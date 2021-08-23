@@ -224,10 +224,10 @@ extension AbsoluteSymbolLink.LinkComponent {
         case kindAndPreciseIdentifier(
             kindIdentifier: String, preciseIdentifierHash: String
         )
-        
-        private static let knownSymbolKindIdentifiers: Set<String> = {
-            Set(SymbolGraph.Symbol.Kind.Swift.allCases.map(\.rawValue))
-        }()
+
+        private static func isKnownSymbolKindIdentifier(identifier: String) -> Bool {
+            return SymbolGraph.Symbol.KindIdentifier.isKnownIdentifier(identifier)
+        }
         
         /// Creates a disambiguation suffix based on the given kind and precise
         /// identifiers.
@@ -261,7 +261,7 @@ extension AbsoluteSymbolLink.LinkComponent {
             if splitSuffix.count == 1 && splitSuffix[0] == string {
                 // The string didn't contain a "-" so now we check
                 // to see if the hash is a known symbol kind identifier.
-                if Self.knownSymbolKindIdentifiers.contains(string) {
+                if Self.isKnownSymbolKindIdentifier(identifier: string) {
                     self = .kindIdentifier(string)
                 } else {
                     // Since we've confirmed that it's not a symbol kind identifier
@@ -274,7 +274,7 @@ extension AbsoluteSymbolLink.LinkComponent {
                 //
                 // We expect the symbol kind identifier to come first, followed
                 // by a hash of the symbol's precise identifier.
-                if Self.knownSymbolKindIdentifiers.contains(String(splitSuffix[0])) {
+                if Self.isKnownSymbolKindIdentifier(identifier: String(splitSuffix[0])) {
                     self = .kindAndPreciseIdentifier(
                         kindIdentifier: String(splitSuffix[0]),
                         preciseIdentifierHash: String(splitSuffix[1])

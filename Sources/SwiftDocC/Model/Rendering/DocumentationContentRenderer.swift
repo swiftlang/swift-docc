@@ -75,7 +75,7 @@ public class DocumentationContentRenderer {
             if fragments.last?.text == "\n" { fragments.removeLast() }
             
             // TODO: Return an Objective-C subheading for Objective-C symbols (rdar://84195588)
-            return Swift.subHeading(for: fragments, symbolTitle: title, symbolKind: kind.identifier)
+            return Swift.subHeading(for: fragments, symbolTitle: title, symbolKind: kind.identifier.identifier)
         } ?? .init(defaultValue: nil)
     }
     
@@ -523,7 +523,8 @@ extension DocumentationContentRenderer {
             }
             
             // 2. Map the first found "keyword=init" to an "identifier" kind to enable syntax highlighting.
-            if symbolKind == SymbolGraph.Symbol.Kind.Swift.`init`.rawValue,
+            let parsedKind = SymbolGraph.Symbol.KindIdentifier(identifier: symbolKind)
+            if parsedKind == SymbolGraph.Symbol.KindIdentifier.`init`,
                 let initIndex = tokens.firstIndex(of: initKeyword) {
                 tokens[initIndex] = initIdentifier
             }

@@ -21,7 +21,7 @@ class SymbolGraphConcurrentDecoderTests: XCTestCase {
     
     private let lines = SymbolGraph.LineList(Array(repeating: SymbolGraph.LineList.Line(text: "Apple Banana Orange Pear Mango Kiwi Grapefruit Melon Watermelon", range: nil), count: 20))
     private func makeSymbol(index: Int) -> SymbolGraph.Symbol {
-        return SymbolGraph.Symbol(identifier: .init(precise: UUID().uuidString, interfaceLanguage: "swift"), names: .init(title: "Symbol \(index)", navigator: nil, subHeading: [SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .identifier, spelling: "Symbol \(index)", preciseIdentifier: UUID().uuidString)], prose: "Symbol \(index)"), pathComponents: ["Module", "Symbol\(index)"], docComment: lines, accessLevel: .init(rawValue: "public"), kind: .init(identifier: "swift.struct", displayName: "Struct"), mixins: [:])
+        return SymbolGraph.Symbol(identifier: .init(precise: UUID().uuidString, interfaceLanguage: "swift"), names: .init(title: "Symbol \(index)", navigator: nil, subHeading: [SymbolGraph.Symbol.DeclarationFragments.Fragment(kind: .identifier, spelling: "Symbol \(index)", preciseIdentifier: UUID().uuidString)], prose: "Symbol \(index)"), pathComponents: ["Module", "Symbol\(index)"], docComment: lines, accessLevel: .init(rawValue: "public"), kind: .init(parsedIdentifier: .struct, displayName: "Struct"), mixins: [:])
     }
     private func addSymbols(count: Int, graph: inout SymbolGraph) {
         for index in 0...count {

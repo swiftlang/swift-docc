@@ -324,34 +324,32 @@ public struct DocumentationNode {
     /// - Parameter symbol: A symbol graph symbol.
     /// - Returns: A documentation node kind.
     static func kind(for symbol: SymbolGraph.Symbol) -> Kind {
-        // To be able to rely on this conversion from Swift kind to documentation kind,
-        // we need to get an exhaustive kind list from SymbolKit. The list below is
-        // less than complete with the current kind list (rdar://60264979).
-        if let swiftSymbolKind = SymbolGraph.Symbol.Kind.Swift(rawValue: symbol.kind.identifier) {
-            switch swiftSymbolKind  {
-            case .`associatedtype`: return .associatedType
-            case .`class`: return .class
-            case .`deinit`: return .deinitializer
-            case .`enum`: return .enumeration
-            case .`case`: return .enumerationCase
-            case .`func`: return .function
-            case .`operator`: return .operator
-            case .`init`: return .initializer
-            case .`method`: return .instanceMethod
-            case .`property`: return .instanceProperty
-            case .`protocol`: return .protocol
-            case .`struct`: return .structure
-            case .`subscript`: return .instanceSubscript
-            case .`typeMethod`: return .typeMethod
-            case .`typeProperty`: return .typeProperty
-            case .`typeSubscript`: return .typeSubscript
-            case .`typealias`: return .typeAlias
-            case .`var`: return .globalVariable
-                
-            case .module: return .module
-            }
-        } else {
-            return .unknown
+        return Self.kind(forKind: symbol.kind.identifier)
+    }
+
+    static func kind(forKind symbolKind: SymbolGraph.Symbol.KindIdentifier) -> Kind {
+        switch symbolKind  {
+        case .`associatedtype`: return .associatedType
+        case .`class`: return .class
+        case .`deinit`: return .deinitializer
+        case .`enum`: return .enumeration
+        case .`case`: return .enumerationCase
+        case .`func`: return .function
+        case .`operator`: return .operator
+        case .`init`: return .initializer
+        case .`method`: return .instanceMethod
+        case .`property`: return .instanceProperty
+        case .`protocol`: return .protocol
+        case .`struct`: return .structure
+        case .`subscript`: return .instanceSubscript
+        case .`typeMethod`: return .typeMethod
+        case .`typeProperty`: return .typeProperty
+        case .`typeSubscript`: return .typeSubscript
+        case .`typealias`: return .typeAlias
+        case .`var`: return .globalVariable
+
+        case .module: return .module
+        case .unknown: return .unknown
         }
     }
 

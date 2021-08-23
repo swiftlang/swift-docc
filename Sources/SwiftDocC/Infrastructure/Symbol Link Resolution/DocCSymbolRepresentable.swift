@@ -175,7 +175,7 @@ extension SymbolGraph.Symbol: DocCSymbolRepresentable {
     }
     
     public var kindIdentifier: String? {
-        self.kind.identifier
+        "\(self.identifier.interfaceLanguage).\(self.kind.identifier.identifier)"
     }
     
     public static func == (lhs: SymbolGraph.Symbol, rhs: SymbolGraph.Symbol) -> Bool {

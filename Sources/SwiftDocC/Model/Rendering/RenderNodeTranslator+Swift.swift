@@ -77,7 +77,8 @@ extension RenderNodeTranslator {
             }
             
             // 2. Map the first found "keyword=init" to an "identifier" kind to enable syntax highlighting.
-            if symbolKind == SymbolGraph.Symbol.Kind.Swift.`init`.rawValue,
+            let parsedKind = SymbolGraph.Symbol.KindIdentifier(identifier: symbolKind)
+            if parsedKind == SymbolGraph.Symbol.KindIdentifier.`init`,
                 let initIndex = tokens.firstIndex(of: initKeyword) {
                 tokens[initIndex] = initIdentifier
             }

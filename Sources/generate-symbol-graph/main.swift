@@ -210,7 +210,7 @@ let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
         ],
         docComment: nil,
         accessLevel: .init(rawValue: "public"),
-        kind: .init(identifier: "swift.class", displayName: "Directive"),
+        kind: .init(parsedIdentifier: .class, displayName: "Directive"),
         mixins: [
             SymbolGraph.Symbol.DeclarationFragments.mixinKey: SymbolGraph.Symbol.DeclarationFragments(
                 declarationFragments: [

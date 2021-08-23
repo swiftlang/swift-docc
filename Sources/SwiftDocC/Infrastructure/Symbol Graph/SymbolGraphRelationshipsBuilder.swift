@@ -142,14 +142,14 @@ struct SymbolGraphRelationshipsBuilder {
         let relationshipConstraints = edge.mixins[SymbolGraph.Relationship.Swift.GenericConstraints.mixinKey] as? SymbolGraph.Relationship.Swift.GenericConstraints
 
         // Add relationships depending whether it's class inheritance or protocol conformance
-        if conformingSymbol.kind.identifier == SymbolGraph.Symbol.Kind.Swift.protocol.rawValue {
+        if conformingSymbol.kind.identifier == .protocol {
             conformingSymbol.relationships.addRelationship(.inheritsFrom(conformanceNodeReference))
         } else {
             conformingSymbol.relationships.addRelationship(.conformsTo(conformanceNodeReference, relationshipConstraints?.constraints))
         }
         
         if let conformanceSymbol = optionalConformanceNode?.semantic as? Symbol {
-            if let rawSymbol = conformingNode.symbol, rawSymbol.kind.identifier == SymbolGraph.Symbol.Kind.Swift.protocol.rawValue {
+            if let rawSymbol = conformingNode.symbol, rawSymbol.kind.identifier == .protocol {
                 conformanceSymbol.relationships.addRelationship(.inheritedBy(.successfullyResolved(conformingNode.reference)))
             } else {
                 conformanceSymbol.relationships.addRelationship(.conformingType(.successfullyResolved(conformingNode.reference), relationshipConstraints?.constraints))

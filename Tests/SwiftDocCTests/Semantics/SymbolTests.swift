@@ -665,7 +665,7 @@ class SymbolTests: XCTestCase {
             pathComponents: pathComponents,
             docComment: docComment,
             accessLevel: .init(rawValue: "public"),
-            kind: SymbolGraph.Symbol.Kind(identifier: "swift.function", displayName: "myFunction"),
+            kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "myFunction"),
             mixins: [
                 SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: "file:///path/to/my file.swift", position: range.start),
             ]

@@ -28,7 +28,7 @@ class SymbolReferenceTests: XCTestCase {
             pathComponents: ["test", "abcd"],
             docComment: nil,
             accessLevel: .init(rawValue: "public"),
-            kind: .init(identifier: "module", displayName: "Framework"),
+            kind: .init(parsedIdentifier: .module, displayName: "Framework"),
             mixins: [:])
         let leafRef = SymbolReference(symbol.identifier.precise, interfaceLanguage: .swift, symbol: symbol)
         XCTAssertEqual(leafRef.path, "")
@@ -41,7 +41,7 @@ class SymbolReferenceTests: XCTestCase {
             pathComponents: ["test", "abcd"],
             docComment: nil,
             accessLevel: .init(rawValue: "public"),
-            kind: .init(identifier: "swift.variable", displayName: "Variable"),
+            kind: .init(parsedIdentifier: .var, displayName: "Variable"),
             mixins: [:])
         let leafRef = SymbolReference(symbol.identifier.precise, interfaceLanguage: .swift, symbol: symbol)
         XCTAssertEqual(leafRef.path, "test/abcd")
@@ -54,7 +54,7 @@ class SymbolReferenceTests: XCTestCase {
             pathComponents: ["test", "abcd"],
             docComment: nil,
             accessLevel: .init(rawValue: "public"),
-            kind: .init(identifier: "swift.variable", displayName: "Variable"),
+            kind: .init(parsedIdentifier: .var, displayName: "Variable"),
             mixins: [:])
         let leafRef = SymbolReference(symbol.identifier.precise, interfaceLanguage: .swift, symbol: symbol, shouldAddHash: true)
         XCTAssertEqual(leafRef.path, "test/abcd-8ogy4")
@@ -69,7 +69,7 @@ class SymbolReferenceTests: XCTestCase {
                 pathComponents: ["test", "abcd()"],
                 docComment: nil,
                 accessLevel: .init(rawValue: "public"),
-                kind: .init(identifier: "swift.variable", displayName: "Variable"),
+                kind: .init(parsedIdentifier: .var, displayName: "Variable"),
                 mixins: [:])
             let leafRef = SymbolReference(symbol.identifier.precise, interfaceLanguage: .swift, symbol: symbol, shouldAddHash: false)
             XCTAssertEqual(leafRef.path, "test/abcd()")
@@ -83,7 +83,7 @@ class SymbolReferenceTests: XCTestCase {
                 pathComponents: ["test", "abcd(_:Int)"],
                 docComment: nil,
                 accessLevel: .init(rawValue: "public"),
-                kind: .init(identifier: "swift.variable", displayName: "Variable"),
+                kind: .init(parsedIdentifier: .var, displayName: "Variable"),
                 mixins: [:])
             let leafRef = SymbolReference(symbol.identifier.precise, interfaceLanguage: .swift, symbol: symbol, shouldAddHash: false)
             XCTAssertEqual(leafRef.path, "test/abcd(_:Int)")
@@ -97,7 +97,7 @@ class SymbolReferenceTests: XCTestCase {
                 pathComponents: ["test", "abcd(num:text:)"],
                 docComment: nil,
                 accessLevel: .init(rawValue: "public"),
-                kind: .init(identifier: "swift.variable", displayName: "Variable"),
+                kind: .init(parsedIdentifier: .var, displayName: "Variable"),
                 mixins: [:])
             let leafRef = SymbolReference(symbol.identifier.precise, interfaceLanguage: .swift, symbol: symbol, shouldAddHash: false)
             XCTAssertEqual(leafRef.path, "test/abcd(num:text:)")

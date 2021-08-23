@@ -20,7 +20,7 @@ class AutomaticCurationTests: XCTestCase {
             let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
                 let sidekitURL = url.appendingPathComponent("sidekit.symbols.json")
                 let text = try String(contentsOf: sidekitURL)
-                    .replacingOccurrences(of: "\"identifier\" : \"swift.enum.case\"", with: "\"identifier\" : \"\(kind.rawValue)\"")
+                    .replacingOccurrences(of: "\"identifier\" : \"swift.enum.case\"", with: "\"identifier\" : \"\(kind.identifier)\"")
                 try text.write(to: sidekitURL, atomically: true, encoding: .utf8)
             })
             defer { try? FileManager.default.removeItem(at: url) }
@@ -33,7 +33,7 @@ class AutomaticCurationTests: XCTestCase {
             
             XCTAssertNotNil(renderNode.topicSections.first(where: { group -> Bool in
                 return group.title == AutomaticCuration.groupTitle(for: kind)
-            }), "\(kind.rawValue) was not automatically curated in a \(AutomaticCuration.groupTitle(for: kind).singleQuoted) topic group." )
+            }), "\(kind.identifier) was not automatically curated in a \(AutomaticCuration.groupTitle(for: kind).singleQuoted) topic group." )
         }
     }
 

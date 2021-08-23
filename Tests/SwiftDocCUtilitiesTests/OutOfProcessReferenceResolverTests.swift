@@ -229,7 +229,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         
         XCTAssertNotNil(symbolNode.semantic as? Symbol)
         if let symbol = symbolNode.semantic as? Symbol {
-            XCTAssertEqual(symbol.kind.identifier, SymbolGraph.Symbol.Kind.Swift.class.rawValue,
+            XCTAssertEqual(symbol.kind.identifier, SymbolGraph.Symbol.KindIdentifier.class,
                            "When the node kind doesn't map to a known value it should fallback to a `.class` kind.")
             XCTAssertEqual(symbol.title, "Resolved Title")
         }

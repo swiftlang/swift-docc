@@ -36,11 +36,7 @@ struct DiscussionSectionTranslator: RenderSectionTranslator {
                 case .dictionarySymbol?, .restRequestSymbol?:
                     title = "Discussion"
                 case .symbol?:
-                    if let swiftKind = SymbolGraph.Symbol.Kind.Swift(rawValue: symbol.kind.identifier) {
-                        title = swiftKind.symbolCouldHaveChildren ? "Overview" : "Discussion"
-                    } else {
-                        title = "Discussion"
-                    }
+                    title = symbol.kind.identifier.swiftSymbolCouldHaveChildren ? "Overview" : "Discussion"
                 default:
                     title = "Overview"
                 }

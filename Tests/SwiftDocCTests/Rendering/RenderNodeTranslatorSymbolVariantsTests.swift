@@ -211,14 +211,14 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testSymbolKindVariants() throws {
         try assertMultiVariantSymbol(
             configureSymbol: { symbol in
-                symbol.kindVariants[.swift] = .init(identifier: "swift.swift-kind", displayName: "Swift Kind")
-                symbol.kindVariants[.objectiveC] = .init(identifier: "objc.objc-kind", displayName: "Objective-C Kind")
+                symbol.kindVariants[.swift] = .init(rawIdentifier: "swift.method", displayName: "Swift Kind")
+                symbol.kindVariants[.objectiveC] = .init(rawIdentifier: "objc.func", displayName: "Objective-C Kind")
             },
             assertOriginalRenderNode: { renderNode in
-                XCTAssertEqual(renderNode.metadata.symbolKind, "swift-kind")
+                XCTAssertEqual(renderNode.metadata.symbolKind, "method")
             },
             assertAfterApplyingVariant: { renderNode in
-                XCTAssertEqual(renderNode.metadata.symbolKind, "objc-kind")
+                XCTAssertEqual(renderNode.metadata.symbolKind, "func")
             }
         )
     }
@@ -237,8 +237,8 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 symbol.titleVariants[.swift] = "Swift Title"
                 symbol.titleVariants[.objectiveC] = "Objective-C Title"
                 
-                symbol.kindVariants[.swift] = .init(identifier: "swift.swift-kind", displayName: "Swift Kind")
-                symbol.kindVariants[.objectiveC] = .init(identifier: "objc.objc-kind", displayName: "Objective-C Kind")
+                symbol.kindVariants[.swift] = .init(rawIdentifier: "swift.method", displayName: "Swift Kind")
+                symbol.kindVariants[.objectiveC] = .init(rawIdentifier: "objc.func", displayName: "Objective-C Kind")
             },
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(
