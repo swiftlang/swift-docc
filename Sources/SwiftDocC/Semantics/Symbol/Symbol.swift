@@ -305,56 +305,121 @@ extension Symbol {
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use ``NSPoint`` vs ``CGPoint`` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
-    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, otherSymbol symbol: SymbolGraph.Symbol, otherSymbolGraph: SymbolGraph) throws {
-        // FIXME: Update this API to pass a unified symbol and merge the declarations for all variants of the symbol.
-        // rdar://69835303
-        let trait = DocumentationDataVariantsTrait.swift
-        
-        if let platformName = otherSymbolGraph.module.platform.name,
+    func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, selector: UnifiedSymbolGraph.Selector) throws {
+        let trait = DocumentationDataVariantsTrait(interfaceLanguage: selector.interfaceLanguage)
+        let platformName = selector.platform
+
+        if let platformName = platformName,
             let existingKey = declarationVariants[trait]?.first(where: { pair in
-                pair.value.declarationFragments == mergingDeclaration.declarationFragments
-            })?.key
-        {
+            return pair.value.declarationFragments == mergingDeclaration.declarationFragments
+        })?.key {
             guard !existingKey.contains(nil) else {
-                throw DocumentationContext.ContextError.unexpectedEmptyPlatformName(symbol.identifier.precise)
+                throw DocumentationContext.ContextError.unexpectedEmptyPlatformName(identifier)
             }
-            
-            // Matches one of the existing declarations, append to the existing key.
-            let currentDeclaration = declarationVariants[trait]?.removeValue(forKey: existingKey)!
-            declarationVariants[trait]?[existingKey + [PlatformName(operatingSystemName: platformName)]] = currentDeclaration
+
+            let platform = PlatformName(operatingSystemName: platformName)
+            if !existingKey.contains(platform) {
+                // Matches one of the existing declarations, append to the existing key.
+                let currentDeclaration = declarationVariants[trait]?.removeValue(forKey: existingKey)!
+                declarationVariants[trait]?[existingKey + [platform]] = currentDeclaration
+            }
         } else {
             // Add new declaration
-            if let name = otherSymbolGraph.module.platform.name {
+            if let name = platformName {
                 declarationVariants[trait]?[[PlatformName.init(operatingSystemName: name)]] = mergingDeclaration
             } else {
                 declarationVariants[trait]?[[nil]] = mergingDeclaration
             }
         }
-        
+
         // Merge the new symbol with the existing availability. If a value already exist, only override if it's for this platform.
-        if let symbolAvailability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability,
+        if let symbolAvailability = symbolAvailability,
             symbolAvailability.availability.isEmpty == false || availabilityVariants[trait]?.availability.isEmpty == false // Nothing to merge if both are empty
         {
             var items = availabilityVariants[trait]?.availability ?? []
-        
+
             // Add all the domains that don't already have availability information
             for availability in symbolAvailability.availability {
                 guard !items.contains(where: { $0.domain?.rawValue == availability.domain?.rawValue }) else { continue }
                 items.append(availability)
             }
-            
+
             // Override the availability for all domains that apply to this platform
-            if let modulePlatformName = otherSymbolGraph.module.platform.name.map(PlatformName.init) {
+            if let modulePlatformName = platformName.map(PlatformName.init) {
                 let symbolAvailabilityForPlatform = symbolAvailability.filterItems(thatApplyTo: modulePlatformName)
-                
+
                 for availability in symbolAvailabilityForPlatform.availability {
                     items.removeAll(where: { $0.domain?.rawValue == availability.domain?.rawValue })
                     items.append(availability)
                 }
             }
-            
+
             availabilityVariants[trait] = SymbolGraph.Symbol.Availability(availability: items)
         }
+    }
+
+    func mergeDeclarations(unifiedSymbol: UnifiedSymbolGraph.Symbol) throws {
+        for (selector, mixins) in unifiedSymbol.mixins {
+            if let mergingDeclaration = mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments {
+                let availability = mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
+
+                try mergeDeclaration(mergingDeclaration: mergingDeclaration, identifier: unifiedSymbol.uniqueIdentifier, symbolAvailability: availability, selector: selector)
+            }
+        }
+    }
+}
+
+extension UnifiedSymbolGraph.Symbol {
+    var swiftSelector: UnifiedSymbolGraph.Selector? {
+        if let mainSelector = self.mainGraphSelectors.first, mainSelector.interfaceLanguage == "swift" {
+            return mainSelector
+        }
+
+        let defaultSelector = UnifiedSymbolGraph.Selector(interfaceLanguage: "swift", platform: nil)
+
+        if self.pathComponents.keys.contains(defaultSelector) {
+            return defaultSelector
+        } else {
+            return self.pathComponents.keys.first(where: { $0.interfaceLanguage == "swift" })
+        }
+    }
+
+    func symbol(forSelector selector: UnifiedSymbolGraph.Selector?) -> SymbolGraph.Symbol? {
+        guard let selector = selector,
+              let kind = self.kind[selector],
+              let pathComponents = self.pathComponents[selector],
+              let names = self.names[selector],
+              let accessLevel = self.accessLevel[selector],
+              let mixins = self.mixins[selector] else {
+            return nil
+        }
+
+        return SymbolGraph.Symbol(
+            identifier: SymbolGraph.Symbol.Identifier(
+                precise: self.uniqueIdentifier,
+                interfaceLanguage: selector.interfaceLanguage),
+            names: names,
+            pathComponents: pathComponents,
+            docComment: self.docComment[selector],
+            accessLevel: accessLevel,
+            kind: kind,
+            mixins: mixins
+        )
+    }
+
+    var defaultSymbol: SymbolGraph.Symbol? {
+        symbol(forSelector: swiftSelector)
+    }
+
+    func identifier(forLanguage interfaceLanguage: String) -> SymbolGraph.Symbol.Identifier {
+        return SymbolGraph.Symbol.Identifier(
+            precise: self.uniqueIdentifier,
+            interfaceLanguage: interfaceLanguage
+        )
+    }
+
+    var swiftIdentifier: SymbolGraph.Symbol.Identifier {
+        identifier(forLanguage: "swift")
     }
 }
 

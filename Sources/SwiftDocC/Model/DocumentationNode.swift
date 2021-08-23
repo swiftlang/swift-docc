@@ -47,6 +47,9 @@ public struct DocumentationNode {
     /// The symbol that backs this node if it's backed by a symbol, otherwise `nil`.
     public var symbol: SymbolGraph.Symbol?
 
+    /// The unified symbol data that backs this node, if it's backed by a symbol; otherwise `nil`.
+    public var unifiedSymbol: UnifiedSymbolGraph.Symbol?
+
     /// A discrete unit of documentation
     struct DocumentationChunk {
         /// The source of a documentation chunk: either a documentation extension file or an in-source documentation comment.
@@ -146,10 +149,11 @@ public struct DocumentationNode {
     ///   - symbol: The symbol to create a documentation node for.
     ///   - platformName: The name of the platforms for which the node is available.
     ///   - moduleName: The name of the module that the symbol belongs to.
-    init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, bystanderModules: [String]? = nil) {
+    init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, platformName: String?, moduleName: String, bystanderModules: [String]? = nil) {
         self.reference = reference
         
-        guard reference.sourceLanguage == .swift else {
+        guard reference.sourceLanguage == .swift,
+              let symbol = unifiedSymbol.defaultSymbol else {
             fatalError("""
                 Only Swift symbols are currently supported. \
                 This initializer is only called with symbols from the symbol graph, which currently only supports Swift.
@@ -161,6 +165,7 @@ public struct DocumentationNode {
         self.sourceLanguage = reference.sourceLanguage
         self.name = .symbol(declaration: .init([.plain(symbol.names.title)]))
         self.symbol = symbol
+        self.unifiedSymbol = unifiedSymbol
         
         self.markup = Document()
         self.docChunks = []
@@ -179,8 +184,8 @@ public struct DocumentationNode {
         availableSourceLanguages = languages
         
         let extendedModule = (symbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension)?.extendedModule
-        
-        self.semantic = Symbol(
+
+        let sema = Symbol(
             kindVariants: .init(swiftVariant: symbol.kind),
             titleVariants: .init(swiftVariant: symbol.names.title),
             subHeadingVariants: .init(swiftVariant: symbol.names.subHeading),
@@ -204,6 +209,10 @@ public struct DocumentationNode {
             redirectsVariants: .init(swiftVariant: nil),
             bystanderModuleNamesVariants: .init(swiftVariant: bystanderModules)
         )
+
+        try! sema.mergeDeclarations(unifiedSymbol: unifiedSymbol)
+
+        self.semantic = sema
     }
 
     /// Given an optional article updates the node's content.

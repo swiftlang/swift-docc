@@ -182,3 +182,29 @@ extension SymbolGraph.Symbol: DocCSymbolRepresentable {
         lhs.identifier.precise == rhs.identifier.precise
     }
 }
+
+extension UnifiedSymbolGraph.Symbol: DocCSymbolRepresentable {
+    public var preciseIdentifier: String? {
+        self.uniqueIdentifier
+    }
+
+    public var title: String {
+        guard let selector = self.swiftSelector else {
+            fatalError("only Swift is supported for now")
+        }
+
+        return self.names[selector]!.title
+    }
+
+    public var kindIdentifier: String? {
+        guard let selector = self.swiftSelector else {
+            fatalError("only Swift is supported for now")
+        }
+
+        return "\(selector.interfaceLanguage).\(self.kind[selector]!.identifier.identifier)"
+    }
+
+    public static func == (lhs: UnifiedSymbolGraph.Symbol, rhs: UnifiedSymbolGraph.Symbol) -> Bool {
+        lhs.uniqueIdentifier == rhs.uniqueIdentifier
+    }
+}

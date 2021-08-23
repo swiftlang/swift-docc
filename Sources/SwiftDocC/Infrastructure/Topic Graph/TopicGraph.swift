@@ -30,7 +30,8 @@ struct TopicGraph {
     class Node: Hashable, CustomDebugStringConvertible {
         /// The location of the node's contents.
         enum ContentLocation: Hashable {
-            
+
+            // TODO: make this take multiple URLs?
             /// The node exists as a whole file at some URL.
             case file(url: URL)
             

@@ -17,6 +17,8 @@ import SymbolKit
 /// which makes detecting symbol collisions and overloads easier.
 struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
+    private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
+    private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private var dataProvider: DocumentationContextDataProvider
     private var bundle: DocumentationBundle
     
@@ -48,6 +50,7 @@ struct SymbolGraphLoader {
         let decoder = JSONDecoder()
 
         var loadedGraphs = [URL: SymbolKit.SymbolGraph]()
+        let graphLoader = GraphCollector()
         var loadError: Error?
         let bundle = self.bundle
         let dataProvider = self.dataProvider
@@ -75,7 +78,10 @@ struct SymbolGraphLoader {
                 self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
 
                 // Store the decoded graph in `loadedGraphs`
-                loadingLock.sync { loadedGraphs[symbolGraphURL] = symbolGraph }
+                loadingLock.sync {
+                    loadedGraphs[symbolGraphURL] = symbolGraph
+                    graphLoader.mergeSymbolGraph(symbolGraph, at: symbolGraphURL)
+                }
             } catch {
                 // If the symbol graph was invalid, store the error
                 loadingLock.sync { loadError = error }
@@ -110,6 +116,7 @@ struct SymbolGraphLoader {
         }
         
         self.symbolGraphs = loadedGraphs
+        (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading()
     }
     
     // Alias to declutter code
