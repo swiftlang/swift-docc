@@ -145,7 +145,7 @@ struct SymbolGraphLoader {
     /// this method adds them to each of the symbols in the graph.
     private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
         // Check if there are defined default availabilities for the current module
-        if let defaultAvailabilities = bundle.defaultAvailability?.modules[moduleName],
+        if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[moduleName],
             let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
             
             // Prepare a default availability lookup for this module.
