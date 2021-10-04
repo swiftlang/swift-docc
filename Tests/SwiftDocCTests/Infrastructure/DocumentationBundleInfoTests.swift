@@ -189,4 +189,69 @@ class DocumentationBundleInfoTests: XCTestCase {
             infoPlist
         )
     }
+    
+    func testFallbackToBundleDiscoveryOptions() throws {
+        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+            fallbackDisplayName: "Display Name",
+            fallbackIdentifier: "swift.org.Identifier",
+            fallbackVersion: "1.0.0",
+            fallbackDefaultCodeListingLanguage: "swift",
+            fallbackDefaultAvailability: DefaultAvailability(
+                with: [
+                    "MyModule": [
+                        DefaultAvailability.ModuleAvailability(
+                            platformName: .iOS,
+                            platformVersion: "7.0.0"
+                        )
+                    ]
+                ]
+            )
+        )
+        
+        let info = try DocumentationBundle.Info(bundleDiscoveryOptions: bundleDiscoveryOptions)
+        XCTAssertEqual(
+            info,
+            DocumentationBundle.Info(
+                displayName: "Display Name",
+                identifier: "swift.org.Identifier",
+                version: Version(arrayLiteral: 1,0,0),
+                defaultCodeListingLanguage: "swift",
+                defaultAvailability: DefaultAvailability(
+                    with: [
+                        "MyModule": [
+                            DefaultAvailability.ModuleAvailability(
+                                platformName: .iOS,
+                                platformVersion: "7.0.0"
+                            )
+                        ]
+                    ]
+                )
+            )
+        )
+    }
+    
+    func testFallbackToInfoInBundleDiscoveryOptions() throws {
+        let info = DocumentationBundle.Info(
+            displayName: "Display Name",
+            identifier: "swift.org.Identifier",
+            version: Version(arrayLiteral: 1,0,0),
+            defaultCodeListingLanguage: "swift",
+            defaultAvailability: DefaultAvailability(
+                with: [
+                    "MyModule": [
+                        DefaultAvailability.ModuleAvailability(
+                            platformName: .iOS,
+                            platformVersion: "7.0.0"
+                        )
+                    ]
+                ]
+            )
+        )
+        
+        let bundleDiscoveryOptions = try BundleDiscoveryOptions(fallbackInfo: info)
+        XCTAssertEqual(
+            info,
+            try DocumentationBundle.Info(bundleDiscoveryOptions: bundleDiscoveryOptions)
+        )
+    }
 }

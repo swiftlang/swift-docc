@@ -33,7 +33,7 @@ extension DocumentationBundle {
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
         static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier, .version]
         
-        enum CodingKeys: String, CodingKey {
+        enum CodingKeys: String, CodingKey, CaseIterable {
             case displayName = "CFBundleDisplayName"
             case identifier = "CFBundleIdentifier"
             case version = "CFBundleVersion"
@@ -52,6 +52,17 @@ extension DocumentationBundle {
                     return "--default-code-listing-language"
                 case .defaultAvailability:
                     return nil
+                }
+            }
+        }
+        
+        enum Error: DescribedError {
+            case wrongType(expected: Any.Type, actual: Any.Type)
+            
+            var errorDescription: String {
+                switch self {
+                case .wrongType(let expected, let actual):
+                    return "Expected '\(expected)', but found '\(actual)'."
                 }
             }
         }
@@ -170,6 +181,62 @@ extension DocumentationBundle {
             self.defaultCodeListingLanguage = defaultCodeListingLanguage
             self.defaultAvailability = defaultAvailability
         }
+    }
+}
+
+extension BundleDiscoveryOptions {
+    /// Creates new bundle discovery options with the given information.
+    ///
+    /// The given fallback values will be used if any of the discovered bundles are missing that
+    /// value in their Info.plist configuration file.
+    ///
+    /// - Parameters:
+    ///   - fallbackDisplayName: A fallback display name for the bundle.
+    ///   - fallbackIdentifier: A fallback identifier for the bundle.
+    ///   - fallbackVersion: A fallback version for the bundle.
+    ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the bundle.
+    ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
+    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
+    public init(
+        fallbackDisplayName: String? = nil,
+        fallbackIdentifier: String? = nil,
+        fallbackVersion: String? = nil,
+        fallbackDefaultCodeListingLanguage: String? = nil,
+        fallbackDefaultAvailability: DefaultAvailability? = nil,
+        additionalSymbolGraphFiles: [URL] = []
+    ) {
+        // Iterate over all possible coding keys with a switch
+        // to build up the dictionary of fallback options.
+        // This ensures that when new coding keys are added, the compiler will enforce
+        // that we handle them here as well.
+        
+        let fallbacks = DocumentationBundle.Info.CodingKeys.allCases.compactMap { key -> (String, Any)? in
+            let value: Any?
+            
+            switch key {
+            case .displayName:
+                value = fallbackDisplayName
+            case .identifier:
+                value = fallbackIdentifier
+            case .version:
+                value = fallbackVersion
+            case .defaultCodeListingLanguage:
+                value = fallbackDefaultCodeListingLanguage
+            case .defaultAvailability:
+                value = fallbackDefaultAvailability
+            }
+            
+            guard let unwrappedValue = value else {
+                return nil
+            }
+            
+            return (key.rawValue, unwrappedValue)
+        }
+        
+        self.init(
+            infoPlistFallbacks: Dictionary(uniqueKeysWithValues: fallbacks),
+            additionalSymbolGraphFiles: additionalSymbolGraphFiles
+        )
     }
 }
 

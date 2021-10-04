@@ -153,7 +153,7 @@ public struct ConvertService: DocumentationService {
                 context.externalSymbolResolver = resolver
             }
 
-            var converter = self.converter ?? DocumentationConverter(
+            var converter = try self.converter ?? DocumentationConverter(
                 documentationBundleURL: request.bundleLocation ?? URL(fileURLWithPath: "/"),
                 emitDigest: false,
                 documentationCoverageOptions: .noCoverage,
@@ -164,12 +164,7 @@ public struct ConvertService: DocumentationService {
                 externalIDsToConvert: request.externalIDsToConvert,
                 documentPathsToConvert: request.documentPathsToConvert,
                 bundleDiscoveryOptions: BundleDiscoveryOptions(
-                    infoPlistFallbacks: [
-                        "CFBundleDisplayName": request.displayName,
-                        "CFBundleIdentifier": request.identifier,
-                        "CFBundleVersion": request.version,
-                        "CDDefaultCodeListingLanguage": request.defaultCodeListingLanguage as Any
-                    ],
+                    fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 ),
                 // We're enabling the inclusion of symbol declaration file paths
