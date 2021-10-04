@@ -54,24 +54,11 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
     private func createBundle(_ directory: FSNode.Directory, _ bundleChildren: [FSNode], options: BundleDiscoveryOptions) throws -> DocumentationBundle {
         let info: DocumentationBundle.Info
         
+        var infoPlistData: Data?
         if let infoPlistRef = findInfoPlist(bundleChildren) {
-            let infoPlistData = try contentsOfURL(infoPlistRef.url)
-            guard let infoPlist = try PropertyListSerialization.propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any] else {
-                throw WorkspaceError.notADictionaryAtRoot(url: infoPlistRef.url)
-            }
-
-            info = try DocumentationBundle.Info(
-                plist: infoPlist.merging(options.infoPlistFallbacks, uniquingKeysWith: { original, fallback in original })
-            )
-            
-        } else {
-            if options.infoPlistFallbacks.isEmpty {
-                throw WorkspaceError.missingInfoPlist(url: directory.url)
-            }
-            info = try DocumentationBundle.Info(
-                plist: options.infoPlistFallbacks
-            )
+            infoPlistData = try contentsOfURL(infoPlistRef.url)
         }
+        info = try DocumentationBundle.Info(from: infoPlistData, bundleDiscoveryOptions: options)
         
         let markupFiles = findMarkupFiles(bundleChildren, recursive: true).map { $0.url }
         let miscResources = findNonMarkupFiles(bundleChildren, recursive: true).map { $0.url }

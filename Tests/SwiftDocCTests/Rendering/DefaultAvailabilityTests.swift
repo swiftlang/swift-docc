@@ -282,7 +282,13 @@ class DefaultAvailabilityTests: XCTestCase {
                 ]
             ]
         ]
-        let defaultAvailability = try DefaultAvailability(parsingPropertyList: plistEntries)
+        
+        let plistData = try PropertyListEncoder().encode(plistEntries)
+        let defaultAvailability = try PropertyListDecoder().decode(
+            DefaultAvailability.self,
+            from: plistData
+        )
+        
         let module = try XCTUnwrap(defaultAvailability.modules["SwiftUI"])
         XCTAssertEqual(module.count, 5)
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
@@ -313,7 +319,12 @@ class DefaultAvailabilityTests: XCTestCase {
                 ]
             ]
         ]
-        let defaultAvailability = try DefaultAvailability(parsingPropertyList: plistEntries)
+        let plistData = try PropertyListEncoder().encode(plistEntries)
+        let defaultAvailability = try PropertyListDecoder().decode(
+            DefaultAvailability.self,
+            from: plistData
+        )
+        
         let module = try XCTUnwrap(defaultAvailability.modules["SwiftUI"])
         XCTAssertEqual(module.count, 5)
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)

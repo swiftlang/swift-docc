@@ -9,7 +9,7 @@
 */
 
 /// An arbitrary-length version tuple.
-public struct Version: RandomAccessCollection, ExpressibleByArrayLiteral, CustomStringConvertible, Equatable {
+public struct Version: Codable, RandomAccessCollection, ExpressibleByArrayLiteral, CustomStringConvertible, Equatable {
     private var elements: [Int]
     
     /// The start index of the version-components tuple.
@@ -46,6 +46,24 @@ public struct Version: RandomAccessCollection, ExpressibleByArrayLiteral, Custom
             return nil
         }
         self.elements = intComponents
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(description)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let string = try container.decode(String.self)
+        if let versionFromString = Version(versionString: string) {
+            self = versionFromString
+        } else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "Failed to create Version from given string '\(string)'"
+            )
+        }
     }
 
     /// The string representation of the version.

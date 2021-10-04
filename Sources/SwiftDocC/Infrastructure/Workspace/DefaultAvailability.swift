@@ -29,19 +29,17 @@ import Foundation
 ///     </array>
 /// </dict>
 /// ```
-public struct DefaultAvailability {
+public struct DefaultAvailability: Codable, Equatable {
 
     /// A platform name and version number pair.
-    public struct ModuleAvailability: Hashable {
-        /// The keys to use when decoding the platform name and version from property list content.
-        private enum Keys: String {
-            case name, version
+    public struct ModuleAvailability: Codable, Hashable {
+        enum CodingKeys: String, CodingKey {
+            case platformName = "name"
+            case platformVersion = "version"
         }
 
         /// The name of the platform, e.g. "macOS".
         public var platformName: PlatformName
-
-        // FIXME: Should this use `Foundation.OperatingSystemVersion` or something similar?
 
         /// A string representation of the version for this platform.
         public var platformVersion: String
@@ -56,24 +54,14 @@ public struct DefaultAvailability {
             self.platformVersion = platformVersion
         }
 
-        /// Parses a property list dictionary containing a single platform name-version pair into a new module availability.
-        ///
-        /// - Parameter availability: The property list dictionary to parse.
-        /// - Throws: A ``DocumentationBundle/PropertyListError/keyNotFound`` error if the is property list dictionary is missing values or
-        ///           a ``DocumentationBundle/PropertyListError/invalidVersionString`` error if the version string is invalid.
-        init(parsingPropertyList availability: [String: String]) throws {
-            guard let name = availability[Keys.name.rawValue] else {
-                throw DocumentationBundle.PropertyListError.keyNotFound(Keys.name.rawValue)
-            }
-            guard let versionString = availability[Keys.version.rawValue] else {
-                throw DocumentationBundle.PropertyListError.keyNotFound(Keys.version.rawValue)
-            }
-            guard let version = Version(versionString: versionString), (2...3).contains(version.count) else {
-                throw DocumentationBundle.PropertyListError.invalidVersionString(versionString)
-            }
+        public init(from decoder: Decoder) throws {
+            let values = try decoder.container(keyedBy: CodingKeys.self)
+            platformName = try values.decode(PlatformName.self, forKey: .platformName)
+            platformVersion = try values.decode(String.self, forKey: .platformVersion)
             
-            platformName = PlatformName(operatingSystemName: name)
-            platformVersion = versionString
+            guard let version = Version(versionString: platformVersion), (2...3).contains(version.count) else {
+                throw DocumentationBundle.PropertyListError.invalidVersionString(platformVersion)
+            }
         }
     }
 
@@ -82,26 +70,8 @@ public struct DefaultAvailability {
     /// For example: "ModuleName" -> ["macOS 10.15", "iOS 13.0"]
     var modules: [String: [ModuleAvailability]]
 
-    /// Parses a property list dictionary mapping modules to platform-version pairs into a new default availability.
-    ///
-    /// - Parameter modules: The property list dictionary to parse.
-    ///
-    /// The property list dictionary must follow this format:
-    /// ```swift
-    /// [
-    ///   "ModuleName": [
-    ///     ["iOS": "13.0"],
-    ///     ["macOS": "10.15"],
-    ///     // additional platforms ...
-    ///   ],
-    ///   // additional modules ...
-    /// ]
-    /// ```
-    init(parsingPropertyList modules: [String: [[String: String]]]) throws {
-        self.modules = try modules.reduce(into: [String: [ModuleAvailability]](), { result, module in
-            result[module.key] = try module.value.map(ModuleAvailability.init(parsingPropertyList:))
-        })
-        .mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
+    init(with modules: [String: [ModuleAvailability]]) {
+        self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
             // If a module doesn't contain default introduced availability for macCatalyst,
             // infer it from iOS. Their platform versions are always the same.
             if !platformAvailabilities.contains(where: { $0.platformName == .catalyst }),
@@ -113,5 +83,16 @@ public struct DefaultAvailability {
                 return platformAvailabilities
             }
         }
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let modules = try container.decode([String: [ModuleAvailability]].self)
+        self.init(with: modules)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(modules)
     }
 }
