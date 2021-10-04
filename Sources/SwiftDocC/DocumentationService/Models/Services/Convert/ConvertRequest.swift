@@ -13,6 +13,12 @@ import Foundation
 
 /// A request to convert in-memory documentation.
 public struct ConvertRequest: Codable {
+    /// Information about the documentation bundle to convert.
+    ///
+    /// ## See Also
+    /// - ``DocumentationBundle/Info-swift.struct``
+    public var bundleInfo: DocumentationBundle.Info
+    
     /// The external IDs of the symbols to convert.
     ///
     /// Use this property to indicate what symbol documentation nodes should be converted. When ``externalIDsToConvert``
@@ -52,19 +58,43 @@ public struct ConvertRequest: Codable {
     ///
     /// ## See Also
     /// - ``DocumentationBundle/displayName``
-    public var displayName: String
+    @available(*, deprecated, message: "Use 'bundleInfo.displayName' instead.")
+    public var displayName: String {
+        get {
+            return bundleInfo.displayName
+        }
+        set {
+            bundleInfo.displayName = newValue
+        }
+    }
     
     /// The identifier of the documentation bundle to convert.
     ///
     /// ## See Also
     /// - ``DocumentationBundle/identifier``
-    public var identifier: String
+    @available(*, deprecated, message: "Use 'bundleInfo.identifier' instead.")
+    public var identifier: String {
+        get {
+            return bundleInfo.identifier
+        }
+        set {
+            bundleInfo.identifier = newValue
+        }
+    }
     
     /// The version of the documentation bundle to convert.
     ///
     /// ## See Also
     /// - ``DocumentationBundle/version``
-    public var version: String
+    @available(*, deprecated, message: "Use 'bundleInfo.version' instead.")
+    public var version: String {
+        get {
+            return bundleInfo.version.description
+        }
+        set {
+            bundleInfo.version = Version(versionString: newValue) ?? bundleInfo.version
+        }
+    }
     
     /// The symbols graph data included in the documentation bundle to convert.
     ///
@@ -88,24 +118,17 @@ public struct ConvertRequest: Codable {
     ///
     /// ## See Also
     /// - ``DocumentationBundle/defaultCodeListingLanguage``
-    public var defaultCodeListingLanguage: String?
+    @available(*, deprecated, message: "Use 'bundleInfo.defaultCodeListingLanguage' instead.")
+    public var defaultCodeListingLanguage: String? {
+        get {
+            return bundleInfo.defaultCodeListingLanguage
+        }
+        set {
+            bundleInfo.defaultCodeListingLanguage = newValue
+        }
+    }
     
-    /// Creates a request to convert in-memory documentation.
-    /// - Parameters:
-    ///   - externalIDsToConvert: The external IDs of the symbols to convert. In Swift, the external ID of a symbol is its USR.
-    ///   - documentPathsToConvert: The paths of the documentation nodes to convert.
-    ///   - includeRenderReferenceStore: Whether the conversion's render reference store should be included in the
-    ///   response.
-    ///   - bundleLocation: The file location of the documentation bundle to convert, if any.
-    ///   - displayName: The display name of the documentation bundle to convert.
-    ///   - identifier: The identifier of the documentation bundle to convert.
-    ///   - version: The version of the documentation bundle to convert.
-    ///   - symbolGraphs: The symbols graph data included in the documentation bundle to convert.
-    ///   - knownDisambiguatedSymbolPathComponents: The mapping of external symbol identifiers to
-    ///   known disambiguated symbol path components.
-    ///   - markupFiles: The markup file data included in the documentation bundle to convert.
-    ///   - miscResourceURLs: The on-disk resources in the documentation bundle to convert.
-    ///   - defaultCodeListingLanguage: The default code listing language for the documentation bundle to convert.
+    @available(*, deprecated, message: "Use 'init(bundleInfo:externalIDsToConvert:...)' instead.")
     public init(
         externalIDsToConvert: [String]?,
         documentPathsToConvert: [String]? = nil,
@@ -124,13 +147,50 @@ public struct ConvertRequest: Codable {
         self.documentPathsToConvert = documentPathsToConvert
         self.includeRenderReferenceStore = includeRenderReferenceStore
         self.bundleLocation = bundleLocation
-        self.displayName = displayName
-        self.identifier = identifier
-        self.version = version
         self.symbolGraphs = symbolGraphs
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
         self.markupFiles = markupFiles
         self.miscResourceURLs = miscResourceURLs
-        self.defaultCodeListingLanguage = defaultCodeListingLanguage
+        
+        self.bundleInfo = DocumentationBundle.Info(
+            displayName: displayName,
+            identifier: identifier,
+            version: Version(versionString: version)!,
+            defaultCodeListingLanguage: defaultCodeListingLanguage
+        )
+    }
+    
+    /// Creates a request to convert in-memory documentation.
+    /// - Parameters:
+    ///   - bundleInfo: Information about the bundle to convert.
+    ///   - documentPathsToConvert: The paths of the documentation nodes to convert.
+    ///   - includeRenderReferenceStore: Whether the conversion's render reference store should be included in the
+    ///   response.
+    ///   - bundleLocation: The file location of the documentation bundle to convert, if any.
+    ///   - symbolGraphs: The symbols graph data included in the documentation bundle to convert.
+    ///   - knownDisambiguatedSymbolPathComponents: The mapping of external symbol identifiers to
+    ///   known disambiguated symbol path components.
+    ///   - markupFiles: The markup file data included in the documentation bundle to convert.
+    ///   - miscResourceURLs: The on-disk resources in the documentation bundle to convert.
+    public init(
+        bundleInfo: DocumentationBundle.Info,
+        externalIDsToConvert: [String]?,
+        documentPathsToConvert: [String]? = nil,
+        includeRenderReferenceStore: Bool? = nil,
+        bundleLocation: URL? = nil,
+        symbolGraphs: [Data],
+        knownDisambiguatedSymbolPathComponents: [String: [String]]? = nil,
+        markupFiles: [Data],
+        miscResourceURLs: [URL]
+    ) {
+        self.externalIDsToConvert = externalIDsToConvert
+        self.documentPathsToConvert = documentPathsToConvert
+        self.includeRenderReferenceStore = includeRenderReferenceStore
+        self.bundleLocation = bundleLocation
+        self.symbolGraphs = symbolGraphs
+        self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
+        self.markupFiles = markupFiles
+        self.miscResourceURLs = miscResourceURLs
+        self.bundleInfo = bundleInfo
     }
 }

@@ -47,15 +47,11 @@ public struct GeneratedDataProvider: DocumentationWorkspaceDataProvider {
         
         return [
             DocumentationBundle(
-                displayName: info.displayName,
-                identifier: info.identifier,
-                version: info.version,
+                info: info,
                 attributedCodeListings: [:],
                 symbolGraphURLs: options.additionalSymbolGraphFiles,
                 markupURLs: [topLevelPage],
-                miscResourceURLs: [],
-                defaultCodeListingLanguage: info.defaultCodeListingLanguage,
-                defaultAvailability: nil
+                miscResourceURLs: []
             )
         ]
     }

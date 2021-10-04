@@ -80,7 +80,7 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
         let customHeader = findCustomHeader(bundleChildren)?.url
         let customFooter = findCustomFooter(bundleChildren)?.url
         
-        return DocumentationBundle(displayName: info.displayName, identifier: info.identifier, version: info.version, symbolGraphURLs: symbolGraphFiles, markupURLs: markupFiles, miscResourceURLs: miscResources, customHeader: customHeader, customFooter: customFooter, defaultCodeListingLanguage: info.defaultCodeListingLanguage, defaultAvailability: info.defaultAvailability)
+        return DocumentationBundle(info: info, symbolGraphURLs: symbolGraphFiles, markupURLs: markupFiles, miscResourceURLs: miscResources, customHeader: customHeader, customFooter: customFooter)
     }
     
     /// Performs a shallow search for the first Info.plist file in the given list of files and directories.

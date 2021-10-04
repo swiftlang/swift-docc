@@ -21,26 +21,20 @@ extension ConvertService {
         var files: [URL: Data] = [:]
         
         mutating func registerBundle(
-            displayName: String,
-            identifier: String,
-            version: String,
+            info: DocumentationBundle.Info,
             symbolGraphs: [Data],
             markupFiles: [Data],
-            miscResourceURLs: [URL],
-            defaultCodeListingLanguage: String?
+            miscResourceURLs: [URL]
         ) {
             let symbolGraphURLs = symbolGraphs.map { registerFile(contents: $0, isMarkupFile: false) }
             let markupFileURLs = markupFiles.map { registerFile(contents: $0, isMarkupFile: true) }
             
             bundles.append(
                 DocumentationBundle(
-                    displayName: displayName,
-                    identifier: identifier,
-                    version: Version(versionString: version)!,
+                    info: info,
                     symbolGraphURLs: symbolGraphURLs,
                     markupURLs: markupFileURLs,
-                    miscResourceURLs: miscResourceURLs,
-                    defaultCodeListingLanguage: defaultCodeListingLanguage
+                    miscResourceURLs: miscResourceURLs
                 )
             )
         }

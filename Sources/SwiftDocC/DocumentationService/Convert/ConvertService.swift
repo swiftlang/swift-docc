@@ -129,13 +129,10 @@ public struct ConvertService: DocumentationService {
                 var inMemoryProvider = InMemoryContentDataProvider()
                 
                 inMemoryProvider.registerBundle(
-                    displayName: request.displayName,
-                    identifier: request.identifier,
-                    version: request.version,
+                    info: request.bundleInfo,
                     symbolGraphs: request.symbolGraphs,
                     markupFiles: request.markupFiles,
-                    miscResourceURLs: request.miscResourceURLs,
-                    defaultCodeListingLanguage: request.defaultCodeListingLanguage
+                    miscResourceURLs: request.miscResourceURLs
                 )
                 
                 provider = inMemoryProvider
@@ -146,13 +143,13 @@ public struct ConvertService: DocumentationService {
             
             if let linkResolvingServer = linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
-                    bundleIdentifier: request.identifier,
+                    bundleIdentifier: request.bundleInfo.identifier,
                     server: linkResolvingServer,
                     convertRequestIdentifier: messageIdentifier
                 )
                 
-                context.fallbackReferenceResolvers[request.identifier] = resolver
-                context.fallbackAssetResolvers[request.identifier] = resolver
+                context.fallbackReferenceResolvers[request.bundleInfo.identifier] = resolver
+                context.fallbackAssetResolvers[request.bundleInfo.identifier] = resolver
                 context.externalSymbolResolver = resolver
             }
 
