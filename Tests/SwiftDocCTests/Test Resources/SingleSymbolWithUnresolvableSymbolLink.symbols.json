@@ -1,0 +1,131 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.5 (swiftlang-1300.0.21.1 clang-1300.0.21.1)"
+    },
+    "module": {
+        "name": "SmallTestingFramework",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 11,
+                    "minor": 3,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.enum",
+                "displayName": "Enumeration"
+            },
+            "identifier": {
+                "precise": "s:21SmallTestingFramework43EnumerationWithSingleUnresolvableSymbolLinkO",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "EnumerationWithSingleUnresolvableSymbolLink"
+            ],
+            "names": {
+                "title": "EnumerationWithSingleUnresolvableSymbolLink",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "EnumerationWithSingleUnresolvableSymbolLink"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "enum"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "EnumerationWithSingleUnresolvableSymbolLink"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 9,
+                                "character": 4
+                            },
+                            "end": {
+                                "line": 9,
+                                "character": 55
+                            }
+                        },
+                        "text": "Enumeration with a single unresolvable symbol link."
+                    },
+                    {
+                        "range": {
+                            "start": {
+                                "line": 10,
+                                "character": 3
+                            },
+                            "end": {
+                                "line": 10,
+                                "character": 3
+                            }
+                        },
+                        "text": ""
+                    },
+                    {
+                        "range": {
+                            "start": {
+                                "line": 11,
+                                "character": 4
+                            },
+                            "end": {
+                                "line": 11,
+                                "character": 28
+                            }
+                        },
+                        "text": "Link: ``LinkToNowhere``."
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "enum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "EnumerationWithSingleUnresolvableSymbolLink"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///SmallTestingFramework/SmallTestingFramework/SmallTestingFramework.swift",
+                "position": {
+                    "line": 12,
+                    "character": 12
+                }
+            }
+        }
+    ],
+    "relationships": [
+        
+    ]
+}

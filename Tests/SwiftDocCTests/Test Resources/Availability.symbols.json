@@ -1,0 +1,145 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 0
+    },
+    "generator": "Swift 5.3"
+  },
+  "module": {
+    "name": "Availability",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 10,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:7TestBed8MyStructV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyStruct"
+      ],
+      "names": {
+        "title": "MyStruct"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MyStruct"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "Swift",
+          "introduced": {
+            "major": 4,
+            "minor": 2
+          }
+        },
+        {
+          "domain": "macCatalystAppExtension",
+          "introduced": {
+            "major": 1,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "macCatalyst",
+          "introduced": {
+            "major": 2,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "watchOSAppExtension",
+          "introduced": {
+            "major": 6,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "watchOS",
+          "introduced": {
+            "major": 6,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "tvOSAppExtension",
+          "introduced": {
+            "major": 12,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "tvOS",
+          "introduced": {
+            "major": 12,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "macOSAppExtension",
+          "introduced": {
+            "major": 10,
+            "minor": 12
+          }
+        },
+        {
+          "domain": "macOS",
+          "introduced": {
+            "major": 10,
+            "minor": 12
+          }
+        },
+        {
+          "domain": "iOSAppExtension",
+          "introduced": {
+            "major": 12,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "iOS",
+          "introduced": {
+            "major": 12,
+            "minor": 0
+          }
+        }
+      ],
+      "location": {
+        "uri": "file:///Availability.swift",
+        "position": {
+          "line": 22,
+          "character": 14
+        }
+      }
+    }
+  ],
+  "relationships": [ ]
+}

@@ -1,0 +1,11 @@
+// Before we have an automated way to regenerate the test bundles
+// let's keep the source in a text file alongside the extracted symbol graph.
+
+import Foundation
+
+protocol B {}
+
+public struct A {
+    public var b: B // Collides with B
+    public struct B: Equatable {} // Inherites !=(_:_:)
+}

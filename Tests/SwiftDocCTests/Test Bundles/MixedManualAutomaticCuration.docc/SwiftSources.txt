@@ -1,0 +1,16 @@
+// Before we have an automated way to regenerate the test bundles
+// let's keep the source in a text file alongside the extracted symbol graph.
+
+public class TopClass {
+    public var name = ""
+    public var age = 27
+    public enum NestedEnum {
+        public enum SecondLevelNesting {
+            
+        }
+    }
+}
+
+public class DoublyManuallyCuratedClass {
+    public func type() -> Int { 1 }
+}

@@ -1,0 +1,106 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 2
+    },
+    "generator": "Apple Swift version 5.5 (swiftlang-1300.0.12.7 clang-1300.0.13.1)"
+  },
+  "module": {
+    "name": "AsyncMethods",
+    "platform": {
+      "architecture": "arm64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 10,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "accessLevel" : "public",
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "swift.method"
+      },
+      "pathComponents" : [
+        "ClassName",
+        "something()"
+      ],
+      "identifier" : {
+        "precise" : "same-precise-identifier-for-both",
+        "interfaceLanguage" : "swift"
+      },
+      "names" : {
+        "title" : "something()",
+        "subHeading": [
+          {
+            "kind" : "keyword",
+            "spelling" : "func"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "something"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "()"
+          },
+          {
+            "kind" : "keyword",
+            "spelling" : "async"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " -> "
+          },
+          {
+            "kind" : "keyword",
+            "spelling" : "Any"
+          }
+        ]
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "func"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "something"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "()"
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "async"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " -> "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "Any"
+        }
+      ]
+    }
+  ],
+  "relationships": []
+}

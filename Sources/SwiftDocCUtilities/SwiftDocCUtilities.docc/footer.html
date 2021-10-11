@@ -1,0 +1,136 @@
+<!--
+  This source file is part of the Swift.org open source project
+
+  Copyright (c) 2021 Apple Inc. and the Swift project authors
+  Licensed under Apache License v2.0 with Runtime Library Exception
+
+  See https://swift.org/LICENSE.txt for license information
+  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+-->
+<style>
+  :host {
+    --color-footer-background-light: #333333;
+    --color-footer-text-light: #cccccc;
+
+    --color-footer-background: var(--color-footer-background-light);
+    --color-footer-text: var(--color-footer-text-light);
+
+    font-family:
+      -apple-system,
+    BlinkMacSystemFont,
+    "SF Hello",
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    Verdana,
+    sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  p {
+    margin: 0;
+    padding: 0;
+  }
+
+  footer[role="contentinfo"] {
+    background: var(--color-footer-background);
+    color: var(--color-footer-text);
+  }
+
+  .container {
+    --padding-x: 22px;
+    --padding-y: 20px;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    min-height: 74px;
+    padding: var(--padding-y) var(--padding-x);
+    width: 980px;
+  }
+
+  footer[role="contentinfo"] a,
+  footer[role="contentinfo"] a:active,
+  footer[role="contentinfo"] a:visited {
+    text-decoration: none;
+  }
+
+  footer[role="contentinfo"] a:hover {
+    text-decoration: underline;
+  }
+
+  footer[role="contentinfo"] aside {
+    flex-shrink: 0;
+  }
+
+  footer[role="contentinfo"] aside i {
+    --icon-size: 16px;
+    background-repeat: no-repeat;
+    background-size: var(--icon-size);
+    display: block;
+    float: right;
+    height: var(--icon-size);
+    margin-left: 1em;
+    width: var(--icon-size);
+  }
+
+  footer[role="contentinfo"] aside i.feed {
+    background-image: url("https://swift.org/assets/images/icon-feed.svg");
+  }
+
+  footer[role="contentinfo"] aside i.twitter {
+    background-image: url("https://swift.org/assets/images/icon-twitter.svg");
+  }
+
+  footer[role="contentinfo"] p {
+    font-size: 0.625em;
+    line-height: 1em;
+    margin-bottom: 1em;
+  }
+
+  footer[role="contentinfo"] p.privacy a {
+    border-right: 1px solid var(--color-footer-text);
+    color: var(--color-footer-text);
+    margin-right: 6px;
+    padding-right: 8px;
+  }
+
+  footer[role="contentinfo"] p.privacy a:last-child {
+    border: none;
+    margin: 0;
+    padding: 0;
+  }
+
+
+  @supports (padding:calc(max(0px))) {
+    .container {
+      padding-bottom: calc(max(var(--padding-y), env(safe-area-inset-bottom)));
+      padding-left: calc(max(var(--padding-x), env(safe-area-inset-left)));
+      padding-right: calc(max(var(--padding-x), env(safe-area-inset-right)));
+    }
+  }
+
+  @media only screen and (max-width: 1023px) {
+    .container {
+      box-sizing: border-box;
+      width: 100%;
+    }
+  }
+</style>
+<footer role="contentinfo">
+  <div class="container">
+    <div>
+      <p class="copyright">Copyright © 2021 Apple Inc. All rights reserved.</p>
+      <p class="trademark">Swift and the Swift logo are trademarks of Apple Inc.</p>
+      <p class="privacy">
+        <a href="//www.apple.com/privacy/privacy-policy/">Privacy Policy</a>
+        <a href="//www.apple.com/legal/privacy/en-ww/cookies/">Cookies</a>
+      </p>
+    </div>
+    <aside>
+      <a href="/atom.xml" title="Subscribe to Site Updates"><i class="feed"></i></a>
+      <a href="https://twitter.com/swiftlang" rel="nofollow" title="Follow @SwiftLang on Twitter"><i class="twitter"></i></a>
+    </aside>
+  </div>
+</footer>

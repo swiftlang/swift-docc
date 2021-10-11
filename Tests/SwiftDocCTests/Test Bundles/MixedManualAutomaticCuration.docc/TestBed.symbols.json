@@ -1,0 +1,511 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 1
+    },
+    "generator": "Apple Swift version 5.4-dev (LLVM 798a505f5bc4a05, Swift 7f7978370b08812)"
+  },
+  "module": {
+    "name": "TestBed",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 10,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.class",
+        "displayName": "Class"
+      },
+      "identifier": {
+        "precise": "s:7TestBed8TopClassC",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "TopClass"
+      ],
+      "names": {
+        "title": "TopClass",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "TopClass"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "class"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "TopClass"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "class"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "TopClass"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///TestBed/Sources/TestBed/TestBed.swift",
+        "position": {
+          "line": 0,
+          "character": 13
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.enum",
+        "displayName": "Enumeration"
+      },
+      "identifier": {
+        "precise": "s:7TestBed8TopClassC10NestedEnumO18SecondLevelNestingO",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "TopClass",
+        "NestedEnum",
+        "SecondLevelNesting"
+      ],
+      "names": {
+        "title": "TopClass.NestedEnum.SecondLevelNesting",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "SecondLevelNesting"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "enum"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "SecondLevelNesting"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "enum"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "SecondLevelNesting"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///TestBed/Sources/TestBed/TestBed.swift",
+        "position": {
+          "line": 4,
+          "character": 20
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Instance Property"
+      },
+      "identifier": {
+        "precise": "s:7TestBed8TopClassC3ageSivp",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "TopClass",
+        "age"
+      ],
+      "names": {
+        "title": "age",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "var"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "age"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "var"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "age"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///TestBed/Sources/TestBed/TestBed.swift",
+        "position": {
+          "line": 2,
+          "character": 15
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:7TestBed26DoublyManuallyCuratedClassC4typeSiyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "DoublyManuallyCuratedClass",
+        "type()"
+      ],
+      "names": {
+        "title": "type()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "type"
+          },
+          {
+            "kind": "text",
+            "spelling": "() -> "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "type"
+        },
+        {
+          "kind": "text",
+          "spelling": "() -> "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///TestBed/Sources/TestBed/TestBed.swift",
+        "position": {
+          "line": 11,
+          "character": 16
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.class",
+        "displayName": "Class"
+      },
+      "identifier": {
+        "precise": "s:7TestBed26DoublyManuallyCuratedClassC",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "DoublyManuallyCuratedClass"
+      ],
+      "names": {
+        "title": "DoublyManuallyCuratedClass",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "DoublyManuallyCuratedClass"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "class"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "DoublyManuallyCuratedClass"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "class"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "DoublyManuallyCuratedClass"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///TestBed/Sources/TestBed/TestBed.swift",
+        "position": {
+          "line": 10,
+          "character": 13
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Instance Property"
+      },
+      "identifier": {
+        "precise": "s:7TestBed8TopClassC4nameSSvp",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "TopClass",
+        "name"
+      ],
+      "names": {
+        "title": "name",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "var"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "name"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "String",
+            "preciseIdentifier": "s:SS"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "var"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "name"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "String",
+          "preciseIdentifier": "s:SS"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///TestBed/Sources/TestBed/TestBed.swift",
+        "position": {
+          "line": 1,
+          "character": 15
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.enum",
+        "displayName": "Enumeration"
+      },
+      "identifier": {
+        "precise": "s:7TestBed8TopClassC10NestedEnumO",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "TopClass",
+        "NestedEnum"
+      ],
+      "names": {
+        "title": "TopClass.NestedEnum",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "NestedEnum"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "enum"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "NestedEnum"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "enum"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "NestedEnum"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///TestBed/Sources/TestBed/TestBed.swift",
+        "position": {
+          "line": 3,
+          "character": 16
+        }
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "s:7TestBed8TopClassC4nameSSvp",
+      "target": "s:7TestBed8TopClassC"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:7TestBed8TopClassC10NestedEnumO18SecondLevelNestingO",
+      "target": "s:7TestBed8TopClassC10NestedEnumO"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:7TestBed8TopClassC10NestedEnumO",
+      "target": "s:7TestBed8TopClassC"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:7TestBed26DoublyManuallyCuratedClassC4typeSiyF",
+      "target": "s:7TestBed26DoublyManuallyCuratedClassC"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:7TestBed8TopClassC3ageSivp",
+      "target": "s:7TestBed8TopClassC"
+    }
+  ]
+}

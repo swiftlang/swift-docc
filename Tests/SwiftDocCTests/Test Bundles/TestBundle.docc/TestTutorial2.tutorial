@@ -1,0 +1,68 @@
+@Tutorial(time: 20, projectFiles: project.zip) {
+   @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download")
+   @Intro(title: "Advanced Augmented Reality App") {
+
+      Tutorial 2 intro description.
+      Tutorial 2 intro description.
+
+      Tutorial 2 intro description.
+      Tutorial 2 intro description.
+      Tutorial 2 intro description.
+
+      Tutorial 2 intro description.
+      Tutorial 2 intro description.
+
+      @Image(source: introposter2.png, alt: introposter2 )
+   }
+   
+   @Section(title: "Create a New AR Project") {
+      @ContentAndMedia {
+         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+         ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+         Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
+
+         > Note: This is a note.
+
+         > Important: This is important.
+
+         @Image(source: introposter.png, alt: xcode )
+      }
+
+      @Steps {
+        @Step {
+          This is a step.
+        }
+      }
+   }
+   
+   @Assessments {
+      @MultipleChoice {
+         Lorem ipsum dolor sit amet?
+
+         Phasellus faucibus scelerisque eleifend donec pretium.
+         
+         ```swift
+         let scene = ARSCNView()
+         let anchor = scene.anchor(for: node)
+         ```
+         
+         @Choice(isCorrect: true) {
+            `anchor.hitTest(view)`
+            
+            @Justification {
+               This is correct because it is.
+            }
+         }
+         
+         @Choice(isCorrect: false) {
+            `anchor.hitTest(view)`
+            
+            @Justification {
+               This is correct because it is.
+            }
+         }
+      }
+   }
+}
+
+<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

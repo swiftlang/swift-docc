@@ -1,0 +1,153 @@
+@Comment {
+   This comment should not interfere with finding the first top-level directive. <doc://com.external.bundle/LinkFromComment>
+}
+
+@Tutorial(time: 20, projectFiles: project.zip) {
+   @Comment {
+      This is a comment.
+   }
+   @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download" )
+
+   @Comment {
+      This is a comment.
+
+      This Intro should not get picked up.
+
+      @Intro(title: "Basic Augmented Reality App") {
+
+         This is the tutorial abstract.
+
+         @Comment {
+            This is a comment.
+         }
+
+         @Video(source: introvideo.mp4, poster: introposter.png )
+      }
+   }
+
+   @Intro(title: "Basic Augmented Reality App") {
+
+      This is the tutorial abstract <doc://com.external.bundle/LinkFromAbstract>.
+
+      @Comment {
+         This is a comment.
+      }
+
+      @Video(source: introvideo.mp4, poster: introposter.png )
+   }
+   
+   @Section(title: "Create a New AR Project") {
+      @ContentAndMedia {
+         This link will never resolve: <doc:ThisWillNeverResolve>.
+         This link needs an external resolver: <doc://com.external.bundle/LinkFromContentAndMedia>.
+
+         @Comment {
+            This is a comment.
+         }
+
+         > Note: This is a note <doc://com.external.bundle/LinkFromNote>.
+
+         > Important: This is important.
+          
+         @Image(source: figure1.png, alt: figure1 )
+
+         ![](figure1)
+
+         ![](images/figure1)
+
+         Quis auctor elit sed vulputate mi sit amet.
+      }
+
+      @Comment {
+         This is a comment.
+      }
+
+      @Steps {
+       
+      Let's get started building the Augmented Reality app.
+      
+      @Step { 
+        Lorem ipsum dolor sit amet, consectetur <doc://com.external.bundle/LinkFromStep>.
+        @Image(source: step.png, alt: step )
+      }
+
+      @Step { 
+         Lorem ipsum dolor sit amet, consectetur.
+
+         @Comment {
+            This is a comment.
+         }
+
+         This is a step caption .
+
+         @Code(file: helloworld1.swift, name: MyCode.swift) {
+            @Image(source: step.png, alt: step )
+         }
+      }
+      
+      > Experiment: Do something cool.
+      
+      @Step { 
+        Lorem ipsum dolor sit amet, consectetur.
+
+        @Code(file: helloworld2.swift, name: MyCode.swift) {
+           @Image(source: intro.png, alt: intro )
+        }
+      }
+
+      @Step { 
+        Lorem ipsum dolor sit amet, consectetur.
+
+        @Code(file: helloworld4.swift, name: MyCode.swift) {
+           @Image(source: titled2up.png, alt: titled2up )
+        }
+      }
+      }
+   }
+   
+   @Assessments {
+      @Comment {
+         This is a comment.
+      }
+      @MultipleChoice {
+         Lorem ipsum dolor sit amet?
+
+         Phasellus faucibus scelerisque eleifend donec pretium <doc://com.external.bundle/LinkFromMulitpleChoice>.
+
+         ![Diagram](something.png)
+         
+         ```swift
+         let scene = ARSCNView()
+         let anchor = scene.anchor(for: node)
+         ```
+         
+         @Choice(isCorrect: true) {
+            `anchor.hitTest(view)`
+            
+            @Justification {
+               This is correct because it is.
+            }
+         }
+         
+         @Choice(isCorrect: false) {
+            `anchor.intersects(view)`
+            
+            @Justification {
+               This is incorrect because it is.
+            }
+         }
+         
+         @Choice(isCorrect: false) {
+            `anchor.intersects(view)` also a link: <doc://com.external.bundle/LinkFromChoice>
+            
+            @Justification {
+               This is incorrect because it is <doc://com.external.bundle/LinkFromJustification>.
+            }
+         }
+      }
+      
+   }
+   @Image(source: introposter2.png, alt: "Titled 2-up" )
+}
+
+<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

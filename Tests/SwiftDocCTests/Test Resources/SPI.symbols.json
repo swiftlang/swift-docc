@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "formatVersion": { "major": 0, "minor": 5, "patch": 2 },
+    "generator": "App"
+  },
+  "module": {
+    "name": "Minimal_docs",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": { "major": 10, "minor": 10, "patch": 0 }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "spi": true,
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs4TestV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Test"
+      ],
+      "names": {
+        "title": "Test"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Test"
+        }
+      ],
+      "accessLevel": "public"
+    }
+  ],
+  "relationships": []
+}

@@ -1,0 +1,117 @@
+{
+  "metadata" : {
+    "formatVersion" : {
+      "major" : 0,
+      "minor" : 3,
+      "patch" : 0
+    },
+    "generator" : "Apple Swift version 5.2-dev (LLVM 4cd92ac2f9, Swift 79716efbee)"
+  },
+  "module" : {
+    "name" : "MyKit",
+    "platform" : {
+      "architecture" : "x86_64",
+      "operatingSystem" : {
+        "minimumVersion" : {
+          "major" : 10,
+          "minor" : 15,
+          "patch" : 0
+        },
+        "name" : "macosx"
+      },
+      "vendor" : "apple"
+    }
+  },
+  "relationships" : [
+    {
+      "kind" : "memberOf",
+      "source" : "s:So14UncuratedClassCV5MyKitE5angle12CoreGraphics7CGFloatVSgvp",
+      "target" : "c:7SideKit14UncuratedClassC",
+      "targetFallback" : "SideKit.UncuratedClass"
+    }
+  ],
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "var"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "angle"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "s:12CoreGraphics7CGFloatV",
+          "spelling" : "CGFloat"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "Returns the angle from `.zero` to the point or `nil` if the point is `.zero`"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "s:So14UncuratedClassCV5MyKitE5angle12CoreGraphics7CGFloatVSgvp"
+      },
+      "kind" : {
+        "displayName" : "Variable",
+        "identifier" : "swift.var"
+      },
+      "names" : {
+        "subheading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "var"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "angle"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:12CoreGraphics7CGFloatV",
+            "spelling" : "CGFloat"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "?"
+          }
+        ],
+        "title" : "angle"
+      },
+      "pathComponents" : [
+        "UncuratedClass",
+        "angle"
+      ],
+      "swiftExtension" : {
+        "extendedModule" : "SideKit"
+      }
+    }
+  ]
+}

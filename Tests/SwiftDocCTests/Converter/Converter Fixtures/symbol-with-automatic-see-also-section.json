@@ -1,0 +1,365 @@
+{
+    "abstract": [
+        {
+            "text": "MyClass abstract reference.",
+            "type": "text"
+        }
+    ],
+    "hierarchy": {
+        "paths": [
+            [
+                "doc://org.swift.docc.example/documentation/MyKit"
+            ]
+        ]
+    },
+    "identifier": {
+        "interfaceLanguage": "swift",
+        "url": "doc://org.swift.docc.example/documentation/MyKit/MyClass"
+    },
+    "kind": "symbol",
+    "metadata": {
+        "externalID": "s:5MyKit0A5ClassC",
+        "modules": [
+            { "name" : "MyKit" }
+        ],
+        "platforms": [
+            {
+                "introducedAt": "13.0",
+                "name": "tvOS",
+                "unconditionallyDeprecated": false,
+                "unconditionallyUnavailable": false
+            },
+            {
+                "introducedAt": "10.15",
+                "name": "macOS",
+                "unconditionallyDeprecated": false,
+                "unconditionallyUnavailable": false
+            },
+            {
+                "introducedAt": "13.0",
+                "name": "iOS",
+                "unconditionallyDeprecated": false,
+                "unconditionallyUnavailable": false
+            }
+        ],
+        "roleHeading": "Class",
+        "symbolKind": "class",
+        "title": "MyClass"
+    },
+    "primaryContentSections": [
+        {
+            "declarations": [
+                {
+                    "platforms": [
+                        "iOS"
+                    ],
+                    "tokens": [
+                        {
+                            "kind": "keyword",
+                            "text": "class"
+                        },
+                        {
+                            "kind": "text",
+                            "text": " "
+                        },
+                        {
+                            "kind": "identifier",
+                            "text": "NSClass"
+                        },
+                        {
+                            "kind": "text",
+                            "text": ": "
+                        },
+                        {
+                            "kind": "typeIdentifier",
+                            "text": "ProtocolFragments",
+                            "preciseIdentifier": "c:@E@ProtocolFragments",
+                            "identifier": "doc://org.swift.docc.example/documentation/Reference-In-Automatic-SeeAlso-And-Fragments"
+                        }
+                    ]
+                }
+            ],
+            "kind": "declarations"
+        }
+    ],
+    "references": {
+        "doc://org.swift.docc.example/documentation/Reference-In-Automatic-SeeAlso-And-Fragments": {
+            "identifier": "doc://org.swift.docc.example/documentation/Reference-In-Automatic-SeeAlso-And-Fragments",
+            "abstract": [
+                {
+                    "text": "A protocol used in Fragments.",
+                    "type": "text"
+                }
+            ],
+            "kind": "symbol",
+            "title": "ProtocolFragments",
+            "type": "topic",
+            "url": "/documentation/ProtocolFragments"
+        },
+        "doc://org.swift.docc.example/documentation/Reference-From-Automatic-SeeAlso-Section-Only": {
+            "abstract": [
+                {
+                    "text": "Declare the user interface and behavior for your app on every platform.",
+                    "type": "text"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/documentation/Reference-From-Automatic-SeeAlso-Section-Only",
+            "kind": "symbol",
+            "title": "MyKit",
+            "type": "topic",
+            "url": "/documentation/mykit"
+        },
+        "doc://org.swift.docc.example/documentation/MyKit": {
+            "abstract": [
+                {
+                    "text": "Declare the user interface and behavior for your app on every platform.",
+                    "type": "text"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit",
+            "kind": "symbol",
+            "title": "MyKit",
+            "type": "topic",
+            "url": "/documentation/mykit"
+        },
+        "doc://org.swift.docc.example/documentation/MyKit-Basics": {
+            "abstract": [
+                {
+                    "text": "Learn how to make the most of the MyKit basics.",
+                    "type": "text"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit-Basics",
+            "kind": "article",
+            "title": "MyKit Basics",
+            "type": "topic",
+            "url": "/documentation/mykit-basics"
+        },
+        "doc://org.swift.docc.example/documentation/MyKit/MyClass": {
+            "abstract": [
+                {
+                    "text": "MyClass abstract reference.",
+                    "type": "text"
+                }
+            ],
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "class"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "MyClass"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit/MyClass",
+            "kind": "symbol",
+            "title": "MyClass",
+            "type": "topic",
+            "url": "/documentation/mykit/myclass"
+        },
+        "doc://org.swift.docc.example/documentation/MyKit/MyClass/init(_:)-3743d": {
+            "abstract": [
+                {
+                    "text": "Initializes a new instance of MyClass",
+                    "type": "text"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit/MyClass/init(_:)-3743d",
+            "kind": "symbol",
+            "title": "init(_:)",
+            "type": "topic",
+            "url": "/documentation/mykit/myclass/init(_:)-3743d"
+        },
+        "doc://org.swift.docc.example/documentation/MyKit/MyClass/init(_:)-98u07": {
+            "abstract": [],
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit/MyClass/init(_:)-98u07",
+            "kind": "symbol",
+            "title": "init(_:)",
+            "type": "topic",
+            "url": "/documentation/mykit/myclass/init(_:)-98u07"
+        },
+        "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()": {
+            "abstract": [
+                {
+                    "text": "myFunction is the public API to using the most of ",
+                    "type": "text"
+                },
+                {
+                    "code": "MyClass",
+                    "type": "codeVoice"
+                },
+                {
+                    "text": "\u2019s features.",
+                    "type": "text"
+                },
+                {
+                    "text": " ",
+                    "type": "text"
+                },
+                {
+                    "text": "The ",
+                    "type": "text"
+                },
+                {
+                    "code": "ViewBuilder",
+                    "type": "codeVoice"
+                },
+                {
+                    "text": " type is a custom parameter attribute that constructs views from multi-statement",
+                    "type": "text"
+                },
+                {
+                    "text": " ",
+                    "type": "text"
+                },
+                {
+                    "text": "closures.",
+                    "type": "text"
+                }
+            ],
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "func"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "myFunction()"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()",
+            "kind": "symbol",
+            "title": "myFunction()",
+            "type": "topic",
+            "url": "/documentation/mykit/myclass/myfunction()"
+        },
+        "doc://org.swift.docc.example/documentation/MyKit/YourClass": {
+            "abstract": [],
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "class"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "YourClass"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit/YourClass",
+            "kind": "symbol",
+            "title": "YourClass",
+            "type": "topic",
+            "url": "/documentation/mykit/yourclass"
+        },
+        "doc://org.swift.docc.example/tutorials/TechnologyX/Tutorial": {
+            "abstract": [
+                {
+                    "text": "Here is some introduction text that will explain all the things and such you will be following this tutorial. You are going to learn a lot by building an app.",
+                    "type": "text"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/tutorials/TechnologyX/Tutorial",
+            "kind": "project",
+            "title": "Basic Augmented Reality App",
+            "type": "topic",
+            "url": "/tutorials/technologyx/tutorial"
+        },
+        "doc://org.swift.docc.example/tutorials/TechnologyX/Tutorial2": {
+            "abstract": [
+                {
+                    "text": "Here is some introduction text that will explain all the things and such you will be doing this project. You are going to learn a lot by building an app.",
+                    "type": "text"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/tutorials/TechnologyX/Tutorial2",
+            "kind": "project",
+            "title": "Advanced Augmented Reality App",
+            "type": "topic",
+            "url": "/tutorials/technologyx/tutorial2"
+        },
+        "doc://org.swift.docc.example/tutorials/TechnologyX/Tutorial4": {
+            "abstract": [
+                {
+                    "text": "Here is some introduction text that will explain all the things and such you will be doing this project. You are going to learn a lot by building an app.",
+                    "type": "text"
+                }
+            ],
+            "identifier": "doc://org.swift.docc.example/tutorials/TechnologyX/Tutorial4",
+            "kind": "project",
+            "title": "Persistent Shared Experiences",
+            "type": "topic",
+            "url": "/tutorials/technologyx/tutorial4"
+        }
+    },
+    "schemaVersion": {
+        "major": 1,
+        "minor": 0,
+        "patch": 0
+    },
+    "sections": [],
+    "seeAlsoSections": [
+        {
+            "abstract": [
+                {
+                    "text": "Below you will find topics to learn more about using ",
+                    "type": "text"
+                },
+                {
+                    "code": "MyProtocol",
+                    "type": "codeVoice"
+                },
+                {
+                    "text": ".",
+                    "type": "text"
+                }
+            ],
+            "identifiers": [
+                "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"
+            ],
+            "title": "Related Documentation"
+        },
+        {
+            "generated": true,
+            "identifiers": [
+                "doc://org.swift.docc.example/documentation/Reference-From-Automatic-SeeAlso-Section-Only",
+                "doc://org.swift.docc.example/documentation/Reference-In-Automatic-SeeAlso-And-Fragments"
+            ],
+            "title": "Basics"
+        }
+    ],
+    "topicSections": [
+        {
+            "identifiers": [
+                "doc://org.swift.docc.example/documentation/MyKit/MyClass/init(_:)-3743d",
+                "doc://org.swift.docc.example/documentation/MyKit/MyClass/init(_:)-98u07",
+                "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"
+            ],
+            "title": "Basics"
+        }
+    ],
+    "variants": [
+        {
+            "paths": [
+                "/documentation/mykit/myclass"
+            ],
+            "traits": [
+                {
+                    "interfaceLanguage": "swift"
+                }
+            ]
+        }
+    ]
+}

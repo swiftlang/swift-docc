@@ -1,0 +1,131 @@
+{
+  "schemaVersion" : {
+    "major" : 1,
+    "minor" : 0,
+    "patch" : 0
+  },
+  "seeAlsoSections" : [ ],
+  "metadata" : {
+    "platforms" : [
+      {
+        "name" : "macOS",
+        "introducedAt" : "10.15"
+      }
+    ],
+    "modules" : [
+      { "name" : "MyKit" }
+    ],
+    "title" : "Wifi Access",
+    "roleHeading" : "Plist Key"
+  },
+  "abstract" : [
+    {
+      "type" : "text",
+      "text" : "A "
+    },
+    {
+      "type" : "codeVoice",
+      "code" : "WiFi access"
+    },
+    {
+      "type" : "text",
+      "text" : " abstract description."
+    }
+  ],
+  "sections" : [
+  ],
+  "identifier" : {
+      "url" : "doc:\/\/org.swift.docc.example\/plist\/wifiaccess",
+      "interfaceLanguage": "swift"
+  },
+  "hierarchy" : {
+    "paths" : [["doc:\/\/org.swift.docc.example\/plist\/wifiaccess"]]
+  },
+  "topicSections" : [
+  ],
+  "kind" : "symbol",
+  "references" : {
+    "doc:\/\/org.swift.docc.example\/downloads\/sample.zip": {
+      "checksum" : "ad4adacc8ad53230b59d",
+      "type" : "download",
+      "identifier" : "project.zip",
+      "url" : "\/downloads\/project.zip"
+    },
+    "doc:\/\/org.swift.docc.example\/plist\/wifiaccess": {
+      "abstract" : [
+        {
+          "text" : "WiFi access",
+          "type" : "text"
+        }
+      ],
+      "identifier" : "doc:\/\/org.swift.docc.example\/plist\/wifiaccess",
+      "kind" : "symbol",
+      "title" : "WiFi Access",
+      "type" : "topic",
+      "url" : "\/documentation\/mykit"
+    }
+  },
+  "downloadNotAvailableSummary": [
+    {
+      "type": "paragraph",
+      "inlineContent": [
+        {
+          "type": "text",
+          "text": "You can experiment with the code. Just use "
+        },
+        {
+          "type": "reference",
+          "isActive": true,
+          "identifier": "doc:\/\/org.swift.docc.example\/plist\/wifiaccess"
+        },
+        {
+          "type": "text",
+          "text": " on your Mac to download "
+        },
+        {
+          "type": "emphasis",
+          "inlineContent": [
+            {
+              "type": "text",
+              "text": "WiFi access sample code."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "primaryContentSections" : [
+    {
+      "kind" : "content",
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "type" : "heading",
+          "text" : "Discussion"
+        },
+        {
+          "type" : "paragraph",
+          "inlineContent" : [
+            {
+              "type" : "text",
+              "text" : "Use "
+            },
+            {
+              "type" : "codeVoice",
+              "code" : "Wifi access"
+            },
+            {
+              "type" : "text",
+              "text" : " to secure wifi access for your app."
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variants": [{
+      "paths" : ["\/plist\/wifiaccess"],
+      "traits" : []
+  }]
+}

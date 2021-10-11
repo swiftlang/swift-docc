@@ -1,0 +1,221 @@
+{
+  "metadata": {
+      "formatVersion" : {
+          "major" : 1
+      },
+      "generator" : "app/1.0"
+  },
+  "relationships" : [],
+  "module" : {
+    "name" : "MyKit",
+    "platform" : {
+      "architecture" : "x86_64",
+      "vendor" : "apple",
+      "operatingSystem" : {
+        "name" : "ios",
+        "version" : {
+          "major" : 10,
+          "minor" : 15,
+          "patch" : 0
+        }
+      }
+    }
+  },
+  "symbols" : [
+    {
+      "availability" : [
+        {
+          "introduced" : {
+            "major" : 13,
+            "minor" : 0
+          },
+          "domain" : "tvOS"
+        },
+        {
+          "introduced" : {
+            "major" : 10,
+            "minor" : 15
+          },
+          "domain" : "macOS"
+        },
+        {
+          "introduced" : {
+            "major" : 13,
+            "minor" : 0
+          },
+          "domain" : "iOS"
+        }
+      ],
+      "accessLevel" : "public",
+      "location": {
+         "uri": "file:///private/tmp/test.swift",
+         "position": {
+             "line": 1,
+             "character": 4
+         }
+      },
+      "kind" : {
+        "identifier" : "swift.method",
+        "displayName" : "Instance Method"
+      },
+      "names" : {
+        "title" : "myFunction()",
+        "subHeading" : [
+            {
+              "kind" : "keyword",
+              "spelling" : "func"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " "
+            },
+            {
+              "kind" : "identifier",
+              "spelling" : "myFunction()"
+            }
+        ]
+      },
+      "pathComponents": [
+          "MyClass",
+          "myFunction()"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5ClassC10myFunctionyyF",
+        "interfaceLanguage" : "swift"
+      },
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "``myFunction()`` is the public API to using the most of ``ChildOfMyClass``'s features."
+          },
+          {
+            "text" : "The ``ViewBuilder``, ``MyClass``, and <doc://com.test.bundle/MyKit/MyClass/myOtherFunction()> type is a custom parameter attribute that constructs views from multi-statement"
+          },
+          {
+            "text" : "closures."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The typical use of `ViewBuilder` is as a parameter attribute for child view-producing closure"
+          },
+          {
+            "text" : "parameters, allowing those closures to provide multiple child views. For example, the following"
+          },
+          {
+            "text" : "`contextMenu` function accepts a closure that produces one or more views via the `ViewBuilder`."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```swift"
+          },
+          {
+            "text" : "func contextMenu<MenuItems : View>("
+          },
+          {
+            "text" : "        @ViewBuilder menuItems: () -> MenuItems"
+          },
+          {
+            "text" : "    ) -> some View"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This is an image: ![the alt text](image.png)"
+          },
+          {
+            "text" : "This is another image: ![the alt text](another-image.png)"
+          },
+          {
+            "text" : "Clients of this function can use multiple-statement closures to provide several child views, e.g.,"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```swift"
+          },
+          {
+            "text" : "myView.contextMenu {"
+          },
+          {
+            "text" : "    Text(\"Cut\")"
+          },
+          {
+            "text" : "    Text(\"Copy\")"
+          },
+          {
+            "text" : "    Text(\"Paste\")"
+          },
+          {
+            "text" : "    if isSymbol {"
+          },
+          {
+            "text" : "        Text(\"Jump to Definition\")"
+          },
+          {
+            "text" : "    }"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          }
+        ]
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "func"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myFunction"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "() -> "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "TestSymbolPreciseIdentifier",
+          "spelling" : "TestSymbol"
+        }
+      ],
+      "swiftExtension" : {
+          "extendedModule": "OtherModule"
+      },
+      "swiftGenerics" : {
+        "constraints" : [
+          {
+            "kind" : "sameType",
+            "lhs" : "Label",
+            "rhs" : "Text"
+          },
+          {
+            "kind" : "superclass",
+            "lhs" : "Observer",
+            "rhs" : "NSObject"
+          },
+          {
+            "kind" : "conformance",
+            "lhs" : "S",
+            "rhs" : "StringProtocol"
+          }
+        ]
+      }
+    }
+  ]
+}

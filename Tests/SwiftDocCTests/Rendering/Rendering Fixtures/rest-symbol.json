@@ -1,0 +1,345 @@
+{
+  "schemaVersion" : {
+    "major" : 1,
+    "minor" : 0,
+    "patch" : 0
+  },
+  "seeAlsoSections" : [ ],
+  "metadata" : {
+    "platforms" : [
+      {
+        "name" : "macOS",
+        "introducedAt" : "10.10",
+        "deprecatedAt" : "10.15",
+        "current": "10.15",
+        "beta": true
+      },
+      {
+        "unavailable": true,
+        "name" : "watchOS",
+        "introducedAt" : "1.0",
+        "deprecatedAt" : "3.0",
+        "message": "The API is not available anymore",
+        "renamed": "WiFiEntitlement",
+        "current": "4.0",
+        "beta": true
+      },
+      {
+        "deprecated": true
+      }
+    ],
+    "modules" : [
+      { "name" : "MyKit" }
+    ],
+    "title" : "Wifi Access",
+    "roleHeading" : "Plist Key"
+  },
+  "abstract" : [
+    {
+      "type" : "text",
+      "text" : "A "
+    },
+    {
+      "type" : "codeVoice",
+      "code" : "WiFi access"
+    },
+    {
+      "type" : "text",
+      "text" : " abstract description."
+    }
+  ],
+  "sections" : [
+  ],
+  "identifier" : {
+      "url" : "doc:\/\/org.swift.docc.example\/plist\/wifiaccess",
+      "interfaceLanguage": "swift"
+  },
+  "hierarchy" : {
+    "paths" : [["doc:\/\/org.swift.docc.example\/plist\/wifiaccess"]]
+  },
+  "topicSections" : [
+  ],
+  "kind" : "symbol",
+  "references" : {
+    "doc:\/\/org.swift.docc.example\/plist\/wifiaccess": {
+      "abstract" : [
+        {
+          "text" : "WiFi access",
+          "type" : "text"
+        }
+      ],
+      "identifier" : "doc:\/\/org.swift.docc.example\/plist\/wifiaccess",
+      "kind" : "symbol",
+      "title" : "WiFi Access",
+      "type" : "topic",
+      "url" : "\/documentation\/mykit"
+    }
+  },
+  "primaryContentSections" : [
+    {
+      "kind": "restEndpoint",
+      "title": "URL",
+      "tokens": [
+        {
+          "kind": "method",
+          "text": "GET"
+        },
+        {
+          "kind": "text",
+          "text": " "
+        },
+        {
+          "kind": "baseURL",
+          "text": "https://www.example.com"
+        },
+        {
+          "kind": "path",
+          "text": "/v1/me/library/artists/"
+        },
+        {
+          "kind": "parameter",
+          "text": "{id}"
+        }
+      ]
+    },
+    {
+      "kind": "restParameters",
+      "title": "Path Parameters",
+      "source": "path",
+      "items": [
+        {
+          "name": "id",
+          "type": [
+              {
+                "kind": "text",
+                "text": "string"
+              }
+          ],
+          "typeDetails": [
+              { },
+              { "baseType" : "string", "arrayMode" : true }
+          ],
+          "introducedVersion": "1.2",
+          "required": true,
+          "content": [{
+            "type": "paragraph",
+            "inlineContent": [
+              {
+                "type": "text",
+                "text": "The unique identifier for the artist."
+              }
+            ]
+          }]
+        }
+      ]
+    },
+    {
+      "kind": "restParameters",
+      "title": "Query Parameters",
+      "source": "query",
+      "items": [
+        {
+          "name": "l",
+          "type": [
+              {
+                "kind": "text",
+                "text": "string"
+              }
+          ],
+          "content": [
+            {
+              "type": "paragraph",
+              "inlineContent": [
+                {
+                  "type": "text",
+                  "text": "The localization to use, specified by a language tag. The possible values are in the "
+                },
+                {
+                  "type": "codeVoice",
+                  "code": "supportedLanguageTags"
+                },
+                { "type": "text", "text": " array belonging to the " },
+                { "type": "codeVoice", "code": "Storefront" },
+                {
+                  "type": "text",
+                  "text": " object specified by storefront. Otherwise, the storefront’s "
+                },
+                { "type": "codeVoice", "code": "defaultLanguageTag" },
+                { "type": "text", "text": " is used." }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "include",
+          "type": [
+              {
+                "kind": "text",
+                "text": "[string]"
+              }
+          ],
+          "content": [
+            {
+              "type": "paragraph",
+              "inlineContent": [
+                {
+                  "type": "text",
+                  "text": "Additional relationships to include in the fetch."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "restParameters",
+      "title": "HTTP Headers",
+      "source": "header",
+      "items": [
+        {
+          "name": "X-TotalCount",
+          "type": [
+              {
+                "kind": "text",
+                "text": "string"
+              }
+          ],
+          "content": [
+            {
+              "type": "paragraph",
+              "inlineContent": [
+                {
+                  "type": "text",
+                  "text": "Total amount of results"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "restResponses",
+      "title": "Response Codes",
+      "items": [
+        {
+          "status": 200,
+          "reason": "OK",
+          "mimeType": "application/json",
+          "type": [
+              {
+                "kind": "typeIdentifier",
+                "text": "LibraryArtistResponse",
+                "identifier": "doc://org.swift.docc/applemusicapi/libraryartistresponse"
+              }
+          ],
+          "content": [
+            {
+              "type": "paragraph",
+              "inlineContent": [
+                {
+                  "type": "text",
+                  "text": "The request was successful."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "restBody",
+      "title": "Parts",
+      "mimeType": "multipart/form-data",
+      "bodyContentType": [
+          {
+            "kind": "identifier",
+            "text": "form-data"
+          }
+      ],
+      "content": [
+        {
+          "type": "paragraph",
+          "inlineContent": [
+            {
+              "type": "text",
+              "text": "The article’s Apple News Format JSON document and other assets."
+            }
+          ]
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Any Key",
+          "type": [
+              {
+                "kind": "text",
+                "text": "binary"
+              }
+          ],
+          "required": true,
+          "mimeType": "application/octet-stream",
+          "content": [
+            {
+              "type": "paragraph",
+              "inlineContent": [
+                {
+                  "type": "text",
+                  "text": "Assets, such as images."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "content",
+      "title": "Discussion",
+      "content": [
+        {
+          "type": "endpointExample",
+          "summary": [{
+            "type": "paragraph",
+            "inlineContent": [
+              {
+                "type": "text",
+                "text": "The summary of this endpoint example."
+              }
+            ]
+          }],
+          "request" : {
+            "type": "file",
+            "syntax": "http",
+            "content": [
+              {
+                "collapsible": false,
+                "code": [
+                  "Request content"
+                ]
+              }
+            ]
+          },
+          "response" : {
+            "type": "file",
+            "syntax": "json",
+            "content": [
+              {
+                "collapsible": true,
+                "code": [
+                  "Response content"
+                ]
+              }
+            ]
+          }
+        }
+
+      ]
+    }
+  ],
+  "variants": [{
+      "paths" : ["\/plist\/wifiaccess"],
+      "traits" : []
+  }]
+}

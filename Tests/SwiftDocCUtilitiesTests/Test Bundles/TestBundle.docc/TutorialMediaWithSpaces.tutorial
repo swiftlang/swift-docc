@@ -1,0 +1,54 @@
+@Tutorial(time: 20, projectFiles: project.zip) {
+   @XcodeRequirement(title: "Xcode X.Y Beta Z", destination: "https://www.example.com/download")
+   @Intro(title: "Basic Augmented Reality App") {
+
+      This is the tutorial abstract.
+
+      @Video(source: "with spaces.mp4", poster: "with spaces.png")
+   }
+   
+   @Section(title: "Create a New AR Project") {
+      @ContentAndMedia {
+         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+         ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
+          
+         @Image(source: "with spaces.png", alt: figure1)
+
+         ![](with%20spaces.png)
+      }
+
+      @Steps {
+      
+      @Step { 
+        Lorem ipsum dolor sit amet, consectetur.
+        @Image(source: with%20spaces.png, alt: step)
+      }
+      }
+   }
+
+   @Assessments {
+      @MultipleChoice {
+         Lorem ipsum dolor sit amet?
+         
+         @Choice(isCorrect: true) {
+            `anchor.hitTest(view)`
+            
+            @Justification {
+               This is correct because it is.
+            }
+         }
+         
+         @Choice(isCorrect: false) {
+            `anchor.intersects(view)`
+            
+            @Justification {
+               This is incorrect because it is.
+            }
+         }
+      }
+   }
+
+   @Image(source: introposter2.png, alt: "Titled 2-up")
+}
+
+<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

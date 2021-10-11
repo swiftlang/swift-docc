@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# This source file is part of the Swift.org open source project
+#
+# Copyright (c) 2021 Apple Inc. and the Swift project authors
+# Licensed under Apache License v2.0 with Runtime Library Exception
+#
+# See https://swift.org/LICENSE.txt for license information
+# See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+#
+
+set -eu
+
+# A `realpath` alternative using the default C implementation.
+filepath() {
+  [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+
+# First get the absolute path to this file so we can get the absolute file path to the Swift-DocC root source dir.
+DOCC_ROOT="$(dirname $(dirname $(filepath $0)))"
+
+# Build SwiftDocC.
+swift test --parallel --package-path "$DOCC_ROOT"
+
+# Run source code checks for the codebase.
+LC_ALL=C "$DOCC_ROOT"/bin/check-source
+
+# Test utility scripts validity.
+printf "=> Validating scripts in bin subdirectory… "
+
+swift "$DOCC_ROOT/bin/benchmark.swift" > /dev/null
+swift "$DOCC_ROOT/bin/benchmark-diff.swift" > /dev/null
+swift "$DOCC_ROOT/bin/output-diff.swift" > /dev/null
+
+printf "\033[0;32mokay.\033[0m\n"
+

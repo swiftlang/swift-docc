@@ -1,0 +1,158 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.5 (swiftlang-1300.0.21.1 clang-1300.0.21.1)"
+    },
+    "module": {
+        "name": "SmallTestingFramework",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 11,
+                    "minor": 3,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "s:21SmallTestingFramework15TestEnumerationO06NesteddE0O0D6StructV06deeplyfD31FunctionWithUnresolvableDocLinkyyF",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "TestEnumeration",
+                "NestedTestEnumeration",
+                "TestStruct",
+                "deeplyNestedTestFunctionWithUnresolvableDocLink()"
+            ],
+            "names": {
+                "title": "deeplyNestedTestFunctionWithUnresolvableDocLink()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "deeplyNestedTestFunctionWithUnresolvableDocLink"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 12,
+                                "character": 16
+                            },
+                            "end": {
+                                "line": 12,
+                                "character": 75
+                            }
+                        },
+                        "text": "Deeply nested function with a single unresolvable doc link."
+                    },
+                    {
+                        "range": {
+                            "start": {
+                                "line": 13,
+                                "character": 15
+                            },
+                            "end": {
+                                "line": 13,
+                                "character": 15
+                            }
+                        },
+                        "text": ""
+                    },
+                    {
+                        "range": {
+                            "start": {
+                                "line": 14,
+                                "character": 16
+                            },
+                            "end": {
+                                "line": 14,
+                                "character": 42
+                            }
+                        },
+                        "text": "Link: <doc:LinkToNowhere>."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "deeplyNestedTestFunctionWithUnresolvableDocLink"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///SmallTestingFramework/SmallTestingFramework/SmallTestingFramework.swift",
+                "position": {
+                    "line": 15,
+                    "character": 24
+                }
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "memberOf",
+            "source": "s:21SmallTestingFramework15TestEnumerationO06NesteddE0O",
+            "target": "s:21SmallTestingFramework15TestEnumerationO"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:21SmallTestingFramework15TestEnumerationO06NesteddE0O0D6StructV",
+            "target": "s:21SmallTestingFramework15TestEnumerationO06NesteddE0O"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:21SmallTestingFramework15TestEnumerationO06NesteddE0O0D6StructV06deeplyfD31FunctionWithUnresolvableDocLinkyyF",
+            "target": "s:21SmallTestingFramework15TestEnumerationO06NesteddE0O0D6StructV"
+        }
+    ]
+}

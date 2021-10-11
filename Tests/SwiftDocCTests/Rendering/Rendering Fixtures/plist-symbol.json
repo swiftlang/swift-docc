@@ -1,0 +1,225 @@
+{
+  "schemaVersion" : {
+    "major" : 1,
+    "minor" : 0,
+    "patch" : 0
+  },
+  "seeAlsoSections" : [ ],
+  "metadata" : {
+    "platforms" : [
+      {
+        "name" : "macOS",
+        "introducedAt" : "10.15"
+      }
+    ],
+    "modules" : [
+      { "name" : "MyKit" }
+    ],
+    "title" : "Wifi Access",
+    "roleHeading": "Property List Key",
+    "externalID": "plistkey-123",
+    "role": "symbol",
+    "symbolKind": "tdef",
+    "sourceFileURI": "file:///username/developer/project/test.swift",
+  },
+  "abstract" : [
+    {
+      "type" : "text",
+      "text" : "A "
+    },
+    {
+      "type" : "codeVoice",
+      "code" : "WiFi access"
+    },
+    {
+      "type" : "text",
+      "text" : " abstract description."
+    }
+  ],
+  "sections" : [
+  ],
+  "identifier" : {
+      "url": "doc:\/\/org.swift.docc.example\/plist\/wifiaccess",
+      "interfaceLanguage": "swift"
+  },
+  "hierarchy" : {
+    "paths" : [["doc:\/\/org.swift.docc.example\/plist\/wifiaccess"]]
+  },
+  "topicSections" : [
+  ],
+  "kind" : "symbol",
+  "references" : {
+    "doc:\/\/org.swift.docc.example\/plist\/wifiaccess": {
+      "abstract" : [
+        {
+          "text" : "WiFi access",
+          "type" : "text"
+        }
+      ],
+      "identifier" : "doc:\/\/org.swift.docc.example\/plist\/wifiaccess",
+      "kind" : "symbol",
+      "title" : "WiFi Access",
+      "type" : "topic",
+      "url" : "\/documentation\/mykit"
+    },
+    "doc:\/\/org.swift.docc.example\/plist\/dataaccess": {
+      "abstract" : [
+        {
+          "text" : "Data access",
+          "type" : "text"
+        }
+      ],
+      "identifier" : "doc:\/\/org.swift.docc.example\/plist\/dataaccess",
+      "kind" : "symbol",
+      "title" : "Data Access",
+      "type" : "topic",
+      "url" : "\/documentation\/mykit",
+      "titleStyle": "title",
+      "name": "com.apple.enabledataaccess",
+      "ideTitle": "Enable Data Access"
+    }
+  },
+  "primaryContentSections" : [
+    {
+      "kind": "details",
+      "title": "Details",
+      "details": {
+          "name": "com.apple.developer.networking.wifi",
+          "value": [
+            {
+              "baseType": "string",
+              "arrayMode": true
+            },
+            {
+              "baseType": "number"
+            }
+          ],
+          "platforms": ["iOS", "macOS"],
+          "ideTitle": "WiFi access",
+          "titleStyle": "title"
+      }
+    },
+    {
+      "kind" : "content",
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "type" : "heading",
+          "text" : "Discussion"
+        },
+        {
+          "type" : "paragraph",
+          "inlineContent" : [
+            {
+              "type" : "text",
+              "text" : "Use "
+            },
+            {
+              "type" : "codeVoice",
+              "code" : "Wifi access"
+            },
+            {
+              "type" : "text",
+              "text" : " to secure wifi access for your app."
+            }
+          ]
+        },
+        {
+          "type" : "dictionaryExample",
+          "summary" : [
+            {
+              "type" : "paragraph",
+              "inlineContent" : [
+                {
+                  "type" : "text",
+                  "text" : "An example of a dictionary."
+                }
+              ]
+            }
+          ],
+          "example" : {
+            "type" : "file",
+            "content" : [{
+              "collapsible" : false,
+              "code": [
+                "{",
+                "  \"name\" : \"Info.plist\"",
+                "}"
+              ]
+            }]
+          }
+        }
+      ]
+    },
+    {
+      "title": "Properties",
+      "kind": "properties",
+      "items" : [
+        {
+            "name" : "code",
+            "type" : [
+              {
+                  "kind" : "identifier",
+                  "text" : "string"
+              }
+            ],
+            "content" : [
+                {
+                  "type" : "paragraph",
+                  "inlineContent" : [
+                    {
+                      "type" : "text",
+                      "text" : "A code description"
+                    }
+                  ]
+                }
+            ],
+            "attributes" : [
+              {
+                "kind" : "default",
+                "title" : "Default",
+                "value" : "AABBCC"
+              }
+            ]
+        }
+      ]
+    },
+    {
+        "title": "Attributes",
+        "kind": "attributes",
+        "attributes": [
+          {
+            "kind" : "default",
+            "title" : "Default",
+            "value" : "AABBCC"
+          }
+        ]
+    },
+    {
+        "title": "Possible Values",
+        "kind": "possibleValues",
+        "values": [
+            { "name" : "ppc" },
+            { "name" : "i386",
+              "content" : [
+                {
+                  "type" : "paragraph",
+                  "inlineContent" : [
+                    {
+                      "type" : "text",
+                      "text" : "Any i386 type of processor"
+                    }
+                  ]
+                }
+              ]
+            },
+            { "name" : "arm" }
+        ]
+    }
+  ],
+  "variants": [{
+      "paths" : ["\/plist\/wifiaccess"],
+      "traits" : []
+  }]
+}

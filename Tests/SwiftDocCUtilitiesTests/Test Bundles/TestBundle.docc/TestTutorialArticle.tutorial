@@ -1,0 +1,108 @@
+@Article(time: 20) {
+   @Comment {
+      This is a comment.
+   }
+   @Intro(title: "Making an Augmented Reality App") {
+
+      This is an abstract for the intro.
+
+      It can be multiple paragraphs.
+
+      @Image(source: introposter2.png, alt: foo)
+   }
+   
+   ## This is an H2
+
+   This is full width paragraph.
+   
+   Some paragraphs of text here.
+
+   ![full width image](introposter2.png)
+   
+   @ContentAndMedia {
+      @Image(source: introposter2.png, alt: "alt")
+
+      You can customize a view's display by changing your code,
+      or by using the inspector to discover what's available and to help you write code.
+
+      As you build the Landmarks app, you can use any combination of editors:
+      the source editor, the canvas, or the inspectors.
+      Your code stays updated, regardless of which tool you use.
+   }
+   
+   @ContentAndMedia {
+      You can customize a view's display by changing your code,
+      or by using the inspector to discover what's available and to help you write code.
+
+      As you build the Landmarks app, you can use any combination of editors:
+      the source editor, the canvas, or the inspectors.
+      Your code stays updated, regardless of which tool you use.
+      
+      @Image(source: introposter2.png, alt: "alt")
+   }
+   
+   Full width inbetween other layouts.
+   
+   @Stack {
+      @ContentAndMedia {
+         You can customize a view's display by changing your code,
+         or by using the inspector to discover what's available and to help you write code.
+         
+         @Image(source: introposter2.png, alt: "alt")
+
+         As you build the Landmarks app, you can use any combination of editors:
+         the source editor, the canvas, or the inspectors.
+         Your code stays updated, regardless of which tool you use.
+      }
+      
+      @ContentAndMedia {
+         You can customize a view's display by changing your code,
+         or by using the inspector to discover what's available and to help you write code.
+         
+         As you build the Landmarks app, you can use any combination of editors:
+         the source editor, the canvas, or the inspectors.
+         Your code stays updated, regardless of which tool you use.
+         
+         @Image(source: introposter2.png, alt: "alt")
+      }
+   }
+   
+   ## A Section
+   
+   Some full width stuff.
+   
+   - foo
+   - bar
+   - baz
+   
+   @Stack {
+      @ContentAndMedia {
+         You can customize a view's display by changing your code,
+         or by using the inspector to discover what's available and to help you write code.
+         
+         @Image(source: introposter2.png, alt: "alt")
+
+         As you build the Landmarks app, you can use any combination of editors:
+         the source editor, the canvas, or the inspectors.
+         Your code stays updated, regardless of which tool you use.
+      }
+      
+      @ContentAndMedia {
+         @Image(source: introposter2.png, alt: "alt")
+      }
+      
+      @ContentAndMedia {
+         @Image(source: introposter2.png, alt: "alt")
+      }
+   }
+   
+   Some more paragraphs.
+
+   ### This is an H3
+   
+   Some paragraphs.
+   
+   @Image(source: introposter2.png, alt: "Titled 2-up")
+}
+
+<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

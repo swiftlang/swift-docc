@@ -1,0 +1,72 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Specification of the DocC assets.json digest file.",
+        "version": "0.1.0",
+        "title": "Assets"
+    },
+    "paths": { },
+    "components": {
+        "schemas": {
+            "Benchmark": {
+                "type": "object",
+                "required": [
+                    "arguments",
+                    "platform",
+                    "metrics",
+                    "date"
+                ],
+                "properties": {
+                    "arguments": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "platform": {
+                        "type": "string"
+                    },
+                    "metrics": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Metric"
+                        }
+                    },
+                    "date": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Metric": {
+                "type": "object",
+                "required": [
+                    "displayName",
+                    "result",
+                    "identifier"
+                ],
+                "properties": {
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "result": {
+                        "oneOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "string"
+                            }
+                        ]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}

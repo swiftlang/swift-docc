@@ -1,0 +1,232 @@
+{
+  "schemaVersion": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "seeAlsoSections": [],
+  "metadata": {
+    "platforms": [
+      {
+        "name": "macOS",
+        "introducedAt": "10.15"
+      }
+    ],
+    "modules": [
+      {
+        "name": "MyKit"
+      }
+    ],
+    "title": "Wifi Access",
+    "roleHeading": "Plist Key"
+  },
+  "abstract": [
+    {
+      "type": "text",
+      "text": "A "
+    },
+    {
+      "type": "codeVoice",
+      "code": "WiFi access"
+    },
+    {
+      "type": "text",
+      "text": " abstract description."
+    }
+  ],
+  "sections": [],
+  "identifier": {
+    "url": "doc://org.swift.docc.example/plist/wifiaccess",
+    "interfaceLanguage": "swift"
+  },
+  "hierarchy": {
+    "paths": [
+      [
+        "doc://org.swift.docc.example/plist/wifiaccess"
+      ]
+    ]
+  },
+  "topicSections": [],
+  "kind": "symbol",
+  "references": {
+    "doc://org.swift.docc.example/plist/wifiaccess": {
+      "abstract": [
+        {
+          "text": "WiFi access",
+          "type": "text"
+        }
+      ],
+      "identifier": "doc://org.swift.docc.example/plist/wifiaccess",
+      "kind": "symbol",
+      "title": "WiFi Access",
+      "type": "topic",
+      "url": "/documentation/mykit"
+    }
+  },
+  "primaryContentSections": [
+    {
+      "kind": "content",
+      "content": [
+        {
+          "anchor": "discussion",
+          "level": 2,
+          "type": "heading",
+          "text": "Discussion"
+        },
+        {
+          "type": "termList",
+          "items": [
+            {
+              "term": {
+                "inlineContent": [
+                  {
+                    "type": "text",
+                    "text": "First term"
+                  }
+                ]
+              },
+              "definition": {
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "A paragraph that spans multiple lines."
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "term": {
+                "inlineContent": [
+                  {
+                    "type": "text",
+                    "text": "Another "
+                  },
+                  {
+                    "type": "codeVoice",
+                    "code": "term"
+                  }
+                ]
+              },
+              "definition": {
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "Second definition."
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "It has "
+                      },
+                      {
+                        "type": "emphasis",
+                        "inlineContent": [
+                          {
+                            "type": "text",
+                            "text": "multiple"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " paragraphs."
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "term": {
+                "inlineContent": [
+                  {
+                    "type": "text",
+                    "text": "Penultimate "
+                  },
+                  {
+                    "type": "codeVoice",
+                    "code": "term"
+                  }
+                ]
+              },
+              "definition": {
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "emphasis",
+                        "inlineContent": [
+                          {
+                            "type": "text",
+                            "text": "Definition"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " for code voice term. Still part of paragraph with another: colon."
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "term": {
+                "inlineContent": [
+                  {
+                    "type": "strong",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "Final"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "text",
+                    "text": " term"
+                  }
+                ]
+              },
+              "definition": {
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "Definition for bold term."
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "paths": [
+        "/plist/wifiaccess"
+      ],
+      "traits": []
+    }
+  ]
+}

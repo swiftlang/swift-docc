@@ -1,0 +1,117 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Specification of the DocC indexing-records.json digest file.",
+        "version": "0.1.0",
+        "title": "Indexing Records"
+    },
+    "paths": { },
+    "components": {
+        "schemas": {
+            "IndexingRecords": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/IndexingRecord"
+                }
+            },
+            "IndexingRecord": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "location",
+                    "title",
+                    "summary",
+                    "headings",
+                    "rawIndexableTextContent"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["overview", "tutorial", "article", "tutorialSection", "symbol"]
+                    },
+                    "location": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/LocationContained"
+                            },
+                            {
+                                "$ref": "#/components/schemas/LocationTopLevelPage"
+                            }
+                        ]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "summary": {
+                        "type": "string"
+                    },
+                    "headings": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "rawIndexableTextContent": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LocationContained": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "reference",
+                    "inPage"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["contained"]
+                    },
+                    "reference": {
+                        "$ref": "#/components/schemas/ResolvedTopicReference"
+                    },
+                    "inPage": {
+                        "$ref": "#/components/schemas/ResolvedTopicReference"
+                    }
+                }
+            },
+            "LocationTopLevelPage": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "reference"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["topLevelPage"]
+                    },
+                    "reference": {
+                        "$ref": "#/components/schemas/ResolvedTopicReference"
+                    }
+                }
+            },
+            "ResolvedTopicReference": {
+                "required": [
+                    "url",
+                    "interfaceLanguage"
+                ],
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "reference(TopicRenderReference)"
+                    },
+                    "interfaceLanguage": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}

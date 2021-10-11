@@ -1,0 +1,129 @@
+{
+  "schemaVersion" : {
+    "major" : 1,
+    "minor" : 0,
+    "patch" : 0
+  },
+  "seeAlsoSections" : [ ],
+  "metadata" : {
+    "role" : "dictionarySymbol",
+    "title" : "LinkButton",
+    "roleHeading" : "Object",
+    "symbolKind" : "dict",
+    "externalID" : "data:news_format:LinkButton",
+    "modules" : [
+      {
+        "name" : "Apple News Format"
+      }
+    ],
+    "platforms" : [
+      {
+        "name" : "Apple News Format",
+        "introducedAt" : "1.11",
+        "current" : "1.11.0"
+      }
+    ]
+  },
+  "abstract" : [ ],
+  "legacy_identifier" : 3401022,
+  "sections" : [ ],
+  "identifier" : {
+    "url" : "doc:\/\/org.swift.docc\/documentation\/apple_news\/linkbutton",
+    "interfaceLanguage" : "data"
+  },
+  "hierarchy" : {
+    "paths" : [ ]
+  },
+  "relationshipsSections" : [ ],
+  "variants" : [
+    {
+      "paths" : [
+        "documentation\/apple_news\/linkbutton"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "data"
+        }
+      ]
+    }
+  ],
+  "kind" : "symbol",
+  "references" : {
+    "doc:\/\/org.swift.docc\/documentation\/apple_news\/linkbutton" : {
+      "role" : "dictionarySymbol",
+      "title" : "LinkButton",
+      "identifier" : "doc:\/\/org.swift.docc\/documentation\/apple_news\/linkbutton",
+      "abstract" : [ ],
+      "type" : "topic",
+      "kind" : "symbol",
+      "url" : "\/documentation\/apple_news\/linkbutton"
+    }
+  },
+  "primaryContentSections" : [
+    {
+      "kind" : "content",
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "type" : "heading",
+          "text" : "Discussion"
+        },
+        {
+          "type" : "paragraph",
+          "inlineContent" : [
+            {
+              "type" : "text",
+              "text" : "Use the "
+            },
+            {
+              "type" : "codeVoice",
+              "code" : "LinkButton"
+            },
+            {
+              "type" : "text",
+              "text" : " component to display a button with a link."
+            }
+          ]
+        },
+        {
+          "anchor" : "3401525",
+          "level" : 3,
+          "type" : "heading",
+          "text" : "Example"
+        },
+        {
+          "type" : "dictionaryExample",
+          "example" : {
+            "content" : [
+              {
+                "collapsible" : false,
+                "code" : [
+                  "{",
+                  "  \"components\": [",
+                  "    {",
+                  "      \"role\": \"link_button\",",
+                  "      \"URL\": \"http:\/\/www.example.com\",",
+                  "      \"text\": \"Read More\",",
+                  "      \"style\": {",
+                  "        \"backgroundColor\": \"#DDD\",",
+                  "        \"mask\": {",
+                  "          \"type\": \"corners\",",
+                  "          \"radius\": 25",
+                  "        }",
+                  "      },",
+                  "      \"layout\": {",
+                  "        \"padding\": 10",
+                  "      }",
+                  "    }",
+                  "  ]",
+                  "}"
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

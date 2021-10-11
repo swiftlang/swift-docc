@@ -1,0 +1,84 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Specification of the DocC diagnostics.json digest file.",
+        "version": "0.1.0",
+        "title": "Diagnostics"
+    },
+    "paths": { },
+    "components": {
+        "schemas": {
+            "Diagnostics": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/components/schemas/DiagnosticSummary"
+                } 
+            },
+            "DiagnosticSummary": {
+                "type": "object",
+                "required": [
+                    "severity",
+                    "summary",
+                    "notes"
+                ],
+                "properties": {
+                    "start": {
+                        "$ref": "#/components/schemas/Location"
+                    },
+                    "source": {
+                        "type": "string"
+                    },
+                    "severity": {
+                        "type": "integer"
+                    },
+                    "summary": {
+                        "type": "string"
+                    },
+                    "explanation": {
+                        "type": "string"
+                    },
+                    "notes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Note"
+                        }
+                    }
+                }
+            },
+            "Location": {
+                "type": "object",
+                "required": [
+                    "line",
+                    "column"
+                ],
+                "properties": {
+                    "line": {
+                        "type": "integer"
+                    },
+                    "column": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "Note": {
+                "type": "object",
+                "required": [
+                    "location",
+                    "message"
+                ],
+                "properties": {
+                    "location": {
+                        "$ref": "#/components/schemas/Location"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}

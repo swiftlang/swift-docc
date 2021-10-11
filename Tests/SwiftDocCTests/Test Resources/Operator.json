@@ -1,0 +1,452 @@
+{
+    "abstract": [
+        {
+            "text": "No overview available.",
+            "type": "text"
+        }
+    ],
+    "primaryContentSections": [
+        {
+            "kind": "declarations",
+            "declarations": [
+                {
+                    "platforms": [
+                        "iOS",
+                        "iOS",
+                        "macOS"
+                    ],
+                    "tokens": [
+                        {
+                            "text": "static",
+                            "kind": "keyword"
+                        },
+                        {
+                            "kind": "text",
+                            "text": " "
+                        },
+                        {
+                            "kind": "keyword",
+                            "text": "func"
+                        },
+                        {
+                            "kind": "text",
+                            "text": " "
+                        },
+                        {
+                            "kind": "identifier",
+                            "text": "!="
+                        },
+                        {
+                            "kind": "text",
+                            "text": " "
+                        },
+                        {
+                            "kind": "text",
+                            "text": "("
+                        },
+                        {
+                            "kind": "internalParam",
+                            "text": "lhs"
+                        },
+                        {
+                            "kind": "text",
+                            "text": ": "
+                        },
+                        {
+                            "text": "MyFamily",
+                            "kind": "typeIdentifier",
+                            "preciseIdentifier": "s:9MyKit0A6FamilyO",
+                            "identifier": "doc://org.swift.docc.example/documentation/MyKit/MyFamily"
+                        },
+                        {
+                            "kind": "text",
+                            "text": ", "
+                        },
+                        {
+                            "kind": "internalParam",
+                            "text": "rhs"
+                        },
+                        {
+                            "kind": "text",
+                            "text": ": "
+                        },
+                        {
+                            "text": "MyFamily",
+                            "kind": "typeIdentifier",
+                            "preciseIdentifier": "s:9MyKit0A6FamilyO",
+                            "identifier": "doc://org.swift.docc.example/documentation/MyKit/MyFamily"
+                        },
+                        {
+                            "kind": "text",
+                            "text": ") -> "
+                        },
+                        {
+                            "text": "Bool",
+                            "kind": "typeIdentifier",
+                            "preciseIdentifier": "s:Sb",
+                            "identifier": "doc://org.swift.docc.example/s:Sb"
+                        }
+                    ],
+                    "languages": [
+                        "swift"
+                    ]
+                }
+            ]
+        }
+    ],
+    "sections": [],
+    "variants": [
+        {
+            "traits": [
+                {
+                    "interfaceLanguage": "swift"
+                }
+            ],
+            "paths": [
+                "/documentation/mykit/myfamily/_!=(_:_:)"
+            ]
+        }
+    ],
+    "metadata": {
+        "modules": [
+            {
+                "name": "MyKit"
+            }
+        ],
+        "role": "symbol",
+        "symbolKind": "op",
+        "fragments": [
+            {
+                "kind": "keyword",
+                "text": "static"
+            },
+            {
+                "kind": "text",
+                "text": " "
+            },
+            {
+                "kind": "keyword",
+                "text": "func"
+            },
+            {
+                "kind": "text",
+                "text": " "
+            },
+            {
+                "kind": "identifier",
+                "text": "!="
+            },
+            {
+                "kind": "text",
+                "text": " "
+            },
+            {
+                "kind": "text",
+                "text": "("
+            },
+            {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "s:9MyKit0A6FamilyO",
+                "text": "MyFamily"
+            },
+            {
+                "kind": "text",
+                "text": ", "
+            },
+            {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "s:9MyKit0A6FamilyO",
+                "text": "MyFamily"
+            },
+            {
+                "kind": "text",
+                "text": ") -> "
+            },
+            {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "s:Sb",
+                "text": "Bool"
+            }
+        ],
+        "platforms": [
+            {
+                "name": "iOS",
+                "introducedAt": "12.0"
+            },
+            {
+                "name": "macOS",
+                "introducedAt": "10.15"
+            },
+            {
+                "name": "Mac Catalyst",
+                "introducedAt": "12.0"
+            }
+        ],
+        "title": "!=(_:_:)",
+        "navigatorTitle": [
+            {
+                "kind": "keyword",
+                "text": "static"
+            },
+            {
+                "kind": "text",
+                "text": " "
+            },
+            {
+                "kind": "keyword",
+                "text": "func"
+            },
+            {
+                "kind": "text",
+                "text": " "
+            },
+            {
+                "kind": "identifier",
+                "text": "!="
+            },
+            {
+                "kind": "text",
+                "text": " "
+            },
+            {
+                "kind": "text",
+                "text": "("
+            },
+            {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "s:9MyKit0A6FamilyO",
+                "text": "MyFamily"
+            },
+            {
+                "kind": "text",
+                "text": ", "
+            },
+            {
+                "preciseIdentifier": "s:9MyKit0A6FamilyO",
+                "kind": "typeIdentifier",
+                "text": "MyFamily"
+            },
+            {
+                "kind": "text",
+                "text": ") -> "
+            },
+            {
+                "kind": "typeIdentifier",
+                "preciseIdentifier": "s:Sb",
+                "text": "Bool"
+            }
+        ],
+        "externalID": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9MyKit0A6FamilyO",
+        "roleHeading": "Operator"
+    },
+    "schemaVersion": {
+        "major": 1,
+        "patch": 0,
+        "minor": 0
+    },
+    "kind": "symbol",
+    "hierarchy": {
+        "paths": [
+            [
+                "doc://org.swift.docc.example/documentation/MyKit",
+                "doc://org.swift.docc.example/documentation/MyKit/MyFamily"
+            ]
+        ]
+    },
+    "identifier": {
+        "interfaceLanguage": "swift",
+        "url": "doc://org.swift.docc.example/documentation/MyKit/MyFamily/!=(_:_:)"
+    },
+    "references": {
+        "doc://org.swift.docc.example/documentation/MyKit/MyFamily": {
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit/MyFamily",
+            "abstract": [],
+            "role": "symbol",
+            "url": "/documentation/mykit/myfamily",
+            "type": "topic",
+            "kind": "symbol",
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "enum"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "MyFamily"
+                }
+            ],
+            "navigatorTitle": [
+                {
+                    "kind": "identifier",
+                    "text": "MyFamily"
+                }
+            ],
+            "title": "MyFamily"
+        },
+        "doc://org.swift.docc.example/documentation/MyKit/MyFamily/!=(_:_:)": {
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit/MyFamily/!=(_:_:)",
+            "abstract": [],
+            "role": "symbol",
+            "url": "/documentation/mykit/myfamily/_!=(_:_:)",
+            "type": "topic",
+            "kind": "symbol",
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "static"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "keyword",
+                    "text": "func"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "!="
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "text",
+                    "text": "("
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "text": "MyFamily",
+                    "preciseIdentifier": "s:9MyKit0A6FamilyO"
+                },
+                {
+                    "kind": "text",
+                    "text": ", "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "text": "MyFamily",
+                    "preciseIdentifier": "s:9MyKit0A6FamilyO"
+                },
+                {
+                    "kind": "text",
+                    "text": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "text": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                }
+            ],
+            "navigatorTitle": [
+                {
+                    "kind": "keyword",
+                    "text": "static"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "keyword",
+                    "text": "func"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "!="
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "text",
+                    "text": "("
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9MyKit0A6FamilyO",
+                    "text": "MyFamily"
+                },
+                {
+                    "kind": "text",
+                    "text": ", "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "text": "MyFamily",
+                    "preciseIdentifier": "s:9MyKit0A6FamilyO"
+                },
+                {
+                    "kind": "text",
+                    "text": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "text": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                }
+            ],
+            "title": "!=(_:_:)"
+        },
+        "doc://org.swift.docc.example/documentation/MyKit": {
+            "identifier": "doc://org.swift.docc.example/documentation/MyKit",
+            "abstract": [],
+            "role": "collection",
+            "url": "/documentation/mykit",
+            "type": "topic",
+            "kind": "symbol",
+            "title": "MyKit"
+        },
+        "doc://org.swift.docc.example/s:Sb": {
+            "identifier": "doc://org.swift.docc.example/s:Sb",
+            "abstract": [],
+            "role": "symbol",
+            "url": "/documentation/swift/bool",
+            "type": "topic",
+            "kind": "symbol",
+            "fragments": [
+                {
+                    "kind": "text",
+                    "text": "struct "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "Bool"
+                }
+            ],
+            "title": "Bool"
+        }
+    },
+    "diffAvailability": {
+        "minor": {
+            "change": "added",
+            "platform": "Xcode",
+            "versions": [
+                "11.6 beta 1",
+                "12.0 beta 1"
+            ]
+        },
+        "major": {
+            "change": "added",
+            "platform": "Xcode",
+            "versions": [
+                "11.0",
+                "12.0 beta 1"
+            ]
+        }
+    }
+}

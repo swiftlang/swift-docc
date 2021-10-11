@@ -1,0 +1,165 @@
+{
+  "schemaVersion" : {
+    "major" : 1,
+    "minor" : 0,
+    "patch" : 0
+  },
+  "seeAlsoSections" : [ ],
+  "metadata" : {
+    "platforms" : [
+      {
+        "name" : "macOS",
+        "introducedAt" : "10.15"
+      }
+    ],
+    "modules" : [
+      { "name" : "MyKit" }
+    ],
+    "title" : "Error",
+    "roleHeading" : "Plist Key",
+    "externalID": "plistkey-123",
+    "role" : "collection"
+  },
+  "abstract" : [
+    {
+      "type" : "text",
+      "text" : "A "
+    },
+    {
+      "type" : "codeVoice",
+      "code" : "WiFi access"
+    },
+    {
+      "type" : "text",
+      "text" : " abstract description."
+    }
+  ],
+  "sections" : [
+  ],
+  "identifier" : {
+      "url" : "doc:\/\/org.swift.docc.example\/plist\/wifiaccess",
+      "interfaceLanguage": "swift"
+  },
+  "hierarchy" : {
+    "paths" : [["doc:\/\/org.swift.docc.example\/plist\/wifiaccess"]]
+  },
+  "topicSections" : [
+  ],
+  "kind" : "symbol",
+  "references" : {
+    "doc:\/\/org.swift.docc.example\/plist\/wifiaccess": {
+      "abstract" : [
+        {
+          "text" : "WiFi access",
+          "type" : "text"
+        }
+      ],
+      "identifier" : "doc:\/\/org.swift.docc.example\/plist\/wifiaccess",
+      "kind" : "symbol",
+      "title" : "WiFi Access",
+      "type" : "topic",
+      "url" : "\/documentation\/mykit"
+    }
+  },
+  "primaryContentSections" : [
+    {
+      "title": "Properties",
+      "kind": "properties",
+      "items" : [
+        {
+            "name" : "code",
+            "required" : true,
+            "type" : [
+                {
+                    "kind" : "identifier",
+                    "text" : "*"
+                }
+            ],
+            "content" : [
+                {
+                  "type" : "paragraph",
+                  "inlineContent" : [
+                    {
+                      "type" : "text",
+                      "text" : "A code description"
+                    }
+                  ]
+                }
+            ],
+            "attributes" : [
+              {
+                "kind" : "default",
+                "title" : "Default value",
+                "value" : "AABBCC"
+              },
+              {
+                "kind" : "minimum",
+                "title" : "Minimum",
+                "value" : "0.0"
+              },
+              {
+                "kind" : "minimumExclusive",
+                "title" : "Minimum",
+                "value" : "0.0"
+              },
+              {
+                "kind" : "maximum",
+                "title" : "Maximum",
+                "value" : "10.0"
+              },
+              {
+                "kind" : "maximumExclusive",
+                "title" : "Maximum",
+                "value" : "10.0"
+              },
+              {
+                "kind" : "allowedValues",
+                "title" : "Possible values",
+                "values" : ["one", "two", "three"]
+              },
+              {
+                "kind" : "allowedTypes",
+                "title" : "Possible types",
+                "values" : [
+                    [ 
+                        { "kind" : "identifier", "text" : "number"} 
+                    ],
+                    [
+                        { "kind" : "text", "text" : "["},
+                        { "kind" : "identifier", "text" : "string"},
+                        { "kind" : "text", "text" : "]"}
+                    ]
+                ]
+              }
+            ]
+        },
+        {
+            "name" : "status",
+            "deprecated" : true,
+            "type" : [
+                {
+                    "kind" : "identifier",
+                    "text" : "*"
+                }
+            ],
+            "content" : [
+                {
+                  "type" : "paragraph",
+                  "inlineContent" : [
+                    {
+                      "type" : "text",
+                      "text" : "Status description"
+                    }
+                  ]
+                }
+            ]
+        }
+
+      ]
+    }
+  ],
+  "variants": [{
+      "paths" : ["\/plist\/wifiaccess"],
+      "traits" : []
+  }]
+}

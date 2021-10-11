@@ -1,0 +1,55 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Specification of the DocC metadata.json digest file.",
+        "version": "0.1.0",
+        "title": "Metadata"
+    },
+    "paths": { },
+    "components": {
+        "schemas": {
+            "Metadata": {
+                "type": "object",
+                "required": [
+                    "bundleDisplayName",
+                    "bundleIdentifier",
+                    "schemaVersion"
+                ],
+                "properties": {
+                    "bundleDisplayName": {
+                        "type": "string"
+                    },
+                    "bundleIdentifier": {
+                        "type": "string"
+                    },
+                    "schemaVersion": {
+                        "$ref": "#/components/schemas/SchemaVersion"
+                    }
+                }
+            },
+            "SchemaVersion": {
+                "type": "object",
+                "required": [
+                    "major",
+                    "minor",
+                    "patch"
+                ],
+                "properties": {
+                    "major": {
+                        "type": "integer"
+                    },
+                    "minor": {
+                        "type": "integer"
+                    },
+                    "patch": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}

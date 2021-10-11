@@ -1,0 +1,748 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "Apple Swift version 5.5-dev (LLVM bf4bea8531c0073, Swift 2c4f9ef7acb7e54)"
+  },
+  "module": {
+    "name": "Minimal_docs",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 15,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.protocol",
+        "displayName": "Protocol"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs1AP",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A"
+      ],
+      "names": {
+        "title": "A",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "A"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "protocol"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "A"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "protocol"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "A"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Minimal_docs.swift",
+        "position": {
+          "line": 2,
+          "character": 16
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs8MyStructV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyStruct"
+      ],
+      "names": {
+        "title": "MyStruct",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyStruct"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "struct"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "MyStruct"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MyStruct"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Minimal_docs.swift",
+        "position": {
+          "line": 12,
+          "character": 14
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs1APAAE6methodyySiF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A",
+        "method(_:)"
+      ],
+      "names": {
+        "title": "method(_:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "method"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 3,
+                "character": 8
+              },
+              "end": {
+                "line": 3,
+                "character": 49
+              }
+            },
+            "text": "Requirement method: ``method(_:)-7mctk``."
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Int",
+                "preciseIdentifier": "s:Si"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "Minimal_docs"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "method"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Minimal_docs.swift",
+        "position": {
+          "line": 9,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs8MyStructV6methodyySSF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyStruct",
+        "method(_:)"
+      ],
+      "names": {
+        "title": "method(_:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "method"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "String",
+            "preciseIdentifier": "s:SS"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 3,
+                "character": 8
+              },
+              "end": {
+                "line": 3,
+                "character": 49
+              }
+            },
+            "text": "Requirement method: ``method(_:)-7mctk``."
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "method"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "String",
+          "preciseIdentifier": "s:SS"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Minimal_docs.swift",
+        "position": {
+          "line": 13,
+          "character": 16
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs1AP6methodyySSF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A",
+        "method(_:)"
+      ],
+      "names": {
+        "title": "method(_:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "method"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "String",
+            "preciseIdentifier": "s:SS"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 3,
+                "character": 8
+              },
+              "end": {
+                "line": 3,
+                "character": 49
+              }
+            },
+            "text": "Requirement method: ``method(_:)-7mctk``."
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "method"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "String",
+          "preciseIdentifier": "s:SS"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Minimal_docs.swift",
+        "position": {
+          "line": 4,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs1APAAE6methodyySSF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A",
+        "method(_:)"
+      ],
+      "names": {
+        "title": "method(_:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "method"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "String",
+            "preciseIdentifier": "s:SS"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "docComment": {
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 3,
+                "character": 8
+              },
+              "end": {
+                "line": 3,
+                "character": 49
+              }
+            },
+            "text": "Requirement method: ``method(_:)-7mctk``."
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "param",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "param"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "Minimal_docs"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "method"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "String",
+          "preciseIdentifier": "s:SS"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Minimal_docs.swift",
+        "position": {
+          "line": 8,
+          "character": 9
+        }
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "defaultImplementationOf",
+      "source": "s:12Minimal_docs1APAAE6methodyySSF",
+      "target": "s:12Minimal_docs1AP6methodyySSF",
+      "sourceOrigin": {
+        "identifier": "s:12Minimal_docs1AP6methodyySSF",
+        "displayName": "A.method(_:)"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:12Minimal_docs8MyStructV6methodyySSF",
+      "target": "s:12Minimal_docs8MyStructV",
+      "sourceOrigin": {
+        "identifier": "s:12Minimal_docs1AP6methodyySSF",
+        "displayName": "A.method(_:)"
+      }
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:12Minimal_docs8MyStructV",
+      "target": "s:12Minimal_docs1AP"
+    },
+    {
+      "kind": "requirementOf",
+      "source": "s:12Minimal_docs1AP6methodyySSF",
+      "target": "s:12Minimal_docs1AP"
+    },
+    {
+      "kind": "defaultImplementationOf",
+      "source": "s:12Minimal_docs1APAAE6methodyySiF",
+      "target": "s:12Minimal_docs1AP6methodyySSF",
+      "sourceOrigin": {
+        "identifier": "s:12Minimal_docs1AP6methodyySSF",
+        "displayName": "A.method(_:)"
+      }
+    }
+  ]
+}

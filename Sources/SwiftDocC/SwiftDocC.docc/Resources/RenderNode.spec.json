@@ -1,0 +1,2777 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Render Node API",
+        "version": "0.1.0",
+        "title": "Render Node API"
+    },
+    "paths": { },
+    "components": {
+        "schemas": {
+            "RenderNode": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/TutorialsPageRenderNode"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DocumentationRenderNode"
+                    }
+                ]
+            },
+            "TutorialsPageRenderNode": {
+                "required": [
+                    "hierarchy",
+                    "kind",
+                    "identifier",
+                    "sections",
+                    "schemaVersion"
+                ],
+                "type": "object",
+                "properties": {
+                    "hierarchy": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Hierarchy"
+                            }
+                        ]
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": [
+                            "overview",
+                            "project",
+                            "article"
+                        ]
+                    },
+                    "identifier": {
+                        "$ref": "#/components/schemas/ResolvedTopicReference"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/RenderSection"
+                        }
+                    },
+                    "references": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/RenderReference"
+                        }
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/TutorialsMetadata"
+                    },
+                    "schemaVersion": {
+                        "$ref": "#/components/schemas/SchemaVersion"
+                    }
+                }
+            },
+            "RenderSection": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/IntroRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ArticleBodyRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/CallToActionRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TasksSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/AssessmentsSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/VolumeRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ResourcesRenderSection"
+                    }
+                ]
+            },
+            "IntroRenderSection": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "title"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": ["hero", "intro"]
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "ArticleBodyRenderSection": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "content"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["articleBody"]
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "CallToActionRenderSection": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "action",
+                    "title"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["callToAction"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "media": {
+                        "type": "string"
+                    },
+                    "action": {
+                        "$ref": "#/components/schemas/RenderInlineContent"
+                    }
+                }
+            },
+            "TasksSection": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "tasks"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["tasks"]
+                    },
+                    "tasks": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Task"
+                        }
+                    }
+                }
+            },
+            "Task": {
+                "type": "object",
+                "required": [
+                    "anchor",
+                    "title",
+                    "contentSection",
+                    "stepsSection"
+                ],
+                "properties": {
+                    "anchor": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "contentSection": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ContentLayout"
+                        }
+                    },
+                    "stepsSection": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "AssessmentsSection": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "anchor",
+                    "assessments"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["assessments"]
+                    },
+                    "anchor": {
+                        "type": "string"
+                    },
+                    "assessments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Assessment"
+                        }
+                    }
+                }
+            },
+            "Assessment": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "title",
+                    "choices"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["multiple-choice"]
+                    },
+                    "title": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "choices": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Choice"
+                        }
+                    }
+                }
+            },
+            "Choice": {
+                "type": "object",
+                "required": [
+                    "content",
+                    "isCorrect"
+                ],
+                "properties": {
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "isCorrect": {
+                        "type": "boolean"
+                    },
+                    "justification": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "reaction": {
+                        "type": "string"
+                    }
+                }
+            },
+            "VolumeRenderSection": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "chapters"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["volume"]
+                    },
+                    "image": {
+                        "type": "string",
+                        "format": "reference(ImageRenderReference)"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "chapters": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Chapter"
+                        }
+                    }
+                }
+            },
+            "Chapter": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "content",
+                    "tutorials"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "tutorials": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "reference(TopicRenderReference)"
+                        }
+                    },
+                    "image": {
+                        "type": "string",
+                        "format": "reference(ImageRenderReference)"
+                    }
+                }
+            },
+            "ResourcesRenderSection": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "tiles",
+                    "content"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["resources"]
+                    },
+                    "tiles": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "identifier",
+                                "title",
+                                "content"
+                            ],
+                            "properties": {
+                                "identifier": {
+                                    "type": "string",
+                                    "enum": ["featured", "documentation", "sampleCode", "downloads", "videos", "forums"]
+                                },
+                                "title": {
+                                    "type": "string"
+                                },
+                                "content": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RenderBlockContent"
+                                    }
+                                },
+                                "action": {
+                                    "$ref": "#/components/schemas/RenderInlineContent"
+                                },
+                                "media": {
+                                    "type": "string",
+                                    "format": "reference",
+                                    "nullable": true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "ContentLayout": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/FullWidth"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ContentAndMedia"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Columns"
+                    }
+                ]
+            },
+            "RenderBlockContent": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/FullWidth"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ContentAndMedia"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Columns"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Aside"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Heading"
+                    },
+                    {
+                        "$ref": "#/components/schemas/CodeListing"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Paragraph"
+                    },
+                    {
+                        "$ref": "#/components/schemas/OrderedList"
+                    },
+                    {
+                        "$ref": "#/components/schemas/UnorderedList"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Table"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Step"
+                    },
+                    {
+                        "$ref": "#/components/schemas/EndpointExample"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DictionaryExample"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TermList"
+                    }
+                ]
+            },
+            "RenderContentMetadata" : {
+                "type": "object",
+                "properties": {
+                    "anchor": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "FullWidth": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "content"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["fullWidth"]
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "ContentAndMedia": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "content",
+                    "media",
+                    "mediaPosition",
+                    "layout"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["contentAndMedia"]
+                    },
+                    "media": {
+                        "type": "string",
+                        "format": "reference"
+                    },
+                    "mediaPosition": {
+                        "type": "string",
+                        "enum": ["leading", "trailing"]
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "Columns": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "content"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["columns"]
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "Aside": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "content",
+                    "style"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["aside"]
+                    },
+                    "style": {
+                        "type": "string",
+                        "enum": ["important", "note", "tip", "warning", "experiment"]
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "Heading": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "level",
+                    "text"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["heading"]
+                    },
+                    "level": {
+                        "type": "integer"
+                    },
+                    "text": {
+                        "type": "string"
+                    },
+                    "anchor": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CodeListing": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "code",
+                    "syntax"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["codeListing"]
+                    },
+                    "code": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "syntax": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/RenderContentMetadata"
+                    }
+                }
+            },
+            "Paragraph": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "paragraph"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "OrderedList": {
+                "required": [
+                    "type",
+                    "items"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "orderedList"
+                        ]
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ListItem"
+                        }
+                    }
+                }
+            },
+            "UnorderedList": {
+                "required": [
+                    "type",
+                    "items"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "unorderedList"
+                        ]
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ListItem"
+                        }
+                    }
+                }
+            },
+            "ListItem": {
+                "required": [
+                    "content"
+                ],
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "TermList": {
+                "required": [
+                    "type",
+                    "items"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "termList"
+                        ]
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TermListItem"
+                        }
+                    }
+                }
+            },
+            "TermListItem": {
+                "required": [
+                    "term",
+                    "definition"
+                ],
+                "type": "object",
+                "properties": {
+                    "term" : {
+                        "required": [
+                            "inlineContent"
+                        ],
+                        "type": "object",
+                        "properties": {
+                            "inlineContent": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RenderInlineContent"
+                                }
+                            }
+                        }
+                    },
+                    "definition": {
+                        "required": [
+                            "content"
+                        ],
+                        "type": "object",
+                        "properties": {
+                            "content": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RenderBlockContent"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "Table": {
+                "required": [
+                    "type",
+                    "header",
+                    "rows"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "table"
+                        ]
+                    },
+                    "header": {
+                        "type": "string",
+                        "enum": [
+                            "row",
+                            "column",
+                            "both",
+                            "none"
+                        ]
+                    },
+                    "rows": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RenderBlockContent"
+                                }
+                            }
+                        }
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/RenderContentMetadata"
+                    }
+                }
+            },
+            "Step": {
+                "required": [
+                    "type",
+                    "content",
+                    "caption"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["step"]
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "caption": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "runtimePreview": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "media": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "code": {
+                        "type": "string",
+                        "nullable": true
+                    }
+                }
+            },
+            "CodeExampleContent": {
+                "required": [
+                    "collapsible",
+                    "code"
+                ],
+                "type": "object",
+                "properties": {
+                    "collapsible": {
+                        "type": "boolean"
+                    },
+                    "code": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "CodeExample": {
+                "required": [
+                    "content"
+                ],
+                "type": "object",
+                "properties": {
+                    "syntax": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CodeExampleContent"
+                        }
+                    }
+                }
+            },
+            "EndpointExample": {
+                "required": [
+                    "request",
+                    "response",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["endpointExample"]
+                    },
+                    "summary": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "request": {
+                        "$ref": "#/components/schemas/CodeExample"
+                    },
+                    "response": {
+                        "$ref": "#/components/schemas/CodeExample"
+                    }
+                }
+            },
+            "DictionaryExample": {
+                "required": [
+                    "type",
+                    "example"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["dictionaryExample"]
+                    },
+                    "summary": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "example": {
+                        "$ref": "#/components/schemas/CodeExample"
+                    }
+                }
+            },
+            "RenderInlineContent": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/Text"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Emphasis"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Strong"
+                    },
+                    {
+                        "$ref": "#/components/schemas/CodeVoice"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Reference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Image"
+                    },
+                    {
+                        "$ref": "#/components/schemas/InlineHead"
+                    },
+                    {
+                        "$ref": "#/components/schemas/NewTerm"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Superscript"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Link"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Subscript"
+                    }
+                ]
+            },
+            "Text": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "text"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["text"]
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Emphasis": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "emphasis",
+                            "italic"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Strong": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "strong"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "CodeVoice": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "code"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["codeVoice"]
+                    },
+                    "code": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Reference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "isActive",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["reference"]
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "format": "reference"
+                    },
+                    "overridingTitle": {
+                        "type": "string"
+                    },
+                    "overridingTitleInlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Image": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["image"]
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "format": "reference(ImageRenderReference)"
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/RenderContentMetadata"
+                    }
+                }
+            },
+            "InlineHead": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["inlineHead"]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "NewTerm": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["newTerm"]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Superscript": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "superscript"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Subscript": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "subscript"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Strikethrough": {
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "strikethrough"
+                        ]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "Link": {
+                "required": [
+                    "type",
+                    "title",
+                    "destination"
+                ],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "link"
+                        ]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "destination": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ResolvedTopicReference": {
+                "required": [
+                    "url",
+                    "interfaceLanguage"
+                ],
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "format": "reference(TopicRenderReference)"
+                    },
+                    "interfaceLanguage": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RenderReference": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/ImageRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/VideoRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/FileRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/FileTypeRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/XcodeRequirementRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TopicRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DownloadRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/UnresolvableRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/LinkRenderReference"
+                    }
+                ]
+            },
+            "LinkRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "url"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["link"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "titleInlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ImageRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "variants"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["image"]
+                    },
+                    "alt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariant"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariant": {
+                "type": "object",
+                "required": [
+                    "url",
+                    "traits"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariantTrait"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariantTrait": {
+                "type": "string",
+                "enum": ["1x", "2x", "3x", "light", "dark"]
+            },
+            "VideoRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "variants"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["video"]
+                    },
+                    "alt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "poster": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariant"
+                        }
+                    }
+                }
+            },
+            "FileRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "fileName",
+                    "fileType",
+                    "syntax",
+                    "content"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["file"]
+                    },
+                    "fileName": {
+                        "type": "string"
+                    },
+                    "fileType": {
+                        "type": "string"
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "syntax": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "highlights": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FileRenderReferenceHighlight"
+                        }
+                    }
+                }
+            },
+            "FileRenderReferenceHighlight": {
+                "type": "object",
+                "required": [
+                    "line"
+                ],
+                "properties": {
+                    "line": {
+                        "type": "integer"
+                    },
+                    "start": {
+                        "type": "integer"
+                    },
+                    "length": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "FileTypeRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "displayName",
+                    "iconBase64"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["fileType"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "iconBase64": {
+                        "type": "string"
+                    }
+                }
+            },
+            "XcodeRequirementRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "title",
+                    "url"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["xcodeRequirement"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TopicRenderReference": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "type",
+                    "kind",
+                    "identifier",
+                    "url"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": ["topic", "section"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": [
+                            "article", 
+                            "project", 
+                            "section", 
+                            "overview", 
+                            "symbol", 
+                            "root"
+                        ]
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "defaultImplementations": {
+                        "type": "number"
+                    },
+                    "fragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "navigatorTitle": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/DocumentationRole"
+                    },
+                    "conformance": {
+                        "$ref" : "#/components/schemas/ConformanceSection"
+                    },
+                    "estimatedTime": {
+                        "type": "string"
+                    },
+                    "beta": {
+                        "type": "boolean",
+                        "format": "true"
+                    },
+                    "deprecated": {
+                        "type": "boolean",
+                        "format": "true"
+                    },
+                    "titleStyle": {
+                        "type": "string",
+                        "enum": ["title", "symbol"]
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "ideTitle": {
+                        "type": "string"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SymbolTag"
+                        }
+                    }
+                }
+            },
+            "SymbolTag": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "text"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DownloadRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "url",
+                    "checksum"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["download"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "checksum": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UnresolvableRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "title",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["unresolvable"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "identifier": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TutorialsMetadata": {
+                "type": "object",
+                "properties": {
+                    "category": {
+                        "type": "string"
+                    },
+                    "categoryPathComponent": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Hierarchy": {
+                "type": "object",
+                "required": [
+                    "reference"
+                ],
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "format": "reference(TopicRenderReference)"
+                    },
+                    "paths": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "format": "reference(TopicRenderReference)"
+                            }
+                        }
+                    },
+                    "modules": {
+                        "type": "array",
+                        "items": {
+                            "$ref" : "#/components/schemas/HierarchyModule"
+                        }
+                    }
+                }
+            },
+            "HierarchyModule": {
+                "type": "object",
+                "required": [
+                    "reference",
+                    "projects"
+                ],
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "format": "reference(TopicRenderReference)"
+                    },
+                    "projects": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HierarchyProject"
+                        }
+                    }
+                }
+            },
+            "HierarchyProject": {
+                "type": "object",
+                "required": [
+                    "reference",
+                    "sections"
+                ],
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "format": "reference(TopicRenderReference)"
+                    },
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/HierarchySection"
+                        }
+                    }
+                }
+            },
+            "HierarchySection": {
+                "type": "object",
+                "required": [
+                    "reference",
+                    "kind"
+                ],
+                "properties": {
+                    "reference": {
+                        "type": "string",
+                        "format": "reference(RenderReference)"
+                    },
+                    "sections": {
+                        "type": "string",
+                        "enum": ["task", "assesment", "heading"]
+                    }
+                }
+            },
+            "DocumentationHierarchy": {
+                "type": "object",
+                "required": [
+                    "paths"
+                ],
+                "properties": {
+                    "paths": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "format": "reference(TopicRenderReference)"
+                            }
+                        }
+                    }
+                }
+            },
+            "SchemaVersion": {
+                "type": "object",
+                "required": [
+                    "major",
+                    "minor",
+                    "patch"
+                ],
+                "properties": {
+                    "major": {
+                        "type": "integer"
+                    },
+                    "minor": {
+                        "type": "integer"
+                    },
+                    "patch": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "DocumentationRenderNode": {
+                "required": [
+                    "kind",
+                    "identifier",
+                    "schemaVersion",
+                    "hierarchy",
+                    "metadata",
+                    "sections",
+                    "variants"
+                ],
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["symbol", "article"]
+                    },
+                    "identifier": {
+                        "$ref": "#/components/schemas/ResolvedTopicReference"
+                    },
+                    "schemaVersion": {
+                        "$ref": "#/components/schemas/SchemaVersion"
+                    },
+                    "primaryContentSections": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/DocumentationPrimaryRenderSection"
+                        }
+                    },
+                    "references": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/RenderReference"
+                        }
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/DocumentationMetadata"
+                    },
+                    "hierarchy": {
+                        "$ref": "#/components/schemas/DocumentationHierarchy"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "topicSections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TasksGroupSection"
+                        }
+                    },
+                    "seeAlsoSections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TasksGroupSection"
+                        }
+                    },
+                    "defaultImplementationsSections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TasksGroupSection"
+                        }
+                    },
+                    "relationshipsSections": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RelationshipsGroupSection"
+                        }
+                    },
+                    "sampleCodeDownload": {
+                        "$ref": "#/components/schemas/SampleDownload"
+                    },
+                    "downloadNotAvailableSummary": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "deprecationSummary": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "diffAvailability": {
+                        "type": "object",
+                        "properties": {
+                            "beta": {
+                                "$ref": "#/components/schemas/DiffAvailabilityInfo"
+                            },
+                            "minor": {
+                                "$ref": "#/components/schemas/DiffAvailabilityInfo"
+                            },
+                            "major": {
+                                "$ref": "#/components/schemas/DiffAvailabilityInfo"
+                            },
+                            "sdk": {
+                                "$ref": "#/components/schemas/DiffAvailabilityInfo"
+                            }
+                        }
+                    },
+                    "sections": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/RenderSection"
+                        }
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderNodeVariant"
+                        }
+                    }
+                }
+            },
+            "RenderNodeVariant": {
+                "required": [
+                    "traits",
+                    "paths"
+                ],
+                "type": "object",
+                "properties": {
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderNodeVariantTrait"
+                        }
+                    },
+                    "paths": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "RenderNodeVariantTrait": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/TraitInterfaceLanguage"
+                    }
+                ]
+            },
+            "TraitInterfaceLanguage": {
+                "required": [
+                    "interfaceLanguage"
+                ],
+                "type": "object",
+                "properties": {
+                    "interfaceLanguage": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DocumentationMetadata": {
+                "required": [
+                    "title"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "roleHeading": {
+                        "type": "string"
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/DocumentationRole"
+                    },
+                    "modules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DocumentationMetadataModule"
+                        }
+                    },
+                    "extendedModule": {
+                        "type": "string"
+                    },
+                    "platforms": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PlatformAvailability"
+                        }
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "symbolKind": {
+                        "$ref" : "#/components/schemas/SymbolKind"
+                    },
+                    "externalID": {
+                        "type": "string"
+                    },
+                    "conformance": {
+                        "$ref" : "#/components/schemas/ConformanceSection"
+                    },
+                    "fragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "navigatorTitle": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "sourceFileURI": {
+                        "type": "string"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SymbolTag"
+                        }
+                    }
+                }
+            },
+            "ConformanceSection": {
+                "type": "object",
+                "required": [
+                    "constraints",
+                    "availabilityPrefix",
+                    "conformancePrefix"
+                ],
+                "properties": {
+                    "constraints": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "availabilityPrefix": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "conformancePrefix": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
+            },
+            "DocumentationMetadataModule": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "relatedModules": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "SymbolKind": {
+                "type": "string"
+            },
+            "DocumentationRole": {
+                "type": "string",
+                "enum" : [
+                    "symbol",
+                    "containerSymbol",
+                    "restRequestSymbol",
+                    "dictionarySymbol",
+                    "pseudoSymbol",
+                    "pseudoCollection",
+                    "collection",
+                    "collectionGroup",
+                    "article",
+                    "sampleCode",
+                    "overview",
+                    "table",
+                    "codeListing",
+                    "link",
+                    "project",
+                    "subsection",
+                    "task"
+                ]
+            },
+            "PlatformAvailability": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "deprecated": {
+                        "type": "boolean",
+                        "format": "true"
+                    },
+                    "unavailable": {
+                        "type": "boolean",
+                        "format": "true"
+                    },
+                    "introducedAt": {
+                        "type": "string",
+                        "format": "version"
+                    },
+                    "deprecatedAt": {
+                        "type": "string",
+                        "format": "version"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "renamed": {
+                        "type": "string"
+                    },
+                    "current": {
+                        "type": "string",
+                        "format": "version"
+                    },
+                    "beta": {
+                        "type": "boolean",
+                        "format": "true"
+                    }
+                }
+            },
+            "DocumentationPrimaryRenderSection": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/DeclarationsRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ParametersRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ContentRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/RESTParametersRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/RESTResponsesRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/RESTBodyRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/RESTEndpointRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DetailsRenderSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PossibleValuesSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/AttributesSection"
+                    },
+                    {
+                        "$ref": "#/components/schemas/PropertiesSection"
+                    }
+                ]
+            },
+            "DeclarationsRenderSection": {
+                "required": [
+                    "kind",
+                    "declarations"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": ["declarations"]
+                    },
+                    "declarations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Declaration"
+                        }
+                    }
+                }
+            },
+            "Declaration": {
+                "required": [
+                    "platforms",
+                    "tokens"
+                ],
+                "type": "object",
+                "properties": {
+                    "platforms": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "tokens": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    }
+                }
+            },
+            "DeclarationToken": {
+                "required": [
+                    "text",
+                    "kind"
+                ],
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": [
+                            "keyword", "attribute", "number", "string", "identifier", "typeIdentifier", "genericParameter", "text", "internalParam", "externalParam", "label"
+                        ]
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "format": "reference(TopicRenderReference)"
+                    },
+                    "preciseIdentifier": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ParametersRenderSection": {
+                "required": [
+                    "kind",
+                    "parameters"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": ["parameters"]
+                    },
+                    "parameters": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DocumentationParameter"
+                        }
+                    }
+                }
+            },
+            "DocumentationParameter": {
+                "required": [
+                    "name",
+                    "content"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "ContentRenderSection": {
+                "required": [
+                    "kind",
+                    "content"
+                ],
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["content"]
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "TasksGroupSection": {
+                "required": [
+                    "title",
+                    "identifiers"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "discussion": {
+                        "$ref": "#/components/schemas/ContentRenderSection"
+                    },
+                    "identifiers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "generated": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "RelationshipsGroupSection": {
+                "required": [
+                    "kind",
+                    "title",
+                    "type",
+                    "identifiers"
+                ],
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["relationships"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": ["conformsTo", "conformingTypes", "inheritsFrom", "inheritedBy"]
+                    },
+                    "identifiers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "reference"
+                        }
+                    }
+                }
+            },
+            "RESTParametersRenderSection": {
+                "required": [
+                    "kind",
+                    "title",
+                    "items",
+                    "source"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": ["restParameters"]
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TypedProperty"
+                        }
+                    },
+                    "source": {
+                        "type": "string",
+                        "enum": ["query", "path", "header"]
+                    }
+                }
+            },
+            "RESTResponsesRenderSection": {
+                "required": [
+                    "kind",
+                    "title",
+                    "items"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": ["restResponses"]
+                    },
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RESTResponse"
+                        }
+                    }
+                }
+            },
+            "RESTResponse": {
+                "required": [
+                    "status",
+                    "type"
+                ],
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "number"
+                    },
+                    "reason": {
+                        "type": "string"
+                    },
+                    "mimeType": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "RESTEndpointRenderSection": {
+                "required": [
+                    "kind",
+                    "title",
+                    "tokens"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": ["restEndpoint"]
+                    },
+                    "tokens": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EndpointToken"
+                        }
+                    }
+                }
+            },
+            "EndpointToken": {
+                "required": [
+                    "kind",
+                    "text"
+                ],
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["method", "baseURL", "path", "parameter", "text"]
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RESTBodyRenderSection": {
+                "required": [
+                    "kind",
+                    "title",
+                    "mimeType",
+                    "bodyContentType"
+                ],
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": ["restBody"]
+                    },
+                    "mimeType": {
+                        "type": "string"
+                    },
+                    "bodyContentType": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "parameters": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TypedProperty"
+                        }
+                    }
+                }
+            },
+            "DetailsRenderSection": {
+                "required": [
+                    "kind",
+                    "title",
+                    "details"
+                ],
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["details"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "$ref": "#/components/schemas/DetailsSection"
+                    }
+                }
+            },
+            "DetailsSection": {
+                "required": [
+                    "name",
+                    "value",
+                    "platforms",
+                    "titleStyle"
+                ],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TypeDetails"
+                        }
+                    },
+                    "platforms": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "ideTitle": {
+                        "type": "string"
+                    },
+                    "rawName": {
+                        "type": "string"
+                    },
+                    "titleStyle": {
+                        "type": "string",
+                        "enum": ["title", "symbol"]
+                    }
+                }
+            },
+            "PossibleValuesSection": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "values"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["possibleValues"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "values" : {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "name"
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string"
+                                },
+                                "content": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/RenderBlockContent"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "AttributesSection": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "title"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": ["attributes"]
+                    },
+                    "attributes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Attribute"
+                        }
+                    }
+                }
+            },
+            "Attribute": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/StringAttribute"
+                    },
+                    {
+                        "$ref": "#/components/schemas/ArrayAttribute"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TypesAttribute"
+                    }
+                ]
+            },
+            "StringAttribute": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "title",
+                    "value"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["default", "minimum", "minimumExclusive", "maximum", "maximumExclusive"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ArrayAttribute": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "title",
+                    "values"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["allowedValues"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "TypesAttribute": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "title",
+                    "values"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["allowedTypes"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/DeclarationToken"
+                            }
+                        }
+                    }
+                }
+            },
+            "PropertiesSection": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "kind"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": ["properties"]
+                    },
+                    "items": {
+                        "type" : "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TypedProperty"
+                        }
+                    }
+                }
+            },
+            "TypedProperty": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "type"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type" : "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "typeDetails": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TypeDetails"
+                        }
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "attributes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Attribute"
+                        }
+                    },
+                    "mimeType": {
+                        "type": "string"
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "deprecated": {
+                        "type": "boolean"
+                    },
+                    "introducedVersion": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TypeDetails": {
+                "type": "object",
+                "properties": {
+                    "baseType": {
+                        "type": "string"
+                    },
+                    "arrayMode": {
+                        "type": "boolean",
+                        "format": "true"
+                    }
+                }
+            },
+            "SampleDownload": {
+                "type": "object",
+                "required": [
+                    "action"
+                ],
+                "properties": {
+                    "action": {
+                        "$ref": "#/components/schemas/Reference"
+                    }
+                }
+            },
+            "DiffAvailabilityInfo": {
+                "type": "object",
+                "required": ["change", "platform", "versions"],
+                "properties": {
+                    "change": {
+                        "type": "string",
+                        "enum": ["added", "modified", "deprecated"]
+                    },
+                    "platform": {
+                        "type": "string"
+                    },
+                    "versions": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}

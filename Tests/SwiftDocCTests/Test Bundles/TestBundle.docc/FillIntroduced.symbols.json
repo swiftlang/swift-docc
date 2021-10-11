@@ -1,0 +1,708 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 0
+    },
+    "generator": "Swift version 5.3-dev (LLVM c040bec67853929, Swift 0a29ba8839031bd)"
+  },
+  "module": {
+    "name": "FillIntroduced",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 15,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:14FillIntroduced19macOSOnlyDeprecatedyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "macOSOnlyDeprecated()"
+      ],
+      "names": {
+        "title": "macOSOnlyDeprecated()",
+        "navigator": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "macOSOnlyDeprecated"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "macOSOnlyDeprecated"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "macOSOnlyDeprecated"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "macOS",
+          "deprecated": {
+            "major": 10,
+            "minor": 10
+          }
+        }
+      ],
+      "location": {
+        "uri": "file:///tmp/FillIntroduced.swift",
+        "position": {
+          "line": 1,
+          "character": 12
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:14FillIntroduced015macCatalystOnlyB0yyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "macCatalystOnlyIntroduced()"
+      ],
+      "names": {
+        "title": "macCatalystOnlyIntroduced()",
+        "navigator": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "macCatalystOnlyIntroduced"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "macCatalystOnlyIntroduced"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "macCatalystOnlyIntroduced"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "macCatalyst",
+          "introduced": {
+            "major": 13,
+            "minor": 0
+          }
+        }
+      ],
+      "location": {
+        "uri": "file:///tmp/FillIntroduced.swift",
+        "position": {
+          "line": 19,
+          "character": 12
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:14FillIntroduced17iOSOnlyDeprecatedyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "iOSOnlyDeprecated()"
+      ],
+      "names": {
+        "title": "iOSOnlyDeprecated()",
+        "navigator": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "iOSOnlyDeprecated"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "iOSOnlyDeprecated"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "iOSOnlyDeprecated"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "iOS",
+          "deprecated": {
+            "major": 13,
+            "minor": 0
+          }
+        }
+      ],
+      "location": {
+        "uri": "file:///tmp/FillIntroduced.swift",
+        "position": {
+          "line": 7,
+          "character": 12
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:14FillIntroduced12iOSMacOSOnlyyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "iOSMacOSOnly()"
+      ],
+      "names": {
+        "title": "iOSMacOSOnly()",
+        "navigator": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "iOSMacOSOnly"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "iOSMacOSOnly"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "iOSMacOSOnly"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "macOS",
+          "introduced": {
+            "major": 10,
+            "minor": 16
+          }
+        },
+        {
+          "domain": "watchOS",
+          "isUnconditionallyUnavailable": true
+        },
+        {
+          "domain": "iOS",
+          "introduced": {
+            "major": 14,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "tvOS",
+          "isUnconditionallyUnavailable": true
+        }
+      ],
+      "location": {
+        "uri": "file:///tmp/FillIntroduced.swift",
+        "position": {
+          "line": 25,
+          "character": 12
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:14FillIntroduced09macOSOnlyB0yyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "macOSOnlyIntroduced()"
+      ],
+      "names": {
+        "title": "macOSOnlyIntroduced()",
+        "navigator": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "macOSOnlyIntroduced"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "macOSOnlyIntroduced"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "macOSOnlyIntroduced"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "macOS",
+          "introduced": {
+            "major": 10,
+            "minor": 10
+          }
+        }
+      ],
+      "location": {
+        "uri": "file:///tmp/FillIntroduced.swift",
+        "position": {
+          "line": 4,
+          "character": 12
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:14FillIntroduced25macCatalystOnlyDeprecatedyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "macCatalystOnlyDeprecated()"
+      ],
+      "names": {
+        "title": "macCatalystOnlyDeprecated()",
+        "navigator": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "macCatalystOnlyDeprecated"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "macCatalystOnlyDeprecated"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "macCatalystOnlyDeprecated"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "macCatalyst",
+          "deprecated": {
+            "major": 13,
+            "minor": 0
+          }
+        }
+      ],
+      "location": {
+        "uri": "file:///tmp/FillIntroduced.swift",
+        "position": {
+          "line": 16,
+          "character": 12
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:14FillIntroduced07iOSOnlyB0yyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "iOSOnlyIntroduced()"
+      ],
+      "names": {
+        "title": "iOSOnlyIntroduced()",
+        "navigator": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "iOSOnlyIntroduced"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "iOSOnlyIntroduced"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "iOSOnlyIntroduced"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "iOS",
+          "introduced": {
+            "major": 13,
+            "minor": 0
+          }
+        }
+      ],
+      "location": {
+        "uri": "file:///tmp/FillIntroduced.swift",
+        "position": {
+          "line": 10,
+          "character": 12
+        }
+      }
+    }
+  ],
+  "relationships": []
+}

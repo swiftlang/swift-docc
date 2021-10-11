@@ -1,0 +1,558 @@
+{
+  "metadata" : {
+    "generator" : "Apple Swift version 5.4 (swiftlang-1300.0.5.226 clang-1300.0.6.6)",
+    "formatVersion" : {
+      "major" : 0,
+      "minor" : 5,
+      "patch" : 1
+    }
+  },
+  "relationships" : [
+    {
+      "kind" : "memberOf",
+      "target" : "s:11Inheritance11ParentClassC",
+      "source" : "s:11Inheritance11ParentClassC5indexSivp"
+    },
+    {
+      "kind" : "memberOf",
+      "target" : "s:11Inheritance11ParentClassC",
+      "source" : "s:11Inheritance11ParentClassCACycfc"
+    },
+    {
+      "kind" : "memberOf",
+      "target" : "s:11Inheritance10ChildClassC",
+      "source" : "s:11Inheritance11ParentClassC5indexSivp::SYNTHESIZED::s:11Inheritance10ChildClassC"
+    },
+    {
+      "kind" : "inheritsFrom",
+      "target" : "s:11Inheritance11ParentClassC",
+      "source" : "s:11Inheritance10ChildClassC"
+    }
+  ],
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "location" : {
+        "uri" : "file:\/\/\/Inheritance\/ChildClass.swift",
+        "position" : {
+          "line" : 3,
+          "character" : 13
+        }
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "class"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "ChildClass"
+        }
+      ],
+      "identifier" : {
+        "precise" : "s:11Inheritance10ChildClassC",
+        "interfaceLanguage" : "swift"
+      },
+      "kind" : {
+        "displayName" : "Class",
+        "identifier" : "swift.class"
+      },
+      "pathComponents" : [
+        "ChildClass"
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "start" : {
+                "line" : 2,
+                "character" : 4
+              },
+              "end" : {
+                "line" : 2,
+                "character" : 34
+              }
+            },
+            "text" : "A subclass of ``ParentClass``."
+          }
+        ]
+      },
+      "names" : {
+        "title" : "ChildClass",
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "ChildClass"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "class"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "ChildClass"
+          }
+        ]
+      }
+    },
+    {
+      "accessLevel" : "public",
+      "location" : {
+        "uri" : "file:\/\/\/Documents\/ParentClass.swift",
+        "position" : {
+          "line" : 3,
+          "character" : 13
+        }
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "class"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "ParentClass"
+        }
+      ],
+      "identifier" : {
+        "precise" : "s:11Inheritance11ParentClassC",
+        "interfaceLanguage" : "swift"
+      },
+      "kind" : {
+        "displayName" : "Class",
+        "identifier" : "swift.class"
+      },
+      "pathComponents" : [
+        "ParentClass"
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "start" : {
+                "line" : 2,
+                "character" : 4
+              },
+              "end" : {
+                "line" : 2,
+                "character" : 24
+              }
+            },
+            "text" : "The top-level class."
+          }
+        ]
+      },
+      "names" : {
+        "title" : "ParentClass",
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "ParentClass"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "class"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "ParentClass"
+          }
+        ]
+      }
+    },
+    {
+      "accessLevel" : "public",
+      "location" : {
+        "uri" : "file:\/\/\/Documents\/ParentClass.swift",
+        "position" : {
+          "line" : 12,
+          "character" : 15
+        }
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "var"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "index"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "s:Si",
+          "spelling" : "Int"
+        }
+      ],
+      "identifier" : {
+        "precise" : "s:11Inheritance11ParentClassC5indexSivp::SYNTHESIZED::s:11Inheritance10ChildClassC",
+        "interfaceLanguage" : "swift"
+      },
+      "kind" : {
+        "displayName" : "Instance Property",
+        "identifier" : "swift.property"
+      },
+      "pathComponents" : [
+        "ChildClass",
+        "index"
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "start" : {
+                "line" : 9,
+                "character" : 8
+              },
+              "end" : {
+                "line" : 9,
+                "character" : 35
+              }
+            },
+            "text" : "The index of this instance."
+          },
+          {
+            "range" : {
+              "start" : {
+                "line" : 10,
+                "character" : 7
+              },
+              "end" : {
+                "line" : 10,
+                "character" : 7
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "start" : {
+                "line" : 11,
+                "character" : 8
+              },
+              "end" : {
+                "line" : 11,
+                "character" : 26
+              }
+            },
+            "text" : "@returns The index"
+          }
+        ]
+      },
+      "names" : {
+        "title" : "index",
+        "navigator" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "var"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "index"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:Si",
+            "spelling" : "Int"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "var"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "index"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:Si",
+            "spelling" : "Int"
+          }
+        ]
+      }
+    },
+    {
+      "accessLevel" : "public",
+      "location" : {
+        "uri" : "file:\/\/\/Documents\/ParentClass.swift",
+        "position" : {
+          "line" : 7,
+          "character" : 11
+        }
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "init"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "()"
+        }
+      ],
+      "identifier" : {
+        "precise" : "s:11Inheritance11ParentClassCACycfc",
+        "interfaceLanguage" : "swift"
+      },
+      "kind" : {
+        "displayName" : "Initializer",
+        "identifier" : "swift.init"
+      },
+      "pathComponents" : [
+        "ParentClass",
+        "init()"
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "start" : {
+                "line" : 5,
+                "character" : 8
+              },
+              "end" : {
+                "line" : 5,
+                "character" : 37
+              }
+            },
+            "text" : "Creates a new class instance."
+          },
+          {
+            "range" : {
+              "start" : {
+                "line" : 6,
+                "character" : 8
+              },
+              "end" : {
+                "line" : 6,
+                "character" : 31
+              }
+            },
+            "text" : "@returns A new instance"
+          }
+        ]
+      },
+      "names" : {
+        "title" : "init()",
+        "navigator" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "init"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "()"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "init"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "()"
+          }
+        ]
+      }
+    },
+    {
+      "accessLevel" : "public",
+      "location" : {
+        "uri" : "file:\/\/\/Documents\/ParentClass.swift",
+        "position" : {
+          "line" : 12,
+          "character" : 15
+        }
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "var"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "index"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "s:Si",
+          "spelling" : "Int"
+        }
+      ],
+      "identifier" : {
+        "precise" : "s:11Inheritance11ParentClassC5indexSivp",
+        "interfaceLanguage" : "swift"
+      },
+      "kind" : {
+        "displayName" : "Instance Property",
+        "identifier" : "swift.property"
+      },
+      "pathComponents" : [
+        "ParentClass",
+        "index"
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "start" : {
+                "line" : 9,
+                "character" : 8
+              },
+              "end" : {
+                "line" : 9,
+                "character" : 35
+              }
+            },
+            "text" : "The index of this instance."
+          },
+          {
+            "range" : {
+              "start" : {
+                "line" : 10,
+                "character" : 7
+              },
+              "end" : {
+                "line" : 10,
+                "character" : 7
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "start" : {
+                "line" : 11,
+                "character" : 8
+              },
+              "end" : {
+                "line" : 11,
+                "character" : 26
+              }
+            },
+            "text" : "@returns The index"
+          }
+        ]
+      },
+      "names" : {
+        "title" : "index",
+        "navigator" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "var"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "index"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:Si",
+            "spelling" : "Int"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "var"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "index"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:Si",
+            "spelling" : "Int"
+          }
+        ]
+      }
+    }
+  ],
+  "module" : {
+    "name" : "Inheritance",
+    "platform" : {
+      "architecture" : "x86_64",
+      "vendor" : "apple",
+      "operatingSystem" : {
+        "name" : "macosx",
+        "minimumVersion" : {
+          "major" : 11,
+          "minor" : 3,
+          "patch" : 0
+        }
+      }
+    }
+  }
+}

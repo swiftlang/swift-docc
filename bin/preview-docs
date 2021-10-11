@@ -1,0 +1,125 @@
+#!/bin/bash
+#
+# This source file is part of the Swift.org open source project
+#
+# Copyright (c) 2021 Apple Inc. and the Swift project authors
+# Licensed under Apache License v2.0 with Runtime Library Exception
+#
+# See https://swift.org/LICENSE.txt for license information
+# See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+#
+
+# A `realpath` alternative using the default C implementation.
+filepath() {
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+}
+
+# First get the absolute path to this file so we can get the absolute file path to the Swift-DocC root source dir.
+DOCC_ROOT="$(dirname $(dirname $(filepath $0)))"
+DOCS_DIR="$DOCC_ROOT"/.build/docs
+DOCS_BUILD_DIR="$DOCS_DIR/.docc-build"
+SGFS_DIR="$DOCS_DIR"/SGFs
+
+DOCC_CMD=preview
+FRAMEWORK="SwiftDocC"
+
+# Process command line arguments
+while test $# -gt 0; do
+  case "$1" in
+    --help)
+      echo
+      echo "Usage: $(basename $0) [SwiftDocC|SwiftDocCUtilities|DocC] [-h] [--convert-only]"
+      echo "Builds the given framework and converts or previews the documentation"
+      echo "Note: To preview you must set the \`DOCC_HTML_DIR\` with a path to a documentation template.
+      
+      --help: print this message
+      --convert-only: Builds the documentation but does not start a preview server"
+      echo
+      exit 0
+      ;;
+    --convert-only)
+      DOCC_CMD=convert
+      shift
+      ;;
+    *)
+      FRAMEWORK="$1"
+      shift
+      ;;
+  esac
+done
+
+# Create the output directory for the symbol graphs if needed.
+mkdir -p "$DOCS_DIR"
+mkdir -p "$SGFS_DIR"
+rm -f $SGFS_DIR/*.*
+
+case $FRAMEWORK in
+  "SwiftDocC")
+
+    # Generate symbol graph files for SwiftDocC
+    swift build --package-path "$DOCC_ROOT" \
+      --target SwiftDocC \
+      -Xswiftc -emit-symbol-graph \
+      -Xswiftc -emit-symbol-graph-dir -Xswiftc "$SGFS_DIR"
+    
+    echo
+    
+    # Delete the symbol graph files from dependences by looking for
+    # those without a 'SwiftDocC' prefix.
+    find "$SGFS_DIR" -type f ! -name 'SwiftDocC*' -delete
+  
+    echo
+    
+    # Compile the documentation and the symbol graph data.
+    swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/SwiftDocC/SwiftDocC.docc" \
+      --experimental-enable-custom-templates \
+      --fallback-display-name SwiftDocC \
+      --fallback-bundle-identifier org.swift.SwiftDocC \
+      --fallback-bundle-version 1.0.0 \
+      --diagnostic-level error \
+      --additional-symbol-graph-dir "$SGFS_DIR" \
+      --output-path "$DOCS_BUILD_DIR"
+  ;;
+  
+  "SwiftDocCUtilities")
+
+    # Generate symbol graph files for SwiftDocCUtilities
+    swift build --package-path "$DOCC_ROOT" \
+      --target SwiftDocCUtilities \
+      -Xswiftc -emit-symbol-graph \
+      -Xswiftc -emit-symbol-graph-dir -Xswiftc "$SGFS_DIR"
+
+    echo
+    
+    # Delete the symbol graph files from dependences by looking for
+    # those without a 'SwiftDocCUtilities' prefix.
+    find "$SGFS_DIR" -type f ! -name 'SwiftDocCUtilities*' -delete
+    
+    echo
+    
+    # Compile the documentation and the symbol graph data.
+    swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/SwiftDocCUtilities/SwiftDocCUtilities.docc" \
+      --experimental-enable-custom-templates \
+      --fallback-display-name SwiftDocCUtilities \
+      --fallback-bundle-identifier org.swift.SwiftDocCUtilities \
+      --fallback-bundle-version 1.0.0 \
+      --diagnostic-level error \
+      --additional-symbol-graph-dir "$SGFS_DIR" \
+      --output-path $DOCS_BUILD_DIR
+  ;;
+  
+    "DocC")
+
+    # Compile the documentation
+    swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/DocCDocumentation/DocCDocumentation.docc" \
+      --experimental-enable-custom-templates \
+      --diagnostic-level error \
+      --output-path $DOCS_BUILD_DIR
+  ;;
+  
+  *)
+    echo
+    echo "Error: Unknown module '$FRAMEWORK'. Preview is supported only for SwiftDocC, SwiftDocCUtilities, or DocC."
+    exit 0
+  ;;
+esac

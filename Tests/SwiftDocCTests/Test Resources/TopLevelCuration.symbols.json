@@ -1,0 +1,84 @@
+{
+  "metadata": { "formatVersion": { "major": 0, "minor": 5, "patch": 0 }, "generator": "test" },
+  "module": {
+    "name": "TestBed",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": { "major": 10, "minor": 15, "patch": 0 }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:7TestBed1BV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [ "B" ],
+      "names": { "title": "B" },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:7TestBed1AV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [ "A" ],
+      "names": { "title": "A" },
+      "docComment": {
+        "lines": [
+            { "range": { 
+              "start": { "line": 2, "character": 4 },
+              "end": { "line": 2, "character": 13 }
+              },
+              "text": "## Topics"
+            },
+            { "range": { 
+              "start": { "line": 2, "character": 4 },
+              "end": { "line": 2, "character": 13 }
+              },
+              "text": "### Essentials"
+            },
+            { "range": { 
+              "start": { "line": 2, "character": 4 },
+              "end": { "line": 2, "character": 13 }
+              },
+              "text": " - ``B``"
+            }
+        ]
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:7TestBed1BV1CV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [ "B", "C" ],
+      "names": { "title": "C" },
+      "accessLevel": "public"
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "s:7TestBed1BV1CV",
+      "target": "s:7TestBed1BV"
+    }
+  ]
+}

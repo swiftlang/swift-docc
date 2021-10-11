@@ -1,0 +1,445 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "Apple Swift version 5.5-dev (LLVM 5c2269d507c912b, Swift bd010c3998222e7)"
+  },
+  "module": {
+    "name": "Minimal_docs",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 15,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Instance Property"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs1AV1bAC1BVvp",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A",
+        "b"
+      ],
+      "names": {
+        "title": "b",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "var"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "b"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "A",
+            "preciseIdentifier": "s:12Minimal_docs1AV"
+          },
+          {
+            "kind": "text",
+            "spelling": "."
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "B",
+            "preciseIdentifier": "s:12Minimal_docs1AV1BV"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "var"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "b"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "A",
+          "preciseIdentifier": "s:12Minimal_docs1AV"
+        },
+        {
+          "kind": "text",
+          "spelling": "."
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "B",
+          "preciseIdentifier": "s:12Minimal_docs1AV1BV"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Minimal-Inheritance.docs/Sources/Minimal.docs/Minimal_docs.swift",
+        "position": {
+          "line": 5,
+          "character": 15
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs1AV1BV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A",
+        "B"
+      ],
+      "names": {
+        "title": "A.B",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "B"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "struct"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "B"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "B"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Minimal-Inheritance.docs/Sources/Minimal.docs/Minimal_docs.swift",
+        "position": {
+          "line": 6,
+          "character": 18
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:12Minimal_docs1AV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A"
+      ],
+      "names": {
+        "title": "A",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "A"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "struct"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "A"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "A"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Minimal-Inheritance.docs/Sources/Minimal.docs/Minimal_docs.swift",
+        "position": {
+          "line": 4,
+          "character": 14
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.func.op",
+        "displayName": "Operator"
+      },
+      "identifier": {
+        "precise": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:12Minimal_docs1AV1BV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A",
+        "B",
+        "!=(_:_:)"
+      ],
+      "names": {
+        "title": "!=(_:_:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "static"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "!="
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Self"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Self"
+          },
+          {
+            "kind": "text",
+            "spelling": ") -> "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Bool",
+            "preciseIdentifier": "s:Sb"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "lhs",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "lhs"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Self"
+              }
+            ]
+          },
+          {
+            "name": "rhs",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rhs"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Self"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Bool",
+            "preciseIdentifier": "s:Sb"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "Swift"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "static"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "!="
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "lhs"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Self"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "rhs"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Self"
+        },
+        {
+          "kind": "text",
+          "spelling": ") -> "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Bool",
+          "preciseIdentifier": "s:Sb"
+        }
+      ],
+      "accessLevel": "public"
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "conformsTo",
+      "source": "s:12Minimal_docs1AV1BV",
+      "target": "s:SQ",
+      "targetFallback": "Swift.Equatable"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:12Minimal_docs1AV1bAC1BVvp",
+      "target": "s:12Minimal_docs1AV"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:12Minimal_docs1AV1BV",
+      "target": "s:12Minimal_docs1AV1BV",
+      "sourceOrigin": {
+        "identifier": "s:SQsE2neoiySbx_xtFZ",
+        "displayName": "Equatable.!=(_:_:)"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:12Minimal_docs1AV1BV",
+      "target": "s:12Minimal_docs1AV"
+    }
+  ]
+}

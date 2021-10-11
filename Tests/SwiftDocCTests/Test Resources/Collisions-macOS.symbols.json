@@ -1,0 +1,181 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 0
+    },
+    "generator": "Apple Swift version 5.3"
+  },
+  "module": {
+    "name": "Collisions",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 15,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:7TestBed12SharedStructV8testFuncyySiF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "SharedStruct",
+        "testFunc(_:)"
+      ],
+      "names": {
+        "title": "testFunc(_:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "testFunc"
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          },
+          {
+            "kind": "text",
+            "spelling": ")"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "testFunc"
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "externalParam",
+          "spelling": "_"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "param"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Collisions.swift",
+        "position": {
+          "line": 3,
+          "character": 16
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:7TestBed12SharedStructV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "SharedStruct"
+      ],
+      "names": {
+        "title": "SharedStruct",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "struct"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "SharedStruct"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "SharedStruct"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Collisions.swift",
+        "position": {
+          "line": 2,
+          "character": 14
+        }
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "s:7TestBed12SharedStructV8testFuncyySiF",
+      "target": "s:7TestBed12SharedStructV"
+    }
+  ]
+}

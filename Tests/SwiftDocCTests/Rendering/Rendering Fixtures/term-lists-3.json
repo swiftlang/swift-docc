@@ -1,0 +1,304 @@
+{
+  "schemaVersion": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "seeAlsoSections": [],
+  "metadata": {
+    "platforms": [
+      {
+        "name": "macOS",
+        "introducedAt": "10.15"
+      }
+    ],
+    "modules": [
+      {
+        "name": "MyKit"
+      }
+    ],
+    "title": "Wifi Access",
+    "roleHeading": "Plist Key"
+  },
+  "abstract": [
+    {
+      "type": "text",
+      "text": "A "
+    },
+    {
+      "type": "codeVoice",
+      "code": "WiFi access"
+    },
+    {
+      "type": "text",
+      "text": " abstract description."
+    }
+  ],
+  "sections": [],
+  "identifier": {
+    "url": "doc://org.swift.docc.example/plist/wifiaccess",
+    "interfaceLanguage": "swift"
+  },
+  "hierarchy": {
+    "paths": [
+      [
+        "doc://org.swift.docc.example/plist/wifiaccess"
+      ]
+    ]
+  },
+  "topicSections": [],
+  "kind": "symbol",
+  "references": {
+    "doc://org.swift.docc.example/plist/wifiaccess": {
+      "abstract": [
+        {
+          "text": "WiFi access",
+          "type": "text"
+        }
+      ],
+      "identifier": "doc://org.swift.docc.example/plist/wifiaccess",
+      "kind": "symbol",
+      "title": "WiFi Access",
+      "type": "topic",
+      "url": "/documentation/mykit"
+    }
+  },
+  "primaryContentSections": [
+    {
+      "kind": "content",
+      "content": [
+        {
+          "anchor": "discussion",
+          "level": 2,
+          "type": "heading",
+          "text": "Discussion"
+        },
+        {
+          "type": "unorderedList",
+          "items": [
+            {
+              "content": [
+                {
+                  "type": "paragraph",
+                  "inlineContent": [
+                    {
+                      "type": "text",
+                      "text": "Not a term list, and"
+                    },
+                    {
+                      "type": "text",
+                      "text": " "
+                    },
+                    {
+                      "type": "text",
+                      "text": "spans multiple lines."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "termList",
+          "items": [
+            {
+              "term": {
+                "inlineContent": [
+                  {
+                    "type": "text",
+                    "text": " First term item"
+                  }
+                ]
+              },
+              "definition": {
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "First definition."
+                      }
+                    ]
+                  },
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "It has "
+                      },
+                      {
+                        "type": "emphasis",
+                        "inlineContent": [
+                          {
+                            "type": "text",
+                            "text": "multiple"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " paragraphs."
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "term": {
+                "inlineContent": [
+                  {
+                    "type": "text",
+                    "text": "Second term item"
+                  }
+                ]
+              },
+              "definition": {
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "Second definition."
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "term": {
+                "inlineContent": [
+                  {
+                    "type": "text",
+                    "text": "Another "
+                  },
+                  {
+                    "type": "codeVoice",
+                    "code": "term"
+                  }
+                ]
+              },
+              "definition": {
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "list item."
+                      }
+                    ]
+                  },
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "type": "unorderedList",
+          "items": [
+            {
+              "content": [
+                {
+                  "type": "paragraph",
+                  "inlineContent": [
+                    {
+                      "type": "text",
+                      "text": "terminology not: a term list item either."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "content": [
+                {
+                  "type": "paragraph",
+                  "inlineContent": [
+                    {
+                      "type": "strong",
+                      "inlineContent": [
+                        {
+                          "type": "text",
+                          "text": "Final"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "text": " non-term list item"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "termList",
+          "items": [
+            {
+              "term": {
+                "inlineContent": [
+                  {
+                    "type": "text",
+                    "text": ""
+                  }
+                ]
+              },
+              "definition": {
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": "A paragraph"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              "term": {
+                "inlineContent": [
+                  {
+                    "type": "text",
+                    "text": "without definition"
+                  }
+                ]
+              },
+              "definition": {
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "inlineContent": [
+                      {
+                        "type": "text",
+                        "text": ""
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variants": [
+    {
+      "paths": [
+        "/plist/wifiaccess"
+      ],
+      "traits": []
+    }
+  ]
+}

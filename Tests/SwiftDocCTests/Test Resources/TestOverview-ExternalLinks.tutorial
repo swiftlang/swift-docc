@@ -1,0 +1,58 @@
+@Tutorials(name: "Technology X") {
+   @Intro(title: "Technology X") {
+
+      You'll learn all about Technology X <doc://com.external.bundle/LinkFromTechnologyIntro>.
+
+      @Video(source: introvideo.mp4, poster: introposter.png )
+      @Image(source: intro.png, alt: intro )
+   }
+
+   @Chapter(name: "Chapter 1") {
+
+      This is a `Chapter` <doc://com.external.bundle/LinkFromChapter>.
+
+      @Image(source: figure1.png, alt: "Figure 1" )
+
+      @TutorialReference(tutorial: "doc:TestTutorial" )
+      @TutorialReference(tutorial: "doc:/TestTutorial" )
+      @TutorialReference(tutorial: "doc:TestTutorialArticle" )
+      @TutorialReference(tutorial: "doc:TestTutorial2" )
+      @TutorialReference(tutorial: "doc:TutorialMediaWithSpaces" )
+   }
+
+   @Resources {
+      Find the tools and a comprehensive set of resources for creating AR experiences on iOS.
+
+      @Documentation(destination: "https://www.example.com/documentation/technology") {
+         Browse and search detailed API documentation.
+
+         - <doc://com.external.bundle/LinkFromResourceDocumentation>
+         - <doc://org.swift.docc.example/TestTutorial2>
+      }
+
+      @SampleCode(destination: "https://www.example.com/documentation/technology") {
+         Browse and search detailed sample code.
+
+         - <doc://com.external.bundle/LinkFromResourceSampleCode>
+         - <doc://org.swift.docc.example/TestTutorial2>
+      }
+
+      @Downloads(destination: "https://www.example.com/download") {
+         Download Xcode 10, which includes the latest tools and SDKs.
+      }
+
+      @Videos(destination: "https://www.example.com/videos") {
+         See AR presentation from WWDC and other events.
+         
+         - <doc://com.external.bundle/LinkFromResourceVideos>
+      }
+
+      @Forums(destination: "https://www.example.com/forums") {
+         Discuss AR with Apple engineers and other developers.
+         
+         - <doc://com.external.bundle/LinkFromResourceForums>
+      }
+   }
+}
+
+<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

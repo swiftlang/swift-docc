@@ -1,0 +1,466 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 2
+    },
+    "generator": "Apple Swift version 5.5 (swiftlang-1300.0.12.7 clang-1300.0.13.1)"
+  },
+  "module": {
+    "name": "Asides",
+    "platform": {
+      "architecture": "arm64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 10,
+          "minor": 10,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:4asdf11quoteAsidesyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "quoteAsides()"
+      ],
+      "names": {
+        "title": "quoteAsides()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "quoteAsides"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "docComment": {
+        "lines": [
+          {
+            "text": "Testing out blockquote-based asides."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "# Discussion"
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Note: This is a note."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Tip: Here's a tip."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Important: Keep this in mind."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Experiment: Try this out."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Warning: Watch out for this."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Attention: Head's up!"
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Author: I wrote this."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Authors: We wrote this."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Bug: This is wrong."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Complexity: This takes time."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Copyright: 2021 Apple Inc."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Date: 1 January 1970"
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Invariant: This shouldn't change."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> MutatingVariant: This will change."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> NonMutatingVariant: This changes, but not in the data."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Postcondition: After calling, this should be true."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Precondition: Before calling, this should be true."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Remark: Something you should know."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Requires: This needs something."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Since: The beginning of time."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Todo: This needs work."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Version: 3.1.4"
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> Throws: A serious error."
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "quoteAsides"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Asides.swift",
+        "position": {
+          "line": 96,
+          "character": 12
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.func",
+        "displayName": "Function"
+      },
+      "identifier": {
+        "precise": "s:4asdf10dashAsidesyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "dashAsides()"
+      ],
+      "names": {
+        "title": "dashAsides()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "dashAsides"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "docComment": {
+        "lines": [
+          {
+            "text": "Testing out dash-based asides."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "# Discussion"
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Note: This is a note."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Tip: Here's a tip."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Important: Keep this in mind."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Experiment: Try this out."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Warning: Watch out for this."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Attention: Head's up!"
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Author: I wrote this."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Authors: We wrote this."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Bug: This is wrong."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Complexity: This takes time."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Copyright: 2021 Apple Inc."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Date: 1 January 1970"
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Invariant: This shouldn't change."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- MutatingVariant: This will change."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- NonMutatingVariant: This changes, but not in the data."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Postcondition: After calling, this should be true."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Precondition: Before calling, this should be true."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Remark: Something you should know."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Requires: This needs something."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Since: The beginning of time."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Todo: This needs work."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Version: 3.1.4"
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- Throws: A serious error."
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "dashAsides"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Asides.swift",
+        "position": {
+          "line": 47,
+          "character": 12
+        }
+      }
+    }
+  ],
+  "relationships": []
+}

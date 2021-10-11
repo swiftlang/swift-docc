@@ -1,0 +1,1651 @@
+{
+  "metadata" : {
+    "formatVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    },
+    "generator" : "docc-generate-symbol-graph"
+  },
+  "module" : {
+    "bystanders" : [
+
+    ],
+    "name" : "DocC",
+    "platform" : {
+
+    },
+    "version" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "relationships" : [
+
+  ],
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Image",
+          "spelling" : "Image"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Image"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Image",
+            "spelling" : "Image"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Image",
+            "spelling" : "Image"
+          }
+        ],
+        "title" : "Image"
+      },
+      "pathComponents" : [
+        "Image"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Justification",
+          "spelling" : "Justification"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Justification"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Justification",
+            "spelling" : "Justification"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Justification",
+            "spelling" : "Justification"
+          }
+        ],
+        "title" : "Justification"
+      },
+      "pathComponents" : [
+        "Justification"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Volume",
+          "spelling" : "Volume"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Volume"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Volume",
+            "spelling" : "Volume"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Volume",
+            "spelling" : "Volume"
+          }
+        ],
+        "title" : "Volume"
+      },
+      "pathComponents" : [
+        "Volume"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Videos",
+          "spelling" : "Videos"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Videos"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Videos",
+            "spelling" : "Videos"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Videos",
+            "spelling" : "Videos"
+          }
+        ],
+        "title" : "Videos"
+      },
+      "pathComponents" : [
+        "Videos"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Forums",
+          "spelling" : "Forums"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Forums"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Forums",
+            "spelling" : "Forums"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Forums",
+            "spelling" : "Forums"
+          }
+        ],
+        "title" : "Forums"
+      },
+      "pathComponents" : [
+        "Forums"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Documentation",
+          "spelling" : "Documentation"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Documentation"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Documentation",
+            "spelling" : "Documentation"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Documentation",
+            "spelling" : "Documentation"
+          }
+        ],
+        "title" : "Documentation"
+      },
+      "pathComponents" : [
+        "Documentation"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$XcodeRequirement",
+          "spelling" : "XcodeRequirement"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "XcodeRequirement"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$XcodeRequirement",
+            "spelling" : "XcodeRequirement"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$XcodeRequirement",
+            "spelling" : "XcodeRequirement"
+          }
+        ],
+        "title" : "XcodeRequirement"
+      },
+      "pathComponents" : [
+        "XcodeRequirement"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Step",
+          "spelling" : "Step"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Step"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Step",
+            "spelling" : "Step"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Step",
+            "spelling" : "Step"
+          }
+        ],
+        "title" : "Step"
+      },
+      "pathComponents" : [
+        "Step"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$MultipleChoice",
+          "spelling" : "MultipleChoice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "MultipleChoice"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$MultipleChoice",
+            "spelling" : "MultipleChoice"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$MultipleChoice",
+            "spelling" : "MultipleChoice"
+          }
+        ],
+        "title" : "MultipleChoice"
+      },
+      "pathComponents" : [
+        "MultipleChoice"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorials",
+          "spelling" : "Tutorials"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Tutorials"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorials",
+            "spelling" : "Tutorials"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorials",
+            "spelling" : "Tutorials"
+          }
+        ],
+        "title" : "Tutorials"
+      },
+      "pathComponents" : [
+        "Tutorials"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Video",
+          "spelling" : "Video"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Video"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Video",
+            "spelling" : "Video"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Video",
+            "spelling" : "Video"
+          }
+        ],
+        "title" : "Video"
+      },
+      "pathComponents" : [
+        "Video"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorial",
+          "spelling" : "Tutorial"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Tutorial"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorial",
+            "spelling" : "Tutorial"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorial",
+            "spelling" : "Tutorial"
+          }
+        ],
+        "title" : "Tutorial"
+      },
+      "pathComponents" : [
+        "Tutorial"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Assessments",
+          "spelling" : "Assessments"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Assessments"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Assessments",
+            "spelling" : "Assessments"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Assessments",
+            "spelling" : "Assessments"
+          }
+        ],
+        "title" : "Assessments"
+      },
+      "pathComponents" : [
+        "Assessments"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Code",
+          "spelling" : "Code"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Code"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Code",
+            "spelling" : "Code"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Code",
+            "spelling" : "Code"
+          }
+        ],
+        "title" : "Code"
+      },
+      "pathComponents" : [
+        "Code"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Chapter",
+          "spelling" : "Chapter"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Chapter"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Chapter",
+            "spelling" : "Chapter"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Chapter",
+            "spelling" : "Chapter"
+          }
+        ],
+        "title" : "Chapter"
+      },
+      "pathComponents" : [
+        "Chapter"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$DocumentationExtension",
+          "spelling" : "DocumentationExtension"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "DocumentationExtension"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$DocumentationExtension",
+            "spelling" : "DocumentationExtension"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$DocumentationExtension",
+            "spelling" : "DocumentationExtension"
+          }
+        ],
+        "title" : "DocumentationExtension"
+      },
+      "pathComponents" : [
+        "DocumentationExtension"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Intro",
+          "spelling" : "Intro"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Intro"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Intro",
+            "spelling" : "Intro"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Intro",
+            "spelling" : "Intro"
+          }
+        ],
+        "title" : "Intro"
+      },
+      "pathComponents" : [
+        "Intro"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Steps",
+          "spelling" : "Steps"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Steps"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Steps",
+            "spelling" : "Steps"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Steps",
+            "spelling" : "Steps"
+          }
+        ],
+        "title" : "Steps"
+      },
+      "pathComponents" : [
+        "Steps"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Section",
+          "spelling" : "Section"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Section"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Section",
+            "spelling" : "Section"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Section",
+            "spelling" : "Section"
+          }
+        ],
+        "title" : "Section"
+      },
+      "pathComponents" : [
+        "Section"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Downloads",
+          "spelling" : "Downloads"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Downloads"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Downloads",
+            "spelling" : "Downloads"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Downloads",
+            "spelling" : "Downloads"
+          }
+        ],
+        "title" : "Downloads"
+      },
+      "pathComponents" : [
+        "Downloads"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Comment",
+          "spelling" : "Comment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Comment"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Comment",
+            "spelling" : "Comment"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Comment",
+            "spelling" : "Comment"
+          }
+        ],
+        "title" : "Comment"
+      },
+      "pathComponents" : [
+        "Comment"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$SampleCode",
+          "spelling" : "SampleCode"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "SampleCode"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$SampleCode",
+            "spelling" : "SampleCode"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$SampleCode",
+            "spelling" : "SampleCode"
+          }
+        ],
+        "title" : "SampleCode"
+      },
+      "pathComponents" : [
+        "SampleCode"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Choice",
+          "spelling" : "Choice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Choice"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Choice",
+            "spelling" : "Choice"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Choice",
+            "spelling" : "Choice"
+          }
+        ],
+        "title" : "Choice"
+      },
+      "pathComponents" : [
+        "Choice"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$TechnologyRoot",
+          "spelling" : "TechnologyRoot"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "TechnologyRoot"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TechnologyRoot",
+            "spelling" : "TechnologyRoot"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TechnologyRoot",
+            "spelling" : "TechnologyRoot"
+          }
+        ],
+        "title" : "TechnologyRoot"
+      },
+      "pathComponents" : [
+        "TechnologyRoot"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Metadata",
+          "spelling" : "Metadata"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Metadata"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Metadata",
+            "spelling" : "Metadata"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Metadata",
+            "spelling" : "Metadata"
+          }
+        ],
+        "title" : "Metadata"
+      },
+      "pathComponents" : [
+        "Metadata"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Stack",
+          "spelling" : "Stack"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Stack"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Stack",
+            "spelling" : "Stack"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Stack",
+            "spelling" : "Stack"
+          }
+        ],
+        "title" : "Stack"
+      },
+      "pathComponents" : [
+        "Stack"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$ContentAndMedia",
+          "spelling" : "ContentAndMedia"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "ContentAndMedia"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$ContentAndMedia",
+            "spelling" : "ContentAndMedia"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$ContentAndMedia",
+            "spelling" : "ContentAndMedia"
+          }
+        ],
+        "title" : "ContentAndMedia"
+      },
+      "pathComponents" : [
+        "ContentAndMedia"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Resources",
+          "spelling" : "Resources"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n  ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "Resources"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Resources",
+            "spelling" : "Resources"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Resources",
+            "spelling" : "Resources"
+          }
+        ],
+        "title" : "Resources"
+      },
+      "pathComponents" : [
+        "Resources"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$TutorialReference",
+          "spelling" : "TutorialReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "TutorialReference"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "swift.class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TutorialReference",
+            "spelling" : "TutorialReference"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TutorialReference",
+            "spelling" : "TutorialReference"
+          }
+        ],
+        "title" : "TutorialReference"
+      },
+      "pathComponents" : [
+        "TutorialReference"
+      ]
+    }
+  ]
+}

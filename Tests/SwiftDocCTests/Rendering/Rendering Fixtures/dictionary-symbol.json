@@ -1,0 +1,179 @@
+{
+  "hierarchy": {
+    "paths": [
+      [
+        "doc://org.swift.docc.example/documentation/dmanagement"
+      ]
+    ]
+  },
+  "identifier": {
+    "interfaceLanguage": "swift",
+    "url": "doc://org.swift.docc.example/documentation/dmanagement/devicerequestcommand"
+  },
+  "kind": "symbol",
+  "metadata": {
+    "externalID": "mdm-commands:DeviceRequestCommand",
+    "fragments": [
+      {
+        "kind": "text",
+        "text": "object "
+      },
+      {
+        "kind": "identifier",
+        "text": "DeviceRequestCommand"
+      }
+    ],
+    "modules": [
+      {
+        "name": "Test Management"
+      }
+    ],
+    "platforms": [
+      {
+        "beta": true,
+        "current": "10.15",
+        "introducedAt": "10.15",
+        "name": "macOS"
+      }
+    ],
+    "role": "dictionarySymbol",
+    "roleHeading": "Test Management Command",
+    "symbolKind": "dict",
+    "title": "DeviceRequestCommand"
+  },
+  "primaryContentSections": [
+    {
+      "items": [
+        {
+          "attributes": [
+            {
+              "kind": "allowedTypes",
+              "title": "Possible values",
+              "values": [
+                [
+                  {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "mdm-commands:DeviceRequestCommand.Command",
+                    "text": "DeviceRequestCommand.Command"
+                  }
+                ]
+              ]
+            }
+          ],
+          "name": "Command",
+          "required": true,
+          "type": [
+            {
+              "identifier": "doc://org.swift.docc.example/documentation/dmanagement/devicerequestcommand/command",
+              "kind": "typeIdentifier",
+              "preciseIdentifier": "mdm-commands:DeviceRequestCommand.Command",
+              "text": "DeviceRequestCommand.Command"
+            }
+          ],
+          "typeDetails": [
+            {
+              "baseType": "dictionary"
+            }
+          ]
+        },
+        {
+          "attributes": [
+            {
+              "kind": "allowedTypes",
+              "title": "Allowed Types",
+              "values": [
+                [
+                  {
+                    "kind": "text",
+                    "text": "string"
+                  }
+                ]
+              ]
+            }
+          ],
+          "name": "CommandUUID",
+          "required": true,
+          "type": [
+            {
+              "kind": "text",
+              "text": "string"
+            }
+          ],
+          "typeDetails": [
+            {
+              "baseType": "string"
+            }
+          ]
+        }
+      ],
+      "kind": "properties",
+      "title": "Properties"
+    }
+  ],
+  "references": {
+    "doc://org.swift.docc.example/documentation/dmanagement": {
+      "identifier": "doc://org.swift.docc.example/documentation/dmanagement",
+      "kind": "symbol",
+      "role": "collection",
+      "title": "Test Management",
+      "type": "topic",
+      "url": "/documentation/dmanagement"
+    },
+    "doc://org.swift.docc.example/documentation/dmanagement/devicerequestcommand/command": {
+      "beta": true,
+      "fragments": [
+        {
+          "kind": "text",
+          "text": "object "
+        },
+        {
+          "kind": "identifier",
+          "text": "DeviceRequestCommand.Command"
+        }
+      ],
+      "identifier": "doc://org.swift.docc.example/documentation/dmanagement/devicerequestcommand/command",
+      "kind": "symbol",
+      "role": "dictionarySymbol",
+      "title": "DeviceRequestCommand.Command",
+      "type": "topic",
+      "url": "/documentation/dmanagement/devicerequestcommand/command"
+    }
+  },
+  "schemaVersion": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "sections": [],
+  "topicSections": [
+    {
+      "identifiers": [
+        "doc://org.swift.docc.example/documentation/dmanagement/devicerequestcommand/command"
+      ],
+      "kind": "taskGroup",
+      "title": "Commands"
+    }
+  ],
+  "variants": [
+    {
+      "paths": [
+        "documentation/dmanagement/devicerequestcommand"
+      ],
+      "traits": [
+        {
+          "interfaceLanguage": "occ"
+        }
+      ]
+    },
+    {
+      "paths": [
+        "documentation/dmanagement/devicerequestcommand"
+      ],
+      "traits": [
+        {
+          "interfaceLanguage": "swift"
+        }
+      ]
+    }
+  ]
+}

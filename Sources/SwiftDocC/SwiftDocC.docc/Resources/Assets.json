@@ -1,0 +1,167 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Specification of the DocC assets.json digest file.",
+        "version": "0.1.0",
+        "title": "Assets"
+    },
+    "paths": { },
+    "components": {
+        "schemas": {
+            "Assets": {
+                "type": "object",
+                "required": [
+                    "images",
+                    "videos",
+                    "downloads"
+                ],
+                "properties": {
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ImageRenderReference"
+                        }
+                    },
+                    "videos": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VideoRenderReference"
+                        }
+                    },
+                    "downloads": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DownloadRenderReference"
+                        }                    
+                    }
+                }
+            },
+            "ImageRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "variants"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["image"]
+                    },
+                    "alt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariant"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariant": {
+                "type": "object",
+                "required": [
+                    "url",
+                    "traits"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "size": {
+                        "$ref": "#/components/schemas/RenderReferenceVariantSize"
+                    },
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariantTrait"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariantSize": {
+                "type": "object",
+                "required": [
+                    "width",
+                    "height"
+                ],
+                "properties": {
+                    "width": {
+                        "type": "integer"
+                    },
+                    "height": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "RenderReferenceVariantTrait": {
+                "type": "string",
+                "enum": ["1x", "2x", "3x", "light", "dark"]
+            },
+            "VideoRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "variants"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["video"]
+                    },
+                    "alt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "poster": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariant"
+                        }
+                    }
+                }
+            },
+            "DownloadRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "url",
+                    "checksum"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["download"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "checksum": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}

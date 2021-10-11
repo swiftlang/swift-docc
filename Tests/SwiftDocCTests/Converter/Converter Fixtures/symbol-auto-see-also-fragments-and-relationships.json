@@ -1,0 +1,305 @@
+{
+  "abstract": [
+    {
+      "type": "text",
+      "text": "A request to launch your app in the background to execute a short refresh task."
+    }
+  ],
+  "hierarchy": {
+    "paths": [
+      [
+        "doc://org.swift.docc.example/documentation/backgroundtasks"
+      ]
+    ]
+  },
+  "identifier": {
+    "url": "doc://org.swift.docc.example/documentation/backgroundtasks/bgapprefreshtaskrequest",
+    "interfaceLanguage": "swift"
+  },
+  "kind": "symbol",
+  "metadata": {
+    "title": "BGAppRefreshTaskRequest",
+    "role": "symbol",
+    "roleHeading": "Class",
+    "modules": [
+      {
+        "name": "BackgroundTasks"
+      }
+    ],
+    "platforms": [
+      {
+        "name": "iOS",
+        "introducedAt": "13.0",
+        "current": "14.0"
+      },
+      {
+        "name": "Mac Catalyst",
+        "introducedAt": "13.0",
+        "current": "14.0"
+      },
+      {
+        "name": "tvOS",
+        "introducedAt": "13.0",
+        "current": "14.0"
+      }
+    ],
+    "externalID": "c:objc(cs)BGAppRefreshTaskRequest",
+    "symbolKind": "cl",
+    "fragments": [
+      {
+        "kind": "text",
+        "text": "class "
+      },
+      {
+        "kind": "identifier",
+        "text": "BGAppRefreshTaskRequest"
+      }
+    ]
+  },
+  "schemaVersion": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+  },
+  "sections": [],
+  "variants": [
+    {
+      "traits": [
+        {
+          "interfaceLanguage": "occ"
+        }
+      ],
+      "paths": [
+        "documentation/backgroundtasks/bgapprefreshtaskrequest"
+      ]
+    },
+    {
+      "traits": [
+        {
+          "interfaceLanguage": "swift"
+        }
+      ],
+      "paths": [
+        "documentation/backgroundtasks/bgapprefreshtaskrequest"
+      ]
+    }
+  ],
+  "references": {
+    "doc://org.swift.docc.example/documentation/backgroundtasks/bgtaskrequest": {
+      "title": "BGTaskRequest",
+      "type": "topic",
+      "identifier": "doc://org.swift.docc.example/documentation/backgroundtasks/bgtaskrequest",
+      "kind": "symbol",
+      "role": "symbol",
+      "url": "/documentation/backgroundtasks/bgtaskrequest",
+      "abstract": [
+        {
+          "type": "text",
+          "text": "An abstract class for representing task requests."
+        }
+      ],
+      "fragments": [
+        {
+          "kind": "text",
+          "text": "class "
+        },
+        {
+          "kind": "identifier",
+          "text": "BGTaskRequest"
+        }
+      ]
+    },
+    "doc://org.swift.docc.example/documentation/swift/cvararg": {
+      "title": "CVarArg",
+      "type": "topic",
+      "identifier": "doc://org.swift.docc.example/documentation/swift/cvararg",
+      "kind": "symbol",
+      "role": "symbol",
+      "url": "/documentation/swift/cvararg"
+    },
+    "doc://org.swift.docc.example/documentation/swift/equatable": {
+      "title": "Equatable",
+      "type": "topic",
+      "identifier": "doc://org.swift.docc.example/documentation/swift/equatable",
+      "kind": "symbol",
+      "role": "symbol",
+      "url": "/documentation/swift/equatable"
+    },
+    "doc://org.swift.docc.example/documentation/swift/hashable": {
+      "title": "Hashable",
+      "type": "topic",
+      "identifier": "doc://org.swift.docc.example/documentation/swift/hashable",
+      "kind": "symbol",
+      "role": "symbol",
+      "url": "/documentation/swift/hashable"
+    },
+    "doc://org.swift.docc.example/documentation/backgroundtasks/bgapprefreshtaskrequest/3142238-init": {
+      "title": "init(identifier:)",
+      "type": "topic",
+      "identifier": "doc://org.swift.docc.example/documentation/backgroundtasks/bgapprefreshtaskrequest/3142238-init",
+      "kind": "symbol",
+      "role": "symbol",
+      "url": "/documentation/backgroundtasks/bgapprefreshtaskrequest/3142238-init",
+      "abstract": [
+        {
+          "type": "text",
+          "text": "Return a new refresh task request for the specified identifier."
+        }
+      ],
+      "fragments": [
+        {
+          "kind": "identifier",
+          "text": "init"
+        },
+        {
+          "kind": "text",
+          "text": "("
+        },
+        {
+          "kind": "identifier",
+          "text": "identifier"
+        },
+        {
+          "kind": "text",
+          "text": ": String)"
+        }
+      ]
+    },
+    "doc://org.swift.docc.example/documentation/backgroundtasks/bgprocessingtaskrequest": {
+      "title": "BGProcessingTaskRequest",
+      "type": "topic",
+      "identifier": "doc://org.swift.docc.example/documentation/backgroundtasks/bgprocessingtaskrequest",
+      "kind": "symbol",
+      "role": "symbol",
+      "url": "/documentation/backgroundtasks/bgprocessingtaskrequest",
+      "abstract": [
+        {
+          "type": "text",
+          "text": "A request to launch your app in the background to execute a processing task that can take minutes to complete."
+        }
+      ],
+      "fragments": [
+        {
+          "kind": "text",
+          "text": "class "
+        },
+        {
+          "kind": "identifier",
+          "text": "BGProcessingTaskRequest"
+        }
+      ]
+    },
+    "doc://org.swift.docc.example/documentation/backgroundtasks/bgapprefreshtaskrequest": {
+      "title": "BGAppRefreshTaskRequest",
+      "type": "topic",
+      "identifier": "doc://org.swift.docc.example/documentation/backgroundtasks/bgapprefreshtaskrequest",
+      "kind": "symbol",
+      "role": "symbol",
+      "url": "/documentation/backgroundtasks/bgapprefreshtaskrequest",
+      "abstract": [
+        {
+          "type": "text",
+          "text": "A request to launch your app in the background to execute a short refresh task."
+        }
+      ],
+      "fragments": [
+        {
+          "kind": "text",
+          "text": "class "
+        },
+        {
+          "kind": "identifier",
+          "text": "BGAppRefreshTaskRequest"
+        }
+      ]
+    },
+    "doc://org.swift.docc.example/documentation/backgroundtasks": {
+      "title": "BackgroundTasks",
+      "identifier": "doc://org.swift.docc.example/documentation/backgroundtasks",
+      "url": "/documentation/backgroundtasks",
+      "type": "topic",
+      "kind": "symbol",
+      "role": "collection"
+    }
+  },
+  "relationshipsSections": [
+    {
+      "kind": "relationships",
+      "title": "Inherits From",
+      "type": "inheritsFrom",
+      "identifiers": [
+        "doc://org.swift.docc.example/documentation/backgroundtasks/bgtaskrequest"
+      ]
+    },
+    {
+      "kind": "relationships",
+      "title": "Conforms To",
+      "type": "conformsTo",
+      "identifiers": [
+        "doc://org.swift.docc.example/documentation/swift/cvararg",
+        "doc://org.swift.docc.example/documentation/swift/equatable",
+        "doc://org.swift.docc.example/documentation/swift/hashable"
+      ]
+    }
+  ],
+  "topicSections": [
+    {
+      "kind": "taskGroup",
+      "title": "Initializing a Refresh Task Request",
+      "identifiers": [
+        "doc://org.swift.docc.example/documentation/backgroundtasks/bgapprefreshtaskrequest/3142238-init"
+      ]
+    }
+  ],
+  "seeAlsoSections": [
+    {
+      "identifiers": [
+        "doc://org.swift.docc.example/documentation/backgroundtasks/bgprocessingtaskrequest",
+        "doc://org.swift.docc.example/documentation/backgroundtasks/bgtaskrequest"
+      ],
+      "title": "Requests",
+      "generated": true
+    }
+  ],
+  "primaryContentSections": [
+    {
+      "kind": "declarations",
+      "declarations": [
+        {
+          "languages": [
+            "swift"
+          ],
+          "tokens": [
+            {
+              "kind": "keyword",
+              "text": "class"
+            },
+            {
+              "kind": "text",
+              "text": " "
+            },
+            {
+              "kind": "identifier",
+              "text": "BGAppRefreshTaskRequest"
+            },
+            {
+              "kind": "text",
+              "text": " : "
+            },
+            {
+              "kind": "typeIdentifier",
+              "text": "BGTaskRequest",
+              "preciseIdentifier": "c:objc(cs)BGTaskRequest",
+              "identifier": "doc://org.swift.docc.example/documentation/backgroundtasks/bgtaskrequest"
+            }
+          ],
+          "platforms": [
+            "iOS",
+            "Mac Catalyst",
+            "tvOS"
+          ]
+        }
+      ]
+    }
+  ]
+}

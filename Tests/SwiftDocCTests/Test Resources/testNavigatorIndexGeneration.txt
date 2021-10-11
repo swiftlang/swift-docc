@@ -1,0 +1,162 @@
+[Root]
+┣╸FillIntroduced
+┃ ┣╸Functions
+┃ ┣╸func iOSMacOSOnly()
+┃ ┣╸func iOSOnlyDeprecated()
+┃ ┣╸func iOSOnlyIntroduced()
+┃ ┣╸func macCatalystOnlyDeprecated()
+┃ ┣╸func macCatalystOnlyIntroduced()
+┃ ┣╸func macOSOnlyDeprecated()
+┃ ┗╸func macOSOnlyIntroduced()
+┣╸MyKit
+┃ ┣╸Basics
+┃ ┣╸MyProtocol
+┃ ┃ ┣╸Task Group Excercising Symbol Links
+┃ ┃ ┣╸MyClass
+┃ ┃ ┃ ┣╸MyClass members (relative)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (module level)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (absolute)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (topic relative)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (topic module level)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (topic absolute)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┗╸myFunction()
+┃ ┃ ┣╸MyClass
+┃ ┃ ┃ ┣╸MyClass members (relative)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (module level)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (absolute)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (topic relative)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (topic module level)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸myFunction()
+┃ ┃ ┃ ┣╸MyClass members (topic absolute)
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┣╸init()
+┃ ┃ ┃ ┗╸myFunction()
+┃ ┃ ┗╸MyClass
+┃ ┃   ┣╸MyClass members (relative)
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸myFunction()
+┃ ┃   ┣╸MyClass members (module level)
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸myFunction()
+┃ ┃   ┣╸MyClass members (absolute)
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸myFunction()
+┃ ┃   ┣╸MyClass members (topic relative)
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸myFunction()
+┃ ┃   ┣╸MyClass members (topic module level)
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸myFunction()
+┃ ┃   ┣╸MyClass members (topic absolute)
+┃ ┃   ┣╸init()
+┃ ┃   ┣╸init()
+┃ ┃   ┗╸myFunction()
+┃ ┣╸MyClass
+┃ ┃ ┣╸MyClass members (relative)
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸myFunction()
+┃ ┃ ┣╸MyClass members (module level)
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸myFunction()
+┃ ┃ ┣╸MyClass members (absolute)
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸myFunction()
+┃ ┃ ┣╸MyClass members (topic relative)
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸myFunction()
+┃ ┃ ┣╸MyClass members (topic module level)
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸myFunction()
+┃ ┃ ┣╸MyClass members (topic absolute)
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸init()
+┃ ┃ ┗╸myFunction()
+┃ ┣╸MyKit in Practice
+┃ ┣╸My Cool Article
+┃ ┃ ┣╸A Topic
+┃ ┃ ┣╸Article 2
+┃ ┃ ┣╸Article 3
+┃ ┃ ┣╸An Article and a Tutorial
+┃ ┃ ┣╸Article 3
+┃ ┃ ┣╸Basic Augmented Reality App
+┃ ┃ ┣╸Duplicated
+┃ ┃ ┣╸Article 2
+┃ ┃ ┣╸Duplicated
+┃ ┃ ┗╸Article 2
+┃ ┣╸Article 2
+┃ ┣╸Default Code Listing Syntax
+┃ ┣╸Global symbols
+┃ ┣╸func globalFunction(Data, considering: Int)
+┃ ┣╸Extensions to other frameworks
+┃ ┗╸angle
+┣╸SideKit
+┃ ┣╸Basics
+┃ ┣╸SideClass
+┃ ┃ ┣╸Enumeration Cases
+┃ ┃ ┣╸case Value(Int)
+┃ ┃ ┣╸Initializers
+┃ ┃ ┣╸init()
+┃ ┃ ┣╸Instance Properties
+┃ ┃ ┣╸var path: String
+┃ ┃ ┣╸var url: URL
+┃ ┃ ┣╸Instance Methods
+┃ ┃ ┣╸func myFunction()
+┃ ┃ ┣╸Type Aliases
+┃ ┃ ┗╸Element
+┃ ┃   ┣╸Default Implementations
+┃ ┃   ┗╸Protocol Implementations
+┃ ┃     ┣╸Instance Methods
+┃ ┃     ┗╸inherited()
+┃ ┗╸SideProtocol
+┃   ┣╸Instance Methods
+┃   ┗╸func1()
+┃     ┗╸SideProtocol Implementations
+┃       ┗╸func1()
+┣╸Technology X
+┃ ┣╸Chapter 1
+┃ ┣╸Basic Augmented Reality App
+┃ ┣╸Making an Augmented Reality App
+┃ ┣╸Advanced Augmented Reality App
+┃ ┗╸Basic Augmented Reality App
+┗╸UncuratedClass

@@ -1,0 +1,45 @@
+#!/bin/sh
+#
+# This source file is part of the Swift.org open source project
+#
+# Copyright (c) 2021 Apple Inc. and the Swift project authors
+# Licensed under Apache License v2.0 with Runtime Library Exception
+#
+# See http://swift.org/LICENSE.txt for license information
+# See http://swift.org/CONTRIBUTORS.txt for Swift project authors
+#
+
+# Prints system environment information.
+#
+# Example Output:
+# Swift version: Apple Swift version 5.5 (swiftlang-1300.0.19.104 clang-1300.0.18.4)
+# Target: arm64-apple-macosx12.0
+# Unix version: Darwin 21.0.0 Darwin Kernel Version 21.0.0: Thu May 27 21:02:33 PDT 2021; root:xnu-7938.0.0.111.2~2/DEVELOPMENT_ARM64_T8101 arm64 arm;
+# macOS version: 12.0
+# Xcode-select path: '/Applications/Xcode-beta.app/Contents/Developer'
+# Xcode: Xcode 13.0 (Build version 13A5154h)
+
+echo "Gathering you system's environment information..."
+
+swiftversion=$(swift --version)
+unix_version_name=$(uname -mprsv | tr '\n' ';')
+i="${i}Swift version: ${swiftversion}\n"
+i="${i}Unix version: ${unix_version_name}\n"
+
+# Check if OS is macOS, if so retrieve which version and Xcode version.
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	macos=$(defaults read loginwindow SystemVersionStampAsString | cat -)
+	xcodebuild_version=$(/usr/bin/xcodebuild -version | grep Xcode)
+	xcodebuild_build=$(/usr/bin/xcodebuild -version | grep Build)
+	xcodeselectpath=$(xcode-select -p | cat -)
+
+	i="${i}macOS version: ${macos}\n"
+	i="${i}Xcode-select path: '${xcodeselectpath}'\n"
+	i="${i}Xcode: ${xcodebuild_version} (${xcodebuild_build})"
+fi
+
+echo "\n"
+echo "Paste the following into your bug report:"
+echo "-------------------------------------------"
+echo "${i}"
+echo "-------------------------------------------"
