@@ -49,7 +49,7 @@ public class Benchmark: Encodable {
     #endif
 
     /// The list of metrics included in this benchmark.
-    public fileprivate(set) var metrics: [BenchmarkMetric] = []
+    public var metrics: [BenchmarkMetric] = []
     
     enum CodingKeys: String, CodingKey {
         case date, metrics, arguments, platform
@@ -83,7 +83,7 @@ public class Benchmark: Encodable {
 /// Logs a one-off metric value.
 /// - Parameter event: The metric to add to the log.
 public func benchmark<E>(add event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main) where E: BenchmarkMetric {
-    guard E.canBenchmark(log: log) else { return }
+    guard log.shouldLogMetricType(E.self) else { return }
 
     log.metrics.append(event())
 }
@@ -91,7 +91,7 @@ public func benchmark<E>(add event: @autoclosure () -> E, benchmarkLog log: Benc
 /// Starts the given metric.
 /// - Parameter event: The metric to start.
 public func benchmark<E>(begin event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main) -> E? where E: BenchmarkBlockMetric {
-    guard E.canBenchmark(log: log) else { return nil }
+    guard log.shouldLogMetricType(E.self) else { return nil }
 
     let event = event()
     event.begin()
@@ -101,7 +101,7 @@ public func benchmark<E>(begin event: @autoclosure () -> E, benchmarkLog log: Be
 /// Ends the given metric and adds it to the log.
 /// - Parameter event: The metric to end and log.
 public func benchmark<E>(end event: @autoclosure () -> E?, benchmarkLog log: Benchmark = .main) where E: BenchmarkBlockMetric {
-    guard E.canBenchmark(log: log), let event = event() else { return }
+    guard log.shouldLogMetricType(E.self), let event = event() else { return }
 
     event.end()
     log.metrics.append(event)
@@ -111,7 +111,7 @@ public func benchmark<E>(end event: @autoclosure () -> E?, benchmarkLog log: Ben
 /// - Parameter event: The metric to end and log.
 @discardableResult
 public func benchmark<E, Result>(wrap event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main, body: () throws -> Result) rethrows -> Result where E: BenchmarkBlockMetric {
-    if E.canBenchmark(log: log) {
+    if log.shouldLogMetricType(E.self) {
         let event = event()
         event.begin()
         let result = try body()
@@ -123,8 +123,8 @@ public func benchmark<E, Result>(wrap event: @autoclosure () -> E, benchmarkLog 
     }
 }
 
-private extension BenchmarkMetric {
-    static func canBenchmark(log: Benchmark) -> Bool {
-        return log.isEnabled && (log.metricsFilter == nil || identifier.hasPrefix(log.metricsFilter!))
+private extension Benchmark {
+    func shouldLogMetricType(_ metricType: BenchmarkMetric.Type) -> Bool {
+        return isEnabled && (metricsFilter == nil || metricType.identifier.hasPrefix(metricsFilter!))
     }
 }
