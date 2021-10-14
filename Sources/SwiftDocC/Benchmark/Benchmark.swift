@@ -29,12 +29,10 @@ public class Benchmark: Encodable {
     }
     
     /// The shared instance to use for logging.
-    public static let main: Benchmark = {
-        return Benchmark(
-            isEnabled: ProcessInfo.processInfo.environment["DOCC_BENCHMARK"] == "YES",
-            metricsFilter: ProcessInfo.processInfo.environment["DOCC_BENCHMARK_FILTER"]
-        )
-    }()
+    public static let main: Benchmark = Benchmark(
+        isEnabled: ProcessInfo.processInfo.environment["DOCC_BENCHMARK"] == "YES",
+        metricsFilter: ProcessInfo.processInfo.environment["DOCC_BENCHMARK_FILTER"]
+    )
 
     /// The benchmark timestamp.
     public let date = Date()
@@ -51,7 +49,7 @@ public class Benchmark: Encodable {
     #endif
 
     /// The list of metrics included in this benchmark.
-    public var metrics: [BenchmarkMetric] = []
+    public fileprivate(set) var metrics: [BenchmarkMetric] = []
     
     enum CodingKeys: String, CodingKey {
         case date, metrics, arguments, platform
@@ -71,11 +69,11 @@ public class Benchmark: Encodable {
         try container.encode(platform, forKey: .platform)
 
         let metrics = self.metrics.compactMap { log -> BenchmarkResult? in
-            let id = (log as? DynamicallyIdentifiableMetric)?.identifier ?? type(of: log).identifier
-            let displayName = (log as? DynamicallyIdentifiableMetric)?.displayName ?? type(of: log).displayName
             guard let result = log.result else {
                 return nil
             }
+            let id = (log as? DynamicallyIdentifiableMetric)?.identifier ?? type(of: log).identifier
+            let displayName = (log as? DynamicallyIdentifiableMetric)?.displayName ?? type(of: log).displayName
             return BenchmarkResult(identifier: id, displayName: displayName, result: result)
         }
         try container.encode(metrics, forKey: .metrics)
@@ -85,41 +83,35 @@ public class Benchmark: Encodable {
 /// Logs a one-off metric value.
 /// - Parameter event: The metric to add to the log.
 public func benchmark<E>(add event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main) where E: BenchmarkMetric {
-    guard log.isEnabled else { return }
-    if log.metricsFilter == nil || E.identifier.hasPrefix(log.metricsFilter!) {
-        log.metrics.append(event())
-    }
+    guard E.canBenchmark(log: log) else { return }
+
+    log.metrics.append(event())
 }
 
 /// Starts the given metric.
 /// - Parameter event: The metric to start.
 public func benchmark<E>(begin event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main) -> E? where E: BenchmarkBlockMetric {
-    guard log.isEnabled else { return nil }
-    
-    if log.metricsFilter == nil || E.identifier.hasPrefix(log.metricsFilter!) {
-        let event = event()
-        event.begin()
-        return event
-    }
-    return nil
+    guard E.canBenchmark(log: log) else { return nil }
+
+    let event = event()
+    event.begin()
+    return event
 }
 
 /// Ends the given metric and adds it to the log.
 /// - Parameter event: The metric to end and log.
 public func benchmark<E>(end event: @autoclosure () -> E?, benchmarkLog log: Benchmark = .main) where E: BenchmarkBlockMetric {
-    guard log.isEnabled, let event = event() else { return }
-    
-    if log.metricsFilter == nil || E.identifier.hasPrefix(log.metricsFilter!) {
-        event.end()
-        log.metrics.append(event)
-    }
+    guard E.canBenchmark(log: log), let event = event() else { return }
+
+    event.end()
+    log.metrics.append(event)
 }
 
 /// Ends the given metric and adds it to the log.
 /// - Parameter event: The metric to end and log.
 @discardableResult
 public func benchmark<E, Result>(wrap event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main, body: () throws -> Result) rethrows -> Result where E: BenchmarkBlockMetric {
-    if log.isEnabled && (log.metricsFilter == nil || E.identifier.hasPrefix(log.metricsFilter!)) {
+    if E.canBenchmark(log: log) {
         let event = event()
         event.begin()
         let result = try body()
@@ -128,5 +120,11 @@ public func benchmark<E, Result>(wrap event: @autoclosure () -> E, benchmarkLog 
         return result
     } else {
         return try body()
+    }
+}
+
+private extension BenchmarkMetric {
+    static func canBenchmark(log: Benchmark) -> Bool {
+        return log.isEnabled && (log.metricsFilter == nil || identifier.hasPrefix(log.metricsFilter!))
     }
 }
