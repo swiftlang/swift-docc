@@ -164,7 +164,7 @@ class FileServerTests: XCTestCase {
         (response, data) = fileServer.response(to: failingRequest)
         XCTAssertNil(data)
         // Initializing a URLResponse with `nil` as MIME type in Linux returns nil
-        #if os(Linux)
+        #if os(Linux) || os(Android)
         XCTAssertNil(response.mimeType)
         #else
         // Doing the same in macOS or iOS returns the default MIME type

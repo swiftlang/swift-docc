@@ -11,7 +11,7 @@
 import Foundation
 import SwiftDocC
 
-#if !os(Linux)
+#if !os(Linux) && !os(Android)
 import Darwin
 
 /// A throttle object to filter events that come too fast.

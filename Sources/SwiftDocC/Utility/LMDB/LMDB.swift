@@ -97,7 +97,7 @@ extension String: LMDBData {
     }
 }
 
-#if !os(Linux)
+#if !os(Linux) && !os(Android)
 // This is required for macOS and Swift 4.2, for Linux the default implementation works as expected.
 extension Array: LMDBData where Element: FixedWidthInteger {
     

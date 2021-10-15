@@ -24,7 +24,7 @@ class TopicRefenceSchemeTests: XCTestCase {
         forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
     
     func testTopicReferenceSchemeHandler() {
-        #if !os(Linux)
+        #if !os(Linux) && !os(Android)
         let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL)
         
         let request = URLRequest(url:  baseURL.appendingPathComponent("/images/figure1.jpg"))
@@ -50,7 +50,7 @@ class TopicRefenceSchemeTests: XCTestCase {
     }
     
     func testSetData() {
-        #if !os(Linux)
+        #if !os(Linux) && !os(Android)
         let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL)
         
         let data = "hello!".data(using: .utf8)!

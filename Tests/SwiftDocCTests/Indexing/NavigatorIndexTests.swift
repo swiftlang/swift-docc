@@ -947,7 +947,7 @@ Root
     }
     
     func testAvailabilityIndexCreation() throws {
-        #if !os(Linux)
+        #if !os(Linux) && !os(Android)
         let availabilityIndex = AvailabilityIndex()
         
         let macOS_10_14 = Platform(name: .macOS, version: Platform.Version(string: "10.14")!)
