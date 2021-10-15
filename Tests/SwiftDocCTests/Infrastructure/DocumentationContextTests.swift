@@ -661,7 +661,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testSupportedAssetTypes() throws {
-        for ext in ["jpg", "jpeg", "png", "JPG", "PNG", "PnG", "jPg"] {
+        for ext in ["jpg", "jpeg", "png", "JPG", "PNG", "PnG", "jPg", "svg", "gif"] {
             XCTAssertTrue(DocumentationContext.isFileExtension(ext, supported: .image))
         }
         for ext in ["", "aaa", "cookie", "test"] {

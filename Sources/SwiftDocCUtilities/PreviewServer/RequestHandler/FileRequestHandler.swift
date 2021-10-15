@@ -24,6 +24,7 @@ private let imageType: (String) -> String = { name in
         case "png": return "image/png"
         case "jpg", "jpeg": return "image/jpeg"
         case "svg": return "image/svg+xml"
+        case "gif": return "image/gif"
         default: return "application/octet-stream"
     }
 }
