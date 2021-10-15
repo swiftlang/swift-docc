@@ -80,6 +80,12 @@ public class Benchmark: Encodable {
     }
 }
 
+private extension Benchmark {
+    func shouldLogMetricType(_ metricType: BenchmarkMetric.Type) -> Bool {
+        return isEnabled && (metricsFilter == nil || metricType.identifier.hasPrefix(metricsFilter!))
+    }
+}
+
 /// Logs a one-off metric value.
 /// - Parameter event: The metric to add to the log.
 public func benchmark<E>(add event: @autoclosure () -> E, benchmarkLog log: Benchmark = .main) where E: BenchmarkMetric {
@@ -120,11 +126,5 @@ public func benchmark<E, Result>(wrap event: @autoclosure () -> E, benchmarkLog 
         return result
     } else {
         return try body()
-    }
-}
-
-private extension Benchmark {
-    func shouldLogMetricType(_ metricType: BenchmarkMetric.Type) -> Bool {
-        return isEnabled && (metricsFilter == nil || metricType.identifier.hasPrefix(metricsFilter!))
     }
 }
