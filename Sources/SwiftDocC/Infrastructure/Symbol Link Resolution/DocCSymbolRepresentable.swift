@@ -189,16 +189,24 @@ extension UnifiedSymbolGraph.Symbol: DocCSymbolRepresentable {
     }
 
     public var title: String {
-        guard let selector = self.swiftSelector else {
-            fatalError("only Swift is supported for now")
+        guard let selector = self.defaultSelector else {
+            fatalError("""
+                Failed to find a supported default selector. \
+                Language unsupported or corrupt symbol graph provided.
+                """
+            )
         }
 
         return self.names[selector]!.title
     }
 
     public var kindIdentifier: String? {
-        guard let selector = self.swiftSelector else {
-            fatalError("only Swift is supported for now")
+        guard let selector = self.defaultSelector else {
+            fatalError("""
+                Failed to find a supported default selector. \
+                Language unsupported or corrupt symbol graph provided.
+                """
+            )
         }
 
         return "\(selector.interfaceLanguage).\(self.kind[selector]!.identifier.identifier)"

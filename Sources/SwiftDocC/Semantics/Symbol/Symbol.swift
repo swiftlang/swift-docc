@@ -370,7 +370,7 @@ extension Symbol {
 }
 
 extension UnifiedSymbolGraph.Symbol {
-    var swiftSelector: UnifiedSymbolGraph.Selector? {
+    var defaultSelector: UnifiedSymbolGraph.Selector? {
         if let mainSelector = self.mainGraphSelectors.first, mainSelector.interfaceLanguage == "swift" {
             return mainSelector
         }
@@ -379,8 +379,12 @@ extension UnifiedSymbolGraph.Symbol {
 
         if self.pathComponents.keys.contains(defaultSelector) {
             return defaultSelector
+        } else if let firstSwiftSelector = self.pathComponents.keys.first(where: { $0.interfaceLanguage == "swift" }) {
+            return firstSwiftSelector
+        } else if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
+            return mainGraphSelectors.first ?? pathComponents.keys.first
         } else {
-            return self.pathComponents.keys.first(where: { $0.interfaceLanguage == "swift" })
+            return nil
         }
     }
 
@@ -408,7 +412,7 @@ extension UnifiedSymbolGraph.Symbol {
     }
 
     var defaultSymbol: SymbolGraph.Symbol? {
-        symbol(forSelector: swiftSelector)
+        symbol(forSelector: defaultSelector)
     }
 
     func identifier(forLanguage interfaceLanguage: String) -> SymbolGraph.Symbol.Identifier {

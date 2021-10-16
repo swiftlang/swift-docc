@@ -949,7 +949,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     private func referenceFor(_ symbol: UnifiedSymbolGraph.Symbol, moduleName: String, bundle: DocumentationBundle, shouldAddHash: Bool = false, shouldAddKind: Bool = false) -> ResolvedTopicReference {
         let identifier = symbol.swiftIdentifier
-        let selector = symbol.swiftSelector!
+        let selector = symbol.defaultSelector!
         let language = SourceLanguage(id: identifier.interfaceLanguage)
         
         let symbolReference: SymbolReference
@@ -1012,7 +1012,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private func addSymbolsToTopicGraph(symbolGraph: UnifiedSymbolGraph, url: URL?, symbolReferences: [SymbolGraph.Symbol.Identifier : ResolvedTopicReference], bundle: DocumentationBundle) {
         let symbols = Array(symbolGraph.symbols.values)
         let results: [AddSymbolResultWithProblems] = symbols.concurrentPerform { symbol, results in
-            if let selector = symbol.swiftSelector, let module = symbol.modules[selector] {
+            if let selector = symbol.defaultSelector, let module = symbol.modules[selector] {
                 let reference = symbolReferences[symbol.swiftIdentifier]!
                 let result = preparedSymbolData(
                     symbol,
@@ -1382,7 +1382,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let mergeError = Synchronized<Error?>(nil)
         
         let results: [AddSymbolResultWithProblems] = Array(otherSymbolGraph.symbols.values).concurrentPerform { symbol, result in
-            guard let defaultSymbol = symbol.defaultSymbol, let swiftSelector = symbol.swiftSelector, let module = symbol.modules[swiftSelector] else {
+            guard let defaultSymbol = symbol.defaultSymbol, let swiftSelector = symbol.defaultSelector, let module = symbol.modules[swiftSelector] else {
                 fatalError("""
                     Only Swift symbols are currently supported. \
                     This initializer is only called with symbols from the symbol graph, which currently only supports Swift.

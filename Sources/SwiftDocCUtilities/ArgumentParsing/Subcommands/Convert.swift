@@ -105,6 +105,12 @@ extension Docc {
         /// Defaults to false
         @Flag(help: "Allows for custom templates, like `header.html`.")
         public var experimentalEnableCustomTemplates = false
+        
+        /// A user-provided value that is true if the user enables experimental Objective-C language support.
+        ///
+        /// Defaults to false.
+        @Flag(help: .hidden)
+        public var enableExperimentalObjectiveCSupport = false
 
         /// A user-provided value that is true if experimental documentation inheritance is to be enabled.
         ///

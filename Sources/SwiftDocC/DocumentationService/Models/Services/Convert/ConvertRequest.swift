@@ -19,6 +19,9 @@ public struct ConvertRequest: Codable {
     /// - ``DocumentationBundle/Info-swift.struct``
     public var bundleInfo: DocumentationBundle.Info
     
+    /// Feature flags to enable when performing this convert request.
+    public var featureFlags: FeatureFlags
+    
     /// The external IDs of the symbols to convert.
     ///
     /// Use this property to indicate what symbol documentation nodes should be converted. When ``externalIDsToConvert``
@@ -151,6 +154,7 @@ public struct ConvertRequest: Codable {
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
         self.markupFiles = markupFiles
         self.miscResourceURLs = miscResourceURLs
+        self.featureFlags = FeatureFlags()
         
         self.bundleInfo = DocumentationBundle.Info(
             displayName: displayName,
@@ -174,6 +178,7 @@ public struct ConvertRequest: Codable {
     ///   - miscResourceURLs: The on-disk resources in the documentation bundle to convert.
     public init(
         bundleInfo: DocumentationBundle.Info,
+        featureFlags: FeatureFlags = FeatureFlags(),
         externalIDsToConvert: [String]?,
         documentPathsToConvert: [String]? = nil,
         includeRenderReferenceStore: Bool? = nil,
@@ -192,5 +197,6 @@ public struct ConvertRequest: Codable {
         self.markupFiles = markupFiles
         self.miscResourceURLs = miscResourceURLs
         self.bundleInfo = bundleInfo
+        self.featureFlags = featureFlags
     }
 }
