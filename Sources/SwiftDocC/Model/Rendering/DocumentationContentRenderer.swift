@@ -80,20 +80,18 @@ public class DocumentationContentRenderer {
     
     /// Returns the given amount of minutes as a string, for example: "1hr 10min".
     func formatEstimatedDuration(minutes: Int) -> String? {
-        #if os(Linux)
-            // DateComponentsFormatter is unimplemented in Linux (rdar://59787899).
-            let hours = minutes / 60
-            let minutes = minutes % 60
-            return "\(hours > 0 ? "\(hours)hr " : "")\(minutes)min"
-        #else
-        let dateFormatter = DateComponentsFormatter()
-        if #available(OSX 10.12, *) {
-            dateFormatter.unitsStyle = .brief
-        }
-        dateFormatter.allowedUnits = [.hour, .minute]
-
-        return dateFormatter.string(from: TimeInterval(minutes * 60))
-        #endif
+        // DateComponentsFormatter is unimplemented in Linux (rdar://59787899).
+        // TODO: - Using DateComponentsFormatter or other Localization when the implementation on Linux is ready
+        // See [Support for localizing Swift-DocC content](https://bugs.swift.org/browse/SR-15352)
+//        let dateFormatter = DateComponentsFormatter()
+//        if #available(OSX 10.12, *) {
+//            dateFormatter.unitsStyle = .brief
+//        }
+//        dateFormatter.allowedUnits = [.hour, .minute]
+//        return dateFormatter.string(from: TimeInterval(minutes * 60))
+        let hours = minutes / 60
+        let minutes = minutes % 60
+        return "\(hours > 0 ? "\(hours)hr " : "")\(minutes)min"
     }
 
     /// Returns a metadata role for an article, depending if it's a collection, technology, or a free form article.
