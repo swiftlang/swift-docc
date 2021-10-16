@@ -380,38 +380,6 @@ class ReferenceResolverTests: XCTestCase {
         }
     }
     
-    func testWarnsForDeprecatedTopicScheme() throws {
-        let source = """
-    @Intro(title: "Technology X") {
-       Info at: <topic:documentation/TechnologyX/MyArticle>.
-    }
-    """
-        let document = Document(parsing: source, options: .parseBlockDirectives)
-        let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, in: context, problems: &problems)!
-        
-        var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
-        
-        guard let container = resolver.visit(intro).children.first as? MarkupContainer,
-              let firstElement = container.elements.first,
-              firstElement.childCount > 2 else {
-                XCTFail("Unexpected markup result")
-                return
-        }
-        
-        // Verify the link is unchanged (aka topic:// is deprecated)
-        XCTAssertEqual((firstElement.child(at: 1) as? Link)?.destination, "topic:documentation/TechnologyX/MyArticle")
-        
-        // Verify the correct fix-it for the link
-        XCTAssertEqual(resolver.problems.count, 1)
-        XCTAssertEqual(resolver.problems.first?.diagnostic.identifier, "org.swift.docc.deprecatedSchemaReference")
-        XCTAssertEqual(resolver.problems.first?.possibleSolutions.first?.replacements.first.map({ replacement in
-            return "\(replacement.range.lowerBound.line):\(replacement.range.lowerBound.column) - \(replacement.range.upperBound.line):\(replacement.range.upperBound.column) \(replacement.replacement.singleQuoted)"
-        }), "2:13 - 2:56 '<doc:documentation/TechnologyX/MyArticle>'")
-    }
-
     func testUnresolvedTutorialReferenceIsWarning() throws {
         let source = """
 @Chapter(name: "SwiftUI Essentials") {
