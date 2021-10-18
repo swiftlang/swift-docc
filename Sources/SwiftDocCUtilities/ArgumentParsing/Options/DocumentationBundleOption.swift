@@ -22,7 +22,7 @@ public struct DocumentationBundleOption: ParsableArguments {
     /// The path to a bundle to be compiled by DocC.
     @Argument(
         help: ArgumentHelp(
-            "Path to a data directory of JSON files from a compiled documentation archive.",
+            "Path to a documentation archive ('.doccarchive') data directory of JSON files.",
             discussion: "The '.docc' bundle docc will build.",
             valueName: argumentValueName),
         transform: URL.init(fileURLWithPath:))
