@@ -101,15 +101,6 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return link
         }
         guard url.components.scheme == ResolvedTopicReference.urlScheme else {
-            if url.components.scheme == "topic", let linkRange = link.range {
-                var components = url.components
-                components.scheme = ResolvedTopicReference.urlScheme
-                let diagnostic = Diagnostic(source: source, severity: .warning, range: link.range, identifier: "org.swift.docc.deprecatedSchemaReference", summary: "'topic' reference scheme is deprecated in favor of the 'doc' sheme")
-                let solution = Solution(summary: "Replace 'topic' reference scheme with 'doc' scheme.", replacements: [
-                    Replacement(range: linkRange, replacement: "<\(components.url!.absoluteString)>")
-                ])
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
-            }
             return link // Create a non-topic link
         }
         let unresolved = TopicReference.unresolved(.init(topicURL: url))
