@@ -13,6 +13,12 @@ import XCTest
 @testable import SwiftDocC
 
 class RenderMetadataTests: XCTestCase {
+    
+    var testTitleVariants = VariantCollection<String>(
+        defaultValue: "Default title",
+        objectiveCValue: "Objective-C title"
+    )
+    
     func testRenderEmptyMetadata() throws {
         let metadata = RenderMetadata()
         guard let data = try? JSONEncoder().encode(metadata) else {
@@ -109,5 +115,46 @@ class RenderMetadataTests: XCTestCase {
         let renderNode = try converter.convert(entity, at: nil)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "MyKit")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Foundation"])
+    }
+    
+    func testEmitsTitleVariantsDuringEncoding() throws {
+        var metadata = RenderMetadata()
+        metadata.titleVariants = testTitleVariants
+        
+        let encoder = RenderJSONEncoder.makeEncoder()
+        _ = try encoder.encode(metadata)
+        
+        let variantOverrides = try XCTUnwrap(encoder.userInfo[.variantOverrides] as? VariantOverrides)
+        XCTAssertEqual(variantOverrides.values.count, 1)
+        
+        let variantOverride = try XCTUnwrap(variantOverrides.values.first)
+        XCTAssertEqual(variantOverride.traits, [.interfaceLanguage("objc")])
+        
+        XCTAssertEqual(variantOverride.patch.count, 1)
+        let operation = try XCTUnwrap(variantOverride.patch.first)
+        XCTAssertEqual(operation.operation, .replace)
+        XCTAssertEqual(operation.pointer.components, ["title"])
+        XCTAssertEqual(operation.value.value as! String, "Objective-C title")
+    }
+    
+    func testSetsTitleDuringDecoding() throws {
+        let metadata = try JSONDecoder().decode(
+            RenderMetadata.self,
+            from: #"{ "title": "myTitle" }"#.data(using: .utf8)!
+        )
+        XCTAssertEqual(metadata.title, "myTitle")
+    }
+    
+    func testSetsTitleVariantsDefaultValueWhenSettingTitle() {
+        var metadata = RenderMetadata()
+        metadata.title = "another title"
+        
+        XCTAssertEqual(metadata.titleVariants?.defaultValue, "another title")
+    }
+    
+    func testGetsTitleVariantsDefaultValueWhenGettingTitle() {
+        var metadata = RenderMetadata()
+        metadata.titleVariants = testTitleVariants
+        XCTAssertEqual(metadata.title, "Default title")
     }
 }

@@ -1897,7 +1897,7 @@ class ConvertActionTests: XCTestCase {
         XCTAssert(testDataProvider.fileExists(atPath: digestFileURL.path), "The digest file should have been written even though compilation errors occurred")
         
         let data = try testDataProvider.contentsOfURL(digestFileURL)
-        let diagnostics = try RenderNode.defaultJSONDecoder.decode([Digest.Diagnostic].self, from: data)
+        let diagnostics = try RenderJSONDecoder.makeDecoder().decode([Digest.Diagnostic].self, from: data)
         XCTAssertEqual(diagnostics.count, 1)
 
     }

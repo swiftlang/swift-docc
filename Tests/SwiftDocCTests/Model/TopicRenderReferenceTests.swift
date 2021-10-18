@@ -12,10 +12,21 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 
-class TopicRenderReferencesTests: XCTestCase {
-    // Test for backwards-compatibility.
-    func testDecoderAcceptsMissingKindKey() {
-        let json = """
+class TopicRenderReferenceTests: XCTestCase {
+    
+    let testReference = TopicRenderReference(
+        identifier: RenderReferenceIdentifier("identifier"),
+        titleVariants: VariantCollection<String>(
+            defaultValue: "Default value",
+            objectiveCValue: "Objective-C value"
+        ),
+        abstract: [],
+        url: "",
+        kind: .article,
+        estimatedTime: nil
+    )
+    
+    let encodedReference = """
         {
             "type": "topic",
             "identifier": "myIdentifier",
@@ -23,8 +34,10 @@ class TopicRenderReferencesTests: XCTestCase {
             "url": "myURL"
         }
         """.data(using: .utf8)!
-        
-        XCTAssertNoThrow(try JSONDecoder().decode(TopicRenderReference.self, from: json))
+    
+    // Test for backwards-compatibility.
+    func testDecoderAcceptsMissingKindKey() {
+        XCTAssertNoThrow(try JSONDecoder().decode(TopicRenderReference.self, from: encodedReference))
     }
 
     // Test for backwards-compatibility via an additional role for symbol references.
@@ -47,5 +60,50 @@ class TopicRenderReferencesTests: XCTestCase {
         } catch {
             XCTFail(error.localizedDescription)
         }
+    }
+    
+    func testEmitsTitleVariantsDuringEncoding() throws {
+        let encoder = RenderJSONEncoder.makeEncoder()
+        _ = try encoder.encode(testReference)
+        let variantOverrides = try XCTUnwrap(encoder.userInfo[.variantOverrides] as? VariantOverrides)
+        XCTAssertEqual(variantOverrides.values.count, 1)
+        
+        let variantOverride = try XCTUnwrap(variantOverrides.values.first)
+        XCTAssertEqual(variantOverride.traits, [.interfaceLanguage("objc")])
+        
+        XCTAssertEqual(variantOverride.patch.count, 1)
+        let operation = try XCTUnwrap(variantOverride.patch.first)
+        XCTAssertEqual(operation.operation, .replace)
+        XCTAssertEqual(operation.pointer.components, ["title"])
+    }
+        
+    func testSetsTitleDuringDecoding() throws {
+        let reference = try JSONDecoder().decode(TopicRenderReference.self, from: encodedReference)
+        XCTAssertEqual(reference.title, "myTitle")
+    }
+    
+    func testSetsTitleVariantsDefaultValueWhenInstantiatingWithTitle() {
+        let reference = TopicRenderReference(
+            identifier: RenderReferenceIdentifier("identifier"),
+            title: "myTitle",
+            abstract: [],
+            url: "",
+            kind: .article,
+            estimatedTime: nil
+        )
+        
+        XCTAssertEqual(reference.titleVariants.defaultValue, "myTitle")
+        XCTAssert(reference.titleVariants.variants.isEmpty)
+    }
+    
+    func testSetsTitleVariantsDefaultValueWhenSettingTitle() {
+        var reference = testReference
+        reference.title = "another title"
+        
+        XCTAssertEqual(reference.titleVariants.defaultValue, "another title")
+    }
+    
+    func testGetsTitleVariantsDefaultValueWhenGettingTitle() {
+        XCTAssertEqual(testReference.title, "Default value")
     }
 }

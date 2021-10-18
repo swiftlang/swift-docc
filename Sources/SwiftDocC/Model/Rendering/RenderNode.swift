@@ -28,6 +28,18 @@ import Foundation
 /// The render node schema constantly evolves to support new documentation features. To help clients maintain compatibility,
 /// we associate each schema with a version. See ``schemaVersion`` for more details.
 ///
+/// ### Variants
+///
+/// Different variants of a documentation page can be represented by a single render node using the ``variantOverrides`` property.
+/// This property holds overrides that clients should apply to the render JSON when processing documentation for specific programming languages. The overrides
+/// are organized by traits (e.g., language) and it's up to the client to determine which trait is most appropriate for them. For example, a client that wants to
+/// process the Objective-C version of documentation should apply the overrides associated with the `interfaceLanguage: objc` trait.
+///
+/// Use the ``RenderJSONEncoder/makeEncoder(prettyPrint:emitVariantOverrides:)`` API to instantiate a JSON encoder that's configured
+/// to accumulate variant overrides and emit them to the ``variantOverrides`` property.
+///
+/// The overrides are emitted in the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.
+///
 /// ## Topics
 ///
 /// ### General
@@ -129,6 +141,15 @@ public struct RenderNode {
 
     /// List of variants of the same documentation node for various languages, etc.
     public var variants: [RenderNode.Variant]?
+    
+    /// Language-specific overrides for documentation.
+    ///
+    /// This property holds overrides that clients should apply to the render JSON when processing documentation for specific languages. The overrides are
+    /// organized by traits (e.g., language) and it's up to the client to determine which trait is most appropriate for them. For example, a client that wants to
+    /// process the Objective-C version of documentation should apply the overrides associated with the `interfaceLanguage: objc` trait.
+    ///
+    /// The overrides are emitted in the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.
+    public var variantOverrides: VariantOverrides?
     
     /// Information about what API diffs are available for this symbol.
     public var diffAvailability: DiffAvailability?
