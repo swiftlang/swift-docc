@@ -16,19 +16,43 @@ import Foundation
 let jsonFormattingKey = "DOCC_JSON_PRETTYPRINT"
 public let shouldPrettyPrintOutputJSON = NSString(string: ProcessInfo.processInfo.environment[jsonFormattingKey] ?? "NO").boolValue
 
-public extension CodingUserInfoKey {
-    // A user info key to store topic reference cache in `JSONEncoder`.
-    static let renderReferenceCache = CodingUserInfoKey(rawValue: "renderReferenceCache")!
+extension CodingUserInfoKey {
+    /// A user info key to indicate that Render JSON references should not be encoded.
+    static let skipsEncodingReferences = CodingUserInfoKey(rawValue: "skipsEncodingReferences")!
+    
+    /// A user info key that encapsulates variant overrides.
+    ///
+    /// This key is used by encoders to accumulate language-specific variants of documentation in a ``VariantOverrides`` value.
+    static let variantOverrides = CodingUserInfoKey(rawValue: "variantOverrides")!
+}
+
+extension Encoder {
+    /// The variant overrides accumulated as part of the encoding process.
+    var userInfoVariantOverrides: VariantOverrides? {
+        userInfo[.variantOverrides] as? VariantOverrides
+    }
 }
 
 /// A namespace for encoders for render node JSON.
-enum RenderJSONEncoder {
+public enum RenderJSONEncoder {
     /// Creates a new JSON encoder for render node values.
     ///
-    /// - Parameter prettyPrint: If `true`, the encoder formats its output to make it easy to read; if `false`, the output is compact.
+    /// Returns an encoder that's configured to encode ``RenderNode`` values.
+    ///
+    /// > Important: Don't reuse encoders returned by this function to encode multiple render nodes, as the encoder accumulates state during the encoding
+    /// process which should not be shared in other encoding units. Instead, call this API to create a new encoder for each render node you want to encode.
+    ///
+    /// - Parameters:
+    ///     - prettyPrint: If `true`, the encoder formats its output to make it easy to read; if `false`, the output is compact.
+    ///     - emitVariantOverrides: Whether the encoder should emit the top-level ``RenderNode/variantOverrides`` property that holds language-
+    ///     specific documentation data.
     /// - Returns: The new JSON encoder.
-    static func encoder(prettyPrint: Bool) -> JSONEncoder {
+    public static func makeEncoder(
+        prettyPrint: Bool = shouldPrettyPrintOutputJSON,
+        emitVariantOverrides: Bool = true
+    ) -> JSONEncoder {
         let encoder = JSONEncoder()
+        
         if prettyPrint {
             if #available(OSX 10.13, *) {
                 encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -36,19 +60,27 @@ enum RenderJSONEncoder {
                 encoder.outputFormatting = [.prettyPrinted]
             }
         }
+        
+        if emitVariantOverrides {
+            encoder.userInfo[.variantOverrides] = VariantOverrides()
+        }
+        
         return encoder
+    }
+}
+
+/// A namespace for decoders for render node JSON.
+public enum RenderJSONDecoder {
+    /// Creates a new JSON decoder for render node values.
+    ///
+    /// - Returns: The new JSON decoder.
+    public static func makeDecoder() -> JSONDecoder {
+        JSONDecoder()
     }
 }
 
 // This API improves the encoding/decoding to or from JSON with better error messages.
 public extension RenderNode {
-    /// The default decoder for render node JSON.
-    static var defaultJSONDecoder = JSONDecoder()
-    /// The default encoder for render node JSON.
-    static var defaultJSONEncoder = RenderJSONEncoder.encoder(
-        prettyPrint: shouldPrettyPrintOutputJSON
-    )
-
     /// An error that describes failures that may occur while encoding or decoding a render node.
     enum CodingError: DescribedError {
         /// JSON data could not be decoded as a render node value.
@@ -79,7 +111,7 @@ public extension RenderNode {
     ///   - decoder: The object that decodes the JSON data.
     /// - Throws: A ``CodingError`` in case the decoder is unable to find a key or value in the data, the type of a decoded value is wrong, or the data is corrupted.
     /// - Returns: The decoded render node value.
-    static func decode(fromJSON data: Data, with decoder: JSONDecoder = RenderNode.defaultJSONDecoder) throws -> RenderNode {
+    static func decode(fromJSON data: Data, with decoder: JSONDecoder = RenderJSONDecoder.makeDecoder()) throws -> RenderNode {
         do {
             return try decoder.decode(RenderNode.self, from: data)
         } catch {
@@ -105,26 +137,33 @@ public extension RenderNode {
     
     /// Encodes a render node value as JSON data.
     ///
-    /// - Parameter encoder: The object that encodes the render node.
+    /// - Parameters:
+    ///     - encoder: The object that encodes the render node.
+    ///     - renderReferenceCache: A cache for encoded render reference data. When encoding a large number of render nodes, use the same cache instance
+    ///     to avoid encoding the same reference objects repeatedly.
     /// - Throws: A ``CodingError`` in case the encoder couldn't encode the render node.
     /// - Returns: The data for the encoded render node.
-    func encodeToJSON(with encoder: JSONEncoder = RenderNode.defaultJSONEncoder) throws -> Data {
+    func encodeToJSON(
+        with encoder: JSONEncoder = RenderJSONEncoder.makeEncoder(),
+        renderReferenceCache: Synchronized<[String: Data]>? = nil
+    ) throws -> Data {
         do {
             // If there is no topic reference cache, just encode the reference.
             // To skim a little off the duration we first do a quick check if the key is present at all.
-            guard encoder.userInfo.keys.contains(.renderReferenceCache) else {
+            guard let renderReferenceCache = renderReferenceCache else {
                 return try encoder.encode(self)
             }
             
-            // Encode the render node as usual. `RenderNode` will skip encoding the references itself
-            // because the `.renderReferenceCache` key is set.
+            // Since we're using a reference cache, skip encoding the references and encode them separately.
+            encoder.userInfo[.skipsEncodingReferences] = true
             var renderNodeData = try encoder.encode(self)
             
             // Add render references, using the encoder cache.
             TopicRenderReferenceEncoder.addRenderReferences(
                 to: &renderNodeData,
                 references: references,
-                encoder: encoder
+                encoder: encoder,
+                renderReferenceCache: renderReferenceCache
             )
             
             return renderNodeData

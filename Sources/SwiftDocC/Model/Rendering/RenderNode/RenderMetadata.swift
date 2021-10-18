@@ -11,7 +11,7 @@
 import Foundation
 
 /// Arbitrary metadata for a render node.
-public struct RenderMetadata {
+public struct RenderMetadata: VariantContainer {
     // MARK: Tutorials metadata
     
     /// The name of technology associated with a tutorial.
@@ -43,7 +43,13 @@ public struct RenderMetadata {
     public var role: String?
     
     /// The title of the page.
-    public var title: String?
+    public var title: String? {
+        get { getVariantDefaultValue(keyPath: \.titleVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.titleVariants) }
+    }
+    
+    /// The variants of the title.
+    public var titleVariants: VariantCollection<String>?
     
     /// An identifier for a symbol generated externally.
     public var externalID: String?
@@ -141,7 +147,7 @@ extension RenderMetadata: Codable {
         roleHeading = try container.decodeIfPresent(String.self, forKey: .roleHeading)
         let rawRole = try container.decodeIfPresent(String.self, forKey: .role)
         role = rawRole == "tutorial" ? Role.tutorial.rawValue : rawRole
-        title = try container.decodeIfPresent(String.self, forKey: .title)
+        titleVariants = try container.decodeIfPresent(VariantCollection<String>.self, forKey: .title)
         externalID = try container.decodeIfPresent(String.self, forKey: .externalID)
         symbolKind = try container.decodeIfPresent(String.self, forKey: .symbolKind)
         symbolAccessLevel = try container.decodeIfPresent(String.self, forKey: .symbolAccessLevel)
@@ -193,7 +199,7 @@ extension RenderMetadata: Codable {
         }
         try container.encodeIfPresent(roleHeading, forKey: .roleHeading)
         try container.encodeIfPresent(role, forKey: .role)
-        try container.encodeIfPresent(title, forKey: .title)
+        try container.encodeIfPresent(titleVariants, forKey: .title)
         try container.encodeIfPresent(externalID, forKey: .externalID)
         try container.encodeIfPresent(symbolKind, forKey: .symbolKind)
         try container.encodeIfPresent(symbolAccessLevel, forKey: .symbolAccessLevel)
