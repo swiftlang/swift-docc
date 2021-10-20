@@ -11,19 +11,19 @@
 import ArgumentParser
 import Foundation
 
-/// Resolves and validates a URL value that provides the path to a documentation bundle.
-public struct DocumentationBundleOption: DocumentationOption {
+/// Resolves and validates a URL value that provides the path to a documentation archive.
+public struct DocumentationArchiveOption: DocumentationOption {
 
     public init() {}
 
-    /// The name of the command line argument used to specify a source bundle path.
-    static let argumentValueName = "source-bundle-path"
+    /// The name of the command line argument used to specify a source archive path.
+    static let argumentValueName = "source-archive-path"
 
-    /// The path to a bundle to be compiled by DocC.
+    /// The path to an archive.
     @Argument(
         help: ArgumentHelp(
-            "Path to a documentation bundle directory.",
-            discussion: "The '.docc' bundle docc will build.",
+            "Path to a documentation archive data directory of JSON files.",
+            discussion: "The '.doccarchive' bundle docc will index.",
             valueName: argumentValueName),
         transform: URL.init(fileURLWithPath:))
     public var url: URL?

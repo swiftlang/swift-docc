@@ -24,9 +24,9 @@ extension Docc {
 
         // MARK: - Command Line Options & Arguments
 
-        /// The user-provided path to a `.docc` documentation bundle.
+        /// The user-provided path to a `.doccarchive` documentation archive.
         @OptionGroup()
-        public var documentationBundle: DocumentationBundleOption
+        public var documentationBundle: DocumentationArchiveOption
 
         /// The user-provided bundle name to use for the produced index.
         @Option(help: "The bundle name for the index.")
