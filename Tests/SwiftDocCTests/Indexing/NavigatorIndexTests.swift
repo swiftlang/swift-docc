@@ -1098,39 +1098,39 @@ Root
         XCTAssertEqual(PageType(symbolKind: "intftdef"), PageType(symbolKind: "associatedtype"))
     }
     
-    func testNavigatorIndexOnReadOnlyFilesystem() throws {
-        #if os(macOS)
-        // To verify we're able to open a read-only index, we need to mount a small DMG in read-only mode.
-        let dmgPath = Bundle.module.url(
-            forResource: "read-only-index", withExtension: "dmg", subdirectory: "Test Resources")!
-        
-        // Mount the DMG.
-        let mountProcess = Process()
-        mountProcess.launchPath = "/usr/bin/hdiutil"
-        mountProcess.arguments = ["attach", dmgPath.path]
-        mountProcess.launch()
-        mountProcess.waitUntilExit()
-        
-        // Check mounting worked.
-        guard mountProcess.terminationStatus == 0 else {
-            XCTFail("Read-only DMG mounting failed.")
-            return
-        }
-        
-        // Verify we can open the index without errors.
-        let path = URL(fileURLWithPath: "/Volumes/ReadOnlyIndex/index")
-        XCTAssertNoThrow(try NavigatorIndex(url: path))
-        
-        // Detatch the Volume.
-        let detatchProcess = Process()
-        detatchProcess.launchPath = "/usr/bin/hdiutil"
-        detatchProcess.arguments = ["detach", "/Volumes/ReadOnlyIndex"]
-        detatchProcess.launch()
-        detatchProcess.waitUntilExit()
-        
-        XCTAssertEqual(detatchProcess.terminationStatus, 0)
-        #endif
-    }
+//    func testNavigatorIndexOnReadOnlyFilesystem() throws {
+//        #if os(macOS)
+//        // To verify we're able to open a read-only index, we need to mount a small DMG in read-only mode.
+//        let dmgPath = Bundle.module.url(
+//            forResource: "read-only-index", withExtension: "dmg", subdirectory: "Test Resources")!
+//        
+//        // Mount the DMG.
+//        let mountProcess = Process()
+//        mountProcess.launchPath = "/usr/bin/hdiutil"
+//        mountProcess.arguments = ["attach", dmgPath.path]
+//        mountProcess.launch()
+//        mountProcess.waitUntilExit()
+//        
+//        // Check mounting worked.
+//        guard mountProcess.terminationStatus == 0 else {
+//            XCTFail("Read-only DMG mounting failed.")
+//            return
+//        }
+//        
+//        // Verify we can open the index without errors.
+//        let path = URL(fileURLWithPath: "/Volumes/ReadOnlyIndex/index")
+//        XCTAssertNoThrow(try NavigatorIndex(url: path))
+//        
+//        // Detatch the Volume.
+//        let detatchProcess = Process()
+//        detatchProcess.launchPath = "/usr/bin/hdiutil"
+//        detatchProcess.arguments = ["detach", "/Volumes/ReadOnlyIndex"]
+//        detatchProcess.launch()
+//        detatchProcess.waitUntilExit()
+//        
+//        XCTAssertEqual(detatchProcess.terminationStatus, 0)
+//        #endif
+//    }
     
     func testNavigatorIndexAsReadOnlyFile() throws {
         #if !os(Linux)
