@@ -19,6 +19,8 @@ filepath() {
 # First get the absolute path to this file so we can get the absolute file path to the Swift-DocC root source dir.
 DOCC_ROOT="$(dirname $(dirname $(filepath $0)))"
 
+rm -rf .build
+
 # Build SwiftDocC.
 swift test --parallel --package-path "$DOCC_ROOT"
 
