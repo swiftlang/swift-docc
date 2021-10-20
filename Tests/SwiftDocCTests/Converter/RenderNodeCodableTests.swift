@@ -13,22 +13,6 @@ import XCTest
 
 class RenderNodeCodableTests: XCTestCase {
     
-    var bareRenderNode = RenderNode(
-        identifier: .init(bundleIdentifier: "com.bundle", path: "/", sourceLanguage: .swift),
-        kind: .article
-    )
-    
-    var testVariantOverride = VariantOverride(
-        traits: [.interfaceLanguage("objc")],
-        patch: [
-            JSONPatchOperation(
-                operation: .replace,
-                pointer: JSONPointer(components: ["foo"]),
-                value: AnyCodable("bar")
-            )
-        ]
-    )
-    
     func testDataCorrupted() {
         XCTAssertThrowsError(try RenderNode.decode(fromJSON: corruptedJSON), "RenderNode decode didn't throw as expected.") { error in
             XCTAssertTrue(error is RenderNode.CodingError)
@@ -67,7 +51,7 @@ class RenderNodeCodableTests: XCTestCase {
     }
     
     func testPrettyPrintByDefaultOff() {
-        let renderNode = bareRenderNode
+        let renderNode = RenderNode(identifier: .init(bundleIdentifier: "com.bundle", path: "/", sourceLanguage: .swift), kind: .article)
         do {
             let encodedData = try renderNode.encodeToJSON()
             let jsonString = String(data: encodedData, encoding: .utf8)!
@@ -78,10 +62,10 @@ class RenderNodeCodableTests: XCTestCase {
     }
     
     func testPrettyPrintedEncoder() {
-        let renderNode = bareRenderNode
+        let renderNode = RenderNode(identifier: .init(bundleIdentifier: "com.bundle", path: "/", sourceLanguage: .swift), kind: .article)
         do {
             // No pretty print
-            let encoder = RenderJSONEncoder.makeEncoder(prettyPrint: false)
+            let encoder = RenderJSONEncoder.encoder(prettyPrint: false)
             let encodedData = try renderNode.encodeToJSON(with: encoder)
             let jsonString = String(data: encodedData, encoding: .utf8)!
             XCTAssertFalse(jsonString.contains("\n  "))
@@ -90,53 +74,13 @@ class RenderNodeCodableTests: XCTestCase {
         }
         do {
             // Yes pretty print
-            let encoder = RenderJSONEncoder.makeEncoder(prettyPrint: true)
+            let encoder = RenderJSONEncoder.encoder(prettyPrint: true)
             let encodedData = try renderNode.encodeToJSON(with: encoder)
             let jsonString = String(data: encodedData, encoding: .utf8)!
             XCTAssertTrue(jsonString.contains("\n  "))
         } catch {
             XCTFail(error.localizedDescription)
         }
-    }
-    
-    func testEncodesVariantOverridesSetAsProperty() throws {
-        var renderNode = bareRenderNode
-        renderNode.variantOverrides = VariantOverrides(values: [testVariantOverride])
-        
-        let decodedNode = try encodeAndDecode(renderNode)
-        try assertVariantOverrides(XCTUnwrap(decodedNode.variantOverrides))
-    }
-    
-    func testEncodesVariantOverridesAccumulatedInEncoder() throws {
-        let encoder = RenderJSONEncoder.makeEncoder()
-        (encoder.userInfo[.variantOverrides] as! VariantOverrides).add(testVariantOverride)
-        
-        let decodedNode = try encodeAndDecode(bareRenderNode, encoder: encoder)
-        try assertVariantOverrides(XCTUnwrap(decodedNode.variantOverrides))
-    }
-    
-    func testDoesNotEncodeVariantOverridesIfEmpty() throws {
-        let encoder = RenderJSONEncoder.makeEncoder()
-        
-        // Don't record any overrides.
-        
-        let decodedNode = try encodeAndDecode(bareRenderNode, encoder: encoder)
-        XCTAssertNil(decodedNode.variantOverrides)
-    }
-    
-    private func assertVariantOverrides(_ variantOverrides: VariantOverrides) throws {
-        XCTAssertEqual(variantOverrides.values.count, 1)
-        let variantOverride = try XCTUnwrap(variantOverrides.values.first)
-        XCTAssertEqual(variantOverride.traits, testVariantOverride.traits)
-        
-        XCTAssertEqual(variantOverride.patch.count, 1)
-        let operation = try XCTUnwrap(variantOverride.patch.first)
-        XCTAssertEqual(operation.operation, testVariantOverride.patch[0].operation)
-        XCTAssertEqual(operation.pointer.components, testVariantOverride.patch[0].pointer.components)
-    }
-    
-    private func encodeAndDecode<Value: Codable>(_ value: Value, encoder: JSONEncoder = .init()) throws -> Value {
-        try JSONDecoder().decode(Value.self, from: encoder.encode(value))
     }
 }
 

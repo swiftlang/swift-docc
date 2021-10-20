@@ -16,14 +16,13 @@ enum TopicRenderReferenceEncoder {
     ///   - renderNodeData: A render node encoded as JSON data.
     ///   - references: A list of render references.
     ///   - encoder: A `JSONEncoder` to use for the encoding.
-    ///   - renderReferenceCache: A cache for encoded render reference data. When encoding a large number of render nodes, use the same cache
-    ///   instance to avoid encoding the same reference objects repeatedly.
-    static func addRenderReferences(
-        to renderNodeData: inout Data,
+    static func addRenderReferences(to renderNodeData: inout Data,
         references: [String: RenderReference],
-        encoder: JSONEncoder,
-        renderReferenceCache referenceCache: Synchronized<[String: Data]>
-    ) {
+        encoder: JSONEncoder) {
+        
+        guard let referenceCache = encoder.userInfo[.renderReferenceCache] as? Synchronized<[String: Data]> else {
+            fatalError("An unexpected value passed via the .renderReferenceCache key.")
+        }
         
         guard !references.isEmpty else { return }
         

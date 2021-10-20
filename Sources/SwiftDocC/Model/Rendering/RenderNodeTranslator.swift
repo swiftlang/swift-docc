@@ -930,7 +930,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.required = symbol.isRequired
         node.metadata.role = contentRenderer.role(for: documentationNode.kind).rawValue
         node.metadata.roleHeading = symbol.roleHeading
-        node.metadata.titleVariants = VariantCollection<String>(defaultValue: symbol.title)
+        node.metadata.title = symbol.title
         node.metadata.externalID = symbol.externalID
         // Remove any optional namespace (e.g. "swift.") for rendering
         node.metadata.symbolKind = symbol.kind.identifier.components(separatedBy: ".").last

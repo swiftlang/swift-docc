@@ -300,16 +300,7 @@ public class DocumentationContentRenderer {
 
         let estimatedTime = (node?.semantic as? Timed)?.durationMinutes.flatMap(formatEstimatedDuration(minutes:))
 
-        var renderReference = TopicRenderReference(
-            identifier: .init(referenceURL),
-            titleVariants: .init(defaultValue: title),
-            abstract: abstractContent,
-            url: presentationURL.absoluteString,
-            kind: kind,
-            required: isRequired,
-            role: referenceRole,
-            estimatedTime: estimatedTime
-        )
+        var renderReference = TopicRenderReference(identifier: .init(referenceURL), title: title, abstract: abstractContent, url: presentationURL.absoluteString, kind: kind, required: isRequired, role: referenceRole, estimatedTime: estimatedTime)
 
         // Store the symbol's display name if present in the render reference
         renderReference.fragments = node.flatMap(subHeadingFragments)

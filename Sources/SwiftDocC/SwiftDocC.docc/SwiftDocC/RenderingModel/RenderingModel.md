@@ -57,17 +57,6 @@ Hereto a rendering node contains data not only about a single specific topic (a 
 - ``UnresolvedRenderReference``
 - ``VideoReference``
 
-### Variants
-
-- ``RenderNode/variantOverrides``
-- ``VariantOverrides``
-- ``VariantOverride``
-- ``VariantCollection``
-- ``VariantContainer``
-- ``VariantPatchOperation``
-- ``JSONPatchOperation``
-- ``JSONPointer``
-
 ### Others
 
 - ``SemanticVersion``

@@ -29,7 +29,7 @@ class JSONEncodingRenderNodeWriter {
     
     private let urlGenerator: NodeURLGenerator
     private let fileManager: FileManagerProtocol
-    private let renderReferenceCache = Synchronized<[String: Data]>([:])
+    private let encoder: JSONEncoder
     
     /// Creates a writer object that write render node JSON into a given folder.
     ///
@@ -41,6 +41,10 @@ class JSONEncodingRenderNodeWriter {
             baseURL: targetFolder.appendingPathComponent("data", isDirectory: true)
         )
         self.fileManager = fileManager
+
+        // Enable caching topic render references in the encoder.
+        encoder = RenderNode.defaultJSONEncoder
+        encoder.userInfo[.renderReferenceCache] = Synchronized<[String: Data]>([:])
     }
     
     // The already created directories on disk
@@ -78,9 +82,7 @@ class JSONEncodingRenderNodeWriter {
             }
         }
         
-        let encoder = RenderJSONEncoder.makeEncoder()
-        
-        let data = try renderNode.encodeToJSON(with: encoder, renderReferenceCache: renderReferenceCache)
+        let data = try renderNode.encodeToJSON(with: encoder)
         try fileManager.createFile(at: targetFileURL, contents: data)
     }
 }

@@ -161,7 +161,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     
     /// Encodes the given value using the default render node JSON encoder.
     private func encode<E: Encodable>(_ value: E) throws -> Data {
-        try RenderJSONEncoder.makeEncoder().encode(value)
+        try RenderNode.defaultJSONEncoder.encode(value)
     }
 
     // Injects a <template> tag into the index.html <body> using the contents of
