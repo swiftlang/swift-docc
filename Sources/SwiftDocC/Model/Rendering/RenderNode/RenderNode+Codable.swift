@@ -13,7 +13,7 @@ import Foundation
 extension RenderNode: Codable {
     private enum CodingKeys: CodingKey {
         case schemaVersion, identifier, sections, references, metadata, kind, hierarchy
-        case abstract, topicSections, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants
+        case abstract, topicSections, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides
     }
     
     public init(from decoder: Decoder) throws {
@@ -38,6 +38,7 @@ extension RenderNode: Codable {
         deprecationSummary = try container.decodeIfPresent([RenderBlockContent].self, forKey: .deprecationSummary)
         diffAvailability = try container.decodeIfPresent(DiffAvailability.self, forKey: .diffAvailability)
         variants = try container.decodeIfPresent([RenderNode.Variant].self, forKey: .variants)
+        variantOverrides = try container.decodeIfPresent(VariantOverrides.self, forKey: .variantOverrides)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -46,8 +47,8 @@ extension RenderNode: Codable {
         try container.encode(identifier, forKey: .identifier)
         try container.encode(sections.map(CodableRenderSection.init), forKey: .sections)
         
-        // If the encoder is not using a cache for the references, encode all of them.
-        if encoder.userInfo[.renderReferenceCache] == nil {
+        // Encode references if the `.skipsEncodingReferences` value is unset or false.
+        if (encoder.userInfo[.skipsEncodingReferences] as? Bool) != true {
             try container.encode(references.mapValues(CodableRenderReference.init), forKey: .references)
         }
         
@@ -68,6 +69,14 @@ extension RenderNode: Codable {
         try container.encodeIfPresent(deprecationSummary, forKey: .deprecationSummary)
         try container.encodeIfPresent(diffAvailability, forKey: .diffAvailability)
         try container.encodeIfPresent(variants, forKey: .variants)
+        
+        // Emit the variant overrides that are defined on the render node, if present. Otherwise, the variant overrides
+        // that have been accumulated while encoding the properties of the render node.
+        if let variantOverrides = variantOverrides ?? encoder.userInfo[.variantOverrides] as? VariantOverrides,
+            !variantOverrides.isEmpty
+        {
+            try container.encode(variantOverrides, forKey: .variantOverrides)
+        }
     }
 }
 
