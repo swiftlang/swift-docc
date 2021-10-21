@@ -15,17 +15,11 @@ import ArgumentParser
 ///
 /// This option validates the the provided path exists and that it's a directory.
 public protocol DirectoryPathOption: ParsableArguments {
-    /// The help information for this directory's `url` argument.
-    static var argumentHelp: ArgumentHelp? { get }
+    /// The path to a directory.
+    var url: URL? { get }
 }
 
 extension DirectoryPathOption {
-    /// The path to a directory.
-    @Argument(
-        help: argumentHelp,
-        transform: URL.init(fileURLWithPath:))
-    public var url: URL?
-
     /// The provided ``url`` or the "current directory" if the user didn't provide an argument.
     public var urlOrFallback: URL {
         return url ?? URL(fileURLWithPath: ".")
