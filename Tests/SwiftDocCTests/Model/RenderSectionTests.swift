@@ -129,7 +129,7 @@ class RenderSectionTests: XCTestCase {
         
         // We should always output renderJSON that uses "hero" to describe an intro section to
         // maintain compatibility
-        let encodedJSONData = try RenderJSONEncoder.encoder(prettyPrint: true).encode(renderSection)
+        let encodedJSONData = try RenderJSONEncoder.makeEncoder(prettyPrint: true).encode(renderSection)
         let encodedJSONString = String(data: encodedJSONData, encoding: .utf8)
         XCTAssertEqual(encodedJSONString, expectedOutputJSON)
     }

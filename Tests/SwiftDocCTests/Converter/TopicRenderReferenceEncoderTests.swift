@@ -36,7 +36,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // Verify encoding without references
         do {
             let encoderWithoutReferences = JSONEncoder()
-            encoderWithoutReferences.userInfo[.renderReferenceCache] = Synchronized<[String: RenderReference]>([:])
+            encoderWithoutReferences.userInfo[.skipsEncodingReferences] = true
 
             let data = try encoderWithoutReferences.encode(node)
             guard let dictionary = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
@@ -56,16 +56,16 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil)
         ]
 
-        // Encode the render node
-        let encoderWithoutReferences = JSONEncoder()
-        encoderWithoutReferences.userInfo[.renderReferenceCache] = Synchronized<[String: Data]>([:])
-
-        var data = try encoderWithoutReferences.encode(node)
+        let encoder = RenderJSONEncoder.makeEncoder()
+        let cache = Synchronized<[String: Data]>([:])
+        var data = try node.encodeToJSON(with: encoder, renderReferenceCache: cache)
         
         // Insert the references in the node
         TopicRenderReferenceEncoder.addRenderReferences(to: &data,
             references: node.references,
-            encoder: encoderWithoutReferences)
+            encoder: encoder,
+            renderReferenceCache: cache
+        )
         
         // Verify the inserted reference
         guard let dictionary = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
@@ -79,19 +79,21 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         XCTAssertEqual(reference["title"] as? String, "myFunction")
         
         // Verify the encoded reference was stored in the cache
-        XCTAssertNotNil((encoderWithoutReferences.userInfo[.renderReferenceCache] as! Synchronized<[String: Data]>).sync({ $0["reference1"] }))
+        XCTAssertNotNil(cache.sync({ $0["reference1"] }))
         
         // Now change the cached reference
         let newReference = TopicRenderReference(identifier: .init("reference1"), title: "NEW TITLE", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil)
-        try (encoderWithoutReferences.userInfo[.renderReferenceCache] as! Synchronized<[String: Data]>).sync({
-            $0["reference1"] = try encoderWithoutReferences.encode(newReference)
+        try cache.sync({
+            $0["reference1"] = try encoder.encode(newReference)
         })
         
         // Encode again, using the stubbed cache
-        var newData = try encoderWithoutReferences.encode(node)
+        var newData = try node.encodeToJSON(with: encoder, renderReferenceCache: cache)
         TopicRenderReferenceEncoder.addRenderReferences(to: &newData,
             references: node.references,
-            encoder: encoderWithoutReferences)
+            encoder: encoder,
+            renderReferenceCache: cache
+        )
         
         // Verify the inserted reference
         guard let newDictionary = try JSONSerialization.jsonObject(with: newData, options: []) as? [String: Any],
@@ -124,20 +126,20 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
                 return node
             })
 
-        // Create an encoder
-        let encoderWithoutReferences = JSONEncoder()
-        encoderWithoutReferences.userInfo[.renderReferenceCache] = Synchronized<[String: Data]>([:])
-        
+        let cache = Synchronized<[String: Data]>([:])
         let encodingErrors = Synchronized<[Error]>([])
         
         DispatchQueue.concurrentPerform(iterations: nodes.count) { i in
             do {
-                var data = try encoderWithoutReferences.encode(nodes[i])
+                let encoder = RenderJSONEncoder.makeEncoder()
+                var data = try nodes[i].encodeToJSON(with: encoder, renderReferenceCache: cache)
                 
                 // Insert the references in the node
                 TopicRenderReferenceEncoder.addRenderReferences(to: &data,
                     references: nodes[i].references,
-                    encoder: encoderWithoutReferences)
+                    encoder: encoder,
+                    renderReferenceCache: cache
+                )
             } catch {
                 encodingErrors.sync({ $0.append(error) })
             }
@@ -147,7 +149,6 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         encodingErrors.sync({ $0.forEach({ XCTFail(String(describing: $0)) }) })
         
         // Verify all references have been cached
-        let cache = encoderWithoutReferences.userInfo[.renderReferenceCache] as! Synchronized<[String: Data]>
         XCTAssertEqual(cache.sync({ $0.keys.count }), 1000)
     }
     
@@ -158,9 +159,10 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
         // Create a JSON encoder
-        let encoder = RenderNode.defaultJSONEncoder
-        encoder.userInfo[.renderReferenceCache] = Synchronized<[String: Data]>([:])
+        let encoder = RenderJSONEncoder.makeEncoder()
         encoder.outputFormatting = .sortedKeys
+        
+        let cache = Synchronized<[String: Data]>([:])
 
         // For reach topic encode its render node and verify the references are in alphabetical order.
         for reference in context.knownPages {
@@ -168,7 +170,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
             let renderNode = try converter.convert(node, at: nil)
             
             // Get the encoded JSON as string
-            let encodedData = try renderNode.encodeToJSON(with: encoder)
+            let encodedData = try renderNode.encodeToJSON(with: encoder, renderReferenceCache: cache)
             let encodedString = try XCTUnwrap(String(data: encodedData, encoding: .utf8))
 
             // Get the references as a string
@@ -217,8 +219,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
 
         // Create a JSON encoder
-        let encoder = RenderNode.defaultJSONEncoder
-        encoder.userInfo[.renderReferenceCache] = Synchronized<[String: Data]>([:])
+        let encoder = RenderJSONEncoder.makeEncoder()
         encoder.outputFormatting = .sortedKeys
 
         // For reach topic encode its render node and verify the references are in alphabetical order.
