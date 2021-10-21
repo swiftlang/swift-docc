@@ -12,6 +12,8 @@ import ArgumentParser
 import Foundation
 
 /// Resolves and validates a URL value that provides the path to a documentation bundle.
+///
+/// This option is used by the ``Docc/Convert`` subcommand.
 public struct DocumentationBundleOption: DocumentationOption {
 
     public init() {}

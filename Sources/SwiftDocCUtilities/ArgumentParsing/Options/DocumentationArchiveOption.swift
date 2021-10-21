@@ -12,6 +12,8 @@ import ArgumentParser
 import Foundation
 
 /// Resolves and validates a URL value that provides the path to a documentation archive.
+///
+/// This option is used by the ``Docc/Index`` subcommand.
 public struct DocumentationArchiveOption: DocumentationOption {
 
     public init() {}

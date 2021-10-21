@@ -11,6 +11,7 @@
 import Foundation
 import ArgumentParser
 
+/// Resolves and validates a URL value that provides the path to a documentation directory.
 public protocol DocumentationOption: ParsableArguments {
     var url: URL? { get }
 }
