@@ -11,21 +11,31 @@
 import Foundation
 import ArgumentParser
 
-/// Resolves and validates a URL value that provides the path to a documentation directory.
-public protocol DocumentationOption: ParsableArguments {
-    var url: URL? { get }
+/// A parsable argument for an optional directory path.
+///
+/// This option validates the the provided path exists and that it's a directory.
+public protocol DirectoryPathOption: ParsableArguments {
+    /// The help information for this directory's `url` argument.
+    static var argumentHelp: ArgumentHelp? { get }
 }
 
-extension DocumentationOption {
+extension DirectoryPathOption {
+    /// The path to a directory.
+    @Argument(
+        help: argumentHelp,
+        transform: URL.init(fileURLWithPath:))
+    public var url: URL?
+
+    /// The provided ``url`` or the "current directory" if the user didn't provide an argument.
     public var urlOrFallback: URL {
         return url ?? URL(fileURLWithPath: ".")
     }
-    
+
     public mutating func validate() throws {
         guard let url = url else {
             return
         }
-        
+
         // Validate that the URL represents a directory
         guard url.hasDirectoryPath == true else {
             throw ValidationError("No documentation directory exist at '\(url.path)'.")
