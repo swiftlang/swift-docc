@@ -27,7 +27,13 @@ class VariantContainerTests: XCTestCase {
         )
         testValue.setVariantDefaultValue("new value", keyPath: \.optionalPropertyVariants)
         XCTAssertEqual(testValue.optionalPropertyVariants?.defaultValue, "new value")
-        XCTAssertEqual(testValue.optionalPropertyVariants?.variants[0].patch[0].value, "Objective-C value")
+        
+        guard case .replace(let value) = testValue.optionalPropertyVariants?.variants[0].patch[0] else {
+            XCTFail("Unexpected patch value")
+            return
+        }
+        
+        XCTAssertEqual(value, "Objective-C value")
     }
     
     func testGetVariantDefaultValueOptional() throws {

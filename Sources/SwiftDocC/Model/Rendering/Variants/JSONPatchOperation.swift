@@ -11,30 +11,53 @@
 import Foundation
 
 /// A patch to update a JSON value.
+public typealias JSONPatch = [JSONPatchOperation]
+
+/// A patch operation to update a JSON value.
 ///
 /// Values of this type follow the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.
-public struct JSONPatchOperation: Codable {
-    /// The operation to apply.
-    public var operation: PatchOperation
+///
+/// ## Topics
+///
+/// ### Applying Patches
+///
+/// - ``JSONPatchApplier``
+///
+/// ### Operations
+///
+/// - ``PatchOperation``
+public enum JSONPatchOperation: Codable {
     
-    /// The pointer to the value to update.
-    public var pointer: JSONPointer
-    
-    /// The new value to use when performing the update.
-    public var value: AnyCodable
-    
-    /// Creates a patch to update a JSON value.
-    ///
-    /// Values of this type follow the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.
+    /// A replacement operation.
     ///
     /// - Parameters:
-    ///   - operation: The operation to apply.
-    ///   - pointer: The pointer to the value to update.
-    ///   - value: The value to use when performing the update.
-    public init(operation: PatchOperation, pointer: JSONPointer, value: AnyCodable) {
-        self.operation = operation
-        self.pointer = pointer
-        self.value = value
+    ///     - pointer: The pointer to the value to replace.
+    ///     - value: The value to use in the replacement.
+    case replace(pointer: JSONPointer, value: AnyCodable)
+    
+    /// A remove operation.
+    ///
+    /// - Parameter pointer: The pointer to the value to remove.
+    case remove(pointer: JSONPointer)
+    
+    /// The pointer to the value to modify.
+    public var pointer: JSONPointer {
+        switch self {
+        case .replace(let pointer, _):
+            return pointer
+        case .remove(let pointer):
+            return pointer
+        }
+    }
+    
+    /// The operation to apply.
+    public var operation: PatchOperation {
+        switch self {
+        case .replace(_, _):
+            return .replace
+        case .remove(_):
+            return .remove
+        }
     }
     
     /// Creates a patch to update a JSON value.
@@ -45,9 +68,60 @@ public struct JSONPatchOperation: Codable {
     ///   - variantPatch: The patch to apply.
     ///   - pointer: The pointer to the value to update.
     public init<Value>(variantPatch: VariantPatchOperation<Value>, pointer: JSONPointer) {
-        self.operation = variantPatch.operation
-        self.value = AnyCodable(variantPatch.value)
-        self.pointer = pointer
+        switch variantPatch {
+        case .replace(let value):
+            self = .replace(pointer: pointer, encodableValue: value)
+        case .remove:
+            self = .remove(pointer: pointer)
+        }
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let operation = try container.decode(PatchOperation.self, forKey: .operation)
+        
+        let pointer = try container.decode(JSONPointer.self, forKey: .pointer)
+        
+        switch operation {
+        case .replace:
+            let value = try container.decode(AnyCodable.self, forKey: .value)
+            self = .replace(pointer: pointer, value: value)
+        case .remove:
+            self = .remove(pointer: pointer)
+        }
+    }
+    
+    /// A replacement operation.
+    ///
+    /// - Parameters:
+    ///     - pointer: The pointer to the value to replace.
+    ///     - encodedValue: The value to use in the replacement.
+    public static func replace(pointer: JSONPointer, encodableValue: Encodable) -> JSONPatchOperation {
+        .replace(pointer: pointer, value: AnyCodable(encodableValue))
+    }
+    
+    /// Returns the patch operation with the first path component of the pointer removed.
+    public func removingPointerFirstPathComponent() -> Self {
+        let newPointer = pointer.removingFirstPathComponent()
+        switch self {
+        case .replace(_, let value):
+            return .replace(pointer: newPointer, value: value)
+        case .remove(_):
+            return .remove(pointer: newPointer)
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        switch self {
+        case .replace(let pointer, let value):
+            try container.encode(PatchOperation.replace, forKey: .operation)
+            try container.encode(pointer, forKey: .pointer)
+            try container.encode(value, forKey: .value)
+        case .remove(let pointer):
+            try container.encode(PatchOperation.remove, forKey: .operation)
+            try container.encode(pointer, forKey: .pointer)
+        }
     }
     
     public enum CodingKeys: String, CodingKey {

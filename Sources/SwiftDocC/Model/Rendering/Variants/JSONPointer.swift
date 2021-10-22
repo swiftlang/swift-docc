@@ -13,15 +13,24 @@ import Foundation
 /// A pointer to a specific value in a JSON document.
 ///
 /// For more information, see [RFC6901](https://datatracker.ietf.org/doc/html/rfc6901).
-public struct JSONPointer: Codable {
-    /// The components of the pointer.
-    public var components: [String]
+public struct JSONPointer: Codable, CustomStringConvertible {
+    /// The path components of the pointer.
+    public var pathComponents: [String]
+    
+    public var description: String {
+        "/\(pathComponents.joined(separator: "/"))"
+    }
     
     /// Creates a JSON Pointer given its path components.
     ///
     /// The components are assumed to be properly escaped per [RFC6901](https://datatracker.ietf.org/doc/html/rfc6901).
-    public init(components: [String]) {
-        self.components = components
+    public init<Components: Sequence>(pathComponents: Components) where Components.Element == String {
+        self.pathComponents = Array(pathComponents)
+    }
+    
+    /// Returns the pointer with the first path component removed.
+    public func removingFirstPathComponent() -> JSONPointer {
+        JSONPointer(pathComponents: pathComponents.dropFirst())
     }
     
     /// An enum representing characters that need escaping in JSON Pointer values.
@@ -53,7 +62,7 @@ public struct JSONPointer: Codable {
     /// Use this initializer when creating JSON pointers during encoding. This initializer escapes components as defined by
     /// [RFC6901](https://datatracker.ietf.org/doc/html/rfc6901).
     public init(from codingPath: [CodingKey]) {
-        self.components = codingPath.map { component in
+        self.pathComponents = codingPath.map { component in
             if let intValue = component.intValue {
                 // If the coding key is an index into an array, emit the index as a string.
                 return "\(intValue)"
@@ -73,12 +82,12 @@ public struct JSONPointer: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode("/\(components.joined(separator: "/"))")
+        try container.encode(description)
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let stringValue = try container.decode(String.self)
-        self.components = stringValue.removingLeadingSlash.components(separatedBy: "/")
+        self.pathComponents = stringValue.removingLeadingSlash.components(separatedBy: "/")
     }
 }

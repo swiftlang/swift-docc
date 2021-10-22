@@ -10,23 +10,16 @@
 
 import Foundation
 
-/// A patch to update a render node value.
-public enum VariantPatchOperation<Value: Codable> {
+/// The patch operation to apply.
+///
+/// Values of this type follow the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.
+///
+/// > Warning: The cases of this enumeration are non-exhaustive for the supported operations of JSON Patch schema. Further JSON Patch operations may
+/// be added in the future.
+public enum PatchOperation: String, Codable {
     /// A replacement operation.
-    ///
-    /// - Parameter value: The value to use in the replacement.
-    case replace(value: Value)
+    case replace
     
     /// A removal operation.
     case remove
-    
-    /// The operation to apply.
-    public var operation: PatchOperation {
-        switch self {
-        case .replace(_):
-            return .replace
-        case .remove:
-            return .remove
-        }
-    }
 }

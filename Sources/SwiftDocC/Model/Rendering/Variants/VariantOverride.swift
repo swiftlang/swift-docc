@@ -18,14 +18,14 @@ public struct VariantOverride: Codable {
     public var traits: [RenderNode.Variant.Trait]
     
     /// The patch to apply as part of the override.
-    public var patch: [JSONPatchOperation]
+    public var patch: JSONPatch
     
     /// Creates an override value for the given traits.
     ///
     /// - Parameters:
     ///   - traits: The traits associated with this override value.
     ///   - patch: The patch to apply as part of the override.
-    public init(traits: [RenderNode.Variant.Trait], patch: [JSONPatchOperation]) {
+    public init(traits: [RenderNode.Variant.Trait], patch: JSONPatch) {
         self.traits = traits
         self.patch = patch
     }

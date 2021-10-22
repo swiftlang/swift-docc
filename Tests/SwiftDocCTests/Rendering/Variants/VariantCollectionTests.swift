@@ -20,18 +20,22 @@ class VariantCollectionTests: XCTestCase {
         variants: [
             .init(
                 traits: [.interfaceLanguage("language A")],
-                patch: [VariantPatchOperation(operation: .replace, value: "language A value")]
+                patch: [.replace(value: "language A value")]
             ),
             .init(
                 traits: [.interfaceLanguage("language B")],
-                patch: [VariantPatchOperation(operation: .replace, value: "language B value")]
+                patch: [.replace(value: "language B value")]
             )
         ]
     )
     
     func testCreatesObjectiveCVariant() {
         XCTAssertEqual(testCollection.defaultValue, "default value")
-        XCTAssertEqual(testCollection.variants[0].patch[0].value, "Objective-C value")
+        guard case .replace(let value) = testCollection.variants[0].patch[0] else {
+            XCTFail("Unexpected patch value")
+            return
+        }
+        XCTAssertEqual(value, "Objective-C value")
     }
     
     func testEncodesDefaultValueAndAddsVariantsInEncoder() throws {
@@ -60,7 +64,14 @@ class VariantCollectionTests: XCTestCase {
             }
             
             XCTAssertEqual(variant.traits, [.interfaceLanguage(expectedLanguage)])
-            XCTAssertEqual(variant.patch[0].value.value as! String, expectedValue)
+            
+            
+            guard case .replace(_, let value) = variant.patch[0] else {
+                XCTFail("Unexpected patch operation")
+                return
+            }
+                
+            XCTAssertEqual(value.value as! String, expectedValue)
         }
     }
 }

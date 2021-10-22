@@ -21,11 +21,7 @@ class RenderNodeCodableTests: XCTestCase {
     var testVariantOverride = VariantOverride(
         traits: [.interfaceLanguage("objc")],
         patch: [
-            JSONPatchOperation(
-                operation: .replace,
-                pointer: JSONPointer(components: ["foo"]),
-                value: AnyCodable("bar")
-            )
+            .replace(pointer: JSONPointer(pathComponents: ["foo"]), encodableValue: "bar")
         ]
     )
     
@@ -132,7 +128,7 @@ class RenderNodeCodableTests: XCTestCase {
         XCTAssertEqual(variantOverride.patch.count, 1)
         let operation = try XCTUnwrap(variantOverride.patch.first)
         XCTAssertEqual(operation.operation, testVariantOverride.patch[0].operation)
-        XCTAssertEqual(operation.pointer.components, testVariantOverride.patch[0].pointer.components)
+        XCTAssertEqual(operation.pointer.pathComponents, testVariantOverride.patch[0].pointer.pathComponents)
     }
     
     private func encodeAndDecode<Value: Codable>(_ value: Value, encoder: JSONEncoder = .init()) throws -> Value {
