@@ -13,6 +13,12 @@ import Foundation
 /// Defines the overrides for variants of documentation content.
 ///
 /// This class can be used to accumulate override information while encoding a tree of objects.
+///
+/// ## Topics
+///
+/// ### Applying Patches
+///
+/// - ``RenderNodeVariantOverridesApplier``
 public class VariantOverrides: Codable {
     /// The values of the variants, organized by trait.
     public var values = [VariantOverride]()

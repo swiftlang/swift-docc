@@ -65,6 +65,7 @@ Hereto a rendering node contains data not only about a single specific topic (a 
 - ``VariantCollection``
 - ``VariantContainer``
 - ``VariantPatchOperation``
+- ``JSONPatch``
 - ``JSONPatchOperation``
 - ``JSONPointer``
 

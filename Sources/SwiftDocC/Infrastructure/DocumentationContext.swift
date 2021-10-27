@@ -1419,7 +1419,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg"]
+    private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
 
     // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).

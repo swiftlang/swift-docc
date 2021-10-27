@@ -66,7 +66,7 @@ public struct VariantCollection<Value: Codable>: Codable {
 
 public extension VariantCollection {
     /// A variant for a render node value.
-    struct Variant<Value: Codable>: Codable {
+    struct Variant<Value: Codable> {
         /// The traits associated with the override.
         public var traits: [RenderNode.Variant.Trait]
         

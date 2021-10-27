@@ -16,9 +16,8 @@ class VariantOverridesTests: XCTestCase {
     var overrideA = VariantOverride(
         traits: [.interfaceLanguage("language A")],
         patch: [
-            JSONPatchOperation(
-                operation: .replace,
-                pointer: JSONPointer(components: ["a"]),
+            .replace(
+                pointer: JSONPointer(pathComponents: ["a"]),
                 value: AnyCodable("value1")
             )
         ]
@@ -42,9 +41,8 @@ class VariantOverridesTests: XCTestCase {
             VariantOverride(
                 traits: [.interfaceLanguage("language A")],
                 patch: [
-                    JSONPatchOperation(
-                        operation: .replace,
-                        pointer: JSONPointer(components: ["b", "c"]),
+                    .replace(
+                        pointer: JSONPointer(pathComponents: ["b", "c"]),
                         value: AnyCodable("value2")
                     )
                 ]
@@ -72,8 +70,14 @@ class VariantOverridesTests: XCTestCase {
                 continue
             }
             
-            XCTAssertEqual(patchOperation.pointer.components, expectedPointerComponents)
-            XCTAssertEqual(patchOperation.value.value as! String, expectedValue)
+            XCTAssertEqual(patchOperation.pointer.pathComponents, expectedPointerComponents)
+            
+            guard case .replace(_, let value) = patchOperation else {
+                XCTFail("Unexpected patch operation")
+                return
+            }
+            
+            XCTAssertEqual(value.value as! String, expectedValue)
         }
     }
     
@@ -137,12 +141,12 @@ class VariantOverridesTests: XCTestCase {
         
         XCTAssertEqual(patchOperation.operation, .replace)
         
-        guard case .string(let stringValue) = patchOperation.value.value as? JSON else {
+        guard case .replace(_, let value) = patchOperation, case .string(let stringValue) = value.value as? JSON else {
             XCTFail()
             return
         }
         
         XCTAssertEqual(stringValue, "value")
-        XCTAssertEqual(patchOperation.pointer.components, ["a", "b"])
+        XCTAssertEqual(patchOperation.pointer.pathComponents, ["a", "b"])
     }
 }

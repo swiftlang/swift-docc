@@ -133,8 +133,12 @@ class RenderMetadataTests: XCTestCase {
         XCTAssertEqual(variantOverride.patch.count, 1)
         let operation = try XCTUnwrap(variantOverride.patch.first)
         XCTAssertEqual(operation.operation, .replace)
-        XCTAssertEqual(operation.pointer.components, ["title"])
-        XCTAssertEqual(operation.value.value as! String, "Objective-C title")
+        XCTAssertEqual(operation.pointer.pathComponents, ["title"])
+        guard case .replace(_, let value) = operation else {
+            XCTFail("Unexpected patch operation")
+            return
+        }
+        XCTAssertEqual(value.value as! String, "Objective-C title")
     }
     
     func testSetsTitleDuringDecoding() throws {
