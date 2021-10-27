@@ -14,8 +14,17 @@ Swift-DocC is being actively developed. For more information about the
 Swift-DocC project, see the introductory blog post
 [here](https://swift.org/blog/swift-docc/).
 
+The latest documentation for the Swift-DocC project is available
+on [Swift.org](https://swift.org/documentation/docc).
+
 The [Swift Forums](https://forums.swift.org/c/development/swift-docc) are
 the best place to get help with Swift-DocC and discuss future plans.
+
+## Writing and Publishing Documentation with Swift-DocC
+
+If you're looking to write and publish documentation with Swift-DocC, 
+the best way to get started is with Swift-DocC's
+[user documentation](https://www.swift.org/documentation/docc).
 
 ## Technical Overview and Related Projects
 

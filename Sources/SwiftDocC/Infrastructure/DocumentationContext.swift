@@ -2345,6 +2345,22 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         return nil
     }
+    
+    /// Finds the identifier for a given asset name.
+    /// 
+    /// `name` is one of the following formats:
+    /// - "image" - asset name without extension
+    /// - "image.png" - asset name including extension
+    ///
+    /// - Parameters:
+    ///   - name: The name of the asset.
+    ///   - parent: The topic where the asset is referenced.
+    ///
+    /// - Returns: The best matching storage key if it was found, otherwise `nil`.
+    public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
+        let bundleIdentifier = parent.bundleIdentifier
+        return assetManagers[bundleIdentifier]?.bestKey(forAssetName: name)
+    }
 
     /// Attempt to resolve an unresolved code listing.
     ///
