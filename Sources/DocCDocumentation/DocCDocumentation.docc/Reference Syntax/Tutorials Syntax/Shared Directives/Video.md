@@ -17,7 +17,7 @@ The `Video` directive displays a video in your tutorial. Provide the name of a v
 
 Videos and poster images can exist anywhere in your code base, but it's good practice to centralize them in a resources folder. You create a resources` folder in your documentation catalog.
 
-Within your code base, media file names must be unique. Videos must be in *.mov* or *.mp4* format. Poster images must be in *.png*, *.jpg*, or *.jpeg* format.
+Within your code base, media file names must be unique. Videos must be in *.mov* or *.mp4* format. Poster images must be in *.png*, *.jpg*, *.jpeg*, *.svg*, or *.gif* format.
 
 - Tip: To differentiate tutorial media files from reference documentation media files, you may wish to prefix media file names with tutorial\.
 

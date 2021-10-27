@@ -14,7 +14,7 @@ The `Image` directive displays an image in your tutorial. Provide the name of an
 @Image(source: "overview-hero.png", alt: "An illustration of a sleeping sloth, hanging from a tree branch.”)
 ````
 
-Images can exist anywhere in your code base, but it's good practice to centralize them in a resources folder. You create this folder in your documentation catalog. Within your code base, image names must be unique. Images must be in *.png*, *.jpg*, or *.jpeg* format.
+Images can exist anywhere in your code base, but it's good practice to centralize them in a resources folder. You create this folder in your documentation catalog. Within your code base, image names must be unique. Images must be in *.png*, *.jpg*, *.jpeg*, *.svg*, or *.gif* format.
 
 - Tip: To differentiate tutorial images from reference documentation images, you may wish to prefix image file names with tutorial\.
 
