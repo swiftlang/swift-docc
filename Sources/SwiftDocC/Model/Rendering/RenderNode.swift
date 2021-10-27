@@ -40,6 +40,8 @@ import Foundation
 ///
 /// The overrides are emitted in the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.
 ///
+/// To apply variants onto a render node using `SwiftDocC`, use the ``RenderNodeVariantOverridesApplier`` API.
+///
 /// ## Topics
 ///
 /// ### General

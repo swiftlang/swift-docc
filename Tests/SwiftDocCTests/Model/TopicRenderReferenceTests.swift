@@ -74,7 +74,7 @@ class TopicRenderReferenceTests: XCTestCase {
         XCTAssertEqual(variantOverride.patch.count, 1)
         let operation = try XCTUnwrap(variantOverride.patch.first)
         XCTAssertEqual(operation.operation, .replace)
-        XCTAssertEqual(operation.pointer.components, ["title"])
+        XCTAssertEqual(operation.pointer.pathComponents, ["title"])
     }
         
     func testSetsTitleDuringDecoding() throws {
