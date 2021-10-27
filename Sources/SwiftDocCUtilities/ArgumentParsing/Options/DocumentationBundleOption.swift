@@ -12,7 +12,9 @@ import ArgumentParser
 import Foundation
 
 /// Resolves and validates a URL value that provides the path to a documentation bundle.
-public struct DocumentationBundleOption: ParsableArguments {
+///
+/// This option is used by the ``Docc/Convert`` subcommand.
+public struct DocumentationBundleOption: DirectoryPathOption {
 
     public init() {}
 
@@ -27,19 +29,4 @@ public struct DocumentationBundleOption: ParsableArguments {
             valueName: argumentValueName),
         transform: URL.init(fileURLWithPath:))
     public var url: URL?
-    
-    public var urlOrFallback: URL {
-        return url ?? URL(fileURLWithPath: ".")
-    }
-    
-    public mutating func validate() throws {
-        guard let url = url else {
-            return
-        }
-        
-        // Validate that the URL represents a directory
-        guard url.hasDirectoryPath == true else {
-            throw ValidationError("No documentation directory exist at '\(url.path)'.")
-        }
-    }
 }
