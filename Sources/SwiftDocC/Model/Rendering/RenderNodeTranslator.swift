@@ -622,7 +622,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Place "top" rendering preference automatic task groups
-        // after any user-defined task gruops but before automatic curation.
+        // after any user-defined task groups but before automatic curation.
         if !article.automaticTaskGroups.isEmpty {
             node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(article.automaticTaskGroups.filter({ $0.renderPositionPreference == .top }), contentCompiler: &contentCompiler))
         }
@@ -653,7 +653,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Place "bottom" rendering preference automatic task groups
-        // after any user-defined task gruops but before automatic curation.
+        // after any user-defined task groups but before automatic curation.
         if !article.automaticTaskGroups.isEmpty {
             node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(article.automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }), contentCompiler: &contentCompiler))
         }
