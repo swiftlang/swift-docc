@@ -43,17 +43,28 @@ A discussion
         XCTAssertEqual(diagnosticRange.upperBound.column, 13)
 
         let solutions = problem.possibleSolutions
-        XCTAssertEqual(solutions.count, 1)
-        let solution = try XCTUnwrap(solutions.first)
+        XCTAssertEqual(solutions.count, 2)
         
-        let replacements = solution.replacements
-        XCTAssertEqual(replacements.count, 1)
-        let replacement = try XCTUnwrap(replacements.first)
-        XCTAssertEqual(replacement.replacement, "## See Also")
-        let replacementRange = replacement.range
-        XCTAssertEqual(replacementRange.lowerBound.line, 10)
-        XCTAssertEqual(replacementRange.lowerBound.column, 1)
-        XCTAssertEqual(replacementRange.upperBound.line, 10)
-        XCTAssertEqual(replacementRange.upperBound.column, 13)
+        let levelSolution = solutions[0]
+        let levelReplacements = levelSolution.replacements
+        XCTAssertEqual(levelReplacements.count, 1)
+        let levelReplacement = try XCTUnwrap(levelReplacements.first)
+        XCTAssertEqual(levelReplacement.replacement, "## See Also")
+        let levelReplacementRange = levelReplacement.range
+        XCTAssertEqual(levelReplacementRange.lowerBound.line, 10)
+        XCTAssertEqual(levelReplacementRange.lowerBound.column, 1)
+        XCTAssertEqual(levelReplacementRange.upperBound.line, 10)
+        XCTAssertEqual(levelReplacementRange.upperBound.column, 13)
+        
+        let nameSolution = solutions[1]
+        let nameReplacements = nameSolution.replacements
+        XCTAssertEqual(nameReplacements.count, 1)
+        let nameReplacement = try XCTUnwrap(nameReplacements.first)
+        XCTAssertEqual(nameReplacement.replacement, "### <#name#>")
+        let nameReplacementRange = nameReplacement.range
+        XCTAssertEqual(nameReplacementRange.lowerBound.line, 10)
+        XCTAssertEqual(nameReplacementRange.lowerBound.column, 1)
+        XCTAssertEqual(nameReplacementRange.upperBound.line, 10)
+        XCTAssertEqual(nameReplacementRange.upperBound.column, 13)
     }
 }
