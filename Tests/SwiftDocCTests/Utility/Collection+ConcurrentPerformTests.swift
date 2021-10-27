@@ -58,7 +58,7 @@ class CollectionConcurrentPerformTests: XCTestCase {
         
         // Verify that each next block has started after the previous block has finished.
         for (result, next) in zip(results, results.dropFirst()) {
-            XCTAssertTrue(next.start > result.end,
+            XCTAssertTrue(next.start >= result.end,
                           "Blocks didn't run serially; \(result.end) not before \(next.start)")
         }
     }
