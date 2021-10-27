@@ -2875,4 +2875,51 @@ Document @1:1-11:19
         
         XCTAssertEqual(inheritedSymbolReference.absoluteString, groupReference.absoluteString)
     }
+    
+    func testVisitTutorialMediaWithoutExtension() throws {
+        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            try """
+            @Tutorials(name: "Technology X") {
+               @Intro(title: "Technology X") {
+                  You'll learn all about Technology X.
+                  @Video(source: introvideo, poster: introvideo )
+               }
+               @Chapter(name: "Chapter 1") {
+                  @Image(source: intro.png, alt: intro )
+                  @TutorialReference(tutorial: "doc:TestTutorial" )
+               }
+               @Chapter(name: "Chapter 2") {
+                  @Image(source: introposter, alt: introposter )
+                  @TutorialReference(tutorial: "doc:TestTutorial" )
+               }
+               @Chapter(name: "Chapter 3") {
+                  @Image(source: introposter.png, alt: introposter )
+                  @TutorialReference(tutorial: "doc:TestTutorial" )
+               }
+            }
+            """.write(to: url.appendingPathComponent("TestOverview.tutorial"), atomically: true, encoding: .utf8)
+        }
+        defer { try? FileManager.default.removeItem(at: url) }
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift))
+        guard let technologyDirective = node.markup as? BlockDirective else {
+            XCTFail("Unexpected document structure, tutorial not found as first child.")
+            return
+        }
+        var problems = [Problem]()
+        guard let technology = Technology(from: technologyDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+            XCTFail("Couldn't create technology from markup: \(problems)")
+            return
+        }
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = try XCTUnwrap(translator.visit(technology) as? RenderNode)
+        XCTAssertEqual(renderNode.references.count, 5)
+        XCTAssertNotNil(renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial"] as? TopicRenderReference)
+        XCTAssertNotNil(renderNode.references["doc://org.swift.docc.example/tutorials/TestOverview"] as? TopicRenderReference)
+        XCTAssertNotNil(renderNode.references["introvideo.mp4"] as? VideoReference)
+        XCTAssertNotNil(renderNode.references["intro.png"] as? ImageReference)
+        XCTAssertNotNil(renderNode.references["introposter.png"] as? ImageReference)
+        XCTAssertNil(renderNode.references["introvideo"] as? VideoReference)
+        XCTAssertNil(renderNode.references["intro"] as? ImageReference)
+        XCTAssertNil(renderNode.references["introposter"] as? ImageReference)
+    }
 }
