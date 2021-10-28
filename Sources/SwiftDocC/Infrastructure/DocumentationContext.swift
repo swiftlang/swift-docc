@@ -364,7 +364,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             DuplicateTopicsSections(sourceFile: source).any(),
             InvalidAdditionalTitle(sourceFile: source).any(),
             MissingAbstract(sourceFile: source).any(),
-            NonOverviewHeadingChecker(sourceFile: source).any()
+            NonOverviewHeadingChecker(sourceFile: source).any(),
+            SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
         ])
         checker.visit(document)
         diagnosticEngine.emit(checker.problems)
