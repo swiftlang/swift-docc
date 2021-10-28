@@ -132,6 +132,8 @@ public class FileServer {
             "png": "image/png",
             "jpeg": "image/jpeg",
             "jpg": "image/jpeg",
+            "svg": "image/svg+xml",
+            "gif": "image/gif",
             "js": "application/javascript",
             "json": "application/json"]
         

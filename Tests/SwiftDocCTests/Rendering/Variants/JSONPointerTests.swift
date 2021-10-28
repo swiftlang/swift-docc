@@ -23,10 +23,21 @@ class JSONPointerTests: XCTestCase {
     }
     
     func testEncodesRawComponentsWithoutEscaping() throws {
-        let pointer = JSONPointer(components: ["a~0", "foo~1bar"])
+        let pointer = JSONPointer(pathComponents: ["a~0", "foo~1bar"])
         let encodedPointer = try JSONDecoder().decode(String.self, from: JSONEncoder().encode(pointer))
 
         XCTAssertEqual(encodedPointer, "/a~0/foo~1bar")
+    }
+    
+    func testDescription() throws {
+        XCTAssertEqual(JSONPointer(pathComponents: ["a", "b"]).description, "/a/b")
+    }
+    
+    func testRemovingFirstPathComponent() throws {
+        XCTAssertEqual(
+            JSONPointer(pathComponents: ["a", "b"]).removingFirstPathComponent().pathComponents,
+            ["b"]
+        )
     }
     
     /// Returns a coding path for testing.

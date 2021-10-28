@@ -73,12 +73,12 @@ class FileRequestHandlerTests: XCTestCase {
         // default font type
         try verifyAsset(root: tempDir.url, path: "/fonts/test.ttf", body: "ttf", type: "application/octet-stream")
         try verifyAsset(root: tempDir.url, path: "/images/image.png", body: "png", type: "image/png")
-        try verifyAsset(root: tempDir.url, path: "/images/image.gif", body: "gif", type: "application/octet-stream")
+        try verifyAsset(root: tempDir.url, path: "/images/image.gif", body: "gif", type: "image/gif")
         // default image type
         try verifyAsset(root: tempDir.url, path: "/images/image.jpg", body: "jpg", type: "image/jpeg")
         try verifyAsset(root: tempDir.url, path: "/images/logo.svg", body: "svg", type: "image/svg+xml")
         try verifyAsset(root: tempDir.url, path: "/img/image.png", body: "png", type: "image/png")
-        try verifyAsset(root: tempDir.url, path: "/img/image.gif", body: "gif", type: "application/octet-stream")
+        try verifyAsset(root: tempDir.url, path: "/img/image.gif", body: "gif", type: "image/gif")
         // default image type
         try verifyAsset(root: tempDir.url, path: "/img/image.jpg", body: "jpg", type: "image/jpeg")
         try verifyAsset(root: tempDir.url, path: "/videos/video.mov", body: "mov", type: "video/quicktime")

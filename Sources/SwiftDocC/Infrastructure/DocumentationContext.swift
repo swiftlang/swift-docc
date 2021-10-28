@@ -364,7 +364,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             DuplicateTopicsSections(sourceFile: source).any(),
             InvalidAdditionalTitle(sourceFile: source).any(),
             MissingAbstract(sourceFile: source).any(),
-            NonOverviewHeadingChecker(sourceFile: source).any()
+            NonOverviewHeadingChecker(sourceFile: source).any(),
+            SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
         ])
         checker.visit(document)
         diagnosticEngine.emit(checker.problems)
@@ -1418,7 +1419,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg"]
+    private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
 
     // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
@@ -2344,6 +2345,22 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         return nil
+    }
+    
+    /// Finds the identifier for a given asset name.
+    /// 
+    /// `name` is one of the following formats:
+    /// - "image" - asset name without extension
+    /// - "image.png" - asset name including extension
+    ///
+    /// - Parameters:
+    ///   - name: The name of the asset.
+    ///   - parent: The topic where the asset is referenced.
+    ///
+    /// - Returns: The best matching storage key if it was found, otherwise `nil`.
+    public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
+        let bundleIdentifier = parent.bundleIdentifier
+        return assetManagers[bundleIdentifier]?.bestKey(forAssetName: name)
     }
 
     /// Attempt to resolve an unresolved code listing.

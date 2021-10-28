@@ -58,8 +58,8 @@ public struct NonOverviewHeadingChecker: Checker {
     }
 
     public mutating func visitHeading(_ heading: Heading) {
-        // We don't want to flag the Topics H2.
-        guard heading.level == 2, heading.title != "Topics" else {
+        // We don't want to flag the Topics H2 and the See Also H2.
+        guard heading.level == 2, !["Topics", "See Also"].contains(heading.plainText) else {
             return
         }
 

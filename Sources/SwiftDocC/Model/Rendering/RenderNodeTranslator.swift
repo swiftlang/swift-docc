@@ -622,7 +622,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Place "top" rendering preference automatic task groups
-        // after any user-defined task gruops but before automatic curation.
+        // after any user-defined task groups but before automatic curation.
         if !article.automaticTaskGroups.isEmpty {
             node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(article.automaticTaskGroups.filter({ $0.renderPositionPreference == .top }), contentCompiler: &contentCompiler))
         }
@@ -653,7 +653,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Place "bottom" rendering preference automatic task groups
-        // after any user-defined task gruops but before automatic curation.
+        // after any user-defined task groups but before automatic curation.
         if !article.automaticTaskGroups.isEmpty {
             node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(article.automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }), contentCompiler: &contentCompiler))
         }
@@ -1221,8 +1221,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Creates a render reference for the given media and registers the reference to include it in the `references` dictionary.
     mutating func createAndRegisterRenderReference(forMedia media: ResourceReference?, poster: ResourceReference? = nil, altText: String? = nil, assetContext: DataAsset.Context = .display) -> RenderReferenceIdentifier {
         var mediaReference = RenderReferenceIdentifier("")
-        guard let media = media else { return mediaReference }
+        guard let oldMedia = media,
+              let path = context.identifier(forAssetName: oldMedia.path, in: identifier) else { return mediaReference }
         
+        let media = ResourceReference(bundleIdentifier: oldMedia.bundleIdentifier, path: path)
         let fileExtension = NSString(string: media.path).pathExtension
         
         func resolveAsset() -> DataAsset? {
