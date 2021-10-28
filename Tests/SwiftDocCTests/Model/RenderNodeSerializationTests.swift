@@ -42,9 +42,9 @@ class RenderNodeSerializationTests: XCTestCase {
                 .paragraph(inlineContent: [
                     .text("Try running the project in the Simulator using the "),
                     .strong(inlineContent: [.text("Project > Run")]),
-                    .text(" menu item, or the following code:")
+                    .text(" menu item, or the following code:"),
                 ]),
-                .codeListing(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil)
+                .codeListing(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil),
             ])
         ]
         
@@ -54,7 +54,7 @@ class RenderNodeSerializationTests: XCTestCase {
             .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: nil, code: .init("helloworld.swift"), runtimePreview: .init("screenshot2.png")),
             .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: .init("screenshot3.png"), code: nil, runtimePreview: nil),
             .aside(style: .note, content: [.paragraph(inlineContent: [.text("Lorem ipsum dolor emit.")])]),
-            .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: .init("screenshot4.png"), code: nil, runtimePreview: nil)
+            .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: .init("screenshot4.png"), code: nil, runtimePreview: nil),
         ]
         
         var contentAndMedia = ContentAndMediaSection(layout: .horizontal, title: "", media: RenderReferenceIdentifier("screenshot1.png"), mediaPosition: .leading)

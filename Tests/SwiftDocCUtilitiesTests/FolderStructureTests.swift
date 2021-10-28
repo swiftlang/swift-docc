@@ -44,9 +44,9 @@ class FolderStructureTests: XCTestCase {
             Folder(name: "B1", content: []),
             Folder(name: "B2", content: [
                 Folder(name: "C", content: [
-                    TextFile(name: "test.txt", utf8Content: "Lorem ipsum")
-                ])
-            ])
+                    TextFile(name: "test.txt", utf8Content: "Lorem ipsum"),
+                ]),
+            ]),
         ])
         let folderURL = try folder.write(inside: tempFolder)
         
@@ -72,7 +72,7 @@ class FolderStructureTests: XCTestCase {
             Folder(name: "B1", content: []),
             Folder(name: "B2", content: [
                 Folder(name: "C1", content: []),
-                Folder(name: "C2", content: [])
+                Folder(name: "C2", content: []),
             ])
         ])
         let folderURL = try completeFolderHierarchy.write(inside: tempFolder)
@@ -81,7 +81,7 @@ class FolderStructureTests: XCTestCase {
         
         let partialFolderHierarchy = Folder(name: "A", content: [
             Folder(name: "B2", content: [
-                Folder(name: "C1", content: [])
+                Folder(name: "C1", content: []),
             ])
         ])
         partialFolderHierarchy.assertExist(at: folderURL)
@@ -91,7 +91,7 @@ class FolderStructureTests: XCTestCase {
         let tempFolder = try createTemporaryDirectory()
         let exampleFolder = Folder(name: "A", content: [
             TextFile(name: "UPPER", utf8Content: ""),
-            TextFile(name: "lower", utf8Content: "")
+            TextFile(name: "lower", utf8Content: ""),
         ])
         let folderURL = try exampleFolder.write(inside: tempFolder)
         

@@ -47,13 +47,13 @@ class CustomFormattingRenderElementsTests: XCTestCase {
         XCTAssertEqual(items, [
             RenderBlockContent.TermListItem(
                 term: .init(inlineContent: [
-                    .text("This is a term")
+                    .text("This is a term"),
                 ]),
                 definition: .init(content: [
                     .paragraph(inlineContent: [
-                        .text("This is a definition")
-                    ])
-                ]))
+                        .text("This is a definition"),
+                    ]),
+                ])),
         ])
     }
 }

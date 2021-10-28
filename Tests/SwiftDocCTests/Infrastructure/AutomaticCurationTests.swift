@@ -79,7 +79,7 @@ class AutomaticCurationTests: XCTestCase {
             "doc://org.swift.docc.example/documentation/SideKit/SideClass/init()",
             "doc://org.swift.docc.example/documentation/SideKit/SideClass/myFunction()",
             "doc://org.swift.docc.example/documentation/SideKit/SideClass/path",
-            "doc://org.swift.docc.example/documentation/SideKit/SideClass/url"
+            "doc://org.swift.docc.example/documentation/SideKit/SideClass/url",
         ]
         
         // Curate one or two of the children at a time and leave the rest for automatic curation.
@@ -159,7 +159,7 @@ class AutomaticCurationTests: XCTestCase {
                 let declarationFragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
                     .init(kind: .keyword, spelling: "class", preciseIdentifier: nil),
                     .init(kind: .text, spelling: " ", preciseIdentifier: nil),
-                    .init(kind: .identifier, spelling: newClassName, preciseIdentifier: nil)
+                    .init(kind: .identifier, spelling: newClassName, preciseIdentifier: nil),
                 ]
                 let declaration = try JSONDecoder().decode(SymbolGraph.Symbol.DeclarationFragments.self, from: JSONEncoder().encode(declarationFragments))
                 duplicateSymbol.mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] = declaration
@@ -253,7 +253,7 @@ class AutomaticCurationTests: XCTestCase {
             // The other symbols in the same topic section appear in this See Also section
             XCTAssertEqual(renderNode.seeAlsoSections.first?.identifiers, [
                 "doc://org.swift.docc.example/documentation/SideKit/SideClassOne",
-                "doc://org.swift.docc.example/documentation/SideKit/SideClassTwo"
+                "doc://org.swift.docc.example/documentation/SideKit/SideClassTwo",
             ])
         }
         
@@ -266,7 +266,7 @@ class AutomaticCurationTests: XCTestCase {
             // The other symbols in the same topic section appear in this See Also section
             XCTAssertEqual(renderNode.seeAlsoSections.first?.identifiers, [
                 "doc://org.swift.docc.example/documentation/SideKit/SideClassThree",
-                "doc://org.swift.docc.example/documentation/SideKit/SideClassFive"
+                "doc://org.swift.docc.example/documentation/SideKit/SideClassFive",
             ])
         }
         

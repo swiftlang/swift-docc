@@ -75,7 +75,7 @@ class RenderNodeTranslator_SwiftTests: XCTestCase {
         .init(text: "convenience", kind: .keyword),
         .init(text: " ", kind: .text),
         .init(text: "init", kind: .keyword),
-        .init(text: "()", kind: .text)
+        .init(text: "()", kind: .text),
     ]
     
     // Tokens for an "init" symbol
@@ -83,7 +83,7 @@ class RenderNodeTranslator_SwiftTests: XCTestCase {
         .init(text: "convenience", kind: .keyword),
         .init(text: " ", kind: .text),
         .init(text: "init", kind: .identifier),
-        .init(text: "()", kind: .text)
+        .init(text: "()", kind: .text),
     ]
 
     /// Test whether we map if we find the wrong "init" token kind but also we don't if it's correct.

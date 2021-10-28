@@ -86,9 +86,9 @@ class ExternalLinkableTests: XCTestCase {
                       }
                    }
                 }
-                """)
+                """),
             ]),
-        InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+        InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
     ])
     
     func testSummaryOfTutorialPage() throws {
@@ -114,7 +114,7 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(pageSummary.taskGroups, [
             .init(title: nil,
                   identifiers: ["doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project"]
-            )
+            ),
         ])
         XCTAssertEqual(pageSummary.availableLanguages, [.swift])
         XCTAssertEqual(pageSummary.platforms, renderNode.metadata.platforms)
@@ -133,14 +133,14 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(sectionSummary.availableLanguages, [.swift])
         XCTAssertEqual(sectionSummary.platforms, nil)
         XCTAssertEqual(sectionSummary.redirects, [
-            URL(string: "old/path/to/this/landmark")!
+            URL(string: "old/path/to/this/landmark")!,
         ])
         XCTAssertNil(sectionSummary.usr, "Only symbols have USRs")
         XCTAssertNil(sectionSummary.declarationFragments, "Only symbols have declaration fragments")
         XCTAssertEqual(sectionSummary.abstract, [
             .text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"),
             .text(" "),
-            .text("ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.")
+            .text("ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium."),
         ])
     }
 
@@ -165,14 +165,14 @@ class ExternalLinkableTests: XCTestCase {
                 "MyClass members (absolute)",
                 "MyClass members (topic relative)",
                 "MyClass members (topic module level)",
-                "MyClass members (topic absolute)"
+                "MyClass members (topic absolute)",
             ])
             for group in summary.taskGroups ?? [] {
                 // All 6 topic sections curate the same 3 symbols using different syntax and different specificity
                 XCTAssertEqual(group.identifiers, [
                     summary.referenceURL.appendingPathComponent("init()-33vaw").absoluteString,
                     summary.referenceURL.appendingPathComponent("init()-3743d").absoluteString,
-                    summary.referenceURL.appendingPathComponent("myFunction()").absoluteString
+                    summary.referenceURL.appendingPathComponent("myFunction()").absoluteString,
                 ])
             }
             XCTAssertEqual(summary.availableLanguages, [.swift])
@@ -181,7 +181,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
-                .init(text: "MyClass", kind: .identifier, identifier: nil)
+                .init(text: "MyClass", kind: .identifier, identifier: nil),
             ])
         }
         
@@ -204,9 +204,9 @@ class ExternalLinkableTests: XCTestCase {
                         // MyClass is curated 3 times using different syntax.
                         summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
                         summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
-                        summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString
+                        summary.referenceURL.deletingLastPathComponent().appendingPathComponent("MyClass").absoluteString,
                     ]
-                )
+                ),
             ])
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
@@ -266,7 +266,7 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: ": ", kind: .text, identifier: nil, preciseIdentifier: nil),
                 .init(text: "Int", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "s:Si"),
                 .init(text: ")", kind: .text, identifier: nil, preciseIdentifier: nil),
-                .init(text: "\n", kind: .text, identifier: nil, preciseIdentifier: nil)
+                .init(text: "\n", kind: .text, identifier: nil, preciseIdentifier: nil),
             ])
         }
     }

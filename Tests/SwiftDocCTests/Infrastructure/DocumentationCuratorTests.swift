@@ -72,7 +72,7 @@ class DocumentationCuratorTests: XCTestCase {
                 ("doc://org.swift.docc.example/documentation/MyKit/MyProtocol", "doc://org.swift.docc.example/documentation/MyKit/MyClass"),
                 ("doc://org.swift.docc.example/documentation/Test-Bundle/article", "doc://org.swift.docc.example/documentation/Test-Bundle/article2"),
                 ("doc://org.swift.docc.example/documentation/Test-Bundle/article", "doc://org.swift.docc.example/documentation/Test-Bundle/article3"),
-                ("doc://org.swift.docc.example/documentation/Test-Bundle/article", "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial")
+                ("doc://org.swift.docc.example/documentation/Test-Bundle/article", "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial"),
             ].map { ParentChild($0.0, $0.1) }
         )
     }
@@ -377,7 +377,7 @@ class DocumentationCuratorTests: XCTestCase {
         // and the automatic curation under `TopClass` is not present.
         let nameReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/name", sourceLanguage: .swift)
         XCTAssertEqual(context.pathsTo(nameReference).map({ $0.map(\.path) }), [
-            ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"]
+            ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
 
         // Verify that the BOTH manual curations for `TopClass/age` are preserved
@@ -385,7 +385,7 @@ class DocumentationCuratorTests: XCTestCase {
         let ageReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/TopClass/age", sourceLanguage: .swift)
         XCTAssertEqual(context.pathsTo(ageReference).map({ $0.map(\.path) }), [
             ["/documentation/TestBed", "/documentation/TestBed/TopClass"],
-            ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"]
+            ["/documentation/TestBed", "/documentation/TestBed/TopClass", "/documentation/TestBed/TopClass/NestedEnum", "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting", "/documentation/TestBed/MyArticle"],
         ])
     }
     
@@ -404,7 +404,7 @@ class DocumentationCuratorTests: XCTestCase {
                 "/documentation/TestBed/TopClass/NestedEnum/SecondLevelNesting",
                 "/documentation/TestBed/MyArticle",
                 "/documentation/TestBed/NestedArticle",
-                "/documentation/TestBed/DoublyManuallyCuratedClass"
+                "/documentation/TestBed/DoublyManuallyCuratedClass",
             ],
             [
                 "/documentation/TestBed",
@@ -414,8 +414,8 @@ class DocumentationCuratorTests: XCTestCase {
                 "/documentation/TestBed/MyArticle",
                 "/documentation/TestBed/NestedArticle",
                 "/documentation/TestBed/SecondArticle",
-                "/documentation/TestBed/DoublyManuallyCuratedClass"
-            ]
+                "/documentation/TestBed/DoublyManuallyCuratedClass",
+            ],
         ])
     }
 }

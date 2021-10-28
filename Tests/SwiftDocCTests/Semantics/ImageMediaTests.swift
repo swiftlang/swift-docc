@@ -85,7 +85,7 @@ class ImageMediaTests: XCTestCase {
         
         let expectedIds = [
             "org.swift.docc.HasArgument.alt",
-            "org.swift.docc.HasArgument.source"
+            "org.swift.docc.HasArgument.source",
         ]
         
         let problemIds = problems.map(\.diagnostic.identifier)

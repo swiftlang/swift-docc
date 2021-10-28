@@ -42,7 +42,13 @@ class DataAssetManagerTests: XCTestCase {
     
     func testWithDarkVariants() throws {
         var manager = DataAssetManager()
-        let images = ["Documentation/woof.png", "Documentation/woof~dark.png", "bark.jpg", "bark~dark.jpg", "wuphf.jpeg", "wuphf~dark.jpeg"].compactMap(URL.init(string:))
+        let images = ["Documentation/woof.png",
+                      "Documentation/woof~dark.png",
+                      "bark.jpg",
+                      "bark~dark.jpg",
+                      "wuphf.jpeg",
+                      "wuphf~dark.jpeg",
+        ].compactMap(URL.init(string:))
         try manager.register(data: images)
         
         XCTAssertEqual(manager.storage.values.count, 3)
@@ -61,7 +67,16 @@ class DataAssetManagerTests: XCTestCase {
     
     func testImageDisplayScale() throws {
         var manager = DataAssetManager()
-        let images = ["woof.png", "woof~dark.png", "woof~dark@2x.png", "woof~dark@3x.png", "woof@2x.png", "woof@3x.png", "bark.jpg", "bark~dark.jpg", "bark~dark@2x.jpg"].compactMap(URL.init(string:))
+        let images = ["woof.png",
+                      "woof~dark.png",
+                      "woof~dark@2x.png",
+                      "woof~dark@3x.png",
+                      "woof@2x.png",
+                      "woof@3x.png",
+                      "bark.jpg",
+                      "bark~dark.jpg",
+                      "bark~dark@2x.jpg",
+        ].compactMap(URL.init(string:))
         try manager.register(data: images)
         
         XCTAssertEqual(manager.storage.values.count, 2)
@@ -166,7 +181,9 @@ class DataAssetManagerTests: XCTestCase {
     
     func testLoadsImagesWithIdenticalNameSuffixes() throws {
         var manager = DataAssetManager()
-        let images = ["image.png", "assets/different_image.png"].compactMap(URL.init(string:))
+        let images = ["image.png",
+                      "assets/different_image.png",
+        ].compactMap(URL.init(string:))
         try manager.register(data: images)
         
         XCTAssertEqual(manager.allData(named: "image")?.variants.first?.value.path, "image.png")
@@ -179,7 +196,9 @@ class DataAssetManagerTests: XCTestCase {
     
     func testFuzzyLookup() throws {
         var manager = DataAssetManager()
-        let images = ["image.png", "woof~dark.JPG"].compactMap(URL.init(string:))
+        let images = ["image.png",
+                      "woof~dark.JPG",
+        ].compactMap(URL.init(string:))
         try manager.register(data: images)
 
         // The fuzzy lookup will match "name" to "name.png"
@@ -196,12 +215,17 @@ class DataAssetManagerTests: XCTestCase {
         var manager = DataAssetManager()
         
         // Test that we build the fuzzy index
-        let images = ["image@2x.png", "assets/woof.JPG"].compactMap(URL.init(string:))
+        let images = ["image@2x.png",
+                      "assets/woof.JPG",
+        ].compactMap(URL.init(string:))
         try manager.register(data: images)
         XCTAssertEqual(manager.fuzzyKeyIndex.keys.sorted().map({"\($0)"}), ["image", "woof"])
 
         // Test we include only unique keys in the fuzzy index
-        let imagesWithDuplicates = ["image@2x.png", "assets/woof.JPG", "woof.png"].compactMap(URL.init(string:))
+        let imagesWithDuplicates = ["image@2x.png",
+                                    "assets/woof.JPG",
+                                    "woof.png",
+        ].compactMap(URL.init(string:))
         try manager.register(data: imagesWithDuplicates)
         XCTAssertEqual(manager.fuzzyKeyIndex.keys.sorted().map({"\($0)"}), ["image", "woof"])
     }

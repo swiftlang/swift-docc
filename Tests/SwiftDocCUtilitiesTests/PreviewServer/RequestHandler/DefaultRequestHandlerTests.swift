@@ -20,7 +20,7 @@ class DefaultRequestHandlerTests: XCTestCase {
     
     func testDefaultHandler() throws {
         let tempDir = try TempFolder(content: [
-            TextFile(name: "index.html", utf8Content: "Hello!")
+            TextFile(name: "index.html", utf8Content: "Hello!"),
         ])
         try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
 

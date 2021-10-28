@@ -515,7 +515,7 @@ class DocumentationContextTests: XCTestCase {
                 }
                 """),
             ]),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
         let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
         try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
@@ -612,7 +612,7 @@ class DocumentationContextTests: XCTestCase {
             
             Folder(name: "TestBundle2.docc", content: [
                 InfoPlist(displayName: "Test Bundle", identifier: "com.example.bundle2"),
-                CopyOfFolder(original: testBundleLocation, newName: "Subfolder", filter: { $0.lastPathComponent != "Info.plist" })
+                CopyOfFolder(original: testBundleLocation, newName: "Subfolder", filter: { $0.lastPathComponent != "Info.plist" }),
             ])
         ])
         
@@ -680,7 +680,7 @@ class DocumentationContextTests: XCTestCase {
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
                 TextFile(name: "Article1.tutorial", utf8Content: "@Article"),
-                TextFile(name: "Article2.md", utf8Content: "notvalid")
+                TextFile(name: "Article2.md", utf8Content: "notvalid"),
             ])
         ])
         
@@ -706,12 +706,12 @@ class DocumentationContextTests: XCTestCase {
                 CopyOfFile(original: Bundle.module.url(
                     forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
                     .appendingPathComponent("documentation")
-                    .appendingPathComponent("myprotocol.md"))
+                    .appendingPathComponent("myprotocol.md")),
             ]),
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: Bundle.module.url(
                     forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-                    .appendingPathComponent("mykit-iOS.symbols.json"))
+                    .appendingPathComponent("mykit-iOS.symbols.json")),
             ])
         ])
         
@@ -952,8 +952,8 @@ class DocumentationContextTests: XCTestCase {
             Folder(name: "Symbols", content: [
                 TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS),
                 TextFile(name: "mykit-macOS.symbols.json", utf8Content: graphContentmacOS),
-                TextFile(name: "mykit-tvOS.symbols.json", utf8Content: graphContenttvOS)
-            ])
+                TextFile(name: "mykit-tvOS.symbols.json", utf8Content: graphContenttvOS),
+            ]),
         ])
         
         let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
@@ -1018,7 +1018,7 @@ class DocumentationContextTests: XCTestCase {
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Symbols", content: [
                 TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS),
-                TextFile(name: "mykit-macOS.symbols.json", utf8Content: newGraphContent)
+                TextFile(name: "mykit-macOS.symbols.json", utf8Content: newGraphContent),
             ])
         ])
         
@@ -1055,7 +1055,7 @@ class DocumentationContextTests: XCTestCase {
                     .appendingPathComponent("mykit-iOS.symbols.json")),
                 CopyOfFile(original: Bundle.module.url(
                     forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-                    .appendingPathComponent("sidekit.symbols.json"))
+                    .appendingPathComponent("sidekit.symbols.json")),
             ])
         ])
         
@@ -1095,7 +1095,7 @@ class DocumentationContextTests: XCTestCase {
             InfoPlist(displayName: "NoOSDeclaration", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: []),
             Folder(name: "Symbols", content: [
-                TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS)
+                TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS),
             ])
         ])
         
@@ -1134,12 +1134,12 @@ class DocumentationContextTests: XCTestCase {
                 CopyOfFile(original: myKitURL, newName: "mykit.md"),
                 CopyOfFile(original: myKitURL, newName: "mykit-duplicate.md"),
                 CopyOfFile(original: myKitURL, newName: "myprotocol.md"),
-                CopyOfFile(original: myKitURL, newName: "myprotocol-duplicateddm")
+                CopyOfFile(original: myKitURL, newName: "myprotocol-duplicateddm"),
             ]),
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: Bundle.module.url(
                     forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-                    .appendingPathComponent("mykit-iOS.symbols.json"))
+                    .appendingPathComponent("mykit-iOS.symbols.json")),
             ])
         ])
         
@@ -1891,7 +1891,7 @@ let expected = """
         for (source, expectedDiagnosticSource) in [
             ("file:///path/to/file.swift", "file:///path/to/file.swift"),
             // Test the scenario where the symbol graph file contains invalid URLs (rdar://77335208).
-            ("file:///path with spaces/to/file.swift", "file:///path%20with%20spaces/to/file.swift")
+            ("file:///path with spaces/to/file.swift", "file:///path%20with%20spaces/to/file.swift"),
         ] {
             // Create an empty bundle
             let targetURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString.appending(".docc"))
@@ -2154,7 +2154,7 @@ let expected = """
             InfoPlist(displayName: "MissingDocs", identifier: "com.test.missing-docs"),
             CopyOfFile(original: Bundle.module.url(
                         forResource: "MissingDocs.symbols", withExtension: "json",
-                        subdirectory: "Test Resources")!)
+                        subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
         let (_, _, context) = try! loadBundle(from: bundleURL)
@@ -2204,7 +2204,7 @@ let expected = """
     
     func testTaskGroupsOverwriteInitialRanges() throws {
         let newTopics = TopicsSection(content: [], originalLinkRangesByGroup: [[
-            SourceLocation(line: 9, column: 41, source: URL(fileURLWithPath: "/howardst/747.md"))..<SourceLocation(line: 9, column: 42, source: URL(fileURLWithPath: "/howardst/747.md"))
+            SourceLocation(line: 9, column: 41, source: URL(fileURLWithPath: "/howardst/747.md"))..<SourceLocation(line: 9, column: 42, source: URL(fileURLWithPath: "/howardst/747.md")),
         ]])
         
         guard let range = try XCTUnwrap(newTopics.originalLinkRangesByGroup.first?.first) else {
@@ -2288,7 +2288,7 @@ let expected = """
 
                 - ``SideClass``
                 - ``SideProtocol``
-                """)
+                """),
         ]).write(inside: tempURL)
 
         let (_, _, context) = try loadBundle(from: bundleURL)
@@ -2309,11 +2309,11 @@ let expected = """
         """
         let exampleDocumentation = Folder(name: "MyKit.docc", content: [
             Folder(name: "Symbols", content: [
-                CopyOfFile(original: Bundle.module.url(forResource: "mykit-one-symbol.symbols", withExtension: "json", subdirectory: "Test Resources")!)
+                CopyOfFile(original: Bundle.module.url(forResource: "mykit-one-symbol.symbols", withExtension: "json", subdirectory: "Test Resources")!),
             ]),
             Folder(name: "MyKit", content: [
                 TextFile(name: "MyFunc.md", utf8Content: fileContent),
-                TextFile(name: "MyFunc2.md", utf8Content: fileContent)
+                TextFile(name: "MyFunc2.md", utf8Content: fileContent),
             ]),
             TextFile(name: "MyKit.md", utf8Content: """
             # ``MyKit``
@@ -2325,7 +2325,7 @@ let expected = """
             ### Articles
             - ``MyKit/MyClass/myFunction()``
             """),
-            InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit")
+            InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
         ])
         let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
         try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
@@ -2438,7 +2438,7 @@ let expected = """
                 This bundle contains a single module, and the articles should be automatically curated.
                 """),
                 articleOne,
-                articleTwo
+                articleTwo,
             ]).write(inside: tempURL)
             let (_, bundle, context) = try loadBundle(from: bundleURL)
             
@@ -2480,7 +2480,7 @@ let expected = """
                     - <doc:Article2>
                     """),
                 articleOne,
-                articleTwo
+                articleTwo,
             ]).write(inside: tempURL)
             let (_, bundle, context) = try loadBundle(from: bundleURL)
             
@@ -2525,7 +2525,7 @@ let expected = """
                 ## Topics
                 ### Group
                 - <doc:Article1>
-                """)
+                """),
         ]).write(inside: tempURL)
         let (_, bundle, context) = try loadBundle(from: bundleURL)
         
@@ -2601,7 +2601,7 @@ let expected = """
         XCTAssertEqual(Set(disabledDestinationProblems.map({ mapRangeAsString($0.diagnostic.range) })), [
             "4:19 - 4:90",
             "7:4 - 7:74",
-            "8:4 - 8:42"
+            "8:4 - 8:42",
         ])
     }
     
@@ -2704,7 +2704,7 @@ let expected = """
                 TextFile(name: "TestRoot.md", utf8Content: testRootPageSource),
                 TextFile(name: "Test.md", utf8Content: testArticleSource),
                 TextFile(name: "TestTechnology.tutorial", utf8Content: testTechnologySource),
-                TextFile(name: "Test.tutorial", utf8Content: testTutorialSource)
+                TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
             let tempFolderURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString.appending(".docc")))
             try testBundle.write(to: tempFolderURL)
@@ -2742,7 +2742,7 @@ let expected = """
                 TextFile(name: "Test.md", utf8Content: testArticleSource),
                 TextFile(name: "TestFramework.symbols.json", utf8Content: testSymbolGraphSource),
                 TextFile(name: "TestTechnology.tutorial", utf8Content: testTechnologySource),
-                TextFile(name: "Test.tutorial", utf8Content: testTutorialSource)
+                TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
             let tempFolderURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString.appending(".docc")))
             try testBundle.write(to: tempFolderURL)
@@ -2803,7 +2803,7 @@ let expected = """
                              """),
                 TextFile(name: "TestFramework.symbols.json", utf8Content: testSymbolGraphSource),
                 TextFile(name: "TestTechnology.tutorial", utf8Content: testTechnologySource),
-                TextFile(name: "Test.tutorial", utf8Content: testTutorialSource)
+                TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
             let tempFolderURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString.appending(".docc")))
             try testBundle.write(to: tempFolderURL)
@@ -2874,7 +2874,7 @@ let expected = """
             let infoPlistURL = try XCTUnwrap(Bundle.module.url(forResource: "Info+Availability", withExtension: "plist", subdirectory: "Test Resources"))
             let testBundle = Folder(name: "test.docc", content: [
                 CopyOfFile(original: infoPlistURL, newName: "Info.plist"),
-                TextFile(name: "TestFramework.symbols.json", utf8Content: symbolGraphFixture)
+                TextFile(name: "TestFramework.symbols.json", utf8Content: symbolGraphFixture),
             ])
             let tempFolderURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString.appending(".docc")))
             try testBundle.write(to: tempFolderURL)

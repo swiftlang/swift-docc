@@ -193,8 +193,8 @@ class SymbolReferenceTests: XCTestCase {
                   "relationships" : [
                   ]
                 }
-                """)
-            ])
+                """),
+            ]),
         ])
         
         let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)

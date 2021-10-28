@@ -46,7 +46,7 @@ Symbol Name                      Kind                             Abstract?     
                 isCurated: false,
                 hasCodeListing: false,
                 availability: nil,
-                kindSpecificData: .class(memberStats: [:]))
+                kindSpecificData: .class(memberStats: [:])),
         ]
 
         let result = CoverageDataEntry.generateSummary(
@@ -91,7 +91,7 @@ MyDocumentedUncuratedClass     | Class                          | true         |
                 isCurated: true,
                 hasCodeListing: false,
                 availability: nil,
-                kindSpecificData: .instanceProperty)
+                kindSpecificData: .instanceProperty),
         ]
 
         let result = CoverageDataEntry.generateSummary(

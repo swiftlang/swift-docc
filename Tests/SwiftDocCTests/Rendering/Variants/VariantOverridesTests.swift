@@ -19,7 +19,7 @@ class VariantOverridesTests: XCTestCase {
             .replace(
                 pointer: JSONPointer(pathComponents: ["a"]),
                 value: AnyCodable("value1")
-            )
+            ),
         ]
     )
     
@@ -44,7 +44,7 @@ class VariantOverridesTests: XCTestCase {
                     .replace(
                         pointer: JSONPointer(pathComponents: ["b", "c"]),
                         value: AnyCodable("value2")
-                    )
+                    ),
                 ]
             )
         )
@@ -99,16 +99,16 @@ class VariantOverridesTests: XCTestCase {
             [
                 [
                     "traits": [
-                        [ "interfaceLanguage" : "language A" ]
+                        [ "interfaceLanguage" : "language A" ],
                     ],
                     "patch": [
                         [
                             "path": "/a",
                             "value": "value1",
-                            "op": "replace"
+                            "op": "replace",
                         ]
-                    ]
-                ]
+                    ],
+                ],
             ]
         )
     }

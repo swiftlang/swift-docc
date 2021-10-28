@@ -73,7 +73,7 @@ some more *stuff*
         XCTAssertEqual(problems.map { $0.diagnostic.localizedSummary },
                        [
                         "This heading doesn't meet or exceed the minimum allowed heading level (2)",
-                        "This heading doesn't meet or exceed the minimum allowed heading level (2)"
+                        "This heading doesn't meet or exceed the minimum allowed heading level (2)",
                        ])
     }
     
@@ -95,7 +95,7 @@ some more *stuff*
                        [
                         "This heading doesn't sequentially follow the previous heading",
                         "This heading doesn't sequentially follow the previous heading",
-                        "This heading doesn't sequentially follow the previous heading"
+                        "This heading doesn't sequentially follow the previous heading",
         				])
     }
 }

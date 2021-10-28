@@ -66,11 +66,11 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             language: .init(name: "Language Name", id: "com.test.language.id"),
             availableLanguages: [
                 .init(name: "Language Name 1", id: "com.test.language.id"),
-                .init(name: "Language Name 2", id: "com.test.language2.id")
+                .init(name: "Language Name 2", id: "com.test.language2.id"),
             ],
             platforms: [
                 .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
-                .init(name: "barOS", introduced: "1.2.3", isBeta: false)
+                .init(name: "barOS", introduced: "1.2.3", isBeta: false),
             ],
             declarationFragments: nil
         )
@@ -202,11 +202,11 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             language: .init(name: "Language Name", id: "com.test.language.id"),
             availableLanguages: [
                 .init(name: "Language Name 1", id: "com.test.language.id"),
-                .init(name: "Language Name 2", id: "com.test.language2.id")
+                .init(name: "Language Name 2", id: "com.test.language2.id"),
             ],
             platforms: [
                 .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
-                .init(name: "barOS", introduced: "1.2.3", isBeta: false)
+                .init(name: "barOS", introduced: "1.2.3", isBeta: false),
             ],
             declarationFragments: nil
         )

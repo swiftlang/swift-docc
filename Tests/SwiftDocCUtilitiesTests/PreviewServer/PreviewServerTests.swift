@@ -28,7 +28,7 @@ class PreviewServerTests {
     func testPreviewServerBeforeStarted() throws {
         // Create test content
         let tempFolder = try TempFolder(content: [
-            TextFile(name: "index.html", utf8Content: "index")
+            TextFile(name: "index.html", utf8Content: "index"),
         ])
         try tempFolder.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
 
@@ -82,28 +82,28 @@ class PreviewServerTests {
             TextFile(name: "favicon.ico", utf8Content: "icon content"),
             TextFile(name: "apple-logo.svg", utf8Content: "svg content"),
             Folder(name: "data", content: [
-                TextFile(name: "test.js", utf8Content: "data content")
+                TextFile(name: "test.js", utf8Content: "data content"),
             ]),
             Folder(name: "css", content: [
-                TextFile(name: "test.css", utf8Content: "css content")
+                TextFile(name: "test.css", utf8Content: "css content"),
             ]),
             Folder(name: "js", content: [
-                TextFile(name: "test.js", utf8Content: "js content")
+                TextFile(name: "test.js", utf8Content: "js content"),
             ]),
             Folder(name: "fonts", content: [
-                TextFile(name: "test.tff", utf8Content: "fonts content")
+                TextFile(name: "test.tff", utf8Content: "fonts content"),
             ]),
             Folder(name: "images", content: [
-                TextFile(name: "test.png", utf8Content: "images content")
+                TextFile(name: "test.png", utf8Content: "images content"),
             ]),
             Folder(name: "img", content: [
-                TextFile(name: "test.gif", utf8Content: "img content")
+                TextFile(name: "test.gif", utf8Content: "img content"),
             ]),
             Folder(name: "videos", content: [
-                TextFile(name: "test.mov", utf8Content: "videos content")
+                TextFile(name: "test.mov", utf8Content: "videos content"),
             ]),
             Folder(name: "downloads", content: [
-                TextFile(name: "test.zip", utf8Content: "downloads content")
+                TextFile(name: "test.zip", utf8Content: "downloads content"),
             ])
         ])
     }

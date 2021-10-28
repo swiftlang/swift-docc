@@ -77,7 +77,7 @@ class IntroTests: XCTestCase {
         
         let expectedIds = [
             "org.swift.docc.UnknownArgument",
-            "org.swift.docc.HasArgument.title"
+            "org.swift.docc.HasArgument.title",
         ]
         
         let problemIds = problems.map(\.diagnostic.identifier)

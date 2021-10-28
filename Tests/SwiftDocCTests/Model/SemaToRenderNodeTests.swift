@@ -477,8 +477,8 @@ class SemaToRenderNodeTests: XCTestCase {
     private func makeListItem(reference: String) -> RenderBlockContent.ListItem {
         return RenderBlockContent.ListItem(content: [
             RenderBlockContent.paragraph(inlineContent: [
-                .reference(identifier: .init(reference), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)
-            ])
+                .reference(identifier: .init(reference), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
+            ]),
         ])
     }
     
@@ -1017,13 +1017,13 @@ class SemaToRenderNodeTests: XCTestCase {
             "Exercise links to symbols: relative ",
             "Exercise unresolved symbols: unresolved ",
             "Exercise known unresolvable symbols: know unresolvable ",
-            "Exercise external references: "
+            "Exercise external references: ",
         ])
         
         XCTAssertEqual(renderNode.abstract, [
             SwiftDocC.RenderInlineContent.text("An abstract of a protocol using a "),
             SwiftDocC.RenderInlineContent.codeVoice(code: "String"),
-            SwiftDocC.RenderInlineContent.text(" id value.")
+            SwiftDocC.RenderInlineContent.text(" id value."),
         ])
         
         XCTAssertTrue(renderNode.defaultImplementationsSections.isEmpty)
@@ -1488,49 +1488,49 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(renderNode.topicSections[0].identifiers.sorted(), [
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-33vaw",
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-3743d",
-            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"
+            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()",
         ])
         
         // Test resolving module rooted links
         XCTAssertEqual(renderNode.topicSections[1].identifiers.sorted(), [
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-33vaw",
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-3743d",
-            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"
+            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()",
         ])
 
         // Test resolving absolute symbol links
         XCTAssertEqual(renderNode.topicSections[2].identifiers.sorted(), [
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-33vaw",
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-3743d",
-            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"
+            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()",
         ])
 
         // Test resolving relative topic links
         XCTAssertEqual(renderNode.topicSections[3].identifiers.sorted(), [
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-33vaw",
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-3743d",
-            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"
+            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()",
         ])
 
         // Test resolving module-level topic links
         XCTAssertEqual(renderNode.topicSections[4].identifiers.sorted(), [
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-33vaw",
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-3743d",
-            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"
+            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()",
         ])
 
         // Test resolving absolute topic links
         XCTAssertEqual(renderNode.topicSections[5].identifiers.sorted(), [
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-33vaw",
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-3743d",
-            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"
+            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()",
         ])
 
         // Additional test to cover relative links in See Also
         XCTAssertEqual(renderNode.seeAlsoSections.first?.identifiers.sorted(), [
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-33vaw",
             "doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-3743d",
-            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"
+            "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()",
         ])
     }
     
@@ -1767,7 +1767,7 @@ Document @1:1-11:19
             RenderNode.Variant(
                 traits: [.interfaceLanguage("objc")],
                 paths: ["/plist/wifiaccess"]
-            )
+            ),
         ])
     }
     
@@ -1972,7 +1972,7 @@ Document @1:1-11:19
             let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: .init(major: 13, minor: 0, patch: 0), obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
+                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: nil, deprecatedVersion: .init(major: 13, minor: 0, patch: 0), obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
             ])
         }
         
@@ -1996,7 +1996,7 @@ Document @1:1-11:19
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
                 SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: nil, deprecatedVersion: .init(major: 10, minor: 15, patch: 0), obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false)
+                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: nil, deprecatedVersion: .init(major: 10, minor: 15, patch: 0), obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
             ])
         }
     
@@ -2020,7 +2020,7 @@ Document @1:1-11:19
             let node = try context.entity(with: reference)
             (node.semantic as? Symbol)?.availability = SymbolGraph.Symbol.Availability(availability: [
                 SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "iOS"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: true, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: .init(major: 11, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false)
+                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: .init(major: 11, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
             ])
         }
 
@@ -2053,7 +2053,7 @@ Document @1:1-11:19
         XCTAssertEqual(fragments, [
             .init(text: "class", kind: .keyword),
             .init(text: " ", kind: .text),
-            .init(text: "MyClass", kind: .identifier)
+            .init(text: "MyClass", kind: .identifier),
         ])
     }
     
@@ -2636,7 +2636,7 @@ Document @1:1-11:19
                 .paragraph(inlineContent: [
                     .text("Doc extension discussion. Missing: "),
                     .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),
-                    .text(".")
+                    .text("."),
                 ])
             ])
         }
@@ -2673,7 +2673,7 @@ Document @1:1-11:19
                 }
                 """,
                 expectedRenderedAbstract: [.text("Inherited from "), .codeVoice(code: "Module.Protocol.inherited()"), .text(".")]
-            )
+            ),
         ]
             
         for testData in testData {
@@ -2746,8 +2746,8 @@ Document @1:1-11:19
                 .paragraph(inlineContent: [
                     .text("Inherited discussion. Missing: "),
                     .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),
-                    .text(".")
-                ])
+                    .text("."),
+                ]),
             ])
         }
     }

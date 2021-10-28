@@ -162,7 +162,7 @@ func aBlackListedFunc() {
             (.hint, true),
             (.information, true),
             (.warning, false),
-            (.error, false)
+            (.error, false),
         ]
         
         // Create a test bundle with some non-inclusive content.

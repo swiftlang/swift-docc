@@ -144,7 +144,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             myFunctionDiscussion.content,
             [
                 RenderBlockContent.heading(level: 2, text: "Discussion", anchor: "discussion"),
-                RenderBlockContent.paragraph(inlineContent: [.text("This is the overview for myFunction.")])
+                RenderBlockContent.paragraph(inlineContent: [.text("This is the overview for myFunction.")]),
             ]
         )
         
@@ -166,7 +166,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             myClassDiscussion.content,
             [
                 RenderBlockContent.heading(level: 2, text: "Overview", anchor: "overview"),
-                RenderBlockContent.paragraph(inlineContent: [.text("This is the overview for MyClass.")])
+                RenderBlockContent.paragraph(inlineContent: [.text("This is the overview for MyClass.")]),
             ]
         )
     }
@@ -331,13 +331,13 @@ class RenderNodeTranslatorTests: XCTestCase {
         let linksGroup = try XCTUnwrap(node.topicSections.first)
         XCTAssertEqual(linksGroup.title, "Links")
         XCTAssertEqual(linksGroup.identifiers, [
-            "doc://org.swift.docc.example/documentation/Test-Bundle/article"
+            "doc://org.swift.docc.example/documentation/Test-Bundle/article",
         ])
         
         let lastGroup = try XCTUnwrap(node.topicSections.last)
         XCTAssertEqual(lastGroup.title, "Last")
         XCTAssertEqual(lastGroup.identifiers, [
-            "doc://org.swift.docc.example/documentation/Test-Bundle/article2"
+            "doc://org.swift.docc.example/documentation/Test-Bundle/article2",
         ])
     }
     
@@ -372,7 +372,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 "Initializers",
                 "Instance Properties",
                 "Instance Methods",
-                "Type Aliases"
+                "Type Aliases",
             ])
         }
 
@@ -388,10 +388,10 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleIdentifier: bundle.identifier,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        )
+                        ),
                     ],
                     renderPositionPreference: .top
-                )
+                ),
             ]
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
 
@@ -406,7 +406,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 "Initializers",
                 "Instance Properties",
                 "Instance Methods",
-                "Type Aliases"
+                "Type Aliases",
             ])
         }
 
@@ -422,7 +422,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleIdentifier: bundle.identifier,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        )
+                        ),
                     ],
                     renderPositionPreference: .top
                 ),
@@ -433,7 +433,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleIdentifier: bundle.identifier,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        )
+                        ),
                     ],
                     renderPositionPreference: .bottom
                 ),
@@ -444,10 +444,10 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleIdentifier: bundle.identifier,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        )
+                        ),
                     ],
                     renderPositionPreference: .bottom
-                )
+                ),
             ]
             let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
 
@@ -464,7 +464,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 "Instance Methods",
                 "Type Aliases",
                 "Default Implementations",
-                "Another Task Group"
+                "Another Task Group",
             ])
         }
     }
@@ -493,7 +493,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify that by default we render manually curated task groups.
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Basics"
+                "Basics",
             ])
         }
 
@@ -508,10 +508,10 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleIdentifier: bundle.identifier,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        )
+                        ),
                     ],
                     renderPositionPreference: .top
-                )
+                ),
             ]
             let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
 
@@ -520,7 +520,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             // 2. Automatic task groups for uncurated symbols
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
                 "Basics",
-                "Articles"
+                "Articles",
             ])
         }
 
@@ -536,7 +536,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleIdentifier: bundle.identifier,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        )
+                        ),
                     ],
                     renderPositionPreference: .top
                 ),
@@ -547,7 +547,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleIdentifier: bundle.identifier,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        )
+                        ),
                     ],
                     renderPositionPreference: .bottom
                 ),
@@ -558,10 +558,10 @@ class RenderNodeTranslatorTests: XCTestCase {
                             bundleIdentifier: bundle.identifier,
                             path: "/documentation/MyKit/MyProtocol",
                             sourceLanguage: .swift
-                        )
+                        ),
                     ],
                     renderPositionPreference: .bottom
-                )
+                ),
             ]
             let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
 
@@ -572,7 +572,7 @@ class RenderNodeTranslatorTests: XCTestCase {
                 "Basics",
                 "Articles",
                 "Default Implementations",
-                "Another Task Group"
+                "Another Task Group",
             ])
         }
     }
@@ -595,10 +595,10 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify that implementing type gets a "Default implementations"
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Default Implementations"
+                "Default Implementations",
             ])
             XCTAssertEqual(renderNode.topicSections.map(\.identifiers), [
-                ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations"]
+                ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations"],
             ])
             
         }
@@ -614,10 +614,10 @@ class RenderNodeTranslatorTests: XCTestCase {
 
             // Verify that implementing type gets a "Default implementations"
             XCTAssertEqual(renderNode.topicSections.map(\.title), [
-                "Instance Methods"
+                "Instance Methods",
             ])
             XCTAssertEqual(renderNode.topicSections.map(\.identifiers), [
-                ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited()"]
+                ["doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited()"],
             ])
             
         }

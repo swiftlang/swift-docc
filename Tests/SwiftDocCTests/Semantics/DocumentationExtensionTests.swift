@@ -129,7 +129,7 @@ class DocumentationExtensionTests: XCTestCase {
         
         let expectedIds = [
             "org.swift.docc.UnknownArgument",
-            "org.swift.docc.HasArgument.mergeBehavior"
+            "org.swift.docc.HasArgument.mergeBehavior",
         ]
         
         let problemIds = problems.map(\.diagnostic.identifier)

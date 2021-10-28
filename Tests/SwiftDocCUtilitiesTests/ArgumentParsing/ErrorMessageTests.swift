@@ -34,7 +34,7 @@ class ErrorMessageTests: XCTestCase {
         do {
             setenv(TemplateOption.environmentVariableKey, rendererDirectory.path, 1)
             let _ = try Docc.Convert.parse([
-                sourceURL.path
+                sourceURL.path,
             ])
         } catch {
             // TODO: This catch isn't thrown. This test should be fixed.

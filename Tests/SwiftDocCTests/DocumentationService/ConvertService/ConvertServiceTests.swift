@@ -258,7 +258,7 @@ class ConvertServiceTests: XCTestCase {
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
-                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"],
             ],
             markupFiles: [myFunctionExtensionData],
             miscResourceURLs: []
@@ -310,7 +310,7 @@ class ConvertServiceTests: XCTestCase {
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
-                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"],
             ],
             markupFiles: [],
             miscResourceURLs: []
@@ -343,7 +343,7 @@ class ConvertServiceTests: XCTestCase {
         }
         
         request.knownDisambiguatedSymbolPathComponents = [
-            "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()-swift.type.method"]
+            "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()-swift.type.method"],
         ]
         
         try processAndAssert(request: request) { message in
@@ -416,7 +416,7 @@ class ConvertServiceTests: XCTestCase {
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
-                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"],
             ],
             markupFiles: [],
             miscResourceURLs: []
@@ -479,7 +479,7 @@ class ConvertServiceTests: XCTestCase {
             knownDisambiguatedSymbolPathComponents: [
                 // Only provide a single path component when this USR should
                 // produce two
-                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class"]
+                "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class"],
             ],
             markupFiles: [],
             miscResourceURLs: []
@@ -620,7 +620,7 @@ class ConvertServiceTests: XCTestCase {
                 "/documentation/SideKit",
                 "/documentation/SideKit/SideProtocol/func()-6ijsi",
                 "/documentation/SideKit/SideClass/myFunction()",
-                "/documentation/SideKit/SideProtocol"
+                "/documentation/SideKit/SideProtocol",
             ],
             includesRenderReferenceStore: false,
             for: request
@@ -644,7 +644,7 @@ class ConvertServiceTests: XCTestCase {
         try processAndAssertResponseContents(
             expectedRenderNodePaths: [
                 "/documentation/Test-Bundle/article",
-                "/documentation/MyKit/MyClass/myFunction()"
+                "/documentation/MyKit/MyClass/myFunction()",
             ],
             includesRenderReferenceStore: false,
             for: request
@@ -882,7 +882,7 @@ class ConvertServiceTests: XCTestCase {
                     [
                         // Articles:
                         "/documentation/TechnologyX",
-                        "/documentation/TechnologyX/article"
+                        "/documentation/TechnologyX/article",
                     ]
                 )
             
@@ -1147,7 +1147,7 @@ class ConvertServiceTests: XCTestCase {
                         isActive: true,
                         overridingTitle: nil,
                         overridingTitleInlineContent: nil
-                    )
+                    ),
                 ]
             )
             

@@ -121,7 +121,7 @@ class DeprecationSummaryTests: XCTestCase {
                 overridingTitleInlineContent: nil
             ),
             SwiftDocC.RenderInlineContent.text(" "),
-            SwiftDocC.RenderInlineContent.text("initializer instead.")
+            SwiftDocC.RenderInlineContent.text("initializer instead."),
         ]
 
         XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, expected)
@@ -153,7 +153,7 @@ class DeprecationSummaryTests: XCTestCase {
         
         // `doUncoolThings(with:)` has a blanket deprecation notice from the class, but no curated article - verify that the deprecation notice from the class still shows up on the rendered page
         let expected: [RenderInlineContent] = [
-            .text("This class is deprecated.")
+            .text("This class is deprecated."),
         ]
         
         XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, expected)
@@ -192,7 +192,7 @@ class DeprecationSummaryTests: XCTestCase {
               overridingTitle: nil,
               overridingTitleInlineContent: nil
           ),
-          .text(" initializer instead.")
+          .text(" initializer instead."),
       ]
       
       XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, expected)

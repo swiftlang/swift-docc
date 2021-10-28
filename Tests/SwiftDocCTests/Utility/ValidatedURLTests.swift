@@ -19,7 +19,7 @@ class ValidatedURLTests: XCTestCase {
             URL(string: "http://www.domain.com")!,
             URL(string: "http://www.domain.com/path")!,
             URL(string: "https://www.domain.com/path")!,
-            URL(string: "ftp://www.domain.com/path/file.ext")!
+            URL(string: "ftp://www.domain.com/path/file.ext")!,
         ]
         
         // Test ValidatedURL.init(String)
@@ -37,7 +37,7 @@ class ValidatedURLTests: XCTestCase {
 
     func testInvalidURLs() {
         let invalidURLs = [
-            URL(string: "http://:domain")!
+            URL(string: "http://:domain")!,
         ]
         
         // Test ValidatedURL.init(String)
@@ -55,7 +55,7 @@ class ValidatedURLTests: XCTestCase {
         let validURLs = [
             URL(string: "http://domain")!,
             URL(string: "https://www.domain.com")!,
-            URL(string: "ftp://www.domain.com/path")!
+            URL(string: "ftp://www.domain.com/path")!,
         ]
         
         // Test successful requiring

@@ -24,7 +24,7 @@ class SymbolGraphAvailabilityFilterTests: XCTestCase {
             .init(domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.tvOS), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
             .init(domain: .init(rawValue: SymbolGraph.Symbol.Availability.Domain.watchOS), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
             // This will always be filtered out
-            .init(domain: .init(rawValue: "unknownDomain"), introducedVersion: .init(major: 5, minor: 5, patch: 5), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false)
+            .init(domain: .init(rawValue: "unknownDomain"), introducedVersion: .init(major: 5, minor: 5, patch: 5), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
         ])
         
         var filtered = unfiltered.filterItems(thatApplyTo: .macOS).availability

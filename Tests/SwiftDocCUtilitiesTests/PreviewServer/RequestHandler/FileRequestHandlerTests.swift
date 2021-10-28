@@ -33,17 +33,17 @@ class FileRequestHandlerTests: XCTestCase {
     func testFileHandlerAssets() throws {
         let tempDir = try TempFolder(content: [
             Folder(name: "data", content: [
-                TextFile(name: "test.json", utf8Content: "data")
+                TextFile(name: "test.json", utf8Content: "data"),
             ]),
             Folder(name: "css", content: [
-                TextFile(name: "test.css", utf8Content: "css")
+                TextFile(name: "test.css", utf8Content: "css"),
             ]),
             Folder(name: "js", content: [
-                TextFile(name: "test.js", utf8Content: "js")
+                TextFile(name: "test.js", utf8Content: "js"),
             ]),
             Folder(name: "fonts", content: [
                 TextFile(name: "test.otf", utf8Content: "font"),
-                TextFile(name: "test.ttf", utf8Content: "ttf")
+                TextFile(name: "test.ttf", utf8Content: "ttf"),
             ]),
             Folder(name: "images", content: [
                 TextFile(name: "image.png", utf8Content: "png"),
@@ -54,14 +54,14 @@ class FileRequestHandlerTests: XCTestCase {
             Folder(name: "img", content: [
                 TextFile(name: "image.png", utf8Content: "png"),
                 TextFile(name: "image.gif", utf8Content: "gif"),
-                TextFile(name: "image.jpg", utf8Content: "jpg")
+                TextFile(name: "image.jpg", utf8Content: "jpg"),
             ]),
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "mov"),
-                TextFile(name: "video.avi", utf8Content: "avi")
+                TextFile(name: "video.avi", utf8Content: "avi"),
             ]),
             Folder(name: "downloads", content: [
-                TextFile(name: "project.zip", utf8Content: "zip")
+                TextFile(name: "project.zip", utf8Content: "zip"),
             ])
         ])
         try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
@@ -100,7 +100,7 @@ class FileRequestHandlerTests: XCTestCase {
     func testFileHandlerWithRange() throws {
         let tempDir = try TempFolder(content: [
             Folder(name: "videos", content: [
-                TextFile(name: "video.mov", utf8Content: "Hello!")
+                TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
         ])
         try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
@@ -120,7 +120,7 @@ class FileRequestHandlerTests: XCTestCase {
     func testFileInUpperDirectory() throws {
         let tempDir = try TempFolder(content: [
             Folder(name: "videos", content: [
-                TextFile(name: "video.mov", utf8Content: "Hello!")
+                TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
         ])
         try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
@@ -136,7 +136,7 @@ class FileRequestHandlerTests: XCTestCase {
     func testMalformedPath() throws {
         let tempDir = try TempFolder(content: [
             Folder(name: "videos", content: [
-                TextFile(name: "video.mov", utf8Content: "Hello!")
+                TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
         ])
         try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))

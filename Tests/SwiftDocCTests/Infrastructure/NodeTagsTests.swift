@@ -18,7 +18,7 @@ class NodeTagsTests: XCTestCase {
         
         let bundleFolder = Folder(name: "unit-tests.docc", content: [
             InfoPlist(displayName: "spi", identifier: "com.tests.spi"),
-            CopyOfFile(original: spiSGURL)
+            CopyOfFile(original: spiSGURL),
         ])
         let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString.appending("unit-tests.docc"))
         try bundleFolder.write(to: tempURL)

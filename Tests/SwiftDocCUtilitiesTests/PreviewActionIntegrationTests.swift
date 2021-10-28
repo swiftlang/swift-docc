@@ -42,7 +42,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             Folder(name: "Resources", content: [
                 CopyOfFile(original: imageURL),
                 CopyOfFile(original: overviewURL),
-                CopyOfFile(original: uncuratedArticleURL)
+                CopyOfFile(original: uncuratedArticleURL),
             ]),
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
         ])

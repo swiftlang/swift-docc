@@ -27,7 +27,7 @@ class DefaultAvailabilityTests: XCTestCase {
     
     let expectedDefaultAvailability = [
         "Mac Catalyst 13.5",
-        "macOS 10.15.1"
+        "macOS 10.15.1",
     ]
     
     // Test whether the default availability is loaded from Info.plist and applied during render time
@@ -93,7 +93,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // Set a beta status for the docs (which would normally be set via command line argument)
         context.externalMetadata.currentPlatforms = [
             "macOS": PlatformVersion(VersionTriplet(10, 15, 1), beta: true),
-            "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true)
+            "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
         ]
         
         // Test if the module availability is also "beta" for the "macOS" platform,
@@ -107,7 +107,7 @@ class DefaultAvailabilityTests: XCTestCase {
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
                 "Mac Catalyst 13.5(beta)",
-                "macOS 10.15.1(beta)"
+                "macOS 10.15.1(beta)",
             ])
         }
     }
@@ -144,25 +144,25 @@ class DefaultAvailabilityTests: XCTestCase {
         // Set a beta status for both iOS and Mac Catalyst
         context.externalMetadata.currentPlatforms = [
             "iOS": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
-            "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true)
+            "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: true),
         ]
         
         try assertRenderedPlatforms(for: identifier, equal: [
             "Mac Catalyst 13.5(beta)",
             "iOS 13.5(beta)",
-            "macOS 10.15.1"
+            "macOS 10.15.1",
         ], bundle: bundle, context: context)
         
         // Set a public status for both iOS and Mac Catalyst
         context.externalMetadata.currentPlatforms = [
             "iOS": PlatformVersion(VersionTriplet(13, 5, 0), beta: false),
-            "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: false)
+            "Mac Catalyst": PlatformVersion(VersionTriplet(13, 5, 0), beta: false),
         ]
         
         try assertRenderedPlatforms(for: identifier, equal: [
             "Mac Catalyst 13.5",
             "iOS 13.5",
-            "macOS 10.15.1"
+            "macOS 10.15.1",
         ], bundle: bundle, context: context)
 
         // Verify that a bug rendering availability as beta when
@@ -171,7 +171,7 @@ class DefaultAvailabilityTests: XCTestCase {
         try assertRenderedPlatforms(for: identifier, equal: [
             "Mac Catalyst 13.5",
             "iOS 13.5",
-            "macOS 10.15.1"
+            "macOS 10.15.1",
         ], bundle: bundle, context: context)
     }
     
@@ -197,7 +197,7 @@ class DefaultAvailabilityTests: XCTestCase {
             
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
                 "Mac Catalyst 13.5",
-                "macOS 10.15.1"
+                "macOS 10.15.1",
             ])
         }
     }
@@ -222,7 +222,7 @@ class DefaultAvailabilityTests: XCTestCase {
                 // The symbol is introduced but then removed
                 SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "tvOS"), introducedVersion: .init(major: 13, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
                 // The symbol is removed
-                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false)
+                SymbolGraph.Symbol.Availability.AvailabilityItem(domain: .init(rawValue: "macOS"), introducedVersion: nil, deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: true, willEventuallyBeDeprecated: false),
             ])
             
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
@@ -230,7 +230,7 @@ class DefaultAvailabilityTests: XCTestCase {
             
             // Verify that the 'watchOS' & 'tvOS' platforms are filtered out because the symbol is unavailable
             XCTAssertEqual(renderNode.metadata.platforms?.map({ "\($0.name ?? "") \($0.introduced ?? "")\($0.isBeta == true ? "(beta)" : "")" }).sorted(), [
-                "iOS 13.0"
+                "iOS 13.0",
             ])
         }
     }
@@ -262,25 +262,25 @@ class DefaultAvailabilityTests: XCTestCase {
             "SwiftUI": [
                 [
                     "name": "macOS",
-                    "version": "10.15"
+                    "version": "10.15",
                 ],
                 [
                     "name": "iOS",
-                    "version": "13.0"
+                    "version": "13.0",
                 ],
                 [
                     "name": "Mac Catalyst",
-                    "version": "13.0"
+                    "version": "13.0",
                 ],
                 [
                     "name": "tvOS",
-                    "version": "13.0"
+                    "version": "13.0",
                 ],
                 [
                     "name": "watchOS",
-                    "version": "6.0"
-                ]
-            ]
+                    "version": "6.0",
+                ],
+            ],
         ]
         
         let plistData = try PropertyListEncoder().encode(plistEntries)
@@ -299,25 +299,25 @@ class DefaultAvailabilityTests: XCTestCase {
             "SwiftUI": [
                 [
                     "name": "macOS",
-                    "version": "10.15"
+                    "version": "10.15",
                 ],
                 [
                     "name": "iOS",
-                    "version": "13.0"
+                    "version": "13.0",
                 ],
                 [
                     "name": "macCatalyst",
-                    "version": "13.0"
+                    "version": "13.0",
                 ],
                 [
                     "name": "tvOS",
-                    "version": "13.0"
+                    "version": "13.0",
                 ],
                 [
                     "name": "watchOS",
-                    "version": "6.0"
-                ]
-            ]
+                    "version": "6.0",
+                ],
+            ],
         ]
         let plistData = try PropertyListEncoder().encode(plistEntries)
         let defaultAvailability = try PropertyListDecoder().decode(
@@ -364,7 +364,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         // even though the doc bundle includes default availability, the blanket deprecation on `doUncoolThings(with:)` should still be visible
         let expected: [RenderInlineContent] = [
-            .text("This class is deprecated.")
+            .text("This class is deprecated."),
         ]
         
         XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, expected)

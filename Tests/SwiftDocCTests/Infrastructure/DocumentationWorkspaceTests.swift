@@ -137,7 +137,7 @@ class DocumentationWorkspaceTests: XCTestCase {
         static var files: [URL: Data] = [
             testMarkupFile: staticDataFromString("markup"),
             testResourceFile: staticDataFromString("image"),
-            testSymbolGraphFile: staticDataFromString("symbols")
+            testSymbolGraphFile: staticDataFromString("symbols"),
         ]
         
         private static func staticDataFromString(_ string: String) -> Data {
