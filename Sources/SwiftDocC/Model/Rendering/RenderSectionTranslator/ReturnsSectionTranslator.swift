@@ -18,7 +18,7 @@ struct ReturnsSectionTranslator: RenderSectionTranslator {
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
         translateSectionToVariantCollection(
-            symbolDataVariants: symbol.returnsSectionVariants
+            documentationDataVariants: symbol.returnsSectionVariants
         ) { _, returns in
             guard !returns.content.isEmpty,
                   let returnsContent = renderNodeTranslator.visitMarkupContainer(

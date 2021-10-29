@@ -243,10 +243,10 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(url.absoluteString, forKey: .url)
         
-        let sourceLanguageIDVariants = SymbolDataVariants<String>(
-            values: Dictionary<SymbolDataVariantsTrait, String>(
+        let sourceLanguageIDVariants = DocumentationDataVariants<String>(
+            values: Dictionary<DocumentationDataVariantsTrait, String>(
                 uniqueKeysWithValues: sourceLanguages.map { language in
-                    (SymbolDataVariantsTrait(interfaceLanguage: language.id), language.id)
+                    (DocumentationDataVariantsTrait(interfaceLanguage: language.id), language.id)
                 }
             )
         )

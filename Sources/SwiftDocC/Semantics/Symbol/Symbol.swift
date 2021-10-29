@@ -14,9 +14,9 @@ import SymbolKit
 
 /// A programming symbol semantic type.
 ///
-/// This class's properties are represented using ``SymbolDataVariants`` values which encode the different variants for each piece of information
+/// This class's properties are represented using ``DocumentationDataVariants`` values which encode the different variants for each piece of information
 /// about the symbol. For example, if a symbol is available in multiple programming languages, the ``titleVariants`` property represents the title of the symbol
-/// for each programming language it's available in. Use a ``SymbolDataVariantsTrait`` to access a specific variant.
+/// for each programming language it's available in. Use a ``DocumentationDataVariantsTrait`` to access a specific variant.
 ///
 /// ## Topics
 ///
@@ -90,65 +90,65 @@ import SymbolKit
 ///
 /// ### Variants
 ///
-/// - ``SymbolDataVariants``
-/// - ``SymbolDataVariantsTrait``
+/// - ``DocumentationDataVariants``
+/// - ``DocumentationDataVariantsTrait``
 public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroupsProviding {
     /// The title of the symbol in each language variant the symbol is available in.
-    internal(set) public var titleVariants: SymbolDataVariants<String>
+    internal(set) public var titleVariants: DocumentationDataVariants<String>
     
     /// The simplified version of the symbol's declaration in each language variant the symbol is available in.
-    internal(set) public var subHeadingVariants: SymbolDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
+    internal(set) public var subHeadingVariants: DocumentationDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
     
     /// The simplified version of this symbol's declaration in each language variant the symbol is available in.
-    internal(set) public var navigatorVariants: SymbolDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
+    internal(set) public var navigatorVariants: DocumentationDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
     
     /// The presentation-friendly version of the symbol's kind in each language variant the symbol is available in.
-    internal(set) public var roleHeadingVariants: SymbolDataVariants<String>
+    internal(set) public var roleHeadingVariants: DocumentationDataVariants<String>
     
     /// The kind of the symbol in each language variant the symbol is available in.
-    internal(set) public var kindVariants: SymbolDataVariants<SymbolGraph.Symbol.Kind>
+    internal(set) public var kindVariants: DocumentationDataVariants<SymbolGraph.Symbol.Kind>
     
     /// The symbol's platform in each language variant the symbol is available in.
-    internal(set) public var platformNameVariants: SymbolDataVariants<PlatformName>
+    internal(set) public var platformNameVariants: DocumentationDataVariants<PlatformName>
     
     /// The presentation-friendly name of the symbol's framework in each language variant the symbol is available in.
-    internal(set) public var moduleNameVariants: SymbolDataVariants<String>
+    internal(set) public var moduleNameVariants: DocumentationDataVariants<String>
     
     /// The name of the module extension in which the symbol is defined, if applicable, in each language variant the symbol is available in.
-    internal(set) public var extendedModuleVariants: SymbolDataVariants<String>
+    internal(set) public var extendedModuleVariants: DocumentationDataVariants<String>
     
     /// Optional cross-import module names of the symbol, in each language variant the symbol is available in.
-    internal(set) public var bystanderModuleNamesVariants: SymbolDataVariants<[String]>
+    internal(set) public var bystanderModuleNamesVariants: DocumentationDataVariants<[String]>
     
     /// Whether the symbol is required in its context, in each language variant the symbol is available in.
-    public var isRequiredVariants: SymbolDataVariants<Bool>
+    public var isRequiredVariants: DocumentationDataVariants<Bool>
     
     /// The symbol's external identifier, if available, in each language variant the symbol is available in.
-    public var externalIDVariants: SymbolDataVariants<String>
+    public var externalIDVariants: DocumentationDataVariants<String>
     
     /// The symbol's access level, if available, in each language variant the symbol is available in.
-    public var accessLevelVariants: SymbolDataVariants<String>
+    public var accessLevelVariants: DocumentationDataVariants<String>
     
     /// The symbol's deprecation information, if deprecated, in each language variant the symbol is available in.
-    public var deprecatedSummaryVariants: SymbolDataVariants<DeprecatedSection>
+    public var deprecatedSummaryVariants: DocumentationDataVariants<DeprecatedSection>
     
     /// The symbol's declarations in each language variant the symbol is available in.
-    public var declarationVariants = SymbolDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]>(
+    public var declarationVariants = DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]>(
         defaultVariantValue: [:]
     )
     
-    public var locationVariants = SymbolDataVariants<SymbolGraph.Symbol.Location>()
+    public var locationVariants = DocumentationDataVariants<SymbolGraph.Symbol.Location>()
     
     /// The symbol's availability or conformance constraints, in each language variant the symbol is available in.
-    public var constraintsVariants = SymbolDataVariants<[SymbolGraph.Symbol.Swift.GenericConstraint]>()
+    public var constraintsVariants = DocumentationDataVariants<[SymbolGraph.Symbol.Swift.GenericConstraint]>()
     
     /// The inheritance information for the symbol in each language variant the symbol is available in.
-    public var originVariants: SymbolDataVariants<SymbolGraph.Relationship.SourceOrigin>
+    public var originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin>
     
     /// The platforms on which the symbol is available in each language variant the symbol is available in.
     ///
     /// - Note: Updating this property recalculates ``isDeprecatedVariants``.
-    public var availabilityVariants: SymbolDataVariants<SymbolGraph.Symbol.Availability> {
+    public var availabilityVariants: DocumentationDataVariants<SymbolGraph.Symbol.Availability> {
         didSet {
             for (trait, variant) in availabilityVariants.allValues {
                 // When appending more platform availabilities to the symbol
@@ -159,80 +159,80 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     }
     
     /// The presentation-friendly relationships of this symbol to other symbols, in each language variant the symbol is available in.
-    public var relationshipsVariants = SymbolDataVariants<RelationshipsSection>(defaultVariantValue: .init())
+    public var relationshipsVariants = DocumentationDataVariants<RelationshipsSection>(defaultVariantValue: .init())
     
     /// An optional, abstract summary for the symbol, in each language variant the symbol is available in.
-    public var abstractSectionVariants: SymbolDataVariants<AbstractSection>
+    public var abstractSectionVariants: DocumentationDataVariants<AbstractSection>
     
     /// An optional discussion for the symbol, in each language variant the symbol is available in.
-    public var discussionVariants: SymbolDataVariants<DiscussionSection>
+    public var discussionVariants: DocumentationDataVariants<DiscussionSection>
     
     /// The topics task groups for the symbol, in each language variant the symbol is available in.
-    public var topicsVariants: SymbolDataVariants<TopicsSection>
+    public var topicsVariants: DocumentationDataVariants<TopicsSection>
     
     /// Any default implementations of the symbol, if the symbol is a protocol requirement, in each language variant the symbol is available in.
-    public var defaultImplementationsVariants = SymbolDataVariants<DefaultImplementationsSection>(defaultVariantValue: .init())
+    public var defaultImplementationsVariants = DocumentationDataVariants<DefaultImplementationsSection>(defaultVariantValue: .init())
     
     /// Any See Also groups of the symbol, in each language variant the symbol is available in.
-    public var seeAlsoVariants: SymbolDataVariants<SeeAlsoSection>
+    public var seeAlsoVariants: DocumentationDataVariants<SeeAlsoSection>
     
     /// Any return value information of the symbol, if the symbol returns, in each language variant the symbol is available in.
-    public var returnsSectionVariants: SymbolDataVariants<ReturnsSection>
+    public var returnsSectionVariants: DocumentationDataVariants<ReturnsSection>
     
     /// Any parameters of the symbol, if the symbol accepts parameters, in each language variant the symbol is available in.
-    public var parametersSectionVariants: SymbolDataVariants<ParametersSection>
+    public var parametersSectionVariants: DocumentationDataVariants<ParametersSection>
     
     /// Any redirect information of the symbol, if the symbol has been moved from another location, in each language variant the symbol is available in.
-    public var redirectsVariants: SymbolDataVariants<[Redirect]>
+    public var redirectsVariants: DocumentationDataVariants<[Redirect]>
     
     /// The symbol's abstract summary as a single paragraph, in each language variant the symbol is available in.
-    public var abstractVariants: SymbolDataVariants<Paragraph> {
-        SymbolDataVariants(
+    public var abstractVariants: DocumentationDataVariants<Paragraph> {
+        DocumentationDataVariants(
             values: Dictionary(uniqueKeysWithValues: abstractSectionVariants.allValues.map { ($0, $1.paragraph) })
         )
     }
     
     /// Whether the symbol is deprecated, in each language variant the symbol is available in.
-    public var isDeprecatedVariants = SymbolDataVariants<Bool>(defaultVariantValue: false)
+    public var isDeprecatedVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
     
     /// Whether the symbol is declared as an SPI, in each language variant the symbol is available in.
-    public var isSPIVariants = SymbolDataVariants<Bool>(defaultVariantValue: false)
+    public var isSPIVariants = DocumentationDataVariants<Bool>(defaultVariantValue: false)
     
     /// The mixins of the symbol, in each language variant the symbol is available in.
-    var mixinsVariants: SymbolDataVariants<[String: Mixin]>
+    var mixinsVariants: DocumentationDataVariants<[String: Mixin]>
     
     /// Any automatically created task groups of the symbol, in each language variant the symbol is available in.
-    var automaticTaskGroupsVariants: SymbolDataVariants<[AutomaticTaskGroupSection]>
+    var automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]>
 
     /// Creates a new symbol with the given data.
     init(
-        kindVariants: SymbolDataVariants<SymbolGraph.Symbol.Kind>,
-        titleVariants: SymbolDataVariants<String>,
-        subHeadingVariants: SymbolDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>,
-        navigatorVariants: SymbolDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>,
-        roleHeadingVariants: SymbolDataVariants<String>,
-        platformNameVariants: SymbolDataVariants<PlatformName>,
-        moduleNameVariants: SymbolDataVariants<String>,
-        extendedModuleVariants: SymbolDataVariants<String> = .init(),
-        requiredVariants: SymbolDataVariants<Bool> = .init(defaultVariantValue: false),
-        externalIDVariants: SymbolDataVariants<String>,
-        accessLevelVariants: SymbolDataVariants<String>,
-        availabilityVariants: SymbolDataVariants<SymbolGraph.Symbol.Availability>,
-        deprecatedSummaryVariants: SymbolDataVariants<DeprecatedSection>,
-        mixinsVariants: SymbolDataVariants<[String: Mixin]>,
-        declarationVariants: SymbolDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]> = .init(defaultVariantValue: [:]),
-        defaultImplementationsVariants: SymbolDataVariants<DefaultImplementationsSection> = .init(defaultVariantValue: .init()),
-        relationshipsVariants: SymbolDataVariants<RelationshipsSection> = .init(),
-        abstractSectionVariants: SymbolDataVariants<AbstractSection>,
-        discussionVariants: SymbolDataVariants<DiscussionSection>,
-        topicsVariants: SymbolDataVariants<TopicsSection>,
-        seeAlsoVariants: SymbolDataVariants<SeeAlsoSection>,
-        returnsSectionVariants: SymbolDataVariants<ReturnsSection>,
-        parametersSectionVariants: SymbolDataVariants<ParametersSection>,
-        redirectsVariants: SymbolDataVariants<[Redirect]>,
-        bystanderModuleNamesVariants: SymbolDataVariants<[String]> = .init(),
-        originVariants: SymbolDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
-        automaticTaskGroupsVariants: SymbolDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: [])
+        kindVariants: DocumentationDataVariants<SymbolGraph.Symbol.Kind>,
+        titleVariants: DocumentationDataVariants<String>,
+        subHeadingVariants: DocumentationDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>,
+        navigatorVariants: DocumentationDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>,
+        roleHeadingVariants: DocumentationDataVariants<String>,
+        platformNameVariants: DocumentationDataVariants<PlatformName>,
+        moduleNameVariants: DocumentationDataVariants<String>,
+        extendedModuleVariants: DocumentationDataVariants<String> = .init(),
+        requiredVariants: DocumentationDataVariants<Bool> = .init(defaultVariantValue: false),
+        externalIDVariants: DocumentationDataVariants<String>,
+        accessLevelVariants: DocumentationDataVariants<String>,
+        availabilityVariants: DocumentationDataVariants<SymbolGraph.Symbol.Availability>,
+        deprecatedSummaryVariants: DocumentationDataVariants<DeprecatedSection>,
+        mixinsVariants: DocumentationDataVariants<[String: Mixin]>,
+        declarationVariants: DocumentationDataVariants<[[PlatformName?]: SymbolGraph.Symbol.DeclarationFragments]> = .init(defaultVariantValue: [:]),
+        defaultImplementationsVariants: DocumentationDataVariants<DefaultImplementationsSection> = .init(defaultVariantValue: .init()),
+        relationshipsVariants: DocumentationDataVariants<RelationshipsSection> = .init(),
+        abstractSectionVariants: DocumentationDataVariants<AbstractSection>,
+        discussionVariants: DocumentationDataVariants<DiscussionSection>,
+        topicsVariants: DocumentationDataVariants<TopicsSection>,
+        seeAlsoVariants: DocumentationDataVariants<SeeAlsoSection>,
+        returnsSectionVariants: DocumentationDataVariants<ReturnsSection>,
+        parametersSectionVariants: DocumentationDataVariants<ParametersSection>,
+        redirectsVariants: DocumentationDataVariants<[Redirect]>,
+        bystanderModuleNamesVariants: DocumentationDataVariants<[String]> = .init(),
+        originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
+        automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: [])
     ) {
         self.kindVariants = kindVariants
         self.titleVariants = titleVariants
@@ -308,7 +308,7 @@ extension Symbol {
     func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, otherSymbol symbol: SymbolGraph.Symbol, otherSymbolGraph: SymbolGraph) throws {
         // FIXME: Update this API to pass a unified symbol and merge the declarations for all variants of the symbol.
         // rdar://69835303
-        let trait = SymbolDataVariantsTrait.swift
+        let trait = DocumentationDataVariantsTrait.swift
         
         if let platformName = otherSymbolGraph.module.platform.name,
             let existingKey = declarationVariants[trait]?.first(where: { pair in

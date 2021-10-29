@@ -21,42 +21,42 @@ public extension VariantCollection {
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
     /// are encoded in the variant collection's ``variants``.
     init?<SymbolValue>(
-        from symbolDataVariants: SymbolDataVariants<SymbolValue>,
-        transform: (SymbolDataVariantsTrait, SymbolValue) -> Value
+        from documentationDataVariants: DocumentationDataVariants<SymbolValue>,
+        transform: (DocumentationDataVariantsTrait, SymbolValue) -> Value
     ) {
-        self.init(from: symbolDataVariants, anyTransform: { trait, value in transform(trait, value as! SymbolValue) })
+        self.init(from: documentationDataVariants, anyTransform: { trait, value in transform(trait, value as! SymbolValue) })
     }
     
     /// Creates a variant collection from a non-empty symbol variants data of the same value type using the given transformation closure.
     ///
-    /// Use this initializer when the `Value` of  the given ``SymbolDataVariants`` is the same as the variant collection's `Value`. If there are no variants
+    /// Use this initializer when the `Value` of  the given ``DocumentationDataVariants`` is the same as the variant collection's `Value`. If there are no variants
     /// for the symbol data, this initializer returns `nil`.
     ///
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
     /// are encoded in the variant collection's ``variants``.
     init?(
-        from symbolDataVariants: SymbolDataVariants<Value>,
-        transform: (SymbolDataVariantsTrait, Value) -> Value = { $1 }
+        from documentationDataVariants: DocumentationDataVariants<Value>,
+        transform: (DocumentationDataVariantsTrait, Value) -> Value = { $1 }
     ) {
-        self.init(from: symbolDataVariants, anyTransform: { trait, value in transform(trait, value as! Value) })
+        self.init(from: documentationDataVariants, anyTransform: { trait, value in transform(trait, value as! Value) })
     }
     
     /// Creates a variant collection of optional value from a symbol variants data of the same value type using the given transformation closure.
     ///
-    /// Use this initializer when the `Value` of  the given ``SymbolDataVariants`` is the variant collection's `Value` wrapped in an `Optional` .
+    /// Use this initializer when the `Value` of  the given ``DocumentationDataVariants`` is the variant collection's `Value` wrapped in an `Optional` .
     /// If there are no variants for the symbol data, the variant collection encodes a `nil` value.
     ///
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
     /// are encoded in the variant collection's ``variants``.
     init<Wrapped>(
-        from symbolDataVariants: SymbolDataVariants<Wrapped>,
-        transform: (SymbolDataVariantsTrait, Value) -> Value = { $1 }
+        from documentationDataVariants: DocumentationDataVariants<Wrapped>,
+        transform: (DocumentationDataVariantsTrait, Value) -> Value = { $1 }
     ) where Value == Wrapped? {
-        var symbolDataVariants = symbolDataVariants
+        var documentationDataVariants = documentationDataVariants
 
-        let defaultValue = symbolDataVariants.removeDefaultValueForRendering().flatMap(transform)
+        let defaultValue = documentationDataVariants.removeDefaultValueForRendering().flatMap(transform)
 
-        let variants = symbolDataVariants.allValues.compactMap { trait, value -> Variant<Value>? in
+        let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant<Value>? in
             Self.createVariant(trait: trait, value: transform(trait, value))
         }
 
@@ -70,14 +70,14 @@ public extension VariantCollection {
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
     /// are encoded in the variant collection's ``variants``.
     init<SymbolValue>(
-        from symbolDataVariants: SymbolDataVariants<SymbolValue>,
-        transform: ((SymbolDataVariantsTrait, SymbolValue)?) -> Value
+        from documentationDataVariants: DocumentationDataVariants<SymbolValue>,
+        transform: ((DocumentationDataVariantsTrait, SymbolValue)?) -> Value
     ) {
-        var symbolDataVariants = symbolDataVariants
+        var documentationDataVariants = documentationDataVariants
         
-        let defaultValue = transform(symbolDataVariants.removeDefaultValueForRendering())
+        let defaultValue = transform(documentationDataVariants.removeDefaultValueForRendering())
         
-        let variants = symbolDataVariants.allValues.compactMap { trait, value -> Variant<Value>? in
+        let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant<Value>? in
             Self.createVariant(trait: trait, value: transform((trait, value)))
         }
         
@@ -92,22 +92,22 @@ public extension VariantCollection {
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
     /// are encoded in the variant collection's ``variants``.
     init?<Value1, Value2>(
-        from symbolDataVariants1: SymbolDataVariants<Value1>,
-        optionalValue symbolDataVariants2: SymbolDataVariants<Value2>,
-        transform: (SymbolDataVariantsTrait, Value1, Value2?) -> Value
+        from documentationDataVariants1: DocumentationDataVariants<Value1>,
+        optionalValue documentationDataVariants2: DocumentationDataVariants<Value2>,
+        transform: (DocumentationDataVariantsTrait, Value1, Value2?) -> Value
     ) {
-        var symbolDataVariants1 = symbolDataVariants1
-        var symbolDataVariants2 = symbolDataVariants2
+        var documentationDataVariants1 = documentationDataVariants1
+        var documentationDataVariants2 = documentationDataVariants2
         
-        guard let (trait1, defaultValue1) = symbolDataVariants1.removeDefaultValueForRendering() else {
+        guard let (trait1, defaultValue1) = documentationDataVariants1.removeDefaultValueForRendering() else {
             return nil
         }
         
-        let defaultValue2 = symbolDataVariants2.removeDefaultValueForRendering()
+        let defaultValue2 = documentationDataVariants2.removeDefaultValueForRendering()
         
         let defaultValue = transform(trait1, defaultValue1, defaultValue2.map(\.variant))
         
-        let variants = zipPairsByKey(symbolDataVariants1.allValues, optionalPairs2: symbolDataVariants2.allValues)
+        let variants = zipPairsByKey(documentationDataVariants1.allValues, optionalPairs2: documentationDataVariants2.allValues)
             .compactMap { (trait, values) -> Variant<Value>? in
                 let (value1, value2) = values
                 return Self.createVariant(trait: trait, value: transform(trait, value1, value2))
@@ -124,22 +124,22 @@ public extension VariantCollection {
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
     /// are encoded in the variant collection's ``variants``.
     init?<Value1, Value2, Wrapped>(
-        from symbolDataVariants1: SymbolDataVariants<Value1>,
-        optionalValue symbolDataVariants2: SymbolDataVariants<Value2>,
-        transform: (SymbolDataVariantsTrait, Value1, Value2?) -> Value
+        from documentationDataVariants1: DocumentationDataVariants<Value1>,
+        optionalValue documentationDataVariants2: DocumentationDataVariants<Value2>,
+        transform: (DocumentationDataVariantsTrait, Value1, Value2?) -> Value
     ) where Value == Wrapped? {
-        var symbolDataVariants1 = symbolDataVariants1
-        var symbolDataVariants2 = symbolDataVariants2
+        var documentationDataVariants1 = documentationDataVariants1
+        var documentationDataVariants2 = documentationDataVariants2
         
-        guard let (trait1, defaultValue1) = symbolDataVariants1.removeDefaultValueForRendering() else {
+        guard let (trait1, defaultValue1) = documentationDataVariants1.removeDefaultValueForRendering() else {
             return nil
         }
         
-        let defaultValue2 = symbolDataVariants2.removeDefaultValueForRendering()
+        let defaultValue2 = documentationDataVariants2.removeDefaultValueForRendering()
         
         let defaultValue = transform(trait1, defaultValue1, defaultValue2.map(\.variant))
         
-        let variants = zipPairsByKey(symbolDataVariants1.allValues, optionalPairs2: symbolDataVariants2.allValues)
+        let variants = zipPairsByKey(documentationDataVariants1.allValues, optionalPairs2: documentationDataVariants2.allValues)
             .compactMap { (trait, values) -> Variant<Value>? in
                 let (value1, value2) = values
                 guard let patchValue = transform(trait, value1, value2) else { return nil }
@@ -156,22 +156,22 @@ public extension VariantCollection {
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
     /// are encoded in the variant collection's ``variants``.
     init?<Value1, Value2>(
-        from symbolDataVariants1: SymbolDataVariants<Value1>,
-        _ symbolDataVariants2: SymbolDataVariants<Value2>,
-        transform: (SymbolDataVariantsTrait, Value1, Value2) -> Value
+        from documentationDataVariants1: DocumentationDataVariants<Value1>,
+        _ documentationDataVariants2: DocumentationDataVariants<Value2>,
+        transform: (DocumentationDataVariantsTrait, Value1, Value2) -> Value
     ) {
-        var symbolDataVariants1 = symbolDataVariants1
-        var symbolDataVariants2 = symbolDataVariants2
+        var documentationDataVariants1 = documentationDataVariants1
+        var documentationDataVariants2 = documentationDataVariants2
         
-        guard let (trait1, defaultValue1) = symbolDataVariants1.removeDefaultValueForRendering(),
-              let (_, defaultValue2) = symbolDataVariants2.removeDefaultValueForRendering()
+        guard let (trait1, defaultValue1) = documentationDataVariants1.removeDefaultValueForRendering(),
+              let (_, defaultValue2) = documentationDataVariants2.removeDefaultValueForRendering()
         else {
             return nil
         }
         
         let defaultValue = transform(trait1, defaultValue1, defaultValue2)
         
-        let variants = zipPairsByKey(symbolDataVariants1.allValues, symbolDataVariants2.allValues)
+        let variants = zipPairsByKey(documentationDataVariants1.allValues, documentationDataVariants2.allValues)
             .compactMap { (trait, values) -> Variant<Value>? in
                 let (value1, value2) = values
                 return Self.createVariant(trait: trait, value: transform(trait, value1, value2))
@@ -187,18 +187,18 @@ public extension VariantCollection {
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
     /// are encoded in the variant collection's ``variants``.
     init?<Value1, Value2, Value3>(
-        from symbolDataVariants1: SymbolDataVariants<Value1>,
-        _ symbolDataVariants2: SymbolDataVariants<Value2>,
-        _ symbolDataVariants3: SymbolDataVariants<Value3>,
-        transform: (SymbolDataVariantsTrait, Value1, Value2, Value3) -> Value
+        from documentationDataVariants1: DocumentationDataVariants<Value1>,
+        _ documentationDataVariants2: DocumentationDataVariants<Value2>,
+        _ documentationDataVariants3: DocumentationDataVariants<Value3>,
+        transform: (DocumentationDataVariantsTrait, Value1, Value2, Value3) -> Value
     ) {
-        var symbolDataVariants1 = symbolDataVariants1
-        var symbolDataVariants2 = symbolDataVariants2
-        var symbolDataVariants3 = symbolDataVariants3
+        var documentationDataVariants1 = documentationDataVariants1
+        var documentationDataVariants2 = documentationDataVariants2
+        var documentationDataVariants3 = documentationDataVariants3
         
-        guard let (trait1, defaultValue1) = symbolDataVariants1.removeDefaultValueForRendering(),
-              let (_, defaultValue2) = symbolDataVariants2.removeDefaultValueForRendering(),
-              let (_, defaultValue3) = symbolDataVariants3.removeDefaultValueForRendering()
+        guard let (trait1, defaultValue1) = documentationDataVariants1.removeDefaultValueForRendering(),
+              let (_, defaultValue2) = documentationDataVariants2.removeDefaultValueForRendering(),
+              let (_, defaultValue3) = documentationDataVariants3.removeDefaultValueForRendering()
         else {
             return nil
         }
@@ -206,9 +206,9 @@ public extension VariantCollection {
         let defaultValue = transform(trait1, defaultValue1, defaultValue2, defaultValue3)
         
         let variants = zipTriplesByKey(
-            symbolDataVariants1.allValues,
-            symbolDataVariants2.allValues,
-            symbolDataVariants3.allValues
+            documentationDataVariants1.allValues,
+            documentationDataVariants2.allValues,
+            documentationDataVariants3.allValues
         ).compactMap { (trait, values) -> Variant<Value>? in
             let (value1, value2, value3) = values
             return Self.createVariant(trait: trait, value: transform(trait, value1, value2, value3))
@@ -223,17 +223,17 @@ public extension VariantCollection {
     ///
     /// This initializer picks a variant (the Swift variant, if available) of the given symbol data as the default value for the variant collection. Other variants
     /// are encoded in the variant collection's ``variants``.
-    private init?<SymbolDataVariantsValue>(
-        from symbolDataVariants: SymbolDataVariants<SymbolDataVariantsValue>,
-        anyTransform transform: (SymbolDataVariantsTrait, Any) -> Value
+    private init?<DocumentationDataVariantsValue>(
+        from documentationDataVariants: DocumentationDataVariants<DocumentationDataVariantsValue>,
+        anyTransform transform: (DocumentationDataVariantsTrait, Any) -> Value
     ) {
-        var symbolDataVariants = symbolDataVariants
+        var documentationDataVariants = documentationDataVariants
         
-        guard let defaultValue = symbolDataVariants.removeDefaultValueForRendering().flatMap(transform) else {
+        guard let defaultValue = documentationDataVariants.removeDefaultValueForRendering().flatMap(transform) else {
            return nil
         }
         
-        let variants = symbolDataVariants.allValues.compactMap { trait, value -> Variant<Value>? in
+        let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant<Value>? in
             Self.createVariant(trait: trait, value: transform(trait, value))
         }
         
@@ -244,7 +244,7 @@ public extension VariantCollection {
     ///
     /// This function returns `nil` if the given trait doesn't have an interface language.
     private static func createVariant(
-        trait: SymbolDataVariantsTrait,
+        trait: DocumentationDataVariantsTrait,
         value: Value
     ) -> Variant<Value>? {
         guard let interfaceLanguage = trait.interfaceLanguage else { return nil }
@@ -255,11 +255,11 @@ public extension VariantCollection {
     }
 }
 
-private extension SymbolDataVariants {
+private extension DocumentationDataVariants {
     /// Removes and returns the value that should be considered as the default value for rendering.
     ///
     /// The default value used for rendering is the Swift variant of the symbol data if available, otherwise it's the first one that's been registered.
-    mutating func removeDefaultValueForRendering() -> (trait: SymbolDataVariantsTrait, variant: Variant)? {
+    mutating func removeDefaultValueForRendering() -> (trait: DocumentationDataVariantsTrait, variant: Variant)? {
         let index = allValues.firstIndex(where: { $0.trait == .swift }) ?? allValues.indices.startIndex
         
         guard allValues.indices.contains(index) else {

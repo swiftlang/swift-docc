@@ -243,7 +243,7 @@ public class DocumentationContentRenderer {
     func renderReference(for reference: ResolvedTopicReference, with overridingDocumentationNode: DocumentationNode? = nil, dependencies: inout RenderReferenceDependencies) -> TopicRenderReference {
         let resolver = LinkTitleResolver(context: documentationContext, source: reference.url)
         
-        let titleVariants: SymbolDataVariants<String>
+        let titleVariants: DocumentationDataVariants<String>
         let kind: RenderNode.Kind
         var referenceRole: String?
         let node = try? overridingDocumentationNode ?? documentationContext.entity(with: reference)

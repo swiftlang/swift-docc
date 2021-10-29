@@ -18,7 +18,7 @@ struct ParametersSectionTranslator: RenderSectionTranslator {
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
         translateSectionToVariantCollection(
-            symbolDataVariants: symbol.parametersSectionVariants
+            documentationDataVariants: symbol.parametersSectionVariants
         ) { _, parameters in
             guard !parameters.parameters.isEmpty else { return nil }
             

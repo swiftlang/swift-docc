@@ -18,7 +18,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
         translateSectionToVariantCollection(
-            symbolDataVariants: symbol.declarationVariants
+            documentationDataVariants: symbol.declarationVariants
         ) { trait, declaration -> RenderSection? in
             guard !declaration.isEmpty else {
                 return nil
