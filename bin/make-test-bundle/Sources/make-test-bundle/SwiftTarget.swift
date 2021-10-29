@@ -16,7 +16,6 @@ struct SwiftTarget: Codable {
         let triple: String
         let unversionedTriple: String
         let moduleTriple: String
-        let swiftRuntimeCompatibilityVersion: String
     }
 
     let compilerVersion: String?
