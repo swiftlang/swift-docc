@@ -1760,7 +1760,8 @@
                     "hierarchy",
                     "metadata",
                     "sections",
-                    "variants"
+                    "variants",
+                    "variantOverrides"
                 ],
                 "type": "object",
                 "properties": {
@@ -1865,6 +1866,12 @@
                         "items": {
                             "$ref": "#/components/schemas/RenderNodeVariant"
                         }
+                    },
+                    "variantOverrides": {
+                        "type": "array",
+                        "properties": {
+                            "$ref": "#/components/schemas/VariantOverride"
+                        }
                     }
                 }
             },
@@ -1895,6 +1902,54 @@
                         "$ref": "#/components/schemas/TraitInterfaceLanguage"
                     }
                 ]
+            },
+            "VariantOverride": {
+                "type": "object",
+                "required": [
+                    "traits",
+                    "patch"
+                ],
+                "properties": {
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderNodeVariantTrait"
+                        }
+                    },
+                    "patch": {
+                        "$ref": "#/components/schemas/JSONPatch"
+                    }
+                }
+            },
+            "JSONPatch": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": [
+                        "op",
+                        "path"
+                    ],
+                    "properties": {
+                        "op": {
+                            "type": "string",
+                            "enum": [
+                                "add",
+                                "remove",
+                                "replace",
+                                "move",
+                                "copy",
+                                "test"
+                            ]
+                        },
+                        "path": {
+                            "type": "string"
+                        }
+                    },
+                    "value": {},
+                    "from": {
+                        "type": "string"
+                    }
+                }
             },
             "TraitInterfaceLanguage": {
                 "required": [
