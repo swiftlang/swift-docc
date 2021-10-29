@@ -196,8 +196,9 @@ class DataAssetManagerTests: XCTestCase {
     
     func testFuzzyLookup() throws {
         var manager = DataAssetManager()
-        let images = ["image.png",
-                      "woof~dark.JPG",
+        let images = [
+            "image.png",
+            "woof~dark.JPG",
         ].compactMap(URL.init(string:))
         try manager.register(data: images)
 
