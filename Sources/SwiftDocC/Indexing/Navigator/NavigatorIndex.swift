@@ -707,6 +707,22 @@ extension NavigatorIndex {
                 multiCuratedUnvisited.remove(normalizedIdentifier)
             }
             
+            // Check if the render node has a variant for Objective-C
+            let objCVariantTrait = renderNode.variantOverrides?.values.flatMap({ $0.traits }).first { trait in
+                switch trait {
+                case .interfaceLanguage(let language):
+                    return InterfaceLanguage.from(string: language) == .objc
+                }
+            }
+            
+            // In case we have a variant for Objective-C, apply the variant and re-index the render node.
+            if let variantToApply = objCVariantTrait {
+                let encodedRenderNode = try renderNode.encodeToJSON()
+                let transformedData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(in: encodedRenderNode, for: [variantToApply])
+                let variantRenderNode = try RenderNode.decode(fromJSON: transformedData)
+                try index(renderNode: variantRenderNode)
+            }
+            
             // Bump the nodes counter.
             counter += 1
         }
