@@ -19,7 +19,7 @@ struct DiscussionSectionTranslator: RenderSectionTranslator {
         renderNodeTranslator: inout RenderNodeTranslator
     ) -> VariantCollection<CodableContentSection?>? {
         translateSectionToVariantCollection(
-            symbolDataVariants: symbol.discussionVariants
+            documentationDataVariants: symbol.discussionVariants
         ) { _, discussion in
             guard let discussionContent = renderNodeTranslator.visitMarkupContainer(MarkupContainer(discussion.content)) as? [RenderBlockContent],
                   !discussionContent.isEmpty

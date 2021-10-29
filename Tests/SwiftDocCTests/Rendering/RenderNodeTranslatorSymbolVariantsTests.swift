@@ -931,6 +931,6 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     }
 }
 
-private extension SymbolDataVariantsTrait {
-    static var objectiveC: SymbolDataVariantsTrait { .init(interfaceLanguage: "occ") }
+private extension DocumentationDataVariantsTrait {
+    static var objectiveC: DocumentationDataVariantsTrait { .init(interfaceLanguage: "occ") }
 }

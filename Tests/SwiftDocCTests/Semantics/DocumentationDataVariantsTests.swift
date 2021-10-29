@@ -12,13 +12,13 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 
-class SymbolDataVariantsTests: XCTestCase {
+class DocumentationDataVariantsTests: XCTestCase {
     func testAccessesVariantWithTrait() throws {
-        var variants = SymbolDataVariants<String>(values: [.swift : "Swift"])
+        var variants = DocumentationDataVariants<String>(values: [.swift : "Swift"])
         
         XCTAssertEqual(variants[.swift], "Swift")
         
-        let objectiveCTrait = SymbolDataVariantsTrait(interfaceLanguage: "objc")
+        let objectiveCTrait = DocumentationDataVariantsTrait(interfaceLanguage: "objc")
         
         XCTAssertNil(variants[objectiveCTrait])
         variants[objectiveCTrait] = "Objective-C"
@@ -26,7 +26,7 @@ class SymbolDataVariantsTests: XCTestCase {
     }
     
     func testReturnsDefaultValueInAllValues() throws {
-        let variants = SymbolDataVariants<String>(defaultVariantValue: "Default value")
+        let variants = DocumentationDataVariants<String>(defaultVariantValue: "Default value")
         XCTAssertEqual(variants.allValues.count, 1)
         let first = try XCTUnwrap(variants.allValues.first)
         XCTAssertEqual(first.trait, .fallback)
@@ -34,7 +34,7 @@ class SymbolDataVariantsTests: XCTestCase {
     }
     
     func testSetsDefaultValueWhenTraitIsFallback() throws {
-        var variants = SymbolDataVariants<String>()
+        var variants = DocumentationDataVariants<String>()
         variants[.fallback] = "Default value"
         let first = try XCTUnwrap(variants.allValues.first)
         XCTAssertEqual(first.trait, .fallback)
@@ -42,17 +42,17 @@ class SymbolDataVariantsTests: XCTestCase {
     }
     
     func testIsEmpty() throws {
-        XCTAssert(SymbolDataVariants<String>().isEmpty)
-        XCTAssertFalse(SymbolDataVariants<String>(values: [.swift : "Swift"]).isEmpty)
+        XCTAssert(DocumentationDataVariants<String>().isEmpty)
+        XCTAssertFalse(DocumentationDataVariants<String>(values: [.swift : "Swift"]).isEmpty)
     }
     
     func testHasVariant() throws {
-        XCTAssert(SymbolDataVariants<String>(values: [.swift : "Swift"]).hasVariant(for: .swift))
-        XCTAssertFalse(SymbolDataVariants<String>().hasVariant(for: .swift))
+        XCTAssert(DocumentationDataVariants<String>(values: [.swift : "Swift"]).hasVariant(for: .swift))
+        XCTAssertFalse(DocumentationDataVariants<String>().hasVariant(for: .swift))
     }
     
     func testSwiftVariantInitializer() throws {
-        XCTAssertEqual(SymbolDataVariants<String>(swiftVariant: "Swift")[.swift], "Swift")
-        XCTAssertNil(SymbolDataVariants<String>(swiftVariant: nil)[.swift])
+        XCTAssertEqual(DocumentationDataVariants<String>(swiftVariant: "Swift")[.swift], "Swift")
+        XCTAssertNil(DocumentationDataVariants<String>(swiftVariant: nil)[.swift])
     }
 }

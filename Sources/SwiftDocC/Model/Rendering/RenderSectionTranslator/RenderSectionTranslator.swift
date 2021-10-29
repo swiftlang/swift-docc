@@ -23,11 +23,11 @@ protocol RenderSectionTranslator {
 extension RenderSectionTranslator {
     /// Translates the variants of a piece of the given symbol into render node section variants.
     func translateSectionToVariantCollection<SymbolValue>(
-        symbolDataVariants: SymbolDataVariants<SymbolValue>,
-        transform: (SymbolDataVariantsTrait, SymbolValue) -> RenderSection?
+        documentationDataVariants: DocumentationDataVariants<SymbolValue>,
+        transform: (DocumentationDataVariantsTrait, SymbolValue) -> RenderSection?
     ) -> VariantCollection<CodableContentSection?>? {
         VariantCollection<CodableContentSection?>(
-            from: symbolDataVariants,
+            from: documentationDataVariants,
             transform: { trait, value in
                 transform(trait, value).map(CodableContentSection.init)
             }
