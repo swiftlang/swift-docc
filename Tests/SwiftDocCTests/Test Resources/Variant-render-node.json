@@ -1,0 +1,134 @@
+{
+  "abstract": [],
+  "documentVersion": 0,
+  "identifier": {
+    "interfaceLanguage": "swift",
+    "url": "doc://org.swift.docc/documentation/mykit/my-article"
+  },
+  "kind": "article",
+  "metadata": {
+    "modules": [
+      {
+        "name": "mykit"
+      }
+    ],
+    "role": "article",
+    "roleHeading": "Article",
+    "title": "My Article"
+  },
+  "primaryContentSections": [],
+  "references": {
+    "doc://org.swift.docc/documentation/mykit": {
+      "identifier": "doc://org.swift.docc/documentation/mykit",
+      "kind": "symbol",
+      "role": "collection",
+      "title": "mykit",
+      "type": "topic",
+      "url": "/documentation/mykit"
+    },
+    "doc://org.swift.docc/documentation/mykit/my-article": {
+      "abstract": [],
+      "identifier": "doc://org.swift.docc/documentation/mykit/my-article",
+      "kind": "article",
+      "role": "article",
+      "title": "My Article",
+      "type": "topic",
+      "url": "/documentation/mykit/my-article"
+    },
+    "doc://org.swift.docc/documentation/mykit/myclass": {
+      "abstract": [],
+      "fragments": [
+        {
+          "kind": "text",
+          "text": "class "
+        },
+        {
+          "kind": "identifier",
+          "text": "myclass"
+        }
+      ],
+      "identifier": "doc://org.swift.docc/documentation/mykit/myclass",
+      "kind": "symbol",
+      "role": "symbol",
+      "title": "myclass",
+      "type": "topic",
+      "url": "/documentation/mykit/myclass"
+    }
+  },
+  "schemaVersion": {
+    "major": 0,
+    "minor": 1,
+    "patch": 0
+  },
+  "sections": [],
+  "seeAlsoSections": [],
+  "topicSections": [
+    {
+      "anchor": "2959524",
+      "identifiers": [
+        "doc://org.swift.docc/documentation/mykit/myclass"
+      ],
+      "kind": "taskGroup",
+      "title": "Task Group 1"
+    },
+    {
+      "anchor": "2958803",
+      "identifiers": [
+        "doc://org.swift.docc/documentation/mykit/myclass"
+      ],
+      "kind": "taskGroup",
+      "title": "Task Group 2"
+    },
+    {
+      "anchor": "3016821",
+      "identifiers": [
+        "doc://org.swift.docc/documentation/mykit/myclass"
+      ],
+      "kind": "taskGroup",
+      "title": "Task Group 3"
+    }
+  ],
+  "variants": [
+    {
+      "paths": [
+        "documentation/mykit/my-article"
+      ],
+      "traits": [
+        {
+          "interfaceLanguage": "objc"
+        }
+      ]
+    },
+    {
+      "paths": [
+        "documentation/mykit/my-article"
+      ],
+      "traits": [
+        {
+          "interfaceLanguage": "swift"
+        }
+      ]
+    }
+  ],
+  "variantOverrides": [
+    {
+      "patch": [
+        {
+          "op": "replace",
+          "path": "/metadata/title",
+          "value": "My Article in Objective-C"
+        },
+        {
+          "op": "replace",
+          "path": "/identifier/interfaceLanguage",
+          "value": "objc"
+        }
+      ],
+      "traits": [
+        {
+          "interfaceLanguage": "objc"
+        }
+      ]
+    }
+  ]
+}

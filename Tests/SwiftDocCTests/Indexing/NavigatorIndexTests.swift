@@ -406,6 +406,38 @@ Root
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexGeneration"))
     }
     
+    func testNavigatorIndexGenerationVariantsPayload() throws {
+        let jsonFile = Bundle.module.url(forResource: "Variant-render-node", withExtension: "json", subdirectory: "Test Resources")!
+        let jsonData = try Data(contentsOf: jsonFile)
+        
+        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier, sortRootChildrenByName: true, groupByLanguage: true)
+        builder.setup()
+        
+        let renderNode = try XCTUnwrap(RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: jsonData))
+        try builder.index(renderNode: renderNode)
+        
+        builder.finalize()
+        
+        let navigatorIndex = builder.navigatorIndex!
+        
+        assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
+        assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), """
+        [Root]
+        ┣╸Objective-C
+        ┃ ┗╸My Article in Objective-C
+        ┃   ┣╸Task Group 1
+        ┃   ┣╸Task Group 2
+        ┃   ┗╸Task Group 3
+        ┗╸Swift
+          ┗╸My Article
+            ┣╸Task Group 1
+            ┣╸Task Group 2
+            ┗╸Task Group 3
+        """)
+        try FileManager.default.removeItem(at: targetURL)
+    }
+    
     func testNavigatorIndexUsingPageTitleGeneration() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
