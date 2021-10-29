@@ -20,7 +20,7 @@ class TopicRenderReferenceTests: XCTestCase {
             defaultValue: "Default value",
             objectiveCValue: "Objective-C value"
         ),
-        abstract: [],
+        abstractVariants: .init(defaultValue: []),
         url: "",
         kind: .article,
         estimatedTime: nil

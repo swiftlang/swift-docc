@@ -80,7 +80,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         throw Errors.noCodeBlockFound
     }
 
-    func testDefaultCodeBlockSyntaxForFencedCodeListingWithoutExplicitLangage() throws {
+    func testDefaultCodeBlockSyntaxForFencedCodeListingWithoutExplicitLanguage() throws {
         let fencedCodeListing = try codeListing(at: 1, in: renderSectionWithLanguageDefault)
 
         XCTAssertEqual("swift", fencedCodeListing.language, "Default a language of 'CDDefaultCodeListingLanguage' if  it is set in the 'Info.plist'")

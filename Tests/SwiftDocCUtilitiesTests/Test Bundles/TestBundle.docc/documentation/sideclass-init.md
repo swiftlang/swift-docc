@@ -1,7 +1,7 @@
 # ``SideKit/SideClass/init()``
 
 @DeprecationSummary { 
-This initiailizer has been deprecated.
+This initializer has been deprecated.
 }
 
 Init for `SideClass`.

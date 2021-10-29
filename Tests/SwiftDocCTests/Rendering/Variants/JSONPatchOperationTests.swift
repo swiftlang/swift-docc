@@ -15,7 +15,7 @@ import XCTest
 class JSONPatchOperationTests: XCTestCase {
     func testInitializesWithVariantOverride() {
         let patchOperation = JSONPatchOperation(
-            variantPatch: .replace(value: "value"),
+            variantPatchOperation: .replace(value: "value"),
             pointer: JSONPointer(pathComponents: ["a", "b"])
         )
         

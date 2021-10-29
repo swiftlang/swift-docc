@@ -43,7 +43,7 @@ class DeprecationSummaryTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, [.text("This initiailizer has been deprecated.")])
+        XCTAssertEqual(renderNode.deprecationSummary?.firstParagraph, [.text("This initializer has been deprecated.")])
     }
 
     /// Test for a warning when symbol is not deprecated

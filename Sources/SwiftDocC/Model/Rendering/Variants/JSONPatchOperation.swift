@@ -35,6 +35,8 @@ public enum JSONPatchOperation: Codable {
     ///     - value: The value to use in the replacement.
     case replace(pointer: JSONPointer, value: AnyCodable)
     
+    case add(pointer: JSONPointer, value: AnyCodable)
+    
     /// A remove operation.
     ///
     /// - Parameter pointer: The pointer to the value to remove.
@@ -44,6 +46,8 @@ public enum JSONPatchOperation: Codable {
     public var pointer: JSONPointer {
         switch self {
         case .replace(let pointer, _):
+            return pointer
+        case .add(let pointer, _):
             return pointer
         case .remove(let pointer):
             return pointer
@@ -55,6 +59,8 @@ public enum JSONPatchOperation: Codable {
         switch self {
         case .replace(_, _):
             return .replace
+        case .add(_, _):
+            return .add
         case .remove(_):
             return .remove
         }
@@ -65,12 +71,14 @@ public enum JSONPatchOperation: Codable {
     /// Values of this type follow the [JSON Patch](https://datatracker.ietf.org/doc/html/rfc6902) format.
     ///
     /// - Parameters:
-    ///   - variantPatch: The patch to apply.
+    ///   - variantPatchOperation: The patch to apply.
     ///   - pointer: The pointer to the value to update.
-    public init<Value>(variantPatch: VariantPatchOperation<Value>, pointer: JSONPointer) {
-        switch variantPatch {
+    public init<Value>(variantPatchOperation: VariantPatchOperation<Value>, pointer: JSONPointer) {
+        switch variantPatchOperation {
         case .replace(let value):
             self = .replace(pointer: pointer, encodableValue: value)
+        case .add(let value):
+            self = .add(pointer: pointer, encodableValue: value)
         case .remove:
             self = .remove(pointer: pointer)
         }
@@ -86,6 +94,9 @@ public enum JSONPatchOperation: Codable {
         case .replace:
             let value = try container.decode(AnyCodable.self, forKey: .value)
             self = .replace(pointer: pointer, value: value)
+        case .add:
+            let value = try container.decode(AnyCodable.self, forKey: .value)
+            self = .add(pointer: pointer, value: value)
         case .remove:
             self = .remove(pointer: pointer)
         }
@@ -100,12 +111,18 @@ public enum JSONPatchOperation: Codable {
         .replace(pointer: pointer, value: AnyCodable(encodableValue))
     }
     
+    public static func add(pointer: JSONPointer, encodableValue: Encodable) -> JSONPatchOperation {
+        .add(pointer: pointer, value: AnyCodable(encodableValue))
+    }
+    
     /// Returns the patch operation with the first path component of the pointer removed.
     public func removingPointerFirstPathComponent() -> Self {
         let newPointer = pointer.removingFirstPathComponent()
         switch self {
         case .replace(_, let value):
             return .replace(pointer: newPointer, value: value)
+        case .add(_, let value):
+            return .add(pointer: newPointer, value: value)
         case .remove(_):
             return .remove(pointer: newPointer)
         }
@@ -116,6 +133,10 @@ public enum JSONPatchOperation: Codable {
         switch self {
         case .replace(let pointer, let value):
             try container.encode(PatchOperation.replace, forKey: .operation)
+            try container.encode(pointer, forKey: .pointer)
+            try container.encode(value, forKey: .value)
+        case .add(let pointer, let value):
+            try container.encode(PatchOperation.add, forKey: .operation)
             try container.encode(pointer, forKey: .pointer)
             try container.encode(value, forKey: .value)
         case .remove(let pointer):

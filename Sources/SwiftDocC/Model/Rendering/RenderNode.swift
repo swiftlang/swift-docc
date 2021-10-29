@@ -67,6 +67,18 @@ import Foundation
 /// - ``variants``
 /// - ``diffAvailability``
 ///
+/// ### Multi-Language Reference Documentation Data
+///
+/// Data specific for reference documentation nodes that are available in multiple programming languages.
+///
+/// - ``abstractVariants``
+/// - ``primaryContentSectionsVariants``
+/// - ``topicSectionsVariants``
+/// - ``relationshipSectionsVariants``
+/// - ``defaultImplementationsSectionsVariants``
+/// - ``seeAlsoSectionsVariants``
+/// - ``deprecationSummaryVariants``
+///
 /// ### Sample Code Data
 ///
 /// Data specific for sample code nodes.
@@ -76,7 +88,7 @@ import Foundation
 /// ### Models
 ///
 /// - ``Variant``
-public struct RenderNode {
+public struct RenderNode: VariantContainer {
     /// The current version of the render node schema.
     ///
     /// The schema version describes the compatibility of a client with a render node value. Clients should be able to decode
@@ -120,28 +132,82 @@ public struct RenderNode {
     
     // MARK: Reference documentation nodes
     
-    /// The abstract of the node, which provides a short overview of its contents.
-    public var abstract: [RenderInlineContent]?
+    /// The default value for the abstract of the node, which provides a short overview of its contents.
+    public var abstract: [RenderInlineContent]? {
+        get { getVariantDefaultValue(keyPath: \.abstractVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.abstractVariants) }
+    }
     
-    /// The main sections of a reference documentation node.
-    public var primaryContentSections = [RenderSection]()
+    /// The variants of the abstract of the node, which provide a short overview of its contents.
+    public var abstractVariants: VariantCollection<[RenderInlineContent]?> = .init(defaultValue: nil)
     
-    /// The Topics sections of this documentation node, which contain links to useful related documentation nodes.
-    public var topicSections = [TaskGroupRenderSection]()
+    /// The default value of the main sections of a reference documentation node.
+    public var primaryContentSections: [RenderSection] {
+        get { primaryContentSectionsVariants.compactMap(\.defaultValue?.section) }
+        set {
+            primaryContentSectionsVariants = newValue.enumerated().map { index, section in
+                let section = CodableContentSection(section)
+                
+                if primaryContentSectionsVariants.indices.contains(index) {
+                    var variantCollection = primaryContentSectionsVariants[index]
+                    variantCollection.defaultValue = section
+                    return variantCollection
+                } else {
+                    return VariantCollection<CodableContentSection?>(defaultValue: section)
+                }
+            }
+        }
+    }
     
-    /// The Relationships sections of a reference documentation node, which describes how this symbol is related to others.
-    public var relationshipSections = [RelationshipsRenderSection]()
+    /// The variants of the primary content sections of the node, which are the main sections of a reference documentation node.
+    public var primaryContentSectionsVariants: [VariantCollection<CodableContentSection?>] = []
     
-    /// The Default Implementations sections of symbol node, which list APIs that provide a default implementation of the symbol.
-    public var defaultImplementationsSections = [TaskGroupRenderSection]()
+    /// The default Topics sections of this documentation node, which contain links to useful related documentation nodes.
+    public var topicSections: [TaskGroupRenderSection] {
+        get { getVariantDefaultValue(keyPath: \.topicSectionsVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.topicSectionsVariants) }
+    }
+    
+    /// The variants for the Topics sections of this documentation node, which contain links to useful related documentation nodes.
+    public var topicSectionsVariants: VariantCollection<[TaskGroupRenderSection]> = .init(defaultValue: [])
+    
+    /// The default Relationships sections of a reference documentation node, which describes how this symbol is related to others.
+    public var relationshipSections: [RelationshipsRenderSection] {
+        get { getVariantDefaultValue(keyPath: \.relationshipSectionsVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.relationshipSectionsVariants) }
+    }
+    
+    /// The variants of the Relationships sections of a reference documentation node, which describe how this symbol is related to others.
+    public var relationshipSectionsVariants: VariantCollection<[RelationshipsRenderSection]> = .init(defaultValue: [])
+    
+    /// The default Default Implementations sections of symbol node, which list APIs that provide a default implementation of the symbol.
+    public var defaultImplementationsSections: [TaskGroupRenderSection] {
+        get { getVariantDefaultValue(keyPath: \.defaultImplementationsSectionsVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.defaultImplementationsSectionsVariants) }
+    }
+    
+    /// The variants of the Default Implementations sections of symbol node, which list APIs that provide a default implementation of the symbol.
+    public var defaultImplementationsSectionsVariants: VariantCollection<[TaskGroupRenderSection]> = .init(defaultValue: [])
         
     /// The See Also sections of a node, which list documentation resources related to this documentation node.
-    public var seeAlsoSections = [TaskGroupRenderSection]()
+    public var seeAlsoSections: [TaskGroupRenderSection] {
+        get { getVariantDefaultValue(keyPath: \.seeAlsoSectionsVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.seeAlsoSectionsVariants) }
+    }
+    
+    /// The variants of the See Also sections of a node, which list documentation resources related to this documentation node.
+    public var seeAlsoSectionsVariants: VariantCollection<[TaskGroupRenderSection]> = .init(defaultValue: [])
         
     /// A description of why this symbol is deprecated.
-    public var deprecationSummary: [RenderBlockContent]?
+    public var deprecationSummary: [RenderBlockContent]? {
+        get { getVariantDefaultValue(keyPath: \.deprecationSummaryVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.deprecationSummaryVariants) }
+    }
+    
+    /// The variants of the description of why this symbol is deprecated.
+    public var deprecationSummaryVariants: VariantCollection<[RenderBlockContent]?> = .init(defaultValue: nil)
 
-    /// List of variants of the same documentation node for various languages, etc.
+    /// List of variants of the same documentation node for various languages.
     public var variants: [RenderNode.Variant]?
     
     /// Language-specific overrides for documentation.

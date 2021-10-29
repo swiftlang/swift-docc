@@ -17,6 +17,8 @@ public enum VariantPatchOperation<Value: Codable> {
     /// - Parameter value: The value to use in the replacement.
     case replace(value: Value)
     
+    case add(value: Value)
+    
     /// A removal operation.
     case remove
     
@@ -25,6 +27,8 @@ public enum VariantPatchOperation<Value: Codable> {
         switch self {
         case .replace(_):
             return .replace
+        case .add(_):
+            return .add
         case .remove:
             return .remove
         }
