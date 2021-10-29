@@ -93,6 +93,32 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
         )
     }
     
+    func testReplacesValueAtPointerWithEscapedCharacters() throws {
+        try assertAppliedRenderNode(
+            configureOriginalNode: { renderNode in
+                renderNode.references["doc://path/to/symbol"] = TopicRenderReference(
+                    identifier: RenderReferenceIdentifier("doc://path/to/symbol"),
+                    title: "Title",
+                    abstract: [],
+                    url: "",
+                    kind: .symbol,
+                    estimatedTime: nil
+                )
+                
+                renderNode.addVariantOverride(
+                    pointerComponents: ["references", "doc://path/to/symbol", "title"],
+                    value: "New Title"
+                )
+            },
+            assertion: { appliedRenderNode in
+                XCTAssertEqual(
+                    (appliedRenderNode.references["doc://path/to/symbol"] as? TopicRenderReference)?.title,
+                    "New Title"
+                )
+            }
+        )
+    }
+    
     func testRemovesVariantOverrides() throws {
         try assertAppliedRenderNode(
             configureOriginalNode: { renderNode in
@@ -145,7 +171,7 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
         XCTAssertThrowsError(
             try assertAppliedRenderNode(
                 configureOriginalNode: { renderNode in
-                    renderNode.addVariantOverride(pointerComponents: ["kind/0"], value: "value")
+                    renderNode.addVariantOverride(pointerComponents: ["kind", "0"], value: "value")
                 },
                 assertion: { renderNode in }
             )

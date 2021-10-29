@@ -87,7 +87,14 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     }
     
     /// The source language for which this topic is relevant.
-    public var sourceLanguage: SourceLanguage
+    public var sourceLanguage: SourceLanguage {
+        // Return Swift by default to maintain backwards-compatibility.
+        get { sourceLanguages.contains(.swift) ? .swift : sourceLanguages.first! }
+        set { sourceLanguages.insert(newValue) }
+    }
+    
+    /// The source languages for which this topic is relevant.
+    public var sourceLanguages: Set<SourceLanguage>
     
     /// The reference cache key
     var cacheKey: String {
@@ -108,7 +115,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         self.bundleIdentifier = bundleIdentifier
         self.path = urlReadablePath(path)
         self.fragment = fragment.map { urlReadableFragment($0) }
-        self.sourceLanguage = sourceLanguage
+        self.sourceLanguages = [sourceLanguage]
         updateURL()
 
         // Cache the reference
@@ -235,7 +242,21 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(url.absoluteString, forKey: .url)
-        try container.encode(sourceLanguage.id, forKey: .interfaceLanguage)
+        
+        let sourceLanguageIDVariants = SymbolDataVariants<String>(
+            values: Dictionary<SymbolDataVariantsTrait, String>(
+                uniqueKeysWithValues: sourceLanguages.map { language in
+                    (SymbolDataVariantsTrait(interfaceLanguage: language.id), language.id)
+                }
+            )
+        )
+        
+        try container.encodeVariantCollection(
+            // Force-unwrapping because resolved topic references should have at least one source language.
+            VariantCollection<String>(from: sourceLanguageIDVariants)!,
+            forKey: .interfaceLanguage,
+            encoder: encoder
+        )
     }
     
     public var description: String {

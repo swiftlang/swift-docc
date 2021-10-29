@@ -45,7 +45,6 @@ public struct SymbolDataVariants<Variant> {
         self.defaultVariantValue = defaultVariantValue
     }
     
-    
     /// Accesses the variant for the given trait.
     public subscript(trait: SymbolDataVariantsTrait) -> Variant? {
         get { values[trait] ?? defaultVariantValue }
@@ -74,6 +73,12 @@ extension SymbolDataVariants {
         } else {
             self.init()
         }
+    }
+    
+    /// Convenience API to access the first variant, or the default value if there are no registered variants.
+    var firstValue: Variant? {
+        get { allValues.first?.variant }
+        set { self[allValues.first?.trait ?? .fallback] = newValue }
     }
 }
 

@@ -94,31 +94,31 @@ import SymbolKit
 /// - ``SymbolDataVariantsTrait``
 public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroupsProviding {
     /// The title of the symbol in each language variant the symbol is available in.
-    public let titleVariants: SymbolDataVariants<String>
+    internal(set) public var titleVariants: SymbolDataVariants<String>
     
     /// The simplified version of the symbol's declaration in each language variant the symbol is available in.
-    public let subHeadingVariants: SymbolDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
+    internal(set) public var subHeadingVariants: SymbolDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
     
     /// The simplified version of this symbol's declaration in each language variant the symbol is available in.
-    public let navigatorVariants: SymbolDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
+    internal(set) public var navigatorVariants: SymbolDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>
     
     /// The presentation-friendly version of the symbol's kind in each language variant the symbol is available in.
-    public let roleHeadingVariants: SymbolDataVariants<String>
+    internal(set) public var roleHeadingVariants: SymbolDataVariants<String>
     
     /// The kind of the symbol in each language variant the symbol is available in.
-    public let kindVariants: SymbolDataVariants<SymbolGraph.Symbol.Kind>
+    internal(set) public var kindVariants: SymbolDataVariants<SymbolGraph.Symbol.Kind>
     
     /// The symbol's platform in each language variant the symbol is available in.
-    public let platformNameVariants: SymbolDataVariants<PlatformName>
+    internal(set) public var platformNameVariants: SymbolDataVariants<PlatformName>
     
     /// The presentation-friendly name of the symbol's framework in each language variant the symbol is available in.
-    public let moduleNameVariants: SymbolDataVariants<String>
+    internal(set) public var moduleNameVariants: SymbolDataVariants<String>
     
     /// The name of the module extension in which the symbol is defined, if applicable, in each language variant the symbol is available in.
-    public let extendedModuleVariants: SymbolDataVariants<String>
+    internal(set) public var extendedModuleVariants: SymbolDataVariants<String>
     
     /// Optional cross-import module names of the symbol, in each language variant the symbol is available in.
-    public let bystanderModuleNamesVariants: SymbolDataVariants<[String]>
+    internal(set) public var bystanderModuleNamesVariants: SymbolDataVariants<[String]>
     
     /// Whether the symbol is required in its context, in each language variant the symbol is available in.
     public var isRequiredVariants: SymbolDataVariants<Bool>
@@ -523,13 +523,5 @@ extension Symbol {
     var automaticTaskGroups: [AutomaticTaskGroupSection] {
         get { automaticTaskGroupsVariants.firstValue! }
         set { automaticTaskGroupsVariants.firstValue = newValue }
-    }
-}
-
-fileprivate extension SymbolDataVariants {
-    /// Convenience API to access the first variant, or the default value if there are no registered variants.
-    var firstValue: Variant? {
-        get { allValues.first?.variant }
-        set { self[allValues.first?.trait ?? .fallback] = newValue }
     }
 }

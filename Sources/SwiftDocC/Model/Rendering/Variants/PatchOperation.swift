@@ -20,6 +20,9 @@ public enum PatchOperation: String, Codable {
     /// A replacement operation.
     case replace
     
+    /// An add operation.
+    case add
+    
     /// A removal operation.
     case remove
 }

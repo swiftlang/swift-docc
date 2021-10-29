@@ -13,7 +13,7 @@ import XCTest
 @testable import SwiftDocC
 
 class JSONPointerTests: XCTestCase {
-    func testEncodesCodingPathByEscapingCharacters() throws {
+    func testEncodesCodingPathByEscapingCharactersUsingCodingPathInitializer() throws {
         let codingPath = try createCodingPathWithSpecialCharacters()
         
         let pointer = JSONPointer(from: codingPath)
@@ -22,11 +22,19 @@ class JSONPointerTests: XCTestCase {
         XCTAssertEqual(encodedPointer, "/property/0/property~1with~0special~1~0characters")
     }
     
-    func testEncodesRawComponentsWithoutEscaping() throws {
-        let pointer = JSONPointer(pathComponents: ["a~0", "foo~1bar"])
+    func testEncodesCodingPathByEscapingCharactersUsingPathComponentsInitializer() throws {
+        let pointer = JSONPointer(pathComponents: ["a~", "foo/bar"])
         let encodedPointer = try JSONDecoder().decode(String.self, from: JSONEncoder().encode(pointer))
 
         XCTAssertEqual(encodedPointer, "/a~0/foo~1bar")
+    }
+    
+    func testDecodesEscapedComponents() throws {
+        let pointerData = #""/a~0/foo~1bar""#.data(using: .utf8)!
+        let encodedPointer = try JSONDecoder().decode(JSONPointer.self, from: pointerData)
+
+        XCTAssertEqual(encodedPointer.description, "/a~0/foo~1bar")
+        XCTAssertEqual(encodedPointer.pathComponents, ["a~", "foo/bar"])
     }
     
     func testDescription() throws {

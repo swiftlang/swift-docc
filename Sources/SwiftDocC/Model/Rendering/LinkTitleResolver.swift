@@ -25,8 +25,8 @@ struct LinkTitleResolver {
     /// Depending on the page type, semantic parsing may be necessary to determine the title of the page.
     ///
     /// - Parameter page: The page for which to resolve the title.
-    /// - Returns: The link title for this page, or `nil` if the page doesn't exist in the context.
-    func title(for page: DocumentationNode) -> String? {
+    /// - Returns: The variants of the link title for this page, or `nil` if the page doesn't exist in the context.
+    func title(for page: DocumentationNode) -> SymbolDataVariants<String>? {
         if let bundle = context.bundle(identifier: page.reference.bundleIdentifier),
            let directive = page.markup.child(at: 0) as? BlockDirective {
             
@@ -34,26 +34,30 @@ struct LinkTitleResolver {
             switch directive.name {
             case Tutorial.directiveName:
                 if let tutorial = Tutorial(from: directive, source: source, for: bundle, in: context, problems: &problems) {
-                    return tutorial.intro.title
+                    return .init(defaultVariantValue: tutorial.intro.title)
                 }
             case Technology.directiveName:
                 if let overview = Technology(from: directive, source: source, for: bundle, in: context, problems: &problems) {
-                    return overview.name
+                    return .init(defaultVariantValue: overview.name)
                 }
             default: break
             }
         }
         
-        if let symbol = page.symbol {
-            return symbol.names.title
-        }
-
-        if let article = page.semantic as? Article, let title = article.title?.plainText {
-            return title
+        if case let .conceptual(name) = page.name {
+            return .init(defaultVariantValue: name)
         }
         
-        if case let .conceptual(name) = page.name {
-            return name
+        if let symbol = (page.semantic as? Symbol) {
+            return symbol.titleVariants
+        }
+        
+        if let symbol = page.symbol {
+            return .init(defaultVariantValue: symbol.names.title)
+        }
+        
+        if let article = page.semantic as? Article, let title = article.title?.plainText {
+            return .init(defaultVariantValue: title)
         }
         
         return nil
