@@ -113,9 +113,18 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         }
         
         XCTAssertEqual(hierarchy.paths.sorted(by: { $0.count < $1.count }), [
-            ["doc://org.swift.docc.example/documentation/MyKit"],
-            ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/Test-Bundle/article"],
-            ["doc://org.swift.docc.example/tutorials/TestOverview", "doc://org.swift.docc.example/tutorials/TestOverview/$volume", "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1"],
+            [
+              "doc://org.swift.docc.example/documentation/MyKit",
+            ],
+            [
+              "doc://org.swift.docc.example/documentation/MyKit",
+              "doc://org.swift.docc.example/documentation/Test-Bundle/article",
+            ],
+            [
+              "doc://org.swift.docc.example/tutorials/TestOverview",
+              "doc://org.swift.docc.example/tutorials/TestOverview/$volume",
+              "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1",
+            ],
         ])
     }
 }

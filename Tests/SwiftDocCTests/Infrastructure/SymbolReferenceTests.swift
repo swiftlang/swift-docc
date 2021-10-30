@@ -211,9 +211,11 @@ class SymbolReferenceTests: XCTestCase {
         // The overloads are sorted and all dupes get a hash suffix.
         XCTAssertEqual(
             context.knownIdentifiers.map { $0.path }.filter { $0.contains("/function") }.sorted(),
-            ["/documentation/OverloadKit/function(_:)-1echv",
-             "/documentation/OverloadKit/function(_:)-4s9wl",
-             "/documentation/OverloadKit/function(_:)-7kt4g"]
+            [
+              "/documentation/OverloadKit/function(_:)-1echv",
+              "/documentation/OverloadKit/function(_:)-4s9wl",
+              "/documentation/OverloadKit/function(_:)-7kt4g",
+            ]
         )
     }    
 }

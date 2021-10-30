@@ -31,9 +31,10 @@ class TileTests: XCTestCase {
                 let tile = Tile(from: directive, source: nil, for: bundle, in: context, problems: &problems)
                 XCTAssertNotNil(tile)
                 XCTAssertEqual(2, problems.count)
-                XCTAssertEqual(["org.swift.docc.Resources.\(directiveName).HasContent", 
-                                "org.swift.docc.Resources.\(directiveName).HasLinks"],
-                               problems.map { $0.diagnostic.identifier })
+                XCTAssertEqual([
+                  "org.swift.docc.Resources.\(directiveName).HasContent",
+                  "org.swift.docc.Resources.\(directiveName).HasLinks",
+                ],problems.map { $0.diagnostic.identifier })
             }
             
             do {
@@ -79,8 +80,9 @@ class TileTests: XCTestCase {
                 let tile = Tile(from: directive, source: nil, for: bundle, in: context, problems: &problems)
                 XCTAssertNotNil(tile)
                 XCTAssertEqual(1, problems.count)
-                XCTAssertEqual(["org.swift.docc.Resources.\(directiveName).HasContent"],
-                               problems.map { $0.diagnostic.identifier })
+                XCTAssertEqual([
+                  "org.swift.docc.Resources.\(directiveName).HasContent",
+                ],problems.map { $0.diagnostic.identifier })
             }
             
             do {

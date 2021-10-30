@@ -1036,7 +1036,12 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(renderNode.relationshipSections[0].identifiers, ["doc://org.swift.docc.example/5Foundation0A5NSCodableP"])
         XCTAssertEqual(renderNode.relationshipSections[0].type, "inheritsFrom")
         
-        XCTAssertEqual(renderNode.relationshipSections[1].identifiers, ["doc://org.swift.docc.example/documentation/MyKit/MyClass", "doc://org.swift.docc.example/documentation/SideKit/SideClass"])
+        XCTAssertEqual(renderNode.relationshipSections[1].identifiers,
+                       [
+                        "doc://org.swift.docc.example/documentation/MyKit/MyClass",
+                        "doc://org.swift.docc.example/documentation/SideKit/SideClass",
+                       ]
+        )
         XCTAssertEqual(renderNode.relationshipSections[1].type, "conformingTypes")
         
         guard renderNode.topicSections.count == 1 else {
