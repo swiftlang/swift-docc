@@ -1665,6 +1665,14 @@ class ConvertActionTests: XCTestCase {
     }
     
     func testConvertActionProducesDeterministicOutput() throws {
+        // Pretty printing the output JSON also enables sorting keys during encoding
+        // which is required for testing if the conversion output is deterministic.
+        let priorPrettyPrintValue = shouldPrettyPrintOutputJSON
+        shouldPrettyPrintOutputJSON = true
+        defer {
+            shouldPrettyPrintOutputJSON = priorPrettyPrintValue
+        }
+        
         let testBundleURL = try XCTUnwrap(
             Bundle.module.url(
                 forResource: "TestBundle",

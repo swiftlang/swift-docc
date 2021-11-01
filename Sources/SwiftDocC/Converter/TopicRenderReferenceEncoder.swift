@@ -38,8 +38,10 @@ enum TopicRenderReferenceEncoder {
         // The keys of the node render references
         var referenceIndexes = Array(references.keys)
         
-        // Sort the render references so that RenderJSON output is stable and deterministic
-        referenceIndexes.sort()
+        // Sort the keys if `.sortedKeys` is set on the encoder.
+        if encoder.outputFormatting.contains(.sortedKeys) {
+            referenceIndexes.sort()
+        }
         
         // Insert the references
         for index in referenceIndexes {
