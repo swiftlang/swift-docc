@@ -57,13 +57,10 @@ class CollectionConcurrentPerformTests: XCTestCase {
         }
         
         // Verify that each next block has started after the previous block has finished.
-        XCTAssertTrue(
-            zip(results, results.dropFirst())
-                .allSatisfy({ result, next -> Bool in
-                    return next.start > result.end
-                }),
-            "Blocks didn't run serially"
-        )
+        for (result, next) in zip(results, results.dropFirst()) {
+            XCTAssertTrue(next.start >= result.end,
+                          "Blocks didn't run serially; \(result.end) not before \(next.start)")
+        }
     }
 
     func testConcurrentPerform() {
