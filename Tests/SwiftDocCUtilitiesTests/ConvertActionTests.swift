@@ -1584,8 +1584,8 @@ class ConvertActionTests: XCTestCase {
         struct TestReferenceResolver: ExternalReferenceResolver {
             let customResolvedURL = URL(string: "https://resolved.com/resolved/path?query=item")!
 
-            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReference {
-                return TopicReference.resolved(ResolvedTopicReference(bundleIdentifier: "com.example.test", path: reference.url!.path, sourceLanguage: .swift))
+            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+                return .success(ResolvedTopicReference(bundleIdentifier: "com.example.test", path: reference.url!.path, sourceLanguage: .swift))
             }
 
             func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {

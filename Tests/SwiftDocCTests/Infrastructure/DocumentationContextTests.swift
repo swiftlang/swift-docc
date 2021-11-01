@@ -107,7 +107,7 @@ class DocumentationContextTests: XCTestCase {
         let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL("doc:/TestTutorial")!)
         let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "", sourceLanguage: .swift)
         
-        guard case let .resolved(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
+        guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
             XCTFail("Couldn't resolve \(unresolved)")
             return
         }
@@ -117,7 +117,7 @@ class DocumentationContextTests: XCTestCase {
         
         // Test lowercasing of path
         let unresolvedUppercase = UnresolvedTopicReference(topicURL: ValidatedURL("doc:/TESTTUTORIAL")!)
-        guard case .unresolved = context.resolve(.unresolved(unresolvedUppercase), in: parent) else {
+        guard case .failure = context.resolve(.unresolved(unresolvedUppercase), in: parent) else {
             XCTFail("Did incorrectly resolve \(unresolvedUppercase)")
             return
         }
@@ -133,7 +133,7 @@ class DocumentationContextTests: XCTestCase {
         
         try workspace.unregisterProvider(dataProvider)
         
-        guard case .unresolved = context.resolve(.unresolved(unresolved), in: parent) else {
+        guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
             XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
             return
         }
@@ -2565,8 +2565,8 @@ let expected = """
         // Try resolving the new resolvable node
         XCTAssertNoThrow(try context.entity(with: resolvableReference))
         switch context.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL("doc:resolvable-article")!)), in: moduleReference) {
-        case .resolved: break
-        case .unresolved: XCTFail("Did not resolve resolvable link")
+        case .success: break
+        case .failure(_, let errorMessage): XCTFail("Did not resolve resolvable link. Error: \(errorMessage)")
         }
     }
     
@@ -2724,11 +2724,11 @@ let expected = """
             // Resolve from various locations in the bundle
             for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialsRootReference] {
                 switch context.resolve(unresolved, in: parent) {
-                    case .resolved(let reference):
+                    case .success(let reference):
                         if reference.path != expected.path {
                             XCTFail("Expected to resolve to \(expected.path) in parent path '\(parent.path)' but got \(reference.path)")
                         }
-                    case .unresolved: XCTFail("Didn't resolve to expected reference path \(expected.path)")
+                    case .failure(_, let errorMessage): XCTFail("Didn't resolve to expected reference path \(expected.path). Error: \(errorMessage)")
                 }
             }
         }
@@ -2766,11 +2766,11 @@ let expected = """
             // Resolve from various locations in the bundle
             for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialsRootReference, symbolReference] {
                 switch context.resolve(unresolved, in: parent) {
-                    case .resolved(let reference):
+                    case .success(let reference):
                         if reference.path != expected.path {
                             XCTFail("Expected to resolve to \(expected.path) but got \(reference.path)")
                         }
-                    case .unresolved: XCTFail("Didn't resolve to expected reference path \(expected.path)")
+                    case .failure(_, let errorMessage): XCTFail("Didn't resolve to expected reference path \(expected.path). Error: \(errorMessage)")
                 }
             }
         }
@@ -2820,21 +2820,21 @@ let expected = """
             // with an explicity preference.
             let unresolvedSymbolRef1 = UnresolvedTopicReference(topicURL: ValidatedURL("Test")!)
             switch context.resolve(.unresolved(unresolvedSymbolRef1), in: moduleReference, fromSymbolLink: true) {
-                case .unresolved: XCTFail("Did not resolve a symbol link to the symbol Test")
+                case .failure(_, let errorMessage): XCTFail("Did not resolve a symbol link to the symbol Test. Error: \(errorMessage)")
                 default: break
             }
             switch context.resolve(.unresolved(unresolvedSymbolRef1), in: moduleReference, fromSymbolLink: false) {
-                case .unresolved: XCTFail("Did not resolve a topic link to the symbol Test")
+                case .failure(_, let errorMessage): XCTFail("Did not resolve a topic link to the symbol Test. Error: \(errorMessage)")
                 default: break
             }
 
             let articleRef1 = UnresolvedTopicReference(topicURL: ValidatedURL("Article")!)
             switch context.resolve(.unresolved(articleRef1), in: moduleReference, fromSymbolLink: true) {
-                case .resolved: XCTFail("Did resolve a symbol link to an article")
+                case .success: XCTFail("Did resolve a symbol link to an article")
                 default: break
             }
             switch context.resolve(.unresolved(articleRef1), in: moduleReference, fromSymbolLink: false) {
-                case .unresolved: XCTFail("Did not resolve a topic link to an article")
+                case .failure(_, let errorMessage): XCTFail("Did not resolve a topic link to an article. Error: \(errorMessage)")
                 default: break
             }
 

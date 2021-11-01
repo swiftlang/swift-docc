@@ -81,7 +81,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         // Resolve the reference
         let unresolved = TopicReference.unresolved(
             UnresolvedTopicReference(topicURL: ValidatedURL("doc://com.test.bundle/something")!))
-        guard case .resolved(let resolvedReference) = resolver.resolve(
+        guard case .success(let resolvedReference) = resolver.resolve(
                 unresolved, sourceLanguage: .swift)
         else {
             XCTFail("Unexpectedly failed to resolve reference")
@@ -360,13 +360,12 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     
     func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver) throws {
         XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
-        XCTAssertThrowsError(try resolver.resolveInformationForTopicURL(URL(string: "doc://com.test.bundle/something")!)) {
-            guard case OutOfProcessReferenceResolver.Error.forwardedErrorFromClient(let errorMessage) = $0 else {
-                XCTFail("Encountered an unexpected type of error.")
-                return
-            }
-            XCTAssertEqual(errorMessage, "Some error message.")
+        let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL("doc://com.test.bundle/something")!)), sourceLanguage: .swift)
+        guard case .failure(_, let errorMessage) = resolverResult else {
+            XCTFail("Encountered an unexpected type of error.")
+            return
         }
+        XCTAssertEqual(errorMessage, "Some error message.")
     }
     
     func testForwardsResolverErrorsProcess() throws {

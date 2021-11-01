@@ -107,21 +107,27 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     /// - Parameters:
     ///   - reference: The unresolved reference.
     ///   - sourceLanguage: The source language of the reference (in case the reference exists in multiple languages)
-    /// - Returns: The resolved reference for the topic, or the original unresolved reference if the topic doesn't exist in the external source.
-    public func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReference {
+    /// - Returns: The resolved reference for the topic, or information about why the other process failed to resolve the reference.
+    public func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
         switch reference {
+        case .resolved(let resolved):
+            return resolved
+            
         case let .unresolved(unresolvedReference):
             guard let bundleIdentifier = unresolvedReference.bundleIdentifier else {
-                return reference
+                fatalError("""
+                    Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
+                    DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
+                    """)
             }
             do {
                 guard let unresolvedTopicURL = unresolvedReference.topicURL.components.url else {
                     // Return the unresolved reference if the underlying URL is not valid
-                    return reference
+                    return .failure(unresolvedReference, errorMessage: "URL \(unresolvedReference.topicURL) is not valid.")
                 }
                 let metadata = try resolveInformationForTopicURL(unresolvedTopicURL)
                 // Don't do anything with this URL. The external URL will be resolved during conversion to render nodes
-                return .resolved(
+                return .success(
                     ResolvedTopicReference(
                         bundleIdentifier: bundleIdentifier,
                         path: unresolvedReference.path,
@@ -129,12 +135,9 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
                         sourceLanguage: .init(name: metadata.language.name, id: metadata.language.id)
                     )
                 )
-            } catch {
-                return reference
+            } catch let error {
+                return .failure(unresolvedReference, errorMessage: error.localizedDescription)
             }
-            
-        case .resolved:
-            return reference
         }
     }
     
@@ -280,7 +283,10 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         case .unresolved(let unresolved):
             guard unresolved.bundleIdentifier == symbolBundleIdentifier else { return nil }
             url = unresolved.topicURL.url
-        case .resolved(let resolved):
+        case .resolved(.failure(let unresolved, _)):
+            guard unresolved.bundleIdentifier == symbolBundleIdentifier else { return nil }
+            url = unresolved.topicURL.url
+        case .resolved(.success(let resolved)):
             guard resolved.bundleIdentifier == symbolBundleIdentifier else { return nil }
             url = resolved.url
         }

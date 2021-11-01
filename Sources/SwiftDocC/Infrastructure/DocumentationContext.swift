@@ -205,8 +205,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// This is tracked to exclude external symbols from the build output. Information about external references is still included for the local pages that makes the external reference.
     var externallyResolvedSymbols = Set<ResolvedTopicReference>()
     
-    /// All the link references that have been resolved from external sources.
-    var externallyResolvedLinks = [ValidatedURL: ResolvedTopicReference]()
+    /// All the link references that have been resolved from external sources, either successfully or not.
+    var externallyResolvedLinks = [ValidatedURL: TopicReferenceResolutionResult]()
     
     /// The mapping of external symbol identifiers to known disambiguated symbol path components.
     ///
@@ -430,7 +430,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
         
-        try Set(collectedExternalLinks).compactMap { externalLink -> (url: ValidatedURL, resolved: ResolvedTopicReference)? in
+        try Set(collectedExternalLinks).compactMap { externalLink -> (url: ValidatedURL, resolved: TopicReferenceResolutionResult)? in
             guard let referenceBundleIdentifier = externalLink.unresolved.topicURL.components.host else {
                 assertionFailure("Should not hit this code path, url is verified to have an external bundle id.")
                 return nil
@@ -438,21 +438,22 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             if let externalResolver = externalReferenceResolvers[referenceBundleIdentifier] {
                 let reference = externalResolver.resolve(.unresolved(externalLink.unresolved), sourceLanguage: externalLink.targetLanguage)
-                if case .resolved(let resolvedReference) = reference {
+                if case .success(let resolvedReference) = reference {
                     // Add the resolved entity to the documentation cache.
                     if let externallyResolvedNode = try externalEntity(with: resolvedReference) {
                         documentationCache[resolvedReference] = externallyResolvedNode
                     }
-                    return (externalLink.unresolved.topicURL, resolvedReference)
                 }
+                return (externalLink.unresolved.topicURL, reference)
             }
             
             return nil
         }
         .forEach { pair in
             externallyResolvedLinks[pair.url] = pair.resolved
-            if pair.url.absoluteString != pair.resolved.absoluteString,
-                let url = pair.resolved.url.flatMap(ValidatedURL.init) {
+            if case .success(let resolvedReference) = pair.resolved,
+                pair.url.absoluteString != resolvedReference.absoluteString,
+                let url = resolvedReference.url.flatMap(ValidatedURL.init) {
                 // If the resolved reference has a different URL than the link cache both URLs
                 // so we can resolve both unresolved and resolved references.
                 externallyResolvedLinks[url] = pair.resolved
@@ -605,7 +606,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         topicGraph.addEdge(from: volumeNode, to: chapterNode)
                         
                         for tutorialReference in chapter.topicReferences {
-                            guard case let .resolved(tutorialReference) = tutorialReference.topic,
+                            guard case let .resolved(.success(tutorialReference)) = tutorialReference.topic,
                                 let tutorialNode = topicGraph.nodeWithReference(tutorialReference) else {
                                     continue
                             }
@@ -2152,7 +2153,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      
      If none of these succeeds we will return the original unresolved reference.
      */
-    public func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool = false) -> TopicReference {
+    public func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool = false) -> TopicReferenceResolutionResult {
         switch reference {
         case .unresolved(let unresolvedReference):
             
@@ -2164,7 +2165,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     // When resolving a symbol link, ignore non-symbol matches,
                     // do continue to try resolving the symbol as if cached match was not found.
                 } else {
-                    return .resolved(cachedReference)
+                    return .success(cachedReference)
                 }
             }
 
@@ -2173,7 +2174,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             // Ensure we are resolving either relative links or "doc:" scheme links
             guard reference.url?.scheme == nil || ResolvedTopicReference.urlHasResolvedTopicScheme(reference.url) else {
                 // Not resolvable in the topic graph
-                return reference
+                return .failure(unresolvedReference, errorMessage: "Reference URL \(reference.description.singleQuoted) doesn't have \"doc:\" scheme.")
             }
             
             // Fall back on the parent's bundle identifier for relative paths
@@ -2186,7 +2187,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             /// Returns the given reference if it resolves. Otherwise, returns nil.
             ///
             /// Adds any non-resolving reference to the `allCandidateURLs` collection.
-            func attemptToResolve(_ reference: ResolvedTopicReference) -> TopicReference? {
+            func attemptToResolve(_ reference: ResolvedTopicReference) -> TopicReferenceResolutionResult? {
                 if topicGraph.nodeWithReference(reference) != nil {
                     let resolved = ResolvedTopicReference(bundleIdentifier: referenceBundleIdentifier, path: reference.url.path, fragment: reference.fragment, sourceLanguage: reference.sourceLanguage)
                     // If resolving a symbol link, only match symbol nodes.
@@ -2195,9 +2196,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         return nil
                     }
                     cacheReference(resolved, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
-                    return .resolved(resolved)
+                    return .success(resolved)
                 } else if reference.fragment != nil, nodeAnchorSections.keys.contains(reference) {
-                    return .resolved(reference)
+                    return .success(reference)
                 } else {
                     allCandidateURLs.append(reference.url)
                     return nil
@@ -2283,10 +2284,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
 
             // 5. Check if a pre-resolved external link.
-            if let bundleID = unresolvedReference.topicURL.components.host,
-                externalReferenceResolvers[bundleID] != nil,
-                let resolvedExternalReference = externallyResolvedLinks[unresolvedReference.topicURL] {
-                return .resolved(resolvedExternalReference)
+            if let bundleID = unresolvedReference.topicURL.components.host {
+                if externalReferenceResolvers[bundleID] != nil,
+                   let resolvedExternalReference = externallyResolvedLinks[unresolvedReference.topicURL] {
+                    // Return the successful or failed externally resolved reference.
+                    return resolvedExternalReference
+                } else if !registeredBundles.contains(where: { $0.identifier == bundleID }) {
+                    return .failure(unresolvedReference, errorMessage: "No external resolver registered for \(bundleID.singleQuoted).")
+                }
             }
             
             // External symbols are already pre-resolved while loading the symbol graph
@@ -2298,18 +2303,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     let unresolvedReference = UnresolvedTopicReference(topicURL: ValidatedURL(candidateURL)!)
                     let reference = fallbackResolver.resolve(.unresolved(unresolvedReference), sourceLanguage: parent.sourceLanguage)
                     
-                    if case .resolved(let resolvedReference) = reference {
+                    if case .success(let resolvedReference) = reference {
                         cacheReference(resolvedReference, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
-                        return .resolved(resolvedReference)
+                        return .success(resolvedReference)
                     }
                 }
             }
             
             // Give up: there is no local or external document for this reference.
-            return reference
-        case .resolved:
-            // This reference is already resolved, so don't change anything.
-            return reference
+            
+            // External references which failed to resolve will already have returned a more specific error message.
+            return .failure(unresolvedReference, errorMessage: "No local documentation matches this reference.")
+        case .resolved(let resolved):
+            // This reference is already resolved (either as a success or a failure), so don't change anything.
+            return resolved
         }
     }
     

@@ -58,8 +58,8 @@ class PresentationURLGeneratorTests: XCTestCase {
         struct TestLinkResolver: ExternalReferenceResolver {
             let customResolvedURL = URL(string: "https://resolved.com/resolved/path?query=item")!
             
-            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReference {
-                return TopicReference.resolved(ResolvedTopicReference(bundleIdentifier: "com.example.test", path: "/path", sourceLanguage: .swift))
+            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+                return .success(ResolvedTopicReference(bundleIdentifier: "com.example.test", path: "/path", sourceLanguage: .swift))
             }
             
             func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {

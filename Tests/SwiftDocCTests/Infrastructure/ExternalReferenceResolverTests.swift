@@ -28,11 +28,11 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         var resolvedExternalPaths = [String]()
         
-        func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReference {
+        func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
             if let path = reference.url?.path {
                 resolvedExternalPaths.append(path)
             }
-            return .resolved(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, fragment: expectedFragment, sourceLanguage: .swift))
+            return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, fragment: expectedFragment, sourceLanguage: .swift))
         }
         
         func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
@@ -125,7 +125,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL("doc://com.external.testbundle/article")!)
         let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyClass", sourceLanguage: .swift)
 
-        guard case let .resolved(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
+        guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
             XCTFail("Couldn't resolve \(unresolved)")
             return
         }
@@ -138,7 +138,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         try workspace.unregisterProvider(dataProvider)
         context.externalReferenceResolvers = [:]
-        guard case .unresolved = context.resolve(.unresolved(unresolved), in: parent) else {
+        guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
             XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
             return
         }
@@ -159,7 +159,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             context.externalReferenceResolvers = [:]
             context.fallbackReferenceResolvers = [:]
             
-            if case .resolved = context.resolve(.unresolved(unresolved), in: parent) {
+            if case .success = context.resolve(.unresolved(unresolved), in: parent) {
                 XCTFail("The reference was unexpectedly resolved.")
             }
         }
@@ -168,7 +168,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             context.externalReferenceResolvers = [:]
             context.fallbackReferenceResolvers = [bundleIdentifier : TestExternalReferenceResolver()]
             
-            guard case let .resolved(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
+            guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
                 XCTFail("The reference was unexpectedly unresolved.")
                 return
             }
@@ -181,7 +181,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             
             try workspace.unregisterProvider(dataProvider)
             context.externalReferenceResolvers = [:]
-            guard case .unresolved = context.resolve(.unresolved(unresolved), in: parent) else {
+            guard case .failure = context.resolve(.unresolved(unresolved), in: parent) else {
                 XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
                 return
             }
@@ -465,15 +465,20 @@ Document @1:1-1:35
             var referencesCreatingEntityFor: Set<ResolvedTopicReference> = []
             var referencesReadingURLFor: Set<ResolvedTopicReference> = []
             
-            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReference {
+            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
                 referencesAskedToResolve.insert(reference)
                 
                 // Only resolve a specific, known reference
                 guard reference.description == "doc://com.external.testbundle/resolvable" else {
-                    return reference
+                    switch reference {
+                    case .unresolved(let unresolved):
+                        return .failure(unresolved, errorMessage: "Unit test: External resolve error.")
+                    case .resolved(let resolvedResult):
+                        return resolvedResult
+                    }
                 }
                 // Note that this resolved reference doesn't have the same path as the unresolved reference.
-                return .resolved(.init(bundleIdentifier: "com.external.testbundle", path: "/resolved", sourceLanguage: .swift))
+                return .success(.init(bundleIdentifier: "com.external.testbundle", path: "/resolved", sourceLanguage: .swift))
             }
             
             func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
@@ -513,8 +518,38 @@ Document @1:1-1:35
         defer { try? FileManager.default.removeItem(at: url) }
         
         // Verify the external link has been collected and pre-resolved.
-        XCTAssertEqual(context.externallyResolvedLinks.keys.map({ $0.absoluteString }).sorted(), ["doc://com.external.testbundle/resolvable", "doc://com.external.testbundle/resolved"])
-        XCTAssertEqual(context.externallyResolvedLinks.values.map({ $0.absoluteString }), ["doc://com.external.testbundle/resolved", "doc://com.external.testbundle/resolved"])
+        XCTAssertEqual(context.externallyResolvedLinks.keys.map({ $0.absoluteString }).sorted(), [
+            "doc://com.external.testbundle/not-resolvable-1", // expected failure
+            "doc://com.external.testbundle/not-resolvable-2", // expected failure
+            "doc://com.external.testbundle/resolvable", // expected success
+            "doc://com.external.testbundle/resolved" // the successfully resolved reference has a different reference which should also be collected.
+        ], "Results for both failed and successfully resolved external references should be collected.")
+        
+        XCTAssertNil(context.externallyResolvedLinks[ValidatedURL("doc://com.external.other-test-bundle/article")!],
+                     "External references without a registered external resolver should not be collected.")
+        
+        // Expected failed externally resolved reference.
+        XCTAssertEqual(
+            context.externallyResolvedLinks[ValidatedURL("doc://com.external.testbundle/not-resolvable-1")!],
+            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL("doc://com.external.testbundle/not-resolvable-1")!), errorMessage: "Unit test: External resolve error.")
+        )
+        XCTAssertEqual(
+            context.externallyResolvedLinks[ValidatedURL("doc://com.external.testbundle/not-resolvable-2")!],
+            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL("doc://com.external.testbundle/not-resolvable-2")!), errorMessage: "Unit test: External resolve error.")
+        )
+        
+        // Expected successful externally resolved reference.
+        XCTAssertEqual(
+            context.externallyResolvedLinks[ValidatedURL("doc://com.external.testbundle/resolvable")!],
+            TopicReferenceResolutionResult.success(ResolvedTopicReference(bundleIdentifier: "com.external.testbundle", path: "/resolved", fragment: nil, sourceLanguage: .swift))
+        )
+        XCTAssertEqual(
+            context.externallyResolvedLinks[ValidatedURL("doc://com.external.testbundle/resolved")!],
+            TopicReferenceResolutionResult.success(ResolvedTopicReference(bundleIdentifier: "com.external.testbundle", path: "/resolved", fragment: nil, sourceLanguage: .swift))
+        )
+        
+        XCTAssert(context.problems.contains(where: { $0.diagnostic.localizedSummary.contains("Unit test: External resolve error.")}),
+                  "The external reference resolver error message is included in that problem's error summary.")
         
         // Get MyKit symbol
         let entity = try context.entity(with: .init(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
@@ -575,7 +610,10 @@ Document @1:1-1:35
 
         // Verify that the external link was stored in the context.
         let linkURL = try XCTUnwrap(ValidatedURL(markdownLink))
-        let linkReference = try XCTUnwrap(context.externallyResolvedLinks[linkURL])
+        guard case .success(let linkReference) = try XCTUnwrap(context.externallyResolvedLinks[linkURL]) else {
+            XCTFail("Unexpected failed external reference.")
+            return
+        }
         XCTAssertEqual(linkReference.absoluteString, "doc://com.external.testbundle/externally/resolved/path#67890")
 
         // Verify that the final URL is as expected.

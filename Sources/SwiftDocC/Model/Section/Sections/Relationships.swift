@@ -96,9 +96,9 @@ public struct RelationshipsGroup {
 extension TopicReference {
     var url: URL? {
         switch self {
-        case .resolved(let resolved):
+        case .resolved(.success(let resolved)):
             return resolved.url
-        case .unresolved(let unresolved):
+        case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
             return unresolved.topicURL.components.url
         }
     }

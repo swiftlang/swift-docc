@@ -493,9 +493,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
     public mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> RenderTree? {
         switch context.resolve(tutorialReference.topic, in: bundle.rootReference) {
-        case let .unresolved(reference):
+        case let .failure(reference, _):
             return RenderReferenceIdentifier(reference.topicURL.absoluteString)
-        case let .resolved(resolved):
+        case let .success(resolved):
             return visitResolvedTopicReference(resolved)
         }
     }
@@ -517,7 +517,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let action: RenderInlineContent
         // We expect, at this point of the rendering, this API to be called with valid URLs, otherwise crash.
         let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(link)!)
-        if case let .resolved(resolved) = context.resolve(.unresolved(unresolved), in: bundle.rootReference) {
+        if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: bundle.rootReference) {
             action = RenderInlineContent.reference(identifier: RenderReferenceIdentifier(resolved.absoluteString),
                                                    isActive: true,
                                                    overridingTitle: overridingTitle,
@@ -1090,7 +1090,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     }
 
                     switch destination {
-                        case .resolved(let resolved):
+                        case .resolved(.success(let resolved)):
                             let node = try! context.entity(with: resolved)
                             let resolver = LinkTitleResolver(context: context, source: resolved.url)
                             let resolvedTitle = resolver.title(for: node)
@@ -1098,13 +1098,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                             
                             // Add relationship to render references
                             collectedTopicReferences.append(resolved)
-                        case .unresolved(let unresolved):
+
+                        case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
                             // Try creating a render reference anyway
                             if let title = symbol.relationships.targetFallbacks[destination],
                                 let reference = collectUnresolvableSymbolReference(destination: unresolved, title: title) {
                                 destinationsMap[destination] = reference.title
                             }
-                            continue
                     }
                 }
                 
@@ -1124,7 +1124,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Place "top" rendering preference automatic task groups
-        // after any user-defined task gruops but before automatic curation.
+        // after any user-defined task groups but before automatic curation.
         if !symbol.automaticTaskGroups.isEmpty {
             node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(symbol.automaticTaskGroups.filter({ $0.renderPositionPreference == .top }), contentCompiler: &contentCompiler))
         }
@@ -1147,7 +1147,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         })
 
         // Place "bottom" rendering preference automatic task groups
-        // after any user-defined task gruops but before automatic curation.
+        // after any user-defined task groups but before automatic curation.
         if !symbol.automaticTaskGroups.isEmpty {
             node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(symbol.automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }), contentCompiler: &contentCompiler))
         }
@@ -1156,9 +1156,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
             for imp in symbol.defaultImplementations.implementations {
                 let resolved: ResolvedTopicReference
                 switch imp.reference {
-                    case .resolved(let reference):
+                    case .resolved(.success(let reference)):
                         resolved = reference
-                    case .unresolved(let unresolved):
+                    case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
                         // Try creating a render reference anyway
                         if let title = symbol.defaultImplementations.targetFallbacks[imp.reference],
                             let reference = collectUnresolvableSymbolReference(destination: unresolved, title: title),
@@ -1171,7 +1171,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // Add implementation to render references
                 collectedTopicReferences.append(resolved)
                 if let constraints = symbol.relationships.constraints[imp.reference] {
-                    collectedConstraints[.resolved(resolved)] = constraints
+                    collectedConstraints[.successfullyResolved(resolved)] = constraints
                 }
             }
             

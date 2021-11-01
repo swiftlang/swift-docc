@@ -47,7 +47,7 @@ struct DocumentationCurator {
         }
         let maybeResolved = context.resolve(.unresolved(unresolved), in: resolved, fromSymbolLink: true)
         
-        if case let .resolved(resolved) = maybeResolved {
+        if case let .success(resolved) = maybeResolved {
             return resolved
         }
         return nil
@@ -65,7 +65,7 @@ struct DocumentationCurator {
         }
         let maybeResolved = context.resolve(.unresolved(unresolved), in: resolved)
         
-        if case let .resolved(resolved) = maybeResolved {
+        if case let .success(resolved) = maybeResolved {
             // The link resolves to a known topic.
             if let node = context.topicGraph.nodeWithReference(resolved) {
                 // Make sure to remove any articles that have been registered in the topic graph
@@ -84,9 +84,12 @@ struct DocumentationCurator {
         
         // Check if the link has been externally resolved already.
         if let bundleID = unresolved.topicURL.components.host,
-            context.externalReferenceResolvers[bundleID] != nil || context.fallbackReferenceResolvers[bundleID] != nil,
-            let resolvedExternalReference = context.externallyResolvedLinks[unresolved.topicURL] {
-            return resolvedExternalReference
+           context.externalReferenceResolvers[bundleID] != nil || context.fallbackReferenceResolvers[bundleID] != nil {
+            if case .success(let resolvedExternalReference) = context.externallyResolvedLinks[unresolved.topicURL] {
+                return resolvedExternalReference
+            } else {
+                return nil // This link has already failed to resolve.
+            }
         }
         
         // Try extracting an article from the cache

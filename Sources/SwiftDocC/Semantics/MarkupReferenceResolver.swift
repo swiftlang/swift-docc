@@ -42,11 +42,11 @@ struct MarkupReferenceResolver: MarkupRewriter {
     // This property offers a customization point for when we need to try
     // resolving links in other contexts than the current one to provide more
     // precise diagnostics.
-    var problemForUnresolvedReference: ((UnresolvedTopicReference, URL?, SourceRange?, Bool) -> Problem?)? = nil
+    var problemForUnresolvedReference: ((UnresolvedTopicReference, URL?, SourceRange?, Bool, String) -> Problem?)? = nil
 
     private mutating func resolve(reference: TopicReference, range: SourceRange?, severity: DiagnosticSeverity, fromSymbolLink: Bool = false) -> URL? {
         switch context.resolve(reference, in: rootReference, fromSymbolLink: fromSymbolLink) {
-        case .resolved(let resolved):
+        case .success(let resolved):
             // If the linked node is part of the topic graph,
             // verify that linking to it is enabled, else return `nil`.
             if let node = context.topicGraph.nodeWithReference(resolved) {
@@ -57,16 +57,16 @@ struct MarkupReferenceResolver: MarkupRewriter {
             }
             return resolved.url
             
-        case .unresolved(let unresolved):
+        case .failure(let unresolved, let errorMessage):
             if let callback = problemForUnresolvedReference,
-                let problem = callback(unresolved, source, range, fromSymbolLink) {
+                let problem = callback(unresolved, source, range, fromSymbolLink, errorMessage) {
                 problems.append(problem)
                 return nil
             }
             
             // FIXME: Provide near-miss suggestion here. The user is likely to make mistakes with capitalization because of character input (rdar://59660520).
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch))
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
             return nil
         }
     }

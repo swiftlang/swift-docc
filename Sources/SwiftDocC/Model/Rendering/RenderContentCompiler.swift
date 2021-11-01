@@ -115,7 +115,7 @@ struct RenderContentCompiler: MarkupVisitor {
         guard let unresolved = link.destination.flatMap(ValidatedURL.init)
             .map({ UnresolvedTopicReference(topicURL: $0) }),
             // Try to resolve in the local context
-            case let .resolved(resolved) = context.resolve(.unresolved(unresolved), in: identifier) else {
+            case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier) else {
                     // As this was a doc: URL, we render the link inactive by converting it to plain text,
                     // as it may break routing or other downstream uses of the URL.
                     return [RenderInlineContent.text(link.plainText)]
@@ -146,7 +146,7 @@ struct RenderContentCompiler: MarkupVisitor {
         
         // Try local context
         if let unresolved = ValidatedURL(destination).map(UnresolvedTopicReference.init(topicURL:)),
-            case let .resolved(resolved) = context.resolve(.unresolved(unresolved), in: identifier, fromSymbolLink: true) {
+            case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier, fromSymbolLink: true) {
                 resolvedReference = resolved
         }
 
