@@ -200,13 +200,8 @@ class DataAssetManagerTests: XCTestCase {
     func testFuzzyLookup() throws {
         var manager = DataAssetManager()
         let images = [
-<<<<<<< Updated upstream
             "image.png",
             "woof~dark.JPG",
-=======
-          "image.png",
-          "woof~dark.JPG",
->>>>>>> Stashed changes
         ].compactMap(URL.init(string:))
         try manager.register(data: images)
 
