@@ -129,13 +129,10 @@ public struct ConvertService: DocumentationService {
                 var inMemoryProvider = InMemoryContentDataProvider()
                 
                 inMemoryProvider.registerBundle(
-                    displayName: request.displayName,
-                    identifier: request.identifier,
-                    version: request.version,
+                    info: request.bundleInfo,
                     symbolGraphs: request.symbolGraphs,
                     markupFiles: request.markupFiles,
-                    miscResourceURLs: request.miscResourceURLs,
-                    defaultCodeListingLanguage: request.defaultCodeListingLanguage
+                    miscResourceURLs: request.miscResourceURLs
                 )
                 
                 provider = inMemoryProvider
@@ -146,17 +143,17 @@ public struct ConvertService: DocumentationService {
             
             if let linkResolvingServer = linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
-                    bundleIdentifier: request.identifier,
+                    bundleIdentifier: request.bundleInfo.identifier,
                     server: linkResolvingServer,
                     convertRequestIdentifier: messageIdentifier
                 )
                 
-                context.fallbackReferenceResolvers[request.identifier] = resolver
-                context.fallbackAssetResolvers[request.identifier] = resolver
+                context.fallbackReferenceResolvers[request.bundleInfo.identifier] = resolver
+                context.fallbackAssetResolvers[request.bundleInfo.identifier] = resolver
                 context.externalSymbolResolver = resolver
             }
 
-            var converter = self.converter ?? DocumentationConverter(
+            var converter = try self.converter ?? DocumentationConverter(
                 documentationBundleURL: request.bundleLocation ?? URL(fileURLWithPath: "/"),
                 emitDigest: false,
                 documentationCoverageOptions: .noCoverage,
@@ -167,12 +164,7 @@ public struct ConvertService: DocumentationService {
                 externalIDsToConvert: request.externalIDsToConvert,
                 documentPathsToConvert: request.documentPathsToConvert,
                 bundleDiscoveryOptions: BundleDiscoveryOptions(
-                    infoPlistFallbacks: [
-                        "CFBundleDisplayName": request.displayName,
-                        "CFBundleIdentifier": request.identifier,
-                        "CFBundleVersion": request.version,
-                        "CDDefaultCodeListingLanguage": request.defaultCodeListingLanguage as Any
-                    ],
+                    fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 ),
                 // We're enabling the inclusion of symbol declaration file paths

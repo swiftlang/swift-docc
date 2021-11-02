@@ -89,7 +89,18 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
                 let customHeader = files.first(where: { DocumentationBundleFileTypes.isCustomHeader($0) })
                 let customFooter = files.first(where: { DocumentationBundleFileTypes.isCustomFooter($0) })
                 
-                let bundle = DocumentationBundle(displayName: info.content.displayName, identifier: info.content.identifier, version: Version(versionString: info.content.versionString)!, symbolGraphURLs: graphs, markupURLs: markupFiles, miscResourceURLs: miscFiles, customHeader: customHeader, customFooter: customFooter)
+                let bundle = DocumentationBundle(
+                    info: DocumentationBundle.Info(
+                        displayName: info.content.displayName,
+                        identifier: info.content.identifier,
+                        version: Version(versionString: info.content.versionString)!
+                    ),
+                    symbolGraphURLs: graphs,
+                    markupURLs: markupFiles,
+                    miscResourceURLs: miscFiles,
+                    customHeader: customHeader,
+                    customFooter: customFooter
+                )
                 _bundles.append(bundle)
             }
         }

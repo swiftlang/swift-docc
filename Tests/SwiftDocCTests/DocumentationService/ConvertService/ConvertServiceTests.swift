@@ -14,6 +14,12 @@ import Foundation
 import SymbolKit
 
 class ConvertServiceTests: XCTestCase {
+    private let testBundleInfo = DocumentationBundle.Info(
+        displayName: "TestBundle",
+        identifier: "identifier",
+        version: Version(versionString: "1.0.0")!
+    )
+    
     func testConvertSinglePage() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "mykit-one-symbol",
@@ -24,15 +30,12 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssert(request: request) { message in
@@ -110,15 +113,12 @@ class ConvertServiceTests: XCTestCase {
         let myFunctionExtensionData = try Data(contentsOf: myFunctionExtension)
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             markupFiles: [myFunctionExtensionData],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssert(request: request) { message in
@@ -177,15 +177,12 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             markupFiles: [unrelatedFunctionExtensionData],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssert(request: request) { message in
@@ -256,18 +253,15 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
                 "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
             ],
             markupFiles: [myFunctionExtensionData],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssert(request: request) { message in
@@ -311,18 +305,15 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         var request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
                 "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
             ],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssert(request: request) { message in
@@ -420,18 +411,15 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
-            displayName: "TestBundle",
-            identifier: "com.test.bundle",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
                 "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
             ],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         let server = DocumentationServer()
@@ -484,11 +472,9 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             knownDisambiguatedSymbolPathComponents: [
                 // Only provide a single path component when this USR should
@@ -496,8 +482,7 @@ class ConvertServiceTests: XCTestCase {
                 "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class"]
             ],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssert(request: request) { message in
@@ -565,15 +550,12 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssertResponseContents(
@@ -589,16 +571,13 @@ class ConvertServiceTests: XCTestCase {
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
             bundleLocation: testBundleURL,
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssertResponseContents(
@@ -653,16 +632,13 @@ class ConvertServiceTests: XCTestCase {
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: ["/documentation/Test-Bundle/article"],
             bundleLocation: testBundleURL,
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssertResponseContents(
@@ -680,16 +656,13 @@ class ConvertServiceTests: XCTestCase {
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
                 
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             bundleLocation: testBundleURL,
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssertResponseContents(
@@ -717,17 +690,14 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             includeRenderReferenceStore: true,
             bundleLocation: testBundleURL,
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssertResponseContents(
@@ -846,17 +816,14 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             includeRenderReferenceStore: true,
             bundleLocation: testBundleURL,
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssertResponseContents(
@@ -893,17 +860,14 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             includeRenderReferenceStore: true,
             bundleLocation: testBundleURL,
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssertResponseContents(
@@ -952,15 +916,16 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
+            bundleInfo: DocumentationBundle.Info(
+                displayName: "TestBundle",
+                identifier: "com.test.bundle",
+                version: Version(versionString: "1.0.0")!
+            ),
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
-            displayName: "TestBundle",
-            identifier: "com.test.bundle",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         let server = DocumentationServer()
@@ -1237,15 +1202,16 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
+            bundleInfo: DocumentationBundle.Info(
+                displayName: "TestBundleDisplayName",
+                identifier: "com.test.bundle",
+                version: Version(versionString: "1.0.0")!
+            ),
             externalIDsToConvert: ["s:21SmallTestingFramework40EnumerationWithSingleUnresolvableDocLinkO"],
             documentPathsToConvert: [],
-            displayName: "TestBundleDisplayName",
-            identifier: "com.test.bundle",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         let receivedLinkResolutionRequests = try linkResolutionRequestsForConvertRequest(request)
@@ -1283,15 +1249,16 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
+            bundleInfo: DocumentationBundle.Info(
+                displayName: "TestBundleDisplayName",
+                identifier: "com.test.bundle",
+                version: Version(versionString: "1.0.0")!
+            ),
             externalIDsToConvert: ["s:21SmallTestingFramework15TestEnumerationO06NesteddE0O0D6StructV06deeplyfD31FunctionWithUnresolvableDocLinkyyF"],
             documentPathsToConvert: [],
-            displayName: "TestBundleDisplayName",
-            identifier: "com.test.bundle",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         let receivedLinkResolutionRequests = try linkResolutionRequestsForConvertRequest(request)
@@ -1322,15 +1289,16 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
+            bundleInfo: DocumentationBundle.Info(
+                displayName: "TestBundleDisplayName",
+                identifier: "com.test.bundle",
+                version: Version(versionString: "1.0.0")!
+            ),
             externalIDsToConvert: ["s:21SmallTestingFramework43EnumerationWithSingleUnresolvableSymbolLinkO"],
             documentPathsToConvert: [],
-            displayName: "TestBundleDisplayName",
-            identifier: "com.test.bundle",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         let receivedLinkResolutionRequests = try linkResolutionRequestsForConvertRequest(request)
@@ -1421,14 +1389,11 @@ class ConvertServiceTests: XCTestCase {
     
     func testReturnsErrorWhenConversionThrows() throws {
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: nil,
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         try processAndAssert(
@@ -1446,14 +1411,11 @@ class ConvertServiceTests: XCTestCase {
     
     func testReturnsErrorWhenConversionHasProblems() throws {
         let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
             externalIDsToConvert: nil,
-            displayName: "TestBundle",
-            identifier: "identifier",
-            version: "1.0.0",
             symbolGraphs: [],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         let testProblem = Problem(

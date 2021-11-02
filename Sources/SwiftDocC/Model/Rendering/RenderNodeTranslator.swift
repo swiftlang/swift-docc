@@ -1321,7 +1321,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         // Find default module availability if existing
-        guard let bundleDefaultAvailability = bundle.defaultAvailability,
+        guard let bundleDefaultAvailability = bundle.info.defaultAvailability,
             let moduleAvailability = bundleDefaultAvailability.modules[moduleName] else {
             return nil
         }

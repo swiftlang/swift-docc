@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import SwiftDocC
+@testable import SwiftDocC
 
 class DocumentationServer_DefaultTests: XCTestCase {
     func testCreatesDefaultServerWithSpecifiedQualityOfService() {
@@ -66,14 +66,15 @@ class DocumentationServer_DefaultTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
+            bundleInfo: DocumentationBundle.Info(
+                displayName: "TestBundle",
+                identifier: "identifier",
+                version: Version(versionString: "1.0.0")!
+            ),
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
-            displayName: "TestBundle",
-            identifier: "com.test.bundle",
-            version: "1.0.0",
             symbolGraphs: [symbolGraph],
             markupFiles: [],
-            miscResourceURLs: [],
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: []
         )
         
         let message = DocumentationServer.Message(
