@@ -1670,6 +1670,10 @@ class ConvertActionTests: XCTestCase {
         let priorPrettyPrintValue = shouldPrettyPrintOutputJSON
         shouldPrettyPrintOutputJSON = true
         defer {
+            // Because this value is being modified in-process (not in the environment)
+            // it will not affect the outcome of other tests, even when running tests in parallel.
+            // Even when tests are run in parallel,
+            // there is only one test being executed per process at a time.
             shouldPrettyPrintOutputJSON = priorPrettyPrintValue
         }
         
@@ -1721,24 +1725,25 @@ class ConvertActionTests: XCTestCase {
             let firstConversionFiles = testFileSystem.files.lazy.filter { key, _ in
                 key.hasPrefix("/1/data/")
             }.map { (key, value) in
-                return (String(key.dropFirst(2)), value)
+                return (String(key.dropFirst("/1".count)), value)
             }.sorted(by: \.0)
             
             let secondConversionFiles = testFileSystem.files.lazy.filter { key, _ in
                 key.hasPrefix("/2/data/")
             }.map { (key, value) in
-                return (String(key.dropFirst(2)), value)
+                return (String(key.dropFirst("/2".count)), value)
             }.sorted(by: \.0)
             
             // Zip the two sets of sorted files and loop through them, ensuring that
             // each conversion produced the same RenderJSON output.
             
+            XCTAssertEqual(
+                firstConversionFiles.map(\.0),
+                secondConversionFiles.map(\.0),
+                "The produced file paths are nondeterministic."
+            )
+            
             for (first, second) in zip(firstConversionFiles, secondConversionFiles) {
-                guard first.0 == second.0 else {
-                    XCTFail("The produced file paths are nondeterministic. Found '\(first.0)' and '\(second.0)'")
-                    continue
-                }
-                
                 let firstString = String(data: first.1, encoding: .utf8)
                 let secondString = String(data: second.1, encoding: .utf8)
                 
