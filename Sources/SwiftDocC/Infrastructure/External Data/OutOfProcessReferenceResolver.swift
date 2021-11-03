@@ -123,7 +123,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             do {
                 guard let unresolvedTopicURL = unresolvedReference.topicURL.components.url else {
                     // Return the unresolved reference if the underlying URL is not valid
-                    return .failure(unresolvedReference, errorMessage: "URL \(unresolvedReference.topicURL) is not valid.")
+                    return .failure(unresolvedReference, errorMessage: "URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid.")
                 }
                 let metadata = try resolveInformationForTopicURL(unresolvedTopicURL)
                 // Don't do anything with this URL. The external URL will be resolved during conversion to render nodes
@@ -280,10 +280,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     public func preciseIdentifier(forExternalSymbolReference reference: TopicReference) -> String? {
         let url: URL
         switch reference {
-        case .unresolved(let unresolved):
-            guard unresolved.bundleIdentifier == symbolBundleIdentifier else { return nil }
-            url = unresolved.topicURL.url
-        case .resolved(.failure(let unresolved, _)):
+        case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
             guard unresolved.bundleIdentifier == symbolBundleIdentifier else { return nil }
             url = unresolved.topicURL.url
         case .resolved(.success(let resolved)):

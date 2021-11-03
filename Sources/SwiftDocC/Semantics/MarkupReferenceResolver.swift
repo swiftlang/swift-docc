@@ -42,7 +42,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     // This property offers a customization point for when we need to try
     // resolving links in other contexts than the current one to provide more
     // precise diagnostics.
-    var problemForUnresolvedReference: ((UnresolvedTopicReference, URL?, SourceRange?, Bool, String) -> Problem?)? = nil
+    var problemForUnresolvedReference: ((_ unresolvedReference: UnresolvedTopicReference, _ source: URL?, _ range: SourceRange?, _ fromSymbolLink: Bool, _ underlyingErrorMessage: String) -> Problem?)? = nil
 
     private mutating func resolve(reference: TopicReference, range: SourceRange?, severity: DiagnosticSeverity, fromSymbolLink: Bool = false) -> URL? {
         switch context.resolve(reference, in: rootReference, fromSymbolLink: fromSymbolLink) {

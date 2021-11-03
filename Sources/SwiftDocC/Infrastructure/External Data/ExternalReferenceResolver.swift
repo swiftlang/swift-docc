@@ -22,7 +22,7 @@ import Foundation
 ///
 /// If the reference exists in the external source of documentation, the external resolver returns a resolved reference to the context. Later, the context uses this resolved reference to ask the external resolver
 /// for the node with the documentation content for that reference. Because this content isn't part of the compiled bundle, it won't be included in the build output. However, references to this node from the bundle's content
-/// may incorporate, for example, the external node's title, kind, or abstract in their
+/// may incorporate, for example, the external node's title, kind, or abstract in their output.
 ///
 /// If the reference doesn't exist in the external source of documentation or if an error occurs while attempting to resolve the reference, the external resolver returns information about the error.
 ///

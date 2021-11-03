@@ -28,7 +28,7 @@ public protocol FallbackReferenceResolver {
     /// - Parameters:
     ///   - reference: The unresolved reference.
     ///   - sourceLanguage: The source language of the reference, in case the reference exists in multiple languages.
-    /// - Returns: The resolved reference for the topic,  or information about why the resolver failed to resolve the reference.
+    /// - Returns: The resolved reference for the topic, or information about why the resolver failed to resolve the reference.
     func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult
     
     /// Creates a new documentation node with the documentation content for the external reference, if the given reference was
