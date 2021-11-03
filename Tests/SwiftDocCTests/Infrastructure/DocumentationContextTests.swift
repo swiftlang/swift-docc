@@ -554,23 +554,23 @@ class DocumentationContextTests: XCTestCase {
             .sorted()
         
         XCTAssertEqual(
-          [
-            "figure1.jpg",
-            "figure1.png",
-            "figure1~dark.png",
-            "intro.png",
-            "introposter.png",
-            "introposter2.png",
-            "something@2x.png",
-            "step.png",
-            "titled2up.png",
-            "titled2upCapital.PNG",
-            "with spaces.png",
-            "with spaces@2x.png",
-          ],
-          imagesRegistered.sorted()
+            [
+                "figure1.jpg",
+                "figure1.png",
+                "figure1~dark.png",
+                "intro.png",
+                "introposter.png",
+                "introposter2.png",
+                "something@2x.png",
+                "step.png",
+                "titled2up.png",
+                "titled2upCapital.PNG",
+                "with spaces.png",
+                "with spaces@2x.png",
+            ],
+            imagesRegistered.sorted()
         )
-      }
+    }
     
     func testDownloadAssets() throws {
         let workspace = DocumentationWorkspace()

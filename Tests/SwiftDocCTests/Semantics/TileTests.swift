@@ -32,8 +32,8 @@ class TileTests: XCTestCase {
                 XCTAssertNotNil(tile)
                 XCTAssertEqual(2, problems.count)
                 XCTAssertEqual([
-                  "org.swift.docc.Resources.\(directiveName).HasContent",
-                  "org.swift.docc.Resources.\(directiveName).HasLinks",
+                    "org.swift.docc.Resources.\(directiveName).HasContent",
+                    "org.swift.docc.Resources.\(directiveName).HasLinks",
                 ],problems.map { $0.diagnostic.identifier })
             }
             
@@ -81,7 +81,7 @@ class TileTests: XCTestCase {
                 XCTAssertNotNil(tile)
                 XCTAssertEqual(1, problems.count)
                 XCTAssertEqual([
-                  "org.swift.docc.Resources.\(directiveName).HasContent",
+                    "org.swift.docc.Resources.\(directiveName).HasContent",
                 ],problems.map { $0.diagnostic.identifier })
             }
             
