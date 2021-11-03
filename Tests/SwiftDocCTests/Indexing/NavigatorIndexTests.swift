@@ -1129,8 +1129,13 @@ Root
         XCTAssertEqual(PageType(symbolKind: "intfopfunc"), PageType(symbolKind: "func.op"))
         XCTAssertEqual(PageType(symbolKind: "intftdef"), PageType(symbolKind: "associatedtype"))
     }
-    
-    func testNavigatorIndexOnReadOnlyFilesystem() throws {
+
+    // rdar://84986427
+    // Mounting and unmounting the dmg creates noise on the bots when it fails.
+    // If the test fails before unmounting, the resource is leaked.
+    // This is currently the only test mounting anything, but with tests running
+    // in parallel, this could cause collisions.
+    func skip_testNavigatorIndexOnReadOnlyFilesystem() throws {
         #if os(macOS)
         // To verify we're able to open a read-only index, we need to mount a small DMG in read-only mode.
         let dmgPath = Bundle.module.url(
