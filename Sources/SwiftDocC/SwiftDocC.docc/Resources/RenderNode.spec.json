@@ -1865,6 +1865,12 @@
                         "items": {
                             "$ref": "#/components/schemas/RenderNodeVariant"
                         }
+                    },
+                    "variantOverrides": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VariantOverride"
+                        }
                     }
                 }
             },
@@ -1895,6 +1901,85 @@
                         "$ref": "#/components/schemas/TraitInterfaceLanguage"
                     }
                 ]
+            },
+            "VariantOverride": {
+                "type": "object",
+                "required": [
+                    "traits",
+                    "patch"
+                ],
+                "properties": {
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderNodeVariantTrait"
+                        }
+                    },
+                    "patch": {
+                        "$ref": "#/components/schemas/JSONPatch"
+                    }
+                }
+            },
+            "JSONPatch": {
+                "type": "array",
+                "items": {
+                    "oneOf": [
+                        {
+                            "type": "object",
+                            "required": [
+                                "op",
+                                "path",
+                                "value"
+                            ],
+                            "properties": {
+                                "op": {
+                                    "type": "string",
+                                    "enum": ["add", "test"]
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "value": {}
+                            }
+                        },
+                        {
+                            "type": "object",
+                            "required": [
+                                "op",
+                                "path"
+                            ],
+                            "properties": {
+                                "op": {
+                                    "type": "string",
+                                    "enum": ["remove"]
+                                },
+                                "path": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        {
+                            "type": "object",
+                            "required": [
+                                "op",
+                                "path",
+                                "from"
+                            ],
+                            "properties": {
+                                "op": {
+                                    "type": "string",
+                                    "enum": ["move", "copy"]
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "from": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    ]
+                }
             },
             "TraitInterfaceLanguage": {
                 "required": [

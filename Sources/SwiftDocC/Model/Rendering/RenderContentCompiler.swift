@@ -40,7 +40,7 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
-        return [RenderBlockContent.codeListing(syntax: codeBlock.language ?? bundle.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil)]
+        return [RenderBlockContent.codeListing(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil)]
     }
     
     mutating func visitHeading(_ heading: Heading) -> [RenderContent] {

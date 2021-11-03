@@ -14,7 +14,7 @@ import XCTest
 typealias Node = NavigatorTree.Node
 typealias PageType = NavigatorIndex.PageType
 
-let testBundleIndetifier = "org.swift.docc.example"
+let testBundleIdentifier = "org.swift.docc.example"
 
 class NavigatorIndexingTests: XCTestCase {
     
@@ -177,7 +177,7 @@ Root
         
         let original = NavigatorTree(root: root)
         try original.write(to: indexURL)
-        let readTree = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIndetifier, interfaceLanguages: [.swift], atomically: true)
+        let readTree = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: true)
         
         XCTAssertEqual(original.root.countItems(), readTree.root.countItems())
         XCTAssertTrue(compare(lhs: original.root, rhs: readTree.root))
@@ -198,7 +198,7 @@ Root
         XCTAssertTrue(validateTree(node: readTree.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
         XCTAssertTrue(validateTree(node: readTree.root, validator: emptyPresentationIdentifierValidator), "The tree has a presentation identifier set which should not be present.")
         
-        var treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIndetifier, interfaceLanguages: [.swift], atomically: true, presentationIdentifier: "com.example.test")
+        var treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: true, presentationIdentifier: "com.example.test")
         
         let presentationIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
             return node.presentationIdentifier == "com.example.test"
@@ -209,7 +209,7 @@ Root
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
         
         // Test non-atomic read.
-        treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIndetifier, interfaceLanguages: [.swift], atomically: false, presentationIdentifier: "com.example.test")
+        treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: false, presentationIdentifier: "com.example.test")
         
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: idValidator), "The tree has IDs missing.")
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
@@ -287,7 +287,7 @@ Root
             try? FileManager.default.removeItem(at: targetURL)
         }
         
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
         builder.setup()
         builder.finalize()
                
@@ -340,7 +340,7 @@ Root
             try? FileManager.default.removeItem(at: targetURL)
         }
 
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
         builder.setup()
         try builder.index(renderNode: renderNode)
         builder.finalize()
@@ -357,7 +357,7 @@ Root
         // Create an index 10 times to ensure we have not undeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier, sortRootChildrenByName: true)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -381,7 +381,7 @@ Root
             XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
             XCTAssertEqual(navigatorIndex.navigatorTree.root.countItems(), navigatorIndex.navigatorTree.numericIdentifierToNode.count)
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
-                return node.bundleIdentifier == testBundleIndetifier
+                return node.bundleIdentifier == testBundleIdentifier
             }))
             
             let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
@@ -398,6 +398,38 @@ Root
         assertEqualDumps(results.first ?? "", try testTree(named: "testNavigatorIndexGeneration"))
     }
     
+    func testNavigatorIndexGenerationVariantsPayload() throws {
+        let jsonFile = Bundle.module.url(forResource: "Variant-render-node", withExtension: "json", subdirectory: "Test Resources")!
+        let jsonData = try Data(contentsOf: jsonFile)
+        
+        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
+        builder.setup()
+        
+        let renderNode = try XCTUnwrap(RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: jsonData))
+        try builder.index(renderNode: renderNode)
+        
+        builder.finalize()
+        
+        let navigatorIndex = builder.navigatorIndex!
+        
+        assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
+        assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), """
+        [Root]
+        ┣╸Objective-C
+        ┃ ┗╸My Article in Objective-C
+        ┃   ┣╸Task Group 1
+        ┃   ┣╸Task Group 2
+        ┃   ┗╸Task Group 3
+        ┗╸Swift
+          ┗╸My Article
+            ┣╸Task Group 1
+            ┣╸Task Group 2
+            ┗╸Task Group 3
+        """)
+        try FileManager.default.removeItem(at: targetURL)
+    }
+    
     func testNavigatorIndexUsingPageTitleGeneration() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
@@ -407,7 +439,7 @@ Root
         // Create an index 10 times to ensure we have not undeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier, sortRootChildrenByName: true, usePageTitle: true)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, usePageTitle: true)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -431,7 +463,7 @@ Root
             XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
             XCTAssertEqual(navigatorIndex.navigatorTree.root.countItems(), navigatorIndex.navigatorTree.numericIdentifierToNode.count)
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
-                return node.bundleIdentifier == testBundleIndetifier
+                return node.bundleIdentifier == testBundleIdentifier
             }))
             
             let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
@@ -456,7 +488,7 @@ Root
         // Create an index 10 times to ensure we have not undeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier, sortRootChildrenByName: true, writePathsOnDisk: false)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, writePathsOnDisk: false)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -481,7 +513,7 @@ Root
             XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
             XCTAssertEqual(navigatorIndex.navigatorTree.root.countItems(), navigatorIndex.navigatorTree.numericIdentifierToNode.count)
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
-                return node.bundleIdentifier == testBundleIndetifier
+                return node.bundleIdentifier == testBundleIdentifier
             }))
             
             let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
@@ -510,7 +542,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -560,7 +592,7 @@ Root
         // Create an index 10 times to ensure we have no undeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier, sortRootChildrenByName: true)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -620,7 +652,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -635,7 +667,7 @@ Root
         let navigatorIndex = try NavigatorIndex(url: targetURL)
         
         XCTAssertEqual(navigatorIndex.pathHasher, .md5)
-        XCTAssertEqual(navigatorIndex.bundleIdentifier, testBundleIndetifier)
+        XCTAssertEqual(navigatorIndex.bundleIdentifier, testBundleIdentifier)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .iOS, .macCatalyst, .tvOS, .macOS])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .macOS), Set([
             Platform.Version(string: "10.9")!,
@@ -717,7 +749,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
         let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIndetifier, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
         builder.setup()
         
         // Change the path hasher to the FNV-1 implementation and make sure paths and mappings are still working.

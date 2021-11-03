@@ -9,7 +9,7 @@
 */
 
 import XCTest
-import SwiftDocC
+@testable import SwiftDocC
 
 class DocumentationWorkspaceTests: XCTestCase {
     func testEmptyWorkspace() {
@@ -145,7 +145,16 @@ class DocumentationWorkspaceTests: XCTestCase {
         }
         
         static func bundle(_ suffix: String) -> DocumentationBundle {
-            return DocumentationBundle(displayName: "Test" + suffix, identifier: "com.example.test" + suffix, version: Version(versionString: "0.1.0")!, symbolGraphURLs: [testSymbolGraphFile], markupURLs: [testMarkupFile], miscResourceURLs: [testResourceFile], defaultCodeListingLanguage: nil)
+            return DocumentationBundle(
+                info: DocumentationBundle.Info(
+                    displayName: "Test" + suffix,
+                    identifier: "com.example.test" + suffix,
+                    version: Version(versionString: "0.1.0")!
+                ),
+                symbolGraphURLs: [testSymbolGraphFile],
+                markupURLs: [testMarkupFile],
+                miscResourceURLs: [testResourceFile]
+            )
         }
         
         static let bundle1 = bundle("1")

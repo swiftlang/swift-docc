@@ -352,9 +352,12 @@ class SymbolGraphLoaderTests: XCTestCase {
     private func makeSymbolGraphLoader(symbolGraphURLs: [URL]) throws -> SymbolGraphLoader {
         let workspace = DocumentationWorkspace()
         let bundle = DocumentationBundle(
-            displayName: "Test",
-            identifier: "com.example.test",
-            version: Version(arrayLiteral: 1,2,3),
+            info: DocumentationBundle.Info(
+                displayName: "Test",
+                identifier: "com.example.test",
+                version: Version(arrayLiteral: 1,2,3)
+            ),
+            baseURL: URL(string: "https://example.com/example")!,
             symbolGraphURLs: symbolGraphURLs,
             markupURLs: [],
             miscResourceURLs: []

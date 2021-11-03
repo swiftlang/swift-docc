@@ -70,4 +70,34 @@ public struct BundleDiscoveryOptions {
         self.infoPlistFallbacks = infoPlistFallbacks
         self.additionalSymbolGraphFiles = additionalSymbolGraphFiles
     }
+    
+    /// Creates new bundle discovery options with the provided documentation bundle info
+    /// as Info.plist fallback values.
+    ///
+    /// - Parameters:
+    ///   - fallbackInfo: Fallback documentation bundle information to use if any discovered bundles are missing an Info.plist.
+    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
+    public init(
+        fallbackInfo: DocumentationBundle.Info,
+        additionalSymbolGraphFiles: [URL] = []
+    ) throws {
+        // Use JSONEncoder to dynamically create the Info.plist fallback
+        // dictionary the `BundleDiscoveryOption`s expect from given DocumentationBundle.Info
+        // model.
+        
+        let data = try JSONEncoder().encode(fallbackInfo)
+        let serializedFallbackInfo = try JSONSerialization.jsonObject(with: data)
+        
+        guard let fallbackInfoDictionary = serializedFallbackInfo as? [String: Any] else {
+            throw DocumentationBundle.Info.Error.wrongType(
+                expected: [String: Any].Type.self,
+                actual: type(of: serializedFallbackInfo)
+            )
+        }
+        
+        self.init(
+            infoPlistFallbacks: fallbackInfoDictionary,
+            additionalSymbolGraphFiles: additionalSymbolGraphFiles
+        )
+    }
 }

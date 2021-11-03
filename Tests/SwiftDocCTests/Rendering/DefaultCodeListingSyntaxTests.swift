@@ -45,15 +45,17 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
 
         // Copy the bundle but explicitly set `defaultCodeListingLanguage` to `nil` to mimic having no default language set.
         testBundleWithoutLanguageDefault = DocumentationBundle(
-            displayName: testBundleWithLanguageDefault.displayName,
-            identifier: testBundleWithLanguageDefault.identifier,
-            version: testBundleWithLanguageDefault.version,
+            info: DocumentationBundle.Info(
+                displayName: testBundleWithLanguageDefault.displayName,
+                identifier: testBundleWithLanguageDefault.identifier,
+                version: testBundleWithLanguageDefault.version,
+                defaultCodeListingLanguage: nil
+            ),
             baseURL: testBundleWithLanguageDefault.baseURL,
             attributedCodeListings: testBundleWithLanguageDefault.attributedCodeListings,
             symbolGraphURLs: testBundleWithLanguageDefault.symbolGraphURLs,
             markupURLs: testBundleWithLanguageDefault.markupURLs,
-            miscResourceURLs: testBundleWithLanguageDefault.miscResourceURLs,
-            defaultCodeListingLanguage: nil
+            miscResourceURLs: testBundleWithLanguageDefault.miscResourceURLs
         )
 
         renderSectionWithLanguageDefault = renderSection(for: testBundleWithLanguageDefault, in: context)
