@@ -31,8 +31,7 @@ public struct GeneratedDataProvider: DocumentationWorkspaceDataProvider {
         self.options = options
         self.symbolGraphDataLoader = symbolGraphDataLoader
         do {
-            let info = try DocumentationBundle.Info(plist: options.infoPlistFallbacks)
-            self.info = info
+            self.info = try DocumentationBundle.Info(bundleDiscoveryOptions: options)
         } catch {
             throw Error.notEnoughDataToGenerateBundle(options: options, underlyingError: error)
         }
@@ -47,15 +46,11 @@ public struct GeneratedDataProvider: DocumentationWorkspaceDataProvider {
         
         return [
             DocumentationBundle(
-                displayName: info.displayName,
-                identifier: info.identifier,
-                version: info.version,
+                info: info,
                 attributedCodeListings: [:],
                 symbolGraphURLs: options.additionalSymbolGraphFiles,
                 markupURLs: [topLevelPage],
-                miscResourceURLs: [],
-                defaultCodeListingLanguage: info.defaultCodeListingLanguage,
-                defaultAvailability: nil
+                miscResourceURLs: []
             )
         ]
     }

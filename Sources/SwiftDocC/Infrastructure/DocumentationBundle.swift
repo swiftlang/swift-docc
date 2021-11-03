@@ -41,17 +41,24 @@ public struct DocumentationBundle {
         }
     }
     
+    /// Information about this documentation bundle that's unrelated to its documentation content.
+    public let info: Info
+    
     /**
      The bundle's human-readable display name.
      */
-    public let displayName: String
-
+    public var displayName: String {
+        info.displayName
+    }
+    
     /**
      The documentation bundle identifier.
 
      An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
      */
-    public let identifier: String
+    public var identifier: String {
+        info.identifier
+    }
 
     /**
      The documentation bundle's version.
@@ -66,7 +73,9 @@ public struct DocumentationBundle {
 
      If the value of the third number is 0, you can omit it and the second period.
      */
-    public let version: Version
+    public var version: Version {
+        info.version
+    }
     
     /// Code listings extracted from the documented modules' source, indexed by their identifier.
     public var attributedCodeListings: [String: AttributedCodeListing]
@@ -87,13 +96,18 @@ public struct DocumentationBundle {
     public let customFooter: URL?
 
     /// Default syntax highlighting to use for code samples in this bundle.
-    public let defaultCodeListingLanguage: String?
-
-    /// Default availability information for modules in this bundle.
-    public let defaultAvailability: DefaultAvailability?
+    @available(*, deprecated, message: "Use 'info.defaultCodeListingLanguage' instead.")
+    public var defaultCodeListingLanguage: String? {
+        return info.defaultCodeListingLanguage
+    }
     
-    /*
-    A URL prefix to be appended to the relative presentation
+    @available(*, deprecated, message: "Use 'info.defaultAvailability' instead.")
+    public var defaultAvailability: DefaultAvailability? {
+        return info.defaultAvailability
+    }
+    
+    /**
+    A URL prefix to be appended to the relative presentation URL.
     
     This is used when a bundle's documentation is hosted in a known location.
     */
@@ -113,10 +127,46 @@ public struct DocumentationBundle {
        - defaultCodeListingLanguage: The default language for code blocks.
        - defaultAvailability: Default availability information for modules in this bundle.
      */
+    @available(*, deprecated, message: "Use 'init(info:baseURL:...)' instead.")
     public init(displayName: String, identifier: String, version: Version, baseURL: URL = URL(string: "/")!, attributedCodeListings: [String: AttributedCodeListing] = [:], symbolGraphURLs: [URL], markupURLs: [URL], miscResourceURLs: [URL], customHeader: URL? = nil, customFooter: URL? = nil, defaultCodeListingLanguage: String? = nil, defaultAvailability: DefaultAvailability? = nil) {
-        self.displayName = displayName
-        self.identifier = identifier
-        self.version = version
+        self.init(
+            info: Info(
+                displayName: displayName,
+                identifier: identifier,
+                version: version,
+                defaultCodeListingLanguage: defaultCodeListingLanguage,
+                defaultAvailability: defaultAvailability
+            ),
+            symbolGraphURLs: symbolGraphURLs,
+            markupURLs: markupURLs,
+            miscResourceURLs: miscResourceURLs,
+            customHeader: customHeader,
+            customFooter: customFooter
+        )
+    }
+    
+    /// Creates a documentation bundle.
+    ///
+    /// - Parameters:
+    ///   - info: Information about the bundle.
+    ///   - baseURL: A URL prefix to be appended to the relative presentation URL.
+    ///   - attributedCodeListings: Code listings extracted from the documented modules' source, indexed by their identifier.
+    ///   - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the bundle.
+    ///   - markupURLs: DocC Markup files of the bundle.
+    ///   - miscResourceURLs: Miscellaneous resources of the bundle.
+    ///   - customHeader: Custom HTML file to use as the header for rendered output.
+    ///   - customFooter: Custom HTML file to use as the footer for rendered output.
+    public init(
+        info: Info,
+        baseURL: URL = URL(string: "/")!,
+        attributedCodeListings: [String: AttributedCodeListing] = [:],
+        symbolGraphURLs: [URL],
+        markupURLs: [URL],
+        miscResourceURLs: [URL],
+        customHeader: URL? = nil,
+        customFooter: URL? = nil
+    ) {
+        self.info = info
         self.baseURL = baseURL
         self.attributedCodeListings = attributedCodeListings
         self.symbolGraphURLs = symbolGraphURLs
@@ -124,14 +174,11 @@ public struct DocumentationBundle {
         self.miscResourceURLs = miscResourceURLs
         self.customHeader = customHeader
         self.customFooter = customFooter
-        self.defaultCodeListingLanguage = defaultCodeListingLanguage
-        self.defaultAvailability = defaultAvailability
-        
-        self.rootReference = ResolvedTopicReference(bundleIdentifier: identifier, path: "/", sourceLanguage: .swift)
-        self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
-        self.tutorialsRootReference = ResolvedTopicReference(bundleIdentifier: identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
-        self.technologyTutorialsRootReference = tutorialsRootReference.appendingPath(urlReadablePath(displayName))
-        self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(displayName))
+        self.rootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: "/", sourceLanguage: .swift)
+        self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
+        self.tutorialsRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
+        self.technologyTutorialsRootReference = tutorialsRootReference.appendingPath(urlReadablePath(info.displayName))
+        self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }
     
     public private(set) var rootReference: ResolvedTopicReference

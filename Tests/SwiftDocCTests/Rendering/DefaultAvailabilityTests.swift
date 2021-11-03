@@ -18,7 +18,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether missing default availability key correctly produces nil availability
     func testBundleWithoutDefaultAvailability() {
         let bundle = testBundle(named: "BundleWithoutAvailability")
-        XCTAssertNil(bundle.defaultAvailability)
+        XCTAssertNil(bundle.info.defaultAvailability)
     }
 
     // Test resource with default availability included
@@ -40,10 +40,10 @@ class DefaultAvailabilityTests: XCTestCase {
         defer { try? FileManager.default.removeItem(at: url) }
         
         // Verify the bundle has loaded the default availability
-        XCTAssertEqual(bundle.defaultAvailability?.modules["MyKit"]?.map({ "\($0.platformName.displayName) \($0.platformVersion)" }).sorted(), expectedDefaultAvailability)
+        XCTAssertEqual(bundle.info.defaultAvailability?.modules["MyKit"]?.map({ "\($0.platformName.displayName) \($0.platformVersion)" }).sorted(), expectedDefaultAvailability)
         
         // Bail the rendering part of the test if the availability hasn't been loaded
-        guard bundle.defaultAvailability != nil else {
+        guard bundle.info.defaultAvailability != nil else {
             return
         }
         
@@ -282,7 +282,13 @@ class DefaultAvailabilityTests: XCTestCase {
                 ]
             ]
         ]
-        let defaultAvailability = try DefaultAvailability(parsingPropertyList: plistEntries)
+        
+        let plistData = try PropertyListEncoder().encode(plistEntries)
+        let defaultAvailability = try PropertyListDecoder().decode(
+            DefaultAvailability.self,
+            from: plistData
+        )
+        
         let module = try XCTUnwrap(defaultAvailability.modules["SwiftUI"])
         XCTAssertEqual(module.count, 5)
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
@@ -313,7 +319,12 @@ class DefaultAvailabilityTests: XCTestCase {
                 ]
             ]
         ]
-        let defaultAvailability = try DefaultAvailability(parsingPropertyList: plistEntries)
+        let plistData = try PropertyListEncoder().encode(plistEntries)
+        let defaultAvailability = try PropertyListDecoder().decode(
+            DefaultAvailability.self,
+            from: plistData
+        )
+        
         let module = try XCTUnwrap(defaultAvailability.modules["SwiftUI"])
         XCTAssertEqual(module.count, 5)
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)

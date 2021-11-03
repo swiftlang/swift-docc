@@ -38,16 +38,22 @@ extension ConvertAction {
         // into a dictionary. This will throw with a descriptive error upon failure.
         let parsedPlatforms = try PlatformArgumentParser.parse(convert.platforms)
 
-        var infoPlistFallbacks = [String: Any]()
-        infoPlistFallbacks["CFBundleDisplayName"] = convert.fallbackBundleDisplayName
-        infoPlistFallbacks["CFBundleIdentifier"] = convert.fallbackBundleIdentifier
-        infoPlistFallbacks["CFBundleVersion"] = convert.fallbackBundleVersion
-        infoPlistFallbacks["CDDefaultCodeListingLanguage"] = convert.defaultCodeListingLanguage
-
+        let additionalSymbolGraphFiles = convert.additionalSymbolGraphFiles + symbolGraphFiles(
+            in: convert.additionalSymbolGraphDirectory
+        )
+        
+        let bundleDiscoveryOptions = BundleDiscoveryOptions(
+            fallbackDisplayName: convert.fallbackBundleDisplayName,
+            fallbackIdentifier: convert.fallbackBundleIdentifier,
+            fallbackVersion: convert.fallbackBundleVersion,
+            fallbackDefaultCodeListingLanguage: convert.defaultCodeListingLanguage,
+            additionalSymbolGraphFiles: additionalSymbolGraphFiles
+        )
+        
         // The `preview` and `convert` action defaulting to the current working directory is only supported
         // when running `docc preview` and `docc convert` without any of the fallback options.
         let documentationBundleURL: URL?
-        if infoPlistFallbacks.isEmpty {
+        if bundleDiscoveryOptions.infoPlistFallbacks.isEmpty {
             documentationBundleURL = convert.documentationBundle.urlOrFallback
         } else {
             documentationBundleURL = convert.documentationBundle.url
@@ -66,11 +72,7 @@ extension ConvertAction {
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions
             ),
-
-            bundleDiscoveryOptions: BundleDiscoveryOptions(
-                infoPlistFallbacks: infoPlistFallbacks,
-                additionalSymbolGraphFiles: symbolGraphFiles(in: convert.additionalSymbolGraphDirectory) + convert.additionalSymbolGraphFiles
-            ),
+            bundleDiscoveryOptions: bundleDiscoveryOptions,
             diagnosticLevel: convert.diagnosticLevel,
             emitFixits: convert.emitFixits,
             inheritDocs: convert.enableInheritedDocs,

@@ -35,7 +35,17 @@ class PresentationURLGeneratorTests: XCTestCase {
     }
     
     func testExternalURLs() throws {
-        let bundle = DocumentationBundle(displayName: "Test", identifier: "com.example.test", version: Version(versionString: "1.0")!, baseURL: URL(string: "https://example.com/example")!, symbolGraphURLs: [], markupURLs: [], miscResourceURLs: [], defaultCodeListingLanguage: nil)
+        let bundle = DocumentationBundle(
+            info: DocumentationBundle.Info(
+                displayName: "Test",
+                identifier: "com.example.test",
+                version: Version(versionString: "1.0")!
+            ),
+            baseURL: URL(string: "https://example.com/example")!,
+            symbolGraphURLs: [],
+            markupURLs: [],
+            miscResourceURLs: []
+        )
         
         let provider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         
@@ -77,7 +87,17 @@ class PresentationURLGeneratorTests: XCTestCase {
             }
         }
         
-        let bundle = DocumentationBundle(displayName: "Test", identifier: "com.example.test", version: Version(versionString: "1.0")!, baseURL: URL(string: "https://example.com/example")!, symbolGraphURLs: [], markupURLs: [], miscResourceURLs: [], defaultCodeListingLanguage: nil)
+        let bundle = DocumentationBundle(
+            info: DocumentationBundle.Info(
+                displayName: "Test",
+                identifier: "com.example.test",
+                version: Version(versionString: "1.0")!
+            ),
+            baseURL: URL(string: "https://example.com/example")!,
+            symbolGraphURLs: [],
+            markupURLs: [],
+            miscResourceURLs: []
+        )
         let provider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         
         let workspace = DocumentationWorkspace()
