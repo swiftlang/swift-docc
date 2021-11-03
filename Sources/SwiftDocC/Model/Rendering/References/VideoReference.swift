@@ -80,9 +80,9 @@ public struct VideoReference: MediaReference, URLReference {
         
         // convert the data asset to a serializable object
         var result = [VariantProxy]()
-        asset.variants.forEach { (args) in
-            let (key, value) = args
-            let isAbsoluteWebURL = !value.isFileURL && value.scheme?.isEmpty == false // if scheme is present it means it's an absolute URL
+        asset.variants.sorted(by: \.value.path).forEach { (key, value) in
+            // If a scheme is present it means it's an absolute URL
+            let isAbsoluteWebURL = !value.isFileURL && value.scheme?.isEmpty == false
             let url = isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent)
             result.append(VariantProxy(url: url, traits: key))
         }

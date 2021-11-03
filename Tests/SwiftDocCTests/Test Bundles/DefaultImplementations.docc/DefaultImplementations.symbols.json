@@ -1,0 +1,973 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "Apple Swift version 5.5 (swiftlang-1300.0.33.1 clang-1300.0.29.1)"
+  },
+  "module": {
+    "name": "DefaultImplementations",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 12,
+          "minor": 0,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1CPAAE1cyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "C",
+        "c()"
+      ],
+      "names": {
+        "title": "c()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "c"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "DefaultImplementations"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "c"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 23,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1BPAAE1byyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "B",
+        "b()"
+      ],
+      "names": {
+        "title": "b()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "b"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "DefaultImplementations"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "b"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 15,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1CP1cyyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "C",
+        "c()"
+      ],
+      "names": {
+        "title": "c()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "c"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "c"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 19,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1APAAE1ayyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A",
+        "a()"
+      ],
+      "names": {
+        "title": "a()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "a"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "DefaultImplementations"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "a"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 7,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1BP1byyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "B",
+        "b()"
+      ],
+      "names": {
+        "title": "b()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "b"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "b"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 11,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.protocol",
+        "displayName": "Protocol"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1CP",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "C"
+      ],
+      "names": {
+        "title": "C",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "C"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "protocol"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "C"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "protocol"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "C"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 18,
+          "character": 16
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1BPAAE1byyF::SYNTHESIZED::s:22DefaultImplementations3FooV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Foo",
+        "b()"
+      ],
+      "names": {
+        "title": "b()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "b"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "DefaultImplementations"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "b"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 15,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1AP1ayyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A",
+        "a()"
+      ],
+      "names": {
+        "title": "a()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "a"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "a"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 3,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations3FooV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Foo"
+      ],
+      "names": {
+        "title": "Foo",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Foo"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "struct"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Foo"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Foo"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 0,
+          "character": 14
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1CPAAE1cyyF::SYNTHESIZED::s:22DefaultImplementations3FooV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Foo",
+        "c()"
+      ],
+      "names": {
+        "title": "c()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "c"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "DefaultImplementations"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "c"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 23,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.protocol",
+        "displayName": "Protocol"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1AP",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "A"
+      ],
+      "names": {
+        "title": "A",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "A"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "protocol"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "A"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "protocol"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "A"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 2,
+          "character": 16
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1APAAE1ayyF::SYNTHESIZED::s:22DefaultImplementations3FooV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Foo",
+        "a()"
+      ],
+      "names": {
+        "title": "a()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "a"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "DefaultImplementations"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "a"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 7,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.protocol",
+        "displayName": "Protocol"
+      },
+      "identifier": {
+        "precise": "s:22DefaultImplementations1BP",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "B"
+      ],
+      "names": {
+        "title": "B",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "B"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "protocol"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "B"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "protocol"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "B"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///DefaultImplementations.swift",
+        "position": {
+          "line": 10,
+          "character": 16
+        }
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "requirementOf",
+      "source": "s:22DefaultImplementations1CP1cyyF",
+      "target": "s:22DefaultImplementations1CP"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:22DefaultImplementations3FooV",
+      "target": "s:22DefaultImplementations1AP"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:22DefaultImplementations3FooV",
+      "target": "s:22DefaultImplementations1BP"
+    },
+    {
+      "kind": "defaultImplementationOf",
+      "source": "s:22DefaultImplementations1BPAAE1byyF",
+      "target": "s:22DefaultImplementations1BP1byyF"
+    },
+    {
+      "kind": "requirementOf",
+      "source": "s:22DefaultImplementations1AP1ayyF",
+      "target": "s:22DefaultImplementations1AP"
+    },
+    {
+      "kind": "defaultImplementationOf",
+      "source": "s:22DefaultImplementations1CPAAE1cyyF",
+      "target": "s:22DefaultImplementations1CP1cyyF"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:22DefaultImplementations1CPAAE1cyyF::SYNTHESIZED::s:22DefaultImplementations3FooV",
+      "target": "s:22DefaultImplementations3FooV",
+      "sourceOrigin": {
+        "identifier": "s:22DefaultImplementations1CPAAE1cyyF",
+        "displayName": "C.c()"
+      }
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:22DefaultImplementations3FooV",
+      "target": "s:22DefaultImplementations1CP"
+    },
+    {
+      "kind": "requirementOf",
+      "source": "s:22DefaultImplementations1BP1byyF",
+      "target": "s:22DefaultImplementations1BP"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:22DefaultImplementations1BPAAE1byyF::SYNTHESIZED::s:22DefaultImplementations3FooV",
+      "target": "s:22DefaultImplementations3FooV",
+      "sourceOrigin": {
+        "identifier": "s:22DefaultImplementations1BPAAE1byyF",
+        "displayName": "B.b()"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:22DefaultImplementations1APAAE1ayyF::SYNTHESIZED::s:22DefaultImplementations3FooV",
+      "target": "s:22DefaultImplementations3FooV",
+      "sourceOrigin": {
+        "identifier": "s:22DefaultImplementations1APAAE1ayyF",
+        "displayName": "A.a()"
+      }
+    },
+    {
+      "kind": "defaultImplementationOf",
+      "source": "s:22DefaultImplementations1APAAE1ayyF",
+      "target": "s:22DefaultImplementations1AP1ayyF"
+    }
+  ]
+}
+

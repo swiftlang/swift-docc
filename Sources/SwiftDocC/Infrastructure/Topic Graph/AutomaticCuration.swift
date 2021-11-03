@@ -81,7 +81,7 @@ public struct AutomaticCuration {
             .compactMap { groupIndex in
                 let group = groupIndex.value
                 guard !group.references.isEmpty else { return nil }
-                return (title: group.title, references: group.references.sorted { $0.path < $1.path })
+                return (title: group.title, references: group.references.sorted(by: \.path))
             }
     }
     

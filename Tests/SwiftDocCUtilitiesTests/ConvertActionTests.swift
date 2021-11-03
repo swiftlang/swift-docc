@@ -1664,6 +1664,81 @@ class ConvertActionTests: XCTestCase {
         }
     }
     
+    func testConvertActionProducesDeterministicOutput() throws {
+        let testBundleURL = try XCTUnwrap(
+            Bundle.module.url(
+                forResource: "TestBundle",
+                withExtension: "docc",
+                subdirectory: "Test Bundles"
+            )
+        )
+        let bundle = try Folder.createFromDisk(url: testBundleURL)
+        
+        func performConvertAction(outputURL: URL, testFileSystem: TestFileSystem) throws {
+            var action = try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: false,
+                targetDirectory: outputURL,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testFileSystem,
+                fileManager: testFileSystem
+            )
+            
+            _ = try action.perform(logHandle: .none)
+        }
+        
+        // We'll perform 3 sets of conversions to confirm the output is deterministic
+        for _ in 1...3 {
+            let testFileSystem = try TestFileSystem(
+                folders: [bundle, Folder.emptyHTMLTemplateDirectory]
+            )
+            
+            // Convert the same bundle three times and place the output in
+            // separate directories.
+            
+            try performConvertAction(
+                outputURL: URL(fileURLWithPath: "/1", isDirectory: true),
+                testFileSystem: testFileSystem
+            )
+            try performConvertAction(
+                outputURL: URL(fileURLWithPath: "/2", isDirectory: true),
+                testFileSystem: testFileSystem
+            )
+            
+            // Extract and sort the RenderJSON output of each conversion
+            
+            let firstConversionFiles = testFileSystem.files.lazy.filter { key, _ in
+                key.hasPrefix("/1/data/")
+            }.map { (key, value) in
+                return (String(key.dropFirst(2)), value)
+            }.sorted(by: \.0)
+            
+            let secondConversionFiles = testFileSystem.files.lazy.filter { key, _ in
+                key.hasPrefix("/2/data/")
+            }.map { (key, value) in
+                return (String(key.dropFirst(2)), value)
+            }.sorted(by: \.0)
+            
+            // Zip the two sets of sorted files and loop through them, ensuring that
+            // each conversion produced the same RenderJSON output.
+            
+            for (first, second) in zip(firstConversionFiles, secondConversionFiles) {
+                guard first.0 == second.0 else {
+                    XCTFail("The produced file paths are nondeterministic. Found '\(first.0)' and '\(second.0)'")
+                    continue
+                }
+                
+                let firstString = String(data: first.1, encoding: .utf8)
+                let secondString = String(data: second.1, encoding: .utf8)
+                
+                XCTAssertEqual(firstString, secondString, "The contents of '\(first.0)' is nondeterministic.")
+            }
+        }
+    }
+    
     func testConvertActionNavigatorIndexGeneration() throws {
         // The navigator index needs to test with the real file manager
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!

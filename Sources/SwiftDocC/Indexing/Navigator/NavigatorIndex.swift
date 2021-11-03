@@ -811,10 +811,10 @@ extension NavigatorIndex {
             var fallouts = [NavigatorTree.Node]()
 
             if sortRootChildrenByName {
-                root.children.sort { $0.item.title < $1.item.title }
+                root.children.sort(by: \.item.title)
                 if groupByLanguage {
                     root.children.forEach { (languageGroup) in
-                        languageGroup.children.sort { $0.item.title < $1.item.title }
+                        languageGroup.children.sort(by: \.item.title)
                     }
                 }
             }

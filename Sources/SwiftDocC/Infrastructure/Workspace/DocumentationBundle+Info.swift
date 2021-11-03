@@ -147,11 +147,7 @@ extension DocumentationBundle {
             let missingKeys = Self.requiredKeys.subtracting(givenKeys)
             
             guard missingKeys.isEmpty else {
-                throw TypedValueError.missingRequiredKeys(
-                    missingKeys.sorted { first, second in
-                        first.rawValue < second.rawValue
-                    }
-                )
+                throw TypedValueError.missingRequiredKeys(missingKeys.sorted(by: \.rawValue))
             }
             
             // Now that we've confirmed that all keys are here, begin
