@@ -22,6 +22,8 @@ public struct Signal {
         #if os(Linux)
         // This is where we get to use a triple underscore in a method name.
         signalAction.__sigaction_handler = unsafeBitCast(callback, to: sigaction.__Unnamed_union___sigaction_handler.self)
+        #elseif os(Android)
+        signalAction.sa_handler = callback
         #else
         signalAction.__sigaction_u = unsafeBitCast(callback, to: __sigaction_u.self)
         #endif

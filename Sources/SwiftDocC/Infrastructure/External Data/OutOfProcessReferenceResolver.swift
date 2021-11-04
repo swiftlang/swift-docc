@@ -400,7 +400,7 @@ private class LongRunningService: ExternalLinkResolving {
 /// This private class is only used by the ``OutOfProcessReferenceResolver`` and shouldn't be used for general communication with other processes.
 private class LongRunningProcess: ExternalLinkResolving {
     
-    #if os(macOS) || os(Linux)
+    #if os(macOS) || os(Linux) || os(Android)
     private let process: Process
     
     init(location: URL, errorOutputHandler: @escaping (String) -> Void) throws {

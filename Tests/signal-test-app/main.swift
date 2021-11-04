@@ -13,7 +13,7 @@
 // Check Tests/SwiftDocCUtilitiesTests/SignalTests.swift for more details.
 //
 
-#if os(macOS) || os(Linux)
+#if os(macOS) || os(Linux) || os(Android)
 
 import Foundation
 import SwiftDocCUtilities

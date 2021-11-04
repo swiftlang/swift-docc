@@ -29,7 +29,7 @@ public class Synchronized<Value> {
     /// A lock type appropriate for the current platform.
     /// > Note: To avoid access race reports we manage the memory manually.
     var lock: UnsafeMutablePointer<os_unfair_lock>
-    #elseif os(Linux)
+    #elseif os(Linux) || os(Android)
     /// A lock type appropriate for the current platform.
     var lock: UnsafeMutablePointer<pthread_mutex_t>
     #else
@@ -44,7 +44,7 @@ public class Synchronized<Value> {
         #if os(macOS) || os(iOS)
         lock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)
         lock.initialize(to: os_unfair_lock())
-        #elseif os(Linux)
+        #elseif os(Linux) || os(Android)
         lock = UnsafeMutablePointer<pthread_mutex_t>.allocate(capacity: 1)
         lock.initialize(to: pthread_mutex_t())
         pthread_mutex_init(lock, nil)
@@ -66,7 +66,7 @@ public class Synchronized<Value> {
         #if os(macOS) || os(iOS)
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
-        #elseif os(Linux)
+        #elseif os(Linux) || os(Android)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
         #else
@@ -99,7 +99,7 @@ public extension Lock {
         #if os(macOS) || os(iOS)
         os_unfair_lock_lock(lock)
         defer { os_unfair_lock_unlock(lock) }
-        #elseif os(Linux)
+        #elseif os(Linux) || os(Android)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
         #else

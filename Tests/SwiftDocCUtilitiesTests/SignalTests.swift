@@ -12,10 +12,10 @@ import XCTest
 @testable import SwiftDocCUtilities
 
 class SignalTests: XCTestCase {
-    #if os(macOS) || os(Linux)
+    #if os(macOS) || os(Linux) || os(Android)
     /// The path to the built products directory.
     private var productDirectory: URL {
-        #if !os(Linux)
+        #if !os(Linux) && !os(Android)
         guard let xcTestBundle = Bundle.allBundles.first(where: { bundle in
             bundle.bundleURL.pathExtension == "xctest"
         }) else {

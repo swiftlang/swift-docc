@@ -39,7 +39,7 @@ extension Benchmark {
             return Double(vmInfo.ledger_phys_footprint_peak)
         }
         
-        #elseif os(Linux)
+        #elseif os(Linux) || os(Android)
         private static func peakMemory() -> Double? {
             // On Linux we cannot use the Kernel framework, so we tap into the
             // kernel proc file system to read the vm peak reported in the process status.
