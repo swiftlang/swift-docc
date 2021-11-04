@@ -8,7 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if os(macOS) || os(Linux)
+#if os(macOS) || os(Linux) || os(Android)
 import SwiftDocCUtilities
 
 Docc.main()

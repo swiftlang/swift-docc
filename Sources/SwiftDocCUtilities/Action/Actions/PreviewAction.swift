@@ -183,7 +183,7 @@ public final class PreviewAction: Action, RecreatingContext {
             trapSignals()
 
             // Monitor the source folder if possible.
-            #if !os(Linux)
+            #if !os(Linux) && !os(Android)
             try watch()
             #endif
             // This will wait until the server is manually killed.
@@ -225,7 +225,7 @@ public final class PreviewAction: Action, RecreatingContext {
 
 // Monitoring a source folder: Asynchronous output reading and file system events are supported only on macOS.
 
-#if !os(Linux)
+#if !os(Linux) && !os(Android)
 /// If needed, a retained directory monitor.
 fileprivate var monitor: DirectoryMonitor! = nil
 

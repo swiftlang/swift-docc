@@ -61,8 +61,8 @@ public struct RenderContext {
             )
         }
         
-        #if os(macOS) || os(iOS)
-        // Concurrently render content on macOS & iOS
+        #if os(macOS) || os(iOS) || os(Android)
+        // Concurrently render content on macOS/iOS & Android
         let results: [(reference: ResolvedTopicReference, content: RenderReferenceStore.TopicContent)] = references.concurrentPerform { reference, results in
             results.append((reference, renderContentFor(reference)))
         }

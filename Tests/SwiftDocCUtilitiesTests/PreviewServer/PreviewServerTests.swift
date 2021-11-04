@@ -26,7 +26,7 @@ class PreviewServerTests: XCTestCase {
         ])
         try tempFolder.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
 
-        let socketURL = URL(fileURLWithPath: "/var/tmp").appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = URL(fileURLWithPath: FileManager.default.temporaryDirectory.path).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
         
         // Run test server
         var log = LogHandle.none
@@ -106,7 +106,7 @@ class PreviewServerTests: XCTestCase {
         let tempFolder = try makeTempFolder()
         
         // Socket URL
-        let socketURL = URL(fileURLWithPath: "/var/tmp").appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = URL(fileURLWithPath: FileManager.default.temporaryDirectory.path).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
         
         // Create the server
         var log = LogHandle.none
@@ -153,7 +153,7 @@ class PreviewServerTests: XCTestCase {
         let tempFolder = try makeTempFolder()
         
         // Socket URL
-        let socketURL = URL(fileURLWithPath: "/var/tmp").appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = URL(fileURLWithPath: FileManager.default.temporaryDirectory.path).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
         
         // Create the server
         var log = LogHandle.none
