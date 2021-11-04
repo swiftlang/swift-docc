@@ -247,7 +247,7 @@ class AutomaticCurationTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
-            // SideKit incldues the "Manually curated" task group and addiotional automatically created groups.
+            // SideKit includes the "Manually curated" task group and additional automatically created groups.
             XCTAssertEqual(renderNode.topicSections.map { $0.title }, ["Manually curated", "Instance Properties", "Instance Methods", "Type Aliases"])
             
             // The other symbols in the same topic section appear in this See Also section
@@ -263,7 +263,7 @@ class AutomaticCurationTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
-            // The other symmbols in the same topic section appear in this See Also section
+            // The other symbols in the same topic section appear in this See Also section
             XCTAssertEqual(renderNode.seeAlsoSections.first?.identifiers, [
                 "doc://org.swift.docc.example/documentation/SideKit/SideClassThree",
                 "doc://org.swift.docc.example/documentation/SideKit/SideClassFive"
@@ -276,7 +276,7 @@ class AutomaticCurationTests: XCTestCase {
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
             let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
             
-            // The other symmbols in the same topic section appear in this See Also section
+            // The other symbols in the same topic section appear in this See Also section
             XCTAssertEqual(renderNode.seeAlsoSections.first?.identifiers, [
                 "doc://org.swift.docc.example/documentation/SideKit/SideClassSeven",
             ])

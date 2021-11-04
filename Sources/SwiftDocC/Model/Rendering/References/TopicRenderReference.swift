@@ -29,8 +29,15 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
     
     /// The topic url for the destination page.
     public var url: String
+    
     /// The abstract of the destination page.
-    public var abstract: [RenderInlineContent] = []
+    public var abstract: [RenderInlineContent] {
+        get { getVariantDefaultValue(keyPath: \.abstractVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.abstractVariants) }
+    }
+    
+    public var abstractVariants: VariantCollection<[RenderInlineContent]> = .init(defaultValue: [])
+    
     /// The kind of page that's referenced.
     public var kind: RenderNode.Kind
     /// Whether the reference is required in its parent context.
@@ -39,14 +46,27 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
     ///
     /// This value is `nil` if the referenced page is not a symbol.
     public var role: String?
+    
     /// The abbreviated declaration of the symbol to display in links
     ///
     /// This value is `nil` if the referenced page is not a symbol.
-    public var fragments: [DeclarationRenderSection.Token]?
+    public var fragments: [DeclarationRenderSection.Token]? {
+        get { getVariantDefaultValue(keyPath: \.fragmentsVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.fragmentsVariants) }
+    }
+    
+    public var fragmentsVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil)
+    
     /// The abbreviated declaration of the symbol to display in navigation
     ///
     /// This value is `nil` if the referenced page is not a symbol.
-    public var navigatorTitle: [DeclarationRenderSection.Token]?
+    public var navigatorTitle: [DeclarationRenderSection.Token]? {
+        get { getVariantDefaultValue(keyPath: \.navigatorTitleVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.navigatorTitleVariants) }
+    }
+    
+    public var navigatorTitleVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil)
+    
     /// Information about conditional conformance for the symbol
     ///
     /// This value is `nil` if the referenced page is not a symbol.
@@ -128,13 +148,13 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         self.init(
             identifier: identifier,
             titleVariants: .init(defaultValue: title),
-            abstract: abstract,
+            abstractVariants: .init(defaultValue: abstract),
             url: url,
             kind: kind,
             required: required,
             role: role,
-            fragments: fragments,
-            navigatorTitle: navigatorTitle,
+            fragmentsVariants: .init(defaultValue: fragments),
+            navigatorTitleVariants: .init(defaultValue: navigatorTitle),
             estimatedTime: estimatedTime,
             conformance: conformance,
             isBeta: isBeta,
@@ -171,13 +191,13 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
     public init(
         identifier: RenderReferenceIdentifier,
         titleVariants: VariantCollection<String>,
-        abstract: [RenderInlineContent],
+        abstractVariants: VariantCollection<[RenderInlineContent]>,
         url: String,
         kind: RenderNode.Kind,
         required: Bool = false,
         role: String? = nil,
-        fragments: [DeclarationRenderSection.Token]? = nil,
-        navigatorTitle: [DeclarationRenderSection.Token]? = nil,
+        fragmentsVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil),
+        navigatorTitleVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil),
         estimatedTime: String?,
         conformance: ConformanceSection? = nil,
         isBeta: Bool = false,
@@ -190,13 +210,13 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
     ) {
         self.identifier = identifier
         self.titleVariants = titleVariants
-        self.abstract = abstract
+        self.abstractVariants = abstractVariants
         self.url = url
         self.kind = kind
         self.required = required
         self.role = role
-        self.fragments = fragments
-        self.navigatorTitle = navigatorTitle
+        self.fragmentsVariants = fragmentsVariants
+        self.navigatorTitleVariants = navigatorTitleVariants
         self.estimatedTime = estimatedTime
         self.conformance = conformance
         self.isBeta = isBeta
@@ -211,7 +231,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
     enum CodingKeys: String, CodingKey {
         case type
         case identifier
-        case titleVariants = "title"
+        case title
         case url
         case abstract
         case kind
@@ -234,16 +254,16 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         type = try values.decode(RenderReferenceType.self, forKey: .type)
         identifier = try values.decode(RenderReferenceIdentifier.self, forKey: .identifier)
-        titleVariants = try values.decode(VariantCollection<String>.self, forKey: .titleVariants)
+        titleVariants = try values.decode(VariantCollection<String>.self, forKey: .title)
         url = try values.decode(String.self, forKey: .url)
-        abstract = try values.decodeIfPresent([RenderInlineContent].self, forKey: .abstract) ?? []
+        abstractVariants = try values.decodeIfPresent(VariantCollection<[RenderInlineContent]>.self, forKey: .abstract) ?? .init(defaultValue: [])
         kind = try values.decodeIfPresent(RenderNode.Kind.self, forKey: .kind)
             // Provide backwards-compatibility for TopicRenderReferences that don't have a `kind` key.
             ?? .tutorial
         required = try values.decodeIfPresent(Bool.self, forKey: .required) ?? false
         role = try values.decodeIfPresent(String.self, forKey: .role)
-        fragments = try values.decodeIfPresent([DeclarationRenderSection.Token].self, forKey: .fragments)
-        navigatorTitle = try values.decodeIfPresent([DeclarationRenderSection.Token].self, forKey: .navigatorTitle)
+        fragmentsVariants = try values.decodeVariantCollectionIfPresent(ofValueType: [DeclarationRenderSection.Token]?.self, forKey: .fragments) ?? .init(defaultValue: nil)
+        navigatorTitleVariants = try values.decodeVariantCollectionIfPresent(ofValueType: [DeclarationRenderSection.Token]?.self, forKey: .navigatorTitle)
         conformance = try values.decodeIfPresent(ConformanceSection.self, forKey: .conformance)
         estimatedTime = try values.decodeIfPresent(String.self, forKey: .estimatedTime)
         isBeta = try values.decodeIfPresent(Bool.self, forKey: .beta) ?? false
@@ -260,16 +280,16 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         
         try container.encode(type, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
-        try container.encode(titleVariants, forKey: .titleVariants)
+        try container.encodeVariantCollection(titleVariants, forKey: .title, encoder: encoder)
         try container.encode(url, forKey: .url)
-        try container.encode(abstract, forKey: .abstract)
+        try container.encodeVariantCollection(abstractVariants, forKey: .abstract, encoder: encoder)
         try container.encode(kind, forKey: .kind)
         
         if required {
             try container.encode(required, forKey: .required)
         }
         try container.encodeIfPresent(role, forKey: .role)
-        try container.encodeIfPresent(fragments, forKey: .fragments)
+        try container.encodeVariantCollectionIfNotEmpty(fragmentsVariants, forKey: .fragments, encoder: encoder)
         try container.encodeIfPresent(navigatorTitle, forKey: .navigatorTitle)
         try container.encodeIfPresent(conformance, forKey: .conformance)
         try container.encodeIfPresent(estimatedTime, forKey: .estimatedTime)

@@ -23,19 +23,49 @@ public struct RenderMetadata: VariantContainer {
     // MARK: Symbol metadata
     
     /// The modules that the symbol is apart of.
-    public var modules: [Module]?
+    public var modules: [Module]? {
+        get { getVariantDefaultValue(keyPath: \.modulesVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.modulesVariants) }
+    }
+    
+    /// The variants for the modules.
+    public var modulesVariants: VariantCollection<[Module]?> = .init(defaultValue: nil)
     
     /// The name of the module extension in which the symbol is defined, if applicable.
-    public var extendedModule: String?
+    public var extendedModule: String? {
+        get { getVariantDefaultValue(keyPath: \.extendedModuleVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.extendedModuleVariants) }
+    }
+    
+    /// The variants for the module extension.
+    public var extendedModuleVariants: VariantCollection<String?> = .init(defaultValue: nil)
     
     /// The platform availability information about a symbol.
-    public var platforms: [AvailabilityRenderItem]?
+    public var platforms: [AvailabilityRenderItem]? {
+        get { getVariantDefaultValue(keyPath: \.platformsVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.platformsVariants) }
+    }
+    
+    /// The variants for the platforms.
+    public var platformsVariants: VariantCollection<[AvailabilityRenderItem]?> = .init(defaultValue: nil)
     
     /// Whether protocol method is required to be implemented by conforming types.
-    public var required: Bool = false
+    public var required: Bool {
+        get { getVariantDefaultValue(keyPath: \.requiredVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.requiredVariants) }
+    }
+
+    /// The variants for the `required` property.
+    public var requiredVariants: VariantCollection<Bool> = .init(defaultValue: false)
     
     /// A heading describing the type of the document.
-    public var roleHeading: String?
+    public var roleHeading: String? {
+        get { getVariantDefaultValue(keyPath: \.roleHeadingVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.roleHeadingVariants) }
+    }
+    
+    /// The variants of the role heading.
+    public var roleHeadingVariants: VariantCollection<String?> = .init(defaultValue: nil)
     
     /// The role of the document.
     ///
@@ -49,22 +79,52 @@ public struct RenderMetadata: VariantContainer {
     }
     
     /// The variants of the title.
-    public var titleVariants: VariantCollection<String>?
+    public var titleVariants: VariantCollection<String?> = .init(defaultValue: nil)
     
     /// An identifier for a symbol generated externally.
-    public var externalID: String?
+    public var externalID: String? {
+        get { getVariantDefaultValue(keyPath: \.externalIDVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.externalIDVariants) }
+    }
+    
+    /// The variants of the external ID.
+    public var externalIDVariants: VariantCollection<String?> = .init(defaultValue: nil)
     
     /// The kind of a symbol, e.g., "class" or "func".
-    public var symbolKind: String?
+    public var symbolKind: String? {
+        get { getVariantDefaultValue(keyPath: \.symbolKindVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.symbolKindVariants) }
+    }
+    
+    /// The variants of the symbol kind.
+    public var symbolKindVariants: VariantCollection<String?> = .init(defaultValue: nil)
     
     /// The access level of a symbol, e.g., "public" or "private".
-    public var symbolAccessLevel: String?
+    public var symbolAccessLevel: String? {
+        get { getVariantDefaultValue(keyPath: \.symbolAccessLevelVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.symbolAccessLevelVariants) }
+    }
+    
+    /// The variants for the access level of a symbol.
+    public var symbolAccessLevelVariants: VariantCollection<String?> = .init(defaultValue: nil)
     
     /// Abbreviated declaration to display in links.
-    public var fragments: [DeclarationRenderSection.Token]?
+    public var fragments: [DeclarationRenderSection.Token]? {
+        get { getVariantDefaultValue(keyPath: \.fragmentsVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.fragmentsVariants) }
+    }
+    
+    /// The variants for the fragments of a page.
+    public var fragmentsVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil)
     
     /// Abbreviated declaration to display in navigators.
-    public var navigatorTitle: [DeclarationRenderSection.Token]?
+    public var navigatorTitle: [DeclarationRenderSection.Token]? {
+        get { getVariantDefaultValue(keyPath: \.navigatorTitleVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.navigatorTitleVariants) }
+    }
+    
+    /// The variants for the navigator title of a page.
+    public var navigatorTitleVariants: VariantCollection<[DeclarationRenderSection.Token]?> = .init(defaultValue: nil)
     
     /// Additional metadata associated with the render node.
     public var extraMetadata: [CodingKeys: Any] = [:]
@@ -76,7 +136,13 @@ public struct RenderMetadata: VariantContainer {
     ///
     /// This information may not (and should not) always be available for many reasons,
     /// such as compiler infrastructure limitations, or filesystem privacy and security concerns.
-    public var sourceFileURI: String?
+    public var sourceFileURI: String? {
+        get { getVariantDefaultValue(keyPath: \.sourceFileURIVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.sourceFileURIVariants) }
+    }
+    
+    /// The variants for the source file URI of a page.
+    public var sourceFileURIVariants: VariantCollection<String?> = .init(defaultValue: nil)
     
     /// Any tags assigned to the node.
     public var tags: [RenderNode.Tag]?
@@ -139,22 +205,22 @@ extension RenderMetadata: Codable {
         category = try container.decodeIfPresent(String.self, forKey: .category)
         categoryPathComponent = try container.decodeIfPresent(String.self, forKey: .categoryPathComponent)
 
-        platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms)
-        modules = try container.decodeIfPresent([Module].self, forKey: .modules)
-        extendedModule = try container.decodeIfPresent(String.self, forKey: .extendedModule)
+        platformsVariants = try container.decodeVariantCollectionIfPresent(ofValueType: [AvailabilityRenderItem]?.self, forKey: .platforms)
+        modulesVariants = try container.decodeVariantCollectionIfPresent(ofValueType: [Module]?.self, forKey: .modules)
+        extendedModuleVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .extendedModule)
         estimatedTime = try container.decodeIfPresent(String.self, forKey: .estimatedTime)
-        required = try container.decodeIfPresent(Bool.self, forKey: .required) ?? false
-        roleHeading = try container.decodeIfPresent(String.self, forKey: .roleHeading)
+        requiredVariants = try container.decodeVariantCollectionIfPresent(ofValueType: Bool.self, forKey: .required) ?? .init(defaultValue: false)
+        roleHeadingVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .roleHeading)
         let rawRole = try container.decodeIfPresent(String.self, forKey: .role)
         role = rawRole == "tutorial" ? Role.tutorial.rawValue : rawRole
-        titleVariants = try container.decodeIfPresent(VariantCollection<String>.self, forKey: .title)
+        titleVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .title)
         externalID = try container.decodeIfPresent(String.self, forKey: .externalID)
-        symbolKind = try container.decodeIfPresent(String.self, forKey: .symbolKind)
-        symbolAccessLevel = try container.decodeIfPresent(String.self, forKey: .symbolAccessLevel)
+        symbolKindVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .symbolKind)
+        symbolAccessLevelVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .symbolAccessLevel)
         conformance = try container.decodeIfPresent(ConformanceSection.self, forKey: .conformance)
-        fragments = try container.decodeIfPresent([DeclarationRenderSection.Token].self, forKey: .fragments)
-        navigatorTitle = try container.decodeIfPresent([DeclarationRenderSection.Token].self, forKey: .navigatorTitle)
-        sourceFileURI = try container.decodeIfPresent(String.self, forKey: .sourceFileURI)
+        fragmentsVariants = try container.decodeVariantCollectionIfPresent(ofValueType: [DeclarationRenderSection.Token]?.self, forKey: .fragments)
+        navigatorTitleVariants = try container.decodeVariantCollectionIfPresent(ofValueType: [DeclarationRenderSection.Token]?.self, forKey: .navigatorTitle)
+        sourceFileURIVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .sourceFileURI)
         tags = try container.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
         
         let extraKeys = Set(container.allKeys).subtracting(
@@ -190,23 +256,22 @@ extension RenderMetadata: Codable {
         try container.encodeIfPresent(category, forKey: .category)
         try container.encodeIfPresent(categoryPathComponent, forKey: .categoryPathComponent)
         
-        try container.encodeIfPresent(modules, forKey: .modules)
-        try container.encodeIfPresent(extendedModule, forKey: .extendedModule)
+        try container.encodeVariantCollection(modulesVariants, forKey: .modules, encoder: encoder)
+        try container.encodeVariantCollection(extendedModuleVariants, forKey: .extendedModule, encoder: encoder)
         try container.encodeIfPresent(estimatedTime, forKey: .estimatedTime)
-        try container.encodeIfPresent(platforms, forKey: .platforms)
-        if required {
-            try container.encodeIfPresent(required, forKey: .required)
-        }
-        try container.encodeIfPresent(roleHeading, forKey: .roleHeading)
+        try container.encodeVariantCollection(platformsVariants, forKey: .platforms, encoder: encoder)
+        try container.encodeVariantCollectionIfTrue(requiredVariants, forKey: .required, encoder: encoder)
+        try container.encodeVariantCollection(roleHeadingVariants, forKey: .roleHeading, encoder: encoder)
         try container.encodeIfPresent(role, forKey: .role)
-        try container.encodeIfPresent(titleVariants, forKey: .title)
+        try container.encodeVariantCollection(titleVariants, forKey: .title, encoder: encoder)
         try container.encodeIfPresent(externalID, forKey: .externalID)
-        try container.encodeIfPresent(symbolKind, forKey: .symbolKind)
-        try container.encodeIfPresent(symbolAccessLevel, forKey: .symbolAccessLevel)
+        try container.encodeIfPresent(symbolKindVariants.defaultValue, forKey: .symbolKind)
+        try container.encodeVariantCollection(symbolKindVariants, forKey: .symbolKind, encoder: encoder)
+        try container.encodeVariantCollection(symbolAccessLevelVariants, forKey: .symbolAccessLevel, encoder: encoder)
         try container.encodeIfPresent(conformance, forKey: .conformance)
-        try container.encodeIfPresent(fragments, forKey: .fragments)
-        try container.encodeIfPresent(navigatorTitle, forKey: .navigatorTitle)
-        try container.encodeIfPresent(sourceFileURI, forKey: .sourceFileURI)
+        try container.encodeVariantCollection(fragmentsVariants, forKey: .fragments, encoder: encoder)
+        try container.encodeVariantCollection(navigatorTitleVariants, forKey: .navigatorTitle, encoder: encoder)
+        try container.encodeVariantCollection(sourceFileURIVariants, forKey: .sourceFileURI, encoder: encoder)
         if let tags = self.tags, !tags.isEmpty {
             try container.encodeIfPresent(tags, forKey: .tags)
         }

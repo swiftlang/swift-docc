@@ -26,6 +26,6 @@ class LinkTitleResolverTests: XCTestCase {
         
         // Tests title resolving for symbols
         let title = resolver.title(for: myProtocolNode)
-        XCTAssertEqual("MyProtocol", title)
+        XCTAssertEqual("MyProtocol", title?.allValues.first?.variant)
     }
 }

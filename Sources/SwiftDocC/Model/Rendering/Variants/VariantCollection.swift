@@ -39,28 +39,53 @@ public struct VariantCollection<Value: Codable>: Codable {
         self.variants = variants
     }
     
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(defaultValue)
-        
-        let overrides = variants.map { variant in
-            VariantOverride(
-                traits: variant.traits,
-                patch: variant.patch.map { patch in
-                    JSONPatchOperation(variantPatch: patch, pointer: JSONPointer(from: encoder.codingPath))
-                }
-            )
-        }
-        
-        encoder.userInfoVariantOverrides?.add(contentsOf: overrides)
-    }
-    
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.defaultValue = try container.decode(Value.self)
         
         // When decoding a render node, the variants overrides stored in the `RenderNode.variantOverrides` property.
         self.variants = []
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(defaultValue)
+        addVariantsToEncoder(encoder)
+    }
+    
+    /// Adds the variants of the collection to the given encoder.
+    ///
+    /// - Parameters:
+    ///   - encoder: The encoder to add the variants to.
+    ///   - pointer: The pointer that should be used for the variants. If `nil`, the encoder's current coding path will be used.
+    ///   - isDefaultValueEncoded: Whether the default value for this topic collection has been encoded in the encoder's container. If it hasn't, this function
+    ///   replaces the variants' 'replace' patch operations with 'add' operations, since the container has no value to replace.
+    func addVariantsToEncoder(
+        _ encoder: Encoder,
+        pointer: JSONPointer? = nil,
+        isDefaultValueEncoded: Bool = true
+    ) {
+        let overrides = variants.map { variant in
+            VariantOverride(
+                traits: variant.traits,
+                patch: variant.patch.map { patchOperation in
+                    var patchOperation = patchOperation
+                    
+                    // If the default value for this variant collection wasn't encoded in the JSON and the
+                    // patch operation is a 'replace', change it to an 'add' since there's no value to replace.
+                    if !isDefaultValueEncoded, case .replace(let value) = patchOperation {
+                        patchOperation = .add(value: value)
+                    }
+                    
+                    return JSONPatchOperation(
+                        variantPatchOperation: patchOperation,
+                        pointer: pointer ?? JSONPointer(from: encoder.codingPath)
+                    )
+                }
+            )
+        }
+        
+        encoder.userInfoVariantOverrides?.add(contentsOf: overrides)
     }
 }
 
@@ -83,5 +108,4 @@ public extension VariantCollection {
             self.patch = patch
         }
     }
-
 }
