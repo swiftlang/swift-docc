@@ -87,6 +87,46 @@ class JSONPatchApplierTests: XCTestCase {
         )
     }
     
+    func testAddsDictionaryValue() throws {
+        XCTAssertEqual(
+            try apply(
+                .add(pointer: JSONPointer(pathComponents: ["baz"]), encodableValue: "qux"),
+                to: Model()
+            ),
+            Model(baz: "qux")
+        )
+    }
+
+    func testAddsNestedDictionaryValue() throws {
+        XCTAssertEqual(
+            try apply(
+                .add(pointer: JSONPointer(pathComponents: ["bar", "0", "foo"]), encodableValue: "foo"),
+                to: Model(bar: [.init()])
+            ),
+            Model(bar: [.init(foo: "foo")])
+        )
+    }
+    
+    func testAddsArrayValue() throws {
+        XCTAssertEqual(
+            try apply(
+                .add(pointer: JSONPointer(pathComponents: ["bar", "0"]), encodableValue: Model.Model(foo: "foo")),
+                to: Model(bar: [.init()])
+            ),
+            Model(bar: [.init(foo: "foo"), .init()])
+        )
+    }
+    
+    func testAddsArrayValueAtTheEnd() throws {
+        XCTAssertEqual(
+            try apply(
+                .add(pointer: JSONPointer(pathComponents: ["bar", "1"]), encodableValue: Model.Model(foo: "foo")),
+                to: Model(bar: [.init()])
+            ),
+            Model(bar: [.init(), .init(foo: "foo")])
+        )
+    }
+
     func testAppliesMultiplePatchOperations() throws {
         XCTAssertEqual(
             try apply(
@@ -104,7 +144,7 @@ class JSONPatchApplierTests: XCTestCase {
         )
     }
     
-    func testThrowsErrorForInvalidObjectPointer() throws {
+    func testThrowsErrorForInvalidRemoveObjectPointer() throws {
         XCTAssertThrowsError(
             try apply(
                 .remove(pointer: JSONPointer(pathComponents: ["bar", "0", "invalid-property"])),
@@ -121,12 +161,28 @@ class JSONPatchApplierTests: XCTestCase {
         }
     }
     
-    func testThrowsErrorForInvalidArrayPointer() throws {
+    func testThrowsErrorForInvalidRemoveArrayPointer() throws {
         XCTAssertThrowsError(
             try apply(
                 .remove(pointer: JSONPointer(pathComponents: ["foo", "5"])),
                 to: Model(
                     baz: "qux",
+                    foo: [8, 9]
+                )
+            )
+        ) { error in
+            XCTAssertEqual(
+                error.localizedDescription,
+                "Invalid array pointer '/foo/5'. The index '5' is not valid for array of 2 elements."
+            )
+        }
+    }
+    
+    func testThrowsErrorForInvalidAddArrayPointer() throws {
+        XCTAssertThrowsError(
+            try apply(
+                .add(pointer: JSONPointer(pathComponents: ["foo", "5"]), encodableValue: ""),
+                to: Model(
                     foo: [8, 9]
                 )
             )
@@ -170,7 +226,8 @@ class JSONPatchApplierTests: XCTestCase {
         var bar: [Model] = []
         
         struct Model: Codable, Equatable {
-            var bar: String
+            var bar: String? = nil
+            var foo: String? = nil
         }
     }
 }

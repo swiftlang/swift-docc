@@ -1174,25 +1174,25 @@ class SemaToRenderNodeTests: XCTestCase {
             
             public func symbolEntity(withPreciseIdentifier preciseIdentifier: String) throws -> DocumentationNode {
                 let symbol = Symbol(
-                    kind: TestSymbolResolver.symbolKind(forNodeKind: .protocol),
-                    title: "ExternalResolvedSymbolTitle",
-                    subHeading: nil,
-                    navigator: nil,
-                    roleHeading: "ExternalResolvedSymbolRoleHeading",
-                    platformName: nil,
-                    moduleName: "ExternalResolvedSymbolModuleName",
-                    externalID: nil,
-                    accessLevel: nil,
-                    availability: nil,
-                    deprecatedSummary: nil,
-                    mixins: nil,
-                    abstractSection: nil,
-                    discussion: nil,
-                    topics: nil,
-                    seeAlso: nil,
-                    returnsSection: nil,
-                    parametersSection: nil,
-                    redirects: nil
+                    kindVariants: .init(swiftVariant: TestSymbolResolver.symbolKind(forNodeKind: .protocol)),
+                    titleVariants: .init(swiftVariant: "ExternalResolvedSymbolTitle"),
+                    subHeadingVariants: .init(swiftVariant: nil),
+                    navigatorVariants: .init(swiftVariant: nil),
+                    roleHeadingVariants: .init(swiftVariant: "ExternalResolvedSymbolRoleHeading"),
+                    platformNameVariants: .init(swiftVariant: nil),
+                    moduleNameVariants: .init(swiftVariant: "ExternalResolvedSymbolModuleName"),
+                    externalIDVariants: .init(swiftVariant: nil),
+                    accessLevelVariants: .init(swiftVariant: nil),
+                    availabilityVariants: .init(swiftVariant: nil),
+                    deprecatedSummaryVariants: .init(swiftVariant: nil),
+                    mixinsVariants: .init(swiftVariant: nil),
+                    abstractSectionVariants: .init(swiftVariant: nil),
+                    discussionVariants: .init(swiftVariant: nil),
+                    topicsVariants: .init(swiftVariant: nil),
+                    seeAlsoVariants: .init(swiftVariant: nil),
+                    returnsSectionVariants: .init(swiftVariant: nil),
+                    parametersSectionVariants: .init(swiftVariant: nil),
+                    redirectsVariants: .init(swiftVariant: nil)
                 )
                 
                 return DocumentationNode(

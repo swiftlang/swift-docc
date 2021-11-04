@@ -159,9 +159,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     
     /// Sorts a list of bundles by the bundle identifier.
     private func sorted(bundles: [DocumentationBundle]) -> [DocumentationBundle] {
-        return bundles.sorted { (bundle1, bundle2) -> Bool in
-            return bundle1.identifier < bundle2.identifier
-        }
+        return bundles.sorted(by: \.identifier)
     }
     
     mutating public func convert<OutputConsumer: ConvertOutputConsumer>(

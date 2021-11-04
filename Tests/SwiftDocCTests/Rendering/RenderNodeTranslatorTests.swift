@@ -624,6 +624,25 @@ class RenderNodeTranslatorTests: XCTestCase {
 
     }
     
+    func testAutomaticTaskGroupTopicsAreSorted() throws {
+        let (bundle, context) = try testBundleAndContext(named: "DefaultImplementations")
+        let structReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/DefaultImplementations/Foo", sourceLanguage: .swift)
+        let structNode = try context.entity(with: structReference)
+        let symbol = try XCTUnwrap(structNode.semantic as? Symbol)
+        
+        // Verify that the ordering of default implementations is deterministic
+        for _ in 0..<100 {
+            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: structReference, source: nil)
+            let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+            let section = renderNode.topicSections.first(where: { $0.title == "Default Implementations" })
+            XCTAssertEqual(section?.identifiers, [
+                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/A-Implementations",
+                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/B-Implementations",
+                "doc://org.swift.docc.example/documentation/DefaultImplementations/Foo/C-Implementations",
+            ])
+        }
+    }
+    
     // Verifies we don't render links to non linkable nodes.
     func testNonLinkableNodes() throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.

@@ -59,4 +59,61 @@ class ReferenceURLTests: XCTestCase {
         
         XCTAssertEqual("/videos/video%20file.mov", url)
     }
+    
+    func testImageVariantsEncodingOrder() throws {
+        let lightImageURL = URL(string: "/images/figure@2x.png")!
+        let darkImageURL = URL(string: "/images/figure~dark@2x.png")!
+        
+        var asset = DataAsset()
+        asset.variants = [
+            DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightImageURL,
+            DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkImageURL
+        ]
+        let reference = ImageReference(identifier: RenderReferenceIdentifier("image"), imageAsset: asset)
+        
+        let encoder = JSONEncoder()
+        
+        for _ in 0..<100 {
+            let data = try encoder.encode(reference)
+            
+            let object = try JSONSerialization.jsonObject(with: data)
+            let jsonReference = try XCTUnwrap(object as? [String: Any])
+            let variants = try XCTUnwrap(jsonReference["variants"] as? [[String: Any]])
+            
+            let urls = variants.compactMap { $0["url"] as? String }
+            XCTAssertEqual(urls, [
+                lightImageURL.path,
+                darkImageURL.path
+            ])
+        }
+    }
+    
+    
+    func testVideoVariantsEncodingOrder() throws {
+        let lightImageURL = URL(string: "/videos/video.png")!
+        let darkImageURL = URL(string: "/videos/video~dark.png")!
+        
+        var asset = DataAsset()
+        asset.variants = [
+            DataTraitCollection(userInterfaceStyle: .light): lightImageURL,
+            DataTraitCollection(userInterfaceStyle: .dark): darkImageURL
+        ]
+        let reference = VideoReference(identifier: RenderReferenceIdentifier("video"), videoAsset: asset, poster: nil)
+        
+        let encoder = JSONEncoder()
+        
+        for _ in 0..<100 {
+            let data = try encoder.encode(reference)
+            
+            let object = try JSONSerialization.jsonObject(with: data)
+            let jsonReference = try XCTUnwrap(object as? [String: Any])
+            let variants = try XCTUnwrap(jsonReference["variants"] as? [[String: Any]])
+            
+            let urls = variants.compactMap { $0["url"] as? String }
+            XCTAssertEqual(urls, [
+                lightImageURL.path,
+                darkImageURL.path
+            ])
+        }
+    }
 }

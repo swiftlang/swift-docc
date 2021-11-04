@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import Markdown
 
 public struct RenderReferenceDependencies {
     var topicReferences = [ResolvedTopicReference]()
@@ -57,25 +58,44 @@ public class DocumentationContentRenderer {
     }
     
     /// For symbol nodes, returns the fragments mixin if any.
-    func subHeadingFragments(for node: DocumentationNode) -> [DeclarationRenderSection.Token]? {
-        guard let symbol = (node.semantic as? Symbol),
-            var fragments = symbol.subHeading?
+    func subHeadingFragments(for node: DocumentationNode) -> VariantCollection<[DeclarationRenderSection.Token]?> {
+        guard let symbol = (node.semantic as? Symbol) else {
+            return .init(defaultValue: nil)
+        }
+        
+        return VariantCollection<[DeclarationRenderSection.Token]?>(
+            from: symbol.subHeadingVariants,
+            symbol.titleVariants,
+            symbol.kindVariants
+        ) { _, subHeading, title, kind in
+            var fragments = subHeading
                 .map({ fragment -> DeclarationRenderSection.Token in
                     return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
-                }) else { return nil }
-        if fragments.last?.text == "\n" { fragments.removeLast() }
-        return Swift.subHeading(for: fragments, symbolTitle: symbol.title, symbolKind: symbol.kind.identifier)
+                })
+            if fragments.last?.text == "\n" { fragments.removeLast() }
+            
+            // TODO: Return an Objective-C subheading for Objective-C symbols (rdar://84195588)
+            return Swift.subHeading(for: fragments, symbolTitle: title, symbolKind: kind.identifier)
+        } ?? .init(defaultValue: nil)
     }
     
     /// For symbol nodes, returns the navigator title if any.
-    func navigatorFragments(for node: DocumentationNode) -> [DeclarationRenderSection.Token]? {
-        guard let symbol = (node.semantic as? Symbol),
-            var fragments = symbol.navigator?
-                .map({ fragment -> DeclarationRenderSection.Token in
-                    return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
-                }) else { return nil }
-        if fragments.last?.text == "\n" { fragments.removeLast() }
-        return Swift.navigatorTitle(for: fragments, symbolTitle: symbol.title)
+    func navigatorFragments(for node: DocumentationNode) -> VariantCollection<[DeclarationRenderSection.Token]?> {
+        guard let symbol = (node.semantic as? Symbol) else {
+            return .init(defaultValue: nil)
+        }
+        
+        return VariantCollection<[DeclarationRenderSection.Token]?>(
+            from: symbol.navigatorVariants
+        ) { _, navigator in
+            var fragments = navigator.map { fragment -> DeclarationRenderSection.Token in
+                return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
+            }
+            if fragments.last?.text == "\n" { fragments.removeLast() }
+            
+            // TODO: Return an Objective-C navigator title for Objective-C symbols (rdar://84195588)
+            return Swift.navigatorTitle(for: fragments, symbolTitle: symbol.title)
+        } ?? .init(defaultValue: nil)
     }
     
     /// Returns the given amount of minutes as a string, for example: "1hr 10min".
@@ -223,21 +243,29 @@ public class DocumentationContentRenderer {
     func renderReference(for reference: ResolvedTopicReference, with overridingDocumentationNode: DocumentationNode? = nil, dependencies: inout RenderReferenceDependencies) -> TopicRenderReference {
         let resolver = LinkTitleResolver(context: documentationContext, source: reference.url)
         
-        let title: String
+        let titleVariants: DocumentationDataVariants<String>
         let kind: RenderNode.Kind
         var referenceRole: String?
         let node = try? overridingDocumentationNode ?? documentationContext.entity(with: reference)
+        
         if let node = node, let resolvedTitle = resolver.title(for: node) {
-            title = resolvedTitle
+            titleVariants = resolvedTitle
         } else if let anchorSection = documentationContext.nodeAnchorSections[reference] {
             // No need to continue, return a section topic reference
-            return TopicRenderReference(identifier: RenderReferenceIdentifier(reference.absoluteString), title: anchorSection.title, abstract: [], url: urlGenerator.presentationURLForReference(reference, requireRelativeURL: true).absoluteString, kind: .section, estimatedTime: nil)
+            return TopicRenderReference(
+                identifier: RenderReferenceIdentifier(reference.absoluteString),
+                title: anchorSection.title,
+                abstract: [],
+                url: urlGenerator.presentationURLForReference(reference, requireRelativeURL: true).absoluteString,
+                kind: .section,
+                estimatedTime: nil
+            )
         } else if let topicGraphOnlyNode = documentationContext.topicGraph.nodeWithReference(reference) {
             // Some nodes are artificially inserted into the topic graph,
             // try resolving that way as a fallback after looking up `documentationCache`.
-            title = topicGraphOnlyNode.title
+            titleVariants = .init(defaultVariantValue: topicGraphOnlyNode.title)
         } else {
-            title = reference.absoluteString
+            titleVariants = .init(defaultVariantValue: reference.absoluteString)
         }
         
         switch node?.kind {
@@ -273,7 +301,7 @@ public class DocumentationContentRenderer {
         let presentationURL = urlGenerator.presentationURLForReference(reference, requireRelativeURL: true)
         
         var contentCompiler = RenderContentCompiler(context: documentationContext, bundle: bundle, identifier: reference)
-        let abstractContent: [RenderInlineContent]
+        let abstractContent: VariantCollection<[RenderInlineContent]>
         
         var abstractedNode = node
         if kind == .section {
@@ -282,12 +310,28 @@ public class DocumentationContentRenderer {
             abstractedNode = try? documentationContext.entity(with: containerReference)
         }
         
-        if let abstract = (abstractedNode?.semantic as? Abstracted)?.abstract ?? abstractedNode.map({ DocumentationMarkup(markup: $0.markup, parseUpToSection: .abstract) })?.abstractSection?.paragraph,
-            let renderedContent = contentCompiler.visit(abstract).first,
-            case let .paragraph(inlines)? = renderedContent as? RenderBlockContent {
-            abstractContent = inlines
+        func extractAbstract(from paragraph: Paragraph?) -> [RenderInlineContent] {
+            if let abstract = paragraph
+                ?? abstractedNode.map({
+                    DocumentationMarkup(markup: $0.markup, parseUpToSection: .abstract)
+                })?.abstractSection?.paragraph,
+                let renderedContent = contentCompiler.visit(abstract).first,
+                case let .paragraph(inlines)? = renderedContent as? RenderBlockContent
+            {
+                return inlines
+            } else {
+                return []
+            }
+        }
+        
+        if let symbol = (abstractedNode?.semantic as? Symbol) {
+            abstractContent = VariantCollection<[RenderInlineContent]>(
+                from: symbol.abstractVariants
+            ) { _, abstract in
+                extractAbstract(from: abstract)
+            } ?? .init(defaultValue: [])
         } else {
-            abstractContent = []
+            abstractContent = .init(defaultValue: extractAbstract(from: (abstractedNode?.semantic as? Abstracted)?.abstract))
         }
         
         // Collect the reference dependencies.
@@ -300,8 +344,8 @@ public class DocumentationContentRenderer {
 
         var renderReference = TopicRenderReference(
             identifier: .init(referenceURL),
-            titleVariants: .init(defaultValue: title),
-            abstract: abstractContent,
+            titleVariants: VariantCollection<String>(from: titleVariants) ?? .init(defaultValue: ""),
+            abstractVariants: abstractContent,
             url: presentationURL.absoluteString,
             kind: kind,
             required: isRequired,
@@ -310,9 +354,9 @@ public class DocumentationContentRenderer {
         )
 
         // Store the symbol's display name if present in the render reference
-        renderReference.fragments = node.flatMap(subHeadingFragments)
+        renderReference.fragmentsVariants = node.flatMap(subHeadingFragments) ?? .init(defaultValue: [])
         // Store the symbol's navigator title if present in the render reference
-        renderReference.navigatorTitle = node.flatMap(navigatorFragments)
+        renderReference.navigatorTitleVariants = node.flatMap(navigatorFragments) ?? .init(defaultValue: [])
         
         // Omit the navigator title if it's identical to the fragments
         if renderReference.navigatorTitle == renderReference.fragments {
