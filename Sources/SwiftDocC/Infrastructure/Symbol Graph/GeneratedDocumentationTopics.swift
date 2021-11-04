@@ -70,8 +70,15 @@ enum GeneratedDocumentationTopics {
     private static let defaultImplementationGroupTitle = "Default Implementations"
     
     private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext, bundle: DocumentationBundle) throws {
+        let automaticCurationSourceLanguage: SourceLanguage
+        if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
+            automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
+        } else {
+            automaticCurationSourceLanguage = .swift
+        }
+        
         // Create the collection topic reference
-        let collectionReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: NodeURLGenerator.Path.documentationCuration(parentPath: parent.path, articleName: title).stringValue, sourceLanguage: .swift)
+        let collectionReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: NodeURLGenerator.Path.documentationCuration(parentPath: parent.path, articleName: title).stringValue, sourceLanguage: automaticCurationSourceLanguage)
         
         // Add the topic graph node
         let collectionTopicGraphNode = TopicGraph.Node(reference: collectionReference, kind: .collection, source: .external, title: title, isResolvable: false)
@@ -128,7 +135,7 @@ enum GeneratedDocumentationTopics {
         let temporaryCollectionNode = DocumentationNode(
             reference: collectionReference,
             kind: .collectionGroup,
-            sourceLanguage: .swift,
+            sourceLanguage: automaticCurationSourceLanguage,
             name: DocumentationNode.Name.conceptual(title: title),
             markup: Document(parsing: ""),
             semantic: Article(markup: nil, metadata: nil, redirects: nil)
@@ -144,7 +151,7 @@ enum GeneratedDocumentationTopics {
         let collectionNode = DocumentationNode(
             reference: collectionReference,
             kind: .collectionGroup,
-            sourceLanguage: .swift,
+            sourceLanguage: automaticCurationSourceLanguage,
             name: DocumentationNode.Name.conceptual(title: title),
             markup: Document(parsing: ""),
             semantic: collectionArticle

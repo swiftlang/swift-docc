@@ -422,8 +422,16 @@ extension UnifiedSymbolGraph.Symbol {
         )
     }
 
-    var swiftIdentifier: SymbolGraph.Symbol.Identifier {
-        identifier(forLanguage: "swift")
+    var defaultIdentifier: SymbolGraph.Symbol.Identifier {
+        guard FeatureFlags.current.isExperimentalObjectiveCSupportEnabled else {
+            return identifier(forLanguage: "swift")
+        }
+        
+        if let defaultInterfaceLanguage = defaultSelector?.interfaceLanguage {
+            return identifier(forLanguage: defaultInterfaceLanguage)
+        } else {
+            return identifier(forLanguage: "swift")
+        }
     }
 }
 

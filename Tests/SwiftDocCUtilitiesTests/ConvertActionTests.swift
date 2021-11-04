@@ -1809,6 +1809,77 @@ class ConvertActionTests: XCTestCase {
             indexFromIndexAction.navigatorTree.root.dumpTree()
         )
     }
+    
+    func testObjectiveCNavigatorIndexGeneration() throws {
+        let bundle = Folder(name: "unit-test-objc.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: objectiveCSymbolGraphFile),
+        ])
+        
+        // The navigator index needs to test with the real File Manager
+        let testTemporaryDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(
+            "\(#function)-\(UUID())"
+        )
+        try FileManager.default.createDirectory(
+            at: testTemporaryDirectory,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
+        defer {
+            try? FileManager.default.removeItem(at: testTemporaryDirectory)
+        }
+        
+        let bundleDirectory = testTemporaryDirectory.appendingPathComponent(
+            bundle.name,
+            isDirectory: true
+        )
+        try bundle.write(to: bundleDirectory)
+        
+        let targetDirectory = testTemporaryDirectory.appendingPathComponent(
+            "output",
+            isDirectory: true
+        )
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundleDirectory,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: nil,
+            emitDigest: false,
+            currentPlatforms: nil,
+            buildIndex: true
+        )
+        
+        FeatureFlags.current.isExperimentalObjectiveCSupportEnabled = true
+        _ = try action.perform(logHandle: .none)
+        
+        let index = try NavigatorIndex(url: targetDirectory.appendingPathComponent("index"))
+        func assertAllChildrenAreObjectiveC(_ node: NavigatorTree.Node) {
+            XCTAssertEqual(
+                node.item.languageID,
+                InterfaceLanguage.objc.mask,
+                """
+                Node from Objective-C symbol graph did not have Objective-C language ID: \
+                '\(node.item.usrIdentifier ?? node.item.title)'"
+                """
+            )
+            
+            for childNode in node.children {
+                assertAllChildrenAreObjectiveC(childNode)
+            }
+        }
+        
+        XCTAssertEqual(
+            index.navigatorTree.root.children.count, 1,
+            "The root of the navigator tree unexpectedly contained more than one child."
+        )
+        
+        let firstChild = try XCTUnwrap(index.navigatorTree.root.children.first)
+        assertAllChildrenAreObjectiveC(firstChild)
+        
+        FeatureFlags.current.isExperimentalObjectiveCSupportEnabled = false
+    }
 
     func testDiagnosticLevel() throws {
         let bundle = Folder(name: "unit-test.docc", content: [
