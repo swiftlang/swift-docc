@@ -15,10 +15,12 @@ import Foundation
 /// For more information, see [RFC6901](https://datatracker.ietf.org/doc/html/rfc6901).
 public struct JSONPointer: Codable, CustomStringConvertible {
     /// The path components of the pointer.
+    ///
+    /// The path components of the pointer are not escaped.
     public var pathComponents: [String]
     
     public var description: String {
-        "/\(pathComponents.joined(separator: "/"))"
+        "/\(pathComponents.map(Self.escape).joined(separator: "/"))"
     }
     
     /// Creates a JSON Pointer given its path components.
@@ -68,14 +70,7 @@ public struct JSONPointer: Codable, CustomStringConvertible {
                 return "\(intValue)"
             } else {
                 // Otherwise, emit the property name, escaped per the JSON Pointer specification.
-                return EscapedCharacters.allCases
-                    .reduce(component.stringValue) { partialResult, characterThatNeedsEscaping in
-                        partialResult
-                            .replacingOccurrences(
-                                of: characterThatNeedsEscaping.rawValue,
-                                with: characterThatNeedsEscaping.escaped
-                            )
-                    }
+                return component.stringValue
             }
         }
     }
@@ -88,6 +83,36 @@ public struct JSONPointer: Codable, CustomStringConvertible {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let stringValue = try container.decode(String.self)
-        self.pathComponents = stringValue.removingLeadingSlash.components(separatedBy: "/")
+        self.pathComponents = stringValue.removingLeadingSlash.components(separatedBy: "/").map(Self.unescape)
+    }
+    
+    /// Escapes a path component of a JSON pointer.
+    static func escape(_ pointerPathComponents: String) -> String {
+        applyEscaping(pointerPathComponents, shouldUnescape: false)
+    }
+    
+    /// Unescaped a path component of a JSON pointer.
+    static func unescape(_ pointerPathComponents: String) -> String {
+        applyEscaping(pointerPathComponents, shouldUnescape: true)
+    }
+    
+    /// Applies an escaping operation to the path component of a JSON pointer.
+    /// - Parameters:
+    ///   - pointerPathComponent: The path component to escape.
+    ///   - shouldUnescape: Whether this function should unescape or escape the path component.
+    /// - Returns: The escaped value if `shouldUnescape` is false, otherwise the escaped value.
+    private static func applyEscaping(_ pointerPathComponent: String, shouldUnescape: Bool) -> String {
+        EscapedCharacters.allCases
+            .reduce(pointerPathComponent) { partialResult, characterThatNeedsEscaping in
+                partialResult
+                    .replacingOccurrences(
+                        of: characterThatNeedsEscaping[
+                            keyPath: shouldUnescape ? \EscapedCharacters.escaped : \EscapedCharacters.rawValue
+                        ],
+                        with: characterThatNeedsEscaping[
+                            keyPath: shouldUnescape ? \EscapedCharacters.rawValue : \EscapedCharacters.escaped
+                        ]
+                    )
+            }
     }
 }

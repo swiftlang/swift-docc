@@ -2469,7 +2469,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     func dumpGraph() -> String {
         return topicGraph.nodes.values
             .filter { parents(of: $0.reference).isEmpty }
-            .sorted { $0.reference.absoluteString < $1.reference.absoluteString }
+            .sorted(by: \.reference.absoluteString)
             .map { node -> String in
                 self.topicGraph.dump(startingAt: node, keyPath: \.reference.absoluteString)
             }

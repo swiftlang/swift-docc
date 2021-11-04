@@ -22,7 +22,11 @@ public struct AnyCodable: Codable, CustomDebugStringConvertible {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        value = try container.decode(JSON.self)
+        if container.decodeNil() {
+            value = JSON.null
+        } else {
+            value = try container.decode(JSON.self)
+        }
     }
     
     public func encode(to encoder: Encoder) throws {

@@ -14,7 +14,7 @@ import XCTest
 
 class RenderMetadataTests: XCTestCase {
     
-    var testTitleVariants = VariantCollection<String>(
+    var testTitleVariants = VariantCollection<String?>(
         defaultValue: "Default title",
         objectiveCValue: "Objective-C title"
     )
@@ -153,7 +153,7 @@ class RenderMetadataTests: XCTestCase {
         var metadata = RenderMetadata()
         metadata.title = "another title"
         
-        XCTAssertEqual(metadata.titleVariants?.defaultValue, "another title")
+        XCTAssertEqual(metadata.titleVariants.defaultValue, "another title")
     }
     
     func testGetsTitleVariantsDefaultValueWhenGettingTitle() {

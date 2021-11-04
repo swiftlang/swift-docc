@@ -43,25 +43,25 @@ class ExternalReferenceResolverTests: XCTestCase {
             let semantic: Semantic?
             if let declaration = resolvedEntityDeclarationFragments {
                 semantic = Symbol(
-                    kind: OutOfProcessReferenceResolver.symbolKind(forNodeKind: resolvedEntityKind),
-                    title: resolvedEntityTitle,
-                    subHeading: declaration.declarationFragments,
-                    navigator: nil,
-                    roleHeading: "", // This information isn't used anywhere.
-                    platformName: nil,
-                    moduleName: "", // This information isn't used anywhere.
-                    externalID: nil,
-                    accessLevel: nil,
-                    availability: nil,
-                    deprecatedSummary: nil,
-                    mixins: nil,
-                    abstractSection: nil,
-                    discussion: nil,
-                    topics: nil,
-                    seeAlso: nil,
-                    returnsSection: nil,
-                    parametersSection: nil,
-                    redirects: nil
+                    kindVariants: .init(swiftVariant: OutOfProcessReferenceResolver.symbolKind(forNodeKind: resolvedEntityKind)),
+                    titleVariants: .init(swiftVariant: resolvedEntityTitle),
+                    subHeadingVariants: .init(swiftVariant: declaration.declarationFragments),
+                    navigatorVariants: .init(swiftVariant: nil),
+                    roleHeadingVariants: .init(swiftVariant: ""), // This information isn't used anywhere.
+                    platformNameVariants: .init(swiftVariant: nil),
+                    moduleNameVariants: .init(swiftVariant: ""), // This information isn't used anywhere.
+                    externalIDVariants: .init(swiftVariant: nil),
+                    accessLevelVariants: .init(swiftVariant: nil),
+                    availabilityVariants: .init(swiftVariant: nil),
+                    deprecatedSummaryVariants: .init(swiftVariant: nil),
+                    mixinsVariants: .init(swiftVariant: nil),
+                    abstractSectionVariants: .init(swiftVariant: nil),
+                    discussionVariants: .init(swiftVariant: nil),
+                    topicsVariants: .init(swiftVariant: nil),
+                    seeAlsoVariants: .init(swiftVariant: nil),
+                    returnsSectionVariants: .init(swiftVariant: nil),
+                    parametersSectionVariants: .init(swiftVariant: nil),
+                    redirectsVariants: .init(swiftVariant: nil)
                 )
             } else {
                 semantic = nil

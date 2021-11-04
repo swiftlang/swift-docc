@@ -11,12 +11,6 @@
 import Foundation
 import Crypto
 
-// Fallback solution for Linux as it has no PropertyList support.
-#if os(Linux)
-fileprivate typealias PropertyListEncoder = JSONEncoder
-fileprivate typealias PropertyListDecoder = JSONDecoder
-#endif
-
 /// A protocol to provide data to be indexed.
 public protocol RenderNodeProvider {
     /// Get an instance of `RenderNode` to be processed by the index.
@@ -811,10 +805,10 @@ extension NavigatorIndex {
             var fallouts = [NavigatorTree.Node]()
 
             if sortRootChildrenByName {
-                root.children.sort { $0.item.title < $1.item.title }
+                root.children.sort(by: \.item.title)
                 if groupByLanguage {
                     root.children.forEach { (languageGroup) in
-                        languageGroup.children.sort { $0.item.title < $1.item.title }
+                        languageGroup.children.sort(by: \.item.title)
                     }
                 }
             }

@@ -755,25 +755,25 @@ extension OutOfProcessReferenceResolver {
         }
         
         return Symbol(
-            kind: symbolKind(forNodeKind: kind),
-            title: title,
-            subHeading: declarationFragments?.declarationFragments,
-            navigator: nil,
-            roleHeading: "", // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
-            platformName: nil,
-            moduleName: "", // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
-            externalID: nil,
-            accessLevel: nil,
-            availability: availability,
-            deprecatedSummary: nil,
-            mixins: nil,
-            abstractSection: nil,
-            discussion: nil,
-            topics: nil,
-            seeAlso: nil,
-            returnsSection: nil,
-            parametersSection: nil,
-            redirects: nil
+            kindVariants: .init(swiftVariant: symbolKind(forNodeKind: kind)),
+            titleVariants: .init(swiftVariant: title),
+            subHeadingVariants: .init(swiftVariant: declarationFragments?.declarationFragments),
+            navigatorVariants: .init(swiftVariant: nil),
+            roleHeadingVariants: .init(swiftVariant: ""), // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
+            platformNameVariants: .init(swiftVariant: nil),
+            moduleNameVariants: .init(swiftVariant: ""), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
+            externalIDVariants: .init(swiftVariant: nil),
+            accessLevelVariants: .init(swiftVariant: nil),
+            availabilityVariants: .init(swiftVariant: availability),
+            deprecatedSummaryVariants: .init(swiftVariant: nil),
+            mixinsVariants: .init(swiftVariant: nil),
+            abstractSectionVariants: .init(swiftVariant: nil),
+            discussionVariants: .init(swiftVariant: nil),
+            topicsVariants: .init(swiftVariant: nil),
+            seeAlsoVariants: .init(swiftVariant: nil),
+            returnsSectionVariants: .init(swiftVariant: nil),
+            parametersSectionVariants: .init(swiftVariant: nil),
+            redirectsVariants: .init(swiftVariant: nil)
         )
     }
 }
