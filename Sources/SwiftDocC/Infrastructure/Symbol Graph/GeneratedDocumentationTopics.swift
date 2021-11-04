@@ -85,6 +85,7 @@ enum GeneratedDocumentationTopics {
                 // Update the existing group
                 var inheritedSection = symbol.automaticTaskGroups[matchIndex]
                 inheritedSection.references.append(collectionReference)
+                inheritedSection.references.sort(by: \.lastPathComponent)
                 symbol.automaticTaskGroups[matchIndex] = inheritedSection
             } else {
                 // Add a new group
