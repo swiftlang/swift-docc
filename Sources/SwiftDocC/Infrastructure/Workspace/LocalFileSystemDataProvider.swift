@@ -31,12 +31,7 @@ public struct LocalFileSystemDataProvider: DocumentationWorkspaceDataProvider, F
     /// - Returns: A virtual file system that describe the file and directory structure within the given URL.
     private static func buildTree(root: URL) throws -> FSNode {
         var children: [FSNode] = []
-        #if os(Linux)
-        // Resource values and enumeration options aren't implemented on Linux.
-        let childURLs = try FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey], options: .init())
-        #else
         let childURLs = try FileManager.default.contentsOfDirectory(at: root, includingPropertiesForKeys: [URLResourceKey.isDirectoryKey], options: .skipsHiddenFiles)
-        #endif
         
         for url in childURLs {
             if FileManager.default.directoryExists(atPath: url.path) {

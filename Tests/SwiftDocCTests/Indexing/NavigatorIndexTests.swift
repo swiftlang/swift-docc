@@ -236,7 +236,6 @@ Root
     }
     
     func testNavigationTreeLargeDumpAndReadAsync() throws {
-#if !os(Linux)
         let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
         defer {
@@ -279,11 +278,9 @@ Root
         }
         
         XCTAssertTrue(validateTree(node: readTreePresentationIdentifier.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
-#endif
     }
     
     func testNavigatorIndexGenerationEmpty() throws {
-#if !os(Linux)
         let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
         defer {
@@ -300,11 +297,9 @@ Root
                 
         let readTree = NavigatorTree()
         XCTAssertThrowsError(try readTree.read(from: indexURL, interfaceLanguages: [.swift], timeout: 0.25, queue: DispatchQueue.main, broadcast: nil))
-#endif
     }
     
     func testNavigatorIndexGenerationOneNode() throws {
-#if !os(Linux)
         let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
         defer {
@@ -331,11 +326,9 @@ Root
         XCTAssert(counter == 1, "The broadcast callback has to be called at exactly 1 time.")
         XCTAssertEqual(original.root.countItems(), readTree.root.countItems())
         XCTAssertTrue(compare(lhs: original.root, rhs: readTree.root))
-#endif
     }
     
     func testNavigatorIndexGenerationOperator() throws {
-#if !os(Linux)
         let operatorURL = Bundle.module.url(
             forResource: "Operator", withExtension: "json", subdirectory: "Test Resources")!
         
@@ -353,7 +346,6 @@ Root
         builder.finalize()
                
         XCTAssertNotNil(builder.navigatorIndex)
-#endif
     }
     
     func testNavigatorIndexGeneration() throws {
@@ -545,7 +537,6 @@ Root
     }
     
     func testNavigatorIndexGenerationWithLanguageGrouping() throws {
-#if !os(Linux)
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
@@ -589,7 +580,6 @@ Root
 
         assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
         assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), try testTree(named: "testNavigatorIndexGenerationWithLanguageGrouping"))
-#endif
     }
 
     
@@ -657,7 +647,6 @@ Root
     }
     
     func testNavigatorIndexAvailabilityGeneration() throws {
-        #if !os(Linux)
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
@@ -752,11 +741,9 @@ Root
         let availabilityDB = try navigatorIndex.environment.openDatabase(named: "availability")
         XCTAssertThrowsError(try availabilityDB.put(key: "content", value: "test"))
         XCTAssertNil(availabilityDB.get(type: String.self, forKey: "content"))
-        #endif
     }
     
     func testNavigatorIndexDifferenHasherGeneration() throws {
-        #if !os(Linux)
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
@@ -812,8 +799,6 @@ Root
         let sideClassNode = try XCTUnwrap(search(node: navigatorIndex.navigatorTree.root) { navigatorIndex.path(for: $0.id!) == "/documentation/sidekit/sideclass" })
         let availabilities = navigatorIndex.availabilities(for: sideClassNode.item.availabilityID)
         XCTAssertEqual(availabilities.count, 1)
-        
-        #endif
     }
     
     func testPlatformVersion() {
@@ -1170,7 +1155,6 @@ Root
     }
     
     func testNavigatorIndexAsReadOnlyFile() throws {
-        #if !os(Linux)
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
@@ -1201,7 +1185,6 @@ Root
         
         // Make sure we throw if an index can't be opened even after the fallback, avoiding entering an infinite loop.
         XCTAssertThrowsError(try NavigatorIndex(url: targetURL, readNavigatorTree: false))
-        #endif
     }
     
     func testNavigatorTitle() throws {
