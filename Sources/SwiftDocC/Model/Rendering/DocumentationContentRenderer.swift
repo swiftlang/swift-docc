@@ -168,7 +168,7 @@ public class DocumentationContentRenderer {
         // Render references can have either availability or conformance data
         var constraints: [SymbolGraph.Symbol.Swift.GenericConstraint] = []
         
-        if let conformanceConstraints = collectedConstraints[.resolved(reference)], !conformanceConstraints.isEmpty {
+        if let conformanceConstraints = collectedConstraints[.successfullyResolved(reference)], !conformanceConstraints.isEmpty {
             // Collected conformance constraints
             constraints = conformanceConstraints
         } else if let availabilityConstraints = (node.semantic as? Symbol)?.constraints, !availabilityConstraints.isEmpty {

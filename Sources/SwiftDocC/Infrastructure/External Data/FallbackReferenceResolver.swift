@@ -21,15 +21,15 @@ import Foundation
 public protocol FallbackReferenceResolver {
     /// Attempts to resolve an unresolved reference for a topic that couldn't be resolved locally.
     ///
-    /// Your implementation returns a resolved reference if the topic exists in the external source of documentation, or the original
-    /// unresolved reference if the topic doesn't exist in the external source.
+    /// Your implementation returns a resolved reference if the topic exists in the external source of documentation, or information about why the reference failed to resolve if the topic doesn't exist in the external source.
+    ///
+    /// Your implementation will only be called once for a given unresolved reference. Failures are assumed to persist for the duration of the documentation build.
     ///
     /// - Parameters:
     ///   - reference: The unresolved reference.
     ///   - sourceLanguage: The source language of the reference, in case the reference exists in multiple languages.
-    /// - Returns: The resolved reference for the topic, or the original unresolved reference if the topic doesn't exist in the external
-    /// source.
-    func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReference
+    /// - Returns: The resolved reference for the topic, or information about why the resolver failed to resolve the reference.
+    func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult
     
     /// Creates a new documentation node with the documentation content for the external reference, if the given reference was
     /// resolved by this resolver.

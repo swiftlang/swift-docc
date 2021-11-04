@@ -358,8 +358,8 @@ class ReferenceResolverTests: XCTestCase {
         var resolvedEntityKind = DocumentationNode.Kind.article
         var expectedAvailableSourceLanguages: Set<SourceLanguage> = [.swift, .objectiveC]
         
-        func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReference {
-            return .resolved(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, sourceLanguage: .swift))
+        func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+            return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, sourceLanguage: .swift))
         }
         
         func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {

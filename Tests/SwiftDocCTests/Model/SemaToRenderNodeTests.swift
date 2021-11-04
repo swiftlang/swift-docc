@@ -1218,10 +1218,10 @@ class SemaToRenderNodeTests: XCTestCase {
             public func preciseIdentifier(forExternalSymbolReference reference: TopicReference) -> String? {
                 let url: URL
                 switch reference {
-                case .unresolved(let unresolved):
+                case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
                     guard unresolved.bundleIdentifier == bundleIdentifier else { return nil }
                     url = unresolved.topicURL.url
-                case .resolved(let resolved):
+                case .resolved(.success(let resolved)):
                     guard resolved.bundleIdentifier == bundleIdentifier else { return nil }
                     url = resolved.url
                 }
@@ -1231,8 +1231,8 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         class TestReferenceResolver: ExternalReferenceResolver {
-            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReference {
-                .resolved(
+            func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
+                .success(
                     ResolvedTopicReference(
                         bundleIdentifier: "com.test.external",
                         path: reference.url!.path,

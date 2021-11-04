@@ -78,7 +78,7 @@ struct SymbolGraphRelationshipsBuilder {
         if let interfaceSymbol = optionalInterfaceNode?.semantic as? Symbol {
             // Add a default implementation
             interfaceSymbol.defaultImplementations.addImplementation(
-                Implementation(reference: .resolved(implementorNode.reference), parent: parentName, fallbackName: edge.targetFallback)
+                Implementation(reference: .successfullyResolved(implementorNode.reference), parent: parentName, fallbackName: edge.targetFallback)
             )
             
             // Make the implementation a child of the requirement
@@ -118,7 +118,7 @@ struct SymbolGraphRelationshipsBuilder {
         let conformanceNodeReference: TopicReference
         
         if let conformanceNode = optionalConformanceNode {
-            conformanceNodeReference = .resolved(conformanceNode.reference)
+            conformanceNodeReference = .successfullyResolved(conformanceNode.reference)
         } else {
             // Take the interface language of the target symbol
             // or if external - default to the language of the current symbol.
@@ -150,9 +150,9 @@ struct SymbolGraphRelationshipsBuilder {
         
         if let conformanceSymbol = optionalConformanceNode?.semantic as? Symbol {
             if let rawSymbol = conformingNode.symbol, rawSymbol.kind.identifier == SymbolGraph.Symbol.Kind.Swift.protocol.rawValue {
-                conformanceSymbol.relationships.addRelationship(.inheritedBy(.resolved(conformingNode.reference)))
+                conformanceSymbol.relationships.addRelationship(.inheritedBy(.successfullyResolved(conformingNode.reference)))
             } else {
-                conformanceSymbol.relationships.addRelationship(.conformingType(.resolved(conformingNode.reference), relationshipConstraints?.constraints))
+                conformanceSymbol.relationships.addRelationship(.conformingType(.successfullyResolved(conformingNode.reference), relationshipConstraints?.constraints))
             }
         }
     }
@@ -180,7 +180,7 @@ struct SymbolGraphRelationshipsBuilder {
         let parentNodeReference: TopicReference
         
         if let parentNode = optionalParentNode {
-            parentNodeReference = .resolved(parentNode.reference)
+            parentNodeReference = .successfullyResolved(parentNode.reference)
         } else {
             // Use the target symbol language, if external - fallback on child symbol's langauge
             let language = symbolIndex[edge.target]?.symbol.map({ SourceLanguage(id: $0.identifier.interfaceLanguage) })
@@ -199,7 +199,7 @@ struct SymbolGraphRelationshipsBuilder {
         childSymbol.relationships.addRelationship(.inheritsFrom(parentNodeReference))
         
         if let parentSymbol = optionalParentNode?.semantic as? Symbol {
-            parentSymbol.relationships.addRelationship(.inheritedBy(.resolved(childNode.reference)))
+            parentSymbol.relationships.addRelationship(.inheritedBy(.successfullyResolved(childNode.reference)))
         }
     }
     

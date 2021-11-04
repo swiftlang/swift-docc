@@ -672,7 +672,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 targetFallbacks: [:],
                 implementations: [
                     Implementation(
-                        reference: .resolved(
+                        reference: .successfullyResolved(
                             ResolvedTopicReference(
                                 bundleIdentifier: "org.swift.docc.example",
                                 path: path,
@@ -904,7 +904,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 RelationshipsGroup(
                     kind: kind,
                     destinations: [
-                        TopicReference.resolved(
+                        TopicReference.successfullyResolved(
                             ResolvedTopicReference(
                                 bundleIdentifier: "org.swift.docc.example",
                                 path: path,

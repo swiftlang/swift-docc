@@ -24,6 +24,8 @@ import Foundation
 /// for the node with the documentation content for that reference. Because this content isn't part of the compiled bundle, it won't be included in the build output. However, references to this node from the bundle's content
 /// may incorporate, for example, the external node's title, kind, or abstract in their output.
 ///
+/// If the reference doesn't exist in the external source of documentation or if an error occurs while attempting to resolve the reference, the external resolver returns information about the error.
+///
 /// In addition to the information in the documentation node, the external resolver may be asked to provide a web URL that can be used to navigate to this resource. When the render node translator converts a documentation node
 /// that has an external reference in its content to a render node, this provided web URL is the link to the external content.
 ///
@@ -31,17 +33,20 @@ import Foundation
 /// - ``DocumentationContext/externalReferenceResolvers``
 /// - ``LinkDestinationSummary``
 /// - ``ExternalSymbolResolver``
+/// - ``TopicReferenceResolutionResult``
 public protocol ExternalReferenceResolver {
     
     /// Attempts to resolve an unresolved reference for an external topic.
     ///
-    /// Your implementation returns a resolved reference if the topic exists in the external source of documentation, or the original unresolved reference if the topic doesn't exist in the external source.
+    /// Your implementation returns a resolved reference if the topic exists in the external source of documentation, or information about why the reference failed to resolve if the topic doesn't exist in the external source.
+    ///
+    /// Your implementation will only be called once for a given unresolved reference. Failures are assumed to persist for the duration of the documentation build.
     ///
     /// - Parameters:
     ///   - reference: The unresolved reference.
     ///   - sourceLanguage: The source language of the reference, in case the reference exists in multiple languages.
-    /// - Returns: The resolved reference for the topic, or the original unresolved reference if the topic doesn't exist in the external source.
-    func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReference
+    /// - Returns: The resolved reference for the topic, or information about why the resolver failed to resolve the reference.
+    func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult
     
     /// Creates a new documentation node with the documentation content for the external reference.
     ///

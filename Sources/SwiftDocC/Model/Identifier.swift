@@ -11,22 +11,33 @@
 import Foundation
 import SymbolKit
 
-/**
- A resolved or unresolved reference to a piece of documentation.
-
- ## Topics
- ### Topic References
-
-  - ``ResolvedTopicReference``
-  - ``UnresolvedTopicReference``
-  - ``SourceLanguage``
- */
+/// A resolved or unresolved reference to a piece of documentation.
+///
+/// A reference can exist in one of three states:
+///  - It has not yet been resolved.
+///  - It has successfully resolved.
+///  - It has failed to resolve.
+///
+/// References that have resolved, either successfully or not, are represented by ``TopicReferenceResolutionResult``.
+///
+/// ## Topics
+/// ### Topic References
+///
+/// - ``UnresolvedTopicReference``
+/// - ``ResolvedTopicReference``
+/// - ``TopicReferenceResolutionResult``
+/// - ``SourceLanguage``
 public enum TopicReference: Hashable, CustomStringConvertible {
     /// A topic reference that hasn't been resolved to known documentation.
     case unresolved(UnresolvedTopicReference)
     
-    /// A topic reference that has been resolved to known documentation.
-    case resolved(ResolvedTopicReference)
+    /// A topic reference that has either been resolved to known documentation or failed to resolve to known documentation.
+    case resolved(TopicReferenceResolutionResult)
+    
+    /// A topic reference that has successfully been resolved to known documentation.
+    internal static func successfullyResolved(_ reference: ResolvedTopicReference) -> TopicReference {
+        return .resolved(.success(reference))
+    }
     
     public var description: String {
         switch self {
@@ -34,6 +45,23 @@ public enum TopicReference: Hashable, CustomStringConvertible {
             return unresolved.description
         case .resolved(let resolved):
             return resolved.description
+        }
+    }
+}
+
+/// A topic reference that has been resolved, either successfully or not.
+public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
+    /// A topic reference that has successfully been resolved to known documentation.
+    case success(ResolvedTopicReference)
+    /// A topic reference that has failed to resolve to known documentation and an error message with information about why the reference failed to resolve.
+    case failure(UnresolvedTopicReference, errorMessage: String)
+    
+    public var description: String {
+        switch self {
+        case .success(let resolved):
+            return resolved.description
+        case .failure(let unresolved, _):
+            return unresolved.description
         }
     }
 }

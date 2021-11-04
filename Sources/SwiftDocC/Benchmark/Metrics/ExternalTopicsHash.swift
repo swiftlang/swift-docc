@@ -27,9 +27,16 @@ extension Benchmark {
                 return
             }
             
-            // Make a flat string of all resolved external topics.
+            // Make a flat string of all successfully resolved external topics.
             // Note: We have to sort the URLs to produce a stable checksum.
-            let sourceString = context.externallyResolvedLinks.map({ $0.value.absoluteString }).sorted().joined()
+            let sourceString = context.externallyResolvedLinks.values.compactMap({
+                switch $0 {
+                case .success(let resolved):
+                    return resolved.absoluteString
+                case .failure(_, _):
+                    return nil
+                }
+            }).sorted().joined()
                 + context.externallyResolvedSymbols.map({ $0.absoluteString }).sorted().joined()
 
             result = .string(Checksum.md5(of: Data(sourceString.utf8)))

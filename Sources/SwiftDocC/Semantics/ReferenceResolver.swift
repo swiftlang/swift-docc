@@ -11,12 +11,12 @@
 import Foundation
 import Markdown
 
-func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?) -> Problem {
+func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, underlyingErrorMessage: String) -> Problem {
     let notes = uncuratedArticleMatch.map {
         [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
     
-    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved to known documentation", notes: notes)
+    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(underlyingErrorMessage)", notes: notes)
     return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
@@ -56,16 +56,16 @@ struct ReferenceResolver: SemanticVisitor {
         self.inheritanceParentReference = inheritanceParentReference
     }
     
-    mutating func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> TopicReference {
+    mutating func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, range: SourceRange?, severity: DiagnosticSeverity) -> TopicReferenceResolutionResult {
         switch context.resolve(reference, in: parent) {
-        case .resolved(let resolved):
-            return .resolved(resolved)
+        case .success(let resolved):
+            return .success(resolved)
             
-        case .unresolved(let unresolved):
+        case let .failure(unresolved, errorMessage):
             // FIXME: Provide near-miss suggestion here. The user is likely to make mistakes with capitalization because of character input.
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch))
-            return reference
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
+            return .failure(unresolved, errorMessage: errorMessage)
         }
     }
     
@@ -163,7 +163,7 @@ struct ReferenceResolver: SemanticVisitor {
         let parent = inheritanceParentReference
         let context = self.context
         
-        markupResolver.problemForUnresolvedReference = { unresolved, source, range, fromSymbolLink -> Problem? in
+        markupResolver.problemForUnresolvedReference = { unresolved, source, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
             // Verify we have all the information about the location of the source comment
             // and the symbol that the comment is inherited from.
             if let parent = parent, let range = range,
@@ -173,7 +173,7 @@ struct ReferenceResolver: SemanticVisitor {
                 let docStartColumn = docLines.lines.first?.range?.start.character {
                 
                 switch context.resolve(.unresolved(unresolved), in: parent, fromSymbolLink: fromSymbolLink) {
-                    case .resolved(let resolved):
+                    case .success(let resolved):
                         
                         // Make the range for the suggested replacement.
                         let start = SourceLocation(line: docStartLine + range.lowerBound.line, column: docStartColumn + range.lowerBound.column, source: range.lowerBound.source)
@@ -273,7 +273,7 @@ struct ReferenceResolver: SemanticVisitor {
             let maybeResolved = resolve(tutorialReference.topic, in: bundle.technologyTutorialsRootReference,
                                         range: arguments[TutorialReference.Semantics.Tutorial.argumentName]?.valueRange,
                                         severity: .warning)
-            return TutorialReference(originalMarkup: tutorialReference.originalMarkup, tutorial: maybeResolved)
+            return TutorialReference(originalMarkup: tutorialReference.originalMarkup, tutorial: .resolved(maybeResolved))
         case .resolved:
             return tutorialReference
         }
