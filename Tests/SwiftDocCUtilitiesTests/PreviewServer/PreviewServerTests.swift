@@ -17,7 +17,13 @@ import Foundation
 @testable import NIO
 @testable import NIOHTTP1
 
-class PreviewServerTests: XCTestCase {
+// rdar85046362
+// Disabling this test due to accessing the temp directory and
+// making network calls. The temp directories are accessible by all jobs on a
+// bot, so they are subject to noise. Network calls are slow and can also be
+// very noisy.
+// class PreviewServerTests: XCTestCase {
+class PreviewServerTests {
 
     func testPreviewServerBeforeStarted() throws {
         // Create test content
