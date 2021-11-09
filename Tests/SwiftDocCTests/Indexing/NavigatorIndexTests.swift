@@ -235,7 +235,10 @@ Root
 #endif
     }
     
-    func testNavigationTreeLargeDumpAndReadAsync() throws {
+    // This test has been disabled because of frequent failures in Swift CI.
+    //
+    // rdar://85055022 tracks updating this test to remove any flakiness.
+    func disabled_testNavigationTreeLargeDumpAndReadAsync() throws {
         let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
         defer {
