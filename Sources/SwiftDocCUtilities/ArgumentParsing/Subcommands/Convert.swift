@@ -185,6 +185,14 @@ extension Docc {
         """))
         public var diagnosticLevel: String?
         
+        // Parse and ignore any unrecognized flags, options, and input.
+        //
+        // When we're adding new flags or options to the `convert` command. This behavior allows us to also land
+        // changes in other tools that pass these values to `docc convert` without coordinating the two releases.
+        
+        @Argument(parsing: .unconditionalRemaining, help: .hidden)
+        var unrecognizedArgumentsAndOptions: [String] = []
+        
         // MARK: - Computed Properties
 
         /// The path to the directory that all build output should be placed in.
@@ -212,6 +220,10 @@ extension Docc {
                 note: "\(level)" is not a valid diagnostic level.
                       Use one of "error", "warning", "information", or "hint"
                 """)
+            }
+            
+            if !unrecognizedArgumentsAndOptions.isEmpty {
+                print("note: The following arguments, options, and flags were not recognized and will be ignored: \(unrecognizedArgumentsAndOptions)")
             }
             
             if let outputParent = providedOutputURL?.deletingLastPathComponent() {
