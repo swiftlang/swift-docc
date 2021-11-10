@@ -27,46 +27,29 @@ public struct TopicWithoutSubheading: Checker {
     }
 
     public mutating func visitDocument(_ document: Document) -> () {
-        let headings = getHeadings(document: document)
+        let headings = document.children.compactMap { $0 as? Heading }
         for (index, element) in headings.enumerated() {
-            guard element.title == "Topics" else {
+            guard element.title == "Topics",
+                  element.level == 2 else {
                 continue
             }
 
-            if !hasSubheading(heading: element, subnodes: headings.dropFirst(index + 1)) {
-                warnHeading(element)
+            if !hasSubheading(heading: element, remainingHeadings: headings.dropFirst(index + 1)) {
+                let explanation = """
+                A Topics section requires at least one topic, represented by a level-3 subheading. A Topics section without topics won’t render any content.”
+                """
+
+                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: element.range, identifier:       "org.swift.docc.TopicWithoutSubheading", summary: "Missing required subheading for Topics section.", explanation: explanation)
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
             }
         }
     }
 
-    private func getHeadings(document: Document) -> [Heading] {
-        return (0..<document.childCount).compactMap { index -> Heading? in
-            guard let heading = document.child(at: index) as? Heading else {
-                return nil
-            }
-
-            return heading
-        }
-    }
-
-    private func hasSubheading(heading: Heading, subnodes: ArraySlice<Heading>) -> Bool {
-        for subnode in subnodes {
-            if subnode.level <= heading.level {
-                break
-            }
-
-            return true
+    private func hasSubheading(heading: Heading, remainingHeadings: ArraySlice<Heading>) -> Bool {
+        if let nextHeading = remainingHeadings.first {
+            return nextHeading.level > heading.level
         }
 
         return false
-    }
-
-    private mutating func warnHeading(_ heading: Heading) {
-        let explanation = """
-        Topics headings must have at least one subheading.
-        """
-
-        let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: heading.range, identifier:       "org.swift.docc.TopicWithoutSubheading", summary: "Invalid use of Topics heading.", explanation: explanation)
-        problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
     }
 }
