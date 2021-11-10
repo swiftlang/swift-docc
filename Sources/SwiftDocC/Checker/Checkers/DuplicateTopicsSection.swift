@@ -49,9 +49,8 @@ public struct DuplicateTopicsSections: Checker {
     }
     
     public mutating func visitHeading(_ heading: Heading) {
-        guard heading.level == 2,
-            heading.plainText == "Topics",
-            heading.parent is Document?  else {
+        guard heading.isTopic,
+              heading.parent is Document? else {
                 return
         }
         foundTopicsHeadings.append(heading)
