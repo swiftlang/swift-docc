@@ -114,7 +114,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(url: "https://github.com/apple/swift-nio-ssl.git", .upToNextMinor(from: "2.15.0")),
         .package(name: "swift-markdown", url: "https://github.com/apple/swift-markdown.git", .branch("main")),
         .package(name: "CLMDB", url: "https://github.com/apple/swift-lmdb.git", .branch("main")),
-        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "1.0.1")),
+        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.4.4")),
         .package(name: "SymbolKit", url: "https://github.com/apple/swift-docc-symbolkit", .branch("main")),
         .package(url: "https://github.com/apple/swift-crypto.git", .upToNextMinor(from: "1.1.2")),
     ]
