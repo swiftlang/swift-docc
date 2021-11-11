@@ -29,18 +29,16 @@ public struct TopicsSectionWithoutSubheading: Checker {
     public mutating func visitDocument(_ document: Document) -> () {
         let headings = document.children.compactMap { $0 as? Heading }
         for (index, heading) in headings.enumerated() {
-            guard heading.isTopicsSection else {
+            guard heading.isTopicsSection, !hasSubheading(heading, remainingHeadings: headings.dropFirst(index + 1)) else {
                 continue
             }
 
-            if !hasSubheading(heading, remainingHeadings: headings.dropFirst(index + 1)) {
-                let explanation = """
-                A Topics section requires at least one topic, represented by a level-3 subheading. A Topics section without topics won’t render any content.”
-                """
+            let explanation = """
+            A Topics section requires at least one topic, represented by a level-3 subheading. A Topics section without topics won’t render any content.”
+            """
 
-                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: heading.range, identifier: "org.swift.docc.TopicsSectionWithoutSubheading", summary: "Missing required subheading for Topics section.", explanation: explanation)
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
-            }
+            let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: heading.range, identifier: "org.swift.docc.TopicsSectionWithoutSubheading", summary: "Missing required subheading for Topics section.", explanation: explanation)
+            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
         }
     }
 
