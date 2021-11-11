@@ -289,21 +289,6 @@ class ConvertSubcommandTests: XCTestCase {
         }
     }
     
-    func testExtraArgumentsAreIgnored() throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
-        
-        let convertOptions = try Docc.Convert.parse([
-            testBundleURL.path,
-            // These are unrecognized
-            "--extra-option", "\"extra value\"",
-            "--extra-flag",
-            // This flag is recognized
-            "--analyze"
-        ])
-        
-        XCTAssertEqual(convertOptions.unrecognizedArgumentsAndOptions, ["--extra-option", "\"extra value\"", "--extra-flag"])
-    }
-    
     func testIndex() throws {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
         
