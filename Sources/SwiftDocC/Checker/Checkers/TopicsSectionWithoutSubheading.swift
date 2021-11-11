@@ -29,7 +29,7 @@ public struct TopicsSectionWithoutSubheading: Checker {
     public mutating func visitDocument(_ document: Document) -> () {
         let headings = document.children.compactMap { $0 as? Heading }
         for (index, heading) in headings.enumerated() {
-            guard heading.isTopicsSection, missingSubheading(heading, remainingHeadings: headings.dropFirst(index + 1)) else {
+            guard heading.isTopicsSection, isMissingSubheading(heading, remainingHeadings: headings.dropFirst(index + 1)) else {
                 continue
             }
 
@@ -42,7 +42,7 @@ public struct TopicsSectionWithoutSubheading: Checker {
         }
     }
 
-    private func missingSubheading(_ heading: Heading, remainingHeadings: ArraySlice<Heading>) -> Bool {
+    private func isMissingSubheading(_ heading: Heading, remainingHeadings: ArraySlice<Heading>) -> Bool {
         if let nextHeading = remainingHeadings.first {
             return nextHeading.level <= heading.level
         }
