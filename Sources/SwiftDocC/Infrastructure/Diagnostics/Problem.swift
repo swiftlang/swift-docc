@@ -21,6 +21,10 @@ public struct Problem {
         self.diagnostic = diagnostic
         self.possibleSolutions = Array(possibleSolutions)
     }
+
+    public init(diagnostic: Diagnostic) {
+        self.init(diagnostic: diagnostic, possibleSolutions: [])
+    }
 }
 
 extension Problem {

@@ -38,7 +38,7 @@ public struct TopicsSectionWithoutSubheading: Checker {
             """
 
             let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: heading.range, identifier: "org.swift.docc.TopicsSectionWithoutSubheading", summary: "Missing required subheading for Topics section.", explanation: explanation)
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+            problems.append(Problem(diagnostic: diagnostic))
         }
     }
 
