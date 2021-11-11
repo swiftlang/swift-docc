@@ -19,6 +19,6 @@ Run static analysis checks on markup files.
 - ``NonInclusiveLanguageChecker``
 - ``NonOverviewHeadingChecker``
 - ``SeeAlsoInTopicsHeadingChecker``
-- ``TopicWithoutSubheading``
+- ``TopicsSectionWithoutSubheading``
 
 <!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

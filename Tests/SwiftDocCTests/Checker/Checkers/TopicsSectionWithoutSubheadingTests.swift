@@ -12,7 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 
-class TopicWithoutSubheadingTests: XCTestCase {
+class TopicsSectionWithoutSubheadingTests: XCTestCase {
     func testEmptyDocument() {
         let checker = visitDocument(Document())
         XCTAssertTrue(checker.problems.isEmpty)
@@ -58,7 +58,7 @@ Abstract.
         
         let noSubheadingHeading = document.child(at: 2)! as! Heading
         let diagnostic = problem.diagnostic
-        XCTAssertEqual("org.swift.docc.TopicWithoutSubheading", diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.TopicsSectionWithoutSubheading", diagnostic.identifier)
         XCTAssertEqual(noSubheadingHeading.range, diagnostic.range)
     }
 
@@ -84,19 +84,19 @@ Abstract.
         
         let noSubheadingHeading = document.child(at: 4)! as! Heading
         let diagnostic = problem.diagnostic
-        XCTAssertEqual("org.swift.docc.TopicWithoutSubheading", diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.TopicsSectionWithoutSubheading", diagnostic.identifier)
         XCTAssertEqual(noSubheadingHeading.range, diagnostic.range)
     }
 }
 
-extension TopicWithoutSubheadingTests {
-    func visitSource(_ source: String) -> TopicWithoutSubheading {
+extension TopicsSectionWithoutSubheadingTests {
+    func visitSource(_ source: String) -> TopicsSectionWithoutSubheading {
         let document = Document(parsing: source)
         return visitDocument(document)
     }
     
-    func visitDocument(_ document: Document) -> TopicWithoutSubheading {
-        var checker = TopicWithoutSubheading(sourceFile: nil)
+    func visitDocument(_ document: Document) -> TopicsSectionWithoutSubheading {
+        var checker = TopicsSectionWithoutSubheading(sourceFile: nil)
         checker.visit(document)
         
         return checker

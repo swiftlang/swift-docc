@@ -49,7 +49,7 @@ public struct DuplicateTopicsSections: Checker {
     }
     
     public mutating func visitHeading(_ heading: Heading) {
-        guard heading.isTopic,
+        guard heading.isTopicsSection,
               heading.parent is Document? else {
                 return
         }

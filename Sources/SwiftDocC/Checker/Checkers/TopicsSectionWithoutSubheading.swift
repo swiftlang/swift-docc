@@ -12,14 +12,14 @@ import Foundation
 import Markdown
 
 /**
- A `Topic` should have at least one subheading.
+ A Topics section  should have at least one subheading.
  */
-public struct TopicWithoutSubheading: Checker {
+public struct TopicsSectionWithoutSubheading: Checker {
     public var problems = [Problem]()
 
     private var sourceFile: URL?
 
-    /// Creates a new checker that detects Topics without subheadings.
+    /// Creates a new checker that detects Topics sections without subheadings.
     ///
     /// - Parameter sourceFile: The URL to the documentation file that the checker checks.
     public init(sourceFile: URL?) {
@@ -29,7 +29,7 @@ public struct TopicWithoutSubheading: Checker {
     public mutating func visitDocument(_ document: Document) -> () {
         let headings = document.children.compactMap { $0 as? Heading }
         for (index, heading) in headings.enumerated() {
-            guard heading.isTopic else {
+            guard heading.isTopicsSection else {
                 continue
             }
 
@@ -38,7 +38,7 @@ public struct TopicWithoutSubheading: Checker {
                 A Topics section requires at least one topic, represented by a level-3 subheading. A Topics section without topics won’t render any content.”
                 """
 
-                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: heading.range, identifier:       "org.swift.docc.TopicWithoutSubheading", summary: "Missing required subheading for Topics section.", explanation: explanation)
+                let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: heading.range, identifier: "org.swift.docc.TopicsSectionWithoutSubheading", summary: "Missing required subheading for Topics section.", explanation: explanation)
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
             }
         }

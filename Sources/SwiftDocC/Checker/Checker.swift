@@ -418,7 +418,7 @@ public struct CompositeChecker: Checker {
  A collection of `Heading` properties utilized by `Checker`s.
  */
 extension Heading {
-    var isTopic: Bool {
+    var isTopicsSection: Bool {
         return level == 2 && title == "Topics"
     }
 }
