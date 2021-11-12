@@ -2972,6 +2972,15 @@ let expected = """
         // Verify the solution proposes the expected absolute link replacement.
         XCTAssertEqual(problem.possibleSolutions[0].replacements[0].replacement, "<doc:/documentation/Minimal_docs/A/method(_:)-7mctk>")
     }
+    
+    func testCustomModuleKind() throws {
+        let (bundle, context) = try testBundleAndContext(named: "BundleWithExecutableModuleKind")
+        XCTAssertEqual(bundle.info.defaultModuleKind, "Executable")
+        
+        let moduleSymbol = try XCTUnwrap(context.symbolIndex["ExampleDocumentedExecutable"]?.symbol)
+        XCTAssertEqual(moduleSymbol.kind.identifier.identifier, "module")
+        XCTAssertEqual(moduleSymbol.kind.displayName, "Executable")
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {

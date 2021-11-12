@@ -49,6 +49,7 @@ extension ConvertAction {
             fallbackIdentifier: convert.fallbackBundleIdentifier,
             fallbackVersion: convert.fallbackBundleVersion,
             fallbackDefaultCodeListingLanguage: convert.defaultCodeListingLanguage,
+            fallbackDefaultModuleKind: convert.fallbackDefaultModuleKind,
             additionalSymbolGraphFiles: additionalSymbolGraphFiles
         )
         

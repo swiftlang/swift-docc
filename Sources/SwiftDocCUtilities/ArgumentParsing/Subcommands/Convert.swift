@@ -155,6 +155,14 @@ extension Docc {
             help: "A fallback default language for code listings if no value is provided in the documentation bundle's Info.plist file."
         )
         public var defaultCodeListingLanguage: String?
+            
+        @Option(
+            help: """
+                A fallback default module kind if no value is provided \
+                in the documentation bundle's Info.plist file.
+                """
+        )
+        public var fallbackDefaultModuleKind: String?
         
         /// A user-provided location where the convert action writes the built documentation.
         @Option(
