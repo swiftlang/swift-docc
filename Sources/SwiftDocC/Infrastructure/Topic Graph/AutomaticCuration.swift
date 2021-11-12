@@ -28,7 +28,7 @@ public struct AutomaticCuration {
     }
     
     /// A mapping between a symbol kind and its matching group.
-    typealias ReferenceGroupIndex = [SymbolGraph.Symbol.Kind.Swift: ReferenceGroup]
+    typealias ReferenceGroupIndex = [SymbolGraph.Symbol.KindIdentifier: ReferenceGroup]
     
     /// A static list of predefined groups for each supported kind of symbol.
     static var groups: ReferenceGroupIndex {
@@ -65,12 +65,9 @@ public struct AutomaticCuration {
                 }
                 
                 let childNode = try context.entity(with: child.reference)
-                guard let childSymbol = childNode.semantic as? Symbol,
-                    let swiftKind = SymbolGraph.Symbol.Kind.Swift(rawValue: childSymbol.kind.identifier) else {
-                    return
+                if let childSymbol = childNode.semantic as? Symbol {
+                    groupsIndex[childSymbol.kind.identifier]?.references.append(child.reference)
                 }
-                
-                groupsIndex[swiftKind]?.references.append(child.reference)
             }
             .lazy
             // Sort the groups in the order intended for rendering
@@ -137,7 +134,7 @@ extension AutomaticCuration {
     /// Returns a topics group title for the given symbol kind.
     /// - Parameter symbolKind: A symbol kind, such as a protocol or a variable.
     /// - Returns: A group title for symbols of the given kind.
-    static func groupTitle(`for` symbolKind: SymbolGraph.Symbol.Kind.Swift) -> String {
+    static func groupTitle(`for` symbolKind: SymbolGraph.Symbol.KindIdentifier) -> String {
         switch symbolKind {
             case .`associatedtype`: return "Associated Types"
             case .`class`: return "Classes"
@@ -158,11 +155,12 @@ extension AutomaticCuration {
             case .`typealias`: return "Type Aliases"
             case .`var`: return "Variables"
             case .module: return "Modules"
+            case .unknown: return "Symbols"
         }
     }
 
     /// The order of symbol kinds when grouped automatically.
-    static let groupKindOrder: [SymbolGraph.Symbol.Kind.Swift] = [
+    static let groupKindOrder: [SymbolGraph.Symbol.KindIdentifier] = [
         .module,
 
         .`class`,

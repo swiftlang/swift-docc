@@ -24,6 +24,12 @@ class ConvertActionTests: XCTestCase {
         forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         .appendingPathComponent("FillIntroduced.symbols.json")
     
+    let objectiveCSymbolGraphFile = Bundle.module.url(
+        forResource: "DeckKit-Objective-C",
+        withExtension: "symbols.json",
+        subdirectory: "Test Resources"
+    )!
+    
     /// A symbol graph file that has missing symbols.
     let incompleteSymbolGraphFile = TextFile(name: "TechnologyX.symbols.json", utf8Content: """
         {
@@ -1987,6 +1993,40 @@ class ConvertActionTests: XCTestCase {
         let diagnostics = try RenderJSONDecoder.makeDecoder().decode([Digest.Diagnostic].self, from: data)
         XCTAssertEqual(diagnostics.count, 1)
 
+    }
+    
+    func testObjectiveCFeatureFlag() throws {
+        let bundle = Folder(name: "unit-test-objc.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: objectiveCSymbolGraphFile),
+        ])
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath).appendingPathComponent("target", isDirectory: true)
+
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: true,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider
+        )
+        
+        try action.performAndHandleResult()
+        XCTAssertFalse(
+            testDataProvider.fileExists(atPath: targetDirectory.appendingPathComponent("data").path)
+        )
+        
+        FeatureFlags.current.isExperimentalObjectiveCSupportEnabled = true
+        
+        try action.performAndHandleResult()
+        XCTAssertTrue(
+            testDataProvider.fileExists(atPath: targetDirectory.appendingPathComponent("data").path)
+        )
     }
     
     /// Verifies that a metadata.json file is created in the output folder with additional metadata.

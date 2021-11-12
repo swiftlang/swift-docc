@@ -255,10 +255,10 @@ public class MemoryFileServerProvider: FileServerProvider {
     
 }
 
-/// A list of Swift symbol kinds which might interfere with the rendering engine while dealing with URLs.
-fileprivate var swiftEntitiesDefinition: Set<String> = {
-    Set(SymbolGraph.Symbol.Kind.Swift.allCases.map(\.rawValue))
-}()
+/// Checks whether the given string is a known entity definition which might interfere with the rendering engine while dealing with URLs.
+fileprivate func isKnownEntityDefinition(_ identifier: String) -> Bool {
+    return SymbolGraph.Symbol.KindIdentifier.isKnownIdentifier(identifier)
+}
 
 fileprivate extension String {
     
@@ -279,7 +279,7 @@ fileprivate extension String {
         let swiftEntityPattern = #"(?<=\-)swift\..*"#
         if let range = range(of: swiftEntityPattern, options: .regularExpression, range: nil, locale: nil) {
             let entityCheck = String(self[range])
-            return swiftEntitiesDefinition.contains(entityCheck)
+            return isKnownEntityDefinition(entityCheck)
         }
         return false
     }

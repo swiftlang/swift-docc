@@ -1,0 +1,1881 @@
+{
+  "metadata" : {
+    "formatVersion" : {
+      "major" : 0,
+      "minor" : 5,
+      "patch" : 0
+    },
+    "generator" : "SymbolKit"
+  },
+  "module" : {
+    "name" : "DeckKit",
+    "platform" : {
+      "architecture" : "x86_64",
+      "operatingSystem" : {
+        "minimumVersion" : {
+          "major" : 11,
+          "minor" : 0,
+          "patch" : 0
+        },
+        "name" : "macos"
+      },
+      "vendor" : "apple"
+    }
+  },
+  "relationships" : [
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@EnumTest@one",
+      "target" : "c:@E@EnumTest",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@EnumTest@two",
+      "target" : "c:@E@EnumTest",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@OptionTest@first",
+      "target" : "c:@E@OptionTest",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@OptionTest@second",
+      "target" : "c:@E@OptionTest",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Ace",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Eight",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Five",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Four",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Jack",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@King",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Nine",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Queen",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Seven",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Six",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Ten",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Three",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Rank@Two",
+      "target" : "c:@EA@Rank",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Suit@Clubs",
+      "target" : "c:@EA@Suit",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Suit@Diamonds",
+      "target" : "c:@EA@Suit",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Suit@Hearts",
+      "target" : "c:@EA@Suit",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@EA@Suit@Spades",
+      "target" : "c:@EA@Suit",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "inheritsFrom",
+      "source" : "c:objc(cs)PlayingCard",
+      "target" : "c:objc(cs)NSObject",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "conformsTo",
+      "source" : "c:objc(cs)PlayingCard",
+      "target" : "c:objc(pl)ColorDetecting",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "conformsTo",
+      "source" : "c:objc(cs)PlayingCard",
+      "target" : "c:objc(pl)NSCopying",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:",
+      "target" : "c:objc(cs)PlayingCard",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(cs)PlayingCard(im)initWithRank:ofSuit:",
+      "target" : "c:objc(cs)PlayingCard",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(cs)PlayingCard(im)isFaceCard",
+      "target" : "c:objc(cs)PlayingCard",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(cs)PlayingCard(py)rank",
+      "target" : "c:objc(cs)PlayingCard",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(cs)PlayingCard(py)suit",
+      "target" : "c:objc(cs)PlayingCard",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(pl)ColorDetecting(im)isBlack",
+      "target" : "c:objc(pl)ColorDetecting",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(pl)ColorDetecting(im)isGreen",
+      "target" : "c:objc(pl)ColorDetecting",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(pl)ColorDetecting(im)isRed",
+      "target" : "c:objc(pl)ColorDetecting",
+      "targetFallback" : null
+    }
+  ],
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "(anonymous)"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 41,
+                "line" : 11
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 11
+              }
+            },
+            "text" : "Enum used to represent a card's rank."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank"
+      },
+      "kind" : {
+        "displayName" : "Enumeration",
+        "identifier" : "occ.enum"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "(anonymous)"
+      },
+      "pathComponents" : [
+        "(anonymous)"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "(anonymous)"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 41,
+                "line" : 26
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 26
+              }
+            },
+            "text" : "Enum used to represent a card's suit."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Suit"
+      },
+      "kind" : {
+        "displayName" : "Enumeration",
+        "identifier" : "occ.enum"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 27
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "(anonymous)"
+      },
+      "pathComponents" : [
+        "(anonymous)"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Ace"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Ace"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 14,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Ace"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Ace"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Clubs"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 36,
+                "line" : 29
+              },
+              "start" : {
+                "character" : 20,
+                "line" : 29
+              }
+            },
+            "text" : "Black clover. "
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Suit@Clubs"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 29
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Clubs"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Clubs"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Diamonds"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 35,
+                "line" : 30
+              },
+              "start" : {
+                "character" : 20,
+                "line" : 30
+              }
+            },
+            "text" : "Red rhombus. "
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Suit@Diamonds"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 30
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Diamonds"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Diamonds"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Eight"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Eight"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 57,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Eight"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Eight"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Five"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Five"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 39,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Five"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Five"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Four"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Four"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 33,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Four"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Four"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Hearts"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 42,
+                "line" : 28
+              },
+              "start" : {
+                "character" : 20,
+                "line" : 28
+              }
+            },
+            "text" : "Red cardiovascular. "
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Suit@Hearts"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 28
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Hearts"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Hearts"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Jack"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Jack"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 75,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Jack"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Jack"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "King"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@King"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 88,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "King"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "King"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Nine"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Nine"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 64,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Nine"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Nine"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Queen"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Queen"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 81,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Queen"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Queen"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Seven"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Seven"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 50,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Seven"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Seven"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Six"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Six"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 45,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Six"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Six"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Spades"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 36,
+                "line" : 31
+              },
+              "start" : {
+                "character" : 20,
+                "line" : 31
+              }
+            },
+            "text" : "Black shovel. "
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Suit@Spades"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 31
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Spades"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Spades"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Ten"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Ten"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 70,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Ten"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Ten"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Three"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Three"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 26,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Three"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Three"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Two"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@EA@Rank@Two"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 21,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Two"
+      },
+      "pathComponents" : [
+        "(anonymous)",
+        "Two"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "ColorDetecting"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 72,
+                "line" : 34
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 34
+              }
+            },
+            "text" : "Protocol of methods that report whether an object is certain colors."
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 3,
+                "line" : 35
+              },
+              "start" : {
+                "character" : 3,
+                "line" : 35
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 38,
+                "line" : 36
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 36
+              }
+            },
+            "text" : "Only a few colors are implemented."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(pl)ColorDetecting"
+      },
+      "kind" : {
+        "displayName" : "Protocol",
+        "identifier" : "occ.protocol"
+      },
+      "location" : {
+        "position" : {
+          "character" : 10,
+          "line" : 37
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "ColorDetecting"
+      },
+      "pathComponents" : [
+        "ColorDetecting"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "isBlack"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 48,
+                "line" : 41
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 41
+              }
+            },
+            "text" : "Returns true if the card is of a black suit."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(pl)ColorDetecting(im)isBlack"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "occ.method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 42
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "isBlack"
+      },
+      "pathComponents" : [
+        "ColorDetecting",
+        "isBlack"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Unsupported OS: macos",
+          "isUnconditionallyUnavailable" : true
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "isGreen"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 48,
+                "line" : 44
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 44
+              }
+            },
+            "text" : "Returns true if the card is of a green suit."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(pl)ColorDetecting(im)isGreen"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "occ.method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 45
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "isGreen"
+      },
+      "pathComponents" : [
+        "ColorDetecting",
+        "isGreen"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "isRed"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 46,
+                "line" : 38
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 38
+              }
+            },
+            "text" : "Returns true if the card is of a red suit."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(pl)ColorDetecting(im)isRed"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "occ.method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 39
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "isRed"
+      },
+      "pathComponents" : [
+        "ColorDetecting",
+        "isRed"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "EnumTest"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 35,
+                "line" : 14
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 14
+              }
+            },
+            "text" : "Test doc comment for an NS_ENUM"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@EnumTest"
+      },
+      "kind" : {
+        "displayName" : "Enumeration",
+        "identifier" : "occ.enum"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 15
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "EnumTest"
+      },
+      "pathComponents" : [
+        "EnumTest"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "EnumTest"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 35,
+                "line" : 14
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 14
+              }
+            },
+            "text" : "Test doc comment for an NS_ENUM"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:PlayingCard.h@T@EnumTest"
+      },
+      "kind" : {
+        "displayName" : "Typedef",
+        "identifier" : "occ.typealias"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 15
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "EnumTest"
+      },
+      "pathComponents" : [
+        "EnumTest"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "one"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@EnumTest@one"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 16
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "one"
+      },
+      "pathComponents" : [
+        "EnumTest",
+        "one"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "two"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@EnumTest@two"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 17
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "two"
+      },
+      "pathComponents" : [
+        "EnumTest",
+        "two"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "OptionTest"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 38,
+                "line" : 20
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 20
+              }
+            },
+            "text" : "Test doc comment for an NS_OPTIONS"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@OptionTest"
+      },
+      "kind" : {
+        "displayName" : "Enumeration",
+        "identifier" : "occ.enum"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 21
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "OptionTest"
+      },
+      "pathComponents" : [
+        "OptionTest"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "OptionTest"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 38,
+                "line" : 20
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 20
+              }
+            },
+            "text" : "Test doc comment for an NS_OPTIONS"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:PlayingCard.h@T@OptionTest"
+      },
+      "kind" : {
+        "displayName" : "Typedef",
+        "identifier" : "occ.typealias"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 21
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "OptionTest"
+      },
+      "pathComponents" : [
+        "OptionTest"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "first"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@OptionTest@first"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 22
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "first"
+      },
+      "pathComponents" : [
+        "OptionTest",
+        "first"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "second"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@OptionTest@second"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "occ.enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 23
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "second"
+      },
+      "pathComponents" : [
+        "OptionTest",
+        "second"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "PlayingCard"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)PlayingCard"
+      },
+      "kind" : {
+        "displayName" : "Class",
+        "identifier" : "occ.class"
+      },
+      "location" : {
+        "position" : {
+          "character" : 11,
+          "line" : 48
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "PlayingCard"
+      },
+      "pathComponents" : [
+        "PlayingCard"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "initWithRank:ofSuit:"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 51,
+                "line" : 53
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 53
+              }
+            },
+            "text" : "Initialize a card with the given rank and suit."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)PlayingCard(im)initWithRank:ofSuit:"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "occ.method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 54
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "initWithRank:ofSuit:"
+      },
+      "pathComponents" : [
+        "PlayingCard",
+        "initWithRank:ofSuit:"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "availability" : [
+        {
+          "domain" : "Unsupported OS: macos",
+          "introduced" : {
+            "major" : 10,
+            "minor" : 11,
+            "patch" : 0
+          }
+        }
+      ],
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "isFaceCard"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 44,
+                "line" : 62
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 62
+              }
+            },
+            "text" : "Returns true if the card is a face card."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)PlayingCard(im)isFaceCard"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "occ.method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 63
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "isFaceCard"
+      },
+      "pathComponents" : [
+        "PlayingCard",
+        "isFaceCard"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "newWithRank:ofSuit:"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 68,
+                "line" : 56
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 56
+              }
+            },
+            "text" : "Allocate and initialize a new card with the given rank and suit."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:"
+      },
+      "kind" : {
+        "displayName" : "Class Method",
+        "identifier" : "occ.type.method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 57
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "newWithRank:ofSuit:"
+      },
+      "pathComponents" : [
+        "PlayingCard",
+        "newWithRank:ofSuit:"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "rank"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)PlayingCard(py)rank"
+      },
+      "isReadOnly" : true,
+      "kind" : {
+        "displayName" : "Property",
+        "identifier" : "occ.property"
+      },
+      "location" : {
+        "position" : {
+          "character" : 26,
+          "line" : 50
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "rank"
+      },
+      "pathComponents" : [
+        "PlayingCard",
+        "rank"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "suit"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)PlayingCard(py)suit"
+      },
+      "isReadOnly" : true,
+      "kind" : {
+        "displayName" : "Property",
+        "identifier" : "occ.property"
+      },
+      "location" : {
+        "position" : {
+          "character" : 26,
+          "line" : 51
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "suit"
+      },
+      "pathComponents" : [
+        "PlayingCard",
+        "suit"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Rank"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 41,
+                "line" : 11
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 11
+              }
+            },
+            "text" : "Enum used to represent a card's rank."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@T@Rank"
+      },
+      "kind" : {
+        "displayName" : "Typedef",
+        "identifier" : "occ.typealias"
+      },
+      "location" : {
+        "position" : {
+          "character" : 94,
+          "line" : 12
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Rank"
+      },
+      "pathComponents" : [
+        "Rank"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "Suit"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 41,
+                "line" : 26
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 26
+              }
+            },
+            "text" : "Enum used to represent a card's suit."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@T@Suit"
+      },
+      "kind" : {
+        "displayName" : "Typedef",
+        "identifier" : "occ.typealias"
+      },
+      "location" : {
+        "position" : {
+          "character" : 2,
+          "line" : 32
+        },
+        "uri" : "PlayingCard.h"
+      },
+      "names" : {
+        "title" : "Suit"
+      },
+      "pathComponents" : [
+        "Suit"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "_DeckKitVersionNumber"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 39,
+                "line" : 9
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 9
+              }
+            },
+            "text" : "Project version number for DeckKit."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@DeckKitVersionNumber"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "occ.var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 25,
+          "line" : 10
+        },
+        "uri" : "DeckKit.h"
+      },
+      "names" : {
+        "title" : "_DeckKitVersionNumber"
+      },
+      "pathComponents" : [
+        "_DeckKitVersionNumber"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "_DeckKitVersionString"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 39,
+                "line" : 12
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 12
+              }
+            },
+            "text" : "Project version string for DeckKit."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@DeckKitVersionString"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "occ.var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 38,
+          "line" : 13
+        },
+        "uri" : "DeckKit.h"
+      },
+      "names" : {
+        "title" : "_DeckKitVersionString"
+      },
+      "pathComponents" : [
+        "_DeckKitVersionString"
+      ]
+    }
+  ]
+}

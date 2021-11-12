@@ -175,10 +175,44 @@ extension SymbolGraph.Symbol: DocCSymbolRepresentable {
     }
     
     public var kindIdentifier: String? {
-        self.kind.identifier
+        "\(self.identifier.interfaceLanguage).\(self.kind.identifier.identifier)"
     }
     
     public static func == (lhs: SymbolGraph.Symbol, rhs: SymbolGraph.Symbol) -> Bool {
         lhs.identifier.precise == rhs.identifier.precise
+    }
+}
+
+extension UnifiedSymbolGraph.Symbol: DocCSymbolRepresentable {
+    public var preciseIdentifier: String? {
+        self.uniqueIdentifier
+    }
+
+    public var title: String {
+        guard let selector = self.defaultSelector else {
+            fatalError("""
+                Failed to find a supported default selector. \
+                Language unsupported or corrupt symbol graph provided.
+                """
+            )
+        }
+
+        return self.names[selector]!.title
+    }
+
+    public var kindIdentifier: String? {
+        guard let selector = self.defaultSelector else {
+            fatalError("""
+                Failed to find a supported default selector. \
+                Language unsupported or corrupt symbol graph provided.
+                """
+            )
+        }
+
+        return "\(selector.interfaceLanguage).\(self.kind[selector]!.identifier.identifier)"
+    }
+
+    public static func == (lhs: UnifiedSymbolGraph.Symbol, rhs: UnifiedSymbolGraph.Symbol) -> Bool {
+        lhs.uniqueIdentifier == rhs.uniqueIdentifier
     }
 }

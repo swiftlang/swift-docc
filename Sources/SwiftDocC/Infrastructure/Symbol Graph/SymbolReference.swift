@@ -22,11 +22,7 @@ extension String {
 public struct SymbolReference {
     /// Returns `true` if the symbol is a known graph leaf symbol.
     static func isLeaf(_ symbol: SymbolGraph.Symbol) -> Bool {
-        guard let swiftKind = SymbolGraph.Symbol.Kind.Swift(rawValue: symbol.kind.identifier) else {
-            return true
-        }
-        
-        return !swiftKind.symbolCouldHaveChildren
+        return !symbol.kind.identifier.swiftSymbolCouldHaveChildren
     }
     
     /// Creates a new reference to a symbol.
@@ -56,7 +52,7 @@ public struct SymbolReference {
         }
 
         // A module reference does not have path as it's a root symbol in the topic graph.
-        if symbol.kind.identifier == SymbolGraph.Symbol.Kind.Swift.module.rawValue {
+        if symbol.kind.identifier == SymbolGraph.Symbol.KindIdentifier.module {
             path = ""
             return
         }
@@ -64,7 +60,7 @@ public struct SymbolReference {
         var name = symbol.pathComponents.joinedSymbolPathComponents
 
         if shouldAddKind {
-            name = name.appending("-\(symbol.kind.identifier)")
+            name = name.appending("-\(symbol.identifier.interfaceLanguage).\(symbol.kind.identifier.identifier)")
         }
         if shouldAddHash {
             name = name.appendingHashedIdentifier(identifier)

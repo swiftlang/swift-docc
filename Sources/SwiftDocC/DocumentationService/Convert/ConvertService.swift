@@ -115,6 +115,10 @@ public struct ConvertService: DocumentationService {
         messageIdentifier: String
     ) -> Result<([RenderNode], RenderReferenceStore?), ConvertServiceError> {
         Result {
+            // Update DocC's current feature flags based on the ones provided
+            // in the request.
+            FeatureFlags.current = request.featureFlags
+            
             // Set up the documentation context.
 
             let workspace = DocumentationWorkspace()

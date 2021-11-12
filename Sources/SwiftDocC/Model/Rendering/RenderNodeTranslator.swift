@@ -955,7 +955,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         // Remove any optional namespace (e.g. "swift.") for rendering
         node.metadata.symbolKindVariants = VariantCollection<String?>(from: symbol.kindVariants) { _, kindVariants in
-            kindVariants.identifier.components(separatedBy: ".").last
+            kindVariants.identifier.identifier.components(separatedBy: ".").last
         } ?? .init(defaultValue: nil)
         
         node.metadata.conformance = contentRenderer.conformanceSectionFor(identifier, collectedConstraints: collectedConstraints)

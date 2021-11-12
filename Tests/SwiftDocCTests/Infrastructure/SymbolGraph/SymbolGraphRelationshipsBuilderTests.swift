@@ -22,8 +22,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let sourceRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/A", sourceLanguage: .swift)
         let targetRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/B", sourceLanguage: .swift)
         
-        let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(identifier: "swift.class", displayName: "Class"), mixins: [:])
-        let targetSymbol = SymbolGraph.Symbol(identifier: targetIdentifier, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(identifier: "swift.protocol", displayName: "Protocol"), mixins: [:])
+        let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
+        let targetSymbol = SymbolGraph.Symbol(identifier: targetIdentifier, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Protocol"), mixins: [:])
         
         let engine = DiagnosticEngine()
         symbolIndex["A"] = DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleName: "MyKit", article: nil, engine: engine)
@@ -38,7 +38,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
-        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(identifier: "swift.class", displayName: "Class"), targetType: .init(identifier: "swift.protocol", displayName: "Protocol"))
+        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
         SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, in: bundle, context: context, symbolIndex: &symbolIndex, engine: engine)
@@ -52,7 +52,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
-        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(identifier: "swift.class", displayName: "Class"), targetType: .init(identifier: "swift.protocol", displayName: "Protocol"))
+        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
         SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
@@ -81,7 +81,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
-        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(identifier: "swift.class", displayName: "Class"), targetType: .init(identifier: "swift.protocol", displayName: "Protocol"))
+        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
         SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
@@ -110,7 +110,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
-        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(identifier: "swift.class", displayName: "Class"), targetType: .init(identifier: "swift.protocol", displayName: "Protocol"))
+        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
         SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)

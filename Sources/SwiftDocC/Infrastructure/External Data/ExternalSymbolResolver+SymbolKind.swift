@@ -25,7 +25,7 @@ extension ExternalSymbolResolver {
     /// everything should work as expected in practice — covering the exceptions with the known values and having "any symbol"
     /// value for the rest.
     static func symbolKind(forNodeKind kind: DocumentationNode.Kind) -> SymbolGraph.Symbol.Kind {
-        let symbolKind: SymbolGraph.Symbol.Kind.Swift
+        let symbolKind: SymbolGraph.Symbol.KindIdentifier
         
         switch kind {
         case .associatedType:
@@ -75,6 +75,6 @@ extension ExternalSymbolResolver {
             symbolKind = .class
         }
         
-        return .init(identifier: symbolKind.rawValue, displayName: kind.name)
+        return .init(parsedIdentifier: symbolKind, displayName: kind.name)
     }
 }

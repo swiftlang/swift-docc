@@ -47,6 +47,9 @@ public struct DocumentationNode {
     /// The symbol that backs this node if it's backed by a symbol, otherwise `nil`.
     public var symbol: SymbolGraph.Symbol?
 
+    /// The unified symbol data that backs this node, if it's backed by a symbol; otherwise `nil`.
+    public var unifiedSymbol: UnifiedSymbolGraph.Symbol?
+
     /// A discrete unit of documentation
     struct DocumentationChunk {
         /// The source of a documentation chunk: either a documentation extension file or an in-source documentation comment.
@@ -146,10 +149,11 @@ public struct DocumentationNode {
     ///   - symbol: The symbol to create a documentation node for.
     ///   - platformName: The name of the platforms for which the node is available.
     ///   - moduleName: The name of the module that the symbol belongs to.
-    init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, bystanderModules: [String]? = nil) {
+    init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, platformName: String?, moduleName: String, bystanderModules: [String]? = nil) {
         self.reference = reference
         
-        guard reference.sourceLanguage == .swift else {
+        guard reference.sourceLanguage == .swift,
+              let symbol = unifiedSymbol.defaultSymbol else {
             fatalError("""
                 Only Swift symbols are currently supported. \
                 This initializer is only called with symbols from the symbol graph, which currently only supports Swift.
@@ -161,6 +165,7 @@ public struct DocumentationNode {
         self.sourceLanguage = reference.sourceLanguage
         self.name = .symbol(declaration: .init([.plain(symbol.names.title)]))
         self.symbol = symbol
+        self.unifiedSymbol = unifiedSymbol
         
         self.markup = Document()
         self.docChunks = []
@@ -179,8 +184,8 @@ public struct DocumentationNode {
         availableSourceLanguages = languages
         
         let extendedModule = (symbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension)?.extendedModule
-        
-        self.semantic = Symbol(
+
+        let sema = Symbol(
             kindVariants: .init(swiftVariant: symbol.kind),
             titleVariants: .init(swiftVariant: symbol.names.title),
             subHeadingVariants: .init(swiftVariant: symbol.names.subHeading),
@@ -204,6 +209,10 @@ public struct DocumentationNode {
             redirectsVariants: .init(swiftVariant: nil),
             bystanderModuleNamesVariants: .init(swiftVariant: bystanderModules)
         )
+
+        try! sema.mergeDeclarations(unifiedSymbol: unifiedSymbol)
+
+        self.semantic = sema
     }
 
     /// Given an optional article updates the node's content.
@@ -324,34 +333,32 @@ public struct DocumentationNode {
     /// - Parameter symbol: A symbol graph symbol.
     /// - Returns: A documentation node kind.
     static func kind(for symbol: SymbolGraph.Symbol) -> Kind {
-        // To be able to rely on this conversion from Swift kind to documentation kind,
-        // we need to get an exhaustive kind list from SymbolKit. The list below is
-        // less than complete with the current kind list (rdar://60264979).
-        if let swiftSymbolKind = SymbolGraph.Symbol.Kind.Swift(rawValue: symbol.kind.identifier) {
-            switch swiftSymbolKind  {
-            case .`associatedtype`: return .associatedType
-            case .`class`: return .class
-            case .`deinit`: return .deinitializer
-            case .`enum`: return .enumeration
-            case .`case`: return .enumerationCase
-            case .`func`: return .function
-            case .`operator`: return .operator
-            case .`init`: return .initializer
-            case .`method`: return .instanceMethod
-            case .`property`: return .instanceProperty
-            case .`protocol`: return .protocol
-            case .`struct`: return .structure
-            case .`subscript`: return .instanceSubscript
-            case .`typeMethod`: return .typeMethod
-            case .`typeProperty`: return .typeProperty
-            case .`typeSubscript`: return .typeSubscript
-            case .`typealias`: return .typeAlias
-            case .`var`: return .globalVariable
-                
-            case .module: return .module
-            }
-        } else {
-            return .unknown
+        return Self.kind(forKind: symbol.kind.identifier)
+    }
+
+    static func kind(forKind symbolKind: SymbolGraph.Symbol.KindIdentifier) -> Kind {
+        switch symbolKind  {
+        case .`associatedtype`: return .associatedType
+        case .`class`: return .class
+        case .`deinit`: return .deinitializer
+        case .`enum`: return .enumeration
+        case .`case`: return .enumerationCase
+        case .`func`: return .function
+        case .`operator`: return .operator
+        case .`init`: return .initializer
+        case .`method`: return .instanceMethod
+        case .`property`: return .instanceProperty
+        case .`protocol`: return .protocol
+        case .`struct`: return .structure
+        case .`subscript`: return .instanceSubscript
+        case .`typeMethod`: return .typeMethod
+        case .`typeProperty`: return .typeProperty
+        case .`typeSubscript`: return .typeSubscript
+        case .`typealias`: return .typeAlias
+        case .`var`: return .globalVariable
+
+        case .module: return .module
+        case .unknown: return .unknown
         }
     }
 

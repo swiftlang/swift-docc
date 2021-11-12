@@ -776,7 +776,7 @@ class DocumentationContextTests: XCTestCase {
         //
 
         // The two types are equatable but XCTAssertEqual doesn't catch that.
-        XCTAssertTrue(myClassSymbol.kind.identifier == SymbolGraph.Symbol.Kind.Swift.class.rawValue)
+        XCTAssertTrue(myClassSymbol.kind.identifier == SymbolGraph.Symbol.KindIdentifier.class)
         XCTAssertNotNil(myClassSymbol.availability?.availability.first(where: { (availability) -> Bool in
             if let domain = availability.domain, let introduced = availability.introducedVersion, domain.rawValue == "macOS", introduced.major == 10, introduced.minor == 15 {
                 return true
@@ -1471,7 +1471,7 @@ let expected = """
             {
               "accessLevel" : "public",
               "kind" : {
-                "identifier" : "swift.variable",
+                "identifier" : "swift.var",
                 "displayName" : "Type Variable"
               },
               "names" : { "title" : "test" },
@@ -1484,7 +1484,7 @@ let expected = """
             {
               "accessLevel" : "public",
               "kind" : {
-                "identifier" : "swift.variable",
+                "identifier" : "swift.var",
                 "displayName" : "Type Variable"
               },
               "names" : { "title" : "tEst" },
@@ -1502,8 +1502,8 @@ let expected = """
         
         // Verify the non-overload collisions were resolved
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-swift.variable-9053a", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.variable-959hd", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-swift.var-9053a", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var-959hd", sourceLanguage: .swift)))
     }
 
     func testUnknownSymbolKind() throws {
