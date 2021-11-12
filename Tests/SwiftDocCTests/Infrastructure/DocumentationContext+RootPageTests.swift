@@ -34,8 +34,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
                 ## See Also
                  - <doc:documentation/TechnologyX/ReleaseNotes>
                 """),
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
-            ])
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            ]),
         ])
         
         // Parse this test content
@@ -76,8 +76,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
                    @TechnologyRoot
                 }
                 """),
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
-            ])
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            ]),
         ])
         
         // Parse this test content

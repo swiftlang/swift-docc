@@ -17,7 +17,7 @@ import XCTest
 class RenderContentMetadataTests: XCTestCase {
     func testImageMetadata() throws {
         let metadata = RenderContentMetadata(anchor: "anchor", title: "title", abstract: [
-            RenderInlineContent.text("Content")
+            RenderInlineContent.text("Content"),
         ])
         
         let image = RenderInlineContent.image(identifier: .init("image-1"), metadata: metadata)
@@ -34,7 +34,7 @@ class RenderContentMetadataTests: XCTestCase {
 
     func testTableMetadata() throws {
         let metadata = RenderContentMetadata(anchor: "anchor", title: "title", abstract: [
-            RenderInlineContent.text("Content")
+            RenderInlineContent.text("Content"),
         ])
         
         let table = RenderBlockContent.table(header: .both, rows: [], metadata: metadata)
@@ -51,7 +51,7 @@ class RenderContentMetadataTests: XCTestCase {
 
     func testCodeListingMetadata() throws {
         let metadata = RenderContentMetadata(anchor: "anchor", title: "title", abstract: [
-            RenderInlineContent.text("Content")
+            RenderInlineContent.text("Content"),
         ])
         
         let code = RenderBlockContent.codeListing(syntax: nil, code: [], metadata: metadata)

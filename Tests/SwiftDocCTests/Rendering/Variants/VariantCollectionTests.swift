@@ -25,7 +25,7 @@ class VariantCollectionTests: XCTestCase {
             .init(
                 traits: [.interfaceLanguage("language B")],
                 patch: [.replace(value: "language B value")]
-            )
+            ),
         ]
     )
     

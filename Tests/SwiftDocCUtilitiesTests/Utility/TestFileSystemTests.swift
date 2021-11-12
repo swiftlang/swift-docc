@@ -30,8 +30,8 @@ class TestFileSystemTests: XCTestCase {
     func testInitialContentMultipleFolders() throws {
         let folder1 = Folder(name: "main", content: [
             Folder(name: "nested", content: [
-                TextFile(name: "myfile.txt", utf8Content: "text")
-            ])
+                TextFile(name: "myfile.txt", utf8Content: "text"),
+            ]),
         ])
         let folder2 = Folder(name: "additional", content: [])
         
@@ -63,7 +63,7 @@ class TestFileSystemTests: XCTestCase {
         let folder = Folder(name: "main", content: [
             Folder(name: "nested", content: [
                 TextFile(name: "myfile1.txt", utf8Content: "text"),
-                TextFile(name: "myfile2.txt", utf8Content: "text")
+                TextFile(name: "myfile2.txt", utf8Content: "text"),
             ])
         ])
         

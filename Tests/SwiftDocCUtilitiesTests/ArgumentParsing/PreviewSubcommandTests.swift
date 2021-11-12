@@ -42,7 +42,7 @@ class PreviewSubcommandTests: XCTestCase {
         do {
             setenv(TemplateOption.environmentVariableKey, templateDir.path, 1)
             XCTAssertNoThrow(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -50,7 +50,7 @@ class PreviewSubcommandTests: XCTestCase {
         do {
             unsetenv(TemplateOption.environmentVariableKey)
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -78,7 +78,7 @@ class PreviewSubcommandTests: XCTestCase {
             try "".write(to: defaultTemplateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
             
             let preview = try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ])
             XCTAssertEqual(
                 preview.previewOptions.convertCommand.templateOption.templateURL?.standardizedFileURL,
@@ -96,7 +96,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(TemplateOption.environmentVariableKey, templateDir.path, 1)
             XCTAssertNoThrow(try Docc.Preview.parse([
                 "--port", "2048",
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
 
@@ -105,7 +105,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(TemplateOption.environmentVariableKey, templateDir.path, 1)
             XCTAssertThrowsError(try Docc.Preview.parse([
                 "--port", "42",
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -119,7 +119,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertNoThrow(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -134,7 +134,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -149,7 +149,7 @@ class PreviewSubcommandTests: XCTestCase {
                    testTLSKey.appendingPathComponent("invalidPath.pem").path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -162,7 +162,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateChainKey, testTLSCertificate.path, 1)
             unsetenv(PreviewExternalConnectionOptions.certificateKeyKey)
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -176,7 +176,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -190,7 +190,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertNoThrow(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -204,7 +204,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
       
@@ -218,7 +218,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
       }
         
@@ -232,7 +232,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -246,7 +246,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -260,7 +260,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
         
@@ -274,7 +274,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ]))
         }
     }

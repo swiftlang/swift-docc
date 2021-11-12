@@ -24,7 +24,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
         let tempDir = try TempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
             Folder(name: "css", content: [
-                TextFile(name: "test.css", utf8Content: "css")
+                TextFile(name: "test.css", utf8Content: "css"),
             ])
         ])
         try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
@@ -86,7 +86,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
         let tempDir = try TempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
             Folder(name: "css", content: [
-                TextFile(name: "test.css", utf8Content: "css")
+                TextFile(name: "test.css", utf8Content: "css"),
             ])
         ])
         try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))

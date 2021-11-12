@@ -169,7 +169,7 @@ fileprivate let diagnostics: [String: Diagnostic] = [
     ```swift
     func bar() {}
     ```
-    """)
+    """),
 ]
 
 enum Diagnostics {

@@ -53,7 +53,7 @@ Globals         | (0/0)           | (0/0)           | (0/0)
                 isCurated: false,
                 hasCodeListing: false,
                 availability: nil,
-                kindSpecificData: .class(memberStats: [:]))
+                kindSpecificData: .class(memberStats: [:])),
         ]
 
         let result = CoverageDataEntry.generateSummary(
@@ -94,7 +94,7 @@ Globals         | (0/0)           | (0/0)           | (0/0)
                 isCurated: true,
                 hasCodeListing: false,
                 availability: nil,
-                kindSpecificData: .instanceProperty)
+                kindSpecificData: .instanceProperty),
         ]
 
         let result = CoverageDataEntry.generateSummary(

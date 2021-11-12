@@ -37,7 +37,7 @@ class SubscriptSuperscriptElementsTests: XCTestCase {
             RenderInlineContent.subscript(inlineContent: [.text("sub")]),
             RenderInlineContent.text(" and "),
             RenderInlineContent.superscript(inlineContent: [.text("sup")]),
-            RenderInlineContent.text(" to render attributed text.")
+            RenderInlineContent.text(" to render attributed text."),
         ], content)
     }
 }

@@ -45,9 +45,9 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
                 renderNode.primaryContentSections = [
                     DeclarationsRenderSection(
                         declarations: [
-                            DeclarationRenderSection(languages: nil, platforms: [], tokens: [])
+                            DeclarationRenderSection(languages: nil, platforms: [], tokens: []),
                         ]
-                    )
+                    ),
                 ]
                 
                 renderNode.addVariantOverride(
@@ -55,7 +55,7 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
                     value: DeclarationsRenderSection(
                         declarations: [
                             DeclarationRenderSection(languages: nil, platforms: [], tokens: []),
-                            DeclarationRenderSection(languages: nil, platforms: [], tokens: [])
+                            DeclarationRenderSection(languages: nil, platforms: [], tokens: []),
                         ]
                     )
                 )
@@ -230,7 +230,7 @@ fileprivate extension RenderNode {
                     .replace(
                         pointer: JSONPointer(pathComponents: pointerComponents),
                         value: AnyCodable(value)
-                    )
+                    ),
                 ]
             )
         )

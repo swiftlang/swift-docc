@@ -41,7 +41,7 @@ class RESTExampleRenderSectionTests: XCTestCase {
         XCTAssertEqual(example.type, nil, "The `type` is optional in the specification and there's no value to decode in this test.")
         XCTAssertEqual(example.syntax, nil, "The `syntax` is optional in the specification and there's no value to decode in this test.")
         XCTAssertEqual(example.content, [
-            CodeExample.Code(collapsible: false, code: ["lines of code", "goes here..."])
+            CodeExample.Code(collapsible: false, code: ["lines of code", "goes here..."]),
         ])
     }
     

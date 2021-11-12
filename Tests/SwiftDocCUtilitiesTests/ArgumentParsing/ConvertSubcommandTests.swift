@@ -40,7 +40,7 @@ class ConvertSubcommandTests: XCTestCase {
         do {
             setenv(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path, 1)
             XCTAssertNoThrow(try Docc.Convert.parse([
-                sourceURL.path
+                sourceURL.path,
             ]))
         }
         
@@ -54,7 +54,7 @@ class ConvertSubcommandTests: XCTestCase {
         do {
             setenv(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path, 1)
             XCTAssertThrowsError(try Docc.Convert.parse([
-                URL(fileURLWithPath: "123").path
+                URL(fileURLWithPath: "123").path,
             ]))
         }
         
@@ -68,7 +68,7 @@ class ConvertSubcommandTests: XCTestCase {
             
             setenv(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path, 1)
             XCTAssertThrowsError(try Docc.Convert.parse([
-                sourceAsSingleFileURL.path
+                sourceAsSingleFileURL.path,
             ]))
         }
         
@@ -77,7 +77,7 @@ class ConvertSubcommandTests: XCTestCase {
         do {
             unsetenv(TemplateOption.environmentVariableKey)
             XCTAssertNoThrow(try Docc.Convert.parse([
-                sourceURL.path
+                sourceURL.path,
             ]))
         }
         
@@ -105,7 +105,7 @@ class ConvertSubcommandTests: XCTestCase {
             try "".write(to: defaultTemplateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
             
             let convert = try Docc.Convert.parse([
-                testBundleURL.path
+                testBundleURL.path,
             ])
             XCTAssertEqual(
                 convert.templateOption.templateURL?.standardizedFileURL,
@@ -122,7 +122,7 @@ class ConvertSubcommandTests: XCTestCase {
         do {
             setenv(TemplateOption.environmentVariableKey, URL(fileURLWithPath: "123").path, 1)
             XCTAssertThrowsError(try Docc.Convert.parse([
-                sourceURL.path
+                sourceURL.path,
             ]))
         }
         
@@ -130,7 +130,7 @@ class ConvertSubcommandTests: XCTestCase {
         do {
             setenv(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path, 1)
             let parseResult = try Docc.Convert.parse([
-                sourceURL.path
+                sourceURL.path,
             ])
             
             XCTAssertEqual(parseResult.outputURL, sourceURL.appendingPathComponent(".docc-build"))
@@ -162,7 +162,7 @@ class ConvertSubcommandTests: XCTestCase {
             setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
             XCTAssertThrowsError(try Docc.Convert.parse([
                 "--output-path", fakeRootPath + path,
-                testBundleURL.path
+                testBundleURL.path,
             ]), "Did not refuse target folder path '\(path)'")
         }
     }
@@ -170,7 +170,7 @@ class ConvertSubcommandTests: XCTestCase {
     func testAnalyzerIsTurnedOffByDefault() throws {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
         let convertOptions = try Docc.Convert.parse([
-            testBundleURL.path
+            testBundleURL.path,
         ])
         
         XCTAssertFalse(convertOptions.analyze)
@@ -198,7 +198,7 @@ class ConvertSubcommandTests: XCTestCase {
                 "--display-name", "DisplayName",
                 "--bundle-identifier", "com.example.test",
                 "--bundle-version", "1.2.3",
-                "--default-code-listing-language", "swift"
+                "--default-code-listing-language", "swift",
             ])
             
             XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
@@ -214,7 +214,7 @@ class ConvertSubcommandTests: XCTestCase {
                 "--fallback-display-name", "DisplayName",
                 "--fallback-bundle-identifier", "com.example.test",
                 "--fallback-bundle-version", "1.2.3",
-                "--default-code-listing-language", "swift"
+                "--default-code-listing-language", "swift",
             ])
             
             XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
@@ -241,7 +241,7 @@ class ConvertSubcommandTests: XCTestCase {
             let convertOptions = try Docc.Convert.parse([
                 testBundleURL.path,
                 "--additional-symbol-graph-dir",
-                "/path/to/folder-of-symbol-graph-files"
+                "/path/to/folder-of-symbol-graph-files",
             ])
             
             XCTAssertEqual(
@@ -278,13 +278,13 @@ class ConvertSubcommandTests: XCTestCase {
             
             XCTAssertEqual(convertOptions.additionalSymbolGraphFiles, [
                 URL(fileURLWithPath: "/path/to/first.symbols.json"),
-                URL(fileURLWithPath: "/path/to/second.symbols.json")
+                URL(fileURLWithPath: "/path/to/second.symbols.json"),
             ])
             
             let action = try ConvertAction(fromConvertCommand: convertOptions)
             XCTAssertEqual(action.converter.bundleDiscoveryOptions.additionalSymbolGraphFiles, [
                 URL(fileURLWithPath: "/path/to/first.symbols.json"),
-                URL(fileURLWithPath: "/path/to/second.symbols.json")
+                URL(fileURLWithPath: "/path/to/second.symbols.json"),
             ])
         }
     }
@@ -313,7 +313,7 @@ class ConvertSubcommandTests: XCTestCase {
             "--fallback-bundle-version", "1.2.3",
             
             "--additional-symbol-graph-dir",
-            testBundleURL.path
+            testBundleURL.path,
         ])
         
         // Verify the options
@@ -351,7 +351,7 @@ class ConvertSubcommandTests: XCTestCase {
 
         let commandWithFlag = try Docc.Convert.parse([
             "--experimental-enable-custom-templates",
-            testBundleURL.path
+            testBundleURL.path,
         ])
         let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.experimentalEnableCustomTemplates)

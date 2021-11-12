@@ -25,7 +25,7 @@ class ResourcesTests: XCTestCase {
       
         XCTAssertEqual(
             [
-                "org.swift.docc.Resources.HasContent"
+                "org.swift.docc.Resources.HasContent",
             ],
             Set(problems.map { $0.diagnostic.identifier })
         )
@@ -132,7 +132,7 @@ Resources @1:1-29:2
         // The two warnings have the same id
         XCTAssertEqual(Set([
             "org.swift.docc.Resources.SampleCode.HasLinks", 
-            "org.swift.docc.Resources.Documentation.HasLinks"
+            "org.swift.docc.Resources.Documentation.HasLinks",
             ]),
             Set(problems.map { $0.diagnostic.identifier }))
     }

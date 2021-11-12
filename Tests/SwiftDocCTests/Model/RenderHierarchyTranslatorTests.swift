@@ -34,7 +34,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
             "doc://org.swift.docc.example/tutorials/Test-Bundle/TutorialMediaWithSpaces",
             "doc://org.swift.docc.example/tutorials/Test-Bundle/TutorialMediaWithSpaces#Create-a-New-AR-Project",
             "doc://org.swift.docc.example/tutorials/TestOverview",
-            "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1"
+            "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1",
         ])
         
         let pending = translator.linkReferences
@@ -48,7 +48,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         XCTAssertEqual(pending, [
             "Check Your Understanding, /tutorials/test-bundle/testtutorial#Check-Your-Understanding",
             "Check Your Understanding, /tutorials/test-bundle/testtutorial2#Check-Your-Understanding",
-            "Check Your Understanding, /tutorials/test-bundle/tutorialmediawithspaces#Check-Your-Understanding"
+            "Check Your Understanding, /tutorials/test-bundle/tutorialmediawithspaces#Check-Your-Understanding",
         ])
         
         guard case .tutorials(let technologyHierarchy)? = renderHierarchy else {
@@ -113,8 +113,18 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         }
         
         XCTAssertEqual(hierarchy.paths.sorted(by: { $0.count < $1.count }), [
-            ["doc://org.swift.docc.example/documentation/MyKit"],
-            ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/Test-Bundle/article"],
-            ["doc://org.swift.docc.example/tutorials/TestOverview", "doc://org.swift.docc.example/tutorials/TestOverview/$volume", "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1"]])
+            [
+                "doc://org.swift.docc.example/documentation/MyKit",
+            ],
+            [
+                "doc://org.swift.docc.example/documentation/MyKit",
+                "doc://org.swift.docc.example/documentation/Test-Bundle/article",
+            ],
+            [
+                "doc://org.swift.docc.example/tutorials/TestOverview",
+                "doc://org.swift.docc.example/tutorials/TestOverview/$volume",
+                "doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1",
+            ],
+        ])
     }
 }

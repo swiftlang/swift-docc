@@ -44,7 +44,7 @@ class LineHighlighterTests: XCTestCase {
             Folder(name: "Symbols", content: []),
             Folder(name: "Resources", content: [
                 overview,
-                tutorial
+                tutorial,
                 ] + codeFiles),
             ])
     }

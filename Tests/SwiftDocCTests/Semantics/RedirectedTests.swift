@@ -349,7 +349,7 @@ class RedirectedTests: XCTestCase {
         
         let expectedIds = [
             "org.swift.docc.UnknownArgument",
-            "org.swift.docc.HasArgument.from"
+            "org.swift.docc.HasArgument.from",
         ]
         
         let problemIds = problems.map(\.diagnostic.identifier)

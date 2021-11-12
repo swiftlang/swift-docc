@@ -116,7 +116,7 @@ class TopicGraphHashTests: XCTestCase {
             "doc://org.swift.docc.example/documentation/Test-Bundle/article",
             "doc://org.swift.docc.example/documentation/Test-Bundle/article2",
             "doc://com.external.testbundle/article",
-            "doc://com.external.testbundle/article2"
+            "doc://com.external.testbundle/article2",
         ])
         
         // Verify correct hierarchy under `MyKit` in the topic graph dump including external symbols.

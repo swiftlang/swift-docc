@@ -21,7 +21,7 @@ class RenderNodeCodableTests: XCTestCase {
     var testVariantOverride = VariantOverride(
         traits: [.interfaceLanguage("objc")],
         patch: [
-            .replace(pointer: JSONPointer(pathComponents: ["foo"]), encodableValue: "bar")
+            .replace(pointer: JSONPointer(pathComponents: ["foo"]), encodableValue: "bar"),
         ]
     )
     

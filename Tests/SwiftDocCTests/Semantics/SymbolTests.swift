@@ -507,7 +507,7 @@ class SymbolTests: XCTestCase {
             InfoPlist(displayName: "Inheritance", identifier: "com.test.inheritance"),
             CopyOfFile(original: Bundle.module.url(
                 forResource: "Inheritance.symbols", withExtension: "json",
-                subdirectory: "Test Resources")!)
+                subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
         let (_, _, context) = try loadBundle(from: bundleURL)
@@ -667,7 +667,7 @@ class SymbolTests: XCTestCase {
             accessLevel: .init(rawValue: "public"),
             kind: SymbolGraph.Symbol.Kind(identifier: "swift.function", displayName: "myFunction"),
             mixins: [
-                SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: "file:///path/to/my file.swift", position: range.start)
+                SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: "file:///path/to/my file.swift", position: range.start),
             ]
         )
         

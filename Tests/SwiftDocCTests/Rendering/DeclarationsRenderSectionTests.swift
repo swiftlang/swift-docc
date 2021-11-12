@@ -25,7 +25,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
             (.text, "text"),
             (.internalParam, "internalParam"),
             (.externalParam, "externalParam"),
-            (.label, "label")
+            (.label, "label"),
         ]
 
         for (token, string) in values {
@@ -53,7 +53,7 @@ class DeclarationsRenderSectionTests: XCTestCase {
                         languages: nil,
                         platforms: [],
                         tokens: [.init(text: "", kind: token)]
-                    )
+                    ),
                 ])
             )
         }

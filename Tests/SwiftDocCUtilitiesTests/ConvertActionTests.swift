@@ -67,7 +67,7 @@ class ConvertActionTests: XCTestCase {
         // Documentation bundle that contains an image
         let bundle = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: imageFile, newName: testImageName),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -89,8 +89,8 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "images", content: [
-               CopyOfFile(original: imageFile, newName: testImageName)
-            ])
+               CopyOfFile(original: imageFile, newName: testImageName),
+            ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
         
@@ -113,7 +113,7 @@ class ConvertActionTests: XCTestCase {
         // Documentation bundle that contains a video
         let bundle = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: videoFile, newName: testVideoName),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -135,8 +135,8 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "videos", content: [
-               CopyOfFile(original: videoFile, newName: testVideoName)
-            ])
+               CopyOfFile(original: videoFile, newName: testVideoName),
+            ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
         
@@ -193,8 +193,8 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "downloads", content: [
-               CopyOfFile(original: downloadFile)
-            ])
+               CopyOfFile(original: downloadFile),
+            ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
@@ -204,7 +204,7 @@ class ConvertActionTests: XCTestCase {
     func testCreationOfAssetFolders() throws {
         // Empty documentation bundle
         let bundle = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -234,7 +234,7 @@ class ConvertActionTests: XCTestCase {
     
     func testConvertsWithoutErrorsWhenBundleIsNotAtRoot() throws {
         let bundle = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let input = Folder(name: "nested", content: [Folder(name: "folders", content: [bundle, Folder.emptyHTMLTemplateDirectory])])
@@ -329,7 +329,7 @@ class ConvertActionTests: XCTestCase {
         
         XCTAssert(FileManager.default.fileExists(atPath: myKitSymbolGraph.path))
         let symbolGraphFiles = Folder(name: "Not-a-doc-bundle", content: [
-            CopyOfFile(original: myKitSymbolGraph, newName: "MyKit.symbols.json")
+            CopyOfFile(original: myKitSymbolGraph, newName: "MyKit.symbols.json"),
         ])
         
         let outputLocation = Folder(name: "output", content: [])
@@ -370,12 +370,12 @@ class ConvertActionTests: XCTestCase {
     func testMoveOutputCreatesTargetFolderParent() throws {
         // Source folder to test moving
         let source = Folder(name: "source", content: [
-            TextFile(name: "index.html", utf8Content: "")
+            TextFile(name: "index.html", utf8Content: ""),
         ])
 
         // The target location to test moving to
         let target = Folder(name: "target", content: [
-            Folder(name: "output", content: [])
+            Folder(name: "output", content: []),
         ])
         
         // We add only the source to the file system
@@ -404,13 +404,13 @@ class ConvertActionTests: XCTestCase {
     func testMoveOutputDoesNotCreateIntermediateTargetFolderParents() throws {
         // Source folder to test moving
         let source = Folder(name: "source", content: [
-            TextFile(name: "index.html", utf8Content: "")
+            TextFile(name: "index.html", utf8Content: ""),
         ])
 
         // The target location to test moving to
         let target = Folder(name: "intermediate", content: [
             Folder(name: "target", content: [
-                Folder(name: "output", content: [])
+                Folder(name: "output", content: []),
             ])
         ])
         
@@ -440,7 +440,7 @@ class ConvertActionTests: XCTestCase {
         let bundle = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: imageFile, newName: "TEST.png"),
             CopyOfFile(original: imageFile, newName: "VIDEO.mov"),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -462,11 +462,11 @@ class ConvertActionTests: XCTestCase {
         // Verify that the following files and folder exist at the output location
         let expectedOutput = Folder(name: ".docc-build", content: [
             Folder(name: "images", content: [
-               CopyOfFile(original: imageFile, newName: "TEST.png")
+               CopyOfFile(original: imageFile, newName: "TEST.png"),
             ]),
             Folder(name: "videos", content: [
-               CopyOfFile(original: imageFile, newName: "VIDEO.mov")
-            ])
+               CopyOfFile(original: imageFile, newName: "VIDEO.mov"),
+            ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
@@ -478,7 +478,7 @@ class ConvertActionTests: XCTestCase {
         // The symbol graph contains symbols that include location information.
         let bundle = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: symbolGraphFile),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -547,7 +547,7 @@ class ConvertActionTests: XCTestCase {
         // The symbol graph contains symbols that include access level information.
         let bundle = Folder(name: "unit-test.docc", content: [
             CopyOfFile(original: symbolGraphFile),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -633,7 +633,7 @@ class ConvertActionTests: XCTestCase {
                 }
                 """
             ),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -668,8 +668,8 @@ class ConvertActionTests: XCTestCase {
                     summary: "The 'Chapter' directive requires at least one 'TutorialReference' child directive",
                     explanation: nil,
                     notes: []
-                )]
-            )
+                ),
+            ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
@@ -690,8 +690,7 @@ class ConvertActionTests: XCTestCase {
                 }
                 """
             ),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
-
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -738,7 +737,7 @@ class ConvertActionTests: XCTestCase {
                     explanation: nil,
                     notes: []
                 ),
-            ])
+            ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
@@ -771,7 +770,7 @@ class ConvertActionTests: XCTestCase {
                 }
                 """
             ),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -883,8 +882,8 @@ class ConvertActionTests: XCTestCase {
             // Verify that the build output folder was successfully created
             let expectedOutput = Folder(name: ".docc-build", content: [
                 Folder(name: "data", content: [
-                    Folder(name: "tutorials", content: [])
-                ])
+                    Folder(name: "tutorials", content: []),
+                ]),
             ])
             expectedOutput.assertExist(at: targetDirectory, fileManager: testDataProvider)
         }
@@ -913,7 +912,7 @@ class ConvertActionTests: XCTestCase {
             // still exists after this failure.
             let expectedOutput = Folder(name: ".docc-build", content: [
                 Folder(name: "data", content: [
-                ])
+                ]),
             ])
             expectedOutput.assertExist(at: targetDirectory, fileManager: testDataProvider)
         }
@@ -923,7 +922,7 @@ class ConvertActionTests: XCTestCase {
         // Documentation bundle that contains an image
         let bundle = Folder(name: "unit-test.docc", content: [
             incompleteSymbolGraphFile,
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -952,8 +951,8 @@ class ConvertActionTests: XCTestCase {
                     summary: "Symbol with identifier 's:5MyKit0A5ProtocolP' couldn't be found",
                     explanation: nil,
                     notes: []
-                )
-            ])
+                ),
+            ]),
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
@@ -1005,7 +1004,7 @@ class ConvertActionTests: XCTestCase {
             // A symbol graph
             CopyOfFile(original: Bundle.module.url(forResource: "TopLevelCuration.symbols", withExtension: "json", subdirectory: "Test Resources")!),
             
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
         
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -1079,13 +1078,13 @@ class ConvertActionTests: XCTestCase {
                         abstract: "TestBed abstract.",
                         taskGroups: [
                             .init(title: "Basics", identifiers: ["doc://com.test.example/documentation/TestBundle/Article"]),
-                            .init(title: "Structures", identifiers: ["doc://com.test.example/documentation/TestBed/A"])
+                            .init(title: "Structures", identifiers: ["doc://com.test.example/documentation/TestBed/A"]),
                         ],
                         usr: "TestBed",
                         availableLanguages: [.swift],
                         platforms: nil,
                         redirects: nil
-                    )
+                    ),
                 ]
             case "/documentation/TestBed/A":
                 return [
@@ -1101,7 +1100,7 @@ class ConvertActionTests: XCTestCase {
                         availableLanguages: [.swift],
                         platforms: nil,
                         redirects: nil
-                    )
+                    ),
                 ]
             case "/documentation/TestBundle/Article":
                 return [
@@ -1116,7 +1115,7 @@ class ConvertActionTests: XCTestCase {
                         availableLanguages: [.swift],
                         platforms: nil,
                         redirects: nil
-                    )
+                    ),
                 ]
             default:
                 XCTFail("Encountered unexpected page '\(reference)'")
@@ -1210,7 +1209,7 @@ class ConvertActionTests: XCTestCase {
                 }
                 """
             ),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -1290,7 +1289,7 @@ class ConvertActionTests: XCTestCase {
                         availableLanguages: [.swift],
                         platforms: nil,
                         redirects: nil
-                    )
+                    ),
                 ]
             case "/tutorials/TechnologyX":
                 return [
@@ -1305,7 +1304,7 @@ class ConvertActionTests: XCTestCase {
                         availableLanguages: [.swift],
                         platforms: nil,
                         redirects: nil
-                    )
+                    ),
                 ]
             default:
                 XCTFail("Encountered unexpected page '\(reference)'")
@@ -1370,7 +1369,7 @@ class ConvertActionTests: XCTestCase {
         
         // An empty documentation bundle
         let bundle = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         // Check that they're all written when `--emit-digest` is set
@@ -1426,7 +1425,7 @@ class ConvertActionTests: XCTestCase {
 
         // An empty documentation bundle
         let bundle = Folder(name: "unit-test.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
 
         // Check that they're nothing is written for `.noCoverage`
@@ -1502,8 +1501,8 @@ class ConvertActionTests: XCTestCase {
         let bundle = Folder(name: "nested", content: [
             Folder(name: "folders", content: [
                 Folder(name: "unit-test.docc", content: [
-                    InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
-                ])
+                    InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                ]),
             ])
         ])
         
@@ -1520,14 +1519,14 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: [
                 "platform1": PlatformVersion(.init(10, 11, 12), beta: false),
-                "platform2": PlatformVersion(.init(11, 12, 13), beta: false)
+                "platform2": PlatformVersion(.init(11, 12, 13), beta: false),
             ],
             dataProvider: testDataProvider,
             fileManager: testDataProvider)
         
         XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
             "platform1" : PlatformVersion(.init(10, 11, 12), beta: false),
-            "platform2" : PlatformVersion(.init(11, 12, 13), beta: false)
+            "platform2" : PlatformVersion(.init(11, 12, 13), beta: false),
         ])
     }
 
@@ -1815,7 +1814,7 @@ class ConvertActionTests: XCTestCase {
             This article has a malformed title and can't be analyzed, so it
             produces one warning.
             """),
-            incompleteSymbolGraphFile
+            incompleteSymbolGraphFile,
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -1852,7 +1851,7 @@ class ConvertActionTests: XCTestCase {
             This article has a malformed title and can't be analyzed, so it
             produces one warning.
             """),
-            incompleteSymbolGraphFile
+            incompleteSymbolGraphFile,
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -1891,7 +1890,7 @@ class ConvertActionTests: XCTestCase {
             This article has a malformed title and can't be analyzed, so it
             produces one warning.
             """),
-            incompleteSymbolGraphFile
+            incompleteSymbolGraphFile,
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -1919,7 +1918,7 @@ class ConvertActionTests: XCTestCase {
     func testConvertInheritDocsOption() throws {
         // Empty documentation bundle
         let bundle = Folder(name: "unit-test.documentation", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
         
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -1960,7 +1959,7 @@ class ConvertActionTests: XCTestCase {
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
-            incompleteSymbolGraphFile
+            incompleteSymbolGraphFile,
         ])
 
         let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
@@ -2018,7 +2017,7 @@ class ConvertActionTests: XCTestCase {
             JSONFile(
                 name: "metadata.json",
                 content: BuildMetadata(bundleDisplayName: "TestBundle", bundleIdentifier: "com.test.example")
-            )
+            ),
         ])
         
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)

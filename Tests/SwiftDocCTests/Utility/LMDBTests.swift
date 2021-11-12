@@ -78,7 +78,7 @@ final class SwiftLMDBTests: XCTestCase {
         let records: [NavigatorIndex.Builder.Record] = [
             .init(nodeMapping: (1, "one"), curationMapping: ("one", 1), usrMapping: ("usr1", 1)),
             .init(nodeMapping: (2, "two"), curationMapping: ("two", 2), usrMapping: ("usr2", 2)),
-            .init(nodeMapping: (3, "three"), curationMapping: ("three", 3), usrMapping: nil)
+            .init(nodeMapping: (3, "three"), curationMapping: ("three", 3), usrMapping: nil),
         ]
         XCTAssertNoThrow(try database.put(records: records))
 

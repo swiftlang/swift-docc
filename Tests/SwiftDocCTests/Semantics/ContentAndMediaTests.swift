@@ -111,7 +111,7 @@ class ContentAndMediaTests: XCTestCase {
             [
                 "org.swift.docc.DeprecatedArgument.eyebrow",
                 "org.swift.docc.DeprecatedArgument.title",
-                "org.swift.docc.DeprecatedArgument.layout"
+                "org.swift.docc.DeprecatedArgument.layout",
             ],
             problems.map { $0.diagnostic.identifier }
         )

@@ -22,7 +22,7 @@ class AnchorSectionTests: XCTestCase {
         // Verify the sub-sections of the article have been collected in the context
         [
             ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift)
+            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
             XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
@@ -80,7 +80,7 @@ class AnchorSectionTests: XCTestCase {
         // Verify the sub-sections of the article have been collected in the context
         [
             ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Sub-Section", sourceLanguage: .swift)
+            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
             XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
@@ -138,7 +138,7 @@ class AnchorSectionTests: XCTestCase {
         // Verify the sub-sections of the article have been collected in the context
         [
             ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework", fragment: "Module-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework", fragment: "Module-Sub-Sub-Section", sourceLanguage: .swift)
+            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework", fragment: "Module-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
             XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))

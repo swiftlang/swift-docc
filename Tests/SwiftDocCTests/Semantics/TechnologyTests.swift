@@ -27,7 +27,7 @@ class TechnologyTests: XCTestCase {
             problems.map { $0.diagnostic.identifier },
             [
                 "org.swift.docc.HasArgument.name",
-                "org.swift.docc.HasExactlyOne<Technology, Intro>.Missing"
+                "org.swift.docc.HasExactlyOne<Technology, Intro>.Missing",
             ]
         )
         XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })

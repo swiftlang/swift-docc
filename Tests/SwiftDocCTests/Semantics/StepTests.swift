@@ -111,7 +111,7 @@ Step @1:1-9:2
         
         XCTAssertEqual([
             "org.swift.docc.Step.ExtraneousContent",
-            "org.swift.docc.Step.ExtraneousContent"
+            "org.swift.docc.Step.ExtraneousContent",
         ], problems.map { $0.diagnostic.identifier })
         
         XCTAssertNotNil(step)

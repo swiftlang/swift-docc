@@ -43,7 +43,7 @@ class RESTResponseRenderSectionTests: XCTestCase {
                         mimeType: nil,
                         type: [],
                         content: nil
-                    )
+                    ),
                 ]
             )
         )
@@ -78,7 +78,7 @@ class RESTResponseRenderSectionTests: XCTestCase {
                         mimeType: nil,
                         type: [],
                         content: nil
-                    )
+                    ),
                 ]
             )
         )

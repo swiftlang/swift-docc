@@ -29,7 +29,7 @@ class TutorialTests: XCTestCase {
             XCTAssertEqual(
                 [
                     "org.swift.docc.HasExactlyOne<\(Tutorial.self), \(Intro.self)>.Missing",
-                    "org.swift.docc.HasAtLeastOne<\(Tutorial.self), \(TutorialSection.self)>"
+                    "org.swift.docc.HasAtLeastOne<\(Tutorial.self), \(TutorialSection.self)>",
                 ],
                 problems.map { $0.diagnostic.identifier }
             )
@@ -363,7 +363,7 @@ Tutorial @1:1-150:2 projectFiles: nil
             XCTAssertNotNil(tutorial)
             XCTAssertEqual(1, tutorial?.sections.count)
             XCTAssertEqual([
-                "org.swift.docc.\(Tutorial.self).DuplicateSectionTitle"
+                "org.swift.docc.\(Tutorial.self).DuplicateSectionTitle",
             ], problems.map { $0.diagnostic.identifier })
         }
     }

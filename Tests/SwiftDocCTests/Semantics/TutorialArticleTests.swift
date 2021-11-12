@@ -29,7 +29,7 @@ class TutorialArticleTests: XCTestCase {
             XCTAssertEqual(2, problems.count)
             XCTAssertEqual([
                 "org.swift.docc.HasArgument.time",
-                "org.swift.docc.HasExactlyOne<\(TutorialArticle.self), \(Intro.self)>.Missing"
+                "org.swift.docc.HasExactlyOne<\(TutorialArticle.self), \(Intro.self)>.Missing",
                 ],
                            problems.map { $0.diagnostic.identifier })
         }

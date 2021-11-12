@@ -222,7 +222,7 @@ Document @1:1-1:35
             (.restAPI, .article),
             (.tag, .symbol),
             (.propertyList, .article),
-            (.object, .symbol)
+            (.object, .symbol),
         ]
         
         for fixture in fixtures {
@@ -280,7 +280,7 @@ Document @1:1-1:35
         externalResolver.resolvedEntityDeclarationFragments = .init(declarationFragments: [
             .init(kind: .keyword, spelling: "class", preciseIdentifier: nil),
             .init(kind: .text, spelling: " ", preciseIdentifier: nil),
-            .init(kind: .identifier, spelling: "ClassName", preciseIdentifier: nil)
+            .init(kind: .identifier, spelling: "ClassName", preciseIdentifier: nil),
         ])
         
         let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
@@ -320,7 +320,7 @@ Document @1:1-1:35
         XCTAssertEqual(symbolRenderReference.fragments, [
             .init(text: "class", kind: .keyword),
             .init(text: " ", kind: .text),
-            .init(text: "ClassName", kind: .identifier)
+            .init(text: "ClassName", kind: .identifier),
         ])
     }
     
@@ -408,7 +408,7 @@ Document @1:1-1:35
             "doc://org.swift.docc.example/documentation/Test-Bundle/article",
             "doc://org.swift.docc.example/documentation/Test-Bundle/article2",
             "doc://com.external.testbundle/article",
-            "doc://com.external.testbundle/article2"
+            "doc://com.external.testbundle/article2",
         ])
     }
     
@@ -450,7 +450,7 @@ Document @1:1-1:35
             "/LinkFromResourceVideos",
             "/LinkFromStep",
             "/LinkFromTechnologyIntro",
-            "/externally/resolved/path"
+            "/externally/resolved/path",
         ])
         
         // Verify the link in a comment directive hasn't been visited.
@@ -561,21 +561,21 @@ Document @1:1-1:35
         XCTAssertEqual(taskGroupLinks.sorted(), [
             "doc://org.swift.docc.example/documentation/Test-Bundle/article",
             "doc://org.swift.docc.example/documentation/Test-Bundle/article2",
-            "doc://com.external.testbundle/resolved"
+            "doc://com.external.testbundle/resolved",
         ].sorted())
         
         // Verify that the resolver was asked to resolve all references that match its bundle identifier.
         XCTAssertEqual(resolver.referencesAskedToResolve.map({ $0.description }).sorted(), [
             "doc://com.external.testbundle/not-resolvable-1",
             "doc://com.external.testbundle/not-resolvable-2",
-            "doc://com.external.testbundle/resolvable" // Note that this is the reference in the content.
+            "doc://com.external.testbundle/resolvable", // Note that this is the reference in the content.
         ])
         // Verify that the resolver wasn't passed references it didn't resolve.
         XCTAssertEqual(resolver.referencesCreatingEntityFor.map({ $0.description }).sorted(), [
-            "doc://com.external.testbundle/resolved" // Note that this is the resolved reference, not the one from the content.
+            "doc://com.external.testbundle/resolved", // Note that this is the resolved reference, not the one from the content.
         ])
         XCTAssertEqual(resolver.referencesReadingURLFor.map({ $0.description }).sorted(), [
-            "doc://com.external.testbundle/resolved" // Note that this is the resolved reference, not the one from the content.
+            "doc://com.external.testbundle/resolved", // Note that this is the resolved reference, not the one from the content.
         ])
     }
     

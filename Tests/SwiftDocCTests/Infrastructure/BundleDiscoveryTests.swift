@@ -34,7 +34,7 @@ class BundleDiscoveryTests: XCTestCase {
                 Abstract.
                 
                 Content.
-                """)
+                """),
             ])
             _ = try nestedBundle.write(inside: url)
         }
@@ -62,16 +62,16 @@ class BundleDiscoveryTests: XCTestCase {
             CopyOfFile(original: testBundleLocation),
             Folder(name: "nested", content: [
                 Folder(name: "irrelevant", content: [
-                    TextFile(name: "irrelevant.txt", utf8Content: "distraction")
+                    TextFile(name: "irrelevant.txt", utf8Content: "distraction"),
                 ]),
                 TextFile(name: "irrelevant.txt", utf8Content: "distraction"),
                 Folder(name: "TestBundle2.docc", content: [
                     InfoPlist(displayName: "Test Bundle", identifier: "com.example.bundle2"),
                     Folder(name: "Subfolder", content: // All files flattened into one folder
                         allFiles.map { CopyOfFile(original: $0) }
-                    )
-                ])
-            ])
+                    ),
+                ]),
+            ]),
         ])
         
         let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
@@ -179,7 +179,7 @@ class BundleDiscoveryTests: XCTestCase {
                     allFiles.filter { !$0.lastPathComponent.lowercased().hasSuffix(".symbols.json") }.map { CopyOfFile(original: $0) }
                 ),
                 // The original Info.plist
-                CopyOfFile(original: allFiles.first(where: { $0.lastPathComponent.lowercased() == "info.plist" })!)
+                CopyOfFile(original: allFiles.first(where: { $0.lastPathComponent.lowercased() == "info.plist" })!),
             ])
         )
         
@@ -195,7 +195,7 @@ class BundleDiscoveryTests: XCTestCase {
                             Folder(name: "Four", content: allFiles[30...].map { CopyOfFile(original: $0) })
                         )
                     )
-                )
+                ),
             ])
         )
     }
@@ -206,7 +206,7 @@ class BundleDiscoveryTests: XCTestCase {
             CopyOfFolder(original: testBundleLocation, filter: { !DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
             
             // Just the symbol graph files in a non-bundle folder
-            CopyOfFolder(original: testBundleLocation, newName: "Not a doc bundle", filter: { DocumentationBundleFileTypes.isSymbolGraphFile($0) })
+            CopyOfFolder(original: testBundleLocation, newName: "Not a doc bundle", filter: { DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
         ])
         
         let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
@@ -223,7 +223,7 @@ class BundleDiscoveryTests: XCTestCase {
             additionalSymbolGraphFiles: [
                 tempURL.appendingPathComponent("TestWorkspace/Not a doc bundle/mykit-iOS.symbols.json"),
                 tempURL.appendingPathComponent("TestWorkspace/Not a doc bundle/sidekit.symbols.json"),
-                tempURL.appendingPathComponent("TestWorkspace/Not a doc bundle/MyKit@SideKit.symbols.json")
+                tempURL.appendingPathComponent("TestWorkspace/Not a doc bundle/MyKit@SideKit.symbols.json"),
             ]
         )
         let bundles = try dataProvider.bundles(options: bundleDiscoveryOptions)
@@ -267,7 +267,7 @@ class BundleDiscoveryTests: XCTestCase {
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Fallback Display Name",
                 "CFBundleIdentifier": "com.fallback.bundle.identifier",
-                "CFBundleVersion": "1.2.3"
+                "CFBundleVersion": "1.2.3",
             ],
             additionalSymbolGraphFiles: []
         )
@@ -315,7 +315,7 @@ class BundleDiscoveryTests: XCTestCase {
                 """),
                 TextFile(name: "footer.html", utf8Content: """
                 <footer><marquee>goodbye world</marquee></footer>
-                """)
+                """),
             ]
         )
 

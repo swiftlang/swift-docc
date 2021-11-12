@@ -14,6 +14,6 @@ import Foundation
 /// A folder that represents a fake html-build dir for testing.
 extension Folder {
     static let emptyHTMLTemplateDirectory = Folder(name: "template", content: [
-        TextFile(name: "index.html", utf8Content: "")
+        TextFile(name: "index.html", utf8Content: ""),
     ])
 }

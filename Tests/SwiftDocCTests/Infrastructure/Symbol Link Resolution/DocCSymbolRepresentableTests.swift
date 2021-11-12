@@ -81,7 +81,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             incorrectLinks: [
                 "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method",
                 "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)"
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)",
             ],
             symbolTitle: "firstTestMemberName(_:)",
             expectedNumberOfAmbiguousSymbols: 6

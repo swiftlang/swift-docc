@@ -54,7 +54,7 @@ class PresentationURLGeneratorTests: XCTestCase {
         
         let context = try DocumentationContext(dataProvider: workspace)
         context.externalReferenceResolvers = [
-            bundle.identifier: ExternalReferenceResolverTests.TestExternalReferenceResolver()
+            bundle.identifier: ExternalReferenceResolverTests.TestExternalReferenceResolver(),
         ]
         let reference = ResolvedTopicReference(bundleIdentifier: "com.example.test", path: "/Test/Path", sourceLanguage: .swift)
         
@@ -106,7 +106,7 @@ class PresentationURLGeneratorTests: XCTestCase {
         let testResolver = TestLinkResolver()
         let context = try DocumentationContext(dataProvider: workspace)
         context.externalReferenceResolvers = [
-            bundle.identifier: testResolver
+            bundle.identifier: testResolver,
         ]
         
         let reference = ResolvedTopicReference(bundleIdentifier: "com.example.test", path: "/Test/Path", sourceLanguage: .swift)

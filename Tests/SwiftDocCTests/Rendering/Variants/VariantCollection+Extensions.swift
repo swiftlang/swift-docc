@@ -29,9 +29,9 @@ extension VariantCollection {
                 Variant(
                     traits: [.interfaceLanguage("objc")],
                     patch: [
-                        .replace(value: objectiveCValue)
+                        .replace(value: objectiveCValue),
                     ]
-                )
+                ),
             ]
         )
     }
