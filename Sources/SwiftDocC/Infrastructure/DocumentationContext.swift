@@ -1096,13 +1096,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                     // Create a module symbol
                     let moduleIdentifier = SymbolGraph.Symbol.Identifier(precise: moduleName, interfaceLanguage: SourceLanguage.swift.id)
+                    
+                    // Use the default module kind for this bundle if one was provided,
+                    // otherwise fall back to 'Framework'
+                    let moduleKindDisplayName = bundle.info.defaultModuleKind ?? "Framework"
                     let moduleSymbol = SymbolGraph.Symbol(
                             identifier: moduleIdentifier,
                             names: SymbolGraph.Symbol.Names(title: moduleName, navigator: nil, subHeading: nil, prose: nil),
                             pathComponents: [moduleName],
                             docComment: nil,
                             accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
-                            kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: "Framework"),
+                            kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
                             mixins: [:])
                     let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguage: .swift, symbol: moduleSymbol)
                     moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, bundle: bundle)

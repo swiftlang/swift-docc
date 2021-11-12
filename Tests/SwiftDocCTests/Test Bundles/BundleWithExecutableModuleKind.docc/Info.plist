@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleName</key>
+	<string>ExampleDocumentedExecutable</string>
+	<key>CFBundleDisplayName</key>
+	<string>My Executable</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.swift.Executable</string>
+	<key>CFBundleVersion</key>
+	<string>0.1.0</string>
+	<key>CDDefaultModuleKind</key>
+	<string>Executable</string>
+</dict>
+</plist>

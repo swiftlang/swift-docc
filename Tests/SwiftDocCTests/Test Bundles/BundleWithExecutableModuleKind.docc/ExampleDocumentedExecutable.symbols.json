@@ -1,0 +1,202 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.5 (swiftlang-1300.0.29.1 clang-1300.0.28.1)"
+    },
+    "module": {
+        "name": "ExampleDocumentedExecutable",
+        "platform": {
+            "architecture": "arm64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 10,
+                    "minor": 10,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "s:27ExampleDocumentedExecutableAAV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "ExampleDocumentedExecutable"
+            ],
+            "names": {
+                "title": "ExampleDocumentedExecutable",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "ExampleDocumentedExecutable"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "struct"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "ExampleDocumentedExecutable"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 0,
+                                "character": 4
+                            },
+                            "end": {
+                                "line": 0,
+                                "character": 55
+                            }
+                        },
+                        "text": "This is a description of what this executable does."
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "attribute",
+                    "spelling": "@main"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "struct"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "ExampleDocumentedExecutable"
+                }
+            ],
+            "accessLevel": "internal",
+            "location": {
+                "uri": "file:///Users/demo/Downloads/ExampleDocumentedExecutable/Sources/ExampleDocumentedExecutable/ExampleDocumentedExecutable.swift",
+                "position": {
+                    "line": 2,
+                    "character": 14
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.type.method",
+                "displayName": "Type Method"
+            },
+            "identifier": {
+                "precise": "s:27ExampleDocumentedExecutableAAV4mainyyFZ",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "ExampleDocumentedExecutable",
+                "main()"
+            ],
+            "names": {
+                "title": "main()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "main"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "main"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "accessLevel": "internal",
+            "location": {
+                "uri": "file:///Users/username/Downloads/ExampleDocumentedExecutable/Sources/ExampleDocumentedExecutable/ExampleDocumentedExecutable.swift",
+                "position": {
+                    "line": 3,
+                    "character": 23
+                }
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "memberOf",
+            "source": "s:27ExampleDocumentedExecutableAAV4mainyyFZ",
+            "target": "s:27ExampleDocumentedExecutableAAV"
+        }
+    ]
+}

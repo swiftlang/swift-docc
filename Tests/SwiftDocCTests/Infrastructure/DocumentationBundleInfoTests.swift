@@ -159,6 +159,8 @@ class DocumentationBundleInfoTests: XCTestCase {
             </dict>
             <key>CDDefaultCodeListingLanguage</key>
             <string>swift</string>
+            <key>CDDefaultModuleKind</key>
+            <string>Executable</string>
             <key>CFBundleDisplayName</key>
             <string>ShapeKit</string>
             <key>CFBundleIdentifier</key>
@@ -196,6 +198,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             fallbackIdentifier: "swift.org.Identifier",
             fallbackVersion: "1.0.0",
             fallbackDefaultCodeListingLanguage: "swift",
+            fallbackDefaultModuleKind: "Executable",
             fallbackDefaultAvailability: DefaultAvailability(
                 with: [
                     "MyModule": [
@@ -216,6 +219,7 @@ class DocumentationBundleInfoTests: XCTestCase {
                 identifier: "swift.org.Identifier",
                 version: Version(arrayLiteral: 1,0,0),
                 defaultCodeListingLanguage: "swift",
+                defaultModuleKind: "Executable",
                 defaultAvailability: DefaultAvailability(
                     with: [
                         "MyModule": [
@@ -236,6 +240,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             identifier: "swift.org.Identifier",
             version: Version(arrayLiteral: 1,0,0),
             defaultCodeListingLanguage: "swift",
+            defaultModuleKind: "Executable",
             defaultAvailability: DefaultAvailability(
                 with: [
                     "MyModule": [
