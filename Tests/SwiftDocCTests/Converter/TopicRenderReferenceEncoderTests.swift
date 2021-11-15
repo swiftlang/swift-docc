@@ -107,8 +107,11 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         XCTAssertEqual(newRenderReference["title"] as? String, "NEW TITLE")
     }
     
+    // This test has been disabled because of failures in Swift CI.
+    // rdar://85428149 tracks updating this test to remove any flakiness.
+    //
     // Encodes concurrently 1000 nodes with 1000 references each.
-    func testTopicReferenceEncodingWithHighConcurrency() throws {
+    func skip_testTopicReferenceEncodingWithHighConcurrency() throws {
         // Create many references
         let references = (0..<1000)
             .map({ i in
