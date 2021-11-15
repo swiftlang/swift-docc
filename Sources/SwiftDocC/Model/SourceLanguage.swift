@@ -86,9 +86,26 @@ public struct SourceLanguage: Hashable, Codable {
             return nil
         }
     }
+    
+    /// Finds the programming language that matches a given identifier.
+    ///
+    /// If the language identifier doesn't match any known language, this initializer returns `nil`.
+    ///
+    /// - Parameter knownLanguageIdentifier: The identifier name of the programming language.
+    public init?(knownLanguageIdentifier: String) {
+        if let knownLanguage = SourceLanguage.firstKnownLanguage(withIdentifier: knownLanguageIdentifier) {
+            self = knownLanguage
+        } else {
+            return nil
+        }
+    }
 
     private static func firstKnownLanguage(withName name: String) -> SourceLanguage? {
         return SourceLanguage.knownLanguages.first { $0.name.lowercased() == name.lowercased() }
+    }
+    
+    private static func firstKnownLanguage(withIdentifier id: String) -> SourceLanguage? {
+        return SourceLanguage.knownLanguages.first { $0.id.lowercased() == id.lowercased() }
     }
     
     /// The Swift programming language.

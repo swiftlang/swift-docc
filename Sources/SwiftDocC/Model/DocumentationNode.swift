@@ -152,13 +152,16 @@ public struct DocumentationNode {
     init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, platformName: String?, moduleName: String, bystanderModules: [String]? = nil) {
         self.reference = reference
         
-        guard reference.sourceLanguage == .swift,
-              let symbol = unifiedSymbol.defaultSymbol else {
+        guard reference.sourceLanguage == .swift || FeatureFlags.current.isExperimentalObjectiveCSupportEnabled else {
             fatalError("""
                 Only Swift symbols are currently supported. \
                 This initializer is only called with symbols from the symbol graph, which currently only supports Swift.
                 """
             )
+        }
+        
+        guard let symbol = unifiedSymbol.defaultSymbol else {
+            fatalError("Unexpectedly failed to get 'defaultSymbol' from 'unifiedSymbol'.")
         }
         
         self.kind = Self.kind(for: symbol)

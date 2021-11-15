@@ -940,7 +940,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let disambiguationSuffixes = collisions.map(\.symbol).requiredDisambiguationSuffixes
             
             for (collision, disambiguationSuffix) in zip(collisions, disambiguationSuffixes) {
-                result[collision.symbol.swiftIdentifier] = referenceFor(collision.symbol, moduleName: collision.moduleName, bundle: bundle, shouldAddHash: disambiguationSuffix.shouldAddIdHash, shouldAddKind: disambiguationSuffix.shouldAddKind)
+                result[collision.symbol.defaultIdentifier] = referenceFor(collision.symbol, moduleName: collision.moduleName, bundle: bundle, shouldAddHash: disambiguationSuffix.shouldAddIdHash, shouldAddKind: disambiguationSuffix.shouldAddKind)
             }
         }
         
@@ -948,7 +948,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     private func referenceFor(_ symbol: UnifiedSymbolGraph.Symbol, moduleName: String, bundle: DocumentationBundle, shouldAddHash: Bool = false, shouldAddKind: Bool = false) -> ResolvedTopicReference {
-        let identifier = symbol.swiftIdentifier
+        let identifier = symbol.defaultIdentifier
         let selector = symbol.defaultSelector!
         let language = SourceLanguage(id: identifier.interfaceLanguage)
         
@@ -1013,7 +1013,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let symbols = Array(symbolGraph.symbols.values)
         let results: [AddSymbolResultWithProblems] = symbols.concurrentPerform { symbol, results in
             if let selector = symbol.defaultSelector, let module = symbol.modules[selector] {
-                let reference = symbolReferences[symbol.swiftIdentifier]!
+                let reference = symbolReferences[symbol.defaultIdentifier]!
                 let result = preparedSymbolData(
                     symbol,
                     reference: reference,
@@ -1094,8 +1094,25 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                     addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, bundle: bundle)
                     
+                    let moduleInterfaceLanguage: SourceLanguage
+                    if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
+                        // Infer the module's interface language from the interface
+                        // language of the first symbol in the symbol graph.
+                        let firstSymbolInterfaceLanguage = unifiedSymbolGraph.symbols.first?
+                            .value.defaultSelector?.interfaceLanguage
+                        
+                        moduleInterfaceLanguage = firstSymbolInterfaceLanguage.flatMap { languageName in
+                            SourceLanguage(knownLanguageIdentifier: languageName)
+                        } ?? .swift
+                    } else {
+                        moduleInterfaceLanguage = .swift
+                    }
+                    
                     // Create a module symbol
-                    let moduleIdentifier = SymbolGraph.Symbol.Identifier(precise: moduleName, interfaceLanguage: SourceLanguage.swift.id)
+                    let moduleIdentifier = SymbolGraph.Symbol.Identifier(
+                        precise: moduleName,
+                        interfaceLanguage: moduleInterfaceLanguage.id
+                    )
                     
                     // Use the default module kind for this bundle if one was provided,
                     // otherwise fall back to 'Framework'
@@ -1108,7 +1125,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
                             kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
                             mixins: [:])
-                    let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguage: .swift, symbol: moduleSymbol)
+                    let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguage: moduleInterfaceLanguage, symbol: moduleSymbol)
                     moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, bundle: bundle)
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
@@ -1401,7 +1418,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             guard let existingNode = symbolIndex[symbol.uniqueIdentifier], existingNode.semantic is Symbol else {
                 // New symbols that didn't exist in the previous graphs should be added.
                 result.append(
-                    preparedSymbolData(symbol, reference: references[symbol.swiftIdentifier]!, module: module, bundle: bundle, fileURL: otherSymbolGraphURL)
+                    preparedSymbolData(symbol, reference: references[symbol.defaultIdentifier]!, module: module, bundle: bundle, fileURL: otherSymbolGraphURL)
                 )
                 return
             }
