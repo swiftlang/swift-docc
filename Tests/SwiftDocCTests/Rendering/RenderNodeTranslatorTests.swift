@@ -267,7 +267,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             Article abstract
             ## Topics
             ### Task Group
-            - <doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project>
+            - <doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>
             """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
         })
         defer { try? FileManager.default.removeItem(at: url) }
@@ -279,7 +279,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         let renderedNode = translator.visit(article) as! RenderNode
 
         // Verify that the render reference to a section includes the container symbol's abstract
-        let renderReference = try XCTUnwrap(renderedNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project"] as? TopicRenderReference)
+        let renderReference = try XCTUnwrap(renderedNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"] as? TopicRenderReference)
         XCTAssertEqual(renderReference.abstract.first?.plainText, "This is the tutorial abstract.")
     }
 

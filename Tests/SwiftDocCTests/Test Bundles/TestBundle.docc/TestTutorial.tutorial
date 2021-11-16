@@ -36,12 +36,12 @@
       @Video(source: introvideo.mp4, poster: introposter.png )
    }
    
-   @Section(title: "Create a New AR Project") {
+   @Section(title: "Create a New AR Project 💻") {
       @ContentAndMedia {
          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-         This section link refers to this section itself: <doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project>.
+         This section link refers to this section itself: <doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.
          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
          This link will never resolve: <doc:ThisWillNeverResolve>.
@@ -132,7 +132,7 @@
       @ContentAndMedia {
          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
-         This section link refers to the previous section: <doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project>.
+         This section link refers to the previous section: <doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.
          This section link refers to the first section in another tutorial: <doc:/tutorials/Test-Bundle/TestTutorial2#Create-a-New-AR-Project>.
           
          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.

@@ -426,14 +426,14 @@ func urlReadablePath(_ path: String) -> String {
 func urlReadableFragment(_ fragment: String) -> String {
     // Trim leading/trailing invalid characters
     var fragment = fragment
-        .trimmingCharacters(in: CharacterSet.urlFragmentAllowed.inverted)
+        .trimmingCharacters(in: .whitespaces)
     
     // Replace continuous whitespace
     fragment = fragment.components(separatedBy: .whitespaces)
         .filter({ !$0.isEmpty })
         .joined(separator: "-")
 
-    let invalidCharacterSet = CharacterSet.urlFragmentAllowed.inverted.union(CharacterSet(charactersIn: "'\"`").subtracting(.whitespaces))
+    let invalidCharacterSet = CharacterSet(charactersIn: "'\"`")
     fragment = fragment.components(separatedBy: invalidCharacterSet)
         .joined()
 

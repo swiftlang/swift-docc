@@ -183,10 +183,10 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        if let testTutorialFirstSectionReference = renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project"] as? TopicRenderReference {
+        if let testTutorialFirstSectionReference = renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"] as? TopicRenderReference {
             XCTAssertEqual(testTutorialFirstSectionReference.type, .section)
         } else {
-            XCTFail("Missing reference to doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project")
+            XCTFail("Missing reference to doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
         }
         
         if let testTutorial2FirstSectionReference = renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2#Create-a-New-AR-Project"] as? TopicRenderReference {

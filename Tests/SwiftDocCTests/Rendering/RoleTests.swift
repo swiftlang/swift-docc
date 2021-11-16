@@ -71,6 +71,6 @@ class RoleTests: XCTestCase {
 
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/TestOverview"] as? TopicRenderReference)?.role, "overview")
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle"] as? TopicRenderReference)?.role, "article")
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project"] as? TopicRenderReference)?.role, "pseudoSymbol")
+        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"] as? TopicRenderReference)?.role, "pseudoSymbol")
     }
 }
