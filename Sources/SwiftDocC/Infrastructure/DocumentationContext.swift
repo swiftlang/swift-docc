@@ -543,6 +543,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         for result in results.sync({ $0 }) {
             documentationCache[result.reference] = result.node
+            if let preciseIdentifier = result.node.symbol?.identifier.precise {
+                symbolIndex[preciseIdentifier] = result.node
+            }
             diagnosticEngine.emit(result.problems)
         }
     }
