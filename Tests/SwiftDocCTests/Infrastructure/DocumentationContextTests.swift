@@ -842,9 +842,9 @@ class DocumentationContextTests: XCTestCase {
 
                         Paragraph
                         ├─ Text "Exercise links to symbols: relative "
-                        ├─ SymbolLink destination: MyClass
+                        ├─ SymbolLink destination: doc://com.example.documentation/documentation/MyKit/MyClass
                         ├─ Text " and absolute "
-                        ├─ SymbolLink destination: MyKit/MyClass
+                        ├─ SymbolLink destination: doc://com.example.documentation/documentation/MyKit/MyClass
                         └─ Text "."
 
                         Paragraph
@@ -856,11 +856,11 @@ class DocumentationContextTests: XCTestCase {
                         ├─ Text "Exercise known unresolvable symbols: know unresolvable "
                         ├─ SymbolLink destination: NSCodable
                         └─ Text "."
-                        
+
                         Paragraph
-                        ├─ Text \"Exercise external references: \"
-                        └─ Link destination: \"doc://com.test.external/ExternalPage\"
-                           └─ Text \"doc://com.test.external/ExternalPage\"
+                        ├─ Text "Exercise external references: "
+                        └─ Link destination: "doc://com.test.external/ExternalPage"
+                           └─ Text "doc://com.test.external/ExternalPage"
 
                         OrderedList
                         ├─ ListItem
@@ -894,9 +894,9 @@ class DocumentationContextTests: XCTestCase {
                         └─ Text "Task Group Excercising Symbol Links"
                         """)
         XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links.count, 3)
-        XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links[0].destination, "doc:MyKit/MyClass")
-        XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links[1].destination, "MyClass")
-        XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links[2].destination, "MyKit/MyClass")
+        XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links[0].destination, "doc://com.example.documentation/documentation/MyKit/MyClass")
+        XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links[1].destination, "doc://com.example.documentation/documentation/MyKit/MyClass")
+        XCTAssertEqual(myProtocolSymbol.topics?.taskGroups.first?.links[2].destination, "doc://com.example.documentation/documentation/MyKit/MyClass")
 
         XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.heading?.detachedFromParent.debugDescription(),
         """
@@ -904,7 +904,7 @@ class DocumentationContextTests: XCTestCase {
         └─ Text "Related Documentation"
         """)
         XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.links.count, 5)
-        XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.links.first?.destination, "doc:MyKit/MyClass")
+        XCTAssertEqual(myProtocolSymbol.seeAlso?.taskGroups.first?.links.first?.destination, "doc://com.example.documentation/documentation/MyKit/MyClass")
 
         XCTAssertEqual(myProtocolSymbol.returnsSection?.content.map { $0.detachedFromParent.debugDescription() }.joined(separator: "\n"),
                        """
@@ -2980,6 +2980,89 @@ let expected = """
         let moduleSymbol = try XCTUnwrap(context.symbolIndex["ExampleDocumentedExecutable"]?.symbol)
         XCTAssertEqual(moduleSymbol.kind.identifier.identifier, "module")
         XCTAssertEqual(moduleSymbol.kind.displayName, "Executable")
+    }
+    
+    /// Verifies that the number of symbols registered in the documentation context is consistent with
+    /// the number of symbols in the symbol graph files.
+    func testSymbolsCountIsConsistentWithSymbolGraphData() throws {
+        let exampleDocumentation = Folder(name: "unit-test.docc", content: [
+            Folder(name: "Symbols", content: [
+                JSONFile(
+                    name: "module.symbols.json",
+                    content: SymbolGraph(
+                        metadata: .init(formatVersion: .init(string: "1.0.0")!, generator: "generator"),
+                        module: .init(name: "module", platform: .init(), version: nil, bystanders: nil),
+                        symbols: (1...1000).map { index in
+                            SymbolGraph.Symbol(
+                                identifier: .init(precise: UUID().uuidString, interfaceLanguage: "swift"),
+                                names: .init(
+                                    title: "Symbol \(index)",
+                                    navigator: nil,
+                                    subHeading: [],
+                                    prose: "Symbol \(index)"
+                                ),
+                                pathComponents: ["Module", "Symbol\(index)"],
+                                docComment: nil,
+                                accessLevel: .init(rawValue: "public"),
+                                kind: .init(parsedIdentifier: .struct, displayName: "Struct"),
+                                mixins: [:]
+                            )
+                        },
+                        relationships: []
+                    )
+                )
+            ]),
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+        ])
+        
+        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
+        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
+        defer { try? FileManager.default.removeItem(at: tempURL) }
+        
+        let bundleURL = try exampleDocumentation.write(inside: tempURL)
+
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        try workspace.registerProvider(dataProvider)
+        
+        XCTAssertEqual(
+            context.symbolIndex.count,
+            1001,
+            "Expected 1000 symbols from the symbol graph + 1 for the module."
+        )
+        
+        XCTAssertEqual(
+            context.documentationCache.count,
+            1001,
+            "Expected 1000 nodes for each symbol of the symbol graph + 1 for the module."
+        )
+        
+        // Create ObjectIdentifier values for the symbols stored in the documentationCache and symbolIndex dictionaries,
+        // and verify that the dictionaries contain the same set of Symbol objects.
+        
+        let symbolsInDocumentationCache = Set(
+            context.documentationCache.values
+                .lazy
+                .compactMap { $0.semantic as? Symbol }
+                .map(ObjectIdentifier.init)
+        )
+        
+        let symbolsInSymbolIndex = Set(
+            context.symbolIndex.values.compactMap { node -> ObjectIdentifier? in
+                guard let symbol = node.semantic as? Symbol else {
+                    XCTFail("Node in symbolIndex doesn't have a symbol.")
+                    return nil
+                }
+                return ObjectIdentifier(symbol)
+            }
+        )
+        
+        XCTAssertEqual(
+            symbolsInDocumentationCache,
+            symbolsInSymbolIndex,
+            "Expected the symbol instances in the documentationCache and symbolIndex dictionaries to be the same"
+        )
     }
 }
 
