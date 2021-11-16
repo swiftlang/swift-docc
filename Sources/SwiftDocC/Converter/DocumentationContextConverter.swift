@@ -73,6 +73,16 @@ public class DocumentationContextConverter {
     ///   - source: The source file for the documentation node.
     /// - Returns: The render node representation of the documentation node.
     public func renderNode(for node: DocumentationNode, at source: URL?) throws -> RenderNode? {
+        switch node.kind {
+        case .module:
+            guard !context.onlyHasSnippetRelatedChildren(for: node.reference) else {
+                return nil
+            }
+        case .snippet, .snippetGroup:
+            return nil
+        default: break
+        }
+
         var translator = RenderNodeTranslator(
             context: context,
             bundle: bundle,
