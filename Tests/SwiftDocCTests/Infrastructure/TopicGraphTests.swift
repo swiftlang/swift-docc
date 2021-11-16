@@ -13,7 +13,7 @@ import XCTest
 
 class TopicGraphTests: XCTestCase {
     enum TestGraphs {
-        /// Returns a ``ResolvedTopicReference` with the given title, with a phony source language, kind, and source. These are not for testing specific relationships, only abstract graph connectivity.
+        /// Returns a ``ResolvedTopicReference`` with the given title, with a phony source language, kind, and source. These are not for testing specific relationships, only abstract graph connectivity.
         static func testNodeWithTitle(_ title: String) -> TopicGraph.Node {
             let urlSafeTitle = title.replacingOccurrences(of: " ", with: "_")
             let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(urlSafeTitle)", sourceLanguage: .swift)
