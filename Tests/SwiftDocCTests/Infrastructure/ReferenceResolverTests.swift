@@ -441,4 +441,137 @@ class ReferenceResolverTests: XCTestCase {
         }
         XCTAssertTrue(foundSymbolDiscussionLink)
     }
+    
+    func testForwardsSymbolPropertiesThatAreUnmodifiedDuringLinkResolution() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        
+        var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
+        
+        let symbol = try XCTUnwrap(context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)
+        
+        /// Verifies the given assertion on a variants property of the given symbols.
+        func assertSymbolVariants<Variant>(
+            _ symbol1: Symbol,
+            _ symbol2: Symbol,
+            keyPath: KeyPath<Symbol, DocumentationDataVariants<Variant>>,
+            assertion: (Variant, Variant) -> (),
+            file: StaticString = #file,
+            line: UInt = #line
+        ) {
+            let variants1Values = symbol1[keyPath: keyPath].allValues
+            let variants2Values = symbol2[keyPath: keyPath].allValues
+            
+            XCTAssertEqual(
+                variants1Values.count, variants2Values.count,
+                "The two symbols have a different number of variants for the key path '\(keyPath)'.",
+                file: file, line: line
+            )
+            
+            for (variants1Value, variants2Value) in zip(variants1Values, variants2Values) {
+                XCTAssertEqual(
+                    variants1Value.trait, variants2Value.trait,
+                    "The two symbols have variants of mismatching traits for the key path '\(keyPath)'.",
+                    file: file, line: line
+                )
+                assertion(variants1Value.variant, variants2Value.variant)
+            }
+        }
+        
+        /// Populates the symbol with an Objective-C variant and returns an assertion that checks that another symbol
+        /// has the same variants.
+        func populateObjCVariantAndCreateAssertion<Variant>(
+            keyPath: ReferenceWritableKeyPath<Symbol, DocumentationDataVariants<Variant>>,
+            assertion: @escaping (Variant, Variant) -> (),
+            file: StaticString = #file,
+            line: UInt = #line
+        ) -> ((_ resolvedSymbol: Symbol) -> Void) {
+            symbol[keyPath: keyPath][.objectiveC] = symbol[keyPath: keyPath].firstValue
+            
+            return { resolvedSymbol in
+                assertSymbolVariants(
+                    symbol,
+                    resolvedSymbol,
+                    keyPath: keyPath,
+                    assertion: assertion,
+                    file: file,
+                    line: line
+                )
+            }
+        }
+        
+        /// Populates the symbol with an Objective-C variant and returns an assertion that checks that another symbol
+        /// has the same variants.
+        ///
+        /// This overload accepts a Symbol key path whose variant value is Equatable. The default assertion verifies that the variant values of the two
+        /// symbols are equal.
+        func populateObjCVariantAndCreateAssertion<Variant: Equatable>(
+            keyPath: ReferenceWritableKeyPath<Symbol, DocumentationDataVariants<Variant>>,
+            assertion: @escaping (Variant, Variant) -> () = { XCTAssertEqual($0, $1, file: #file, line: #line) },
+            file: StaticString = #file,
+            line: UInt = #line
+        ) -> ((_ resolvedSymbol: Symbol) -> Void) {
+            populateObjCVariantAndCreateAssertion(keyPath: keyPath, assertion: assertion)
+        }
+        
+        let assertions = [
+            // For variants properties that hold an Equatable value, populate the Objective-C variant and create
+            // an assertion that verifies that the resolved symbol contains the same variants as the original symbol.
+            
+            populateObjCVariantAndCreateAssertion(keyPath: \.kindVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.titleVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.subHeadingVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.navigatorVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.roleHeadingVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.platformNameVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.moduleNameVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.extendedModuleVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.isRequiredVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.externalIDVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.accessLevelVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.redirectsVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.bystanderModuleNamesVariants),
+            populateObjCVariantAndCreateAssertion(keyPath: \.originVariants),
+            
+            // Otherwise, for variants properties that don't a value that is Equatable, populate the Objective-C variant
+            // and specify an assertion.
+            
+            populateObjCVariantAndCreateAssertion(keyPath: \.availabilityVariants) { value1, value2 in
+                XCTAssertEqual(value1.availability.count, value2.availability.count)
+            },
+            populateObjCVariantAndCreateAssertion(keyPath: \.deprecatedSummaryVariants) { value1, value2 in
+                XCTAssertEqual(
+                    value1.content.map { $0.debugDescription() },
+                    value2.content.map { $0.debugDescription() }
+                )
+            },
+            populateObjCVariantAndCreateAssertion(keyPath: \.mixinsVariants) { value1, value2 in
+                XCTAssertEqual(value1.count, value2.count)
+            },
+            populateObjCVariantAndCreateAssertion(keyPath: \.declarationVariants) { value1, value2 in
+                XCTAssertEqual(value1.count, value2.count)
+            },
+            populateObjCVariantAndCreateAssertion(keyPath: \.defaultImplementationsVariants) { value1, value2 in
+                XCTAssertEqual(value1.groups.count, value2.groups.count)
+            },
+            populateObjCVariantAndCreateAssertion(keyPath: \.relationshipsVariants) { value1, value2 in
+                XCTAssertEqual(value1.groups.count, value2.groups.count)
+            },
+            populateObjCVariantAndCreateAssertion(keyPath: \.automaticTaskGroupsVariants) { value1, value2 in
+                XCTAssertEqual(value1.map { $0.title }, value2.map { $0.title })
+                XCTAssertEqual(value1.map { $0.references }, value2.map { $0.references })
+                XCTAssertEqual(value1.map { $0.renderPositionPreference }, value2.map { $0.renderPositionPreference })
+            },
+        ]
+        
+        let resolvedSymbol = try XCTUnwrap(resolver.visitSymbol(symbol) as? Symbol)
+        
+        // Assert symbol variant values that are Equatable.
+        for assertion in assertions {
+            assertion(resolvedSymbol)
+        }
+    }
+}
+
+private extension DocumentationDataVariantsTrait {
+    static var objectiveC: DocumentationDataVariantsTrait { .init(interfaceLanguage: "occ") }
 }
