@@ -82,6 +82,8 @@ extension DocumentationDataVariants {
     }
 }
 
+extension DocumentationDataVariants: Equatable where Variant: Equatable {}
+
 /// The trait associated with a variant of some piece of information about a documentation node.
 public struct DocumentationDataVariantsTrait: Hashable {
     /// The Swift programming language.
