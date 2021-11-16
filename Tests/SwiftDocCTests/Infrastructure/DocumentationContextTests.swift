@@ -191,7 +191,7 @@ class DocumentationContextTests: XCTestCase {
 │  │     |    "source: introvideo.mp4, poster: introposter.png "
 │  ├─ BlockDirective name: "Section"
 │  │  ├─ Argument text segments:
-│  │  |    "title: \\"Create a New AR Project\\""
+│  │  |    "title: \\"Create a New AR Project 💻\\""
 │  │  ├─ BlockDirective name: "ContentAndMedia"
 │  │  │  ├─ Paragraph
 │  │  │  │  ├─ Text "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"
@@ -201,8 +201,8 @@ class DocumentationContextTests: XCTestCase {
 │  │  │  │  ├─ Text "Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This section link refers to this section itself: "
-│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project"
-│  │  │  │  │  └─ Text "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project"
+│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
+│  │  │  │  │  └─ Text "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
 │  │  │  │  ├─ Text "."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This is an external link to Swift documentation: "
@@ -317,8 +317,8 @@ class DocumentationContextTests: XCTestCase {
 │  │  │  │  ├─ Text "ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This section link refers to the previous section: "
-│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project"
-│  │  │  │  │  └─ Text "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project"
+│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
+│  │  │  │  │  └─ Text "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
 │  │  │  │  ├─ Text "."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This section link refers to the first section in another tutorial: "
@@ -1216,7 +1216,7 @@ let expected = """
  │ ├ doc://org.swift.docc.example/documentation/Test-Bundle/article2
  │ ├ doc://org.swift.docc.example/documentation/Test-Bundle/article3
  │ ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial
- │   ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project
+ │   ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB
  │   ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate
  │   ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection
  ╰ doc://org.swift.docc.example/documentation/Test-Bundle/article2
@@ -1238,7 +1238,7 @@ let expected = """
  ╰ doc://org.swift.docc.example/tutorials/TestOverview/$volume
    ╰ doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1
      ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial
-     │ ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project
+     │ ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB
      │ ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate
      │ ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection
      ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2

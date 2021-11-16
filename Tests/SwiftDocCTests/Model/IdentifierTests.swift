@@ -18,18 +18,18 @@ class IdentifierTests: XCTestCase {
         XCTAssertEqual(urlReadableFragment(""), "")
 
         // Test trimming invalid characters
-        XCTAssertEqual(urlReadableFragment(" ä ö "), "")
-        XCTAssertEqual(urlReadableFragment(" asdö  "), "asd")
+        XCTAssertEqual(urlReadableFragment(" ä ö "), "ä-ö")
+        XCTAssertEqual(urlReadableFragment(" asdö  "), "asdö")
         
         // Test lowercasing
         XCTAssertEqual(urlReadableFragment(" ASD  "), "ASD")
         
         // Test replacing invalid characters
         XCTAssertEqual(urlReadableFragment(" ASD ASD  "), "ASD-ASD")
-        XCTAssertEqual(urlReadableFragment(" 3äêòNS  "), "3NS")
+        XCTAssertEqual(urlReadableFragment(" 3äêòNS  "), "3äêòNS")
 
         // Test replacing continuous whitespace
-        XCTAssertEqual(urlReadableFragment("    Aä    êò  B   CD    "), "A-B-CD")
+        XCTAssertEqual(urlReadableFragment("    Aä    êò  B   CD    "), "Aä-êò-B-CD")
 
         // Test replacing quotes
         XCTAssertEqual(urlReadableFragment(" This is a 'test' "), "This-is-a-test")
@@ -38,6 +38,8 @@ class IdentifierTests: XCTestCase {
         
         // Test replacing complete sentence.
         XCTAssertEqual(urlReadableFragment("Test replacing 'complete' sentence"), "Test-replacing-complete-sentence")
+        
+        XCTAssertEqual(urlReadableFragment("💻"), "💻")
     }
     
     func testReusingReferences() {

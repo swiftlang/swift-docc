@@ -20,6 +20,6 @@ class ResourceReferenceTests: XCTestCase {
         XCTAssertEqual(refAdvanced.absoluteString, "doc://org.swift.docc.example/Test-Bundle/Tutorial1#fragment")
         
         let refSuperAdvanced = ref.withFragment(" FRä'g'mē\"nt ")
-        XCTAssertEqual(refSuperAdvanced.absoluteString, "doc://org.swift.docc.example/Test-Bundle/Tutorial1#FRgmnt")
+        XCTAssertEqual(refSuperAdvanced.absoluteString, "doc://org.swift.docc.example/Test-Bundle/Tutorial1#FR%C3%A4gm%C4%93nt")
     }
 }

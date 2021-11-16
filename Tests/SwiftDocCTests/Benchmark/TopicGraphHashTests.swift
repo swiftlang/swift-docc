@@ -135,7 +135,7 @@ class TopicGraphHashTests: XCTestCase {
          │ ├ Article 2
          │ ├ Article 3
          │ ╰ Basic Augmented Reality App
-         │   ├ Create a New AR Project
+         │   ├ Create a New AR Project 💻
          │   ├ Initiate ARKit Plane Detection
          │   ╰ Duplicate
          ╰ Article 2

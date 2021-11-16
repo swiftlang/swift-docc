@@ -22,7 +22,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         // Verify that the hierarchy translator has collected all topic references from the hierarchy
         XCTAssertEqual(translator.collectedTopicReferences.sorted(by: { $0.absoluteString <= $1.absoluteString }).map{ $0.absoluteString }, [
             "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial",
-            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project",
+            "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB",
             "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate",
             "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection",
             "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2",
@@ -79,7 +79,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
         let section3 = tutorial.landmarks[2]
         let assessments = tutorial.landmarks[3]
         
-        XCTAssertEqual(section1.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project")
+        XCTAssertEqual(section1.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
         XCTAssertEqual(section2.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection")
         XCTAssertEqual(section3.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate")
         XCTAssertEqual(assessments.reference.identifier, "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Check-Your-Understanding")
