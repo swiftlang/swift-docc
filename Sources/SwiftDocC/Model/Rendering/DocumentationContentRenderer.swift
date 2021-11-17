@@ -67,15 +67,18 @@ public class DocumentationContentRenderer {
             from: symbol.subHeadingVariants,
             symbol.titleVariants,
             symbol.kindVariants
-        ) { _, subHeading, title, kind in
+        ) { trait, subHeading, title, kind in
             var fragments = subHeading
                 .map({ fragment -> DeclarationRenderSection.Token in
                     return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
                 })
             if fragments.last?.text == "\n" { fragments.removeLast() }
             
-            // TODO: Return an Objective-C subheading for Objective-C symbols (rdar://84195588)
-            return Swift.subHeading(for: fragments, symbolTitle: title, symbolKind: kind.identifier.identifier)
+            if trait == .swift {
+                return Swift.subHeading(for: fragments, symbolTitle: title, symbolKind: kind.identifier.identifier)
+            } else {
+                return fragments
+            }
         } ?? .init(defaultValue: nil)
     }
     
@@ -86,15 +89,19 @@ public class DocumentationContentRenderer {
         }
         
         return VariantCollection<[DeclarationRenderSection.Token]?>(
-            from: symbol.navigatorVariants
-        ) { _, navigator in
+            from: symbol.navigatorVariants,
+            symbol.titleVariants
+        ) { trait, navigator, title in
             var fragments = navigator.map { fragment -> DeclarationRenderSection.Token in
                 return DeclarationRenderSection.Token(fragment: fragment, identifier: nil)
             }
             if fragments.last?.text == "\n" { fragments.removeLast() }
             
-            // TODO: Return an Objective-C navigator title for Objective-C symbols (rdar://84195588)
-            return Swift.navigatorTitle(for: fragments, symbolTitle: symbol.title)
+            if trait == .swift {
+                return Swift.navigatorTitle(for: fragments, symbolTitle: title)
+            } else {
+                return fragments
+            }
         } ?? .init(defaultValue: nil)
     }
     
