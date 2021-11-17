@@ -265,6 +265,9 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 symbol.navigatorVariants[.objectiveC] = [
                     .init(kind: .keyword, spelling: "objc", preciseIdentifier: nil)
                 ]
+                
+                symbol.titleVariants[.swift] = "Swift Title"
+                symbol.titleVariants[.objectiveC] = "Objective-C Title"
             },
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(
