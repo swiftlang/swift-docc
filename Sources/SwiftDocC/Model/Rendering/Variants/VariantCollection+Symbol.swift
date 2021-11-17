@@ -342,7 +342,7 @@ private func zipPairsByKey<Key, Value1, Value2>(
     )
 }
 
-/// Creates a dictionary out of three sequences of pairs of the same key type
+/// Creates a dictionary out of three sequences of pairs of the same key type.
 ///
 /// ```swift
 /// let words = [("a", "one"), ("b", "two")]
