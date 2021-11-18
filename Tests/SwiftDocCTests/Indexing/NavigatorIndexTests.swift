@@ -227,10 +227,7 @@ Root
 #endif
     }
     
-    // This test has been disabled because of frequent failures in Swift CI.
-    //
-    // rdar://85055022 tracks updating this test to remove any flakiness.
-    func disabled_testNavigationTreeLargeDumpAndReadAsync() throws {
+    func testNavigationTreeLargeDumpAndReadAsync() throws {
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
         
