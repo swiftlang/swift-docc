@@ -21,19 +21,11 @@ class ConvertSubcommandTests: XCTestCase {
     
     func testOptionsValidation() throws {
         // create source bundle directory
-        let sourceURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension("documentation")
-        try FileManager.default.createDirectory(at: sourceURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: sourceURL)
-        }
+        let sourceURL = try createTemporaryDirectory(pathComponents: "documentation")
         try "".write(to: sourceURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         
         // create template dir
-        let rendererTemplateDirectory = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: rendererTemplateDirectory, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: rendererTemplateDirectory)
-        }
+        let rendererTemplateDirectory = try createTemporaryDirectory()
         try "".write(to: rendererTemplateDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
         
         // Tests a single input.
@@ -84,7 +76,7 @@ class ConvertSubcommandTests: XCTestCase {
         // Test default template
         do {
             unsetenv(TemplateOption.environmentVariableKey)
-            let tempDir = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+            let tempDir = try createTemporaryDirectory()
             let doccExecutableLocation = tempDir
                 .appendingPathComponent("bin")
                 .appendingPathComponent("docc-executable-name")

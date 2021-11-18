@@ -63,8 +63,7 @@ class FileRequestHandlerTests: XCTestCase {
             Folder(name: "downloads", content: [
                 TextFile(name: "project.zip", utf8Content: "zip"),
             ])
-        ])
-        try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
 
         try verifyAsset(root: tempDir.url, path: "/data/test.json", body: "data", type: "application/json")
         try verifyAsset(root: tempDir.url, path: "/css/test.css", body: "css", type: "text/css")
@@ -87,8 +86,7 @@ class FileRequestHandlerTests: XCTestCase {
     }
     
     func testFileHandlerAssetsMissing() throws {
-        let tempDir = try TempFolder(content: [])
-        try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
+        let tempDir = try TempFolder(content: [], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
 
         let request = makeRequestHead(path: "/css/b00011100.css")
         let factory = FileRequestHandler(rootURL: tempDir.url, fileIO: fileIO)
@@ -102,8 +100,7 @@ class FileRequestHandlerTests: XCTestCase {
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
-        ])
-        try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
 
         let request = makeRequestHead(path: "/videos/video.mov", headers: [("Range", "bytes=0-1")])
         let factory = FileRequestHandler(rootURL: tempDir.url, fileIO: fileIO)
@@ -122,8 +119,7 @@ class FileRequestHandlerTests: XCTestCase {
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
-        ])
-        try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
 
         let request = makeRequestHead(path: "/videos/../video.mov", headers: [("Range", "bytes=0-1")])
         let factory = FileRequestHandler(rootURL: tempDir.url, fileIO: fileIO)
@@ -138,8 +134,7 @@ class FileRequestHandlerTests: XCTestCase {
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
-        ])
-        try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
 
         let request = makeRequestHead(path: "/videos/.  ? ? ? ./video.mov", headers: [("Range", "bytes=0-1")])
         let factory = FileRequestHandler(rootURL: tempDir.url, fileIO: fileIO)

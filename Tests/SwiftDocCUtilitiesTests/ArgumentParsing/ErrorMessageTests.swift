@@ -16,19 +16,11 @@ class ErrorMessageTests: XCTestCase {
     
     func testInvalidParameterMessageError() throws {
         // create source bundle directory
-        let sourceURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension("documentation")
-        try FileManager.default.createDirectory(at: sourceURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: sourceURL)
-        }
+        let sourceURL = try createTemporaryDirectory(pathComponents: "documentation")
         try "".write(to: sourceURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         
         // create renderer template directory
-        let rendererDirectory = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: rendererDirectory, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: rendererDirectory)
-        }
+        let rendererDirectory = try createTemporaryDirectory()
         try "".write(to: rendererDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
         
         do {

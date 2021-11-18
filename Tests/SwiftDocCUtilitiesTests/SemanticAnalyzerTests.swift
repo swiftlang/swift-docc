@@ -14,12 +14,6 @@ import Markdown
 @testable import SwiftDocCUtilities
 
 class SemanticAnalyzerTests: XCTestCase {
-    func createTemporaryDirectory() throws -> URL {
-        let url = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-        return url
-    }
-
     let bundleFolderHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
         Folder(name: "Symbols", content: []),
         Folder(name: "Resources", content: [

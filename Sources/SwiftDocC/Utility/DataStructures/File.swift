@@ -247,10 +247,10 @@ class TempFolder: File {
         }
     }
 
-    init(content: [File]) throws {
+    init(content: [File], atRoot root: URL) throws {
         self.content = content
 
-        url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        url = root
         name = url.absoluteString
 
         try write(to: url)

@@ -105,23 +105,4 @@ class FolderStructureTests: XCTestCase {
         
         XCTAssertEqual(try FileManager.default.contentsOfDirectory(atPath: lowercaseCopyURL.path), ["lower"])
     }
-    
-    // Workaround that addTeardownBlock doesn't exist in swift-corelibs-xctest
-    
-    private var tempFilesToRemove: [URL] = []
-    
-    override func tearDown() {
-        for url in tempFilesToRemove {
-             try? FileManager.default.removeItem(at: url)
-        }
-        tempFilesToRemove.removeAll()
-        super.tearDown()
-    }
-    
-    func createTemporaryDirectory() throws -> URL {
-        let url = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-        tempFilesToRemove.append(url)
-        return url
-    }
 }

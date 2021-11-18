@@ -121,12 +121,8 @@ class DirectoryMonitorTests: XCTestCase {
         #if !os(Linux) && !os(Android)
 
         // Create temp folder & sub-folder.
-        let tempFolderURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        let tempSubfolderURL = tempFolderURL.appendingPathComponent("subfolder")  
-        try FileManager.default.createDirectory(at: tempSubfolderURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: tempFolderURL)
-        }
+        let tempSubfolderURL = try createTemporaryDirectory(pathComponents: "subfolder")
+        let tempFolderURL = tempSubfolderURL.deletingLastPathComponent()
         
         // A file URL to update.
         let updateURL = tempSubfolderURL.appendingPathComponent("test.txt")
@@ -174,12 +170,8 @@ class DirectoryMonitorTests: XCTestCase {
         #if !os(Linux) && !os(Android)
         
         // Create temp folder & sub-folder.
-        let tempFolderURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        let tempSubfolderURL = tempFolderURL.appendingPathComponent("subfolder")
-        try FileManager.default.createDirectory(at: tempSubfolderURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: tempFolderURL)
-        }
+        let tempSubfolderURL = try createTemporaryDirectory(pathComponents: "subfolder")
+        let tempFolderURL = tempSubfolderURL.deletingLastPathComponent()
 
         // 1) Test that creating a hidden file inside the tree will not trigger an update.
         try monitorNoUpdates(url: tempFolderURL, testBlock: { 
@@ -211,12 +203,8 @@ class DirectoryMonitorTests: XCTestCase {
         #if !os(Linux) && !os(Android)
 
         // Create temp folder & sub-folder.
-        let tempFolderURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        let tempSubfolderURL = tempFolderURL.appendingPathComponent("subfolder")  
-        try FileManager.default.createDirectory(at: tempSubfolderURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: tempFolderURL)
-        }
+        let tempSubfolderURL = try createTemporaryDirectory(pathComponents: "subfolder")
+        let tempFolderURL = tempSubfolderURL.deletingLastPathComponent()
         
         // A file URL to update.
         let updateURL = tempSubfolderURL.appendingPathComponent("test.txt")

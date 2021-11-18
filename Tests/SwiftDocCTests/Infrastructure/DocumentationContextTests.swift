@@ -34,67 +34,6 @@ extension CollectionDifference {
     }
 }
 
-/// Loads a documentation bundle from the given source URL and creates a documentation context.
-func loadBundle(from bundleURL: URL, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil, diagnosticFilterLevel: DiagnosticSeverity = .hint, configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
-    let workspace = DocumentationWorkspace()
-    let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel))
-    context.externalReferenceResolvers = externalResolvers
-    context.externalSymbolResolver = externalSymbolResolver
-    context.externalMetadata.diagnosticLevel = diagnosticFilterLevel
-    try configureContext?(context)
-    // Load the bundle using automatic discovery
-    let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-    // Mutate the bundle to include the code listings, then apply to the workspace using a manual provider.
-    var bundle = try automaticDataProvider.bundles().first!
-    bundle.attributedCodeListings = codeListings
-    let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-    try workspace.registerProvider(dataProvider)
-    return (bundleURL, bundle, context)
-}
-
-func testBundleAndContext(copying name: String, excludingPaths excludedPaths: [String] = [], codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [BundleIdentifier : ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil,  configureBundle: ((URL) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
-    let sourceURL = Bundle.module.url(
-        forResource: name, withExtension: "docc", subdirectory: "Test Bundles")!
-    let bundleURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString.appending(".docc")))
-    
-    if FileManager.default.fileExists(atPath: sourceURL.path) {
-        try FileManager.default.copyItem(at: sourceURL, to: bundleURL)
-    } else {
-        try FileManager.default.createDirectory(at: bundleURL, withIntermediateDirectories: true, attributes: nil)
-    }
-    
-    for path in excludedPaths {
-        try FileManager.default.removeItem(at: bundleURL.appendingPathComponent(path))
-    }
-
-    // Do any additional setup to the custom bundle - adding, modifying files, etc
-    try configureBundle?(bundleURL)
-    
-    return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers, externalSymbolResolver: externalSymbolResolver)
-}
-
-
-func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
-    let bundleURL = Bundle.module.url(
-        forResource: name, withExtension: "docc", subdirectory: "Test Bundles")!
-    let (_, bundle, context) = try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers)
-    return (bundle, context)
-}
-
-func testBundle(named name: String) -> DocumentationBundle {
-    let (bundle, _) = try! testBundleAndContext(named: name)
-    return bundle
-}
-
-func testBundleFromRootURL(named name: String) throws -> DocumentationBundle {
-    let bundleURL = Bundle.module.url(
-        forResource: name, withExtension: "docc", subdirectory: "Test Bundles")!
-    let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-    
-    let bundles = try dataProvider.bundles()
-    return bundles[0]
-}
-
 class DocumentationContextTests: XCTestCase {
     func testResolve() throws {
         let workspace = DocumentationWorkspace()
@@ -517,9 +456,7 @@ class DocumentationContextTests: XCTestCase {
             ]),
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
         ])
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
 
@@ -632,9 +569,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         let workspaceURL = try workspaceContent.write(inside: tempURL)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
@@ -700,10 +635,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-        
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
@@ -731,10 +663,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-        
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
@@ -972,10 +901,7 @@ class DocumentationContextTests: XCTestCase {
             ]),
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-        
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
@@ -1038,10 +964,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-        
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
         
         let workspace = DocumentationWorkspace()
@@ -1075,10 +998,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-        
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
@@ -1115,10 +1035,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-        
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
@@ -1159,10 +1076,7 @@ class DocumentationContextTests: XCTestCase {
             ])
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-        
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
@@ -1910,11 +1824,7 @@ let expected = """
             ("file:///path with spaces/to/file.swift", "file:///path%20with%20spaces/to/file.swift"),
         ] {
             // Create an empty bundle
-            let targetURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString.appending(".docc"))
-            try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-            defer {
-                try? FileManager.default.removeItem(at: targetURL)
-            }
+            let targetURL = try createTemporaryDirectory(pathComponents: "test.docc")
             
             // Copy test Info.plist
             try FileManager.default.copyItem(at: Bundle.module.url(
@@ -2070,9 +1980,7 @@ let expected = """
     
     func testCrossSymbolGraphPathCollisions() throws {
         // Create temp folder
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-        try FileManager.default.createDirectory(atPath: tempURL.path, withIntermediateDirectories: false, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
 
         // Create test bundle
         let bundleURL = try Folder(name: "collisions.docc", content: [
@@ -2162,9 +2070,7 @@ let expected = """
 
     /// rdar://69242313
     func testLinkResolutionDoesNotSkipSymbolGraph() throws {
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-        try FileManager.default.createDirectory(atPath: tempURL.path, withIntermediateDirectories: false, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         let bundleURL = try Folder(name: "Missing.docc", content: [
             InfoPlist(displayName: "MissingDocs", identifier: "com.test.missing-docs"),
@@ -2278,9 +2184,7 @@ let expected = """
     }
 
     func testLinkResolutionDiagnosticsEmittedForTechnologyPages() throws {
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-        try FileManager.default.createDirectory(atPath: tempURL.path, withIntermediateDirectories: false, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
 
         let bundleURL = try Folder(name: "module-links.docc", content: [
             InfoPlist(displayName: "Test", identifier: "com.test.docc"),
@@ -2343,10 +2247,7 @@ let expected = """
             """),
             InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
         ])
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
 
         // Parse this test content
@@ -2438,9 +2339,7 @@ let expected = """
             """)
         
         do {
-            let tempURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-            try FileManager.default.createDirectory(atPath: tempURL.path, withIntermediateDirectories: false, attributes: nil)
-            defer { try? FileManager.default.removeItem(at: tempURL) }
+            let tempURL = try createTemporaryDirectory()
             
             let bundleURL = try Folder(name: "Module.docc", content: [
                 InfoPlist(displayName: "Module", identifier: "org.swift.docc.example"),
@@ -2476,9 +2375,7 @@ let expected = """
         }
         
         do {
-            let tempURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-            try FileManager.default.createDirectory(atPath: tempURL.path, withIntermediateDirectories: false, attributes: nil)
-            defer { try? FileManager.default.removeItem(at: tempURL) }
+            let tempURL = try createTemporaryDirectory()
             
             let bundleURL = try Folder(name: "Module.docc", content: [
                 InfoPlist(displayName: "Module", identifier: "org.swift.docc.example"),
@@ -2509,9 +2406,7 @@ let expected = """
     }
     
     func testAutomaticTaskGroupsPlacedAfterManualCuration() throws {
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-        try FileManager.default.createDirectory(atPath: tempURL.path, withIntermediateDirectories: false, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         let bundleURL = try Folder(name: "Module.docc", content: [
             InfoPlist(displayName: "Module", identifier: "org.swift.docc.example"),
@@ -2722,9 +2617,8 @@ let expected = """
                 TextFile(name: "TestTechnology.tutorial", utf8Content: testTechnologySource),
                 TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
-            let tempFolderURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString.appending(".docc")))
+            let tempFolderURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
             try testBundle.write(to: tempFolderURL)
-            defer { try? FileManager.default.removeItem(at: tempFolderURL) }
             
             // Load the bundle
             let (_, bundle, context) = try loadBundle(from: tempFolderURL)
@@ -2760,9 +2654,8 @@ let expected = """
                 TextFile(name: "TestTechnology.tutorial", utf8Content: testTechnologySource),
                 TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
-            let tempFolderURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString.appending(".docc")))
+            let tempFolderURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
             try testBundle.write(to: tempFolderURL)
-            defer { try? FileManager.default.removeItem(at: tempFolderURL) }
             
             // Load the bundle
             let (_, bundle, context) = try loadBundle(from: tempFolderURL)
@@ -2821,9 +2714,8 @@ let expected = """
                 TextFile(name: "TestTechnology.tutorial", utf8Content: testTechnologySource),
                 TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
-            let tempFolderURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString.appending(".docc")))
+            let tempFolderURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
             try testBundle.write(to: tempFolderURL)
-            defer { try? FileManager.default.removeItem(at: tempFolderURL) }
             
             // Load the bundle
             let (_, bundle, context) = try loadBundle(from: tempFolderURL)
@@ -2892,9 +2784,8 @@ let expected = """
                 CopyOfFile(original: infoPlistURL, newName: "Info.plist"),
                 TextFile(name: "TestFramework.symbols.json", utf8Content: symbolGraphFixture),
             ])
-            let tempFolderURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString.appending(".docc")))
+            let tempFolderURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
             try testBundle.write(to: tempFolderURL)
-            defer { try? FileManager.default.removeItem(at: tempFolderURL) }
             
             // Load the bundle
             let (_, bundle, context) = try loadBundle(from: tempFolderURL)
@@ -2931,9 +2822,7 @@ let expected = """
     /// ```
     func testWarningForUnresolvableLinksInInheritedDocs() throws {
         // Create temp folder
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-        try FileManager.default.createDirectory(atPath: tempURL.path, withIntermediateDirectories: false, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
 
         // Create test bundle
         let bundleURL = try Folder(name: "InheritedDocs.docc", content: [
@@ -3015,10 +2904,7 @@ let expected = """
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-        
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()

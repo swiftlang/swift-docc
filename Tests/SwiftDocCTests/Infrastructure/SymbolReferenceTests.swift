@@ -197,10 +197,7 @@ class SymbolReferenceTests: XCTestCase {
             ]),
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
-        
+        let tempURL = try createTemporaryDirectory()
         let bundleURL = try testBundle.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()

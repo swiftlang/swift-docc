@@ -17,25 +17,16 @@ class PreviewSubcommandTests: XCTestCase {
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
         // Create HTML template dir.
-        let templateDir = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: templateDir, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: templateDir)
-        }
+        let templateDir = try createTemporaryDirectory()
         try "".write(to: templateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
         
+        let tempURL = try createTemporaryDirectory()
         // Create Test TLS Certificate File
-        let testTLSCertificate = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("testCert.pem")
-        defer {
-            try? FileManager.default.removeItem(at: testTLSCertificate)
-        }
+        let testTLSCertificate = tempURL.appendingPathComponent("testCert.pem")
         try "".write(to: testTLSCertificate, atomically: true, encoding: .utf8)
         
         // Create Test TLS Key File
-        let testTLSKey = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("testCert.pem")
-        defer {
-            try? FileManager.default.removeItem(at: testTLSKey)
-        }
+        let testTLSKey = tempURL.appendingPathComponent("testCert.pem")
         try "".write(to: testTLSKey, atomically: true, encoding: .utf8)
         
         // Tests a single input.
@@ -57,7 +48,7 @@ class PreviewSubcommandTests: XCTestCase {
         // Test default template
         do {
             unsetenv(TemplateOption.environmentVariableKey)
-            let tempDir = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+            let tempDir = try createTemporaryDirectory()
             let doccExecutableLocation = tempDir
                 .appendingPathComponent("bin")
                 .appendingPathComponent("docc-executable-name")
@@ -72,9 +63,6 @@ class PreviewSubcommandTests: XCTestCase {
                 TemplateOption.doccExecutableLocation = originalDoccExecutableLocation
             }
             try FileManager.default.createDirectory(at: defaultTemplateDir, withIntermediateDirectories: true, attributes: nil)
-            defer {
-                try? FileManager.default.removeItem(at: defaultTemplateDir)
-            }
             try "".write(to: defaultTemplateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
             
             let preview = try Docc.Preview.parse([

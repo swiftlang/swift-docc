@@ -128,7 +128,7 @@ class PlistSymbolTests: XCTestCase {
         
         let tempDir = try TempFolder(content: [
             TextFile(name: "missingIdeTitle.json", utf8Content: modifiedJSON),
-        ])
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
         let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempDir.url.appendingPathComponent("missingIdeTitle.json")))
         
         //
@@ -154,7 +154,7 @@ class PlistSymbolTests: XCTestCase {
         
         let tempDir = try TempFolder(content: [
             TextFile(name: "missingPossibleValuesTitle.json", utf8Content: modifiedJSON),
-        ])
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
         let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempDir.url.appendingPathComponent("missingPossibleValuesTitle.json")))
         
         //

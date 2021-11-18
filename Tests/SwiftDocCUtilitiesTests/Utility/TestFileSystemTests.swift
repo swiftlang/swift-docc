@@ -21,8 +21,7 @@ class TestFileSystemTests: XCTestCase {
         XCTAssertTrue(try fs.bundles().isEmpty)
         var isDirectory = ObjCBool(false)
         XCTAssertTrue(fs.fileExists(atPath: "/", isDirectory: &isDirectory))
-        XCTAssertTrue(isDirectory.boolValue)
-        XCTAssertTrue(fs.fileExists(atPath: NSTemporaryDirectory(), isDirectory: &isDirectory))
+        XCTAssertEqual(fs.files.keys.sorted(), ["/"], "The root (/) should be the only existing path.")
         XCTAssertTrue(isDirectory.boolValue)
         XCTAssertFalse(fs.disableWriting)
     }
@@ -36,7 +35,6 @@ class TestFileSystemTests: XCTestCase {
         let folder2 = Folder(name: "additional", content: [])
         
         let fs = try TestFileSystem(folders: [folder1, folder2])
-        try fs.removeItem(at: URL(string: NSTemporaryDirectory())!)
         
         // Verify correct folders & files
         var isDirectory = ObjCBool(false)
@@ -68,9 +66,6 @@ class TestFileSystemTests: XCTestCase {
         ])
         
         let fs = try TestFileSystem(folders: [folder])
-
-        // Remove temp folder since the path is random on macOS and we can't do efficient comparisson of the dump
-        try fs.removeItem(at: URL(string: NSTemporaryDirectory())!)
         
         XCTAssertEqual(fs.dump(), """
         /
@@ -214,7 +209,6 @@ class TestFileSystemTests: XCTestCase {
     
     func testCreateDeeplyNestedDirectory() throws {
         let fs = try TestFileSystem(folders: [])
-        try fs.removeItem(at: URL(string: NSTemporaryDirectory())!)
 
         // Test if creates deeply nested directory structure
         try fs.createDirectory(at: URL(string: "/one/two/three/four/five/six")!, withIntermediateDirectories: true)

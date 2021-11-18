@@ -26,8 +26,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
             Folder(name: "css", content: [
                 TextFile(name: "test.css", utf8Content: "css"),
             ])
-        ])
-        try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
 
         let channel = EmbeddedChannel()
         let channelHandler = PreviewHTTPHandler(fileIO: fileIO, rootURL: tempDir.url)
@@ -88,8 +87,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
             Folder(name: "css", content: [
                 TextFile(name: "test.css", utf8Content: "css"),
             ])
-        ])
-        try tempDir.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
 
         let channel = EmbeddedChannel()
         defer {

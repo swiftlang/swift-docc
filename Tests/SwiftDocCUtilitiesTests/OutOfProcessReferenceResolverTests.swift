@@ -18,11 +18,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     
     func testInitializationProcess() throws {
         #if os(macOS)
-        let temporaryFolder = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: temporaryFolder, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: temporaryFolder)
-        }
+        let temporaryFolder = try createTemporaryDirectory()
         
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         // When the executable file doesn't exist
@@ -120,11 +116,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     func testResolvingTopicLinkProcess() throws {
         #if os(macOS)
         try assertResolvesTopicLink(makeResolver: { testMetadata in
-            let temporaryFolder = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-            try FileManager.default.createDirectory(at: temporaryFolder, withIntermediateDirectories: true, attributes: nil)
-            defer {
-                try? FileManager.default.removeItem(at: temporaryFolder)
-            }
+            let temporaryFolder = try createTemporaryDirectory()
             let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
             
             let encodedMetadata = try String(data: JSONEncoder().encode(testMetadata), encoding: .utf8)!
@@ -256,11 +248,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     func testResolvingSymbolProcess() throws {
         #if os(macOS)
         try assertResolvesSymbol(makeResolver: { testMetadata in
-            let temporaryFolder = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-            try FileManager.default.createDirectory(at: temporaryFolder, withIntermediateDirectories: true, attributes: nil)
-            defer {
-                try? FileManager.default.removeItem(at: temporaryFolder)
-            }
+            let temporaryFolder = try createTemporaryDirectory()
             let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
             
             let encodedMetadata = try String(data: JSONEncoder().encode(testMetadata), encoding: .utf8)!
@@ -327,11 +315,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     
     func testForwardsErrorOutputProcess() throws {
         #if os(macOS)
-        let temporaryFolder = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: temporaryFolder, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: temporaryFolder)
-        }
+        let temporaryFolder = try createTemporaryDirectory()
         
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         try """
@@ -370,11 +354,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     
     func testForwardsResolverErrorsProcess() throws {
         #if os(macOS)
-        let temporaryFolder = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: temporaryFolder, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: temporaryFolder)
-        }
+        let temporaryFolder = try createTemporaryDirectory()
         
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         try """
@@ -504,11 +484,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     
     func testErrorWhenReceivingBundleIdentifierTwiceProcess() throws {
         #if os(macOS)
-        let temporaryFolder = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: temporaryFolder, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: temporaryFolder)
-        }
+        let temporaryFolder = try createTemporaryDirectory()
         
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         try """

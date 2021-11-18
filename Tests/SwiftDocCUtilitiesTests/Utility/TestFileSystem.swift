@@ -70,7 +70,6 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         
         // Default system paths
         files["/"] = Self.folderFixtureData
-        files[NSTemporaryDirectory()] = Self.folderFixtureData
  
         // Import given folders
         try updateDocumentationBundles(withFolders: folders)

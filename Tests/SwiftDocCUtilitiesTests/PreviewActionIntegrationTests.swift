@@ -70,11 +70,10 @@ class PreviewActionIntegrationTests: XCTestCase {
         return (sourceURL: sourceURL, outputURL: outputURL, templateURL: templateURL)
     }
     
-/*
-    FIXME: This test can fail when run in parallel so it is temporarily disabled (rdar://81524725).
-     
+    // FIXME: This test can fail when run in parallel so it is temporarily disabled (rdar://81524725).
+    
     /// Test the fix for <rdar://problem/48615392>.
-    func testWatchRecoversAfterConversionErrors() throws {
+    func skip_testWatchRecoversAfterConversionErrors() throws {
         #if os(macOS)
         // Source files.
         let source = createMinimalDocsBundle()
@@ -109,7 +108,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             return
         }
 
-        let socketURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
         preview.bindServerToSocketPath = socketURL.path
         
         // The technology output file URL
@@ -223,7 +222,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         try FileManager.default.removeItem(at: templateURL)
         #endif
     }
-*/
     
     class MemoryOutputChecker {
         init(storage: LogHandle.LogStorage, expectation: XCTestExpectation, condition: @escaping (String)->Bool) {
@@ -237,7 +235,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let condition: (String)->Bool
     }
     
-    /// Helper class to fulfill an expecation when given condition is met.
+    /// Helper class to fulfill an expectation when given condition is met.
     class OutputChecker {
         init(fileURL: URL, expectation: XCTestExpectation, condition: @escaping (String)->Bool) {
             self.url = fileURL
@@ -250,7 +248,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let condition: (String)->Bool
     }
     
-    /// Check the contents of the log file for the expectatation.
+    /// Check the contents of the log file for the expectation.
     func checkOutput(timer: Timer) {
         if let checker = timer.userInfo as? OutputChecker {
             if let data = try? Data(contentsOf: checker.url),
@@ -460,7 +458,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             return
         }
 
-        let socketURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
         preview.bindServerToSocketPath = socketURL.path
         
         // Start watching the source and get the initial (successful) state.
@@ -540,10 +538,6 @@ class PreviewActionIntegrationTests: XCTestCase {
     
     // MARK: -
     
-    // Workaround that addTeardownBlock doesn't exist in swift-corelibs-xctest
-    
-    private static var tempFilesToRemove: [URL] = []
-    
     override static func setUp() {
         super.setUp()
         PreviewAction.allowConcurrentPreviews = true
@@ -551,21 +545,6 @@ class PreviewActionIntegrationTests: XCTestCase {
     
     override static func tearDown() {
         PreviewAction.allowConcurrentPreviews = false
-        for url in tempFilesToRemove {
-            try? FileManager.default.removeItem(at: url)
-        }
-        tempFilesToRemove.removeAll()
         super.tearDown()
-    }
-    
-    func createTemporaryDirectory() throws -> URL {
-        // We append "-test" here because the convert action uses the same logic
-        // to create its temporary directory and we don't want to rely on
-        // this folder already existing
-        let url = Foundation.URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent("\(ProcessInfo.processInfo.globallyUniqueString)-test")
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-        Self.tempFilesToRemove.append(url)
-        return url
     }
 }

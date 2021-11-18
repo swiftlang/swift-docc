@@ -20,15 +20,9 @@ class IndexActionTests: XCTestCase {
         // Convert a test bundle as input for the IndexAction
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        
-        let fileManager = FileManager.default
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? fileManager.removeItem(at: targetURL) }
-        
-        let templateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
+        let templateURL = try createTemporaryDirectory(createDirectoryForLastPathComponent: false)
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
-        defer { try? fileManager.removeItem(at: templateURL) }
         
         let targetBundleURL = targetURL.appendingPathComponent("Result.builtdocs")
         

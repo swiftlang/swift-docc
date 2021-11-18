@@ -20,9 +20,8 @@ class NodeTagsTests: XCTestCase {
             InfoPlist(displayName: "spi", identifier: "com.tests.spi"),
             CopyOfFile(original: spiSGURL),
         ])
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString.appending("unit-tests.docc"))
+        let tempURL = try createTemporaryDirectory(pathComponents: "unit-tests.docc", createDirectoryForLastPathComponent: false)
         try bundleFolder.write(to: tempURL)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
         
         let (_, bundle, context) = try loadBundle(from: tempURL)
         

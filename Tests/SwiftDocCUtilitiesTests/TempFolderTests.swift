@@ -14,22 +14,19 @@ import XCTest
 
 class TempFolderTests: XCTestCase {
     func testCreatesAndDeletesTempFolder() throws {
-        var tempFolder: TempFolder? = try TempFolder(content: [
+        var tempFolder: TempFolder! = try TempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
-        ])
-        
-        // Below is safe to unwrap tempFolder because the initializer does not return an optional.
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
         
         // Check the folder is created and the file inside exists.
-        XCTAssertTrue(FileManager.default.directoryExists(atPath: tempFolder!.url.path))
+        XCTAssertTrue(FileManager.default.directoryExists(atPath: tempFolder.url.path))
         XCTAssertTrue(FileManager.default.fileExists(atPath: tempFolder!.url.appendingPathComponent("index.html").path))
         
-        let rootTempFolderPath = NSTemporaryDirectory()
-        
+        let rootTempFolderPath = tempFolder!.url.path
         // Check the temp folder is inside the system temporary folder.
         XCTAssertTrue(tempFolder!.url.path.contains(rootTempFolderPath))
         
-        let tempFolderURL = tempFolder!.url
+        let tempFolderURL = tempFolder.url
         
         tempFolder = nil
         
@@ -38,8 +35,8 @@ class TempFolderTests: XCTestCase {
     }
     
     func testCreatesRandomPaths() throws {
-        let tempFolder1 = try TempFolder(content: [])
-        let tempFolder2 = try TempFolder(content: [])
+        let tempFolder1 = try TempFolder(content: [], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        let tempFolder2 = try TempFolder(content: [], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
         
         XCTAssertNotEqual(tempFolder1.url, tempFolder2.url)
     }

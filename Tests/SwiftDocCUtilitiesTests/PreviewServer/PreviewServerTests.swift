@@ -25,14 +25,21 @@ import Foundation
 // class PreviewServerTests: XCTestCase {
 class PreviewServerTests {
 
+     func createTemporaryDirectory(
+         pathComponents: String...,
+         createDirectoryForLastPathComponent: Bool = true,
+         fileManager: FileManager = .default
+     ) throws -> URL {
+         fatalError("This test is disabled by not conforming to XCTestCase. This helper is added here to make the code compile. This should never be called.")
+     }
+    
     func testPreviewServerBeforeStarted() throws {
         // Create test content
         let tempFolder = try TempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
-        ])
-        try tempFolder.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
 
-        let socketURL = URL(fileURLWithPath: FileManager.default.temporaryDirectory.path).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
         
         // Run test server
         var log = LogHandle.none
@@ -105,14 +112,14 @@ class PreviewServerTests {
             Folder(name: "downloads", content: [
                 TextFile(name: "test.zip", utf8Content: "downloads content"),
             ])
-        ])
+        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
     }
     
     func testPreviewServerPaths() throws {
         let tempFolder = try makeTempFolder()
         
         // Socket URL
-        let socketURL = URL(fileURLWithPath: FileManager.default.temporaryDirectory.path).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
         
         // Create the server
         var log = LogHandle.none
@@ -159,7 +166,7 @@ class PreviewServerTests {
         let tempFolder = try makeTempFolder()
         
         // Socket URL
-        let socketURL = URL(fileURLWithPath: FileManager.default.temporaryDirectory.path).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
         
         // Create the server
         var log = LogHandle.none

@@ -1759,15 +1759,9 @@ class ConvertActionTests: XCTestCase {
         // The navigator index needs to test with the real file manager
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        
-        let fileManager = FileManager.default
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? fileManager.removeItem(at: targetURL) }
-        
-        let templateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
+        let templateURL = try createTemporaryDirectory(createDirectoryForLastPathComponent: false)
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
-        defer { try? fileManager.removeItem(at: templateURL) }
         
         // Convert the documentation and create an index
         
@@ -1788,7 +1782,7 @@ class ConvertActionTests: XCTestCase {
         let indexFromConvertAction = try NavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromConvertAction.count, 37)
         
-        try fileManager.removeItem(at: indexURL)
+        try FileManager.default.removeItem(at: indexURL)
         
         // Run just the index command over the built documentation
         
@@ -2316,10 +2310,7 @@ class ConvertActionTests: XCTestCase {
             footer,
         ])
 
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         let targetURL = tempURL.appendingPathComponent("target", isDirectory: true)
 
         let bundleURL = try bundle.write(inside: tempURL)

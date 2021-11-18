@@ -81,14 +81,11 @@ class DocumentationCuratorTests: XCTestCase {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
         
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString).appendingPathComponent("unit-test.docc")
+        let tempURL = try createTemporaryDirectory(pathComponents: "unit-test.docc", createDirectoryForLastPathComponent: false)
         let testBundleURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
             
         XCTAssert(FileManager.default.fileExists(atPath: testBundleURL.path))
-
-        try FileManager.default.createDirectory(at: tempURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL.deletingLastPathComponent()) }
         try FileManager.default.copyItem(at: testBundleURL, to: tempURL)
         
         let sidecarFile = tempURL.appendingPathComponent("documentation/myfunction.md")
