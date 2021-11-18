@@ -65,7 +65,7 @@ public struct TemplateOption: ParsableArguments {
 
         // Only perform further validation if a templateURL has been provided
         guard let templateURL = templateURL else {
-            if FileManager.default.fileExists(atPath: defaultTemplateURL.appendingPathComponent("index.html").path) {
+            if FileManager.default.fileExists(atPath: defaultTemplateURL.appendingPathComponent(HTMLTemplate.indexFileName.rawValue).path) {
                 self.templateURL = defaultTemplateURL
             }
             return
@@ -73,7 +73,8 @@ public struct TemplateOption: ParsableArguments {
         
         // Confirm that the provided directory contains an 'index.html' file which is a required part of
         // an HTML template for docc.
-        guard FileManager.default.fileExists(atPath: templateURL.appendingPathComponent("index.html").path) else {
+        guard FileManager.default.fileExists(atPath: templateURL.appendingPathComponent(HTMLTemplate.indexFileName.rawValue).path)
+        else {
             throw ValidationError(
                 """
                 Invalid HTML template directory configuration provided via the '\(TemplateOption.environmentVariableKey)' environment variable.

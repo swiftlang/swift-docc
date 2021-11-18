@@ -155,7 +155,7 @@ extension Docc {
             help: "A fallback default language for code listings if no value is provided in the documentation bundle's Info.plist file."
         )
         public var defaultCodeListingLanguage: String?
-            
+
         @Option(
             help: """
                 A fallback default module kind if no value is provided \
@@ -217,6 +217,20 @@ extension Docc {
 
             return outputURL
         }
+        
+        /// Defaults to false
+        @Flag(help: "Produce a Swift-DocC Archive that supports a static hosting environment.")
+        public var transformForStaticHosting = false
+
+        /// A user-provided relative path to be used in the archived output
+        @Option(
+            name: [.customLong("static-hosting-base-path")],
+            help: ArgumentHelp(
+                "The base path your documentation website will be hosted at.",
+                discussion: "For example, to deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.")
+        )
+        var staticHostingBasePath: String?
+        
 
         // MARK: - Property Validation
 
@@ -234,6 +248,31 @@ extension Docc {
                     throw ValidationError("No directory exist at '\(outputParent.path)'.")
                 }
             }
+
+            if transformForStaticHosting {
+                if let templateURL =  templateOption.templateURL {
+                    let neededFileName: String
+
+                    if staticHostingBasePath != nil {
+                        neededFileName = HTMLTemplate.templateFileName.rawValue
+                    }else {
+                        neededFileName = HTMLTemplate.indexFileName.rawValue
+                    }
+
+                    let indexTemplate = templateURL.appendingPathComponent(neededFileName)
+                    if !FileManager.default.fileExists(atPath: indexTemplate.path) {
+                        throw ValidationError("You cannot Transform for Static Hosting as the provided template (\(TemplateOption.environmentVariableKey)) does not contain a valid \(neededFileName)  file.")
+                    }
+
+                } else {
+                    throw ValidationError(
+                        """
+                        Invalid or missing HTML template directory, relative to the docc executable, at: \(templateOption.defaultTemplateURL.path)
+                        Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
+                        """)
+                }
+            }
+
         }
 
         // MARK: - Execution
