@@ -13,6 +13,7 @@ import Foundation
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
 import Markdown
+import SwiftDocCTestUtilities
 
 class IndexActionTests: XCTestCase {
     #if !os(iOS)
@@ -33,7 +34,8 @@ class IndexActionTests: XCTestCase {
             targetDirectory: targetBundleURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
-            currentPlatforms: nil
+            currentPlatforms: nil,
+            temporaryDirectory: createTemporaryDirectory()
         )
         _ = try action.perform(logHandle: .standardOutput)
         

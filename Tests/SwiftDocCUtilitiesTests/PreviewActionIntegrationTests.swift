@@ -85,6 +85,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let logStorage = LogHandle.LogStorage()
         var logHandle = LogHandle.memory(logStorage)
 
+        let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
                 documentationBundleURL: sourceURL,
@@ -94,7 +95,8 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default)
+                fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory)
         }
         
         guard let preview = try? PreviewAction(
@@ -289,6 +291,7 @@ class PreviewActionIntegrationTests: XCTestCase {
 
         let engine = DiagnosticEngine()
 
+        let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
                 documentationBundleURL: sourceURL,
@@ -299,6 +302,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 emitDigest: false,
                 currentPlatforms: nil,
                 fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory,
                 diagnosticEngine: engine)
         }
         
@@ -359,6 +363,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let logStorage = LogHandle.LogStorage()
         let logHandle = LogHandle.memory(logStorage)
         
+        let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
                 documentationBundleURL: sourceURL,
@@ -368,7 +373,8 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default)
+                fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory)
         }
         
         guard let preview = try? PreviewAction(
@@ -429,6 +435,7 @@ class PreviewActionIntegrationTests: XCTestCase {
 
         var convertFuture: () -> Void = {}
         
+        let convertActionTempDirectory = try createTemporaryDirectory()
         /// Create the convert action and store it
         let createConvertAction = { () -> ConvertAction in
             var convertAction = try ConvertAction(
@@ -439,7 +446,8 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default)
+                fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory)
                 
             // Inject a future to control how long the conversion takes
             convertAction.willPerformFuture = convertFuture
