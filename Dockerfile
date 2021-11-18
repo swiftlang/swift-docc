@@ -6,4 +6,14 @@
 # See https://swift.org/LICENSE.txt for license information
 # See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 
-FROM swiftlang/swift:nightly-5.5 
+FROM swift:5.5
+
+# Set up the current build user in the same way done in the Swift.org CI system: 
+# https://github.com/apple/swift-docker/blob/main/swift-ci/master/ubuntu/20.04/Dockerfile.
+
+RUN groupadd -g 998 build-user && \
+  useradd -m -r -u 42 -g build-user build-user
+  
+USER build-user
+
+WORKDIR /home/build-user
