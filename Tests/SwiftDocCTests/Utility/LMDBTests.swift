@@ -11,6 +11,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 final class SwiftLMDBTests: XCTestCase {
     var environment: LMDB.Environment!
@@ -30,7 +31,7 @@ final class SwiftLMDBTests: XCTestCase {
     func testVersion() {
         let version = LMDB.default.version
         
-        // Ensure the LMDB library version is the exptected one: 0.9.70
+        // Ensure the LMDB library version is the expected one: 0.9.70
         XCTAssertEqual(version.description, "0.9.70")
     }
     

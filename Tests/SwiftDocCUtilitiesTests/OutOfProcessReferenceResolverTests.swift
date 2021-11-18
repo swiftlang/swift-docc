@@ -13,6 +13,7 @@ import Foundation
 import SymbolKit
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
+import SwiftDocCTestUtilities
 
 class OutOfProcessReferenceResolverTests: XCTestCase {
     

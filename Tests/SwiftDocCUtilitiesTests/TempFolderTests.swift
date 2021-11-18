@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class TempFolderTests: XCTestCase {
     func testCreatesAndDeletesTempFolder() throws {

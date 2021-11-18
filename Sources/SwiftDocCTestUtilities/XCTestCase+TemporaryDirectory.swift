@@ -10,11 +10,10 @@
 
 import Foundation
 import XCTest
-@testable import SwiftDocC
 
 // These helpers methods exist to put temp files for different test executions in different locations when running in Swift CI.
 
-extension XCTestCase {
+public extension XCTestCase {
     
     @available(*, deprecated, message: "Use `createTemporaryDirectory` instead in unit tests to avoid referencing a shared location in Swift CI.")
     func NSTemporaryDirectory() -> String {
@@ -52,5 +51,12 @@ extension XCTestCase {
         try fileManager.createDirectory(at: urlToCreate, withIntermediateDirectories: true, attributes: nil)
         
         return tempURL
+    }
+}
+
+private extension String {
+    func replacingWhitespaceAndPunctuation(with separator: String) -> String {
+        let charactersToStrip = CharacterSet.whitespaces.union(.punctuationCharacters)
+        return components(separatedBy: charactersToStrip).filter({ !$0.isEmpty }).joined(separator: separator)
     }
 }

@@ -11,6 +11,7 @@
 import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class SymbolReferenceTests: XCTestCase {
     func testUsesIdentifierForUnresolvedSymbols() {

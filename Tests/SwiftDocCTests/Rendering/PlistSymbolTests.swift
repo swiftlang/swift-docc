@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class PlistSymbolTests: XCTestCase {
     private let plistSymbolURL = Bundle.module.url(

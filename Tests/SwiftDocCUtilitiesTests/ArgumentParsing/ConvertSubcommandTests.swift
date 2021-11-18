@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocCUtilities
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class ConvertSubcommandTests: XCTestCase {
     private let testBundleURL = Bundle.module.url(
