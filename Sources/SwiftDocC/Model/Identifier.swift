@@ -126,13 +126,18 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     
     /// The reference cache key
     var cacheKey: String {
-        return "\(path):\(fragment ?? ""):\(sourceLanguage.id)"
+        return Self.cacheKey(path: path, fragment: fragment, sourceLanguages: sourceLanguages)
     }
     
     /// - Note: The `path` parameter is escaped to a path readable string.
     public init(bundleIdentifier: String, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
+        self.init(bundleIdentifier: bundleIdentifier, path: path, fragment: fragment, sourceLanguages: [sourceLanguage])
+    }
+    
+    public init(bundleIdentifier: String, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
+        precondition(!sourceLanguages.isEmpty, "ResolvedTopicReference.sourceLanguages cannot be empty")
         // Check for a cached instance of the reference
-        let key = "\(path):\(fragment ?? ""):\(sourceLanguage.id)"
+        let key = Self.cacheKey(path: path, fragment: fragment, sourceLanguages: sourceLanguages)
         let cached = Self.sharedPool.sync { $0[bundleIdentifier]?[key] }
         if let resolved = cached {
             self = resolved
@@ -143,11 +148,25 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         self.bundleIdentifier = bundleIdentifier
         self.path = urlReadablePath(path)
         self.fragment = fragment.map { urlReadableFragment($0) }
-        self.sourceLanguages = [sourceLanguage]
+        self.sourceLanguages = sourceLanguages
         updateURL()
 
         // Cache the reference
         Self.sharedPool.sync { $0[bundleIdentifier, default: [:]][cacheKey] = self }
+    }
+    
+    private static func cacheKey(
+        path: String,
+        fragment: String?,
+        sourceLanguages: Set<SourceLanguage>
+    ) -> String {
+        let sourceLanguagesString = sourceLanguages.map(\.id).sorted().joined(separator: "-")
+        
+        if let fragment = fragment {
+            return "\(path):\(fragment):\(sourceLanguagesString)"
+        } else {
+            return "\(path):\(sourceLanguagesString)"
+        }
     }
     
     /// The topic URL as you would write in a link.
@@ -218,7 +237,13 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// - Parameter fragment: The new fragment.
     /// - Returns: The resulting topic reference.
     public func withFragment(_ fragment: String?) -> ResolvedTopicReference {
-        let newReference = ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: path, fragment: fragment.map(urlReadableFragment), sourceLanguage: sourceLanguage)
+        let newReference = ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            path: path,
+            fragment: fragment.map(urlReadableFragment),
+            sourceLanguages: sourceLanguages
+        )
+        
         Self.addToPool(newReference)
         return newReference
     }
@@ -230,7 +255,11 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// - Parameter path: The path to append.
     /// - Returns: The resulting topic reference.
     public func appendingPath(_ path: String) -> ResolvedTopicReference {
-        let newReference = ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: url.appendingPathComponent(urlReadablePath(path), isDirectory: false).path, sourceLanguage: sourceLanguage)
+        let newReference = ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            path: url.appendingPathComponent(urlReadablePath(path), isDirectory: false).path,
+            sourceLanguages: sourceLanguages
+        )
         Self.addToPool(newReference)
         return newReference
     }
@@ -248,7 +277,12 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             return self
         }
         let newPath = url.appendingPathComponent(referencePath, isDirectory: false).path
-        let newReference = ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: newPath, fragment: reference.fragment, sourceLanguage: sourceLanguage)
+        let newReference = ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            path: newPath,
+            fragment: reference.fragment,
+            sourceLanguages: sourceLanguages
+        )
         Self.addToPool(newReference)
         return newReference
     }
@@ -256,7 +290,12 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// Creates a new topic reference by removing the last path component from this topic reference.
     public func removingLastPathComponent() -> ResolvedTopicReference {
         let newPath = String(pathComponents.dropLast().joined(separator: "/").dropFirst())
-        let newReference = ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: newPath, fragment: fragment, sourceLanguage: sourceLanguage)
+        let newReference = ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            path: newPath,
+            fragment: fragment,
+            sourceLanguages: sourceLanguages
+        )
         Self.addToPool(newReference)
         return newReference
     }
@@ -291,11 +330,23 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         return url.absoluteString
     }
     
+    // Note: The source language of a `ResolvedTopicReference` is not considered when
+    // hashing and checking for equality. This is intentional as DocC uses a single
+    // ResolvedTopicReference to refer to all source language variants of a topic.
+    //
+    // This allows clients to look up topic references without knowing ahead of time
+    // which languages they are available in.
+    
     public func hash(into hasher: inout Hasher) {
         hasher.combine(bundleIdentifier)
         hasher.combine(path)
         hasher.combine(fragment)
-        hasher.combine(sourceLanguage.id)
+    }
+    
+    public static func == (lhs: ResolvedTopicReference, rhs: ResolvedTopicReference) -> Bool {
+        return lhs.bundleIdentifier == rhs.bundleIdentifier
+            && lhs.path == rhs.path
+            && lhs.fragment == rhs.fragment
     }
 }
 

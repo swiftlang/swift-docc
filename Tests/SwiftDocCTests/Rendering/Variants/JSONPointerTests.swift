@@ -48,6 +48,15 @@ class JSONPointerTests: XCTestCase {
         )
     }
     
+    func testPrependingPathComponents() {
+        XCTAssertEqual(
+            JSONPointer(pathComponents: ["c", "d", "e"])
+                .prependingPathComponents(["a", "b"])
+                .pathComponents,
+            ["a", "b", "c", "d", "e"]
+        )
+    }
+    
     /// Returns a coding path for testing.
     ///
     /// The coding path is composed of the following components:
