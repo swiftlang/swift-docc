@@ -781,7 +781,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     let reference = result.topicGraphNode.reference
                     
                     let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
-                    let symbolReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: symbolPath, fragment: nil, sourceLanguage: reference.sourceLanguage)
+                    let symbolReference = ResolvedTopicReference(
+                        bundleIdentifier: reference.bundleIdentifier,
+                        path: symbolPath,
+                        fragment: nil,
+                        sourceLanguages: reference.sourceLanguages
+                    )
                     
                     uncuratedDocumentationExtensions[symbolReference, default: []].append(result)
                     
@@ -853,23 +858,26 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         var updatedNode = documentationCache[reference]!
         
         // Pull a matched article out of the cache and attach content to the symbol
-        if let found = matches?.first, let symbol = updatedNode.symbol {
-            let article = found.value
+        let symbol = updatedNode.unifiedSymbol?.documentedSymbol
+        let foundDocumentationExtension = matches?.first
+        
+        updatedNode.initializeSymbolContent(
+            documentationExtension: foundDocumentationExtension?.value,
+            engine: diagnosticEngine
+        )
 
-            updatedNode.initializeSymbolContent(article: article, engine: diagnosticEngine)
-
-            // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
-            if article.deprecationSummary != nil,
-                (updatedNode.semantic as? Symbol)?.isDeprecated == false,
-                let articleMarkup = article.markup {
-                let directive = articleMarkup.children.mapFirst { child -> BlockDirective? in
-                    guard let directive = child as? BlockDirective, directive.name == DeprecationSummary.directiveName else { return nil }
-                    return directive
-                }
-                diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: found.source, severity: .warning, range: directive?.range, identifier: "org.swift.docc.DeprecationSummaryForAvailableSymbol", summary: "\(symbol.absolutePath.singleQuoted) isn't unconditionally deprecated"), possibleSolutions: []))
+        // After merging the documentation extension into the symbol, warn about deprecation summary for non-deprecated symbols.
+        if let foundDocumentationExtension = foundDocumentationExtension,
+            foundDocumentationExtension.value.deprecationSummary != nil,
+            (updatedNode.semantic as? Symbol)?.isDeprecated == false,
+            let articleMarkup = foundDocumentationExtension.value.markup,
+            let symbol = symbol
+        {
+            let directive = articleMarkup.children.mapFirst { child -> BlockDirective? in
+                guard let directive = child as? BlockDirective, directive.name == DeprecationSummary.directiveName else { return nil }
+                return directive
             }
-        } else {
-            updatedNode.initializeSymbolContent(article: nil, engine: diagnosticEngine)
+            diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: foundDocumentationExtension.source, severity: .warning, range: directive?.range, identifier: "org.swift.docc.DeprecationSummaryForAvailableSymbol", summary: "\(symbol.absolutePath.singleQuoted) isn't unconditionally deprecated"), possibleSolutions: []))
         }
 
         return updatedNode
@@ -951,18 +959,23 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     private func referenceFor(_ symbol: UnifiedSymbolGraph.Symbol, moduleName: String, bundle: DocumentationBundle, shouldAddHash: Bool = false, shouldAddKind: Bool = false) -> ResolvedTopicReference {
-        let identifier = symbol.defaultIdentifier
-        let selector = symbol.defaultSelector!
-        let language = SourceLanguage(id: identifier.interfaceLanguage)
-        
         let symbolReference: SymbolReference
         if let pathComponents = knownDisambiguatedSymbolPathComponents?[symbol.uniqueIdentifier],
-           let componentsCount = symbol.pathComponents[selector]?.count,
+           let componentsCount = symbol.defaultSymbol?.pathComponents.count,
            pathComponents.count == componentsCount
         {
-            symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguage: language)
+            symbolReference = SymbolReference(
+                pathComponents: pathComponents,
+                interfaceLanguages: symbol.sourceLanguages
+            )
         } else {
-            symbolReference = SymbolReference(symbol.uniqueIdentifier, interfaceLanguage: language, symbol: symbol.symbol(forSelector: selector), shouldAddHash: shouldAddHash, shouldAddKind: shouldAddKind)
+            symbolReference = SymbolReference(
+                symbol.uniqueIdentifier,
+                interfaceLanguages: symbol.sourceLanguages,
+                defaultSymbol: symbol.defaultSymbol,
+                shouldAddHash: shouldAddHash,
+                shouldAddKind: shouldAddKind
+            )
         }
 
         return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
@@ -1083,6 +1096,22 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                 let fileURL = symbolGraphLoader.mainModuleURL(forModule: moduleName)
                 
+                let moduleInterfaceLanguages: Set<SourceLanguage>
+                if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
+                    // FIXME: Update with new SymbolKit API once available.
+                    // This is a very inefficient way to gather the source languages
+                    // represented in a symbol graph. Adding a dedicated SymbolKit API is tracked
+                    // with SR-15551 and rdar://85982095.
+                    moduleInterfaceLanguages = Set(
+                        unifiedSymbolGraph.symbols.flatMap(\.value.sourceLanguages)
+                    )
+                } else {
+                    moduleInterfaceLanguages = [.swift]
+                }
+                
+                // If it's an existing module, update the interface languages
+                moduleReferences[moduleName]?.sourceLanguages.formUnion(moduleInterfaceLanguages)
+                
                 // Import the symbol graph symbols
                 let moduleReference: ResolvedTopicReference
                 
@@ -1097,24 +1126,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                     addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, bundle: bundle)
                     
-                    let moduleInterfaceLanguage: SourceLanguage
-                    if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
-                        // Infer the module's interface language from the interface
-                        // language of the first symbol in the symbol graph.
-                        let firstSymbolInterfaceLanguage = unifiedSymbolGraph.symbols.first?
-                            .value.defaultSelector?.interfaceLanguage
-                        
-                        moduleInterfaceLanguage = firstSymbolInterfaceLanguage.flatMap { languageName in
-                            SourceLanguage(knownLanguageIdentifier: languageName)
-                        } ?? .swift
-                    } else {
-                        moduleInterfaceLanguage = .swift
-                    }
-                    
                     // Create a module symbol
                     let moduleIdentifier = SymbolGraph.Symbol.Identifier(
                         precise: moduleName,
-                        interfaceLanguage: moduleInterfaceLanguage.id
+                        interfaceLanguage: moduleInterfaceLanguages.first!.id
                     )
                     
                     // Use the default module kind for this bundle if one was provided,
@@ -1128,7 +1143,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
                             kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
                             mixins: [:])
-                    let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguage: moduleInterfaceLanguage, symbol: moduleSymbol)
+                    let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguages: moduleInterfaceLanguages, defaultSymbol: moduleSymbol)
                     moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, bundle: bundle)
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
@@ -1400,7 +1415,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// When building multi-platform documentation symbols might have more than one declaration
-    /// depending on variances in their implementation across platforms (e.g. use ``NSPoint`` vs ``CGPoint`` parameter in a method).
+    /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
     func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference], bundle: DocumentationBundle, fileURL otherSymbolGraphURL: URL?) throws {
         let mergeError = Synchronized<Error?>(nil)
@@ -2218,7 +2233,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             /// Adds any non-resolving reference to the `allCandidateURLs` collection.
             func attemptToResolve(_ reference: ResolvedTopicReference) -> TopicReferenceResolutionResult? {
                 if topicGraph.nodeWithReference(reference) != nil {
-                    let resolved = ResolvedTopicReference(bundleIdentifier: referenceBundleIdentifier, path: reference.url.path, fragment: reference.fragment, sourceLanguage: reference.sourceLanguage)
+                    let resolved = ResolvedTopicReference(
+                        bundleIdentifier: referenceBundleIdentifier,
+                        path: reference.url.path,
+                        fragment: reference.fragment,
+                        sourceLanguages: reference.sourceLanguages
+                    )
                     // If resolving a symbol link, only match symbol nodes.
                     if isCurrentlyResolvingSymbolLink && !(documentationCache[resolved]?.semantic is Symbol) {
                         allCandidateURLs.append(reference.url)
@@ -2239,7 +2259,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 return bundle.identifier == referenceBundleIdentifier || urlReadablePath(bundle.displayName) == referenceBundleIdentifier
             })?.identifier {
                 // 1. Check if reference is already resolved but not found in the cache
-                let alreadyResolved = ResolvedTopicReference(bundleIdentifier: knownBundleIdentifier, path: absolutePath, fragment: unresolvedReference.topicURL.components.fragment, sourceLanguage: parent.sourceLanguage)
+                let alreadyResolved = ResolvedTopicReference(
+                    bundleIdentifier: knownBundleIdentifier,
+                    path: absolutePath,
+                    fragment: unresolvedReference.topicURL.components.fragment,
+                    sourceLanguages: parent.sourceLanguages
+                )
                 if let resolved = attemptToResolve(alreadyResolved) {
                     return resolved
                 }
@@ -2278,7 +2303,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let parentPath = parent.path.components(separatedBy: "/").dropLast()
                 let siblingSymbolReference: ResolvedTopicReference?
                 if parentPath.count >= 2 {
-                    siblingSymbolReference = ResolvedTopicReference(bundleIdentifier: knownBundleIdentifier, path: parentPath.joined(separator: "/"), fragment: unresolvedReference.topicURL.components.fragment, sourceLanguage: parent.sourceLanguage).appendingPathOfReference(unresolvedReference)
+                    siblingSymbolReference = ResolvedTopicReference(
+                        bundleIdentifier: knownBundleIdentifier,
+                        path: parentPath.joined(separator: "/"),
+                        fragment: unresolvedReference.topicURL.components.fragment,
+                        sourceLanguages: parent.sourceLanguages
+                    ).appendingPathOfReference(unresolvedReference)
+                    
                     if let resolved = attemptToResolve(siblingSymbolReference!) {
                         return resolved
                     }

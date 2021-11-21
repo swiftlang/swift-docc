@@ -1,0 +1,532 @@
+{
+  "metadata" : {
+    "formatVersion" : {
+      "major" : 0,
+      "minor" : 5,
+      "patch" : 3
+    },
+    "generator" : "clang"
+  },
+  "module" : {
+    "name" : "MixedLanguageFramework",
+    "platform" : {
+      "architecture" : "x86_64",
+      "operatingSystem" : {
+        "minimumVersion" : {
+          "major" : 11,
+          "minor" : 0,
+          "patch" : 0
+        },
+        "name" : "macos"
+      },
+      "vendor" : "apple"
+    }
+  },
+  "relationships" : [
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@Foo@first",
+      "target" : "c:@E@Foo",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@Foo@fourth",
+      "target" : "c:@E@Foo",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@Foo@second",
+      "target" : "c:@E@Foo",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@Foo@third",
+      "target" : "c:@E@Foo",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "inheritsFrom",
+      "source" : "c:objc(cs)Bar",
+      "target" : "c:objc(cs)NSObject",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(cs)Bar(cm)MyStringFunction:error:",
+      "target" : "c:objc(cs)Bar",
+      "targetFallback" : null
+    }
+  ],
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "BAR"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 10,
+                "line" : 30
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 30
+              }
+            },
+            "text" : "A bar."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)Bar"
+      },
+      "kind" : {
+        "displayName" : "Class",
+        "identifier" : "class"
+      },
+      "location" : {
+        "position" : {
+          "character" : 11,
+          "line" : 31
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "Bar"
+      },
+      "pathComponents" : [
+        "Bar"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "MYSTRINGFUNCTION:ERROR:"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 27,
+                "line" : 34
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 34
+              }
+            },
+            "text" : "Does a string function."
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 41,
+                "line" : 35
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 35
+              }
+            },
+            "text" : "- parameter string: The given string."
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 24,
+                "line" : 36
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 36
+              }
+            },
+            "text" : "- returns: A string."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)Bar(cm)MyStringFunction:error:"
+      },
+      "kind" : {
+        "displayName" : "Class Method",
+        "identifier" : "type.method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 37
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "MyStringFunction:error:"
+      },
+      "pathComponents" : [
+        "Bar",
+        "MyStringFunction:error:"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "FOO"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@Foo"
+      },
+      "kind" : {
+        "displayName" : "Enumeration",
+        "identifier" : "enum"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 18
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "Foo"
+      },
+      "pathComponents" : [
+        "Foo"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "FOO"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:MixedLanguageFramework.h@T@Foo"
+      },
+      "kind" : {
+        "displayName" : "Typedef",
+        "identifier" : "typealias"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 18
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "Foo"
+      },
+      "pathComponents" : [
+        "Foo"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "FIRST"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 25,
+                "line" : 20
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 20
+              }
+            },
+            "text" : "The first option."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@Foo@first"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 21
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "first"
+      },
+      "pathComponents" : [
+        "Foo",
+        "first"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "FOURTH"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 26,
+                "line" : 26
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 26
+              }
+            },
+            "text" : "The fourth option."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@Foo@fourth"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 27
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "fourth"
+      },
+      "pathComponents" : [
+        "Foo",
+        "fourth"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "SECOND"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 26,
+                "line" : 22
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 22
+              }
+            },
+            "text" : "The second option."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@Foo@second"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 23
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "second"
+      },
+      "pathComponents" : [
+        "Foo",
+        "second"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "THIRD"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 25,
+                "line" : 24
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 24
+              }
+            },
+            "text" : "The third option."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@Foo@third"
+      },
+      "kind" : {
+        "displayName" : "Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 25
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "third"
+      },
+      "pathComponents" : [
+        "Foo",
+        "third"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "_MIXEDLANGUAGEFRAMEWORKVERSIONNUMBER"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 54,
+                "line" : 9
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 9
+              }
+            },
+            "text" : "Project version number for MixedLanguageFramework."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@MixedLanguageFrameworkVersionNumber"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 25,
+          "line" : 10
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "_MixedLanguageFrameworkVersionNumber"
+      },
+      "pathComponents" : [
+        "_MixedLanguageFrameworkVersionNumber"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "_MIXEDLANGUAGEFRAMEWORKVERSIONSTRING"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 54,
+                "line" : 12
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 12
+              }
+            },
+            "text" : "Project version string for MixedLanguageFramework."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@MixedLanguageFrameworkVersionString"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 38,
+          "line" : 13
+        },
+        "uri" : "MixedLanguageFramework.h"
+      },
+      "names" : {
+        "title" : "_MixedLanguageFrameworkVersionString"
+      },
+      "pathComponents" : [
+        "_MixedLanguageFrameworkVersionString"
+      ]
+    }
+  ]
+}

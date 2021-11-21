@@ -1848,7 +1848,7 @@ class ConvertActionTests: XCTestCase {
             buildIndex: true
         )
         
-        FeatureFlags.current.isExperimentalObjectiveCSupportEnabled = true
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
         _ = try action.perform(logHandle: .none)
         
         let index = try NavigatorIndex(url: targetDirectory.appendingPathComponent("index"))
@@ -1874,10 +1874,164 @@ class ConvertActionTests: XCTestCase {
         
         let firstChild = try XCTUnwrap(index.navigatorTree.root.children.first)
         assertAllChildrenAreObjectiveC(firstChild)
-        
-        FeatureFlags.current.isExperimentalObjectiveCSupportEnabled = false
     }
-
+    
+    func testMixedLanguageNavigatorIndexGeneration() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        // The navigator index needs to test with the real File Manager
+        let temporaryTestOutputDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(
+            "\(#function)-\(UUID())"
+        )
+        try FileManager.default.createDirectory(
+            at: temporaryTestOutputDirectory,
+            withIntermediateDirectories: true,
+            attributes: nil
+        )
+        
+        defer {
+            try? FileManager.default.removeItem(at: temporaryTestOutputDirectory)
+        }
+        
+        let bundleDirectory = try XCTUnwrap(
+            Bundle.module.url(
+                forResource: "MixedLanguageFramework",
+                withExtension: "docc",
+                subdirectory: "Test Bundles"
+            ),
+            "Unexpectedly failed to find 'MixedLanguageFramework.docc' test bundle."
+        )
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundleDirectory,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: temporaryTestOutputDirectory,
+            htmlTemplateDirectory: nil,
+            emitDigest: false,
+            currentPlatforms: nil,
+            buildIndex: true
+        )
+        
+        _ = try action.perform(logHandle: .none)
+        
+        let index = try NavigatorIndex(
+            url: temporaryTestOutputDirectory.appendingPathComponent("index")
+        )
+        
+        func assertForAllChildren(
+            _ node: NavigatorTree.Node,
+            assert: (_ node: NavigatorTree.Node) -> ()
+        ) {
+            assert(node)
+            
+            for childNode in node.children {
+                assertForAllChildren(childNode, assert: assert)
+            }
+        }
+        
+        XCTAssertEqual(
+            index.navigatorTree.root.children.count, 2,
+            "The root of the navigator tree should contain '2' children, one for each language"
+        )
+        
+        let swiftRootNode = try XCTUnwrap(
+            index.navigatorTree.root.children.first { node in
+                return node.item.languageID == InterfaceLanguage.swift.mask
+            },
+            "The navigator tree should contain a Swift item at the root."
+        )
+        
+        let objectiveCRootNode = try XCTUnwrap(
+            index.navigatorTree.root.children.first { node in
+                return node.item.languageID == InterfaceLanguage.objc.mask
+            },
+            "The navigator tree should contain an Objective-C item at the root."
+        )
+        
+        var swiftNavigatorEntries = [String]()
+        assertForAllChildren(swiftRootNode) { node in
+            XCTAssertEqual(
+                node.item.languageID,
+                InterfaceLanguage.swift.mask,
+                """
+                Node from Swift root node did not have Swift language ID: \
+                '\(node.item.usrIdentifier ?? node.item.title)'"
+                """
+            )
+            
+            swiftNavigatorEntries.append(node.item.title)
+        }
+        
+        let expectedSwiftNavigatorEntires = [
+            "Swift",
+            "MixedLanguageFramework",
+            "Classes",
+            "Bar",
+            "Type Methods",
+            "class func myStringFunction(String) throws -> String",
+            "Structures",
+            "Foo",
+            "Initializers",
+            "init(rawValue: UInt)",
+            "Type Properties",
+            "static var first: Foo",
+            "static var fourth: Foo",
+            "static var second: Foo",
+            "static var third: Foo",
+            "SwiftOnlyStruct",
+            "Instance Methods",
+            "func tada()",
+        ]
+        
+        XCTAssertEqual(
+            swiftNavigatorEntries,
+            expectedSwiftNavigatorEntires,
+            "Swift navigator contained unexpected content."
+        )
+        
+        var objectiveCNavigatorEntries = [String]()
+        assertForAllChildren(objectiveCRootNode) { node in
+            XCTAssertEqual(
+                node.item.languageID,
+                InterfaceLanguage.objc.mask,
+                """
+                Node from Objective-C symbol graph did not have Objective-C language ID: \
+                '\(node.item.usrIdentifier ?? node.item.title)'"
+                """
+            )
+            
+            objectiveCNavigatorEntries.append(node.item.title)
+        }
+        
+        let expectedObjectiveNavigatorEntries = [
+            "Objective-C",
+            "MixedLanguageFramework",
+            "Classes",
+            "Bar",
+            "Type Methods",
+            "class func myStringFunction(String) throws -> String",
+            "Variables",
+            "_MixedLanguageFrameworkVersionNumber",
+            "_MixedLanguageFrameworkVersionString",
+            "Type Aliases",
+            "Foo",
+            "Enumerations",
+            "Foo",
+            "Enumeration Cases",
+            "static var first: Foo",
+            "static var fourth: Foo",
+            "static var second: Foo",
+            "static var third: Foo",
+        ]
+        
+        XCTAssertEqual(
+            objectiveCNavigatorEntries,
+            expectedObjectiveNavigatorEntries,
+            "Swift navigator contained unexpected content."
+        )
+    }
+    
     func testDiagnosticLevel() throws {
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
@@ -2089,7 +2243,7 @@ class ConvertActionTests: XCTestCase {
             testDataProvider.fileExists(atPath: targetDirectory.appendingPathComponent("data").path)
         )
         
-        FeatureFlags.current.isExperimentalObjectiveCSupportEnabled = true
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
         
         try action.performAndHandleResult()
         XCTAssertTrue(
