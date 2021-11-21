@@ -636,7 +636,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Automatic groups are named after the child's kind, e.g.
             // "Methods", "Variables", etc.
             let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
-            let groups = try! AutomaticCuration.topics(for: documentationNode, context: context)
+            let groups = try! AutomaticCuration.topics(for: documentationNode, withTrait: nil, context: context)
                 .compactMap({ group -> AutomaticCuration.TaskGroup? in
                     // Remove references that have been already curated.
                     let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
@@ -1107,12 +1107,20 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return groupSections
         } ?? .init(defaultValue: [])
         
+        // Build up the topic section variants by iterating over all available
+        // variant traits.
+        //
+        // We can't just iterate over the traits of the existing
+        // topics section or automatic task groups, because it's important
+        // for automatic curation to consider _all_ variants this node is available in.
         node.topicSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: symbol.automaticTaskGroupsVariants,
-            optionalValue: symbol.topicsVariants
-        ) { _, automaticTaskGroups, topics in
-            var sections = [TaskGroupRenderSection]()
+            from: documentationNode.availableVariantTraits,
+            fallbackDefaultValue: []
+        ) { trait in
+            let automaticTaskGroups = symbol.automaticTaskGroupsVariants[trait] ?? []
+            let topics = symbol.topicsVariants[trait]
             
+            var sections = [TaskGroupRenderSection]()
             if let topics = topics, !topics.taskGroups.isEmpty {
                 sections.append(
                     contentsOf: renderGroups(topics, allowExternalLinks: false, contentCompiler: &contentCompiler)
@@ -1133,7 +1141,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Children of the current symbol that have not been curated manually in a task group will all
             // be automatically curated in task groups after their symbol kind: "Properties", "Enumerations", etc.
             let alreadyCurated = Set(sections.flatMap { $0.identifiers })
-            let groups = try! AutomaticCuration.topics(for: documentationNode, context: context)
+            let groups = try! AutomaticCuration.topics(for: documentationNode, withTrait: trait, context: context)
             
             sections.append(contentsOf: groups.compactMap { group in
                 let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
@@ -1159,7 +1167,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 )
             }
             
-            return sections
+            if sections.isEmpty {
+                return nil
+            } else {
+                return sections
+            }
         } ?? .init(defaultValue: [])
         
         node.defaultImplementationsSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
@@ -1203,20 +1215,27 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } ?? .init(defaultValue: [])
 
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
-            from: symbol.seeAlsoVariants
-        ) { variant in
+            from: documentationNode.availableVariantTraits,
+            fallbackDefaultValue: []
+        ) { trait in
             // If the symbol contains an authored See Also section from the documentation extension,
             // add it as the first section under See Also.
             var seeAlsoSections = [TaskGroupRenderSection]()
             
-            if let seeAlso = variant.map(\.1) {
+            if let seeAlso = symbol.seeAlsoVariants[trait] {
                 seeAlsoSections.append(
                     contentsOf: renderGroups(seeAlso, allowExternalLinks: true, contentCompiler: &contentCompiler)
                 )
             }
             
             // Curate the current node's siblings as further See Also groups.
-            if let seeAlso = try! AutomaticCuration.seeAlso(for: documentationNode, context: context, bundle: bundle, renderContext: renderContext, renderer: contentRenderer) {
+            if let seeAlso = try! AutomaticCuration.seeAlso(
+                for: documentationNode,
+                context: context,
+                bundle: bundle,
+                renderContext: renderContext,
+                renderer: contentRenderer
+            ) {
                 contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
                 seeAlsoSections.append(TaskGroupRenderSection(
                     title: seeAlso.title,
@@ -1226,9 +1245,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     generated: true
                 ))
             }
-
-            return seeAlsoSections
-        }
+            
+            if seeAlsoSections.isEmpty {
+                return nil
+            } else {
+                return seeAlsoSections
+            }
+        } ?? .init(defaultValue: [])
         
         node.deprecationSummaryVariants = VariantCollection<[RenderBlockContent]?>(
             from: symbol.deprecatedSummaryVariants
