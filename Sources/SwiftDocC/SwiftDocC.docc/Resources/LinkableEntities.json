@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Specification of the DocC linkable-entities.json digest file.",
-        "version": "0.1.0",
+        "version": "0.2.0",
         "title": "Linkable Entities"
     },
     "paths": { },
@@ -17,34 +17,13 @@
             "LinkDestinationSummary": {
                 "type": "object",
                 "required": [
-                    "kind",
-                    "language",
-                    "path",
                     "referenceURL",
-                    "title",
-                    "availableLanguages"
+                    "availableLanguages",
+                    "contentVariants"
                 ],
                 "properties": {
-                    "kind": {
-                        "type": "string"
-                    },
-                    "language": {
-                        "type": "string"
-                    },
-                    "path": {
-                        "type": "string"
-                    },
                     "referenceURL": {
                         "type": "string"
-                    },
-                    "title": {
-                        "type": "string"
-                    },
-                    "abstract": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/RenderInlineContent"
-                        }
                     },
                     "availableLanguages": {
                         "type": "array",
@@ -58,25 +37,16 @@
                             "$ref": "#/components/schemas/PlatformAvailability"
                         }
                     },
-                    "taskGroups": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/TaskGroup"
-                        }
-                    },
-                    "usr": {
-                        "type": "string"
-                    },
-                    "declarationFragments": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/DeclarationToken"
-                        }
-                    },
                     "redirects": {
                         "type": "array",
                         "items": {
                             "type": "string"
+                        }
+                    },
+                    "contentVariants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ContentVariant"
                         }
                     }
                 }
@@ -92,6 +62,71 @@
                         "type": "string"
                     },
                     "id": {
+                        "type": "string"
+                    }
+                }
+            },
+            "RenderNodeVariantTrait": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/TraitInterfaceLanguage"
+                    }
+                ]
+            },
+            "ContentVariant": {
+                "type": "object",
+                "required": [
+                    "traits",
+                    "kind",
+                    "path",
+                    "title"
+                ],
+                "properties": {
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderNodeVariantTrait"
+                        }
+                    },
+                    "kind": {
+                        "type": "string"
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "usr": {
+                        "type": "string"
+                    },
+                    "declarationFragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "taskGroups": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaskGroup"
+                        }
+                    }
+                }
+            },
+            "TraitInterfaceLanguage": {
+                "required": [
+                    "interfaceLanguage"
+                ],
+                "type": "object",
+                "properties": {
+                    "interfaceLanguage": {
                         "type": "string"
                     }
                 }
