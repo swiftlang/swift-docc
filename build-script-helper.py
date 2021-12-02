@@ -131,7 +131,7 @@ def run(args):
         swiftpm_args=get_swiftpm_options('install', args))
       install(args, env)
     except subprocess.CalledProcessError as e:
-      printerr('FAIL: Generating the Xcode project failed')
+      printerr('FAIL: Installing %s failed' % package_name)
       printerr('Executing: %s' % ' '.join(e.cmd))
       sys.exit(1)
 
@@ -154,7 +154,8 @@ def get_swiftpm_options(action, args):
     '--configuration', args.configuration,
   ]
 
-  if args.verbose:
+  # Pass the verbose flag for "install" builds to get more information to investigate a CI build failure. (rdar://85912344)
+  if args.verbose or action == 'install':
     swiftpm_args += ['--verbose']
 
   if platform.system() == 'Darwin':
