@@ -17,11 +17,20 @@ enum HTMLTemplate: String  {
     case tag = "{{BASE_PATH}}"
 }
 
-enum StaticHostableTransformerError: Error  {
-    case dataProviderDoesNotReferenceValidInput
+enum StaticHostableTransformerError: DescribedError  {
+    case dataProviderDoesNotReferenceValidInput(url: URL)
+    
+    var errorDescription: String {
+        switch self {
+        case .dataProviderDoesNotReferenceValidInput(let url):
+            return """
+            The content of `\(url.absoluteString)` is not in the format expected by the transformer.
+            """
+        }
+    }
 }
 
-/// Navigates the contents of a FileSystemProvider pointing at the data folder of  a .doccarchive to emit a static hostable website.
+/// Navigates the contents of a FileSystemProvider pointing at the data folder of a `.doccarchive` to emit a static hostable website.
 class StaticHostableTransformer {
     
     /// The internal `FileSystemProvider` reference.
@@ -38,44 +47,18 @@ class StaticHostableTransformer {
     
     /// Initialise with a dataProvider to the source doccarchive.
     /// - Parameters:
-    ///   - dataProvider:  Should point to the data folder in a docc archive.
+    ///   - dataProvider: Should point to the data folder in a docc archive.
     ///   - fileManager: The FileManager to use for file processes.
     ///   - outputURL: The folder where the output will be placed
-    ///   - indexHTML: The HTML to be used in the generated index.html file.
-    init(dataProvider: FileSystemProvider, fileManager: FileManagerProtocol, outputURL: URL, htmlTemplate: URL, staticHostingBasePath: String?) throws {
+    ///   - indexHTMLData: Data representing the index.html to be written in the transformed folder structure.
+    init(dataProvider: FileSystemProvider, fileManager: FileManagerProtocol, outputURL: URL, indexHTMLData: Data) {
         self.dataProvider = dataProvider
         self.fileManager = fileManager
         self.outputURL = outputURL
-
-        let indexFileName = staticHostingBasePath != nil ? HTMLTemplate.templateFileName.rawValue : HTMLTemplate.indexFileName.rawValue
-        let indexFileURL = htmlTemplate.appendingPathComponent(indexFileName)
-        var indexHTML = try String(contentsOfFile: indexFileURL.path)
-
-
-        if let staticHostingBasePath = staticHostingBasePath {
-
-            var replacementString = staticHostingBasePath
-
-            // We need to ensure that the base path has a leading /
-            if !replacementString.hasPrefix("/") {
-                replacementString = "/" + replacementString
-            }
-
-            // Trailing /'s are not required so will be removed if provided.
-            if replacementString.hasSuffix("/") {
-                replacementString = String(replacementString.dropLast(1))
-            }
-
-            indexHTML = indexHTML.replacingOccurrences(of: HTMLTemplate.tag.rawValue, with: replacementString)
-        }
-        self.indexHTMLData = Data(indexHTML.utf8)
+        self.indexHTMLData = indexHTMLData
     }
     
-    /// Creates a static hostable version of the documention in the data folder of an archive pointed to by the `dataProvider`
-    /// - Parameters:
-    ///   - outputURL: The folder where the output will be placed
-    ///   - basePath: The path to be prefix to all href and src parameters in generated html
-    /// - Returns: An array if problems encounter during the archive.
+    /// Creates a static hostable version of the documentation in the data folder of an archive pointed to by the `dataProvider`
     func transform() throws {
 
         let node = dataProvider.fileSystem
@@ -83,9 +66,9 @@ class StaticHostableTransformer {
         // We should be starting at the data folder of a .doccarchive.
         switch node {
         case .directory(let dir):
-            try processDirectoryContents(directoryRoot: outputURL, relativeSubPath: "", directoryContents: dir.children)
-        case .file(_):
-            throw StaticHostableTransformerError.dataProviderDoesNotReferenceValidInput
+            try transformDirectoryContents(directoryRoot: outputURL, relativeSubPath: "", directoryContents: dir.children)
+        case .file(let file):
+            throw StaticHostableTransformerError.dataProviderDoesNotReferenceValidInput(url: file.url)
         }
     }
 
@@ -98,38 +81,39 @@ class StaticHostableTransformer {
         }
     }
 
-    /// Processes the contents of a given directory
+    /// Transforms the contents of a given directory
     /// - Parameters:
     ///   - root: The root output URL
     ///   - directory: The relative path (to the root) of the directory for which then content will processed.
     ///   - nodes: The directory contents
-    /// - Returns: An array of problems that may have occured during processing
-    private func processDirectoryContents(directoryRoot: URL, relativeSubPath: String, directoryContents: [FSNode]) throws {
+    /// - Returns: An array of problems that may have occurred during processing
+    private func transformDirectoryContents(directoryRoot: URL, relativeSubPath: String, directoryContents: [FSNode]) throws {
 
         for node in directoryContents {
             switch node {
             case .directory(let dir):
-                try processDirectory(directoryRoot: directoryRoot, currentDirectoryNode: dir, directorySubPath: relativeSubPath)
+                try transformDirectory(directoryRoot: directoryRoot, currentDirectoryNode: dir, directorySubPath: relativeSubPath)
             case .file(let file):
                 let outputURL = directoryRoot.appendingPathComponent(relativeSubPath)
-                try processFile(file: file, outputURL: outputURL)
+                try transformFile(file: file, outputURL: outputURL)
             }
         }
 
     }
 
-    /// Processes the  given directory
+    /// Transform the  given directory
     /// - Parameters:
     ///   - root: The root output URL
     ///   - dir: The FSNode that represents the directory
     ///   - currentDirectory: The relative path (to the root) of the directory that will contain this directory
-    /// - Returns: An array of problems that may have occured during processing
-    private func processDirectory(directoryRoot: URL, currentDirectoryNode: FSNode.Directory, directorySubPath: String) throws {
+    private func transformDirectory(directoryRoot: URL, currentDirectoryNode: FSNode.Directory, directorySubPath: String) throws {
 
         // Create the path for the new directory
         var newDirectory = directorySubPath
         let newPathComponent = currentDirectoryNode.url.lastPathComponent
-        if !newDirectory.isEmpty {
+        
+        // We need to ensure the new directory component, if not empty, ends with /
+        if !newDirectory.isEmpty && !newDirectory.hasSuffix("/") {
             newDirectory += "/"
         }
         newDirectory += newPathComponent
@@ -140,17 +124,16 @@ class StaticHostableTransformer {
         let htmlOutputURL = directoryRoot.appendingPathComponent(newDirectory)
         try createDirectory(url: htmlOutputURL)
 
-        // Process the direcorty contents
-        try processDirectoryContents(directoryRoot: directoryRoot, relativeSubPath: newDirectory, directoryContents: currentDirectoryNode.children)
+        // Process the directory contents
+        try transformDirectoryContents(directoryRoot: directoryRoot, relativeSubPath: newDirectory, directoryContents: currentDirectoryNode.children)
 
     }
 
-    /// Processes the given File
+    /// Transform the given File
     /// -   Parameters:
     ///     - file: The FSNode that represents the file
     ///     - outputURL: The directory the need to be placed in
-    /// -  Returns: An array of problems that may have occured during processing
-    private func processFile(file: FSNode.File, outputURL: URL) throws {
+    private func transformFile(file: FSNode.File, outputURL: URL) throws {
 
         // For JSON files we need to create an associated index.html in a sub-folder of the same name.
         guard file.url.pathExtension.lowercased() == "json" else { return }
@@ -165,5 +148,36 @@ class StaticHostableTransformer {
 
         let fileURL = newDirURL.appendingPathComponent("index.html")
         try self.indexHTMLData.write(to: fileURL)
+    }
+}
+
+extension StaticHostableTransformer {
+    
+    /// Transforms an index-template.html file by replacing the template tag with the provided `hostingBasePath`
+    static func transformHTMLTemplate(htmlTemplate: URL, hostingBasePath: String?) throws -> Data {
+        
+        let indexFileName = hostingBasePath != nil ? HTMLTemplate.templateFileName.rawValue : HTMLTemplate.indexFileName.rawValue
+        let indexFileURL = htmlTemplate.appendingPathComponent(indexFileName)
+        var indexHTML = try String(contentsOfFile: indexFileURL.path)
+
+
+        if let hostingBasePath = hostingBasePath {
+
+            var replacementString = hostingBasePath
+
+            // We need to ensure that the base path has a leading /
+            if !replacementString.hasPrefix("/") {
+                replacementString = "/" + replacementString
+            }
+
+            // Trailing /'s are not required so will be removed if provided.
+            if replacementString.hasSuffix("/") {
+                replacementString = String(replacementString.dropLast(1))
+            }
+
+            indexHTML = indexHTML.replacingOccurrences(of: HTMLTemplate.tag.rawValue, with: replacementString)
+        }
+        
+        return Data(indexHTML.utf8)
     }
 }

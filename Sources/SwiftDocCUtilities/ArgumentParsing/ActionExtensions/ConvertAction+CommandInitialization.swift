@@ -81,7 +81,7 @@ extension ConvertAction {
             inheritDocs: convert.enableInheritedDocs,
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
             transformForStaticHosting: convert.transformForStaticHosting,
-            staticHostingBasePath: convert.staticHostingBasePath
+            hostingBasePath: convert.hostingBasePath
         )
     }
 }

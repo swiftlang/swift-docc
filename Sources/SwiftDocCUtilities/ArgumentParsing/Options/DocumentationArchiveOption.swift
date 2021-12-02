@@ -16,11 +16,11 @@ public struct DocCArchiveOption: DirectoryPathOption {
 
     public init(){}
 
-    /// The name of the command line argument used to specify a source bundle path.
+    /// The name of the command line argument used to specify a source archive path.
     static let argumentValueName = "source-archive-path"
     static let expectedContent: Set<String> = ["data"]
 
-    /// The path to a archive to be used by DocC.
+    /// The path to an archive to be used by DocC.
     @Argument(
         help: ArgumentHelp(
             "Path to the DocC Archive ('.doccarchive') that should be processed.",
@@ -31,8 +31,8 @@ public struct DocCArchiveOption: DirectoryPathOption {
     public mutating func validate() throws {
 
         // Validate that the URL represents a directory
-        guard urlOrFallback.hasDirectoryPath == true else {
-            throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive.")
+        guard urlOrFallback.hasDirectoryPath else {
+            throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive. Expected a directory but a path to a file was provided")
         }
         
         var archiveContents: [String]
@@ -42,9 +42,9 @@ public struct DocCArchiveOption: DirectoryPathOption {
             throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive: \(error)")
         }
         
-        guard DocCArchiveOption.expectedContent.isSubset(of: Set(archiveContents)) else {
-            let missing = Array(Set(DocCArchiveOption.expectedContent).subtracting(archiveContents))
-            throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive. Missing: \(missing)")
+        let missingContents = Array(Set(DocCArchiveOption.expectedContent).subtracting(archiveContents))
+        guard missingContents.isEmpty else {
+            throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive. Missing: \(missingContents)")
         }
         
     }

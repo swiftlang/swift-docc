@@ -35,12 +35,12 @@ extension Docc.ProcessArchive {
         
         /// A user-provided relative path to be used in the archived output
         @Option(
-            name: [.customLong("static-hosting-base-path")],
+            name: [.customLong("hosting-base-path")],
             help: ArgumentHelp(
                             "The base path your documentation website will be hosted at.",
                             discussion: "For example, to deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.")
         )
-        var staticHostingBasePath: String?
+        var hostingBasePath: String?
         
         /// The user-provided path to an HTML documentation template.
         @OptionGroup()

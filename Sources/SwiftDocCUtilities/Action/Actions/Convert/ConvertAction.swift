@@ -40,7 +40,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let diagnosticEngine: DiagnosticEngine
     
     let transformForStaticHosting: Bool
-    let staticHostingBasePath: String?
+    let hostingBasePath: String?
     
     
     private(set) var context: DocumentationContext {
@@ -94,7 +94,7 @@ public struct ConvertAction: Action, RecreatingContext {
         inheritDocs: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool = false,
-        staticHostingBasePath: String? = nil
+        hostingBasePath: String? = nil
     ) throws
     {
         self.rootURL = documentationBundleURL
@@ -109,7 +109,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.fileManager = fileManager
         self.documentationCoverageOptions = documentationCoverageOptions
         self.transformForStaticHosting = transformForStaticHosting
-        self.staticHostingBasePath = staticHostingBasePath
+        self.hostingBasePath = hostingBasePath
         
         let filterLevel: DiagnosticSeverity
         if analyze {
@@ -200,7 +200,7 @@ public struct ConvertAction: Action, RecreatingContext {
         inheritDocs: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool,
-        staticHostingBasePath: String?
+        hostingBasePath: String?
     ) throws {
         // Note: This public initializer exists separately from the above internal one
         // because the FileManagerProtocol type we use to enable mocking in tests
@@ -230,7 +230,7 @@ public struct ConvertAction: Action, RecreatingContext {
             inheritDocs: inheritDocs,
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHosting: transformForStaticHosting,
-            staticHostingBasePath: staticHostingBasePath
+            hostingBasePath: hostingBasePath
         )
     }
 
@@ -290,13 +290,26 @@ public struct ConvertAction: Action, RecreatingContext {
         
         let temporaryFolder = try createTempFolder(
             with: htmlTemplateDirectory)
+        
+        var indexHTMLData: Data?
 
         // The `template-index.html` is a duplicate version of `index.html` with extra template
-        // tokens that allow for customizing the base-path used when transforming
-        // for a static hosting environment. We don't want to include it when copying over
-        // the base template.
+        // tokens that allow for customizing the base-path.
+        // If a base bath is provided we will transform the template using the base path
+        // to produce a replacement index.html file.
+        // After any required transforming has been done the template file will be removed.
         let templateURL: URL = temporaryFolder.appendingPathComponent(HTMLTemplate.templateFileName.rawValue)
         if fileManager.fileExists(atPath: templateURL.path) {
+            // If the `transformForStaticHosting` is not set but there is a `hostingBasePath`
+            // then transform the index template
+            if !transformForStaticHosting,
+               let hostingBasePath = hostingBasePath,
+               !hostingBasePath.isEmpty  {
+                indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: temporaryFolder, hostingBasePath: hostingBasePath)
+                let indexURL = temporaryFolder.appendingPathComponent(HTMLTemplate.indexFileName.rawValue)
+                try indexHTMLData!.write(to: indexURL)
+            }
+            
             try fileManager.removeItem(at: templateURL)
         }
         
@@ -352,10 +365,14 @@ public struct ConvertAction: Action, RecreatingContext {
             allProblems.append(contentsOf: indexerProblems)
         }
 
-        // Process Static Hosting is needed.
+        // Process Static Hosting as needed.
         if transformForStaticHosting, let templateDirectory = htmlTemplateDirectory {
-            let dataProvider = try LocalFileSystemDataProvider(rootURL: temporaryFolder.appendingPathComponent("data"))
-            let transformer = try StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: temporaryFolder, htmlTemplate: templateDirectory, staticHostingBasePath: staticHostingBasePath)
+            if indexHTMLData == nil {
+                indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: templateDirectory, hostingBasePath: hostingBasePath)
+            }
+            
+            let dataProvider = try LocalFileSystemDataProvider(rootURL: temporaryFolder.appendingPathComponent(NodeURLGenerator.Path.dataFolderName))
+            let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: temporaryFolder, indexHTMLData: indexHTMLData!)
             try transformer.transform()
         }
         
@@ -367,7 +384,7 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         // Log the output size.
-        benchmark(add: Benchmark.OutputSize(dataURL: targetDirectory.appendingPathComponent("data")))
+        benchmark(add: Benchmark.OutputSize(dataURL: targetDirectory.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)))
         
         if Benchmark.main.isEnabled {
             // Write the benchmark files directly in the target directory.

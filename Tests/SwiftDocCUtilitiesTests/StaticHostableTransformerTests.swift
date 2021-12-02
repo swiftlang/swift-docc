@@ -56,9 +56,11 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         let basePath =  "test/folder"
         let indexHTML = Folder.testHTMLTemplate(basePath: basePath)
         
-        let dataURL = targetBundleURL.appendingPathComponent("data")
+        let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: testTemplateURL, hostingBasePath: basePath)
+        
+        let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
-        let transformer = try StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, htmlTemplate: testTemplateURL, staticHostingBasePath: basePath)
+        let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
         
         try transformer.transform()
         
@@ -102,6 +104,33 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
     /// Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
     func testStaticHostableTransformerBasePaths() throws {
 
+        let testTemplateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        try Folder.testHTMLTemplateDirectory.write(to: testTemplateURL)
+        defer { try? FileManager.default.removeItem(at: testTemplateURL) }
+
+        let basePaths = ["test": "test",
+                         "/test": "test",
+                         "test/": "test",
+                         "/test/": "test",
+                         "test/test": "test/test",
+                         "/test/test": "test/test",
+                         "test/test/": "test/test",
+                         "/test/test/": "test/test"]
+
+        for (basePath, testValue) in basePaths {
+
+            let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: testTemplateURL, hostingBasePath: basePath)
+            let testIndexHTML = String(decoding: indexHTMLData, as: UTF8.self)
+            let indexHTML = Folder.testHTMLTemplate(basePath: testValue)
+            
+            XCTAssertEqual(indexHTML, testIndexHTML, "Template HTML not transformed as expected")
+        }
+    }
+
+
+    
+    func testStaticHostableTransformerIndexHTMLOutput() throws {
+
         // Convert a test bundle as input for the StaticHostableTransformer
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
 
@@ -131,7 +160,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
 
         _ = try action.perform(logHandle: .standardOutput)
 
-        let dataURL = targetBundleURL.appendingPathComponent("data")
+        let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
 
         let testTemplateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
@@ -152,7 +181,9 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             let outputURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
             defer { try? fileManager.removeItem(at: outputURL) }
 
-            let transformer = try StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, htmlTemplate: testTemplateURL, staticHostingBasePath: basePath)
+            let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: testTemplateURL, hostingBasePath: basePath)
+          
+            let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
 
             try transformer.transform()
 

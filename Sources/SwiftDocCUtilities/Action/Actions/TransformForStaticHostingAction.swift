@@ -16,7 +16,7 @@ struct TransformForStaticHostingAction: Action {
     
     let rootURL: URL
     let outputURL: URL
-    let staticHostingBasePath: String?
+    let hostingBasePath: String?
     let outputIsExternal: Bool
     let htmlTemplateDirectory: URL
 
@@ -27,7 +27,7 @@ struct TransformForStaticHostingAction: Action {
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
     init(documentationBundleURL: URL,
          outputURL:URL?,
-         staticHostingBasePath: String?,
+         hostingBasePath: String?,
          htmlTemplateDirectory: URL,
          fileManager: FileManagerProtocol = FileManager.default,
          diagnosticEngine: DiagnosticEngine = .init()) throws
@@ -36,15 +36,15 @@ struct TransformForStaticHostingAction: Action {
         self.rootURL = documentationBundleURL
         self.outputURL = outputURL ?? documentationBundleURL
         self.outputIsExternal = outputURL != nil
-        self.staticHostingBasePath = staticHostingBasePath
+        self.hostingBasePath = hostingBasePath
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.fileManager = fileManager
         self.diagnosticEngine = diagnosticEngine
         self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
     }
     
-    /// Converts each eligable file from the source archive,
-    /// saves the results in the given output  folder.
+    /// Converts each eligible file from the source archive and
+    /// saves the results in the given output folder.
     mutating func perform(logHandle: LogHandle) throws -> ActionResult {
         try emit()
         return ActionResult(didEncounterError: false, outputs: [outputURL])
@@ -61,7 +61,8 @@ struct TransformForStaticHostingAction: Action {
             try setupOutputDirectory(outputURL: outputURL)
 
             // Copy the appropriate folders from the archive.
-            // We will do it item as we want to preserve anything intentionally left in the output URL by `setupOutputDirectory`
+            // We will copy individual items from the folder rather then just copy the folder
+            // as we want to preserve anything intentionally left in the output URL by `setupOutputDirectory`
             for sourceItem in try fileManager.contentsOfDirectory(at: rootURL, includingPropertiesForKeys: [], options:[.skipsHiddenFiles]) {
                 let targetItem = outputURL.appendingPathComponent(sourceItem.lastPathComponent)
                 try fileManager.copyItem(at: sourceItem, to: targetItem)
@@ -86,15 +87,18 @@ struct TransformForStaticHostingAction: Action {
             }
             try fileManager.copyItem(at: source, to: target)
         }
+        
+        // Transform the indexHTML if needed.
+        let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: htmlTemplateDirectory, hostingBasePath: hostingBasePath)
 
         // Create a StaticHostableTransformer targeted at the archive data folder
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL.appendingPathComponent("data"))
-        let transformer = try StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, htmlTemplate: htmlTemplateDirectory, staticHostingBasePath: staticHostingBasePath)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName))
+        let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
         try transformer.transform()
         
     }
     
-    /// Create ouput directory or empty its contents if it already exists.
+    /// Create output directory or empty its contents if it already exists.
     private func setupOutputDirectory(outputURL: URL) throws {
         
         var isDirectory: ObjCBool = false

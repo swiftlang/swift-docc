@@ -59,7 +59,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
 
         defer { try? fileManager.removeItem(at: testTemplateURL) }
 
-        var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: outputURL, staticHostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
+        var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: outputURL, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
         _ = try transformAction.perform(logHandle: .standardOutput)
         
@@ -88,13 +88,13 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             switch item {
             case "documentation":
                 compareJSONFolder(fileManager: fileManager,
-                               output: outputURL.appendingPathComponent("documentation"),
-                               input:  targetBundleURL.appendingPathComponent("data").appendingPathComponent("documentation"),
+                                  output: outputURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
                                indexHTML: indexHTML)
             case "tutorials":
                 compareJSONFolder(fileManager: fileManager,
-                               output: outputURL.appendingPathComponent("tutorials"),
-                               input:  targetBundleURL.appendingPathComponent("data").appendingPathComponent("tutorials"),
+                                  output: outputURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
                                indexHTML: indexHTML)
             default:
                 continue
@@ -144,7 +144,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         
         defer { try? fileManager.removeItem(at: testTemplateURL) }
 
-        var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: nil, staticHostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
+        var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: nil, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
         _ = try transformAction.perform(logHandle: .standardOutput)
         
@@ -172,13 +172,13 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             switch item {
             case "documentation":
                 compareJSONFolder(fileManager: fileManager,
-                               output: targetBundleURL.appendingPathComponent("documentation"),
-                               input:  targetBundleURL.appendingPathComponent("data").appendingPathComponent("documentation"),
+                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
                                indexHTML: indexHTML)
             case "tutorials":
                 compareJSONFolder(fileManager: fileManager,
-                               output: targetBundleURL.appendingPathComponent("tutorials"),
-                               input:  targetBundleURL.appendingPathComponent("data").appendingPathComponent("tutorials"),
+                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
                                indexHTML: indexHTML)
             default:
                 continue

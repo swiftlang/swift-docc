@@ -14,7 +14,7 @@ import Foundation
 @testable import SwiftDocCUtilities
 
 class ConvertActionStaticHostableTests: StaticHostingBaseTests {
-    /// Creates a DocC archive and then archive woth options  to produce static content which is then validated.
+    /// Creates a DocC archive and then archives it with options  to produce static content which is then validated.
     func testConvertActionStaticHostableTestOutput() throws {
         
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
@@ -47,7 +47,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             emitDigest: false,
             currentPlatforms: nil,
             transformForStaticHosting: true,
-            staticHostingBasePath: basePath
+            hostingBasePath: basePath
         )
        
         _ = try action.perform(logHandle: .standardOutput)
@@ -66,13 +66,13 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             switch item {
             case "documentation":
                 compareJSONFolder(fileManager: fileManager,
-                               output: targetBundleURL.appendingPathComponent("documentation"),
-                               input:  targetBundleURL.appendingPathComponent("data").appendingPathComponent("documentation"),
+                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
                                indexHTML: indexHTML)
             case "tutorials":
                 compareJSONFolder(fileManager: fileManager,
-                               output: targetBundleURL.appendingPathComponent("tutorials"),
-                               input:  targetBundleURL.appendingPathComponent("data").appendingPathComponent("tutorials"),
+                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
                                indexHTML: indexHTML)
             default:
                 continue
