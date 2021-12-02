@@ -69,7 +69,7 @@ class DocumentationServer_DefaultTests: XCTestCase {
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundle",
                 identifier: "identifier",
-                version: Version(versionString: "1.0.0")!
+                version: "1.0.0"
             ),
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             symbolGraphs: [symbolGraph],

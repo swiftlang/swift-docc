@@ -149,7 +149,7 @@ class DocumentationWorkspaceTests: XCTestCase {
                 info: DocumentationBundle.Info(
                     displayName: "Test" + suffix,
                     identifier: "com.example.test" + suffix,
-                    version: Version(versionString: "0.1.0")!
+                    version: "0.1.0"
                 ),
                 symbolGraphURLs: [testSymbolGraphFile],
                 markupURLs: [testMarkupFile],

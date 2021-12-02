@@ -145,7 +145,7 @@ private extension DocumentationContentRendererTests {
                 info: DocumentationBundle.Info(
                     displayName: "Test",
                     identifier: "org.swift.test",
-                    version: Version(arrayLiteral: 1,2,3)
+                    version: "1.2.3"
                 ),
                 baseURL: URL(string: "https://example.com/example")!,
                 symbolGraphURLs: [],

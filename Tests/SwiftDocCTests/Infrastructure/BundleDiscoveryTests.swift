@@ -279,7 +279,7 @@ class BundleDiscoveryTests: XCTestCase {
         // The bundle information was specified via the options
         XCTAssertEqual(bundle.identifier, "com.fallback.bundle.identifier")
         XCTAssertEqual(bundle.displayName, "Fallback Display Name")
-        XCTAssertEqual(bundle.version, Version(arrayLiteral: 1, 2, 3))
+        XCTAssertEqual(bundle.version, "1.2.3")
     }
 
     func testNoCustomTemplates() throws {

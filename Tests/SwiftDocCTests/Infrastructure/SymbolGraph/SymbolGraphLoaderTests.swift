@@ -355,7 +355,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             info: DocumentationBundle.Info(
                 displayName: "Test",
                 identifier: "com.example.test",
-                version: Version(arrayLiteral: 1,2,3)
+                version: "1.2.3"
             ),
             baseURL: URL(string: "https://example.com/example")!,
             symbolGraphURLs: symbolGraphURLs,

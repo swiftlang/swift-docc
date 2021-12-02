@@ -93,7 +93,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
                     info: DocumentationBundle.Info(
                         displayName: info.content.displayName,
                         identifier: info.content.identifier,
-                        version: Version(versionString: info.content.versionString)!
+                        version: info.content.versionString
                     ),
                     symbolGraphURLs: graphs,
                     markupURLs: markupFiles,
