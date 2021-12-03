@@ -2229,18 +2229,22 @@ private extension LinkDestinationSummary {
         redirects: [URL]?
     ) {
         self.init(
-            kind: kind,
-            language: language,
-            path: path,
             referenceURL: referenceURL,
-            title: title,
-            abstract: abstract.map { [.text($0)] } ?? [],
             availableLanguages: availableLanguages,
             platforms: platforms,
-            taskGroups: taskGroups,
-            usr: usr,
-            declarationFragments: nil,
-            redirects: redirects
+            redirects: redirects,
+            contentVariants: [
+                ContentVariant(
+                    traits: [.interfaceLanguage(language.id)],
+                    kind: kind,
+                    path: path,
+                    title: title,
+                    abstract: abstract.map { [.text($0)] } ?? [],
+                    usr: usr,
+                    declarationFragments: nil,
+                    taskGroups: taskGroups
+                )
+            ]
         )
     }
 }

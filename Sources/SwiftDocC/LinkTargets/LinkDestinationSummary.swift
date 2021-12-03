@@ -65,46 +65,70 @@ import SymbolKit
 
 /// A summary of an element that you can link to from outside the documentation bundle.
 ///
+/// The summary is structured as a combination of general information and content that can vary based on the source language.
+///
 /// The non-optional properties of this summary are all the information needed when another bundle references this element.
 ///
-/// Various information from the summary is used depending on what content references the summarized element. For example:
-///  - In a paragraph of text, a link to this element will use the ``title`` as the link text and style the tile in code font if the ``kind`` is a type of symbol.
-///  - In a task group, the the ``title`` and ``abstract-swift.property`` is displayed together to give more context about this element and the element may be marked as deprecated
-///    based on the values of its  ``platforms`` and other metadata about the current versions of the platforms.
+/// What information the other bundle uses depends on what type of content references the summarized element. For example:
+///  - In a paragraph of text, a link to this element will use the ``ContentVariant/title`` as the link text and style the tile in code font if the ``kind`` is a type of symbol.
+///  - In a task group, the the ``ContentVariant/title`` and ``ContentVariant/abstract`` is displayed together to give more context about this element and the element may be marked as deprecated
+///    based on the values of its ``platforms`` and other metadata about the current versions of the platforms.
 public struct LinkDestinationSummary: Codable, Equatable {
-    /// The kind of the summarized element.
-    public let kind: DocumentationNode.Kind
-    
-    /// The language of the summarized element.
-    public let language: SourceLanguage
-    
-    /// The relative path to this element.
-    public let path: String
-    
     /// The resolved topic reference URL to this element.
     public var referenceURL: URL
-    
-    /// The title of the summarized element.
-    public let title: String
-    
-    /// An abstract is a single paragraph of rendered inline content.
-    public typealias Abstract = [RenderInlineContent]
-    /// The abstract of the summarized element.
-    public let abstract: Abstract?
     
     /// All the languages in which the summarized element is available.
     public let availableLanguages: Set<SourceLanguage>
 
-    /// The availability information for a platform.
-    public typealias PlatformAvailability = AvailabilityRenderItem
-    /// Information about the platforms for which the summarized element is available.
-    public let platforms: [PlatformAvailability]?
-    
     // Note to implementors when adding new properties:
     //  Any new property that DocC doesn't need to get back when resolving references should be optional
     //  so that external documentation sources don't need to provide that data.
     //  Adding new required properties is considered breaking change since existing external documentation sources
     //  wouldn't necessarily meet these new requirements.
+    
+    /// The source language specific variation of a summarized element's content.
+    ///
+    /// For example, a symbol will likely have different ``usr`` and ``declarationFragments``  in different languages. Additionally, the symbol's title and abstract may
+    /// have different content that describe the symbol in the context of that source language and different paths.
+    public struct ContentVariant: Codable, Equatable {
+        /// A collection of traits identifying the variant.
+        public let traits: [RenderNode.Variant.Trait]
+        
+        /// The kind of the summarized element.
+        public let kind: DocumentationNode.Kind
+        
+        /// The relative path to this element.
+        public let path: String
+        
+        /// The title of the summarized element.
+        public let title: String
+        
+        /// The abstract of the summarized element.
+        public let abstract: Abstract?
+        
+        /// The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
+        public let usr: String?
+        
+        /// The fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
+        public let declarationFragments: DeclarationFragments?
+        
+        /// The reference URLs of the summarized element's children, grouped by their task groups.
+        ///
+        /// - Note: It's possible for more than one task group to have the same title.
+        /// - Note: This property represents conceptual children. Since See Also sections conceptually represent siblings they should not be included.
+        public let taskGroups: [TaskGroup]?
+    }
+   
+    /// The rendered fragments of a symbol's declaration.
+    public typealias DeclarationFragments = [DeclarationRenderSection.Token]
+    
+    /// An abstract is a single paragraph of rendered inline content.
+    public typealias Abstract = [RenderInlineContent]
+    
+    /// The availability information for a platform.
+    public typealias PlatformAvailability = AvailabilityRenderItem
+    /// Information about the platforms for which the summarized element is available.
+    public let platforms: [PlatformAvailability]?
     
     /// A collection of identifiers that all relate to some common task, as described by the title.
     public struct TaskGroup: Codable, Equatable {
@@ -124,24 +148,13 @@ public struct LinkDestinationSummary: Codable, Equatable {
         }
     }
     
-    /// The reference URLs of the summarized element's children, grouped by their task groups.
-    ///
-    /// - Note: It's possible for more than one task group to have the same title.
-    /// - Note: This property represents conceptual children. Since See Also sections conceptually represent siblings they should not be included.
-    public let taskGroups: [TaskGroup]?
-    
-    /// The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
-    public let usr: String?
-    
-    /// The rendered fragments of a symbol's declaration.
-    public typealias DeclarationFragments = [DeclarationRenderSection.Token]
-    /// The fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
-    public let declarationFragments: DeclarationFragments?
-    
     /// Any previous URLs for this element.
     ///
     /// A web server can use this list of URLs to redirect to the current URL.
     public let redirects: [URL]?
+    
+    /// The variants of content (kind, title, abstract, path, urs, declaration, and task groups) for this summarized element.
+    public let contentVariants: [ContentVariant]
 }
 
 // MARK: - Accessing the externally linkable elements
@@ -212,18 +225,22 @@ extension LinkDestinationSummary {
         }
         
         self.init(
-            kind: documentationNode.kind,
-            language: documentationNode.sourceLanguage,
-            path: path,
             referenceURL: documentationNode.reference.url,
-            title: ReferenceResolver.title(forNode: documentationNode),
-            abstract: (documentationNode.semantic as? Abstracted)?.renderedAbstract(using: &compiler),
             availableLanguages: documentationNode.availableSourceLanguages,
             platforms: platforms,
-            taskGroups: taskGroups,
-            usr: (documentationNode.semantic as? Symbol)?.externalID,
-            declarationFragments: declaration,
-            redirects: (documentationNode.semantic as? Redirected)?.redirects?.map { $0.oldPath }
+            redirects: (documentationNode.semantic as? Redirected)?.redirects?.map { $0.oldPath },
+            contentVariants: [
+                ContentVariant(
+                    traits: [.interfaceLanguage(documentationNode.sourceLanguage.id)],
+                    kind: documentationNode.kind,
+                    path: path,
+                    title: ReferenceResolver.title(forNode: documentationNode),
+                    abstract: (documentationNode.semantic as? Abstracted)?.renderedAbstract(using: &compiler),
+                    usr: (documentationNode.semantic as? Symbol)?.externalID,
+                    declarationFragments: declaration,
+                    taskGroups: taskGroups
+                )
+            ]
         )
     }
 }
@@ -250,18 +267,22 @@ extension LinkDestinationSummary {
         }
         
         self.init(
-            kind: .onPageLandmark,
-            language: page.sourceLanguage,
-            path: basePath + "#\(anchor)", // use an in-page anchor for the landmark's path
             referenceURL: page.reference.withFragment(anchor).url,
-            title: landmark.title,
-            abstract: abstract,
             availableLanguages: page.availableSourceLanguages,
             platforms: platforms,
-            taskGroups: [], // Landmarks have no children
-            usr: nil, // Only symbols have a USR
-            declarationFragments: nil, // Only symbols have declarations
-            redirects: (landmark as? Redirected)?.redirects?.map { $0.oldPath }
+            redirects: (landmark as? Redirected)?.redirects?.map { $0.oldPath },
+            contentVariants: [
+                ContentVariant(
+                    traits: [.interfaceLanguage(page.sourceLanguage.id)],
+                    kind: .onPageLandmark,
+                    path: basePath + "#\(anchor)", // use an in-page anchor for the landmark's path
+                    title: landmark.title,
+                    abstract: abstract,
+                    usr: nil, // Only symbols have a USR
+                    declarationFragments: nil, // Only symbols have a USR,
+                    taskGroups: [] // Landmarks have no children
+                )
+            ]
         )
     }
 }
@@ -271,42 +292,25 @@ extension LinkDestinationSummary {
 // Add Codable methods—which include an initializer—in an extension so that it doesn't override the member-wise initializer.
 extension LinkDestinationSummary {
     enum CodingKeys: String, CodingKey {
-        case kind, path, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects
-        case declarationFragments = "fragments"
+        case referenceURL, availableLanguages, platforms, redirects, contentVariants
+    }
+    
+    enum LegacyCodingKeys: String, CodingKey {
+        case kind, path, title, abstract, language, usr, declarationFragments = "fragments", taskGroups
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(kind.id, forKey: .kind)
-        try container.encode(path, forKey: .path)
         try container.encode(referenceURL, forKey: .referenceURL)
-        try container.encode(title, forKey: .title)
-        try container.encodeIfPresent(abstract, forKey: .abstract)
-        try container.encode(language.id, forKey: .language)
         try container.encode(availableLanguages.map { $0.id }, forKey: .availableLanguages)
         try container.encodeIfPresent(platforms, forKey: .platforms)
-        try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
-        try container.encodeIfPresent(usr, forKey: .usr)
-        try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(redirects, forKey: .redirects)
+        try container.encode(contentVariants, forKey: .contentVariants)
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let kindID = try container.decode(String.self, forKey: .kind)
-        guard let foundKind = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
-            throw DecodingError.dataCorruptedError(forKey: .kind, in: container, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
-        }
-        kind = foundKind
-        path = try container.decode(String.self, forKey: .path)
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
-        title = try container.decode(String.self, forKey: .title)
-        abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
-        let languageID = try container.decode(String.self, forKey: .language)
-        guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
-            throw DecodingError.dataCorruptedError(forKey: .language, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
-        }
-        language = foundLanguage
         
         let availableLanguageIDs = try container.decode([String].self, forKey: .availableLanguages)
         availableLanguages = try Set(availableLanguageIDs.map { languageID in
@@ -316,9 +320,87 @@ extension LinkDestinationSummary {
             return foundLanguage
         })
         platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms)
-        taskGroups = try container.decodeIfPresent([TaskGroup].self, forKey: .taskGroups)
-        usr = try container.decodeIfPresent(String.self, forKey: .usr)
-        declarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .declarationFragments)
         redirects = try container.decodeIfPresent([URL].self, forKey: .redirects)
+        
+        do {
+            let contentVariants = try container.decode([ContentVariant].self, forKey: .contentVariants)
+            guard !contentVariants.isEmpty else {
+                throw DecodingError.dataCorruptedError(forKey: .contentVariants, in: container, debugDescription: "Missing required content. ContentVariations is empty.")
+            }
+            self.contentVariants = contentVariants
+        } catch DecodingError.keyNotFound(_, let originalErrorContext) {
+            // Attempts to decode the legacy format and raise the original keyNotFound if that doesn't work.
+            do {
+                let legacyContainer = try decoder.container(keyedBy: LegacyCodingKeys.self)
+                
+                let kindID = try legacyContainer.decode(String.self, forKey: .kind)
+                guard let kind = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
+                    throw DecodingError.dataCorruptedError(forKey: .kind, in: legacyContainer, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
+                }
+                
+                let languageID = try legacyContainer.decode(String.self, forKey: .language)
+                guard SourceLanguage.knownLanguages.contains(where: { $0.id == languageID }) else {
+                    throw DecodingError.dataCorruptedError(forKey: .language, in: legacyContainer, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
+                }
+                
+                contentVariants = [
+                    ContentVariant(
+                        traits: [.interfaceLanguage(languageID)],
+                        kind: kind,
+                        path: try legacyContainer.decode(String.self, forKey: .path),
+                        title: try legacyContainer.decode(String.self, forKey: .title),
+                        abstract: try legacyContainer.decodeIfPresent(Abstract.self, forKey: .abstract),
+                        usr: try legacyContainer.decodeIfPresent(String.self, forKey: .usr),
+                        declarationFragments: try legacyContainer.decodeIfPresent(DeclarationFragments.self, forKey: .declarationFragments),
+                        taskGroups: try legacyContainer.decodeIfPresent([TaskGroup].self, forKey: .taskGroups)
+                    )
+                ]
+            } catch {
+                throw DecodingError.keyNotFound(CodingKeys.contentVariants, originalErrorContext)
+            }
+        }
+    }
+}
+
+extension LinkDestinationSummary.ContentVariant {
+    enum CodingKeys: String, CodingKey {
+        case traits, kind, path, title, abstract, usr, declarationFragments = "fragments", taskGroups
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(traits, forKey: .traits)
+        try container.encode(kind.id, forKey: .kind)
+        try container.encode(path, forKey: .path)
+        try container.encode(title, forKey: .title)
+        try container.encode(abstract, forKey: .abstract)
+        try container.encodeIfPresent(usr, forKey: .usr)
+        try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
+        try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let traits = try container.decode([RenderNode.Variant.Trait].self, forKey: .traits)
+        for case .interfaceLanguage(let languageID) in traits {
+            guard SourceLanguage.knownLanguages.contains(where: { $0.id == languageID }) else {
+                throw DecodingError.dataCorruptedError(forKey: .traits, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
+            }
+        }
+        self.traits = traits
+        
+        let kindID = try container.decode(String.self, forKey: .kind)
+        guard let foundKind = DocumentationNode.Kind.allKnownValues.first(where: { $0.id == kindID }) else {
+            throw DecodingError.dataCorruptedError(forKey: .kind, in: container, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
+        }
+        kind = foundKind
+        
+        path = try container.decode(String.self, forKey: .path)
+        title = try container.decode(String.self, forKey: .title)
+        abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract.self, forKey: .abstract)
+        usr = try container.decodeIfPresent(String.self, forKey: .usr)
+        declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments.self, forKey: .declarationFragments)
+        taskGroups = try container.decodeIfPresent([LinkDestinationSummary.TaskGroup].self, forKey: .taskGroups)
     }
 }
