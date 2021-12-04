@@ -63,17 +63,9 @@ public struct DocumentationBundle {
     /**
      The documentation bundle's version.
 
-     The build version number should be a string comprised of three non-negative, period-separated integers with the first integer being greater than zero—for example, `3.1.2`. The string should only contain numeric (0-9) and period (.) characters. Leading zeros are truncated from each integer and will be ignored (that is, `1.02.3` is equivalent to `1.2.3`).
-
-     The meaning of each element is as follows:
-
-     - The first number represents the most recent major release and is limited to a maximum length of four digits.
-     - The second number represents the most recent significant revision and is limited to a maximum length of two digits.
-     - The third number represents the most recent minor bug fix and is limited to a maximum length of two digits.
-
-     If the value of the third number is 0, you can omit it and the second period.
+     It's not safe to make computations based on assumptions about the format of bundle's version. The version can be in any format.
      */
-    public var version: Version {
+    public var version: String? {
         info.version
     }
     
@@ -133,7 +125,7 @@ public struct DocumentationBundle {
             info: Info(
                 displayName: displayName,
                 identifier: identifier,
-                version: version,
+                version: version.description,
                 defaultCodeListingLanguage: defaultCodeListingLanguage,
                 defaultAvailability: defaultAvailability
             ),

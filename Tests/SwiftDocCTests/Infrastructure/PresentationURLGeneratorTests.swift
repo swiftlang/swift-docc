@@ -39,7 +39,7 @@ class PresentationURLGeneratorTests: XCTestCase {
             info: DocumentationBundle.Info(
                 displayName: "Test",
                 identifier: "com.example.test",
-                version: Version(versionString: "1.0")!
+                version: "1.0"
             ),
             baseURL: URL(string: "https://example.com/example")!,
             symbolGraphURLs: [],
@@ -91,7 +91,7 @@ class PresentationURLGeneratorTests: XCTestCase {
             info: DocumentationBundle.Info(
                 displayName: "Test",
                 identifier: "com.example.test",
-                version: Version(versionString: "1.0")!
+                version: "1.0"
             ),
             baseURL: URL(string: "https://example.com/example")!,
             symbolGraphURLs: [],
