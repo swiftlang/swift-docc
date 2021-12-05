@@ -61,18 +61,6 @@ public class NavigatorTree {
     /// The root node of the tree.
     public private(set) var root: Node
     
-    /// A map holding the mapping from topicIdentifier to the node.
-    /// - Note: This has been deprecated as the mapping is expensive to build and the path for creating
-    ///         a `ResolvedTopicReference` is not served by the navigator item anymore.
-    @available(*, deprecated)
-    public private(set) var identifierToNode: [ResolvedTopicReference: Node] = [:]
-    
-    /// A map holding the mapping from node to the topicIdentifier.
-    /// - Note: This has been deprecated as the mapping is expensive to build and the path for creating
-    ///         a `ResolvedTopicReference` is not served by the navigator item anymore.
-    @available(*, deprecated)
-    public private(set) var nodeToIdentifier: [Node: ResolvedTopicReference] = [:]
-    
     /// A map holding the mapping from  the numeric identifier to the node.
     public private(set) var numericIdentifierToNode: [UInt32: Node] = [:]
     
@@ -396,17 +384,6 @@ public class NavigatorTree {
         
         /// A value that can be used for identification purposes in presentation contexts.
         public var presentationIdentifier: String?
-        
-        /// A value that can be used for disambiguation purposes in presentation contexts.
-        @available(*, deprecated, message: "Use presentationIdentifier instead.")
-        public var presentationDisambiguator: String? {
-            get {
-                return presentationIdentifier
-            }
-            set {
-                presentationIdentifier = newValue
-            }
-        }
 
         /**
          Initialize a node with the given `NavigatorItem`.

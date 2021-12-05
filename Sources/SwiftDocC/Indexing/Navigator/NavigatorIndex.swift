@@ -258,50 +258,6 @@ public class NavigatorIndex {
         case languageGroup = 127
         case container = 254
         case groupMarker = 255 // UInt8.max
-        
-        @available(*, deprecated, message: "Please use instanceProperty.")
-        public static let property = PageType.instanceProperty
-        
-        @available(*, deprecated, message: "Please use tutorial.")
-        public static let project = PageType.tutorial
-        
-        /// Initialize a page type from a `roleHeading` returning the Symbol type.
-        /// - Note: This initializer works only for symbol pages.
-        @available(*, deprecated, message: "Please use init(role:) or init(symbolKind:)")
-        init(roleHeading: String) {
-            switch roleHeading.lowercased() {
-            case "framework": self = .framework
-            case "class": self = .class
-            case "structure": self = .structure
-            case "protocol": self = .protocol
-            case "enumeration": self = .enumeration
-            case "function": self = .function
-            case "extension": self = .extension
-            case "local variable": self = .localVariable
-            case "global variable": self = .globalVariable
-            case "type alias": self = .typeAlias
-            case "associated type": self = .associatedType
-            case "operator": self = .operator
-            case "macro": self = .macro
-            case "union": self = .union
-            case "enumeration case": self = .enumerationCase
-            case "initializer", "init": self = .initializer
-            case "instance method": self = .instanceMethod
-            case "instance property": self = .instanceProperty
-            case "instance variable": self = .instanceVariable
-            case "subscript": self = .subscript
-            case "type method": self = .typeMethod
-            case "type property": self = .typeProperty
-            case "property": self = .instanceProperty
-            case "sample code": self = .sampleCode
-            case "build setting": self = .buildSetting
-            case "property list key": self = .propertyListKey
-            case "property list key reference": self = .propertyListKeyReference
-            case "web service endpoint": self = .httpRequest
-            case "dictionary symbol": self = .dictionarySymbol
-            default:self = .symbol // Generic Symbol.
-            }
-        }
                 
         /// Initialize a page type from a `role` and a `symbolKind` returning the Symbol type.
         init(symbolKind: String) {

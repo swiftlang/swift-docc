@@ -11,23 +11,6 @@
 import Markdown
 
 extension Markup {
-    @available(*, deprecated, message: "Use DocumentationMarkup(markup:) to parse structured markup")
-    public var seeAlso: SeeAlsoSection? {
-        guard let headingIndex = sectionHeadingIndex(level: 2, named: SeeAlsoSection.title) else {
-            return nil
-        }
-
-        let startIndex = headingIndex + 1
-        let endIndex = indexToNextHeading(from: startIndex, level: 2) ?? childCount
-        let content = Array(children.dropFirst(startIndex).prefix(endIndex - startIndex))
-
-        guard !content.isEmpty else {
-            return nil
-        }
-
-        return SeeAlsoSection(content: content)
-    }
-    
     /// Returns the first available child range.
     ///
     /// In case a block-level element is rewritten and its range is lost
@@ -43,7 +26,7 @@ extension Markup {
         }
         return nil
     }
-    
+
     /// Returns true if the directive contains any children.
     var hasChildren: Bool {
         return childCount > 0

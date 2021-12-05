@@ -13,8 +13,6 @@ import Foundation
 #if canImport(WebKit)
 import WebKit
 
-@available(*, deprecated, renamed: "DocumentationSchemeHandler")
-public typealias TopicReferenceSchemeHandler = DocumentationSchemeHandler
 public class DocumentationSchemeHandler: NSObject {
     
     public typealias FallbackResponseHandler = (URLRequest) -> (URLResponse, Data)?

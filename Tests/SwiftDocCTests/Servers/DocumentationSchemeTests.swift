@@ -19,11 +19,11 @@ import XCTest
 fileprivate let baseURL = URL(string: "test://")!
 fileprivate let helloWorldHTML = "<html><header><title>Hello Title</title></header><body>Hello world</body></html>".data(using: .utf8)!
 
-class TopicRefenceSchemeTests: XCTestCase {
+class DocumentationSchemeTests: XCTestCase {
     let templateURL = Bundle.module.url(
         forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
     
-    func testTopicReferenceSchemeHandler() {
+    func testDocumentationSchemeHandler() {
         #if !os(Linux) && !os(Android)
         let topicSchemeHandler = DocumentationSchemeHandler(withTemplateURL: templateURL)
         

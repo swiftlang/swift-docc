@@ -10,7 +10,6 @@ Offer native integration of DocC in your IDE.
 - ``CommunicationBridge``
 - ``CommunicationBridgeError``
 - ``DocumentationSchemeHandler``
-- ``TopicReferenceSchemeHandler``
 - ``Message``
 - ``MessageType``
 - ``CodeColors``

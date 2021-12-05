@@ -185,12 +185,6 @@ public struct DataAsset: Codable {
     }
     
     /// Returns the data that is registered to the data asset that best matches the given trait collection.
-    @available(*, deprecated, renamed: "data(bestMatching:)")
-    public func data(with traitCollection: DataTraitCollection) -> BundleData {
-        return data(bestMatching: traitCollection)
-    }
-    
-    /// Returns the data that is registered to the data asset that best matches the given trait collection.
     ///
     /// If no variant with the exact given trait collection is found, the variant that has the largest trait collection overlap with the
     /// provided one is returned.

@@ -5,7 +5,6 @@
 ### Errors
 
 - ``DescribedError``
-- ``ErrorWithProblems``
 
 ### Language
 

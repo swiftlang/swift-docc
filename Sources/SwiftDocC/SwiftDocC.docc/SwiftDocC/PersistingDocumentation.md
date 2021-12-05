@@ -6,7 +6,7 @@ Save compiled documentation to disk.
 
 Once the in-memory documentation model is finalized each of its graph nodes can be converted to a rendering node and persisted on disk or elsewhere via the `Codable` protocol.
 
-The ``Converter`` type converts documentation nodes to rendering nodes:
+The ``DocumentationNodeConverter`` type converts documentation nodes to rendering nodes:
 
 ```swift
 let converter = DocumentationNodeConverter(bundle: myBundle, context: myContext)
@@ -28,7 +28,7 @@ The precise path inside the output folder where resulting JSON file is saved is 
 
 ### Node Persistence
 
-- ``Converter``
+- ``DocumentationNodeConverter``
 - ``LinkDestinationSummary``
 
 ### Render Node Rewriter
