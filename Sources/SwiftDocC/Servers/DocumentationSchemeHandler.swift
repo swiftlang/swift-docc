@@ -83,7 +83,6 @@ public class DocumentationSchemeHandler: NSObject {
 }
 
 // MARK: WKURLSchemeHandler protocol
-@available(OSX 10.13, iOS 11.0, *)
 extension DocumentationSchemeHandler: WKURLSchemeHandler {
 
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
