@@ -22,6 +22,10 @@ Exercise external references: <doc://com.test.external/ExternalPage>
 - Two unordered
 - Three unordered
 
+2. Two ordered with custom start
+3. Three ordered with custom start
+4. Four ordered with custom start
+
 - Returns: A `String` id value.
 
 - Parameter input: A name of the item to find.

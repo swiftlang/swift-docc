@@ -886,6 +886,17 @@ class DocumentationContextTests: XCTestCase {
                         └─ ListItem
                            └─ Paragraph
                               └─ Text "Three unordered"
+
+                        OrderedList startIndex: 2
+                        ├─ ListItem
+                        │  └─ Paragraph
+                        │     └─ Text "Two ordered with custom start"
+                        ├─ ListItem
+                        │  └─ Paragraph
+                        │     └─ Text "Three ordered with custom start"
+                        └─ ListItem
+                           └─ Paragraph
+                              └─ Text "Four ordered with custom start"
                         """)
 
         XCTAssertEqual(myProtocolSymbol.declaration.values.first?.declarationFragments.map({ $0.spelling }), ["protocol", " ", "MyProtocol", " : ", "Hashable"])

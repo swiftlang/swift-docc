@@ -57,10 +57,10 @@
       },
       {
         "package": "swift-markdown",
-        "repositoryURL": "https://github.com/apple/swift-markdown.git",
+        "repositoryURL": "https://github.com/QuietMisdreavus/swift-markdown.git",
         "state": {
-          "branch": "main",
-          "revision": "69f31f83a5dca9a3401d3e8fc8ff74804b0dd0ca",
+          "branch": "list-numbering",
+          "revision": "0cdc7269aa395115e50b25f388ffd184a4f04787",
           "version": null
         }
       },

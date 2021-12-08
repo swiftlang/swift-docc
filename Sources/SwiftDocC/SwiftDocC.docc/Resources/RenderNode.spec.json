@@ -822,6 +822,9 @@
                             "orderedList"
                         ]
                     },
+                    "start": {
+                        "type": "integer"
+                    },
                     "items": {
                         "type": "array",
                         "items": {

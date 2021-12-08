@@ -156,10 +156,13 @@ public enum RenderBlockContent: Equatable {
     public struct OrderedList: Equatable {
         /// The items in this list.
         public var items: [ListItem]
+        /// The starting index for items in this list.
+        public var startIndex: UInt
 
         /// Creates a new ordered list with the given items.
-        public init(items: [ListItem]) {
+        public init(items: [ListItem], startIndex: UInt = 1) {
             self.items = items
+            self.startIndex = startIndex
         }
     }
 
@@ -693,7 +696,7 @@ extension RenderBlockContent.Table: Codable {
 extension RenderBlockContent: Codable {
     private enum CodingKeys: CodingKey {
         case type
-        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata
+        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start
         case request, response
         case header, rows
         case numberOfColumns, columns
@@ -723,7 +726,10 @@ extension RenderBlockContent: Codable {
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
         case .orderedList:
-            self = try .orderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
+            self = try .orderedList(.init(
+                items: container.decode([ListItem].self, forKey: .items),
+                startIndex: container.decodeIfPresent(UInt.self, forKey: .start) ?? 1
+            ))
         case .unorderedList:
             self = try .unorderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
         case .step:
@@ -821,6 +827,9 @@ extension RenderBlockContent: Codable {
             try container.encode(h.text, forKey: .text)
             try container.encode(h.anchor, forKey: .anchor)
         case .orderedList(let l):
+            if l.startIndex != 1 {
+                try container.encode(l.startIndex, forKey: .start)
+            }
             try container.encode(l.items, forKey: .items)
         case .unorderedList(let l):
             try container.encode(l.items, forKey: .items)
