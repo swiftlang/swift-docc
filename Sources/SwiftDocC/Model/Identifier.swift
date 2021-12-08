@@ -140,9 +140,22 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     }
     
     public init(bundleIdentifier: String, path: String, fragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
+        self.init(
+            bundleIdentifier: bundleIdentifier,
+            urlReadablePath: urlReadablePath(path),
+            urlReadableFragment: fragment.map(urlReadableFragment(_:)),
+            sourceLanguages: sourceLanguages
+        )
+    }
+    
+    private init(bundleIdentifier: String, urlReadablePath: String, urlReadableFragment: String? = nil, sourceLanguages: Set<SourceLanguage>) {
         precondition(!sourceLanguages.isEmpty, "ResolvedTopicReference.sourceLanguages cannot be empty")
         // Check for a cached instance of the reference
-        let key = Self.cacheKey(path: path, fragment: fragment, sourceLanguages: sourceLanguages)
+        let key = Self.cacheKey(
+            urlReadablePath: urlReadablePath,
+            urlReadableFragment: urlReadableFragment,
+            sourceLanguages: sourceLanguages
+        )
         let cached = Self.sharedPool.sync { $0[bundleIdentifier]?[key] }
         if let resolved = cached {
             self = resolved
@@ -252,7 +265,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     public func appendingPath(_ path: String) -> ResolvedTopicReference {
         let newReference = ResolvedTopicReference(
             bundleIdentifier: bundleIdentifier,
-            path: url.appendingPathComponent(urlReadablePath(path), isDirectory: false).path,
+            urlReadablePath: url.appendingPathComponent(urlReadablePath(path), isDirectory: false).path,
             sourceLanguages: sourceLanguages
         )
         return newReference
@@ -273,8 +286,8 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let newPath = url.appendingPathComponent(referencePath, isDirectory: false).path
         let newReference = ResolvedTopicReference(
             bundleIdentifier: bundleIdentifier,
-            path: newPath,
-            fragment: reference.fragment,
+            urlReadablePath: newPath,
+            urlReadableFragment: reference.fragment,
             sourceLanguages: sourceLanguages
         )
         return newReference
@@ -285,8 +298,8 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let newPath = String(pathComponents.dropLast().joined(separator: "/").dropFirst())
         let newReference = ResolvedTopicReference(
             bundleIdentifier: bundleIdentifier,
-            path: newPath,
-            fragment: fragment,
+            urlReadablePath: newPath,
+            urlReadableFragment: fragment,
             sourceLanguages: sourceLanguages
         )
         return newReference
@@ -514,8 +527,12 @@ public struct ResourceReference: Hashable {
 /// For example, a path like `"hello world/example project"` is converted to `"hello-world/example-project"`
 /// instead of `"hello%20world/example%20project"`.
 func urlReadablePath(_ path: String) -> String {
-    return path.components(separatedBy: CharacterSet.urlPathAllowed.inverted)
-        .joined(separator: "-")
+    return path.components(separatedBy: .urlPathNotAllowed).joined(separator: "-")
+}
+
+private extension CharacterSet {
+    static let invalidCharacterSet = CharacterSet(charactersIn: "'\"`")
+    static let whitespaceAndDashes = CharacterSet(charactersIn: "-").union(.whitespaces)
 }
 
 /// Creates a more readable version of a fragment by replacing characters that are not allowed in the fragment of a URL with hyphens.
@@ -523,23 +540,17 @@ func urlReadablePath(_ path: String) -> String {
 /// If this step is not performed, the disallowed characters are instead percent escape encoded, which is less readable.
 /// For example, a fragment like `"#hello world"` is converted to `"#hello-world"` instead of `"#hello%20world"`.
 func urlReadableFragment(_ fragment: String) -> String {
-    // Trim leading/trailing invalid characters
     var fragment = fragment
+        // Trim leading/trailing whitespace
         .trimmingCharacters(in: .whitespaces)
     
-    // Replace continuous whitespace
-    fragment = fragment.components(separatedBy: .whitespaces)
+        // Replace continuous whitespace and dashes
+        .components(separatedBy: .whitespaceAndDashes)
         .filter({ !$0.isEmpty })
         .joined(separator: "-")
-
-    let invalidCharacterSet = CharacterSet(charactersIn: "'\"`")
-    fragment = fragment.components(separatedBy: invalidCharacterSet)
-        .joined()
-
-    // Replace continuous dashes
-    fragment = fragment.components(separatedBy: CharacterSet(charactersIn: "-"))
-        .filter({ !$0.isEmpty })
-        .joined(separator: "-")
-
+    
+    // Remove invalid characters
+    fragment.unicodeScalars.removeAll(where: CharacterSet.invalidCharacterSet.contains)
+    
     return fragment
 }
