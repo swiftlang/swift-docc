@@ -66,11 +66,24 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
     }
 }
 
-/**
- A reference to a piece of documentation which has been verified to exist.
- 
- A `ResolvedTopicReference` refers to some piece of documentation, such as an article or symbol. Once an `UnresolvedTopicReference` has been resolved to this type, it should be guaranteed that the content backing the documentation is available (i.e. there is a file on disk or data in memory ready to be recalled at any time).
- */
+/// A reference to a piece of documentation which has been verified to exist.
+///
+/// A `ResolvedTopicReference` refers to some piece of documentation, such as an article or symbol.
+/// Once an `UnresolvedTopicReference` has been resolved to this type, it should be guaranteed
+/// that the content backing the documentation is available
+/// (i.e. there is a file on disk or data in memory ready to be
+/// recalled at any time).
+///
+/// ## Implementation Details
+///
+/// `ResolvedTopicReference` is effectively a wrapper around Foundation's `URL` and,
+/// because of this, it exposes an API very similar to `URL` and does not allow direct modification
+/// of its properties. This immutability brings performance benefits and communicates with
+/// user's of the API that doing something like adding a path component
+/// is a potentially expensive operation, just as it is on `URL`.
+///
+/// > Important: This type has copy-on-write semantics and wraps an underlying class to store
+/// > its data.
 public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomStringConvertible {
     typealias ReferenceBundleIdentifier = String
     typealias ReferenceKey = String
@@ -92,30 +105,34 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         return url?.scheme?.lowercased() == ResolvedTopicReference.urlScheme
     }
     
+    /// The storage for the resolved topic reference's state.
+    let _storage: Storage
+    
     /// The identifier of the bundle that owns this documentation topic.
     public var bundleIdentifier: String {
-        didSet { updateURL() }
+        return _storage.bundleIdentifier
     }
     
     /// The absolute path from the bundle to this topic, delimited by `/`.
     public var path: String {
-        didSet { updateURL() }
+        return _storage.path
     }
     
     /// A URL fragment referring to a resource in the topic.
     public var fragment: String? {
-        didSet { updateURL() }
+        return _storage.fragment
     }
     
     /// The source language for which this topic is relevant.
     public var sourceLanguage: SourceLanguage {
         // Return Swift by default to maintain backwards-compatibility.
-        get { sourceLanguages.contains(.swift) ? .swift : sourceLanguages.first! }
-        set { sourceLanguages.insert(newValue) }
+        return sourceLanguages.contains(.swift) ? .swift : sourceLanguages.first!
     }
     
     /// The source languages for which this topic is relevant.
-    public var sourceLanguages: Set<SourceLanguage>
+    public var sourceLanguages: Set<SourceLanguage> {
+        return _storage.sourceLanguages
+    }
     
     /// - Note: The `path` parameter is escaped to a path readable string.
     public init(bundleIdentifier: String, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
@@ -132,20 +149,20 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             return
         }
         
-        // Create a new reference
-        self.bundleIdentifier = bundleIdentifier
-        self.path = urlReadablePath(path)
-        self.fragment = fragment.map { urlReadableFragment($0) }
-        self.sourceLanguages = sourceLanguages
-        updateURL()
+        _storage = Storage(
+            bundleIdentifier: bundleIdentifier,
+            path: urlReadablePath,
+            fragment: urlReadableFragment,
+            sourceLanguages: sourceLanguages
+        )
 
         // Cache the reference
         Self.sharedPool.sync { $0[bundleIdentifier, default: [:]][key] = self }
     }
     
     private static func cacheKey(
-        path: String,
-        fragment: String?,
+        urlReadablePath path: String,
+        urlReadableFragment fragment: String?,
         sourceLanguages: Set<SourceLanguage>
     ) -> String {
         let sourceLanguagesString = sourceLanguages.map(\.id).sorted().joined(separator: "-")
@@ -158,28 +175,19 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     }
     
     /// The topic URL as you would write in a link.
-    private (set) public var url: URL! = nil
-    
-    private mutating func updateURL() {
-        var components = URLComponents()
-        components.scheme = ResolvedTopicReference.urlScheme
-        components.host = bundleIdentifier
-        components.path = path
-        components.fragment = fragment
-        url = components.url!
-        pathComponents = url.pathComponents
-        absoluteString = url.absoluteString
+    public var url: URL {
+        return _storage.url
     }
     
     /// A list of the reference path components.
-    /// > Note: This value is updated inside `updateURL()` to avoid
-    /// accessing the property on `URL`.
-    private(set) var pathComponents = [String]()
+    var pathComponents: [String] {
+        return _storage.pathComponents
+    }
     
     /// A string representation of `url`.
-    /// > Note: This value is updated inside `updateURL()` to avoid
-    /// accessing the property on `URL`.
-    private(set) var absoluteString = ""
+    var absoluteString: String {
+        return _storage.absoluteString
+    }
     
     enum CodingKeys: CodingKey {
         case url, interfaceLanguage
@@ -284,6 +292,25 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         return newReference
     }
     
+    /// Returns a topic reference based on the current one that includes the given source languages.
+    ///
+    /// If the current topic reference already includes the given source languages, this returns
+    /// the original topic reference.
+    public func addingSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> ResolvedTopicReference {
+        let combinedSourceLanguages = self.sourceLanguages.union(sourceLanguages)
+        
+        guard combinedSourceLanguages != self.sourceLanguages else {
+            return self
+        }
+        
+        return ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            urlReadablePath: path,
+            urlReadableFragment: fragment,
+            sourceLanguages: combinedSourceLanguages
+        )
+    }
+    
     /// The last path component of this topic reference.
     public var lastPathComponent: String {
         // There is always at least one component, so we can unwrap `last`.
@@ -322,15 +349,48 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     // which languages they are available in.
     
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(bundleIdentifier)
-        hasher.combine(path)
-        hasher.combine(fragment)
+        hasher.combine(_storage.identifierPathAndFragment)
     }
     
     public static func == (lhs: ResolvedTopicReference, rhs: ResolvedTopicReference) -> Bool {
-        return lhs.bundleIdentifier == rhs.bundleIdentifier
-            && lhs.path == rhs.path
-            && lhs.fragment == rhs.fragment
+        return lhs._storage.identifierPathAndFragment == rhs._storage.identifierPathAndFragment
+    }
+    
+    /// Storage for a resolved topic reference's state.
+    ///
+    /// This is a reference type which allows ``ResolvedTopicReference`` to have copy-on-write behavior.
+    class Storage {
+        let bundleIdentifier: String
+        let path: String
+        let fragment: String?
+        let sourceLanguages: Set<SourceLanguage>
+        let url: URL
+        let pathComponents: [String]
+        let absoluteString: String
+        
+        let identifierPathAndFragment: String
+        
+        init(
+            bundleIdentifier: String,
+            path: String,
+            fragment: String? = nil,
+            sourceLanguages: Set<SourceLanguage>
+        ) {
+            self.bundleIdentifier = bundleIdentifier
+            self.path = path
+            self.fragment = fragment
+            self.sourceLanguages = sourceLanguages
+            self.identifierPathAndFragment = "\(bundleIdentifier)\(path)\(fragment ?? "")"
+            
+            var components = URLComponents()
+            components.scheme = ResolvedTopicReference.urlScheme
+            components.host = bundleIdentifier
+            components.path = path
+            components.fragment = fragment
+            url = components.url!
+            pathComponents = url.pathComponents
+            absoluteString = url.absoluteString
+        }
     }
 }
 

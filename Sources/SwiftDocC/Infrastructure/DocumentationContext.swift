@@ -454,7 +454,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             externallyResolvedLinks[pair.url] = pair.resolved
             if case .success(let resolvedReference) = pair.resolved,
                 pair.url.absoluteString != resolvedReference.absoluteString,
-                let url = resolvedReference.url.flatMap(ValidatedURL.init) {
+                let url = ValidatedURL(resolvedReference.url) {
                 // If the resolved reference has a different URL than the link cache both URLs
                 // so we can resolve both unresolved and resolved references.
                 externallyResolvedLinks[url] = pair.resolved
@@ -1110,7 +1110,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
                 
                 // If it's an existing module, update the interface languages
-                moduleReferences[moduleName]?.sourceLanguages.formUnion(moduleInterfaceLanguages)
+                moduleReferences[moduleName] = moduleReferences[moduleName]?.addingSourceLanguages(moduleInterfaceLanguages)
                 
                 // Import the symbol graph symbols
                 let moduleReference: ResolvedTopicReference
