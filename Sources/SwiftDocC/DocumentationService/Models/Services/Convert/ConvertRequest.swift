@@ -92,10 +92,10 @@ public struct ConvertRequest: Codable {
     @available(*, deprecated, message: "Use 'bundleInfo.version' instead.")
     public var version: String {
         get {
-            return bundleInfo.version.description
+            return bundleInfo.version ?? "0.0.1"
         }
         set {
-            bundleInfo.version = Version(versionString: newValue) ?? bundleInfo.version
+            bundleInfo.version = newValue
         }
     }
     
@@ -159,7 +159,7 @@ public struct ConvertRequest: Codable {
         self.bundleInfo = DocumentationBundle.Info(
             displayName: displayName,
             identifier: identifier,
-            version: Version(versionString: version)!,
+            version: version,
             defaultCodeListingLanguage: defaultCodeListingLanguage
         )
     }

@@ -158,7 +158,7 @@ log in Xcode's report navigator and expanding the "Compile documentation" step.
 ## Using `docc` to build and preview documentation
 
 You can use `docc` directly to build documentation for your Swift framework
-or package. The below instructions use this repository as an example, but
+or package. The below instructions use this repository as an example but
 apply to any Swift package. Just replace any reference to `SwiftDocC` below
 with the name of your package.
 

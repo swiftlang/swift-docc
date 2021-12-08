@@ -17,7 +17,7 @@ class ConvertServiceTests: XCTestCase {
     private let testBundleInfo = DocumentationBundle.Info(
         displayName: "TestBundle",
         identifier: "identifier",
-        version: Version(versionString: "1.0.0")!
+        version: "1.0.0"
     )
     
     func testConvertSinglePage() throws {
@@ -966,7 +966,7 @@ class ConvertServiceTests: XCTestCase {
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundle",
                 identifier: "com.test.bundle",
-                version: Version(versionString: "1.0.0")!
+                version: "1.0.0"
             ),
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
@@ -1252,7 +1252,7 @@ class ConvertServiceTests: XCTestCase {
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundleDisplayName",
                 identifier: "com.test.bundle",
-                version: Version(versionString: "1.0.0")!
+                version: "1.0.0"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework40EnumerationWithSingleUnresolvableDocLinkO"],
             documentPathsToConvert: [],
@@ -1299,7 +1299,7 @@ class ConvertServiceTests: XCTestCase {
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundleDisplayName",
                 identifier: "com.test.bundle",
-                version: Version(versionString: "1.0.0")!
+                version: "1.0.0"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework15TestEnumerationO06NesteddE0O0D6StructV06deeplyfD31FunctionWithUnresolvableDocLinkyyF"],
             documentPathsToConvert: [],
@@ -1339,7 +1339,7 @@ class ConvertServiceTests: XCTestCase {
             bundleInfo: DocumentationBundle.Info(
                 displayName: "TestBundleDisplayName",
                 identifier: "com.test.bundle",
-                version: Version(versionString: "1.0.0")!
+                version: "1.0.0"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework43EnumerationWithSingleUnresolvableSymbolLinkO"],
             documentPathsToConvert: [],

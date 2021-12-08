@@ -23,7 +23,7 @@ class DocumentationBundleInfoTests: XCTestCase {
         
         XCTAssertEqual(info.displayName, "Test Bundle")
         XCTAssertEqual(info.identifier, "org.swift.docc.example")
-        XCTAssertEqual(info.version.description, "0.1.0")
+        XCTAssertEqual(info.version, "0.1.0")
         XCTAssertEqual(info.defaultCodeListingLanguage, "swift")
     }
 
@@ -57,7 +57,7 @@ class DocumentationBundleInfoTests: XCTestCase {
         
         let infoPlistWithAllFieldsData = Data(infoPlistWithAllFields.utf8)
         
-        let infoPlistWithSomeFields = """
+        let infoPlistWithoutDisplayName = """
         <plist version="1.0">
         <dict>
             <key>CFBundleIdentifier</key>
@@ -68,7 +68,7 @@ class DocumentationBundleInfoTests: XCTestCase {
         </plist>
         """
         
-        let infoPlistWithSomeFieldsData = Data(infoPlistWithSomeFields.utf8)
+        let infoPlistWithoutDisplayNameData = Data(infoPlistWithoutDisplayName.utf8)
         
         let bundleDiscoveryOptions = BundleDiscoveryOptions(
             infoPlistFallbacks: [
@@ -86,7 +86,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             DocumentationBundle.Info(
                 displayName: "Info Plist Display Name",
                 identifier: "com.info.Plist",
-                version: Version(arrayLiteral: 1,0,0)
+                version: "1.0.0"
             )
         )
         
@@ -98,19 +98,44 @@ class DocumentationBundleInfoTests: XCTestCase {
             DocumentationBundle.Info(
                 displayName: "Fallback Display Name",
                 identifier: "com.fallback.Identifier",
-                version: Version(arrayLiteral: 2,0,0)
+                version: "2.0.0"
             )
         )
         
         XCTAssertEqual(
             try DocumentationBundle.Info(
-                from: infoPlistWithSomeFieldsData,
+                from: infoPlistWithoutDisplayNameData,
                 bundleDiscoveryOptions: bundleDiscoveryOptions
             ),
             DocumentationBundle.Info(
                 displayName: "Fallback Display Name",
                 identifier: "com.info.Plist",
-                version: Version(arrayLiteral: 1,0,0)
+                version: "1.0.0"
+            )
+        )
+        
+        let infoPlistWithoutVersion = """
+        <plist version="1.0">
+        <dict>
+            <key>CFBundleDisplayName</key>
+            <string>Info Plist Display Name</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.info.Plist</string>
+        </dict>
+        </plist>
+        """
+        
+        let infoPlistWithoutVersionData = Data(infoPlistWithoutVersion.utf8)
+        
+        XCTAssertEqual(
+            try DocumentationBundle.Info(
+                from: infoPlistWithoutVersionData,
+                bundleDiscoveryOptions: nil
+            ),
+            DocumentationBundle.Info(
+                displayName: "Info Plist Display Name",
+                identifier: "com.info.Plist",
+                version: nil
             )
         )
     }
@@ -217,7 +242,7 @@ class DocumentationBundleInfoTests: XCTestCase {
             DocumentationBundle.Info(
                 displayName: "Display Name",
                 identifier: "swift.org.Identifier",
-                version: Version(arrayLiteral: 1,0,0),
+                version: "1.0.0",
                 defaultCodeListingLanguage: "swift",
                 defaultModuleKind: "Executable",
                 defaultAvailability: DefaultAvailability(
@@ -238,7 +263,7 @@ class DocumentationBundleInfoTests: XCTestCase {
         let info = DocumentationBundle.Info(
             displayName: "Display Name",
             identifier: "swift.org.Identifier",
-            version: Version(arrayLiteral: 1,0,0),
+            version: "1.0.0",
             defaultCodeListingLanguage: "swift",
             defaultModuleKind: "Executable",
             defaultAvailability: DefaultAvailability(

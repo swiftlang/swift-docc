@@ -366,9 +366,6 @@ class ConvertActionTests: XCTestCase {
             Missing value for 'CFBundleDisplayName'.
             Use the '--fallback-display-name' argument or add 'CFBundleDisplayName' to the bundle Info.plist.
             
-            Missing value for 'CFBundleVersion'.
-            Use the '--fallback-bundle-version' argument or add 'CFBundleVersion' to the bundle Info.plist.
-            
             """)
         }
     }
