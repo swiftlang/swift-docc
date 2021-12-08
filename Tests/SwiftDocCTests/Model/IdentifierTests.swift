@@ -121,4 +121,14 @@ class IdentifierTests: XCTestCase {
         ref1 = ref1.removingLastPathComponent()
         XCTAssertEqual(ref1.absoluteString, "doc://bundle/MyClass")
     }
+    
+    func testResolvedTopicReferenceDoesNotCopyStorageIfNotModified() {
+         let reference1 = ResolvedTopicReference(bundleIdentifier: "bundle", path: "/", sourceLanguage: .swift)
+         let reference2 = reference1
+
+         XCTAssertEqual(
+             ObjectIdentifier(reference1._storage),
+             ObjectIdentifier(reference2._storage)
+         )
+     }
 }

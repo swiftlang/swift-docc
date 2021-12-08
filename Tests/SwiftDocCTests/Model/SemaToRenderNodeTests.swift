@@ -1240,10 +1240,10 @@ class SemaToRenderNodeTests: XCTestCase {
                     reference: reference,
                     kind: .collection,
                     sourceLanguage: .swift,
-                    name: .conceptual(title: "Title for \(reference.url!.path)"),
+                    name: .conceptual(title: "Title for \(reference.url.path)"),
                     markup: Document(
                         Paragraph(
-                            Text("Abstract for \(reference.url!.path)")
+                            Text("Abstract for \(reference.url.path)")
                         )
                     ),
                     semantic: nil
