@@ -78,13 +78,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// A synchronized reference cache to store resolved references.
     static var sharedPool = Synchronized([ReferenceBundleIdentifier: [ReferenceKey: ResolvedTopicReference]]())
     
-    /// Adds a reference to the reference pool.
-    /// - Note: This method is synchronized over ``sharedPool``.
-    static func addToPool(_ reference: ResolvedTopicReference) {
-        sharedPool.sync {
-            $0[reference.bundleIdentifier, default: [:]][reference.cacheKey] = reference
-        }
-    }
     /// Clears cached references belonging to the bundle with the given identifier.
     /// - Parameter bundleIdentifier: The identifier of the bundle to which the method should clear belonging references.
     static func purgePool(for bundleIdentifier: String) {
@@ -124,11 +117,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     /// The source languages for which this topic is relevant.
     public var sourceLanguages: Set<SourceLanguage>
     
-    /// The reference cache key
-    var cacheKey: String {
-        return Self.cacheKey(path: path, fragment: fragment, sourceLanguages: sourceLanguages)
-    }
-    
     /// - Note: The `path` parameter is escaped to a path readable string.
     public init(bundleIdentifier: String, path: String, fragment: String? = nil, sourceLanguage: SourceLanguage) {
         self.init(bundleIdentifier: bundleIdentifier, path: path, fragment: fragment, sourceLanguages: [sourceLanguage])
@@ -152,7 +140,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         updateURL()
 
         // Cache the reference
-        Self.sharedPool.sync { $0[bundleIdentifier, default: [:]][cacheKey] = self }
+        Self.sharedPool.sync { $0[bundleIdentifier, default: [:]][key] = self }
     }
     
     private static func cacheKey(
@@ -244,7 +232,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             sourceLanguages: sourceLanguages
         )
         
-        Self.addToPool(newReference)
         return newReference
     }
     
@@ -260,7 +247,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             path: url.appendingPathComponent(urlReadablePath(path), isDirectory: false).path,
             sourceLanguages: sourceLanguages
         )
-        Self.addToPool(newReference)
         return newReference
     }
     
@@ -283,7 +269,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             fragment: reference.fragment,
             sourceLanguages: sourceLanguages
         )
-        Self.addToPool(newReference)
         return newReference
     }
     
@@ -296,7 +281,6 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             fragment: fragment,
             sourceLanguages: sourceLanguages
         )
-        Self.addToPool(newReference)
         return newReference
     }
     
