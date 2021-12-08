@@ -804,7 +804,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 title: group.title,
                 abstract: nil,
                 discussion: nil,
-                identifiers: group.references.compactMap(\.url?.absoluteString),
+                identifiers: group.references.map(\.url.absoluteString),
                 generated: true
             )
         }
@@ -892,10 +892,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
     public mutating func visitSymbol(_ symbol: Symbol) -> RenderTree? {
         let documentationNode = try! context.entity(with: identifier)
         
-        var identifier = identifier
+        let identifier = identifier.addingSourceLanguages(documentationNode.availableSourceLanguages)
         
-        // Add the source languages declared in the documentation node.
-        identifier.sourceLanguages = identifier.sourceLanguages.union(documentationNode.availableSourceLanguages)
         var node = RenderNode(identifier: identifier, kind: .symbol)
         var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
 
