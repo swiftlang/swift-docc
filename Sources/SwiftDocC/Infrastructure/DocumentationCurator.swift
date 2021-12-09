@@ -99,7 +99,7 @@ struct DocumentationCurator {
         let reference = ResolvedTopicReference(
             bundleIdentifier: resolved.bundleIdentifier,
             path: sourceArticlePath,
-            sourceLanguage: resolved.sourceLanguage)
+            sourceLanguages: resolved.sourceLanguages)
         
         guard let currentArticle = self.context.uncuratedArticles[reference],
             let documentationNode = try? DocumentationNode(reference: reference, article: currentArticle.value) else { return nil }

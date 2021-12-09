@@ -57,11 +57,35 @@ public struct DocumentationDataVariants<Variant> {
         }
     }
     
+    /// Accesses the variant for the given trait,
+    /// falling back to the given default variant if the key isn’t found.
+    public subscript(trait: DocumentationDataVariantsTrait, default defaultValue: Variant) -> Variant {
+        get { values[trait] ?? defaultValue }
+        set {
+            if trait == .fallback {
+                defaultVariantValue = newValue
+            } else {
+                values[trait] = newValue
+            }
+        }
+    }
+    
     /// Whether a variant for the given trait has been registered.
     ///
     /// - Parameter trait: The trait to look up a variant for.
     public func hasVariant(for trait: DocumentationDataVariantsTrait) -> Bool {
         values.keys.contains(trait)
+    }
+    
+    func map<NewVariant>(transform: (Variant) -> NewVariant) -> DocumentationDataVariants<NewVariant> {
+        return DocumentationDataVariants<NewVariant>(
+            values: Dictionary(
+                uniqueKeysWithValues: values.map { (trait, variant) in
+                    return (trait, transform(variant))
+                }
+            ),
+            defaultVariantValue: defaultVariantValue.map(transform)
+        )
     }
 }
 
@@ -73,6 +97,10 @@ extension DocumentationDataVariants {
         } else {
             self.init()
         }
+    }
+    
+    static var empty: DocumentationDataVariants<Variant> {
+        return DocumentationDataVariants<Variant>(values: [:], defaultVariantValue: nil)
     }
     
     /// Convenience API to access the first variant, or the default value if there are no registered variants.

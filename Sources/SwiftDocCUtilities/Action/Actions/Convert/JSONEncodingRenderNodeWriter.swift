@@ -29,7 +29,7 @@ class JSONEncodingRenderNodeWriter {
     
     private let urlGenerator: NodeURLGenerator
     private let fileManager: FileManagerProtocol
-    private let renderReferenceCache = Synchronized<[String: Data]>([:])
+    private let renderReferenceCache = RenderReferenceCache([:])
     
     /// Creates a writer object that write render node JSON into a given folder.
     ///

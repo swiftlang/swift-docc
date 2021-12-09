@@ -28,7 +28,7 @@ public class VariantOverrides: Codable {
     
     /// Initializes a value given overrides.
     public init(values: [VariantOverride] = []) {
-        self.values = values
+        add(contentsOf: values)
     }
     
     /// Adds the given override.
