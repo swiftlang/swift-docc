@@ -31,7 +31,7 @@ enum StaticHostableTransformerError: DescribedError  {
 }
 
 /// Navigates the contents of a FileSystemProvider pointing at the data folder of a `.doccarchive` to emit a static hostable website.
-class StaticHostableTransformer {
+struct StaticHostableTransformer {
     
     /// The internal `FileSystemProvider` reference.
     /// This should be the data folder of an archive.
