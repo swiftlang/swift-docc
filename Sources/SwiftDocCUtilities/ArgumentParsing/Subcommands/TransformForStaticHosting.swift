@@ -48,17 +48,18 @@ extension Docc.ProcessArchive {
 
         mutating func validate() throws {
 
-            if let templateURL =  templateOption.templateURL {
+            if let templateURL = templateOption.templateURL {
                 let indexTemplate = templateURL.appendingPathComponent(HTMLTemplate.templateFileName.rawValue)
                 if !FileManager.default.fileExists(atPath: indexTemplate.path) {
-                    throw ValidationError("You cannot Transform for Static Hosting as the provided template (\(TemplateOption.environmentVariableKey)) does not contain a \(HTMLTemplate.templateFileName) file.")
+                    throw TemplateOption.invalidHTMLTemplateError(
+                        path: templateURL.path,
+                        expectedFile: HTMLTemplate.templateFileName.rawValue
+                    )
                 }
             } else {
-                throw ValidationError(
-                    """
-                    Invalid or missing HTML template directory, relative to the docc executable, at: \(templateOption.defaultTemplateURL.path)
-                    Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
-                    """)
+                throw TemplateOption.missingHTMLTemplateError(
+                    path: templateOption.defaultTemplateURL.path
+                )
             }
         }
 

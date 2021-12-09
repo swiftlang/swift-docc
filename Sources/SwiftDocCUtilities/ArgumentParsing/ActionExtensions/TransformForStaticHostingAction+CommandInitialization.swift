@@ -20,7 +20,9 @@ extension TransformForStaticHostingAction {
         // Initialize the `TransformForStaticHostingAction` from the options provided by the `EmitStaticHostable` command
         
         guard let htmlTemplateFolder = cmd.templateOption.templateURL ?? fallbackTemplateURL else {
-            throw ValidationError("No valid html Template folder has been provided")
+            throw TemplateOption.missingHTMLTemplateError(
+                path: cmd.templateOption.defaultTemplateURL.path
+            )
         }
         
         try self.init(

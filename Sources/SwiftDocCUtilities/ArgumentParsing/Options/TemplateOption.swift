@@ -53,6 +53,30 @@ public struct TemplateOption: ParsableArguments {
         return templatePath
     }
     
+    static func invalidHTMLTemplateError(
+        path templatePath: String,
+        expectedFile expectedFileName: String
+    ) -> ValidationError {
+        return ValidationError(
+            """
+            Invalid or missing HTML template directory configuration provided.
+            The directory at '\(templatePath)' does not contain a valid template. Missing '\(expectedFileName)' file.
+            Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
+            """
+        )
+    }
+    
+    static func missingHTMLTemplateError(
+        path expectedTemplatePath: String
+    ) -> ValidationError {
+        return ValidationError(
+            """
+            Invalid or missing HTML template directory, relative to the docc executable, at: '\(expectedTemplatePath)'.
+            Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
+            """
+        )
+    }
+
     public mutating func validate() throws {
         templateURL = ProcessInfo.processInfo.environment[TemplateOption.environmentVariableKey]
             .map { URL(fileURLWithPath: $0) }
@@ -75,11 +99,7 @@ public struct TemplateOption: ParsableArguments {
         // an HTML template for docc.
         guard FileManager.default.fileExists(atPath: templateURL.appendingPathComponent(HTMLTemplate.indexFileName.rawValue).path)
         else {
-            throw ValidationError(
-                """
-                Invalid HTML template directory configuration provided via the '\(TemplateOption.environmentVariableKey)' environment variable.
-                The directory at '\(templateURL.path)' does not contain a valid template. Missing 'index.html' file.
-                """)
+            throw Self.invalidHTMLTemplateError(path: templateURL.path, expectedFile: "index.html")
         }
     }
 }

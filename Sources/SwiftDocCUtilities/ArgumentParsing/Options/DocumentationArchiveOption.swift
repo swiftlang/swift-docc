@@ -44,7 +44,12 @@ public struct DocCArchiveOption: DirectoryPathOption {
         
         let missingContents = Array(Set(DocCArchiveOption.expectedContent).subtracting(archiveContents))
         guard missingContents.isEmpty else {
-            throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive. Missing: \(missingContents)")
+            throw ValidationError(
+                """
+                '\(urlOrFallback.path)' is not a valid DocC Archive.
+                Expected a 'data' directory at the root of the archive.
+                """
+            )
         }
         
     }

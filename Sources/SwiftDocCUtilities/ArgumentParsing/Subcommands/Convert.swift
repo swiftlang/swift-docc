@@ -245,13 +245,12 @@ extension Docc {
             if let outputParent = providedOutputURL?.deletingLastPathComponent() {
                 var isDirectory: ObjCBool = false
                 guard FileManager.default.fileExists(atPath: outputParent.path, isDirectory: &isDirectory), isDirectory.boolValue else {
-                    throw ValidationError("No directory exist at '\(outputParent.path)'.")
+                    throw ValidationError("No directory exists at '\(outputParent.path)'.")
                 }
             }
 
             if transformForStaticHosting  {
-                
-                if let templateURL =  templateOption.templateURL {
+                if let templateURL = templateOption.templateURL {
                     let neededFileName: String
 
                     if hostingBasePath != nil {
@@ -262,15 +261,16 @@ extension Docc {
 
                     let indexTemplate = templateURL.appendingPathComponent(neededFileName)
                     if !FileManager.default.fileExists(atPath: indexTemplate.path) {
-                        throw ValidationError("You cannot Transform for Static Hosting as the provided template (\(TemplateOption.environmentVariableKey)) does not contain a valid \(neededFileName) file.")
+                        throw TemplateOption.invalidHTMLTemplateError(
+                            path: templateURL.path,
+                            expectedFile: neededFileName
+                        )
                     }
 
                 } else {
-                    throw ValidationError(
-                        """
-                        Invalid or missing HTML template directory, relative to the docc executable, at: \(templateOption.defaultTemplateURL.path).
-                        Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
-                        """)
+                    throw TemplateOption.missingHTMLTemplateError(
+                        path: templateOption.defaultTemplateURL.path
+                    )
                 }
             }
 
