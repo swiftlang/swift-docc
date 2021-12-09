@@ -24,12 +24,72 @@ extension CodingUserInfoKey {
     ///
     /// This key is used by encoders to accumulate language-specific variants of documentation in a ``VariantOverrides`` value.
     static let variantOverrides = CodingUserInfoKey(rawValue: "variantOverrides")!
+    
+    static let baseEncodingPath = CodingUserInfoKey(rawValue: "baseEncodingPath")!
 }
 
 extension Encoder {
     /// The variant overrides accumulated as part of the encoding process.
     var userInfoVariantOverrides: VariantOverrides? {
         userInfo[.variantOverrides] as? VariantOverrides
+    }
+    
+    /// The base path to use when creating dynamic JSON pointers
+    /// with this encoder.
+    var baseJSONPatchPath: [String]? {
+        userInfo[.baseEncodingPath] as? [String]
+    }
+    
+    /// A Boolean that is true if this encoder skips the encoding of any render references.
+    ///
+    /// These references will then be encoded at a later stage by `TopicRenderReferenceEncoder`.
+    var skipsEncodingReferences: Bool {
+        guard let userInfoValue = userInfo[.skipsEncodingReferences] as? Bool else {
+            // The value doesn't exist so we should encode reference. Return false.
+            return false
+        }
+        
+        return userInfoValue
+    }
+}
+
+extension JSONEncoder {
+    /// The variant overrides accumulated as part of the encoding process.
+    var userInfoVariantOverrides: VariantOverrides? {
+        get {
+            userInfo[.variantOverrides] as? VariantOverrides
+        }
+        set {
+            userInfo[.variantOverrides] = newValue
+        }
+    }
+    
+    /// The base path to use when creating dynamic JSON pointers
+    /// with this encoder.
+    var baseJSONPatchPath: [String]? {
+        get {
+            userInfo[.baseEncodingPath] as? [String]
+        }
+        set {
+            userInfo[.baseEncodingPath] = newValue
+        }
+    }
+    
+    /// A Boolean that is true if this encoder skips the encoding any render references.
+    ///
+    /// These references will then be encoded at a later stage by `TopicRenderReferenceEncoder`.
+    var skipsEncodingReferences: Bool {
+        get {
+            guard let userInfoValue = userInfo[.skipsEncodingReferences] as? Bool else {
+                // The value doesn't exist so we should encode reference. Return false.
+                return false
+            }
+            
+            return userInfoValue
+        }
+        set {
+            userInfo[.skipsEncodingReferences] = newValue
+        }
     }
 }
 
@@ -145,7 +205,7 @@ public extension RenderNode {
     /// - Returns: The data for the encoded render node.
     func encodeToJSON(
         with encoder: JSONEncoder = RenderJSONEncoder.makeEncoder(),
-        renderReferenceCache: Synchronized<[String: Data]>? = nil
+        renderReferenceCache: RenderReferenceCache? = nil
     ) throws -> Data {
         do {
             // If there is no topic reference cache, just encode the reference.
@@ -155,13 +215,14 @@ public extension RenderNode {
             }
             
             // Since we're using a reference cache, skip encoding the references and encode them separately.
-            encoder.userInfo[.skipsEncodingReferences] = true
+            encoder.skipsEncodingReferences = true
             var renderNodeData = try encoder.encode(self)
             
             // Add render references, using the encoder cache.
-            TopicRenderReferenceEncoder.addRenderReferences(
+            try TopicRenderReferenceEncoder.addRenderReferences(
                 to: &renderNodeData,
                 references: references,
+                encodeAccumulatedVariantOverrides: variantOverrides == nil,
                 encoder: encoder,
                 renderReferenceCache: renderReferenceCache
             )
