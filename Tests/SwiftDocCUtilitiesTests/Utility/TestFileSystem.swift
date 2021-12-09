@@ -302,15 +302,17 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
     func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
 
         if let keys = keys {
-            XCTAssert(keys.isEmpty, "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem")
+            XCTAssertTrue(
+                keys.isEmpty,
+                "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem"
+            )
+        }
+        
+        if mask != .skipsHiddenFiles && mask.isEmpty {
+            XCTFail("The given directory enumeration option(s) have not been implemented in the test file system: \(mask)")
         }
 
-        // This code will become incomplete should `FileManager.DirectoryEnumerationOptions` change.
-        if mask.contains(.skipsPackageDescendants) || mask.contains(.skipsPackageDescendants) || mask.contains(.includesDirectoriesPostOrder) || mask.contains(.producesRelativePathURLs) {
-            XCTFail("contentsOfDirectory in TestFileSystem call with a mask option that has not been implented")
-        }
-
-        let skipHiddenFiles = mask.contains(.skipsHiddenFiles)
+        let skipHiddenFiles = mask == .skipsHiddenFiles
         let contents = try contentsOfDirectory(atPath: url.path)
         let output: [URL] = contents.filter({ skipHiddenFiles ? !$0.hasPrefix(".") : true}).map {
             url.appendingPathComponent($0)
