@@ -5,7 +5,7 @@
       "minor" : 5,
       "patch" : 0
     },
-    "generator" : "SymbolKit"
+    "generator" : "clang"
   },
   "module" : {
     "name" : "DeckKit",
