@@ -345,21 +345,22 @@ class ConvertActionTests: XCTestCase {
         var infoPlistFallbacks = [String: Any]()
         infoPlistFallbacks["CFBundleIdentifier"] = "com.example.test"
         
-        XCTAssertThrowsError(try ConvertAction(
-                documentationBundleURL: nil,
-                outOfProcessResolver: nil,
-                analyze: false,
-                targetDirectory: outputLocation.absoluteURL,
-                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-                emitDigest: false,
-                currentPlatforms: nil,
-                fileManager: testDataProvider,
-                bundleDiscoveryOptions: BundleDiscoveryOptions(
-                    infoPlistFallbacks: infoPlistFallbacks,
-                    additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
-                )
+        var action = try ConvertAction(
+            documentationBundleURL: nil,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: outputLocation.absoluteURL,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            fileManager: testDataProvider,
+            bundleDiscoveryOptions: BundleDiscoveryOptions(
+                infoPlistFallbacks: infoPlistFallbacks,
+                additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
             )
-        ) { error in
+        )
+        let logStorage = LogHandle.LogStorage()
+        XCTAssertThrowsError(try action.perform(logHandle: .memory(logStorage))) { error in
             XCTAssertEqual(error.localizedDescription, """
             The information provided as command line arguments is not enough to generate a documentation bundle:
             
