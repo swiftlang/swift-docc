@@ -41,6 +41,7 @@ public struct NodeURLGenerator {
     public enum Path {
         public static let tutorialsFolderName = "tutorials"
         public static let documentationFolderName = "documentation"
+        public static let dataFolderName = "data"
         
         public static let tutorialsFolder = "/\(tutorialsFolderName)"
         public static let documentationFolder = "/\(documentationFolderName)"

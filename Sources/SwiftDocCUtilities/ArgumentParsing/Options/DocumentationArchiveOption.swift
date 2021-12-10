@@ -12,21 +12,45 @@ import ArgumentParser
 import Foundation
 
 /// Resolves and validates a URL value that provides the path to a documentation archive.
-///
-/// This option is used by the ``Docc/Index`` subcommand.
-public struct DocumentationArchiveOption: DirectoryPathOption {
+public struct DocCArchiveOption: DirectoryPathOption {
 
-    public init() {}
+    public init(){}
 
     /// The name of the command line argument used to specify a source archive path.
     static let argumentValueName = "source-archive-path"
+    static let expectedContent: Set<String> = ["data"]
 
-    /// The path to an archive to be indexed by DocC.
+    /// The path to an archive to be used by DocC.
     @Argument(
         help: ArgumentHelp(
-            "Path to a documentation archive data directory of JSON files.",
-            discussion: "The '.doccarchive' bundle docc will index.",
+            "Path to the DocC Archive ('.doccarchive') that should be processed.",
             valueName: argumentValueName),
         transform: URL.init(fileURLWithPath:))
     public var url: URL?
+
+    public mutating func validate() throws {
+
+        // Validate that the URL represents a directory
+        guard urlOrFallback.hasDirectoryPath else {
+            throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive. Expected a directory but a path to a file was provided")
+        }
+        
+        var archiveContents: [String]
+        do {
+            archiveContents = try FileManager.default.contentsOfDirectory(atPath: urlOrFallback.path)
+        } catch {
+            throw ValidationError("'\(urlOrFallback.path)' is not a valid DocC Archive: \(error)")
+        }
+        
+        let missingContents = Array(Set(DocCArchiveOption.expectedContent).subtracting(archiveContents))
+        guard missingContents.isEmpty else {
+            throw ValidationError(
+                """
+                '\(urlOrFallback.path)' is not a valid DocC Archive.
+                Expected a 'data' directory at the root of the archive.
+                """
+            )
+        }
+        
+    }
 }
