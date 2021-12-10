@@ -324,6 +324,23 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         )
     }
     
+    /// Returns a topic reference based on the current one but with the given source languages.
+    ///
+    /// If the current topic reference's source languages equal the given source languages,
+    /// this returns the original topic reference.
+    public func withSourceLanguages(_ sourceLanguages: Set<SourceLanguage>) -> ResolvedTopicReference {
+        guard sourceLanguages != self.sourceLanguages else {
+            return self
+        }
+        
+        return ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            urlReadablePath: path,
+            urlReadableFragment: fragment,
+            sourceLanguages: sourceLanguages
+        )
+    }
+    
     /// The last path component of this topic reference.
     public var lastPathComponent: String {
         // There is always at least one component, so we can unwrap `last`.
