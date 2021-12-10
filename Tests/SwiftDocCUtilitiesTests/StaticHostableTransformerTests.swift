@@ -77,7 +77,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         
         // Test the content of the output folder.
         let expectedContent = ["documentation", "tutorials"]
-        let output = try fileManager.contentsOfDirectory(atPath: outputURL.path)
+        let output = try fileManager.contentsOfDirectory(atPath: outputURL.path).sorted()
         
         XCTAssertEqual(output, expectedContent, "Unexpected output")
         for item in output {
