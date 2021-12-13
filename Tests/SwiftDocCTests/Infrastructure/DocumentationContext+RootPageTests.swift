@@ -36,7 +36,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
                 """),
                 InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ]),
-        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
         
         // Parse this test content
         let workspace = DocumentationWorkspace()
@@ -78,7 +78,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
                 """),
                 InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             ]),
-        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
         
         // Parse this test content
         let workspace = DocumentationWorkspace()

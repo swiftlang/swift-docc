@@ -101,7 +101,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
         // Create a copy of the test bundle
-        let bundleURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
+        let bundleURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
         try FileManager.default.copyItem(at: sourceURL, to: bundleURL)
         
         // Add external link

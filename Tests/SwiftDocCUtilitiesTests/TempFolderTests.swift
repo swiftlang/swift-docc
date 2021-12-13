@@ -17,7 +17,7 @@ class TempFolderTests: XCTestCase {
     func testCreatesAndDeletesTempFolder() throws {
         var tempFolder: TempFolder! = try TempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
-        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
         
         // Check the folder is created and the file inside exists.
         XCTAssertTrue(FileManager.default.directoryExists(atPath: tempFolder.url.path))
@@ -36,8 +36,8 @@ class TempFolderTests: XCTestCase {
     }
     
     func testCreatesRandomPaths() throws {
-        let tempFolder1 = try TempFolder(content: [], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
-        let tempFolder2 = try TempFolder(content: [], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        let tempFolder1 = try TempFolder(content: [], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        let tempFolder2 = try TempFolder(content: [], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
         
         XCTAssertNotEqual(tempFolder1.url, tempFolder2.url)
     }

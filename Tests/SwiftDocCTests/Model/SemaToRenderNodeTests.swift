@@ -1796,7 +1796,7 @@ Document @1:1-11:19
         // Overwrite the article so we can test the article eyebrow for articles without task groups
         let sourceURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let targetURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
+        let targetURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
         
         try FileManager.default.copyItem(at: sourceURL, to: targetURL)
 

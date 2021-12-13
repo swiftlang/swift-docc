@@ -2617,7 +2617,7 @@ let expected = """
                 TextFile(name: "TestTechnology.tutorial", utf8Content: testTechnologySource),
                 TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
-            let tempFolderURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
+            let tempFolderURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
             try testBundle.write(to: tempFolderURL)
             
             // Load the bundle
@@ -2654,7 +2654,7 @@ let expected = """
                 TextFile(name: "TestTechnology.tutorial", utf8Content: testTechnologySource),
                 TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
-            let tempFolderURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
+            let tempFolderURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
             try testBundle.write(to: tempFolderURL)
             
             // Load the bundle
@@ -2714,7 +2714,7 @@ let expected = """
                 TextFile(name: "TestTechnology.tutorial", utf8Content: testTechnologySource),
                 TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
-            let tempFolderURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
+            let tempFolderURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
             try testBundle.write(to: tempFolderURL)
             
             // Load the bundle
@@ -2784,7 +2784,7 @@ let expected = """
                 CopyOfFile(original: infoPlistURL, newName: "Info.plist"),
                 TextFile(name: "TestFramework.symbols.json", utf8Content: symbolGraphFixture),
             ])
-            let tempFolderURL = try createTemporaryDirectory(pathComponents: "test.docc", createDirectoryForLastPathComponent: false)
+            let tempFolderURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
             try testBundle.write(to: tempFolderURL)
             
             // Load the bundle

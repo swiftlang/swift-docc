@@ -21,7 +21,7 @@ class DefaultRequestHandlerTests: XCTestCase {
     func testDefaultHandler() throws {
         let tempDir = try TempFolder(content: [
             TextFile(name: "index.html", utf8Content: "Hello!"),
-        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
 
         // Default handler should be invoked for any non-asset path
         let request = makeRequestHead(path: "/random-path")
@@ -44,7 +44,7 @@ class DefaultRequestHandlerTests: XCTestCase {
         let tempDir = try TempFolder(content: [
             TextFile(name: "index.html", utf8Content: "Hello!"),
             TextFile(name: "existing.html", utf8Content: "Existing!"),
-        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
 
         // Default handler should handle even paths that do exist on disc
         let request = makeRequestHead(path: "/existing.html")

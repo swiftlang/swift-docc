@@ -26,14 +26,9 @@ public extension XCTestCase {
     ///
     /// - Parameters:
     ///   - pathComponents: Additional path components to add to the temporary URL.
-    ///   - createDirectoryForLastPathComponent: If the file manager should create a directory for the last path component or not. Defaults to `true`.
     ///   - fileManager: The file manager that will create the directory.
     /// - Returns: The URL of the newly created directory.
-    func createTemporaryDirectory(
-        pathComponents: String...,
-        createDirectoryForLastPathComponent: Bool = true,
-        fileManager: FileManager = .default
-    ) throws -> URL {
+    func createTemporaryDirectory(pathComponents: String..., fileManager: FileManager = .default) throws -> URL {
         let bundleParentDir = Bundle(for: Self.self).bundleURL.deletingLastPathComponent()
         let baseURL = bundleParentDir.appendingPathComponent(name.replacingWhitespaceAndPunctuation(with: "-"))
         
@@ -46,9 +41,7 @@ public extension XCTestCase {
         addTeardownBlock {
             try? fileManager.removeItem(at: baseURL)
         }
-        
-        let urlToCreate = createDirectoryForLastPathComponent ? tempURL : tempURL.deletingLastPathComponent()
-        try fileManager.createDirectory(at: urlToCreate, withIntermediateDirectories: true, attributes: nil)
+        try fileManager.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
         
         return tempURL
     }

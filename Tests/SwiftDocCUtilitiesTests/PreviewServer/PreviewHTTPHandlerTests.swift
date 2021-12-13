@@ -26,7 +26,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
             Folder(name: "css", content: [
                 TextFile(name: "test.css", utf8Content: "css"),
             ])
-        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
 
         let channel = EmbeddedChannel()
         let channelHandler = PreviewHTTPHandler(fileIO: fileIO, rootURL: tempDir.url)
@@ -87,7 +87,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
             Folder(name: "css", content: [
                 TextFile(name: "test.css", utf8Content: "css"),
             ])
-        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
 
         let channel = EmbeddedChannel()
         defer {

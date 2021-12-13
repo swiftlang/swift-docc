@@ -110,7 +110,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             return
         }
 
-        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         preview.bindServerToSocketPath = socketURL.path
         
         // The technology output file URL
@@ -466,7 +466,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             return
         }
 
-        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         preview.bindServerToSocketPath = socketURL.path
         
         // Start watching the source and get the initial (successful) state.

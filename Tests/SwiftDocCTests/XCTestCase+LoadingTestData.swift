@@ -37,7 +37,9 @@ extension XCTestCase {
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles")!
         
         let sourceExists = FileManager.default.fileExists(atPath: sourceURL.path)
-        let bundleURL = try createTemporaryDirectory(pathComponents: "\(name).docc", createDirectoryForLastPathComponent: !sourceExists)
+        let bundleURL = sourceExists
+            ? try createTemporaryDirectory().appendingPathComponent("\(name).docc")
+            : try createTemporaryDirectory(pathComponents: "\(name).docc")
         
         if sourceExists {
             try FileManager.default.copyItem(at: sourceURL, to: bundleURL)

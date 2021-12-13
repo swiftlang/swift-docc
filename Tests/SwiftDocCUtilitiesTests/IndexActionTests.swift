@@ -22,7 +22,7 @@ class IndexActionTests: XCTestCase {
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
         let targetURL = try createTemporaryDirectory()
-        let templateURL = try createTemporaryDirectory(createDirectoryForLastPathComponent: false)
+        let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
         
         let targetBundleURL = targetURL.appendingPathComponent("Result.builtdocs")

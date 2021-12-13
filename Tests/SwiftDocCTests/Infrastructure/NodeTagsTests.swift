@@ -20,7 +20,7 @@ class NodeTagsTests: XCTestCase {
             InfoPlist(displayName: "spi", identifier: "com.tests.spi"),
             CopyOfFile(original: spiSGURL),
         ])
-        let tempURL = try createTemporaryDirectory(pathComponents: "unit-tests.docc", createDirectoryForLastPathComponent: false)
+        let tempURL = try createTemporaryDirectory().appendingPathComponent("unit-tests.docc")
         try bundleFolder.write(to: tempURL)
         
         let (_, bundle, context) = try loadBundle(from: tempURL)

@@ -37,7 +37,7 @@ class PreviewServerTests {
         // Create test content
         let tempFolder = try TempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
-        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
 
         let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
         
@@ -112,7 +112,7 @@ class PreviewServerTests {
             Folder(name: "downloads", content: [
                 TextFile(name: "test.zip", utf8Content: "downloads content"),
             ])
-        ], atRoot: createTemporaryDirectory(createDirectoryForLastPathComponent: false))
+        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
     }
     
     func testPreviewServerPaths() throws {

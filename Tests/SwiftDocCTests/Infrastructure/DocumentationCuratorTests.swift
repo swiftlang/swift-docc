@@ -81,7 +81,7 @@ class DocumentationCuratorTests: XCTestCase {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
         
-        let tempURL = try createTemporaryDirectory(pathComponents: "unit-test.docc", createDirectoryForLastPathComponent: false)
+        let tempURL = try createTemporaryDirectory().appendingPathComponent("unit-test.docc")
         let testBundleURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
             
