@@ -20,14 +20,11 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         
         // Convert a test bundle as input for the StaticHostableTransformer
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
 
         let fileManager = FileManager.default
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
         
-        defer { try? fileManager.removeItem(at: targetURL) }
-        
-        let templateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
         defer { try? fileManager.removeItem(at: templateURL) }
         
@@ -41,17 +38,16 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             targetDirectory: targetBundleURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
-            currentPlatforms: nil
+            currentPlatforms: nil,
+            temporaryDirectory: createTemporaryDirectory()
         )
 
         _ = try action.perform(logHandle: .standardOutput)
         
-        let outputURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        defer { try? fileManager.removeItem(at: outputURL) }
+        let outputURL = try createTemporaryDirectory().appendingPathComponent("output")
 
-        let testTemplateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         try Folder.testHTMLTemplateDirectory.write(to: testTemplateURL)
-        defer { try? fileManager.removeItem(at: testTemplateURL) }
 
         let basePath =  "test/folder"
         let indexHTML = Folder.testHTMLTemplate(basePath: basePath)
@@ -103,10 +99,8 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
 
     /// Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
     func testStaticHostableTransformerBasePaths() throws {
-
-        let testTemplateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         try Folder.testHTMLTemplateDirectory.write(to: testTemplateURL)
-        defer { try? FileManager.default.removeItem(at: testTemplateURL) }
 
         let basePaths = ["test": "test",
                          "/test": "test",
@@ -126,27 +120,16 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             XCTAssertEqual(indexHTML, testIndexHTML, "Template HTML not transformed as expected")
         }
     }
-
-
     
     func testStaticHostableTransformerIndexHTMLOutput() throws {
-
         // Convert a test bundle as input for the StaticHostableTransformer
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
 
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-
-        let fileManager = FileManager.default
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-
-        defer { try? fileManager.removeItem(at: targetURL) }
-
-        let templateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
+        let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
-        defer { try? fileManager.removeItem(at: templateURL) }
 
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
-        defer { try? fileManager.removeItem(at: targetBundleURL) }
 
         var action = try ConvertAction(
             documentationBundleURL: bundleURL,
@@ -155,7 +138,8 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
             targetDirectory: targetBundleURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
-            currentPlatforms: nil
+            currentPlatforms: nil,
+            temporaryDirectory: createTemporaryDirectory()
         )
 
         _ = try action.perform(logHandle: .standardOutput)
@@ -163,9 +147,8 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
 
-        let testTemplateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         try Folder.testHTMLTemplateDirectory.write(to: testTemplateURL)
-        defer { try? fileManager.removeItem(at: testTemplateURL) }
 
         let basePaths = ["test": "test",
                          "/test": "test",
@@ -176,11 +159,9 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
                          "test/test/": "test/test",
                          "/test/test/": "test/test"]
 
+        let fileManager = FileManager.default
         for (basePath, testValue) in basePaths {
-
-            let outputURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-            defer { try? fileManager.removeItem(at: outputURL) }
-
+            let outputURL = try createTemporaryDirectory().appendingPathComponent("output")
             let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: testTemplateURL, hostingBasePath: basePath)
           
             let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)

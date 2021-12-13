@@ -20,19 +20,12 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         
         // Convert a test bundle as input for the TransformForStaticHostingAction
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-            
-        let fileManager = FileManager.default
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
+        let targetURL = try createTemporaryDirectory()
         
-        defer { try? fileManager.removeItem(at: targetURL) }
-        
-        let templateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
-        defer { try? fileManager.removeItem(at: templateURL) }
         
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
-        defer { try? fileManager.removeItem(at: targetBundleURL) }
         
         var action = try ConvertAction(
             documentationBundleURL: bundleURL,
@@ -41,28 +34,27 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             targetDirectory: targetBundleURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
-            currentPlatforms: nil
+            currentPlatforms: nil,
+            temporaryDirectory: try createTemporaryDirectory()
         )
        
         _ = try action.perform(logHandle: .standardOutput)
         
-        let outputURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        defer { try? fileManager.removeItem(at: outputURL) }
+        let outputURL = try createTemporaryDirectory()//.appendingPathComponent("output")
     
         let basePath =  "test/folder"
         
-        let testTemplateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         let templateFolder = Folder.testHTMLTemplateDirectory
         try templateFolder.write(to: testTemplateURL)
 
         let indexHTML = Folder.testHTMLTemplate(basePath: basePath)
 
-        defer { try? fileManager.removeItem(at: testTemplateURL) }
-
         var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: outputURL, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
         _ = try transformAction.perform(logHandle: .standardOutput)
         
+        let fileManager = FileManager.default
         var isDirectory: ObjCBool = false
         
         // Test an output folder exists
@@ -109,15 +101,14 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         
         // Convert a test bundle as input for the TransformForStaticHostingAction
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
             
         let fileManager = FileManager.default
         try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
         defer { try? fileManager.removeItem(at: targetURL) }
     
-        let templateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
-        defer { try? fileManager.removeItem(at: templateURL) }
         
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
         
@@ -128,21 +119,20 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             targetDirectory: targetBundleURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
-            currentPlatforms: nil
+            currentPlatforms: nil,
+            temporaryDirectory: try createTemporaryDirectory()
         )
        
         _ = try action.perform(logHandle: .standardOutput)
         
       
         let basePath =  "test/folder"
-        let testTemplateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         let templateFolder = Folder.testHTMLTemplateDirectory
         try templateFolder.write(to: testTemplateURL)
 
         let indexHTML = Folder.testHTMLTemplate(basePath: basePath)
         var expectedContent = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
-        
-        defer { try? fileManager.removeItem(at: testTemplateURL) }
 
         var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: nil, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         

@@ -1937,7 +1937,8 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: nil,
             emitDigest: false,
             currentPlatforms: nil,
-            buildIndex: true
+            buildIndex: true,
+            temporaryDirectory: createTemporaryDirectory()
         )
         
         _ = try action.perform(logHandle: .none)
