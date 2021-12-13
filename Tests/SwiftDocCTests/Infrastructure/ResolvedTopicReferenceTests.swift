@@ -15,21 +15,27 @@ import XCTest
 
 class ResolvedTopicReferenceTests: XCTestCase {
     func testReferenceURL() {
-        var reference = ResolvedTopicReference(bundleIdentifier: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
-        XCTAssertEqual(reference.absoluteString, "doc://bundleID/path/sub-path#fragment")
+        let firstTopicReference = ResolvedTopicReference(
+            bundleIdentifier: "bundleID",
+            path: "/path/sub-path",
+            fragment: "fragment",
+            sourceLanguage: .swift
+        )
+        XCTAssertEqual(firstTopicReference.absoluteString, "doc://bundleID/path/sub-path#fragment")
         
-        reference.bundleIdentifier = "new-bundleID"
-        XCTAssertEqual(reference.absoluteString, "doc://new-bundleID/path/sub-path#fragment")
+        let secondTopicReference = ResolvedTopicReference(
+            bundleIdentifier: "new-bundleID",
+            path: "/new-path/sub-path",
+            fragment: firstTopicReference.fragment,
+            sourceLanguage: firstTopicReference.sourceLanguage
+        )
+        XCTAssertEqual(secondTopicReference.absoluteString, "doc://new-bundleID/new-path/sub-path#fragment")
         
-        reference.path = "/new-path/sub-path"
-        XCTAssertEqual(reference.absoluteString, "doc://new-bundleID/new-path/sub-path#fragment")
-        
-        reference.fragment = nil
-        XCTAssertEqual(reference.absoluteString, "doc://new-bundleID/new-path/sub-path")
+        let thirdTopicReference = secondTopicReference.withFragment(nil)
+        XCTAssertEqual(thirdTopicReference.absoluteString, "doc://new-bundleID/new-path/sub-path")
         
         // Changing the language does not change the url
-        reference.sourceLanguage = .metal
-        XCTAssertEqual(reference.absoluteString, "doc://new-bundleID/new-path/sub-path")
+        XCTAssertEqual(thirdTopicReference.addingSourceLanguages([.metal]).absoluteString, "doc://new-bundleID/new-path/sub-path")
     }
     
     func testAppendingReferenceWithEmptyPath() {

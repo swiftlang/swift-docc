@@ -313,7 +313,11 @@ public class DocumentationContentRenderer {
         var abstractedNode = node
         if kind == .section {
             // Sections don't have their own abstract so take the one of the container symbol.
-            let containerReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: reference.path, sourceLanguage: reference.sourceLanguage)
+            let containerReference = ResolvedTopicReference(
+                bundleIdentifier: reference.bundleIdentifier,
+                path: reference.path,
+                sourceLanguages: reference.sourceLanguages
+            )
             abstractedNode = try? documentationContext.entity(with: containerReference)
         }
         
@@ -446,13 +450,21 @@ public class DocumentationContentRenderer {
                 
                 // For external links, verify they've resolved successfully and return `nil` otherwise.
                 if linkHost != reference.bundleIdentifier {
-                    let externalReference = ResolvedTopicReference(bundleIdentifier: linkHost, path: destination.path, sourceLanguage: node.sourceLanguage)
+                    let externalReference = ResolvedTopicReference(
+                        bundleIdentifier: linkHost,
+                        path: destination.path,
+                        sourceLanguages: node.availableSourceLanguages
+                    )
                     if documentationContext.externallyResolvedSymbols.contains(externalReference) {
                         return externalReference
                     }
                     return nil
                 }
-                return ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: destination.path, sourceLanguage: node.sourceLanguage)
+                return ResolvedTopicReference(
+                    bundleIdentifier: reference.bundleIdentifier,
+                    path: destination.path,
+                    sourceLanguages: node.availableSourceLanguages
+                )
             }
             
             resolvedTaskGroups.append(

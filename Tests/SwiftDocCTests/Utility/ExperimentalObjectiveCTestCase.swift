@@ -8,12 +8,13 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-import Foundation
-@testable import SwiftDocC
+import XCTest
 
-/// A folder that represents a fake html-build dir for testing.
-extension Folder {
-    static let emptyHTMLTemplateDirectory = Folder(name: "template", content: [
-        TextFile(name: "index.html", utf8Content: ""),
-    ])
+/// A test case that enables the experimental Objective-C support feature flag
+/// before running.
+class ExperimentalObjectiveCTestCase: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+    }
 }

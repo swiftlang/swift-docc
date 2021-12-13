@@ -672,7 +672,7 @@ class SymbolTests: XCTestCase {
         )
         
         let engine = DiagnosticEngine()
-        let _ = DocumentationNode.contentFrom(symbol: symbol, article: nil, engine: engine)
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
         XCTAssertEqual(engine.problems.count, 1)
         let problem = try XCTUnwrap(engine.problems.first)
         XCTAssertEqual(problem.diagnostic.source?.path, "/path/to/my file.swift")

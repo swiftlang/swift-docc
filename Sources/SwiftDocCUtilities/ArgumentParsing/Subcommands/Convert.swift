@@ -155,7 +155,7 @@ extension Docc {
             help: "A fallback default language for code listings if no value is provided in the documentation bundle's Info.plist file."
         )
         public var defaultCodeListingLanguage: String?
-            
+
         @Option(
             help: """
                 A fallback default module kind if no value is provided \
@@ -217,6 +217,20 @@ extension Docc {
 
             return outputURL
         }
+        
+        /// Defaults to false
+        @Flag(help: "Produce a Swift-DocC Archive that supports a static hosting environment.")
+        public var transformForStaticHosting = false
+
+        /// A user-provided relative path to be used in the archived output
+        @Option(
+            name: [.customLong("hosting-base-path")],
+            help: ArgumentHelp(
+                "The base path your documentation website will be hosted at.",
+                discussion: "For example, to deploy your site to 'example.com/my_name/my_project/documentation' instead of 'example.com/documentation', pass '/my_name/my_project' as the base path.")
+        )
+        var hostingBasePath: String?
+        
 
         // MARK: - Property Validation
 
@@ -231,9 +245,35 @@ extension Docc {
             if let outputParent = providedOutputURL?.deletingLastPathComponent() {
                 var isDirectory: ObjCBool = false
                 guard FileManager.default.fileExists(atPath: outputParent.path, isDirectory: &isDirectory), isDirectory.boolValue else {
-                    throw ValidationError("No directory exist at '\(outputParent.path)'.")
+                    throw ValidationError("No directory exists at '\(outputParent.path)'.")
                 }
             }
+
+            if transformForStaticHosting  {
+                if let templateURL = templateOption.templateURL {
+                    let neededFileName: String
+
+                    if hostingBasePath != nil {
+                        neededFileName = HTMLTemplate.templateFileName.rawValue
+                    }else {
+                        neededFileName = HTMLTemplate.indexFileName.rawValue
+                    }
+
+                    let indexTemplate = templateURL.appendingPathComponent(neededFileName)
+                    if !FileManager.default.fileExists(atPath: indexTemplate.path) {
+                        throw TemplateOption.invalidHTMLTemplateError(
+                            path: templateURL.path,
+                            expectedFile: neededFileName
+                        )
+                    }
+
+                } else {
+                    throw TemplateOption.missingHTMLTemplateError(
+                        path: templateOption.defaultTemplateURL.path
+                    )
+                }
+            }
+
         }
 
         // MARK: - Execution
