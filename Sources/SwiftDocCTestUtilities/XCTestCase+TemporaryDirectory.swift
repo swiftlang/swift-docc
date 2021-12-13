@@ -22,7 +22,7 @@ public extension XCTestCase {
     
     /// Creates a new temporary directory and returns the URL of that directory.
     ///
-    /// At the end of the test the temporary directory is automatically removed.
+    /// After the current test method has returned the temporary directory is automatically removed.
     ///
     /// - Parameters:
     ///   - pathComponents: Additional path components to add to the temporary URL.
