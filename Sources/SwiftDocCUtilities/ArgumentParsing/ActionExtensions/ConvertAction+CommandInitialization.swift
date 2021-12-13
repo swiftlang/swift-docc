@@ -72,7 +72,7 @@ extension ConvertAction {
             emitDigest: convert.emitDigest,
             currentPlatforms: parsedPlatforms,
             buildIndex: convert.index,
-            temporaryDirectory: URL(fileURLWithPath: NSTemporaryDirectory()),
+            temporaryDirectory: FileManager.default.temporaryDirectory,
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions
             ),
