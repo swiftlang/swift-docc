@@ -112,7 +112,8 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(pageSummary.availableLanguages, [.swift])
         XCTAssertEqual(pageSummary.platforms, renderNode.metadata.platforms)
         XCTAssertEqual(pageSummary.redirects, nil)
-        
+        XCTAssertNil(pageSummary.usr, "Only symbols have USRs")
+
         XCTAssertEqual(pageSummary.contentVariants.count, 1)
         let pageContentVariant = try XCTUnwrap(pageSummary.contentVariants.first)
         XCTAssertEqual(pageContentVariant.traits, [.interfaceLanguage("swift")])
@@ -125,7 +126,6 @@ class ExternalLinkableTests: XCTestCase {
                   identifiers: ["doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project"]
             ),
         ])
-        XCTAssertNil(pageContentVariant.usr, "Only symbols have USRs")
         XCTAssertNil(pageContentVariant.declarationFragments, "Only symbols have declaration fragments")
         XCTAssertNil(pageContentVariant.abstract, "There is no text to use as an abstract for the tutorial page")
 
@@ -138,6 +138,7 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(sectionSummary.redirects, [
             URL(string: "old/path/to/this/landmark")!,
         ])
+        XCTAssertNil(sectionSummary.usr, "Only symbols have USRs")
         
         XCTAssertEqual(sectionSummary.contentVariants.count, 1)
         let sectionContentVariant = try XCTUnwrap(sectionSummary.contentVariants.first)
@@ -148,7 +149,6 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(sectionContentVariant.path, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project")
         XCTAssertEqual(sectionContentVariant.taskGroups, [])
        
-        XCTAssertNil(sectionContentVariant.usr, "Only symbols have USRs")
         XCTAssertNil(sectionContentVariant.declarationFragments, "Only symbols have declaration fragments")
         XCTAssertEqual(sectionContentVariant.abstract, [
             .text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"),
@@ -169,6 +169,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass")
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
+            XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC")
             
             XCTAssertEqual(summary.contentVariants.count, 1)
             let contentVariant = try XCTUnwrap(summary.contentVariants.first)
@@ -194,8 +195,6 @@ class ExternalLinkableTests: XCTestCase {
                     summary.referenceURL.appendingPathComponent("myFunction()").absoluteString,
                 ])
             }
-            
-            XCTAssertEqual(contentVariant.usr, "s:5MyKit0A5ClassC")
             XCTAssertEqual(contentVariant.declarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -212,6 +211,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyProtocol")
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
+            XCTAssertEqual(summary.usr, "s:5MyKit0A5ProtocolP")
             
             XCTAssertEqual(summary.contentVariants.count, 1)
             let contentVariant = try XCTUnwrap(summary.contentVariants.first)
@@ -233,7 +233,6 @@ class ExternalLinkableTests: XCTestCase {
                 ),
             ])
             
-            XCTAssertEqual(contentVariant.usr, "s:5MyKit0A5ProtocolP")
             XCTAssertEqual(contentVariant.declarationFragments, [
                 .init(text: "protocol", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
@@ -252,6 +251,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()")
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
+            XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
             
             XCTAssertEqual(summary.contentVariants.count, 1)
             let contentVariant = try XCTUnwrap(summary.contentVariants.first)
@@ -262,7 +262,6 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(contentVariant.path, "/documentation/mykit/myclass/myfunction()")
             XCTAssertEqual(contentVariant.abstract, [.text("A cool API to call.")])
             XCTAssertEqual(contentVariant.taskGroups, [])
-            XCTAssertEqual(contentVariant.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
             XCTAssertEqual(contentVariant.declarationFragments, nil) // This symbol doesn't have a `subHeading` in the symbol graph
         }
         
@@ -275,6 +274,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)")
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
+            XCTAssertEqual(summary.usr, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
             
             XCTAssertEqual(summary.contentVariants.count, 1)
             let contentVariant = try XCTUnwrap(summary.contentVariants.first)
@@ -285,7 +285,6 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(contentVariant.path, "/documentation/mykit/globalfunction(_:considering:)")
             XCTAssertEqual(contentVariant.abstract, nil)
             XCTAssertEqual(contentVariant.taskGroups, [])
-            XCTAssertEqual(contentVariant.usr, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
             XCTAssertEqual(contentVariant.declarationFragments, [
                 .init(text: "func", kind: .keyword, identifier: nil, preciseIdentifier: nil),
                 .init(text: " ", kind: .text, identifier: nil, preciseIdentifier: nil),
@@ -338,8 +337,7 @@ class ExternalLinkableTests: XCTestCase {
               "kind": "identifier",
               "text": "ClassName"
             }
-          ],
-          "usr": "s:5MyKit9ClassName"
+          ]
         }
         """.data(using: .utf8)!
         
@@ -359,7 +357,6 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(contentVariant.title, "ClassName")
         XCTAssertEqual(contentVariant.abstract?.plainText, "A brief explanation of my class.")
         XCTAssertEqual(contentVariant.path, "documentation/MyKit/ClassName")
-        XCTAssertEqual(contentVariant.usr, "s:5MyKit9ClassName")
         XCTAssertEqual(contentVariant.declarationFragments, [
             .init(text: "class", kind: .keyword, identifier: nil),
             .init(text: " ", kind: .text, identifier: nil),

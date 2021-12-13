@@ -106,9 +106,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// The abstract of the summarized element.
         public let abstract: Abstract?
         
-        /// The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
-        public let usr: String?
-        
         /// The fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
         public let declarationFragments: DeclarationFragments?
         
@@ -119,6 +116,9 @@ public struct LinkDestinationSummary: Codable, Equatable {
         public let taskGroups: [TaskGroup]?
     }
    
+    /// The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
+    public let usr: String?
+    
     /// The rendered fragments of a symbol's declaration.
     public typealias DeclarationFragments = [DeclarationRenderSection.Token]
     
@@ -227,6 +227,7 @@ extension LinkDestinationSummary {
         self.init(
             referenceURL: documentationNode.reference.url,
             availableLanguages: documentationNode.availableSourceLanguages,
+            usr: (documentationNode.semantic as? Symbol)?.externalID,
             platforms: platforms,
             redirects: (documentationNode.semantic as? Redirected)?.redirects?.map { $0.oldPath },
             contentVariants: [
@@ -236,7 +237,6 @@ extension LinkDestinationSummary {
                     path: path,
                     title: ReferenceResolver.title(forNode: documentationNode),
                     abstract: (documentationNode.semantic as? Abstracted)?.renderedAbstract(using: &compiler),
-                    usr: (documentationNode.semantic as? Symbol)?.externalID,
                     declarationFragments: declaration,
                     taskGroups: taskGroups
                 )
@@ -269,6 +269,7 @@ extension LinkDestinationSummary {
         self.init(
             referenceURL: page.reference.withFragment(anchor).url,
             availableLanguages: page.availableSourceLanguages,
+            usr: nil, // Only symbols have a USR
             platforms: platforms,
             redirects: (landmark as? Redirected)?.redirects?.map { $0.oldPath },
             contentVariants: [
@@ -278,7 +279,6 @@ extension LinkDestinationSummary {
                     path: basePath + "#\(anchor)", // use an in-page anchor for the landmark's path
                     title: landmark.title,
                     abstract: abstract,
-                    usr: nil, // Only symbols have a USR
                     declarationFragments: nil, // Only symbols have a USR,
                     taskGroups: [] // Landmarks have no children
                 )
@@ -292,7 +292,7 @@ extension LinkDestinationSummary {
 // Add Codable methods—which include an initializer—in an extension so that it doesn't override the member-wise initializer.
 extension LinkDestinationSummary {
     enum CodingKeys: String, CodingKey {
-        case referenceURL, availableLanguages, platforms, redirects, contentVariants
+        case referenceURL, availableLanguages, platforms, redirects, usr, contentVariants
     }
     
     enum LegacyCodingKeys: String, CodingKey {
@@ -305,6 +305,7 @@ extension LinkDestinationSummary {
         try container.encode(availableLanguages.map { $0.id }, forKey: .availableLanguages)
         try container.encodeIfPresent(platforms, forKey: .platforms)
         try container.encodeIfPresent(redirects, forKey: .redirects)
+        try container.encodeIfPresent(usr, forKey: .usr)
         try container.encode(contentVariants, forKey: .contentVariants)
     }
     
@@ -321,6 +322,7 @@ extension LinkDestinationSummary {
         })
         platforms = try container.decodeIfPresent([AvailabilityRenderItem].self, forKey: .platforms)
         redirects = try container.decodeIfPresent([URL].self, forKey: .redirects)
+        usr = try container.decodeIfPresent(String.self, forKey: .usr)
         
         do {
             let contentVariants = try container.decode([ContentVariant].self, forKey: .contentVariants)
@@ -350,7 +352,6 @@ extension LinkDestinationSummary {
                         path: try legacyContainer.decode(String.self, forKey: .path),
                         title: try legacyContainer.decode(String.self, forKey: .title),
                         abstract: try legacyContainer.decodeIfPresent(Abstract.self, forKey: .abstract),
-                        usr: try legacyContainer.decodeIfPresent(String.self, forKey: .usr),
                         declarationFragments: try legacyContainer.decodeIfPresent(DeclarationFragments.self, forKey: .declarationFragments),
                         taskGroups: try legacyContainer.decodeIfPresent([TaskGroup].self, forKey: .taskGroups)
                     )
@@ -374,7 +375,6 @@ extension LinkDestinationSummary.ContentVariant {
         try container.encode(path, forKey: .path)
         try container.encode(title, forKey: .title)
         try container.encode(abstract, forKey: .abstract)
-        try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
     }
@@ -399,7 +399,6 @@ extension LinkDestinationSummary.ContentVariant {
         path = try container.decode(String.self, forKey: .path)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract.self, forKey: .abstract)
-        usr = try container.decodeIfPresent(String.self, forKey: .usr)
         declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments.self, forKey: .declarationFragments)
         taskGroups = try container.decodeIfPresent([LinkDestinationSummary.TaskGroup].self, forKey: .taskGroups)
     }

@@ -2386,6 +2386,7 @@ private extension LinkDestinationSummary {
         self.init(
             referenceURL: referenceURL,
             availableLanguages: availableLanguages,
+            usr: usr,
             platforms: platforms,
             redirects: redirects,
             contentVariants: [
@@ -2395,7 +2396,6 @@ private extension LinkDestinationSummary {
                     path: path,
                     title: title,
                     abstract: abstract.map { [.text($0)] } ?? [],
-                    usr: usr,
                     declarationFragments: nil,
                     taskGroups: taskGroups
                 )

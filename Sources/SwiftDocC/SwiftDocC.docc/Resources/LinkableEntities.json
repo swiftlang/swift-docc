@@ -43,6 +43,9 @@
                             "type": "string"
                         }
                     },
+                    "usr": {
+                        "type": "string"
+                    },
                     "contentVariants": {
                         "type": "array",
                         "items": {
@@ -102,9 +105,6 @@
                         "items": {
                             "$ref": "#/components/schemas/RenderInlineContent"
                         }
-                    },
-                    "usr": {
-                        "type": "string"
                     },
                     "declarationFragments": {
                         "type": "array",
