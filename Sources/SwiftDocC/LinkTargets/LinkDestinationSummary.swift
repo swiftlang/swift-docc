@@ -163,22 +163,22 @@ public struct LinkDestinationSummary: Codable, Equatable {
         
         /// The abstract of the variant or `nil` if the abstract is the same as the summarized element.
         ///
-        /// - Note: If the summarized element has an abstract but the variant doesn't, this property will be `Optional.some(nil)``.
+        /// - Note: If the summarized element has an abstract but the variant doesn't, this property will be `Optional.some(nil)`.
         public let abstract: Abstract??
         
         /// The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
         ///
-        /// - Note: If the summarized element has task groups but the variant doesn't, this property will be `Optional.some(nil)``
+        /// - Note: If the summarized element has task groups but the variant doesn't, this property will be `Optional.some(nil)`.
         public let taskGroups: [TaskGroup]??
         
         /// The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///
-        /// - Note: If the summarized element has a precise symbol identifier but the variant doesn't, this property will be `Optional.some(nil)``
+        /// - Note: If the summarized element has a precise symbol identifier but the variant doesn't, this property will be `Optional.some(nil)`.
         public let usr: String??
         
         /// The declaration of the variant or `nil` if the declaration is the same as the summarized element.
         ///
-        /// - Note: If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)``
+        /// - Note: If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let declarationFragments: DeclarationFragments??
     }
     
