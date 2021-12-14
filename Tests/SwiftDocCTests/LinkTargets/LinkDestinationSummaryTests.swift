@@ -105,56 +105,50 @@ class ExternalLinkableTests: XCTestCase {
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
         let renderNode = try converter.convert(node, at: nil)
-        let pageSummary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
         
-        // Check the page
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let pageSummary = summaries[0]
+        XCTAssertEqual(pageSummary.title, "Basic Augmented Reality App")
+        XCTAssertEqual(pageSummary.path, "/tutorials/testbundle/tutorial")
         XCTAssertEqual(pageSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial")
-        XCTAssertEqual(pageSummary.availableLanguages, [.swift])
-        XCTAssertEqual(pageSummary.platforms, renderNode.metadata.platforms)
-        XCTAssertEqual(pageSummary.redirects, nil)
-        XCTAssertNil(pageSummary.usr, "Only symbols have USRs")
-
-        XCTAssertEqual(pageSummary.contentVariants.count, 1)
-        let pageContentVariant = try XCTUnwrap(pageSummary.contentVariants.first)
-        XCTAssertEqual(pageContentVariant.traits, [.interfaceLanguage("swift")])
-        
-        XCTAssertEqual(pageContentVariant.title, "Basic Augmented Reality App")
-        XCTAssertEqual(pageContentVariant.path, "/tutorials/testbundle/tutorial")
-        XCTAssertEqual(pageContentVariant.kind, .tutorial)
-        XCTAssertEqual(pageContentVariant.taskGroups, [
+        XCTAssertEqual(pageSummary.traits, [.interfaceLanguage("swift")])
+        XCTAssertEqual(pageSummary.kind, .tutorial)
+        XCTAssertEqual(pageSummary.taskGroups, [
             .init(title: nil,
                   identifiers: ["doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project"]
             ),
         ])
-        XCTAssertNil(pageContentVariant.declarationFragments, "Only symbols have declaration fragments")
-        XCTAssertNil(pageContentVariant.abstract, "There is no text to use as an abstract for the tutorial page")
+        XCTAssertEqual(pageSummary.availableLanguages, [.swift])
+        XCTAssertEqual(pageSummary.platforms, renderNode.metadata.platforms)
+        XCTAssertEqual(pageSummary.redirects, nil)
+        XCTAssertNil(pageSummary.usr, "Only symbols have USRs")
+        XCTAssertNil(pageSummary.declarationFragments, "Only symbols have declaration fragments")
+        XCTAssertNil(pageSummary.abstract, "There is no text to use as an abstract for the tutorial page")
 
-        // Check the section
-        let sectionSummary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[1]
-        
+        let sectionSummary = summaries[1]
+        XCTAssertEqual(sectionSummary.title, "Create a New AR Project")
+        XCTAssertEqual(sectionSummary.path, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project")
         XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project")
+        XCTAssertEqual(sectionSummary.traits, [.interfaceLanguage("swift")])
+        XCTAssertEqual(sectionSummary.kind, .onPageLandmark)
+        XCTAssertEqual(sectionSummary.taskGroups, [])
         XCTAssertEqual(sectionSummary.availableLanguages, [.swift])
         XCTAssertEqual(sectionSummary.platforms, nil)
         XCTAssertEqual(sectionSummary.redirects, [
             URL(string: "old/path/to/this/landmark")!,
         ])
         XCTAssertNil(sectionSummary.usr, "Only symbols have USRs")
-        
-        XCTAssertEqual(sectionSummary.contentVariants.count, 1)
-        let sectionContentVariant = try XCTUnwrap(sectionSummary.contentVariants.first)
-        XCTAssertEqual(sectionContentVariant.traits, [.interfaceLanguage("swift")])
-
-        XCTAssertEqual(sectionContentVariant.kind, .onPageLandmark)
-        XCTAssertEqual(sectionContentVariant.title, "Create a New AR Project")
-        XCTAssertEqual(sectionContentVariant.path, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project")
-        XCTAssertEqual(sectionContentVariant.taskGroups, [])
-       
-        XCTAssertNil(sectionContentVariant.declarationFragments, "Only symbols have declaration fragments")
-        XCTAssertEqual(sectionContentVariant.abstract, [
+        XCTAssertNil(sectionSummary.declarationFragments, "Only symbols have declaration fragments")
+        XCTAssertEqual(sectionSummary.abstract, [
             .text("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt"),
             .text(" "),
             .text("ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium."),
         ])
+        
+        // Test that the summaries can be decoded from the encoded data
+        let encoded = try JSONEncoder().encode(summaries)
+        let decoded = try JSONDecoder().decode([LinkDestinationSummary].self, from: encoded)
+        XCTAssertEqual(summaries, decoded)
     }
 
     func testSymbolSummaries() throws {
@@ -166,20 +160,13 @@ class ExternalLinkableTests: XCTestCase {
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
+            XCTAssertEqual(summary.title, "MyClass")
+            XCTAssertEqual(summary.path, "/documentation/mykit/myclass")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass")
-            XCTAssertEqual(summary.availableLanguages, [.swift])
-            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
-            XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC")
-            
-            XCTAssertEqual(summary.contentVariants.count, 1)
-            let contentVariant = try XCTUnwrap(summary.contentVariants.first)
-            XCTAssertEqual(contentVariant.traits, [.interfaceLanguage("swift")])
-            
-            XCTAssertEqual(contentVariant.kind, .class)
-            XCTAssertEqual(contentVariant.title, "MyClass")
-            XCTAssertEqual(contentVariant.path, "/documentation/mykit/myclass")
-            XCTAssertEqual(contentVariant.abstract, [.text("MyClass abstract.")])
-            XCTAssertEqual(contentVariant.taskGroups?.map { $0.title }, [
+            XCTAssertEqual(summary.traits, [.interfaceLanguage("swift")])
+            XCTAssertEqual(summary.kind, .class)
+            XCTAssertEqual(summary.abstract, [.text("MyClass abstract.")])
+            XCTAssertEqual(summary.taskGroups?.map { $0.title }, [
                 "MyClass members (relative)",
                 "MyClass members (module level)",
                 "MyClass members (absolute)",
@@ -187,7 +174,7 @@ class ExternalLinkableTests: XCTestCase {
                 "MyClass members (topic module level)",
                 "MyClass members (topic absolute)",
             ])
-            for group in contentVariant.taskGroups ?? [] {
+            for group in summary.taskGroups ?? [] {
                 // All 6 topic sections curate the same 3 symbols using different syntax and different specificity
                 XCTAssertEqual(group.identifiers, [
                     summary.referenceURL.appendingPathComponent("init()-33vaw").absoluteString,
@@ -195,7 +182,10 @@ class ExternalLinkableTests: XCTestCase {
                     summary.referenceURL.appendingPathComponent("myFunction()").absoluteString,
                 ])
             }
-            XCTAssertEqual(contentVariant.declarationFragments, [
+            XCTAssertEqual(summary.availableLanguages, [.swift])
+            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
+            XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC")
+            XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "MyClass", kind: .identifier, identifier: nil),
@@ -208,20 +198,13 @@ class ExternalLinkableTests: XCTestCase {
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
+            XCTAssertEqual(summary.title, "MyProtocol")
+            XCTAssertEqual(summary.path, "/documentation/mykit/myprotocol")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyProtocol")
-            XCTAssertEqual(summary.availableLanguages, [.swift])
-            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
-            XCTAssertEqual(summary.usr, "s:5MyKit0A5ProtocolP")
-            
-            XCTAssertEqual(summary.contentVariants.count, 1)
-            let contentVariant = try XCTUnwrap(summary.contentVariants.first)
-            XCTAssertEqual(contentVariant.traits, [.interfaceLanguage("swift")])
-            
-            XCTAssertEqual(contentVariant.kind, .protocol)
-            XCTAssertEqual(contentVariant.title, "MyProtocol")
-            XCTAssertEqual(contentVariant.path, "/documentation/mykit/myprotocol")
-            XCTAssertEqual(contentVariant.abstract, [.text("An abstract of a protocol using a "), .codeVoice(code: "String"), .text(" id value.")])
-            XCTAssertEqual(contentVariant.taskGroups, [
+            XCTAssertEqual(summary.traits, [.interfaceLanguage("swift")])
+            XCTAssertEqual(summary.kind, .protocol)
+            XCTAssertEqual(summary.abstract, [.text("An abstract of a protocol using a "), .codeVoice(code: "String"), .text(" id value.")])
+            XCTAssertEqual(summary.taskGroups, [
                 .init(
                     title: "Task Group Excercising Symbol Links",
                     identifiers: [
@@ -232,8 +215,10 @@ class ExternalLinkableTests: XCTestCase {
                     ]
                 ),
             ])
-            
-            XCTAssertEqual(contentVariant.declarationFragments, [
+            XCTAssertEqual(summary.availableLanguages, [.swift])
+            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
+            XCTAssertEqual(summary.usr, "s:5MyKit0A5ProtocolP")
+            XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "protocol", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "MyProtocol", kind: .identifier, identifier: nil),
@@ -248,21 +233,17 @@ class ExternalLinkableTests: XCTestCase {
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
+            XCTAssertEqual(summary.title, "myFunction()")
+            XCTAssertEqual(summary.path, "/documentation/mykit/myclass/myfunction()")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()")
+            XCTAssertEqual(summary.traits, [.interfaceLanguage("swift")])
+            XCTAssertEqual(summary.kind, .instanceMethod)
+            XCTAssertEqual(summary.abstract, [.text("A cool API to call.")])
+            XCTAssertEqual(summary.taskGroups, [])
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
-            
-            XCTAssertEqual(summary.contentVariants.count, 1)
-            let contentVariant = try XCTUnwrap(summary.contentVariants.first)
-            XCTAssertEqual(contentVariant.traits, [.interfaceLanguage("swift")])
-            
-            XCTAssertEqual(contentVariant.kind, .instanceMethod)
-            XCTAssertEqual(contentVariant.title, "myFunction()")
-            XCTAssertEqual(contentVariant.path, "/documentation/mykit/myclass/myfunction()")
-            XCTAssertEqual(contentVariant.abstract, [.text("A cool API to call.")])
-            XCTAssertEqual(contentVariant.taskGroups, [])
-            XCTAssertEqual(contentVariant.declarationFragments, nil) // This symbol doesn't have a `subHeading` in the symbol graph
+            XCTAssertEqual(summary.declarationFragments, nil) // This symbol doesn't have a `subHeading` in the symbol graph
         }
         
         do {
@@ -271,21 +252,17 @@ class ExternalLinkableTests: XCTestCase {
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
+            XCTAssertEqual(summary.title, "globalFunction(_:considering:)")
+            XCTAssertEqual(summary.path, "/documentation/mykit/globalfunction(_:considering:)")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)")
+            XCTAssertEqual(summary.traits, [.interfaceLanguage("swift")])
+            XCTAssertEqual(summary.kind, .function)
+            XCTAssertEqual(summary.abstract, nil)
+            XCTAssertEqual(summary.taskGroups, [])
             XCTAssertEqual(summary.availableLanguages, [.swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
-            
-            XCTAssertEqual(summary.contentVariants.count, 1)
-            let contentVariant = try XCTUnwrap(summary.contentVariants.first)
-            XCTAssertEqual(contentVariant.traits, [.interfaceLanguage("swift")])
-            
-            XCTAssertEqual(contentVariant.kind, .function)
-            XCTAssertEqual(contentVariant.title, "globalFunction(_:considering:)")
-            XCTAssertEqual(contentVariant.path, "/documentation/mykit/globalfunction(_:considering:)")
-            XCTAssertEqual(contentVariant.abstract, nil)
-            XCTAssertEqual(contentVariant.taskGroups, [])
-            XCTAssertEqual(contentVariant.declarationFragments, [
+            XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "func", kind: .keyword, identifier: nil, preciseIdentifier: nil),
                 .init(text: " ", kind: .text, identifier: nil, preciseIdentifier: nil),
                 .init(text: "globalFunction", kind: .identifier, identifier: nil, preciseIdentifier: nil),
@@ -300,7 +277,6 @@ class ExternalLinkableTests: XCTestCase {
             ])
         }
     }
-    
     func testDecodingLegacyData() throws {
         let legacyData = """
         {
@@ -342,26 +318,22 @@ class ExternalLinkableTests: XCTestCase {
         """.data(using: .utf8)!
         
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: legacyData)
-        // Check the general information
+        
         XCTAssertEqual(decoded.referenceURL, ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
         XCTAssertEqual(decoded.platforms?.count, 1)
         XCTAssertEqual(decoded.platforms?.first?.name, "PlatformName")
         XCTAssertEqual(decoded.platforms?.first?.introduced, "1.0")
-        
-        // Check the language specific information
-        XCTAssertEqual(decoded.contentVariants.count, 1)
-        let contentVariant = try XCTUnwrap(decoded.contentVariants.first)
-        XCTAssertEqual(contentVariant.traits, [.interfaceLanguage("swift")])
-        
-        XCTAssertEqual(contentVariant.kind, .class)
-        XCTAssertEqual(contentVariant.title, "ClassName")
-        XCTAssertEqual(contentVariant.abstract?.plainText, "A brief explanation of my class.")
-        XCTAssertEqual(contentVariant.path, "documentation/MyKit/ClassName")
-        XCTAssertEqual(contentVariant.declarationFragments, [
+        XCTAssertEqual(decoded.kind, .class)
+        XCTAssertEqual(decoded.title, "ClassName")
+        XCTAssertEqual(decoded.abstract?.plainText, "A brief explanation of my class.")
+        XCTAssertEqual(decoded.path, "documentation/MyKit/ClassName")
+        XCTAssertEqual(decoded.declarationFragments, [
             .init(text: "class", kind: .keyword, identifier: nil),
             .init(text: " ", kind: .text, identifier: nil),
             .init(text: "ClassName", kind: .identifier, identifier: nil),
         ])
+        
+        XCTAssert(decoded.variants.isEmpty)
     }
     
     // Workaround that addTeardownBlock doesn't exist in swift-corelibs-xctest

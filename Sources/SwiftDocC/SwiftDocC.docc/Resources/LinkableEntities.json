@@ -17,13 +17,37 @@
             "LinkDestinationSummary": {
                 "type": "object",
                 "required": [
+                    "kind",
+                    "traits",
+                    "path",
                     "referenceURL",
-                    "availableLanguages",
-                    "contentVariants"
+                    "title",
+                    "availableLanguages"
                 ],
                 "properties": {
+                    "kind": {
+                        "type": "string"
+                    },
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderNodeVariantTrait"
+                        }
+                    },
+                    "path": {
+                        "type": "string"
+                    },
                     "referenceURL": {
                         "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
                     },
                     "availableLanguages": {
                         "type": "array",
@@ -37,19 +61,31 @@
                             "$ref": "#/components/schemas/PlatformAvailability"
                         }
                     },
+                    "taskGroups": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TaskGroup"
+                        }
+                    },
+                    "usr": {
+                        "type": "string"
+                    },
+                    "declarationFragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
                     "redirects": {
                         "type": "array",
                         "items": {
                             "type": "string"
                         }
                     },
-                    "usr": {
-                        "type": "string"
-                    },
-                    "contentVariants": {
+                    "variants": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/ContentVariant"
+                            "$ref": "#/components/schemas/LinkDestinationSummaryVariant"
                         }
                     }
                 }
@@ -76,13 +112,21 @@
                     }
                 ]
             },
-            "ContentVariant": {
+            "TraitInterfaceLanguage": {
+                "required": [
+                    "interfaceLanguage"
+                ],
+                "type": "object",
+                "properties": {
+                    "interfaceLanguage": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LinkDestinationSummaryVariant": {
                 "type": "object",
                 "required": [
                     "traits",
-                    "kind",
-                    "path",
-                    "title"
                 ],
                 "properties": {
                     "traits": {
@@ -106,6 +150,9 @@
                             "$ref": "#/components/schemas/RenderInlineContent"
                         }
                     },
+                    "usr": {
+                        "type": "string"
+                    },
                     "declarationFragments": {
                         "type": "array",
                         "items": {
@@ -117,17 +164,6 @@
                         "items": {
                             "$ref": "#/components/schemas/TaskGroup"
                         }
-                    }
-                }
-            },
-            "TraitInterfaceLanguage": {
-                "required": [
-                    "interfaceLanguage"
-                ],
-                "type": "object",
-                "properties": {
-                    "interfaceLanguage": {
-                        "type": "string"
                     }
                 }
             },
