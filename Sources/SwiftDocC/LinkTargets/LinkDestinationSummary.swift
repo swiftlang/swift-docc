@@ -152,34 +152,39 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// The traits of the variant.
         public let traits: [RenderNode.Variant.Trait]
         
+        /// A wrapper for variant values that are either set (the variant has a custom value) not set (the variant have the same value as the summarized element)
+        ///
+        /// This alias is used to make the property declarations more explicit while at the same time offering the convenient syntax of optionals.
+        public typealias VariantValue = Optional
+        
         /// The kind of the variant or `nil` if the kind is the same as the summarized element.
-        public let kind: DocumentationNode.Kind?
+        public let kind: VariantValue<DocumentationNode.Kind>
         
         /// The relative path of the variant or `nil` if the relative is the same as the summarized element.
-        public let path: String?
+        public let path: VariantValue<String>
         
         /// The title of the variant or `nil` if the title is the same as the summarized element.
-        public let title: String?
+        public let title: VariantValue<String?>
         
         /// The abstract of the variant or `nil` if the abstract is the same as the summarized element.
         ///
         /// - Note: If the summarized element has an abstract but the variant doesn't, this property will be `Optional.some(nil)`.
-        public let abstract: Abstract??
+        public let abstract: VariantValue<Abstract?>
         
         /// The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
         ///
         /// - Note: If the summarized element has task groups but the variant doesn't, this property will be `Optional.some(nil)`.
-        public let taskGroups: [TaskGroup]??
+        public let taskGroups: VariantValue<[TaskGroup]?>
         
         /// The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///
         /// - Note: If the summarized element has a precise symbol identifier but the variant doesn't, this property will be `Optional.some(nil)`.
-        public let usr: String??
+        public let usr: VariantValue<String?>
         
         /// The declaration of the variant or `nil` if the declaration is the same as the summarized element.
         ///
         /// - Note: If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
-        public let declarationFragments: DeclarationFragments??
+        public let declarationFragments: VariantValue<DeclarationFragments?>
     }
     
     /// The variants of content (kind, title, abstract, path, urs, declaration, and task groups) for this summarized element.
@@ -427,9 +432,9 @@ extension LinkDestinationSummary.Variant {
             kind = nil
         }
         path = try container.decodeIfPresent(String.self, forKey: .path)
-        title = try container.decodeIfPresent(String.self, forKey: .title)
+        title = try container.decodeIfPresent(String?.self, forKey: .title)
         abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
-        usr = try container.decodeIfPresent(String.self, forKey: .title)
+        usr = try container.decodeIfPresent(String?.self, forKey: .title)
         declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
         taskGroups = try container.decodeIfPresent([LinkDestinationSummary.TaskGroup]?.self, forKey: .taskGroups)
     }
