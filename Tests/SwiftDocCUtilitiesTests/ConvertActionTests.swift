@@ -2234,13 +2234,14 @@ private extension LinkDestinationSummary {
             path: path,
             referenceURL: referenceURL,
             title: title,
-            abstract: abstract.map { [.text($0)] } ?? [],
+            abstract: abstract.map { [.text($0)] },
             availableLanguages: availableLanguages,
             platforms: platforms,
             taskGroups: taskGroups,
             usr: usr,
             declarationFragments: nil,
-            redirects: redirects
+            redirects: redirects,
+            variants: []
         )
     }
 }
