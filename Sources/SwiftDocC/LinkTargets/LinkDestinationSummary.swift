@@ -152,7 +152,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// The traits of the variant.
         public let traits: [RenderNode.Variant.Trait]
         
-        /// A wrapper for variant values that are either set (the variant has a custom value) not set (the variant have the same value as the summarized element)
+        /// A wrapper for variant values that can either be specified, meaning the variant has a custom value, or not, meaning the variant has the same value as the summarized element.
         ///
         /// This alias is used to make the property declarations more explicit while at the same time offering the convenient syntax of optionals.
         public typealias VariantValue = Optional
@@ -160,7 +160,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// The kind of the variant or `nil` if the kind is the same as the summarized element.
         public let kind: VariantValue<DocumentationNode.Kind>
         
-        /// The language of the variant or `nil` if the kind is the same as the summarized element.
+        /// The source language of the variant or `nil` if the kind is the same as the summarized element.
         public let language: VariantValue<SourceLanguage>
         
         /// The relative path of the variant or `nil` if the relative is the same as the summarized element.
@@ -171,22 +171,22 @@ public struct LinkDestinationSummary: Codable, Equatable {
         
         /// The abstract of the variant or `nil` if the abstract is the same as the summarized element.
         ///
-        /// - Note: If the summarized element has an abstract but the variant doesn't, this property will be `Optional.some(nil)`.
+        /// If the summarized element has an abstract but the variant doesn't, this property will be `Optional.some(nil)`.
         public let abstract: VariantValue<Abstract?>
         
         /// The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
         ///
-        /// - Note: If the summarized element has task groups but the variant doesn't, this property will be `Optional.some(nil)`.
+        /// If the summarized element has task groups but the variant doesn't, this property will be `Optional.some(nil)`.
         public let taskGroups: VariantValue<[TaskGroup]?>
         
         /// The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
         ///
-        /// - Note: If the summarized element has a precise symbol identifier but the variant doesn't, this property will be `Optional.some(nil)`.
+        /// If the summarized element has a precise symbol identifier but the variant doesn't, this property will be `Optional.some(nil)`.
         public let usr: VariantValue<String?>
         
         /// The declaration of the variant or `nil` if the declaration is the same as the summarized element.
         ///
-        /// - Note: If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
+        /// If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let declarationFragments: VariantValue<DeclarationFragments?>
     }
     
