@@ -111,7 +111,7 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(pageSummary.title, "Basic Augmented Reality App")
         XCTAssertEqual(pageSummary.path, "/tutorials/testbundle/tutorial")
         XCTAssertEqual(pageSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial")
-        XCTAssertEqual(pageSummary.traits, [.interfaceLanguage("swift")])
+        XCTAssertEqual(pageSummary.language, .swift)
         XCTAssertEqual(pageSummary.kind, .tutorial)
         XCTAssertEqual(pageSummary.taskGroups, [
             .init(title: nil,
@@ -129,7 +129,7 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(sectionSummary.title, "Create a New AR Project")
         XCTAssertEqual(sectionSummary.path, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project")
         XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project")
-        XCTAssertEqual(sectionSummary.traits, [.interfaceLanguage("swift")])
+        XCTAssertEqual(sectionSummary.language, .swift)
         XCTAssertEqual(sectionSummary.kind, .onPageLandmark)
         XCTAssertEqual(sectionSummary.taskGroups, [])
         XCTAssertEqual(sectionSummary.availableLanguages, [.swift])
@@ -163,7 +163,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.title, "MyClass")
             XCTAssertEqual(summary.path, "/documentation/mykit/myclass")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass")
-            XCTAssertEqual(summary.traits, [.interfaceLanguage("swift")])
+            XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .class)
             XCTAssertEqual(summary.abstract, [.text("MyClass abstract.")])
             XCTAssertEqual(summary.taskGroups?.map { $0.title }, [
@@ -201,7 +201,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.title, "MyProtocol")
             XCTAssertEqual(summary.path, "/documentation/mykit/myprotocol")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyProtocol")
-            XCTAssertEqual(summary.traits, [.interfaceLanguage("swift")])
+            XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .protocol)
             XCTAssertEqual(summary.abstract, [.text("An abstract of a protocol using a "), .codeVoice(code: "String"), .text(" id value.")])
             XCTAssertEqual(summary.taskGroups, [
@@ -236,7 +236,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.title, "myFunction()")
             XCTAssertEqual(summary.path, "/documentation/mykit/myclass/myfunction()")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()")
-            XCTAssertEqual(summary.traits, [.interfaceLanguage("swift")])
+            XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .instanceMethod)
             XCTAssertEqual(summary.abstract, [.text("A cool API to call.")])
             XCTAssertEqual(summary.taskGroups, [])
@@ -255,7 +255,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.title, "globalFunction(_:considering:)")
             XCTAssertEqual(summary.path, "/documentation/mykit/globalfunction(_:considering:)")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)")
-            XCTAssertEqual(summary.traits, [.interfaceLanguage("swift")])
+            XCTAssertEqual(summary.language, .swift)
             XCTAssertEqual(summary.kind, .function)
             XCTAssertEqual(summary.abstract, nil)
             XCTAssertEqual(summary.taskGroups, [])

@@ -74,11 +74,11 @@ import SymbolKit
 ///
 /// The summary may include content that vary based on the source language. The content that is different in another source language is specified in a ``Variant``. Any property on the variant that is `nil` has the same value as the summarized element's value. 
 public struct LinkDestinationSummary: Codable, Equatable {
-    /// The traits of the summarized element.
-    let traits: [RenderNode.Variant.Trait]
-    
     /// The kind of the summarized element.
     public let kind: DocumentationNode.Kind
+    
+    /// The language of the summarized element.
+    public let language: SourceLanguage
     
     /// The relative path to this element.
     public let path: String
@@ -159,6 +159,9 @@ public struct LinkDestinationSummary: Codable, Equatable {
         
         /// The kind of the variant or `nil` if the kind is the same as the summarized element.
         public let kind: VariantValue<DocumentationNode.Kind>
+        
+        /// The language of the variant or `nil` if the kind is the same as the summarized element.
+        public let language: VariantValue<SourceLanguage>
         
         /// The relative path of the variant or `nil` if the relative is the same as the summarized element.
         public let path: VariantValue<String>
@@ -253,10 +256,10 @@ extension LinkDestinationSummary {
     ///   - compiler: The content compiler that's used to render the node's abstract.
     init(documentationNode: DocumentationNode, path: String, taskGroups: [TaskGroup], platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
         let symbol = documentationNode.semantic as? Symbol
-             
+        
         self.init(
-            traits: [.interfaceLanguage(documentationNode.sourceLanguage.id)],
             kind: documentationNode.kind,
+            language: documentationNode.sourceLanguage,
             path: path,
             referenceURL: documentationNode.reference.url,
             title: ReferenceResolver.title(forNode: documentationNode),
@@ -294,8 +297,8 @@ extension LinkDestinationSummary {
         }
         
         self.init(
-            traits: [.interfaceLanguage(page.sourceLanguage.id)],
             kind: .onPageLandmark,
+            language: page.sourceLanguage,
             path: basePath + "#\(anchor)", // use an in-page anchor for the landmark's path
             referenceURL: page.reference.withFragment(anchor).url,
             title: landmark.title,
@@ -316,22 +319,18 @@ extension LinkDestinationSummary {
 // Add Codable methods—which include an initializer—in an extension so that it doesn't override the member-wise initializer.
 extension LinkDestinationSummary {
     enum CodingKeys: String, CodingKey {
-        case traits, kind, path, referenceURL, title, abstract, taskGroups, usr, availableLanguages, platforms, redirects, variants
+        case kind, path, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects, variants
         case declarationFragments = "fragments"
-    }
-    
-    enum LegacyCodingKeys: String, CodingKey {
-        case language
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(traits, forKey: .traits)
-        try container.encode(referenceURL, forKey: .referenceURL)
         try container.encode(kind.id, forKey: .kind)
         try container.encode(path, forKey: .path)
+        try container.encode(referenceURL, forKey: .referenceURL)
         try container.encode(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
+        try container.encode(language.id, forKey: .language)
         try container.encode(availableLanguages.map { $0.id }, forKey: .availableLanguages)
         try container.encodeIfPresent(platforms, forKey: .platforms)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
@@ -354,6 +353,11 @@ extension LinkDestinationSummary {
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
+        let languageID = try container.decode(String.self, forKey: .language)
+        guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
+            throw DecodingError.dataCorruptedError(forKey: .language, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
+        }
+        language = foundLanguage
         
         let availableLanguageIDs = try container.decode([String].self, forKey: .availableLanguages)
         availableLanguages = try Set(availableLanguageIDs.map { languageID in
@@ -369,34 +373,12 @@ extension LinkDestinationSummary {
         redirects = try container.decodeIfPresent([URL].self, forKey: .redirects)
         
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
-        do {
-            let traits = try container.decode([RenderNode.Variant.Trait].self, forKey: .traits)
-            for case .interfaceLanguage(let languageID) in traits {
-                guard SourceLanguage.knownLanguages.contains(where: { $0.id == languageID }) else {
-                    throw DecodingError.dataCorruptedError(forKey: .traits, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
-                }
-            }
-            self.traits = traits
-        } catch DecodingError.keyNotFound(_, let originalErrorContext) {
-            // Attempts to decode the legacy format and raise the original keyNotFound if that doesn't work.
-            do {
-                let legacyContainer = try decoder.container(keyedBy: LegacyCodingKeys.self)
-                
-                let languageID = try legacyContainer.decode(String.self, forKey: .language)
-                guard SourceLanguage.knownLanguages.contains(where: { $0.id == languageID }) else {
-                    throw DecodingError.dataCorruptedError(forKey: .language, in: legacyContainer, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
-                }
-                traits = [.interfaceLanguage(languageID)]
-            } catch {
-                throw DecodingError.keyNotFound(CodingKeys.traits, originalErrorContext)
-            }
-        }
     }
 }
 
 extension LinkDestinationSummary.Variant {
     enum CodingKeys: String, CodingKey {
-        case traits, kind, path, title, abstract, usr, declarationFragments = "fragments", taskGroups
+        case traits, kind, path, title, abstract, language, usr, declarationFragments = "fragments", taskGroups
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -406,6 +388,7 @@ extension LinkDestinationSummary.Variant {
         try container.encodeIfPresent(path, forKey: .path)
         try container.encodeIfPresent(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
+        try container.encodeIfPresent(language, forKey: .language)
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
@@ -430,6 +413,16 @@ extension LinkDestinationSummary.Variant {
             kind = foundKind
         } else {
             kind = nil
+        }
+        
+        let languageID = try container.decodeIfPresent(String.self, forKey: .language)
+        if let languageID = languageID {
+            guard let foundLanguage = SourceLanguage.knownLanguages.first(where: { $0.id == languageID }) else {
+                throw DecodingError.dataCorruptedError(forKey: .language, in: container, debugDescription: "Unknown SourceLanguage identifier: '\(languageID)'.")
+            }
+            language = foundLanguage
+        } else {
+            language = nil
         }
         path = try container.decodeIfPresent(String.self, forKey: .path)
         title = try container.decodeIfPresent(String?.self, forKey: .title)

@@ -2384,8 +2384,8 @@ private extension LinkDestinationSummary {
         redirects: [URL]?
     ) {
         self.init(
-            traits: [.interfaceLanguage(language.id)],
             kind: kind,
+            language: language,
             path: path,
             referenceURL: referenceURL,
             title: title,
@@ -2396,8 +2396,8 @@ private extension LinkDestinationSummary {
             usr: usr,
             declarationFragments: nil,
             redirects: redirects,
-            variants: [])
-        
+            variants: []
+        )
     }
 }
 

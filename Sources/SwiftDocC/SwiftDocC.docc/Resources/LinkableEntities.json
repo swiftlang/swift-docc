@@ -18,7 +18,7 @@
                 "type": "object",
                 "required": [
                     "kind",
-                    "traits",
+                    "language",
                     "path",
                     "referenceURL",
                     "title",
@@ -28,11 +28,8 @@
                     "kind": {
                         "type": "string"
                     },
-                    "traits": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/RenderNodeVariantTrait"
-                        }
+                    "language": {
+                        "type": "string"
                     },
                     "path": {
                         "type": "string"
@@ -136,6 +133,9 @@
                         }
                     },
                     "kind": {
+                        "type": "string"
+                    },
+                    "language": {
                         "type": "string"
                     },
                     "path": {
