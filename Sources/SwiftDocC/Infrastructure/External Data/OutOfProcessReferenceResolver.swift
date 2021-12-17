@@ -550,6 +550,9 @@ extension OutOfProcessReferenceResolver {
 }
 
 extension OutOfProcessReferenceResolver {
+    
+    // MARK: Request & Response
+    
     /// A request message to send to the external link resolver.
     ///
     /// This can either be a request to resolve a topic URL or to resolve a symbol based on its precise identifier.
@@ -657,6 +660,8 @@ extension OutOfProcessReferenceResolver {
         }
     }
     
+    // MARK: Resolved Information
+    
     /// A type used to transfer information about a resolved reference to DocC from from a reference resolver in another executable.
     public struct ResolvedInformation: Codable {
         /// Information about the resolved kind.
@@ -689,6 +694,9 @@ extension OutOfProcessReferenceResolver {
             return platforms.map { platforms in Set(platforms.compactMap { $0.name }) }
         }
         
+        /// The variants of content (kind, url, title, abstract, language, declaration) for this resolver information.
+        public let variants: [Variant]?
+        
         /// Creates a new resolved information value with all its values.
         ///
         /// - Parameters:
@@ -700,6 +708,7 @@ extension OutOfProcessReferenceResolver {
         ///   - availableLanguages: The languages where the resolved node is available.
         ///   - platforms: The platforms and their versions where the resolved node is available, if any.
         ///   - declarationFragments: The resolved declaration fragments, if any.
+        ///   - variants: The variants of content for this resolver information.
         public init(
             kind: DocumentationNode.Kind,
             url: URL,
@@ -708,7 +717,8 @@ extension OutOfProcessReferenceResolver {
             language: SourceLanguage,
             availableLanguages: Set<SourceLanguage>,
             platforms: [PlatformAvailability]?,
-            declarationFragments: DeclarationFragments?
+            declarationFragments: DeclarationFragments?,
+            variants: [Variant]? = nil
         ) {
             self.kind = kind
             self.url = url
@@ -718,6 +728,35 @@ extension OutOfProcessReferenceResolver {
             self.availableLanguages = availableLanguages
             self.platforms = platforms
             self.declarationFragments = declarationFragments
+            self.variants = variants
+        }
+        
+        /// A variant of content for the resolved information.
+        ///
+        /// - Note: All properties except for ``traits`` are optional. If a property is `nil` it means that the value is the same as the resolved information's value.
+        public struct Variant: Codable {
+            /// The traits of the variant.
+            public let traits: [RenderNode.Variant.Trait]
+            
+            /// A wrapper for variant values that can either be specified, meaning the variant has a custom value, or not, meaning the variant has the same value as the resolved information.
+            ///
+            /// This alias is used to make the property declarations more explicit while at the same time offering the convenient syntax of optionals.
+            public typealias VariantValue = Optional
+            
+            /// The kind of the variant or `nil` if the kind is the same as the resolved information.
+            public let kind: VariantValue<DocumentationNode.Kind>
+            /// The url of the variant or `nil` if the url is the same as the resolved information.
+            public let url: VariantValue<URL>
+            /// The title of the variant or `nil` if the title is the same as the resolved information.
+            public let title: VariantValue<String>
+            /// The abstract of the variant or `nil` if the abstract is the same as the resolved information.
+            public let abstract: VariantValue<String>
+            /// The language of the variant or `nil` if the language is the same as the resolved information.
+            public let language: VariantValue<SourceLanguage>
+            /// The declaration fragments of the variant or `nil` if the declaration is the same as the resolved information.
+            ///
+            /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
+            public let declarationFragments: VariantValue<DeclarationFragments?>
         }
     }
     
