@@ -157,6 +157,33 @@ struct Sightseeing: Activity {
 }
  ```
 
+ The following table lists the names of programming languages that can be used
+ to specify the syntax highlighting for a given code listing. Each one may have
+ aliases that can also be used to specify the same language.
+
+| Name       | Aliases                                                |
+| ---------- | ------------------------------------------------------ |
+| bash       | sh, zsh                                                |
+| c          | h                                                      |
+| cpp        | cc, c++, h++, hpp, hh, hxx, cxx                        |
+| css        |                                                        |
+| diff       | patch                                                  |
+| http       | https                                                  |
+| java       | jsp                                                    |
+| javascript | js, jsx, mjs, cjs                                      |
+| json       |                                                        |
+| llvm       |                                                        |
+| markdown   | md, mkdown, mkd                                        |
+| objectivec | mm, objc, obj-c                                        |
+| perl       | pl, pm                                                 |
+| php        |                                                        |
+| python     | py, gyp, ipython                                       |
+| ruby       | rb, gemspec, podspec, thor, irb                        |
+| scss       |                                                        |
+| shell      | console, shellsession                                  |
+| swift      |                                                        |
+| xml        | html, xhtml, rss, atom, xjb, xsd, xsl, plist, wsf, svg |
+
 ### Link to Symbols and Other Content
 
 DocC supports the following link types to enable navigation between pages:
