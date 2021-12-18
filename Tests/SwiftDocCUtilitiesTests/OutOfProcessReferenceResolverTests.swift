@@ -63,7 +63,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             url: URL(string: "doc://com.test.bundle/something")!,
             title: "Resolved Title",
             abstract: "Resolved abstract for this topic.",
-            language: .init(name: "Language Name", id: "com.test.language.id"),
+            language: .init(name: "Language Name 1", id: "com.test.language.id"),
             availableLanguages: [
                 .init(name: "Language Name 1", id: "com.test.language.id"),
                 .init(name: "Language Name 2", id: "com.test.language2.id"),
@@ -72,7 +72,22 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                 .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
                 .init(name: "barOS", introduced: "1.2.3", isBeta: false),
             ],
-            declarationFragments: nil
+            declarationFragments: .init(declarationFragments: [
+                .init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)
+            ]),
+            variants: [
+                .init(
+                    traits: [.interfaceLanguage("com.test.language2.id")],
+                    kind: .init(name: "Variant Kind Name", id: "com.test.kind2.id", isSymbol: true),
+                    url: nil,
+                    title: "Resolved Variant Title",
+                    abstract: "Resolved variant abstract for this topic.",
+                    language: .init(name: "Language Name 2", id: "com.test.language2.id"),
+                    declarationFragments: .init(declarationFragments: [
+                        .init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)
+                    ])
+                )
+            ]
         )
         
         let resolver = try makeResolver(testMetadata)
@@ -96,6 +111,9 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(node.kind.id, testMetadata.kind.id)
         XCTAssertEqual(node.kind.isSymbol, testMetadata.kind.isSymbol)
         
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        XCTAssertEqual(symbol.title, "Resolved Title")
+        
         XCTAssertEqual(node.name, .conceptual(title: testMetadata.title))
         
         XCTAssertEqual(node.sourceLanguage.name, testMetadata.language.name)
@@ -115,6 +133,18 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(availableSourceLanguages[1].id, expectedLanguages[1].id)
 
         XCTAssertEqual(node.platformNames?.sorted(), ["barOS", "fooOS"])
+        
+        
+        XCTAssertEqual(symbol.subHeading, [.init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)])
+        
+        let variantTrait = DocumentationDataVariantsTrait(interfaceLanguage: "com.test.language2.id")
+        XCTAssert(node.availableVariantTraits.contains(variantTrait))
+        
+        XCTAssertEqual(symbol.kindVariants[variantTrait]?.displayName, testMetadata.variants?.first?.kind?.name)
+        
+        XCTAssertEqual(symbol.titleVariants[variantTrait], "Resolved Variant Title")
+        XCTAssertEqual(symbol.abstractVariants[variantTrait]?.plainText, "Resolved variant abstract for this topic.")
+        XCTAssertEqual(symbol.subHeadingVariants[variantTrait], [.init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)])
     }
     
     func testResolvingTopicLinkProcess() throws {
@@ -199,7 +229,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             url: URL(string: "/relative/path/to/symbol")!,
             title: "Resolved Title",
             abstract: "Resolved abstract for this topic.",
-            language: .init(name: "Language Name", id: "com.test.language.id"),
+            language: .init(name: "Language Name 1", id: "com.test.language.id"),
             availableLanguages: [
                 .init(name: "Language Name 1", id: "com.test.language.id"),
                 .init(name: "Language Name 2", id: "com.test.language2.id"),
@@ -208,7 +238,22 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                 .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
                 .init(name: "barOS", introduced: "1.2.3", isBeta: false),
             ],
-            declarationFragments: nil
+            declarationFragments: .init(declarationFragments: [
+                .init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)
+            ]),
+            variants: [
+                .init(
+                    traits: [.interfaceLanguage("com.test.language2.id")],
+                    kind: .init(name: "Variant Kind Name", id: "com.test.kind2.id", isSymbol: true),
+                    url: nil,
+                    title: "Resolved Variant Title",
+                    abstract: "Resolved variant abstract for this topic.",
+                    language: .init(name: "Language Name 2", id: "com.test.language2.id"),
+                    declarationFragments: .init(declarationFragments: [
+                        .init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)
+                    ])
+                )
+            ]
         )
         
         let resolver = try makeResolver(testMetadata)
@@ -227,12 +272,10 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(symbolNode.kind.id, testMetadata.kind.id)
         XCTAssertEqual(symbolNode.kind.isSymbol, testMetadata.kind.isSymbol)
         
-        XCTAssertNotNil(symbolNode.semantic as? Symbol)
-        if let symbol = symbolNode.semantic as? Symbol {
-            XCTAssertEqual(symbol.kind.identifier, SymbolGraph.Symbol.KindIdentifier.class,
-                           "When the node kind doesn't map to a known value it should fallback to a `.class` kind.")
-            XCTAssertEqual(symbol.title, "Resolved Title")
-        }
+        let symbol = try XCTUnwrap(symbolNode.semantic as? Symbol)
+        XCTAssertEqual(symbol.kind.identifier, .class,
+                       "When the node kind doesn't map to a known value it should fallback to a `.class` kind.")
+        XCTAssertEqual(symbol.title, "Resolved Title")
         
         XCTAssertEqual(symbolNode.name, .conceptual(title: testMetadata.title))
         
@@ -251,6 +294,17 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(availableSourceLanguages[1].id, expectedLanguages[1].id)
 
         XCTAssertEqual(symbolNode.platformNames?.sorted(), ["barOS", "fooOS"])
+        
+        XCTAssertEqual(symbol.subHeading, [.init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)])
+        
+        let variantTrait = DocumentationDataVariantsTrait(interfaceLanguage: "com.test.language2.id")
+        XCTAssert(symbolNode.availableVariantTraits.contains(variantTrait))
+        
+        XCTAssertEqual(symbol.kindVariants[variantTrait]?.displayName, testMetadata.variants?.first?.kind?.name)
+        
+        XCTAssertEqual(symbol.titleVariants[variantTrait], "Resolved Variant Title")
+        XCTAssertEqual(symbol.abstractVariants[variantTrait]?.plainText, "Resolved variant abstract for this topic.")
+        XCTAssertEqual(symbol.subHeadingVariants[variantTrait], [.init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)])
     }
     
     func testResolvingSymbolProcess() throws {
@@ -494,6 +548,87 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                 
                 XCTAssertEqual(decodedInformation.language.name, testMetadata.language.name)
                 XCTAssertEqual(decodedInformation.language.id, testMetadata.language.id)
+                
+            default:
+                XCTFail("Decoded the wrong type of message")
+            }
+        }
+        #endif
+    }
+    
+    func testMetadataMessageWithVariants() throws {
+        #if os(macOS)
+        do {
+            let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
+                kind: .init(name: "Kind Name", id: "com.test.kind.id", isSymbol: true),
+                url: URL(string: "scheme://host.name/path/")!,
+                title: "Resolved Title",
+                abstract: "Resolved abstract for this topic.",
+                language: .init(name: "Language Name", id: "com.test.language.id"),
+                availableLanguages: [.init(name: "Language Name", id: "com.test.language.id")],
+                platforms: [.init(name: "Platform Name", introduced: "1.0.0", isBeta: false)],
+                declarationFragments: .init(declarationFragments: [
+                    .init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)
+                ]),
+                variants: [
+                    .init(
+                        traits: [.interfaceLanguage("com.test.other-language.id")],
+                        kind: .init(name: "Variant Kind Name", id: "com.test.other-kind.id", isSymbol: true),
+                        url: nil,
+                        title: "Resolved Variant Title",
+                        abstract: "Resolved variant abstract for this topic.",
+                        language: .init(name: "Variant Language Name", id: "com.test.other-language.id"),
+                        declarationFragments: .init(declarationFragments: [
+                            .init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)
+                        ])
+                    )
+                ]
+            )
+            let message = OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata)
+            
+            let data = try JSONEncoder().encode(message)
+            let decodedMessage = try JSONDecoder().decode(OutOfProcessReferenceResolver.Response.self, from: data)
+            
+            switch decodedMessage {
+            case .resolvedInformation(let decodedInformation):
+                XCTAssertEqual(decodedInformation.kind.name, testMetadata.kind.name)
+                XCTAssertEqual(decodedInformation.kind.id, testMetadata.kind.id)
+                XCTAssertEqual(decodedInformation.kind.isSymbol, testMetadata.kind.isSymbol)
+                
+                XCTAssertEqual(decodedInformation.title, testMetadata.title)
+                
+                XCTAssertEqual(decodedInformation.abstract, testMetadata.abstract)
+                
+                XCTAssertEqual(decodedInformation.language.name, testMetadata.language.name)
+                XCTAssertEqual(decodedInformation.language.id, testMetadata.language.id)
+                
+                XCTAssertEqual(decodedInformation.availableLanguages, testMetadata.availableLanguages)
+                XCTAssertEqual(decodedInformation.platforms, testMetadata.platforms)
+                
+                XCTAssertEqual(decodedInformation.declarationFragments?.declarationFragments.count, testMetadata.declarationFragments?.declarationFragments.count)
+                for (decodedFragment, testFragment) in zip(decodedInformation.declarationFragments?.declarationFragments ?? [], testMetadata.declarationFragments?.declarationFragments ?? []) {
+                    XCTAssertEqual(decodedFragment, testFragment)
+                }
+                
+                XCTAssertEqual(decodedInformation.variants?.count, testMetadata.variants?.count)
+                let decodedVariant = try XCTUnwrap(decodedInformation.variants?.first)
+                let testVariant = try XCTUnwrap(testMetadata.variants?.first)
+                
+                XCTAssertEqual(decodedVariant.kind?.name, testVariant.kind?.name)
+                XCTAssertEqual(decodedVariant.kind?.id, testVariant.kind?.id)
+                XCTAssertEqual(decodedVariant.kind?.isSymbol, testVariant.kind?.isSymbol)
+                
+                XCTAssertEqual(decodedVariant.title, testVariant.title)
+                
+                XCTAssertEqual(decodedVariant.abstract, testVariant.abstract)
+                
+                XCTAssertEqual(decodedVariant.language?.name, testVariant.language?.name)
+                XCTAssertEqual(decodedVariant.language?.id, testVariant.language?.id)
+                
+                XCTAssertEqual(decodedVariant.declarationFragments??.declarationFragments.count, testVariant.declarationFragments??.declarationFragments.count)
+                for (decodedFragment, testFragment) in zip(decodedVariant.declarationFragments??.declarationFragments ?? [], testVariant.declarationFragments??.declarationFragments ?? []) {
+                    XCTAssertEqual(decodedFragment, testFragment)
+                }
                 
             default:
                 XCTFail("Decoded the wrong type of message")
