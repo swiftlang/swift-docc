@@ -103,10 +103,22 @@ extension DocumentationDataVariants {
         return DocumentationDataVariants<Variant>(values: [:], defaultVariantValue: nil)
     }
     
+    private var firstVariantElement: (trait: DocumentationDataVariantsTrait, variant: Variant)? {
+        // A Dictionary's order isn't stable across program executions.
+        //
+        // These values are sorted in descending order so that elements with interface languages come before the
+        // fallback value and so that Swift comes before Objective-C.
+        //
+        // Having a stable order sufficient to make the tests stable but can still have surprising results (rdar://86580516)
+        return allValues.sorted(by: { lhs, rhs in
+            lhs.trait.interfaceLanguage ?? "" > rhs.trait.interfaceLanguage ?? ""
+        }).first
+    }
+    
     /// Convenience API to access the first variant, or the default value if there are no registered variants.
     var firstValue: Variant? {
-        get { allValues.first?.variant }
-        set { self[allValues.first?.trait ?? .fallback] = newValue }
+        get { firstVariantElement?.variant }
+        set { self[firstVariantElement?.trait ?? .fallback] = newValue }
     }
 }
 

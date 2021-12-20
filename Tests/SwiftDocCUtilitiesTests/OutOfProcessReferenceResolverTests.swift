@@ -66,7 +66,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             language: .init(name: "Language Name 1", id: "com.test.language.id"),
             availableLanguages: [
                 .init(name: "Language Name 1", id: "com.test.language.id"),
-                .init(name: "Language Name 2", id: "com.test.language2.id"),
+                .init(name: "Language Name 2", id: "com.test.another-language.id"),
             ],
             platforms: [
                 .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
@@ -77,7 +77,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             ]),
             variants: [
                 .init(
-                    traits: [.interfaceLanguage("com.test.language2.id")],
+                    // This trait identifier is written to account for the sort order of variants (rdar://86580516)
+                    traits: [.interfaceLanguage("com.test.another-language.id")],
                     kind: .init(name: "Variant Kind Name", id: "com.test.kind2.id", isSymbol: true),
                     url: nil,
                     title: "Resolved Variant Title",
@@ -137,7 +138,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         
         XCTAssertEqual(symbol.subHeading, [.init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)])
         
-        let variantTrait = DocumentationDataVariantsTrait(interfaceLanguage: "com.test.language2.id")
+        let variantTrait = DocumentationDataVariantsTrait(interfaceLanguage: "com.test.another-language.id")
         XCTAssert(node.availableVariantTraits.contains(variantTrait))
         
         XCTAssertEqual(symbol.kindVariants[variantTrait]?.displayName, testMetadata.variants?.first?.kind?.name)
@@ -232,7 +233,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             language: .init(name: "Language Name 1", id: "com.test.language.id"),
             availableLanguages: [
                 .init(name: "Language Name 1", id: "com.test.language.id"),
-                .init(name: "Language Name 2", id: "com.test.language2.id"),
+                .init(name: "Language Name 2", id: "com.test.another-language.id"),
             ],
             platforms: [
                 .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
@@ -243,7 +244,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             ]),
             variants: [
                 .init(
-                    traits: [.interfaceLanguage("com.test.language2.id")],
+                    // This trait identifier is written to account for the sort order of variants (rdar://86580516)
+                    traits: [.interfaceLanguage("com.test.another-language.id")],
                     kind: .init(name: "Variant Kind Name", id: "com.test.kind2.id", isSymbol: true),
                     url: nil,
                     title: "Resolved Variant Title",
@@ -297,7 +299,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         
         XCTAssertEqual(symbol.subHeading, [.init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)])
         
-        let variantTrait = DocumentationDataVariantsTrait(interfaceLanguage: "com.test.language2.id")
+        let variantTrait = DocumentationDataVariantsTrait(interfaceLanguage: "com.test.another-language.id")
         XCTAssert(symbolNode.availableVariantTraits.contains(variantTrait))
         
         XCTAssertEqual(symbol.kindVariants[variantTrait]?.displayName, testMetadata.variants?.first?.kind?.name)
