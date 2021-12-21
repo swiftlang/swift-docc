@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
+import SwiftDocCTestUtilities
 
 class PreviewActionIntegrationTests: XCTestCase {
     func json(contentsOf url: URL) throws -> [String: Any] {

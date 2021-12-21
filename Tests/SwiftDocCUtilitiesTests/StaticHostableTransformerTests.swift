@@ -12,6 +12,7 @@ import XCTest
 import Foundation
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
+import SwiftDocCTestUtilities
 
 class StaticHostableTransformerTests: StaticHostingBaseTests {
 

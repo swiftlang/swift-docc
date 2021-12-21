@@ -2467,8 +2467,8 @@ extension Folder {
                     if fileURL.lastPathComponent == "Info.plist",
                        let infoPlistData = FileManager.default.contents(atPath: fileURL.path),
                        let infoPlist = try? PropertyListSerialization.propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any],
-                       let displayName = infoPlist[InfoPlist.Content.CodingKeys.displayName.rawValue] as? String,
-                       let identifier = infoPlist[InfoPlist.Content.CodingKeys.identifier.rawValue] as? String {
+                       let displayName = infoPlist["CFBundleDisplayName"] as? String,
+                       let identifier = infoPlist["CFBundleIdentifier"] as? String {
                         content.append(InfoPlist(displayName: displayName, identifier: identifier))
                     } else {
                         content.append(CopyOfFile(original: fileURL, newName: fileURL.lastPathComponent))

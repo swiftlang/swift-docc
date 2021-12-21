@@ -13,6 +13,7 @@ import Foundation
 
 @testable import SwiftDocCUtilities
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 @testable import NIO
 @testable import NIOHTTP1
