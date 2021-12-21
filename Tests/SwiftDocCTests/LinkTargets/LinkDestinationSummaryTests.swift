@@ -105,7 +105,9 @@ class ExternalLinkableTests: XCTestCase {
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
         let renderNode = try converter.convert(node, at: nil)
-        let pageSummary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
+        
+        let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
+        let pageSummary = summaries[0]
         XCTAssertEqual(pageSummary.title, "Basic Augmented Reality App")
         XCTAssertEqual(pageSummary.path, "/tutorials/testbundle/tutorial")
         XCTAssertEqual(pageSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial")
@@ -123,7 +125,7 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertNil(pageSummary.declarationFragments, "Only symbols have declaration fragments")
         XCTAssertNil(pageSummary.abstract, "There is no text to use as an abstract for the tutorial page")
 
-        let sectionSummary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[1]
+        let sectionSummary = summaries[1]
         XCTAssertEqual(sectionSummary.title, "Create a New AR Project")
         XCTAssertEqual(sectionSummary.path, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project")
         XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project")
@@ -142,6 +144,11 @@ class ExternalLinkableTests: XCTestCase {
             .text(" "),
             .text("ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium."),
         ])
+        
+        // Test that the summaries can be decoded from the encoded data
+        let encoded = try JSONEncoder().encode(summaries)
+        let decoded = try JSONDecoder().decode([LinkDestinationSummary].self, from: encoded)
+        XCTAssertEqual(summaries, decoded)
     }
 
     func testSymbolSummaries() throws {
@@ -269,5 +276,63 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: "\n", kind: .text, identifier: nil, preciseIdentifier: nil),
             ])
         }
+    }
+    func testDecodingLegacyData() throws {
+        let legacyData = """
+        {
+          "title": "ClassName",
+          "referenceURL": "doc://org.swift.docc.example/documentation/MyKit/ClassName",
+          "language": "swift",
+          "path": "documentation/MyKit/ClassName",
+          "availableLanguages": [
+            "swift"
+          ],
+          "kind": "org.swift.docc.kind.class",
+          "abstract": [
+            {
+              "type": "text",
+              "text": "A brief explanation of my class."
+            }
+          ],
+          "platforms": [
+            {
+              "name": "PlatformName",
+              "introducedAt": "1.0"
+            },
+          ],
+          "fragments": [
+            {
+              "kind": "keyword",
+              "text": "class"
+            },
+            {
+              "kind": "text",
+              "text": " "
+            },
+            {
+              "kind": "identifier",
+              "text": "ClassName"
+            }
+          ]
+        }
+        """.data(using: .utf8)!
+        
+        let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: legacyData)
+        
+        XCTAssertEqual(decoded.referenceURL, ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
+        XCTAssertEqual(decoded.platforms?.count, 1)
+        XCTAssertEqual(decoded.platforms?.first?.name, "PlatformName")
+        XCTAssertEqual(decoded.platforms?.first?.introduced, "1.0")
+        XCTAssertEqual(decoded.kind, .class)
+        XCTAssertEqual(decoded.title, "ClassName")
+        XCTAssertEqual(decoded.abstract?.plainText, "A brief explanation of my class.")
+        XCTAssertEqual(decoded.path, "documentation/MyKit/ClassName")
+        XCTAssertEqual(decoded.declarationFragments, [
+            .init(text: "class", kind: .keyword, identifier: nil),
+            .init(text: " ", kind: .text, identifier: nil),
+            .init(text: "ClassName", kind: .identifier, identifier: nil),
+        ])
+        
+        XCTAssert(decoded.variants.isEmpty)
     }
 }
