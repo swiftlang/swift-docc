@@ -27,8 +27,6 @@ import SwiftDocCTestUtilities
 class PreviewServerTests {
 
      func createTemporaryDirectory(
-         pathComponents: String...,
-         createDirectoryForLastPathComponent: Bool = true,
          fileManager: FileManager = .default
      ) throws -> URL {
          fatalError("This test is disabled by not conforming to XCTestCase. This helper is added here to make the code compile. This should never be called.")
@@ -44,7 +42,7 @@ class PreviewServerTests {
             TextFile(name: "index.html", utf8Content: "index"),
         ])
 
-        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         
         // Run test server
         var log = LogHandle.none
@@ -124,7 +122,7 @@ class PreviewServerTests {
         let tempFolderURL = try makeTempFolder()
         
         // Socket URL
-        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         
         // Create the server
         var log = LogHandle.none
@@ -171,7 +169,7 @@ class PreviewServerTests {
         let tempFolderURL = try makeTempFolder()
         
         // Socket URL
-        let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         
         // Create the server
         var log = LogHandle.none
