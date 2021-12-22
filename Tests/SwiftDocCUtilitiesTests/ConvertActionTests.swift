@@ -1840,17 +1840,7 @@ class ConvertActionTests: XCTestCase {
         ])
         
         // The navigator index needs to test with the real File Manager
-        let testTemporaryDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(
-            "\(#function)-\(UUID())"
-        )
-        try FileManager.default.createDirectory(
-            at: testTemporaryDirectory,
-            withIntermediateDirectories: true,
-            attributes: nil
-        )
-        defer {
-            try? FileManager.default.removeItem(at: testTemporaryDirectory)
-        }
+        let testTemporaryDirectory = try createTemporaryDirectory()
         
         let bundleDirectory = testTemporaryDirectory.appendingPathComponent(
             bundle.name,
@@ -1907,18 +1897,7 @@ class ConvertActionTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
         
         // The navigator index needs to test with the real File Manager
-        let temporaryTestOutputDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(
-            "\(#function)-\(UUID())"
-        )
-        try FileManager.default.createDirectory(
-            at: temporaryTestOutputDirectory,
-            withIntermediateDirectories: true,
-            attributes: nil
-        )
-        
-        defer {
-            try? FileManager.default.removeItem(at: temporaryTestOutputDirectory)
-        }
+        let temporaryTestOutputDirectory = try createTemporaryDirectory()
         
         let bundleDirectory = try XCTUnwrap(
             Bundle.module.url(

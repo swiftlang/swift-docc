@@ -13,10 +13,20 @@ import XCTest
 
 // These helpers methods exist to put temp files for different test executions in different locations when running in Swift CI.
 
+extension FileManager {
+    
+    @available(*, deprecated, message: "Use `createTemporaryDirectory` instead in unit tests to avoid referencing a shared location in Swift CI.")
+    var temporaryDirectory: URL {
+        XCTFail("Use `createTemporaryDirectory` instead in unit tests to avoid referencing a shared location in Swift CI.")
+        return URL(fileURLWithPath: Foundation.NSTemporaryDirectory())
+    }
+}
+
 public extension XCTestCase {
     
     @available(*, deprecated, message: "Use `createTemporaryDirectory` instead in unit tests to avoid referencing a shared location in Swift CI.")
     func NSTemporaryDirectory() -> String {
+        XCTFail("Use `createTemporaryDirectory` instead in unit tests to avoid referencing a shared location in Swift CI.")
         return Foundation.NSTemporaryDirectory()
     }
     
