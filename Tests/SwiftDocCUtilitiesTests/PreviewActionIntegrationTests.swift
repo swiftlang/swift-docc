@@ -71,18 +71,13 @@ class PreviewActionIntegrationTests: XCTestCase {
         return (sourceURL: sourceURL, outputURL: outputURL, templateURL: templateURL)
     }
     
-    // FIXME: This test can fail when run in parallel so it is temporarily disabled (rdar://81524725).
-    
     /// Test the fix for <rdar://problem/48615392>.
-    func skip_testWatchRecoversAfterConversionErrors() throws {
+    func testWatchRecoversAfterConversionErrors() throws {
         #if os(macOS)
         // Source files.
         let source = createMinimalDocsBundle()
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: source)
         
-        let sourceOverviewURL = sourceURL.appendingPathComponent("Resources")
-            .appendingPathComponent("Overview.tutorial")
-
         let logStorage = LogHandle.LogStorage()
         var logHandle = LogHandle.memory(logStorage)
 
@@ -182,14 +177,14 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         XCTAssertEqual(initialIntroTitle, "Technology X")
 
+        let invalidJSONSymbolGraphURL = sourceURL.appendingPathComponent("invalid-incomplete-data.symbols.json")
+        
         // Start watching the source and detect failed conversion.
         do {
             let outputExpectation = asyncLogExpectation(log: logStorage, description: "Did produce output") { $0.contains("Compilation failed") }
 
-            // Triger a watch update.
-            try String(contentsOf: sourceOverviewURL)
-                .replacingOccurrences(of: "title: \"Technology X\"", with: "ti!!!!!!tle: \"Technology X\"")
-                .write(to: sourceOverviewURL, atomically: true, encoding: .utf8)
+            // this is invalid JSON and will result in an error
+            try "{".write(to: invalidJSONSymbolGraphURL, atomically: true, encoding: .utf8)
 
             // Wait for watch to produce output.
             wait(for: [outputExpectation], timeout: 20.0)
@@ -199,9 +194,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         do {
             let outputExpectation = asyncLogExpectation(log: logStorage, description: "Did finish conversion") { $0.contains("Done") }
 
-            try String(contentsOf: sourceOverviewURL)
-                .replacingOccurrences(of: "ti!!!!!!tle: \"Technology X\"", with: "title: \"Technology X\"")
-                .write(to: sourceOverviewURL, atomically: true, encoding: .utf8)
+            try FileManager.default.removeItem(at: invalidJSONSymbolGraphURL)
 
             // Wait for watch to produce output.
             wait(for: [outputExpectation], timeout: 20.0)
