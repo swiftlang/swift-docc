@@ -121,7 +121,7 @@ class DirectoryMonitorTests: XCTestCase {
         #if !os(Linux) && !os(Android)
 
         // Create temp folder & sub-folder.
-        let tempSubfolderURL = try createTemporaryDirectory(pathComponents: "subfolder")
+        let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
         let tempFolderURL = tempSubfolderURL.deletingLastPathComponent()
         
         // A file URL to update.
@@ -170,7 +170,7 @@ class DirectoryMonitorTests: XCTestCase {
         #if !os(Linux) && !os(Android)
         
         // Create temp folder & sub-folder.
-        let tempSubfolderURL = try createTemporaryDirectory(pathComponents: "subfolder")
+        let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
         let tempFolderURL = tempSubfolderURL.deletingLastPathComponent()
 
         // 1) Test that creating a hidden file inside the tree will not trigger an update.
@@ -203,7 +203,7 @@ class DirectoryMonitorTests: XCTestCase {
         #if !os(Linux) && !os(Android)
 
         // Create temp folder & sub-folder.
-        let tempSubfolderURL = try createTemporaryDirectory(pathComponents: "subfolder")
+        let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
         let tempFolderURL = tempSubfolderURL.deletingLastPathComponent()
         
         // A file URL to update.

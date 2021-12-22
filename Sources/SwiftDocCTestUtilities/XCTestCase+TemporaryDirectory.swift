@@ -35,6 +35,18 @@ public extension XCTestCase {
     /// After the current test method has returned the temporary directory is automatically removed.
     ///
     /// - Parameters:
+    ///   - pathComponents: The name of the temporary directory.
+    ///   - fileManager: The file manager that will create the directory.
+    /// - Returns: The URL of the newly created directory.
+    func createTemporaryDirectory(named: String, fileManager: FileManager = .default) throws -> URL {
+        try createTemporaryDirectory(pathComponents: named)
+    }
+        
+    /// Creates a new temporary directory and returns the URL of that directory.
+    ///
+    /// After the current test method has returned the temporary directory is automatically removed.
+    ///
+    /// - Parameters:
     ///   - pathComponents: Additional path components to add to the temporary URL.
     ///   - fileManager: The file manager that will create the directory.
     /// - Returns: The URL of the newly created directory.

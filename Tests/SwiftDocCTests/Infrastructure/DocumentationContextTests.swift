@@ -1825,7 +1825,7 @@ let expected = """
             ("file:///path with spaces/to/file.swift", "file:///path%20with%20spaces/to/file.swift"),
         ] {
             // Create an empty bundle
-            let targetURL = try createTemporaryDirectory(pathComponents: "test.docc")
+            let targetURL = try createTemporaryDirectory(named: "test.docc")
             
             // Copy test Info.plist
             try FileManager.default.copyItem(at: Bundle.module.url(

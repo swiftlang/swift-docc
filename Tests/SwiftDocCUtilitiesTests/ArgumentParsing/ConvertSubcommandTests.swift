@@ -22,7 +22,7 @@ class ConvertSubcommandTests: XCTestCase {
     
     func testOptionsValidation() throws {
         // create source bundle directory
-        let sourceURL = try createTemporaryDirectory(pathComponents: "documentation")
+        let sourceURL = try createTemporaryDirectory(named: "documentation")
         try "".write(to: sourceURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         
         // create template dir

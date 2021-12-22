@@ -14,7 +14,7 @@ import XCTest
 class OutputSizeTests: XCTestCase {
     func testOutputSize() throws {
         // Create a faux output folder
-        let writeURL = try createTemporaryDirectory(pathComponents: "data")
+        let writeURL = try createTemporaryDirectory(named: "data")
         
         // Write a 2MB file
         let data = Data(repeating: 1, count: 2 * 1024 * 1024)
