@@ -39,8 +39,20 @@ public extension XCTestCase {
         tempURL.standardize()
         
         addTeardownBlock {
-            try? fileManager.removeItem(at: baseURL)
+            do {
+                if fileManager.fileExists(atPath: baseURL.path) {
+                    try fileManager.removeItem(at: baseURL)
+                }
+            } catch {
+                XCTFail("Failed to remove temporary directory: '\(error)'")
+            }
         }
+        
+        if !fileManager.fileExists(atPath: bundleParentDir.path) {
+            // Create the base URL directory without intermediate directories so that an error is raised if the parent directory doesn't exist.
+            try fileManager.createDirectory(at: baseURL, withIntermediateDirectories: false, attributes: nil)
+        }
+         
         try fileManager.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
         
         return tempURL
