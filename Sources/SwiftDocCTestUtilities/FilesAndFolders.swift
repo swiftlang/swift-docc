@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import XCTest
 
 /*
     This file contains API for working with folder hierarchies, and is extensible to allow for testing
@@ -247,32 +248,16 @@ public struct DataFile: File, DataRepresentable {
     }
 }
 
-/// A temporary folder which can write files to a temporary location on disk and
-/// will delete itself when its instance is released from memory.
-public class TempFolder: File {
-    public let name: String
-    public let url: URL
-
-    /// The files and sub folders that this folder contains.
-    let content: [File]
-    
-    public func write(to url: URL) throws {
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-        for file in content {
-            try file.write(inside: url)
-        }
-    }
-
-    public init(content: [File], atRoot root: URL) throws {
-        self.content = content
-
-        url = root
-        name = url.absoluteString
-
-        try write(to: url)
-    }
-    
-    deinit {
-        try? FileManager.default.removeItem(at: url)
+extension XCTestCase {
+    /// Creates a ``Folder`` and writes its content to a temporary location on disk.
+    ///
+    /// - Parameters:
+    ///   - content: The files and subfolders to write to a temporary location
+    /// - Returns: The temporary location where the temporary folder was written.
+    public func createTempFolder(content: [File]) throws -> URL {
+        let temporaryDirectory = try createTemporaryDirectory().appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
+        let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
+        try folder.write(to: temporaryDirectory)
+        return temporaryDirectory
     }
 }

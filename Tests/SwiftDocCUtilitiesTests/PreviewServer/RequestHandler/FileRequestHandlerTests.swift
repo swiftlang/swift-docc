@@ -32,7 +32,7 @@ class FileRequestHandlerTests: XCTestCase {
     }
     
     func testFileHandlerAssets() throws {
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             Folder(name: "data", content: [
                 TextFile(name: "test.json", utf8Content: "data"),
             ]),
@@ -64,47 +64,47 @@ class FileRequestHandlerTests: XCTestCase {
             Folder(name: "downloads", content: [
                 TextFile(name: "project.zip", utf8Content: "zip"),
             ])
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
 
-        try verifyAsset(root: tempDir.url, path: "/data/test.json", body: "data", type: "application/json")
-        try verifyAsset(root: tempDir.url, path: "/css/test.css", body: "css", type: "text/css")
-        try verifyAsset(root: tempDir.url, path: "/js/test.js", body: "js", type: "text/javascript")
-        try verifyAsset(root: tempDir.url, path: "/fonts/test.otf", body: "font", type: "font/otf")
+        try verifyAsset(root: tempFolderURL, path: "/data/test.json", body: "data", type: "application/json")
+        try verifyAsset(root: tempFolderURL, path: "/css/test.css", body: "css", type: "text/css")
+        try verifyAsset(root: tempFolderURL, path: "/js/test.js", body: "js", type: "text/javascript")
+        try verifyAsset(root: tempFolderURL, path: "/fonts/test.otf", body: "font", type: "font/otf")
         // default font type
-        try verifyAsset(root: tempDir.url, path: "/fonts/test.ttf", body: "ttf", type: "application/octet-stream")
-        try verifyAsset(root: tempDir.url, path: "/images/image.png", body: "png", type: "image/png")
-        try verifyAsset(root: tempDir.url, path: "/images/image.gif", body: "gif", type: "image/gif")
+        try verifyAsset(root: tempFolderURL, path: "/fonts/test.ttf", body: "ttf", type: "application/octet-stream")
+        try verifyAsset(root: tempFolderURL, path: "/images/image.png", body: "png", type: "image/png")
+        try verifyAsset(root: tempFolderURL, path: "/images/image.gif", body: "gif", type: "image/gif")
         // default image type
-        try verifyAsset(root: tempDir.url, path: "/images/image.jpg", body: "jpg", type: "image/jpeg")
-        try verifyAsset(root: tempDir.url, path: "/images/logo.svg", body: "svg", type: "image/svg+xml")
-        try verifyAsset(root: tempDir.url, path: "/img/image.png", body: "png", type: "image/png")
-        try verifyAsset(root: tempDir.url, path: "/img/image.gif", body: "gif", type: "image/gif")
+        try verifyAsset(root: tempFolderURL, path: "/images/image.jpg", body: "jpg", type: "image/jpeg")
+        try verifyAsset(root: tempFolderURL, path: "/images/logo.svg", body: "svg", type: "image/svg+xml")
+        try verifyAsset(root: tempFolderURL, path: "/img/image.png", body: "png", type: "image/png")
+        try verifyAsset(root: tempFolderURL, path: "/img/image.gif", body: "gif", type: "image/gif")
         // default image type
-        try verifyAsset(root: tempDir.url, path: "/img/image.jpg", body: "jpg", type: "image/jpeg")
-        try verifyAsset(root: tempDir.url, path: "/videos/video.mov", body: "mov", type: "video/quicktime")
-        try verifyAsset(root: tempDir.url, path: "/videos/video.avi", body: "avi", type: "video/x-msvideo")
-        try verifyAsset(root: tempDir.url, path: "/downloads/project.zip", body: "zip", type: "application/zip")
+        try verifyAsset(root: tempFolderURL, path: "/img/image.jpg", body: "jpg", type: "image/jpeg")
+        try verifyAsset(root: tempFolderURL, path: "/videos/video.mov", body: "mov", type: "video/quicktime")
+        try verifyAsset(root: tempFolderURL, path: "/videos/video.avi", body: "avi", type: "video/x-msvideo")
+        try verifyAsset(root: tempFolderURL, path: "/downloads/project.zip", body: "zip", type: "application/zip")
     }
     
     func testFileHandlerAssetsMissing() throws {
-        let tempDir = try TempFolder(content: [], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        let tempFolderURL = try createTempFolder(content: [])
 
         let request = makeRequestHead(path: "/css/b00011100.css")
-        let factory = FileRequestHandler(rootURL: tempDir.url, fileIO: fileIO)
+        let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         XCTAssertEqual(response.requestError?.status, .notFound)
     }
 
     func testFileHandlerWithRange() throws {
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
 
         let request = makeRequestHead(path: "/videos/video.mov", headers: [("Range", "bytes=0-1")])
-        let factory = FileRequestHandler(rootURL: tempDir.url, fileIO: fileIO)
+        let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         XCTAssertEqual(response.body, "He")
@@ -116,14 +116,14 @@ class FileRequestHandlerTests: XCTestCase {
     }
 
     func testFileInUpperDirectory() throws {
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
 
         let request = makeRequestHead(path: "/videos/../video.mov", headers: [("Range", "bytes=0-1")])
-        let factory = FileRequestHandler(rootURL: tempDir.url, fileIO: fileIO)
+        let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         XCTAssertNil(response.body, "He")
@@ -131,14 +131,14 @@ class FileRequestHandlerTests: XCTestCase {
     }
 
     func testMalformedPath() throws {
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
 
         let request = makeRequestHead(path: "/videos/.  ? ? ? ./video.mov", headers: [("Range", "bytes=0-1")])
-        let factory = FileRequestHandler(rootURL: tempDir.url, fileIO: fileIO)
+        let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         XCTAssertNil(response.body, "He")

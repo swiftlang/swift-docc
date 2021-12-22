@@ -48,11 +48,11 @@ class PreviewSubcommandTests: XCTestCase {
         // Test default template
         do {
             unsetenv(TemplateOption.environmentVariableKey)
-            let tempDir = try createTemporaryDirectory()
-            let doccExecutableLocation = tempDir
+            let tempFolder = try createTemporaryDirectory()
+            let doccExecutableLocation = tempFolder
                 .appendingPathComponent("bin")
                 .appendingPathComponent("docc-executable-name")
-            let defaultTemplateDir = tempDir
+            let defaultTemplateDir = tempFolder
                 .appendingPathComponent("share")
                 .appendingPathComponent("docc")
                 .appendingPathComponent("render", isDirectory: true)

@@ -22,15 +22,15 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
     /// Tests the three different responses we offer: static file, default, and error.
     func testPreviewHandler() throws {
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
             Folder(name: "css", content: [
                 TextFile(name: "test.css", utf8Content: "css"),
             ])
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
 
         let channel = EmbeddedChannel()
-        let channelHandler = PreviewHTTPHandler(fileIO: fileIO, rootURL: tempDir.url)
+        let channelHandler = PreviewHTTPHandler(fileIO: fileIO, rootURL: tempFolderURL)
 
         let response = Response()
         
@@ -83,12 +83,12 @@ class PreviewHTTPHandlerTests: XCTestCase {
     }
     
     func testPreviewAuthHandler() throws {
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
             Folder(name: "css", content: [
                 TextFile(name: "test.css", utf8Content: "css"),
             ])
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
 
         let channel = EmbeddedChannel()
         defer {
@@ -96,7 +96,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
             _ = try? channel.finish()
         }
         
-        let channelHandler = PreviewHTTPHandler(fileIO: fileIO, rootURL: tempDir.url, credentials: (user: "user", pass: "pass"))
+        let channelHandler = PreviewHTTPHandler(fileIO: fileIO, rootURL: tempFolderURL, credentials: (user: "user", pass: "pass"))
 
         let response = Response()
         

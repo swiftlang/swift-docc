@@ -20,13 +20,13 @@ import NIOHTTP1
 class DefaultRequestHandlerTests: XCTestCase {
     
     func testDefaultHandler() throws {
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "Hello!"),
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
 
         // Default handler should be invoked for any non-asset path
         let request = makeRequestHead(path: "/random-path")
-        let factory = DefaultRequestHandler(rootURL: tempDir.url)
+        let factory = DefaultRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         // Expected content
@@ -42,14 +42,14 @@ class DefaultRequestHandlerTests: XCTestCase {
     }
     
     func testDefaultHandlerForExistingPath() throws {
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "Hello!"),
             TextFile(name: "existing.html", utf8Content: "Existing!"),
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
 
         // Default handler should handle even paths that do exist on disc
         let request = makeRequestHead(path: "/existing.html")
-        let factory = DefaultRequestHandler(rootURL: tempDir.url)
+        let factory = DefaultRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
         
         // Expected content

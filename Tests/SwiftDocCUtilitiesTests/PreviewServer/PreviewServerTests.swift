@@ -34,17 +34,21 @@ class PreviewServerTests {
          fatalError("This test is disabled by not conforming to XCTestCase. This helper is added here to make the code compile. This should never be called.")
      }
     
+    public func createTempFolder(content: [File]) throws -> URL {
+        fatalError("This test is disabled by not conforming to XCTestCase. This helper is added here to make the code compile. This should never be called.")
+    }
+    
     func testPreviewServerBeforeStarted() throws {
         // Create test content
-        let tempFolder = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
 
         let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
         
         // Run test server
         var log = LogHandle.none
-        let server = try PreviewServer(contentURL: tempFolder.url, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
+        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
 
         // Assert server starts
         let expectationStarted = AsyncronousExpectation(description: "Server before start")
@@ -81,9 +85,9 @@ class PreviewServerTests {
         XCTAssertEqual(client.handler.statusCode, errorStatusCode, file: (file), line: line)
     }
 
-    private func makeTempFolder() throws -> TempFolder {
+    private func makeTempFolder() throws -> URL {
         // Create test content
-        try TempFolder(content: [
+        try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
             TextFile(name: "theme-settings.js", utf8Content: "java script content"),
             TextFile(name: "theme-settings.json", utf8Content: "JSON content"),
@@ -113,18 +117,18 @@ class PreviewServerTests {
             Folder(name: "downloads", content: [
                 TextFile(name: "test.zip", utf8Content: "downloads content"),
             ])
-        ], atRoot: createTemporaryDirectory().appendingPathComponent("tempFolder"))
+        ])
     }
     
     func testPreviewServerPaths() throws {
-        let tempFolder = try makeTempFolder()
+        let tempFolderURL = try makeTempFolder()
         
         // Socket URL
         let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
         
         // Create the server
         var log = LogHandle.none
-        let server = try PreviewServer(contentURL: tempFolder.url, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
+        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
 
         // Start the server
         let expectationStarted = AsyncronousExpectation(description: "Server before start")
@@ -164,14 +168,14 @@ class PreviewServerTests {
     }
     
     func testConcurrentRequests() throws {
-        let tempFolder = try makeTempFolder()
+        let tempFolderURL = try makeTempFolder()
         
         // Socket URL
         let socketURL = try createTemporaryDirectory(pathComponents: "sock", createDirectoryForLastPathComponent: false)
         
         // Create the server
         var log = LogHandle.none
-        let server = try PreviewServer(contentURL: tempFolder.url, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
+        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
 
         // Start the server
         let expectationStarted = AsyncronousExpectation(description: "Server before start")
