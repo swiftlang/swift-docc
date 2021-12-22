@@ -25,7 +25,7 @@ extension XCTestCase {
         // Load the bundle using automatic discovery
         let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
         // Mutate the bundle to include the code listings, then apply to the workspace using a manual provider.
-        var bundle = try automaticDataProvider.bundles().first!
+        var bundle = try XCTUnwrap(automaticDataProvider.bundles().first)
         bundle.attributedCodeListings = codeListings
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
@@ -33,8 +33,8 @@ extension XCTestCase {
     }
     
     func testBundleAndContext(copying name: String, excludingPaths excludedPaths: [String] = [], codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [BundleIdentifier : ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil,  configureBundle: ((URL) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
-        let sourceURL = Bundle.module.url(
-            forResource: name, withExtension: "docc", subdirectory: "Test Bundles")!
+        let sourceURL = try XCTUnwrap(Bundle.module.url(
+            forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
         
         let sourceExists = FileManager.default.fileExists(atPath: sourceURL.path)
         let bundleURL = sourceExists
@@ -56,20 +56,20 @@ extension XCTestCase {
     }
     
     func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
-        let bundleURL = Bundle.module.url(
-            forResource: name, withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = try XCTUnwrap(Bundle.module.url(
+            forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
         let (_, bundle, context) = try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers)
         return (bundle, context)
     }
     
-    func testBundle(named name: String) -> DocumentationBundle {
-        let (bundle, _) = try! testBundleAndContext(named: name)
+    func testBundle(named name: String) throws -> DocumentationBundle {
+        let (bundle, _) = try testBundleAndContext(named: name)
         return bundle
     }
     
     func testBundleFromRootURL(named name: String) throws -> DocumentationBundle {
-        let bundleURL = Bundle.module.url(
-            forResource: name, withExtension: "docc", subdirectory: "Test Bundles")!
+        let bundleURL = try XCTUnwrap(Bundle.module.url(
+            forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
         let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
         
         let bundles = try dataProvider.bundles()

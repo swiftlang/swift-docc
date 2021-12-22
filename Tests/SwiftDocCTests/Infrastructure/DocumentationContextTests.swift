@@ -39,7 +39,7 @@ class DocumentationContextTests: XCTestCase {
     func testResolve() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         
@@ -482,7 +482,7 @@ class DocumentationContextTests: XCTestCase {
     func testRegisteredImages() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         
@@ -513,7 +513,7 @@ class DocumentationContextTests: XCTestCase {
     func testDownloadAssets() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
 
@@ -601,7 +601,7 @@ class DocumentationContextTests: XCTestCase {
         context.addGlobalChecks([{ (context, reference) -> [Problem] in
             return [Problem(diagnostic: Diagnostic(source: reference.url, severity: DiagnosticSeverity.error, range: nil, identifier: "com.tests.testGraphChecks", summary: "test error"), possibleSolutions: [])]
         }])
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         
@@ -1265,7 +1265,7 @@ let expected = """
     func testLanguageForNode() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         let articleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
@@ -1938,7 +1938,7 @@ let expected = """
     func renderNodeForPath(path: String) throws -> (DocumentationNode, RenderNode) {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         

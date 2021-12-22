@@ -145,7 +145,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     
     func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() throws {
         let workspace = DocumentationWorkspace()
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
@@ -189,7 +189,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     
     func testLoadEntityForExternalReference() throws {
         let workspace = DocumentationWorkspace()
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
@@ -237,7 +237,7 @@ Document @1:1-1:35
             externalResolver.resolvedEntityKind = resolvedEntityKind
             context.externalReferenceResolvers = [externalResolver.bundleIdentifier: externalResolver]
             
-            let bundle = testBundle(named: "TestBundle")
+            let bundle = try testBundle(named: "TestBundle")
             
             let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
             try workspace.registerProvider(dataProvider)

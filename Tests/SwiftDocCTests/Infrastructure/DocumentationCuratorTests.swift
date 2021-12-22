@@ -29,7 +29,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testCrawl() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         
@@ -148,7 +148,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testSymbolLinkResolving() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         
@@ -205,7 +205,7 @@ class DocumentationCuratorTests: XCTestCase {
     func testLinkResolving() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let sourceRoot = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
