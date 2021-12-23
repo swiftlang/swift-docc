@@ -165,12 +165,19 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             variants: resolvedInformation.variants
         )
         
+        let name: DocumentationNode.Name
+        if maybeSymbol != nil {
+            name = .symbol(declaration: .init([.plain(resolvedInformation.title)]))
+        } else {
+            name = .conceptual(title: resolvedInformation.title)
+        }
+        
         return DocumentationNode(
             reference: reference,
             kind: resolvedInformation.kind,
             sourceLanguage: .init(name: resolvedInformation.language.name, id: resolvedInformation.language.id),
             availableSourceLanguages: Set(resolvedInformation.availableLanguages.map { .init(name: $0.name, id: $0.id) }),
-            name: .conceptual(title: resolvedInformation.title),
+            name: name,
             markup: Document(parsing: resolvedInformation.abstract, options: []),
             semantic: maybeSymbol,
             platformNames: resolvedInformation.platformNames
@@ -245,7 +252,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             kind: resolvedInformation.kind,
             sourceLanguage: resolvedInformation.language,
             availableSourceLanguages: sourceLanguages(for: resolvedInformation),
-            name: .conceptual(title: resolvedInformation.title),
+            name: .symbol(declaration: .init([.plain(resolvedInformation.title)])),
             markup: Document(parsing: resolvedInformation.abstract, options: [.parseBlockDirectives, .parseSymbolLinks]),
             semantic: symbol,
             platformNames: resolvedInformation.platformNames

@@ -26,7 +26,7 @@ RESPONSE='{
         "name" : "Language Name"
       },
       {
-        "id" : "objc",
+        "id" : "occ",
         "name" : "Variant Language Name"
       }
     ],
@@ -69,13 +69,13 @@ RESPONSE='{
           "name" : "Variant Kind Name"
         },
         "language" : {
-          "id" : "objc",
+          "id" : "occ",
           "name" : "Variant Language Name"
         },
         "title" : "Resolved Variant Title",
         "traits" : [
           {
-            "interfaceLanguage" : "objc"
+            "interfaceLanguage" : "occ"
           }
         ]
       }
