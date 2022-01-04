@@ -531,6 +531,23 @@
                         "type": "string"
                     }
                 }
+            },
+            "RenderContentMetadata" : {
+                "type": "object",
+                "properties": {
+                    "anchor": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    }
+                }
             }
         },
         "requestBodies": {},
