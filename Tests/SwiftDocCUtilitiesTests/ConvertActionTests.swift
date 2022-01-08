@@ -13,6 +13,7 @@ import Foundation
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
 import Markdown
+import SwiftDocCTestUtilities
 
 class ConvertActionTests: XCTestCase {
     #if !os(iOS)
@@ -89,7 +90,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
         
         // Verify that the following files and folder exist at the output location
@@ -135,7 +137,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
         
         // Verify that the following files and folder exist at the output location
@@ -193,7 +196,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
         
         // Verify that the following files and folder exist at the output location
@@ -226,7 +230,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
         
         // Verify that the following files and folder exist at the output location
@@ -258,7 +263,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
         XCTAssertEqual(result.problems.count, 0)
     }
@@ -291,6 +297,7 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
             bundleDiscoveryOptions: BundleDiscoveryOptions(
                 infoPlistFallbacks: infoPlistFallbacks,
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
@@ -354,6 +361,7 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
             bundleDiscoveryOptions: BundleDiscoveryOptions(
                 infoPlistFallbacks: infoPlistFallbacks,
                 additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
@@ -396,7 +404,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         
         let targetURL = target.absoluteURL.appendingPathComponent("output")
         
@@ -432,7 +441,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         
         let targetURL = target.absoluteURL.appendingPathComponent("target").appendingPathComponent("output")
         
@@ -460,7 +470,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
         
         // Verify that the following files and folder exist at the output location
@@ -498,7 +509,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         
         // Construct the URLs for the produced render json:
@@ -567,7 +579,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .none)
         
         // Construct the URLs for the produced render json:
@@ -654,7 +667,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: true,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
 
         // Verify that the following files and folder exist at the output location
@@ -711,6 +725,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
         let result = try action.perform(logHandle: .standardOutput)
 
@@ -791,6 +806,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "hint") // report all errors during the test
         let result = try action.perform(logHandle: .standardOutput)
 
@@ -875,7 +891,8 @@ class ConvertActionTests: XCTestCase {
                 emitDigest: false,
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
-                fileManager: testDataProvider)
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory())
             let result = try action.perform(logHandle: .standardOutput)
             
             XCTAssertFalse(
@@ -904,7 +921,8 @@ class ConvertActionTests: XCTestCase {
                 emitDigest: false,
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
-                fileManager: testDataProvider)
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory())
             let result = try action.perform(logHandle: .standardOutput)
 
             XCTAssert(
@@ -942,7 +960,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: true,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
 
         // Verify that the following files and folder exist at the output location
@@ -1031,7 +1050,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: true,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
 
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
@@ -1236,7 +1256,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: true,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         let result = try action.perform(logHandle: .standardOutput)
         
         // Because the page order isn't deterministic, we create the indexing records and linkable entities in the same order as the pages.
@@ -1391,7 +1412,8 @@ class ConvertActionTests: XCTestCase {
                 emitDigest: true, // emit digest files
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
-                fileManager: testDataProvider)
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory())
             let result = try action.perform(logHandle: .standardOutput)
             
             XCTAssertTrue(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
@@ -1415,7 +1437,8 @@ class ConvertActionTests: XCTestCase {
                 emitDigest: false, // don't emit digest files
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
-                fileManager: testDataProvider)
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory())
             let result = try action.perform(logHandle: .standardOutput)
             
             XCTAssertFalse(testDataProvider.fileExists(atPath: result.outputs[0].appendingPathComponent("assets.json").path))
@@ -1448,6 +1471,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
                 documentationCoverageOptions: .noCoverage)
             let result = try action.perform(logHandle: .standardOutput)
 
@@ -1470,6 +1494,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
                 documentationCoverageOptions: DocumentationCoverageOptions(level: .brief))
             let result = try action.perform(logHandle: .standardOutput)
 
@@ -1492,6 +1517,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
                 documentationCoverageOptions: DocumentationCoverageOptions(level: .detailed))
             let result = try action.perform(logHandle: .standardOutput)
 
@@ -1526,7 +1552,8 @@ class ConvertActionTests: XCTestCase {
                 "platform2": PlatformVersion(.init(11, 12, 13), beta: false),
             ],
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         
         XCTAssertEqual(action.context.externalMetadata.currentPlatforms, [
             "platform1" : PlatformVersion(.init(10, 11, 12), beta: false),
@@ -1556,6 +1583,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
                 diagnosticEngine: engine)
             let result = try action.perform(logHandle: .standardOutput)
             XCTAssertFalse(result.didEncounterError)
@@ -1620,7 +1648,8 @@ class ConvertActionTests: XCTestCase {
                 emitDigest: emitDigest,
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
-                fileManager: testDataProvider)
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory())
             
             action.converter.batchNodeCount = batchSize
             
@@ -1699,7 +1728,8 @@ class ConvertActionTests: XCTestCase {
                 emitDigest: false,
                 currentPlatforms: nil,
                 dataProvider: testFileSystem,
-                fileManager: testFileSystem
+                fileManager: testFileSystem,
+                temporaryDirectory: createTemporaryDirectory()
             )
             
             _ = try action.perform(logHandle: .none)
@@ -1759,15 +1789,9 @@ class ConvertActionTests: XCTestCase {
         // The navigator index needs to test with the real file manager
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        
-        let fileManager = FileManager.default
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? fileManager.removeItem(at: targetURL) }
-        
-        let templateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
+        let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
-        defer { try? fileManager.removeItem(at: templateURL) }
         
         // Convert the documentation and create an index
         
@@ -1779,7 +1803,8 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
-            buildIndex: true // Create an index
+            buildIndex: true,
+            temporaryDirectory: createTemporaryDirectory() // Create an index
         )
         _ = try action.perform(logHandle: .standardOutput)
         
@@ -1788,7 +1813,7 @@ class ConvertActionTests: XCTestCase {
         let indexFromConvertAction = try NavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromConvertAction.count, 37)
         
-        try fileManager.removeItem(at: indexURL)
+        try FileManager.default.removeItem(at: indexURL)
         
         // Run just the index command over the built documentation
         
@@ -1815,17 +1840,7 @@ class ConvertActionTests: XCTestCase {
         ])
         
         // The navigator index needs to test with the real File Manager
-        let testTemporaryDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(
-            "\(#function)-\(UUID())"
-        )
-        try FileManager.default.createDirectory(
-            at: testTemporaryDirectory,
-            withIntermediateDirectories: true,
-            attributes: nil
-        )
-        defer {
-            try? FileManager.default.removeItem(at: testTemporaryDirectory)
-        }
+        let testTemporaryDirectory = try createTemporaryDirectory()
         
         let bundleDirectory = testTemporaryDirectory.appendingPathComponent(
             bundle.name,
@@ -1846,7 +1861,8 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: nil,
             emitDigest: false,
             currentPlatforms: nil,
-            buildIndex: true
+            buildIndex: true,
+            temporaryDirectory: createTemporaryDirectory()
         )
         
         enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
@@ -1881,18 +1897,7 @@ class ConvertActionTests: XCTestCase {
         enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
         
         // The navigator index needs to test with the real File Manager
-        let temporaryTestOutputDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(
-            "\(#function)-\(UUID())"
-        )
-        try FileManager.default.createDirectory(
-            at: temporaryTestOutputDirectory,
-            withIntermediateDirectories: true,
-            attributes: nil
-        )
-        
-        defer {
-            try? FileManager.default.removeItem(at: temporaryTestOutputDirectory)
-        }
+        let temporaryTestOutputDirectory = try createTemporaryDirectory()
         
         let bundleDirectory = try XCTUnwrap(
             Bundle.module.url(
@@ -1911,7 +1916,8 @@ class ConvertActionTests: XCTestCase {
             htmlTemplateDirectory: nil,
             emitDigest: false,
             currentPlatforms: nil,
-            buildIndex: true
+            buildIndex: true,
+            temporaryDirectory: createTemporaryDirectory()
         )
         
         _ = try action.perform(logHandle: .none)
@@ -2061,6 +2067,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "error",
             diagnosticEngine: engine
         )
@@ -2098,6 +2105,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "error",
             diagnosticEngine: engine
         )
@@ -2136,6 +2144,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: testDataProvider,
             fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
             diagnosticLevel: "error"
         )
         XCTAssertThrowsError(try action.performAndHandleResult()) { error in
@@ -2166,6 +2175,7 @@ class ConvertActionTests: XCTestCase {
                 currentPlatforms: nil,
                 dataProvider: testDataProvider,
                 fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
                 inheritDocs: flag)
             XCTAssertEqual(action.context.externalMetadata.inheritDocs, flag)
         }
@@ -2180,7 +2190,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider)
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
         XCTAssertEqual(action.context.externalMetadata.inheritDocs, false)
     }
     
@@ -2206,7 +2217,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: true,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory()
         )
         
         XCTAssertThrowsError(try action.performAndHandleResult(), "The test bundle should have thrown an error about an incomplete symbol graph file")
@@ -2236,7 +2248,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: true,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory()
         )
         
         try action.performAndHandleResult()
@@ -2272,7 +2285,8 @@ class ConvertActionTests: XCTestCase {
             emitDigest: false,
             currentPlatforms: nil,
             dataProvider: testDataProvider,
-            fileManager: testDataProvider
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory()
         )
         let result = try action.perform(logHandle: .standardOutput)
         
@@ -2316,10 +2330,7 @@ class ConvertActionTests: XCTestCase {
             footer,
         ])
 
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         let targetURL = tempURL.appendingPathComponent("target", isDirectory: true)
 
         let bundleURL = try bundle.write(inside: tempURL)
@@ -2337,6 +2348,7 @@ class ConvertActionTests: XCTestCase {
             currentPlatforms: nil,
             dataProvider: dataProvider,
             fileManager: FileManager.default,
+            temporaryDirectory: createTemporaryDirectory(),
             experimentalEnableCustomTemplates: true
         )
         let result = try action.perform(logHandle: .standardOutput)
@@ -2434,8 +2446,8 @@ extension Folder {
                     if fileURL.lastPathComponent == "Info.plist",
                        let infoPlistData = FileManager.default.contents(atPath: fileURL.path),
                        let infoPlist = try? PropertyListSerialization.propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any],
-                       let displayName = infoPlist[InfoPlist.Content.CodingKeys.displayName.rawValue] as? String,
-                       let identifier = infoPlist[InfoPlist.Content.CodingKeys.identifier.rawValue] as? String {
+                       let displayName = infoPlist["CFBundleDisplayName"] as? String,
+                       let identifier = infoPlist["CFBundleIdentifier"] as? String {
                         content.append(InfoPlist(displayName: displayName, identifier: identifier))
                     } else {
                         content.append(CopyOfFile(original: fileURL, newName: fileURL.lastPathComponent))

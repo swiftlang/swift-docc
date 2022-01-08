@@ -16,8 +16,8 @@ import SymbolKit
 class DefaultAvailabilityTests: XCTestCase {
 
     // Test whether missing default availability key correctly produces nil availability
-    func testBundleWithoutDefaultAvailability() {
-        let bundle = testBundle(named: "BundleWithoutAvailability")
+    func testBundleWithoutDefaultAvailability() throws {
+        let bundle = try testBundle(named: "BundleWithoutAvailability")
         XCTAssertNil(bundle.info.defaultAvailability)
     }
 

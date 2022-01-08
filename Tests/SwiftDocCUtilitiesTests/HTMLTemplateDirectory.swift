@@ -10,6 +10,7 @@
 
 import Foundation
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 /// A folder that represents a fake html-build directory for testing.
 extension Folder {

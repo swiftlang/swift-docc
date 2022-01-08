@@ -189,7 +189,7 @@ public class NavigatorIndex {
      */
     fileprivate init(withEmptyTree url: URL, bundleIdentifier: String) throws {
         self.url = url
-        self.environment = try LMDB.Environment(path: url.path, flags: [], maxDBs: 4, mapSize: 100 * 1024 * 1024) // mapSize = 100MB
+        self.environment = try LMDB.Environment(path: url.path, flags: [.noLock], maxDBs: 4, mapSize: 100 * 1024 * 1024) // mapSize = 100MB
         self.database = try environment.openDatabase(named: "index", flags: [.create])
         self.information = try environment.openDatabase(named: "information", flags: [.create])
         self.availability = try environment.openDatabase(named: "availability", flags: [.create])

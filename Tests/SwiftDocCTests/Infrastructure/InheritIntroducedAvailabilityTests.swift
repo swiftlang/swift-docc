@@ -33,7 +33,20 @@ fileprivate extension SymbolGraph.Symbol {
 class InheritIntroducedAvailabilityTests: XCTestCase {
     typealias Domain = SymbolGraph.Symbol.Availability.Domain
     typealias Version = SymbolGraph.SemanticVersion
-    let (testBundle, context) = try! testBundleAndContext(named: "TestBundle")
+    
+    var testBundle: DocumentationBundle!
+    var context: DocumentationContext!
+    
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        (testBundle, context) = try testBundleAndContext(named: "TestBundle")
+    }
+    
+    override func tearDown() {
+        testBundle = nil
+        context = nil
+        super.tearDown()
+    }
 
     /// Tests that the `introduced` availability version comes from
     /// the macOS version in the Info.plist
