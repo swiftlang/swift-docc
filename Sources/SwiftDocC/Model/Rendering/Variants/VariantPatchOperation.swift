@@ -36,7 +36,7 @@ public enum VariantPatchOperation<Value: Codable> {
 }
 
 extension VariantCollection.Variant where Value: RangeReplaceableCollection {
-    /// Applies the variant's patch operations o a given value and returns the patched value
+    /// Applies the variant's patch operations to a given value and returns the patched value.
     ///
     /// - Parameter originalValue: The value that the variant will apply the patch operations to.
     /// - Returns: The value after applying all patch operations.

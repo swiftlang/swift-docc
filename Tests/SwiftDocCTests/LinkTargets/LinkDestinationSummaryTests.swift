@@ -309,7 +309,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.availableLanguages.sorted(by: \.id), [.objectiveC, .swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "c:objc(cs)Bar")
-            //
+            
             XCTAssertEqual(summary.declarationFragments, [
                 .init(text: "class", kind: .keyword, identifier: nil),
                 .init(text: " ", kind: .text, identifier: nil),

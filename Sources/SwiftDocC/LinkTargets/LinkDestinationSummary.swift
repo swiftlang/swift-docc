@@ -219,7 +219,7 @@ public extension DocumentationNode {
             LinkDestinationSummary(landmark: $0, basePath: presentationURL.path, page: self, platforms: platforms, compiler: &compiler)
         }
         
-        var variantTaskGroups: [[RenderNode.Variant.Trait]: [LinkDestinationSummary.TaskGroup]] = [:]
+        var taskGroupVariants: [[RenderNode.Variant.Trait]: [LinkDestinationSummary.TaskGroup]] = [:]
         let taskGroups: [LinkDestinationSummary.TaskGroup]
         switch kind {
         case .tutorial, .tutorialArticle, .technology, .technologyOverview, .chapter, .volume, .onPageLandmark:
@@ -227,10 +227,10 @@ public extension DocumentationNode {
         default:
             taskGroups = renderNode.topicSections.map { group in .init(title: group.title, identifiers: group.identifiers) }
             for variant in renderNode.topicSectionsVariants.variants {
-                variantTaskGroups[variant.traits] = variant.applyingPatchTo(renderNode.topicSections).map { group in .init(title: group.title, identifiers: group.identifiers) }
+                taskGroupVariants[variant.traits] = variant.applyingPatchTo(renderNode.topicSections).map { group in .init(title: group.title, identifiers: group.identifiers) }
             }
         }
-        return [LinkDestinationSummary(documentationNode: self, path: presentationURL.path, taskGroups: taskGroups, variantTaskGroups: variantTaskGroups, platforms: platforms, compiler: &compiler)] + landmarkSummaries
+        return [LinkDestinationSummary(documentationNode: self, path: presentationURL.path, taskGroups: taskGroups, taskGroupVariants: taskGroupVariants, platforms: platforms, compiler: &compiler)] + landmarkSummaries
     }
 }
 
@@ -258,7 +258,7 @@ extension LinkDestinationSummary {
     ///   - path: The bundle-relative path to this page.
     ///   - taskGroups: The task groups that lists the children of this page.
     ///   - compiler: The content compiler that's used to render the node's abstract.
-    init(documentationNode: DocumentationNode, path: String, taskGroups: [TaskGroup], variantTaskGroups: [[RenderNode.Variant.Trait]: [TaskGroup]], platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
+    init(documentationNode: DocumentationNode, path: String, taskGroups: [TaskGroup], taskGroupVariants: [[RenderNode.Variant.Trait]: [TaskGroup]], platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
         let redirects = (documentationNode.semantic as? Redirected)?.redirects?.map { $0.oldPath }
         let referenceURL = documentationNode.reference.url
         
@@ -285,8 +285,8 @@ extension LinkDestinationSummary {
         // Precompute the summarized elements information so that variants can compare their information against it and remove redundant duplicate information.
         
         // Multi-language symbols need to access the default content via the variant accessors (rdar://86580516)
-        let kind = DocumentationNode.kind(forKind: (symbol.kindVariants[summaryTrait] ?? symbol.kindVariants[.fallback] ?? symbol.kind).identifier)
-        let title = symbol.titleVariants[summaryTrait] ?? symbol.titleVariants[.fallback] ?? symbol.title
+        let kind = DocumentationNode.kind(forKind: (symbol.kindVariants[summaryTrait] ?? symbol.kind).identifier)
+        let title = symbol.titleVariants[summaryTrait] ?? symbol.title
         
         func renderSymbolAbstract(_ symbolAbstract: Paragraph?) -> Abstract? {
             guard let abstractParagraph = symbolAbstract, case RenderBlockContent.paragraph(let inlineContent)? = compiler.visitParagraph(abstractParagraph).first else {
@@ -295,9 +295,9 @@ extension LinkDestinationSummary {
             return inlineContent
         }
         
-        let abstract = renderSymbolAbstract(symbol.abstractVariants[summaryTrait] ?? symbol.abstractVariants[.fallback])
-        let usr = symbol.externalIDVariants[summaryTrait] ?? symbol.externalIDVariants[.fallback]
-        let declaration = (symbol.subHeadingVariants[summaryTrait] ?? symbol.subHeadingVariants[.fallback]).map { subHeading in
+        let abstract = renderSymbolAbstract(symbol.abstractVariants[summaryTrait] ?? symbol.abstract)
+        let usr = symbol.externalIDVariants[summaryTrait] ?? symbol.externalID
+        let declaration = (symbol.subHeadingVariants[summaryTrait] ?? symbol.subHeading).map { subHeading in
             subHeading.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) }
         }
         let language = documentationNode.sourceLanguage
@@ -314,21 +314,21 @@ extension LinkDestinationSummary {
             
             let abstractVariant: Abstract?? = symbol.abstractVariants[trait].map { renderSymbolAbstract($0) }
             
-            func nilIfSame<Value: Equatable>(main: Value, variant: Value?) -> Value? {
+            func nilIfEqual<Value: Equatable>(main: Value, variant: Value?) -> Value? {
                 return main == variant ? nil : variant
             }
             
             let variantTraits = [RenderNode.Variant.Trait.interfaceLanguage(interfaceLanguage)]
             return Variant(
                 traits: variantTraits,
-                kind: nilIfSame(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
-                language: nilIfSame(main: language, variant: SourceLanguage(knownLanguageIdentifier: interfaceLanguage)),
+                kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
+                language: nilIfEqual(main: language, variant: SourceLanguage(knownLanguageIdentifier: interfaceLanguage)),
                 path: nil, // The symbol variant uses the same relative path
-                title: nilIfSame(main: title, variant: symbol.titleVariants[trait]),
-                abstract: nilIfSame(main: abstract, variant: abstractVariant),
-                taskGroups: nilIfSame(main: taskGroups, variant: variantTaskGroups[variantTraits]),
+                title: nilIfEqual(main: title, variant: symbol.titleVariants[trait]),
+                abstract: nilIfEqual(main: abstract, variant: abstractVariant),
+                taskGroups: nilIfEqual(main: taskGroups, variant: taskGroupVariants[variantTraits]),
                 usr: nil, // The symbol variant uses the same USR
-                declarationFragments: nilIfSame(main: declaration, variant: declarationVariant)
+                declarationFragments: nilIfEqual(main: declaration, variant: declarationVariant)
             )
         }
         
