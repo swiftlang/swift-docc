@@ -25,7 +25,7 @@ public struct DocumentationDataVariants<Variant> {
     ///
     /// The default variant value, if one exists, is the last element of the returned array.
     public var allValues: [(trait: DocumentationDataVariantsTrait, variant: Variant)] {
-        values.map { $0 }
+        values.map { (trait: $0.key, variant: $0.value) }
             // Append the default variant value if there is one.
             + (defaultVariantValue.map { [(.fallback, $0)] } ?? [])
     }
