@@ -44,7 +44,10 @@ let package = Package(
             ]),
         .testTarget(
             name: "SwiftDocCTests",
-            dependencies: ["SwiftDocC"],
+            dependencies: [
+                "SwiftDocC",
+                "SwiftDocCTestUtilities",
+            ],
             resources: [
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
@@ -66,11 +69,17 @@ let package = Package(
             dependencies: [
                 "SwiftDocCUtilities",
                 "SwiftDocC",
+                "SwiftDocCTestUtilities",
             ],
             resources: [
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
             ]),
+        
+        // Test utility library
+        .target(
+            name: "SwiftDocCTestUtilities",
+            dependencies: []),
 
         // Command-line tool
         .executableTarget(

@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
+import SwiftDocCTestUtilities
 
 class FileTests: XCTestCase {
     func testAbsoluteURL() {

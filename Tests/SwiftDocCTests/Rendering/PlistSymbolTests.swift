@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class PlistSymbolTests: XCTestCase {
     private let plistSymbolURL = Bundle.module.url(
@@ -126,10 +127,10 @@ class PlistSymbolTests: XCTestCase {
         let modifiedJSON = try String(contentsOf: plistSymbolURL)
             .replacingOccurrences(of: "\"ideTitle\": \"WiFi access\",", with: "")
         
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "missingIdeTitle.json", utf8Content: modifiedJSON),
         ])
-        let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempDir.url.appendingPathComponent("missingIdeTitle.json")))
+        let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempFolderURL.appendingPathComponent("missingIdeTitle.json")))
         
         //
         // Plist Details
@@ -152,10 +153,10 @@ class PlistSymbolTests: XCTestCase {
         let modifiedJSON = try String(contentsOf: plistSymbolURL)
             .replacingOccurrences(of: "\"title\": \"Possible Values\",", with: "")
         
-        let tempDir = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "missingPossibleValuesTitle.json", utf8Content: modifiedJSON),
         ])
-        let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempDir.url.appendingPathComponent("missingPossibleValuesTitle.json")))
+        let symbol = try RenderNode.decode(fromJSON: try Data(contentsOf: tempFolderURL.appendingPathComponent("missingPossibleValuesTitle.json")))
         
         //
         // Plist Details

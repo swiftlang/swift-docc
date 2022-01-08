@@ -11,9 +11,9 @@
 import XCTest
 @testable import SwiftDocC
 import Markdown
+import SwiftDocCTestUtilities
 
 class LineHighlighterTests: XCTestCase {
-    static var tempFilesToRemove = [URL]()
     static let bundleIdentifier = "org.swift.docc.LineHighlighterTests"
     static let defaultOverview = TextFile(name: "TechnologyX.tutorial", utf8Content: """
         @Technology(name: "TechnologyX") {
@@ -49,14 +49,7 @@ class LineHighlighterTests: XCTestCase {
             ])
     }
     
-    static func createTemporaryDirectory() throws -> URL {
-        let url = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-        LineHighlighterTests.tempFilesToRemove.append(url)
-        return url
-    }
-    
-    static func testBundleAndContext(bundleRoot: Folder, bundleIdentifier: BundleIdentifier) throws -> (DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(bundleRoot: Folder, bundleIdentifier: BundleIdentifier) throws -> (DocumentationBundle, DocumentationContext) {
         let workspace = DocumentationWorkspace()
         let context = try! DocumentationContext(dataProvider: workspace)
         
@@ -68,7 +61,7 @@ class LineHighlighterTests: XCTestCase {
         return (bundle, context)
     }
     
-    static func highlights(tutorialFile: TextFile, codeFiles: [TextFile]) throws -> [LineHighlighter.Result] {
+    func highlights(tutorialFile: TextFile, codeFiles: [TextFile]) throws -> [LineHighlighter.Result] {
         let bundleFolder = LineHighlighterTests.bundleFolder(tutorial: tutorialFile, codeFiles: codeFiles)
         let (bundle, context) = try testBundleAndContext(bundleRoot: bundleFolder, bundleIdentifier: LineHighlighterTests.bundleIdentifier)
         
@@ -91,7 +84,7 @@ class LineHighlighterTests: XCTestCase {
                @Assessments
             }
             """)
-        XCTAssertTrue(try LineHighlighterTests.highlights(tutorialFile: tutorialFile, codeFiles: []).isEmpty)
+        XCTAssertTrue(try highlights(tutorialFile: tutorialFile, codeFiles: []).isEmpty)
     }
 
     func testOneStep() throws {
@@ -113,7 +106,7 @@ class LineHighlighterTests: XCTestCase {
             @Assessments
             """)
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}")
-        let results = try LineHighlighterTests.highlights(tutorialFile: tutorialFile, codeFiles: [code1])
+        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code1])
         XCTAssertEqual(1, results.count)
         results.first.map { result in
             XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code1.name), result.file)
@@ -142,7 +135,7 @@ class LineHighlighterTests: XCTestCase {
             """)
         let code0 = TextFile(name: "code0.swift", utf8Content: "func foo() {}")
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try LineHighlighterTests.highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
+        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
         XCTAssertEqual(1, results.count)
         results.first.map { result in
             XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code1.name), result.file)
@@ -181,7 +174,7 @@ class LineHighlighterTests: XCTestCase {
         
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}")
         let code2 = TextFile(name: "code2.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try LineHighlighterTests.highlights(tutorialFile: tutorialFile, codeFiles: [code1, code2])
+        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code1, code2])
         XCTAssertEqual(2, results.count)
         
         XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code1.name), results[0].file)
@@ -211,7 +204,7 @@ class LineHighlighterTests: XCTestCase {
             """)
         let code0 = TextFile(name: "code0.swift", utf8Content: "func foo() {}")
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try LineHighlighterTests.highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
+        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1])
         XCTAssertEqual(1, results.count)
         results.first.map { result in
             XCTAssertEqual(ResourceReference(bundleIdentifier: LineHighlighterTests.bundleIdentifier, path: code1.name), result.file)
@@ -243,7 +236,7 @@ class LineHighlighterTests: XCTestCase {
             """)
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}")
         let code2 = TextFile(name: "code2.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try LineHighlighterTests.highlights(tutorialFile: tutorialFile, codeFiles: [code1, code2])
+        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code1, code2])
         
         XCTAssertEqual(2, results.count)
         
@@ -282,7 +275,7 @@ class LineHighlighterTests: XCTestCase {
         let code0 = TextFile(name: "code0.swift", utf8Content: "")
         let code1 = TextFile(name: "code1.swift", utf8Content: "func foo() {}")
         let code2 = TextFile(name: "code2.swift", utf8Content: "func foo() {}\nfunc bar() {}")
-        let results = try LineHighlighterTests.highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1, code2])
+        let results = try highlights(tutorialFile: tutorialFile, codeFiles: [code0, code1, code2])
         
         XCTAssertEqual(2, results.count)
         
@@ -296,13 +289,5 @@ class LineHighlighterTests: XCTestCase {
             XCTAssertNil(highlight.start)
             XCTAssertNil(highlight.length)
         }
-    }
-    
-    override func tearDown() {
-        for url in LineHighlighterTests.tempFilesToRemove {
-            try? FileManager.default.removeItem(at: url)
-        }
-        LineHighlighterTests.tempFilesToRemove.removeAll()
-        super.tearDown()
     }
 }

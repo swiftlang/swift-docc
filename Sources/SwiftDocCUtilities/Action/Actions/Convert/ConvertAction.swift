@@ -59,6 +59,7 @@ public struct ConvertAction: Action, RecreatingContext {
     private var currentDataProvider: DocumentationWorkspaceDataProvider?
     private var injectedDataProvider: DocumentationWorkspaceDataProvider?
     private var fileManager: FileManagerProtocol
+    private let temporaryDirectory: URL
     
     public var setupContext: ((inout DocumentationContext) -> Void)? {
         didSet {
@@ -86,6 +87,7 @@ public struct ConvertAction: Action, RecreatingContext {
         context: DocumentationContext? = nil,
         dataProvider: DocumentationWorkspaceDataProvider? = nil,
         fileManager: FileManagerProtocol = FileManager.default,
+        temporaryDirectory: URL,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
         bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
         diagnosticLevel: String? = nil,
@@ -107,6 +109,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.workspace = workspace
         self.injectedDataProvider = dataProvider
         self.fileManager = fileManager
+        self.temporaryDirectory = temporaryDirectory
         self.documentationCoverageOptions = documentationCoverageOptions
         self.transformForStaticHosting = transformForStaticHosting
         self.hostingBasePath = hostingBasePath
@@ -200,7 +203,8 @@ public struct ConvertAction: Action, RecreatingContext {
         inheritDocs: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool,
-        hostingBasePath: String?
+        hostingBasePath: String?,
+        temporaryDirectory: URL
     ) throws {
         // Note: This public initializer exists separately from the above internal one
         // because the FileManagerProtocol type we use to enable mocking in tests
@@ -222,6 +226,7 @@ public struct ConvertAction: Action, RecreatingContext {
             context: context,
             dataProvider: dataProvider,
             fileManager: FileManager.default,
+            temporaryDirectory: temporaryDirectory,
             documentationCoverageOptions: documentationCoverageOptions,
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             diagnosticLevel: diagnosticLevel,
@@ -409,9 +414,7 @@ public struct ConvertAction: Action, RecreatingContext {
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {
-        
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
+        let targetURL = temporaryDirectory.appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
         
         if let templateURL = templateURL {
             // If a template directory has been provided, create the temporary build folder with
