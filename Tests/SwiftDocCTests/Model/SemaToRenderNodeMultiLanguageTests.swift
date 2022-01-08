@@ -64,7 +64,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
     }
     
     func testOutputsMultiLanguageRenderNodes() throws {
-        let outputConsumer = try TestRenderNodeOutputConsumer.mixedLanguageFrameworkConsumer()
+        let outputConsumer = try mixedLanguageFrameworkConsumer()
         
         XCTAssertEqual(
             Set(
@@ -119,7 +119,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
     }
     
     func testFrameworkRenderNodeHasExpectedContentAcrossLanguages() throws {
-        let outputConsumer = try TestRenderNodeOutputConsumer.mixedLanguageFrameworkConsumer()
+        let outputConsumer = try mixedLanguageFrameworkConsumer()
         let mixedLanguageFrameworkRenderNode = try outputConsumer.renderNode(
             withIdentifier: "MixedLanguageFramework"
         )
@@ -204,7 +204,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
     }
     
     func testObjectiveCAuthoredRenderNodeHasExpectedContentAcrossLanguages() throws {
-        let outputConsumer = try TestRenderNodeOutputConsumer.mixedLanguageFrameworkConsumer()
+        let outputConsumer = try mixedLanguageFrameworkConsumer()
         let fooRenderNode = try outputConsumer.renderNode(withIdentifier: "c:@E@Foo")
         
         assertExpectedContent(
@@ -455,8 +455,10 @@ extension TestRenderNodeOutputConsumer {
         
         return try XCTUnwrap(renderNode)
     }
-    
-    static func mixedLanguageFrameworkConsumer() throws -> TestRenderNodeOutputConsumer {
+}
+
+fileprivate extension SemaToRenderNodeMixedLanguageTests {
+    func mixedLanguageFrameworkConsumer() throws -> TestRenderNodeOutputConsumer {
         let (bundleURL, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework")
         
         var converter = DocumentationConverter(

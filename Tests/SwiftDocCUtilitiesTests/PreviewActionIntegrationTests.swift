@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
+import SwiftDocCTestUtilities
 
 class PreviewActionIntegrationTests: XCTestCase {
     func json(contentsOf url: URL) throws -> [String: Any] {
@@ -70,9 +71,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         return (sourceURL: sourceURL, outputURL: outputURL, templateURL: templateURL)
     }
     
-/*
-    FIXME: This test can fail when run in parallel so it is temporarily disabled (rdar://81524725).
-     
     /// Test the fix for <rdar://problem/48615392>.
     func testWatchRecoversAfterConversionErrors() throws {
         #if os(macOS)
@@ -80,12 +78,10 @@ class PreviewActionIntegrationTests: XCTestCase {
         let source = createMinimalDocsBundle()
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: source)
         
-        let sourceOverviewURL = sourceURL.appendingPathComponent("Resources")
-            .appendingPathComponent("Overview.tutorial")
-
         let logStorage = LogHandle.LogStorage()
         var logHandle = LogHandle.memory(logStorage)
 
+        let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
                 documentationBundleURL: sourceURL,
@@ -95,7 +91,8 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default)
+                fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory)
         }
         
         guard let preview = try? PreviewAction(
@@ -109,7 +106,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             return
         }
 
-        let socketURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         preview.bindServerToSocketPath = socketURL.path
         
         // The technology output file URL
@@ -180,14 +177,14 @@ class PreviewActionIntegrationTests: XCTestCase {
         
         XCTAssertEqual(initialIntroTitle, "Technology X")
 
+        let invalidJSONSymbolGraphURL = sourceURL.appendingPathComponent("invalid-incomplete-data.symbols.json")
+        
         // Start watching the source and detect failed conversion.
         do {
             let outputExpectation = asyncLogExpectation(log: logStorage, description: "Did produce output") { $0.contains("Compilation failed") }
 
-            // Triger a watch update.
-            try String(contentsOf: sourceOverviewURL)
-                .replacingOccurrences(of: "title: \"Technology X\"", with: "ti!!!!!!tle: \"Technology X\"")
-                .write(to: sourceOverviewURL, atomically: true, encoding: .utf8)
+            // this is invalid JSON and will result in an error
+            try "{".write(to: invalidJSONSymbolGraphURL, atomically: true, encoding: .utf8)
 
             // Wait for watch to produce output.
             wait(for: [outputExpectation], timeout: 20.0)
@@ -197,9 +194,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         do {
             let outputExpectation = asyncLogExpectation(log: logStorage, description: "Did finish conversion") { $0.contains("Done") }
 
-            try String(contentsOf: sourceOverviewURL)
-                .replacingOccurrences(of: "ti!!!!!!tle: \"Technology X\"", with: "title: \"Technology X\"")
-                .write(to: sourceOverviewURL, atomically: true, encoding: .utf8)
+            try FileManager.default.removeItem(at: invalidJSONSymbolGraphURL)
 
             // Wait for watch to produce output.
             wait(for: [outputExpectation], timeout: 20.0)
@@ -223,7 +218,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         try FileManager.default.removeItem(at: templateURL)
         #endif
     }
-*/
     
     class MemoryOutputChecker {
         init(storage: LogHandle.LogStorage, expectation: XCTestExpectation, condition: @escaping (String)->Bool) {
@@ -237,7 +231,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let condition: (String)->Bool
     }
     
-    /// Helper class to fulfill an expecation when given condition is met.
+    /// Helper class to fulfill an expectation when given condition is met.
     class OutputChecker {
         init(fileURL: URL, expectation: XCTestExpectation, condition: @escaping (String)->Bool) {
             self.url = fileURL
@@ -250,7 +244,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let condition: (String)->Bool
     }
     
-    /// Check the contents of the log file for the expectatation.
+    /// Check the contents of the log file for the expectation.
     func checkOutput(timer: Timer) {
         if let checker = timer.userInfo as? OutputChecker {
             if let data = try? Data(contentsOf: checker.url),
@@ -291,6 +285,7 @@ class PreviewActionIntegrationTests: XCTestCase {
 
         let engine = DiagnosticEngine()
 
+        let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
                 documentationBundleURL: sourceURL,
@@ -301,6 +296,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 emitDigest: false,
                 currentPlatforms: nil,
                 fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory,
                 diagnosticEngine: engine)
         }
         
@@ -361,6 +357,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let logStorage = LogHandle.LogStorage()
         let logHandle = LogHandle.memory(logStorage)
         
+        let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
                 documentationBundleURL: sourceURL,
@@ -370,7 +367,8 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default)
+                fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory)
         }
         
         guard let preview = try? PreviewAction(
@@ -431,6 +429,7 @@ class PreviewActionIntegrationTests: XCTestCase {
 
         var convertFuture: () -> Void = {}
         
+        let convertActionTempDirectory = try createTemporaryDirectory()
         /// Create the convert action and store it
         let createConvertAction = { () -> ConvertAction in
             var convertAction = try ConvertAction(
@@ -441,7 +440,8 @@ class PreviewActionIntegrationTests: XCTestCase {
                 htmlTemplateDirectory: templateURL,
                 emitDigest: false,
                 currentPlatforms: nil,
-                fileManager: FileManager.default)
+                fileManager: FileManager.default,
+                temporaryDirectory: convertActionTempDirectory)
                 
             // Inject a future to control how long the conversion takes
             convertAction.willPerformFuture = convertFuture
@@ -460,7 +460,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             return
         }
 
-        let socketURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         preview.bindServerToSocketPath = socketURL.path
         
         // Start watching the source and get the initial (successful) state.
@@ -540,10 +540,6 @@ class PreviewActionIntegrationTests: XCTestCase {
     
     // MARK: -
     
-    // Workaround that addTeardownBlock doesn't exist in swift-corelibs-xctest
-    
-    private static var tempFilesToRemove: [URL] = []
-    
     override static func setUp() {
         super.setUp()
         PreviewAction.allowConcurrentPreviews = true
@@ -551,21 +547,6 @@ class PreviewActionIntegrationTests: XCTestCase {
     
     override static func tearDown() {
         PreviewAction.allowConcurrentPreviews = false
-        for url in tempFilesToRemove {
-            try? FileManager.default.removeItem(at: url)
-        }
-        tempFilesToRemove.removeAll()
         super.tearDown()
-    }
-    
-    func createTemporaryDirectory() throws -> URL {
-        // We append "-test" here because the convert action uses the same logic
-        // to create its temporary directory and we don't want to rely on
-        // this folder already existing
-        let url = Foundation.URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent("\(ProcessInfo.processInfo.globallyUniqueString)-test")
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-        Self.tempFilesToRemove.append(url)
-        return url
     }
 }

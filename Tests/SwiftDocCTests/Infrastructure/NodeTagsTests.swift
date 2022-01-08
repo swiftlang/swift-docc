@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class NodeTagsTests: XCTestCase {
     func testSPIMetadata() throws {
@@ -20,9 +21,8 @@ class NodeTagsTests: XCTestCase {
             InfoPlist(displayName: "spi", identifier: "com.tests.spi"),
             CopyOfFile(original: spiSGURL),
         ])
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString.appending("unit-tests.docc"))
+        let tempURL = try createTemporaryDirectory().appendingPathComponent("unit-tests.docc")
         try bundleFolder.write(to: tempURL)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
         
         let (_, bundle, context) = try loadBundle(from: tempURL)
         

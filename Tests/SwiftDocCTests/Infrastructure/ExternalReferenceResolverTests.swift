@@ -101,9 +101,8 @@ class ExternalReferenceResolverTests: XCTestCase {
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
         // Create a copy of the test bundle
-        let bundleURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString.appending(".docc"))
+        let bundleURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
         try FileManager.default.copyItem(at: sourceURL, to: bundleURL)
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Add external link
         let myClassMDURL = bundleURL.appendingPathComponent("documentation").appendingPathComponent("myclass.md")
@@ -146,7 +145,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     
     func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() throws {
         let workspace = DocumentationWorkspace()
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
@@ -190,7 +189,7 @@ class ExternalReferenceResolverTests: XCTestCase {
     
     func testLoadEntityForExternalReference() throws {
         let workspace = DocumentationWorkspace()
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
@@ -238,7 +237,7 @@ Document @1:1-1:35
             externalResolver.resolvedEntityKind = resolvedEntityKind
             context.externalReferenceResolvers = [externalResolver.bundleIdentifier: externalResolver]
             
-            let bundle = testBundle(named: "TestBundle")
+            let bundle = try testBundle(named: "TestBundle")
             
             let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
             try workspace.registerProvider(dataProvider)
