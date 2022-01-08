@@ -12,28 +12,22 @@ import XCTest
 import Foundation
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
+import SwiftDocCTestUtilities
 
 class ConvertActionStaticHostableTests: StaticHostingBaseTests {
     /// Creates a DocC archive and then archives it with options  to produce static content which is then validated.
     func testConvertActionStaticHostableTestOutput() throws {
         
         let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
             
         let fileManager = FileManager.default
-        try fileManager.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? fileManager.removeItem(at: targetURL) }
-        
         
         let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
-        defer { try? fileManager.removeItem(at: targetBundleURL) }
         
-
-        let testTemplateURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         let templateFolder = Folder.testHTMLTemplateDirectory
         try templateFolder.write(to: testTemplateURL)
-        defer { try? fileManager.removeItem(at: testTemplateURL) }
-
 
         let basePath =  "test/folder"
         let indexHTML = Folder.testHTMLTemplate(basePath: "test/folder")
@@ -47,11 +41,11 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             emitDigest: false,
             currentPlatforms: nil,
             transformForStaticHosting: true,
-            hostingBasePath: basePath
+            hostingBasePath: basePath,
+            temporaryDirectory: try createTemporaryDirectory()
         )
        
         _ = try action.perform(logHandle: .standardOutput)
-        
         
         // Test the content of the output folder.
         var expectedContent = ["data", "documentation", "tutorials", "downloads", "images", "metadata.json" ,"videos", "index.html"]

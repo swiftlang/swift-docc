@@ -11,31 +11,18 @@
 
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 final class SwiftLMDBTests: XCTestCase {
-    
-    let temporaryDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-    
-    /// Convenience var for path.
-    var tmpPath: String {
-        return temporaryDirectoryURL.path
-    }
-    
     var environment: LMDB.Environment!
     
-    override func setUp() {
-        if !FileManager.default.fileExists(atPath: temporaryDirectoryURL.path) {
-            try? FileManager.default.createDirectory(at: temporaryDirectoryURL, withIntermediateDirectories: false, attributes: nil)
-        } else {
-            try? FileManager.default.removeItem(at: temporaryDirectoryURL)
-            try? FileManager.default.createDirectory(at: temporaryDirectoryURL, withIntermediateDirectories: false, attributes: nil)
-        }
+    override func setUpWithError() throws {
+        let tempURL = try createTemporaryDirectory()
         
-        environment = try! LMDB.Environment(path: tmpPath, maxDBs: 4, mapSize: 1024 * 1024 * 1024) // 1GB of mapSize
+        environment = try! LMDB.Environment(path: tempURL.path, maxDBs: 4, mapSize: 1024 * 1024 * 1024) // 1GB of mapSize
     }
     
     override func tearDown() {
-        try? FileManager.default.removeItem(at: temporaryDirectoryURL)
         environment = nil
     }
     
@@ -44,7 +31,7 @@ final class SwiftLMDBTests: XCTestCase {
     func testVersion() {
         let version = LMDB.default.version
         
-        // Ensure the LMDB library version is the exptected one: 0.9.70
+        // Ensure the LMDB library version is the expected one: 0.9.70
         XCTAssertEqual(version.description, "0.9.70")
     }
     

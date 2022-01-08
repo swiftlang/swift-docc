@@ -12,6 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocCUtilities
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 /// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
 ///
@@ -70,7 +71,6 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         
         // Default system paths
         files["/"] = Self.folderFixtureData
-        files[NSTemporaryDirectory()] = Self.folderFixtureData
  
         // Import given folders
         try updateDocumentationBundles(withFolders: folders)

@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import XCTest
 
 /*
     This file contains API for working with folder hierarchies, and is extensible to allow for testing
@@ -16,7 +17,7 @@ import Foundation
 */
 
 /// An abstract representation of a file (or folder).
-protocol File {
+public protocol File {
     /// The name of the file.
     var name: String { get }
 
@@ -24,7 +25,7 @@ protocol File {
     func write(to url: URL) throws
 }
 
-extension File {
+public extension File {
     /// Writes the file inside of a folder and returns the URL that it was written to.
     @discardableResult
     func write(inside url: URL) throws -> URL {
@@ -35,12 +36,12 @@ extension File {
 }
 
 /// An item which provides data.
-protocol DataRepresentable {
+public protocol DataRepresentable {
     func data() throws -> Data
 }
 
 /// `DataRepresentable` can automatically write itself to disk via `Data.write(to:)`
-extension DataRepresentable {
+public extension DataRepresentable {
     func write(to url: URL) throws {
         try data().write(to: url)
     }
@@ -49,17 +50,22 @@ extension DataRepresentable {
 // MARK: -
 
 /// An abstract representation of a folder, containing some files or folders.
-struct Folder: File {
-    let name: String
+public struct Folder: File {
+    public init(name: String, content: [File]) {
+        self.name = name
+        self.content = content
+    }
+    
+    public let name: String
 
     /// The files and sub folders that this folder contains.
-    let content: [File]
+    public let content: [File]
     
-    func appendingFile(_ newFile: File) -> Folder {
+    public func appendingFile(_ newFile: File) -> Folder {
         return Folder(name: name, content: content + [newFile])
     }
 
-    func write(to url: URL) throws {
+    public func write(to url: URL) throws {
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
         for file in content {
             try file.write(inside: url)
@@ -69,7 +75,7 @@ struct Folder: File {
 
 extension Folder {
     /// Returns a flat list of a folder's recursive listing for testing purposes.
-    var recursiveContent: [File] {
+    public var recursiveContent: [File] {
         var result = content
         for file in content {
             if let content = (file as? Folder)?.recursiveContent {
@@ -81,13 +87,13 @@ extension Folder {
 }
 
 /// A representation of an Info.plist file.
-struct InfoPlist: File, DataRepresentable {
-    let name = "Info.plist"
+public struct InfoPlist: File, DataRepresentable {
+    public let name = "Info.plist"
 
     /// The information that the Into.plist file contains.
-    let content: Content
+    public let content: Content
 
-    init(displayName: String, identifier: String, versionString: String = "1.0", developmentRegion: String = "en") {
+    public init(displayName: String, identifier: String, versionString: String = "1.0", developmentRegion: String = "en") {
         self.content = Content(
             displayName: displayName,
             identifier: identifier,
@@ -96,11 +102,11 @@ struct InfoPlist: File, DataRepresentable {
         )
     }
 
-    struct Content: Codable, Equatable {
-        let displayName: String
-        let identifier: String
-        let versionString: String
-        let developmentRegion: String
+    public struct Content: Codable, Equatable {
+        public let displayName: String
+        public let identifier: String
+        public let versionString: String
+        public let developmentRegion: String
 
         fileprivate init(displayName: String, identifier: String, versionString: String, developmentRegion: String) {
             self.displayName = displayName
@@ -117,7 +123,7 @@ struct InfoPlist: File, DataRepresentable {
         }
     }
 
-    func data() throws -> Data {
+    public func data() throws -> Data {
         // TODO: Replace this with PropertListEncoder (see below) when it's available in swift-corelibs-foundation
         // https://github.com/apple/swift-corelibs-foundation/commit/d2d72f88d93f7645b94c21af88a7c9f69c979e4f
         let infoPlist = [
@@ -136,74 +142,85 @@ struct InfoPlist: File, DataRepresentable {
 }
 
 /// A representation of a text file with some UTF-8 content.
-struct TextFile: File, DataRepresentable {
-    let name: String
+public struct TextFile: File, DataRepresentable {
+    public init(name: String, utf8Content: String) {
+        self.name = name
+        self.utf8Content = utf8Content
+    }
+    
+    public let name: String
 
     /// The UTF8 content of the file.
-    let utf8Content: String
+    public let utf8Content: String
 
-    func data() throws -> Data {
+    public func data() throws -> Data {
         return utf8Content.data(using: .utf8)!
     }
 }
 
 /// A representation of a text file with some UTF-8 content.
-struct JSONFile<Content: Codable>: File, DataRepresentable {
-    let name: String
+public struct JSONFile<Content: Codable>: File, DataRepresentable {
+    public init(name: String, content: Content) {
+        self.name = name
+        self.content = content
+    }
+    
+    public let name: String
 
     /// The UTF8 content of the file.
-    let content: Content
+    public let content: Content
 
-    func data() throws -> Data {
+    public func data() throws -> Data {
         return try JSONEncoder().encode(content)
     }
 }
 
 /// A copy of another file on disk somewhere.
-struct CopyOfFile: File, DataRepresentable {
-    enum Error: DescribedError {
+public struct CopyOfFile: File, DataRepresentable {
+    enum Error: LocalizedError {
         case notAFile(URL)
         var errorDescription: String {
             switch self {
-                case .notAFile(let url): return "Original url is not a file: \(url.path.singleQuoted)"
+                case .notAFile(let url): return "Original url is not a file: '\(url.path)'"
             }
         }
     }
     
     /// The original file.
-    let original: URL
-    let name: String
+    public let original: URL
+    public let name: String
     
-    init(original: URL, newName: String? = nil) {
+    public init(original: URL, newName: String? = nil) {
         self.original = original
         self.name = newName ?? original.lastPathComponent
     }
     
-    func data() throws -> Data {
+    public func data() throws -> Data {
         // Note that `CopyOfFile` always reads a file from disk and so it's okay
         // to use `FileManager.default` directly here instead of `FileManagerProtocol`.
-        guard !FileManager.default.directoryExists(atPath: original.path) else { throw Error.notAFile(original) }
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: original.path, isDirectory: &isDirectory), !isDirectory.boolValue else { throw Error.notAFile(original) }
         return try Data(contentsOf: original)
     }
     
-    func write(to url: URL) throws {
+    public func write(to url: URL) throws {
         try FileManager.default.copyItem(at: original, to: url)
     }
 }
 
-struct CopyOfFolder: File {
+public struct CopyOfFolder: File {
     /// The original file.
     let original: URL
-    let name: String
+    public let name: String
     let shouldCopyFile: (URL) -> Bool
     
-    init(original: URL, newName: String? = nil, filter shouldCopyFile: @escaping (URL) -> Bool = { _ in true }) {
+    public init(original: URL, newName: String? = nil, filter shouldCopyFile: @escaping (URL) -> Bool = { _ in true }) {
         self.original = original
         self.name = newName ?? original.lastPathComponent
         self.shouldCopyFile = shouldCopyFile
     }
     
-    func write(to url: URL) throws {
+    public func write(to url: URL) throws {
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
         for filePath in try FileManager.default.contentsOfDirectory(atPath: original.path) {
             // `contentsOfDirectory(atPath)` includes hidden files, skipHiddenFiles option doesn't help on Linux.
@@ -217,46 +234,30 @@ struct CopyOfFolder: File {
 }
 
 /// A file backed by `Data`.
-struct DataFile: File, DataRepresentable {
-    var name: String
+public struct DataFile: File, DataRepresentable {
+    public var name: String
     var _data: Data
     
-    init(name: String, data: Data) {
+    public init(name: String, data: Data) {
         self.name = name
         self._data = data
     }
 
-    func data() throws -> Data {
+    public func data() throws -> Data {
         return _data
     }
 }
 
-/// A temporary folder which can write files to a temporary location on disk and
-/// will delete itself when its instance is released from memory.
-class TempFolder: File {
-    let name: String
-    let url: URL
-
-    /// The files and sub folders that this folder contains.
-    let content: [File]
-    
-    func write(to url: URL) throws {
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: false, attributes: nil)
-        for file in content {
-            try file.write(inside: url)
-        }
-    }
-
-    init(content: [File]) throws {
-        self.content = content
-
-        url = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        name = url.absoluteString
-
-        try write(to: url)
-    }
-    
-    deinit {
-        try? FileManager.default.removeItem(at: url)
+extension XCTestCase {
+    /// Creates a ``Folder`` and writes its content to a temporary location on disk.
+    ///
+    /// - Parameters:
+    ///   - content: The files and subfolders to write to a temporary location
+    /// - Returns: The temporary location where the temporary folder was written.
+    public func createTempFolder(content: [File]) throws -> URL {
+        let temporaryDirectory = try createTemporaryDirectory().appendingPathComponent("TempDirectory-\(ProcessInfo.processInfo.globallyUniqueString)")
+        let folder = Folder(name: temporaryDirectory.lastPathComponent, content: content)
+        try folder.write(to: temporaryDirectory)
+        return temporaryDirectory
     }
 }

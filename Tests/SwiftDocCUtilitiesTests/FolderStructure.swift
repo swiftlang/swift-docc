@@ -11,6 +11,7 @@
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
 import XCTest
+import SwiftDocCTestUtilities
 
 /*
  This file contains a test helper API for working with folder hierarchies, with the ability to:
@@ -69,10 +70,10 @@ extension InfoPlist: AssertableFile {
             }
             let infoPlist = try PropertyListSerialization.propertyList(from: infoPlistData, options: [], format: nil) as? [String: String]
             
-            let displayName = infoPlist?[Content.CodingKeys.displayName.rawValue]
-            let identifier = infoPlist?[Content.CodingKeys.identifier.rawValue]
-            let versionString = infoPlist?[Content.CodingKeys.versionString.rawValue]
-            let developmentRegion = infoPlist?[Content.CodingKeys.developmentRegion.rawValue]
+            let displayName = infoPlist?["CFBundleIdentifier"]
+            let identifier = infoPlist?["CFBundleVersion"]
+            let versionString = infoPlist?["CFBundleDevelopmentRegion"]
+            let developmentRegion = infoPlist?["CFBundleDisplayName"]
             
             XCTAssert(displayName == content.displayName && identifier == content.identifier && versionString == content.versionString && developmentRegion == content.developmentRegion,
                       "File '\(name)' should contain the correct information.", file: (file), line: line)
