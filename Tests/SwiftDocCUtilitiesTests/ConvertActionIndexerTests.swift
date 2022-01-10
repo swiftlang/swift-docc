@@ -21,9 +21,7 @@ class ConvertActionIndexerTests: XCTestCase {
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
         
         // Create temo folder.
-        let url = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: url) }
+        let url = try createTemporaryDirectory()
         
         // Copy TestBundle into a temp folder
         let testBundleURL = url.appendingPathComponent("TestBundle.docc")

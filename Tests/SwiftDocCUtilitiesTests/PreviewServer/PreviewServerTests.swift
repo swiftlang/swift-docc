@@ -13,6 +13,7 @@ import Foundation
 
 @testable import SwiftDocCUtilities
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 @testable import NIO
 @testable import NIOHTTP1
@@ -25,18 +26,27 @@ import Foundation
 // class PreviewServerTests: XCTestCase {
 class PreviewServerTests {
 
+     func createTemporaryDirectory(
+         fileManager: FileManager = .default
+     ) throws -> URL {
+         fatalError("This test is disabled by not conforming to XCTestCase. This helper is added here to make the code compile. This should never be called.")
+     }
+    
+    public func createTempFolder(content: [File]) throws -> URL {
+        fatalError("This test is disabled by not conforming to XCTestCase. This helper is added here to make the code compile. This should never be called.")
+    }
+    
     func testPreviewServerBeforeStarted() throws {
         // Create test content
-        let tempFolder = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
         ])
-        try tempFolder.write(to: URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString)))
 
-        let socketURL = URL(fileURLWithPath: FileManager.default.temporaryDirectory.path).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         
         // Run test server
         var log = LogHandle.none
-        let server = try PreviewServer(contentURL: tempFolder.url, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
+        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
 
         // Assert server starts
         let expectationStarted = AsyncronousExpectation(description: "Server before start")
@@ -73,9 +83,9 @@ class PreviewServerTests {
         XCTAssertEqual(client.handler.statusCode, errorStatusCode, file: (file), line: line)
     }
 
-    private func makeTempFolder() throws -> TempFolder {
+    private func makeTempFolder() throws -> URL {
         // Create test content
-        try TempFolder(content: [
+        try createTempFolder(content: [
             TextFile(name: "index.html", utf8Content: "index"),
             TextFile(name: "theme-settings.js", utf8Content: "java script content"),
             TextFile(name: "theme-settings.json", utf8Content: "JSON content"),
@@ -109,14 +119,14 @@ class PreviewServerTests {
     }
     
     func testPreviewServerPaths() throws {
-        let tempFolder = try makeTempFolder()
+        let tempFolderURL = try makeTempFolder()
         
         // Socket URL
-        let socketURL = URL(fileURLWithPath: FileManager.default.temporaryDirectory.path).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         
         // Create the server
         var log = LogHandle.none
-        let server = try PreviewServer(contentURL: tempFolder.url, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
+        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
 
         // Start the server
         let expectationStarted = AsyncronousExpectation(description: "Server before start")
@@ -156,14 +166,14 @@ class PreviewServerTests {
     }
     
     func testConcurrentRequests() throws {
-        let tempFolder = try makeTempFolder()
+        let tempFolderURL = try makeTempFolder()
         
         // Socket URL
-        let socketURL = URL(fileURLWithPath: FileManager.default.temporaryDirectory.path).appendingPathComponent(UUID().uuidString).appendingPathExtension("sock")
+        let socketURL = try createTemporaryDirectory().appendingPathComponent("sock")
         
         // Create the server
         var log = LogHandle.none
-        let server = try PreviewServer(contentURL: tempFolder.url, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
+        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
 
         // Start the server
         let expectationStarted = AsyncronousExpectation(description: "Server before start")

@@ -11,6 +11,7 @@
 import XCTest
 @testable import SwiftDocCUtilities
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class ConvertSubcommandTests: XCTestCase {
     private let testBundleURL = Bundle.module.url(
@@ -21,19 +22,11 @@ class ConvertSubcommandTests: XCTestCase {
     
     func testOptionsValidation() throws {
         // create source bundle directory
-        let sourceURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString).appendingPathExtension("documentation")
-        try FileManager.default.createDirectory(at: sourceURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: sourceURL)
-        }
+        let sourceURL = try createTemporaryDirectory(named: "documentation")
         try "".write(to: sourceURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         
         // create template dir
-        let rendererTemplateDirectory = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: rendererTemplateDirectory, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: rendererTemplateDirectory)
-        }
+        let rendererTemplateDirectory = try createTemporaryDirectory()
         try "".write(to: rendererTemplateDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
         
         // Tests a single input.
@@ -84,11 +77,11 @@ class ConvertSubcommandTests: XCTestCase {
         // Test default template
         do {
             unsetenv(TemplateOption.environmentVariableKey)
-            let tempDir = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-            let doccExecutableLocation = tempDir
+            let tempFolder = try createTemporaryDirectory()
+            let doccExecutableLocation = tempFolder
                 .appendingPathComponent("bin")
                 .appendingPathComponent("docc-executable-name")
-            let defaultTemplateDir = tempDir
+            let defaultTemplateDir = tempFolder
                 .appendingPathComponent("share")
                 .appendingPathComponent("docc")
                 .appendingPathComponent("render", isDirectory: true)

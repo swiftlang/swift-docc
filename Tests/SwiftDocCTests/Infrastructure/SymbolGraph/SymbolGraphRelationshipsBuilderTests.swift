@@ -48,7 +48,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
 
     func testConformsRelationship() throws {
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
@@ -77,7 +77,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
 
     func testInheritanceRelationship() throws {
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
@@ -106,7 +106,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testRequirementRelationship() throws {
-        let bundle = testBundle(named: "TestBundle")
+        let bundle = try testBundle(named: "TestBundle")
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
