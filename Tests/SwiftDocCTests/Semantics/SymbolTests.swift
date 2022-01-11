@@ -12,6 +12,7 @@ import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
 import Markdown
+import SwiftDocCTestUtilities
 
 class SymbolTests: XCTestCase {
     
@@ -499,9 +500,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testWarningWhenDocCommentContainsDirectiveInSubclass() throws {
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-        try FileManager.default.createDirectory(atPath: tempURL.path, withIntermediateDirectories: false, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         let bundleURL = try Folder(name: "Inheritance.docc", content: [
             InfoPlist(displayName: "Inheritance", identifier: "com.test.inheritance"),

@@ -12,14 +12,12 @@ import Foundation
 import XCTest
 @testable import SymbolKit
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class SymbolGraphLoaderTests: XCTestCase {
     
     func testLoadingDifferentModules() throws {
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         var symbolGraphURLs = [URL]()
         for moduleNames in ["One", "Two", "Three"] {
@@ -59,10 +57,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     }
     
     func testLoadingDifferentModuleExtensions() throws {
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         var symbolGraphURLs = [URL]()
         for moduleName in ["One", "Two", "Three"] {
@@ -89,10 +84,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     }
     
     func testNotGroupingExtensionsWithWithTheModuleThatExtends() throws {
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         var symbolGraphURLs = [URL]()
         
@@ -130,10 +122,7 @@ class SymbolGraphLoaderTests: XCTestCase {
     }
     
     func testLoadingHighNumberOfModulesConcurrently() throws {
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
 
         let symbolGraphSourceURL = Bundle.module.url(
             forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!

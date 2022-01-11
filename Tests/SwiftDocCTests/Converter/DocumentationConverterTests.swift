@@ -26,9 +26,7 @@ class DocumentationConverterTests: XCTestCase {
     }
 
     func testThrowsErrorOnConvertingNoBundles() throws {
-        let rootURL = FileManager.default.temporaryDirectory.appendingPathComponent(#function, isDirectory: true)
-        try FileManager.default.createDirectory(at: rootURL, withIntermediateDirectories: false)
-        defer { try? FileManager.default.removeItem(at: rootURL) }
+        let rootURL = try createTemporaryDirectory()
 
         let dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
         let workspace = DocumentationWorkspace()
