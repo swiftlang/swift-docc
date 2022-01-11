@@ -303,16 +303,19 @@ extension Symbol {
     /// Merges a symbol declaration from another symbol graph into the current symbol.
     ///
     /// When building multi-platform documentation symbols might have more than one declaration
-    /// depending on variances in their implementation across platforms (e.g. use ``NSPoint`` vs ``CGPoint`` parameter in a method).
+    /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
     func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, selector: UnifiedSymbolGraph.Selector) throws {
         let trait = DocumentationDataVariantsTrait(interfaceLanguage: selector.interfaceLanguage)
         let platformName = selector.platform
 
         if let platformName = platformName,
-            let existingKey = declarationVariants[trait]?.first(where: { pair in
-            return pair.value.declarationFragments == mergingDeclaration.declarationFragments
-        })?.key {
+            let existingKey = declarationVariants[trait]?.first(
+                where: { pair in
+                    return pair.value.declarationFragments == mergingDeclaration.declarationFragments
+                }
+            )?.key
+        {
             guard !existingKey.contains(nil) else {
                 throw DocumentationContext.ContextError.unexpectedEmptyPlatformName(identifier)
             }
@@ -414,6 +417,28 @@ extension UnifiedSymbolGraph.Symbol {
     var defaultSymbol: SymbolGraph.Symbol? {
         symbol(forSelector: defaultSelector)
     }
+    
+    /// Returns the primary symbol to use as documentation source.
+    var documentedSymbol: SymbolGraph.Symbol? {
+        guard FeatureFlags.current.isExperimentalObjectiveCSupportEnabled else {
+            return defaultSymbol
+        }
+        
+        return symbol(forSelector: documentedSymbolSelector)
+    }
+    
+    /// Returns the primary symbol selector to use as documentation source.
+    var documentedSymbolSelector: UnifiedSymbolGraph.Selector? {
+        guard FeatureFlags.current.isExperimentalObjectiveCSupportEnabled else {
+            return defaultSelector
+        }
+        
+        // We'll prioritize the first documented 'swift' symbol, if we have
+        // one.
+        return docComment.keys.first { selector  in
+            return selector.interfaceLanguage == "swift"
+        } ?? docComment.keys.first
+    }
 
     func identifier(forLanguage interfaceLanguage: String) -> SymbolGraph.Symbol.Identifier {
         return SymbolGraph.Symbol.Identifier(
@@ -432,6 +457,12 @@ extension UnifiedSymbolGraph.Symbol {
         } else {
             return identifier(forLanguage: "swift")
         }
+    }
+}
+
+extension Dictionary where Key == String, Value == Mixin {
+    func getValueIfPresent<T>(for mixinType: T.Type) -> T? where T: Mixin {
+        return self[mixinType.mixinKey] as? T
     }
 }
 
