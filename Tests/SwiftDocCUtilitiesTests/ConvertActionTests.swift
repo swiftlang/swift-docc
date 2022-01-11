@@ -2240,14 +2240,14 @@ class ConvertActionTests: XCTestCase {
         
         try action.performAndHandleResult()
         XCTAssertFalse(
-            testDataProvider.fileExists(atPath: targetDirectory.appendingPathComponent("data").path)
+            testDataProvider.fileExists(atPath: targetDirectory.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).path)
         )
         
         enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
         
         try action.performAndHandleResult()
         XCTAssertTrue(
-            testDataProvider.fileExists(atPath: targetDirectory.appendingPathComponent("data").path)
+            testDataProvider.fileExists(atPath: targetDirectory.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).path)
         )
     }
     
