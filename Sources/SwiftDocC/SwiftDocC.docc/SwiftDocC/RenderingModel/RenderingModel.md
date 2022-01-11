@@ -42,6 +42,7 @@ Hereto a rendering node contains data not only about a single specific topic (a 
 ### References
 
 - ``RenderReference``
+- ``RenderReferenceCache``
 - ``URLReference``
 - ``RenderReferenceType``
 

@@ -26,7 +26,7 @@ extension Docc {
 
         /// The user-provided path to a `.doccarchive` documentation archive.
         @OptionGroup()
-        public var documentationBundle: DocumentationArchiveOption
+        public var documentationBundle: DocCArchiveOption
 
         /// The user-provided bundle name to use for the produced index.
         @Option(help: "The bundle name for the index.")

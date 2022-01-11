@@ -373,23 +373,23 @@ struct ReferenceResolver: SemanticVisitor {
     }
     
     mutating func visitSymbol(_ symbol: Symbol) -> Semantic {
-        let newAbstract = symbol.abstractSection.map {
+        let newAbstractVariants = symbol.abstractSectionVariants.map {
             AbstractSection(paragraph: visitMarkup($0.paragraph) as! Paragraph)
         }
-        let newDiscussion = symbol.discussion.map {
+        let newDiscussionVariants = symbol.discussionVariants.map {
             DiscussionSection(content: $0.content.map { visitMarkup($0) })
         }
-        let newTopics = symbol.topics.map { topic -> TopicsSection in
+        let newTopicsVariants = symbol.topicsVariants.map { topic -> TopicsSection in
             return TopicsSection(content: topic.content.map { visitMarkup($0) }, originalLinkRangesByGroup: topic.originalLinkRangesByGroup)
         }
-        let newSeeAlso = symbol.seeAlso.map {
+        let newSeeAlsoVariants = symbol.seeAlsoVariants.map {
             SeeAlsoSection(content: $0.content.map { visitMarkup($0) })
         }
-        let newReturns = symbol.returnsSection.map {
+        let newReturnsVariants = symbol.returnsSectionVariants.map {
             ReturnsSection(content: $0.content.map { visitMarkup($0) })
         }
-        let newParameters: ParametersSection? = symbol.parametersSection.map {
-            let parameters = $0.parameters.map {
+        let newParametersVariants = symbol.parametersSectionVariants.map { parametersSection -> ParametersSection in
+            let parameters = parametersSection.parameters.map {
                 Parameter(name: $0.name, contents: $0.contents.map { visitMarkup($0) })
             }
             return ParametersSection(parameters: parameters)
@@ -416,12 +416,12 @@ struct ReferenceResolver: SemanticVisitor {
             declarationVariants: symbol.declarationVariants,
             defaultImplementationsVariants: symbol.defaultImplementationsVariants,
             relationshipsVariants: symbol.relationshipsVariants,
-            abstractSectionVariants: .init(swiftVariant: newAbstract),
-            discussionVariants: .init(swiftVariant: newDiscussion),
-            topicsVariants: .init(swiftVariant: newTopics),
-            seeAlsoVariants: .init(swiftVariant: newSeeAlso),
-            returnsSectionVariants: .init(swiftVariant: newReturns),
-            parametersSectionVariants: .init(swiftVariant: newParameters),
+            abstractSectionVariants: newAbstractVariants,
+            discussionVariants: newDiscussionVariants,
+            topicsVariants: newTopicsVariants,
+            seeAlsoVariants: newSeeAlsoVariants,
+            returnsSectionVariants: newReturnsVariants,
+            parametersSectionVariants: newParametersVariants,
             redirectsVariants: symbol.redirectsVariants,
             bystanderModuleNamesVariants: symbol.bystanderModuleNamesVariants,
             originVariants: symbol.originVariants,

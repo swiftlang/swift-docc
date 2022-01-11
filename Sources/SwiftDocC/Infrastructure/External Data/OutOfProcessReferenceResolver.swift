@@ -132,7 +132,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
                         bundleIdentifier: bundleIdentifier,
                         path: unresolvedReference.path,
                         fragment: unresolvedReference.fragment,
-                        sourceLanguage: .init(name: metadata.language.name, id: metadata.language.id)
+                        sourceLanguages: sourceLanguages(for: metadata)
                     )
                 )
             } catch let error {
@@ -222,11 +222,14 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         let resolvedInformation = try resolveInformationForSymbolIdentifier(preciseIdentifier)
         
         let kind = DocumentationNode.Kind(name: resolvedInformation.kind.name, id: resolvedInformation.kind.id, isSymbol: resolvedInformation.kind.isSymbol)
-        let sourceLanguage = SourceLanguage(name: resolvedInformation.language.name, id: resolvedInformation.language.id)
         
         // Construct a resolved reference for this symbol. It uses a known bundle identifier and the symbol's precise identifier so that the
         // already resolved information can be looked up when determining the URL for this symbol.
-        let reference = ResolvedTopicReference(bundleIdentifier: symbolBundleIdentifier, path: "/" + preciseIdentifier, sourceLanguage: sourceLanguage)
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: symbolBundleIdentifier,
+            path: "/" + preciseIdentifier,
+            sourceLanguages: sourceLanguages(for: resolvedInformation)
+        )
         
         let symbol = OutOfProcessReferenceResolver.symbolSemantic(
             kind: kind,
@@ -238,8 +241,8 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         return DocumentationNode(
             reference: reference,
             kind: kind,
-            sourceLanguage: sourceLanguage,
-            availableSourceLanguages: Set(resolvedInformation.availableLanguages.map { .init(name: $0.name, id: $0.id) }),
+            sourceLanguage: resolvedInformation.language,
+            availableSourceLanguages: sourceLanguages(for: resolvedInformation),
             name: .conceptual(title: resolvedInformation.title),
             markup: Document(parsing: resolvedInformation.abstract, options: [.parseBlockDirectives, .parseSymbolLinks]),
             semantic: symbol,
@@ -376,6 +379,15 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         default:
             throw Error.unexpectedResponse(response: response, requestDescription: "asset")
         }
+    }
+    
+    private func sourceLanguages(for resolvedInformation: ResolvedInformation) -> Set<SourceLanguage> {
+        if !resolvedInformation.availableLanguages.isEmpty {
+            return resolvedInformation.availableLanguages
+        }
+        
+        // Fall back to the `language` property if `availableLanguages` is empty.
+        return [SourceLanguage(name: resolvedInformation.language.name, id: resolvedInformation.language.id)]
     }
 }
 
@@ -658,7 +670,7 @@ extension OutOfProcessReferenceResolver {
         /// Information about the resolved language.
         public let language: SourceLanguage
         /// Information about the languages where the resolved node is available.
-        public let availableLanguages:Set<SourceLanguage>
+        public let availableLanguages: Set<SourceLanguage>
         /// Information about the platforms and their versions where the resolved node is available, if any.
         public let platforms: [PlatformAvailability]?
         /// Information about the resolved declaration fragments, if any.

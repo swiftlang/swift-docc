@@ -10,6 +10,9 @@
 
 import Foundation
 
+/// A thread-safe cache for encoded render references.
+public typealias RenderReferenceCache = Synchronized<[String: (reference: Data, overrides: [VariantOverride])]>
+
 enum TopicRenderReferenceEncoder {
     /// Inserts an encoded list of render references to an already encoded as data render node.
     /// - Parameters:
@@ -21,11 +24,16 @@ enum TopicRenderReferenceEncoder {
     static func addRenderReferences(
         to renderNodeData: inout Data,
         references: [String: RenderReference],
+        encodeAccumulatedVariantOverrides: Bool = false,
         encoder: JSONEncoder,
-        renderReferenceCache referenceCache: Synchronized<[String: Data]>
-    ) {
-        
+        renderReferenceCache referenceCache: RenderReferenceCache
+    ) throws {
         guard !references.isEmpty else { return }
+        
+        // Because we'll be clearing the encoder's variant overrides field before
+        // encoding each reference, we need to store any existing values now so that
+        // when we finally encode the variant overrides we have all relevant values.
+        var variantOverrides = encoder.userInfoVariantOverrides?.values ?? []
         
         let fragments: Fragments = encoder.outputFormatting.contains(.prettyPrinted) ? .prettyPrinted : .compact
         
@@ -49,6 +57,55 @@ enum TopicRenderReferenceEncoder {
             let key = reference.identifier.identifier
             let value: Data
             
+            // Declare a helper function that we'll use to encode any non-cached references
+            // we encounter
+            
+            func encodeRenderReference(cacheKey: String? = nil) throws -> Data {
+                // Because we're encoding these reference ad-hoc and not as part of a full render
+                // node, the `encodingPath` on the encoder will be incorrect. This means that the
+                // logic in `VariantEncoder.addVariantsToEncoder(_:pointer:isDefaultValueEncoded:)`
+                // will incorrectly set the path and the produced JSON patch we use to switch
+                // between language variants will be incorrect.
+                //
+                // To work around this, we set a `baseJSONPatchPath` property in the encoder's
+                // user info dictionary. Then when `addVariantsToEncoder` is called, it prepends
+                // this value to the coding path. This way the produced JSON patch will be accurate.
+                encoder.baseJSONPatchPath = [
+                    "references",
+                    reference.identifier.identifier,
+                ]
+                
+                // Because we want to cache each render reference with the specific
+                // variant overrides it produces, we first clear the encoder's user info
+                // fields before encoding.
+                //
+                // This ensures that the whatever override the user info field holds
+                // _after_ we encode, are the ones for this particular reference.
+                encoder.userInfoVariantOverrides?.values.removeAll()
+                
+                // Encode the reference.
+                let encodedReference = try encoder.encode(CodableRenderReference.init(reference))
+                
+                // Add the collected variant overrides to the collection of overrides
+                // we're currently tracking.
+                if let encodedVariantOverrides = encoder.userInfoVariantOverrides {
+                    variantOverrides.append(contentsOf: encodedVariantOverrides.values)
+                }
+                
+                // If a cache key was provided, update the cache with the reference and it's
+                // overrides.
+                if let cacheKey = cacheKey {
+                    referenceCache.sync { cache in
+                        cache[cacheKey] = (
+                            encodedReference,
+                            encoder.userInfoVariantOverrides?.values ?? []
+                        )
+                    }
+                }
+                
+                return encodedReference
+            }
+            
             if let topicReference = reference as? TopicRenderReference {
                 if let conformance = topicReference.conformance {
                     // In case there is a conformance section, adds conformance hash to the cache key.
@@ -60,20 +117,19 @@ enum TopicRenderReferenceEncoder {
                     
                     let conformanceHash = Checksum.md5(of: Data(conformance.constraints.map({ $0.plainText }).joined().utf8))
                     let cacheKeyWithConformance = "\(key) : \(conformanceHash)"
-                    if let cached = referenceCache.sync({ $0[cacheKeyWithConformance] }) {
-                        value = cached
+                    if let (reference, overrides) = referenceCache.sync({ $0[cacheKeyWithConformance] }) {
+                        value = reference
+                        variantOverrides.append(contentsOf: overrides)
                     } else {
-                        value = try! encoder.encode(CodableRenderReference.init(reference))
-                        referenceCache.sync({ $0[cacheKeyWithConformance] = value })
+                        value = try encodeRenderReference(cacheKey: cacheKeyWithConformance)
                     }
                     
-                } else if let cached = referenceCache.sync({ $0[key] }) {
+                } else if let (reference, overrides) = referenceCache.sync({ $0[key] }) {
                     // Use a cached copy if the reference is already encoded.
-                    value = cached
+                    value = reference
+                    variantOverrides.append(contentsOf: overrides)
                 } else {
-                    // Encode the reference and add it to the cache.
-                    value = try! encoder.encode(CodableRenderReference.init(reference))
-                    referenceCache.sync({ $0[key] = value })
+                    value = try encodeRenderReference(cacheKey: key)
                 }
             }
             else {
@@ -82,7 +138,7 @@ enum TopicRenderReferenceEncoder {
                 // For example: ![image.png](This is an image) and ![image.png](Another image)
                 // have the same identifier when encoded in the render node where they are used but the reference
                 // abstract is not unique within the project.
-                value = try! encoder.encode(CodableRenderReference.init(reference))
+                value = try encodeRenderReference()
             }
             
             renderNodeData.append(fragments.quote)
@@ -96,23 +152,35 @@ enum TopicRenderReferenceEncoder {
         // Remove the last comma from the list
         renderNodeData.removeLast(fragments.listDelimiter.count)
         
-        // Append closing "}}"
-        renderNodeData.append(fragments.closingBrackets)
+        // Append closing "}"
+        renderNodeData.append(fragments.closingBrace)
+        
+        if encodeAccumulatedVariantOverrides, !variantOverrides.isEmpty {
+            // Insert the "variantOverrides" key
+            renderNodeData.append(fragments.variantOverridesKey)
+            let variantOverrideData = try encoder.encode(VariantOverrides(values: variantOverrides))
+            renderNodeData.append(variantOverrideData)
+        }
+        
+        // Append closing "}"
+        renderNodeData.append(fragments.closingBrace)
     }
 
     /// Data fragments to use to build a reference list.
     private struct Fragments {
         
+        let variantOverridesKey: Data
         let referencesKey: Data
-        let closingBrackets: Data
+        let closingBrace: Data
         let listDelimiter: Data
         let quote: Data
         let colon: Data
         
         // Compact fragments
         static let compact = Fragments(
+            variantOverridesKey: Data(",\"variantOverrides\":".utf8),
             referencesKey: Data(",\"references\":{".utf8),
-            closingBrackets: Data("}}".utf8),
+            closingBrace: Data("}".utf8),
             listDelimiter: Data(",".utf8),
             quote: Data("\"".utf8),
             colon: Data(":".utf8)
@@ -120,8 +188,9 @@ enum TopicRenderReferenceEncoder {
         
         // Pretty printed fragments
         static let prettyPrinted = Fragments(
+            variantOverridesKey: Data(", \n\"variantOverrides\":".utf8),
             referencesKey: Data(", \n\"references\": {\n".utf8),
-            closingBrackets: Data("\n}\n}".utf8),
+            closingBrace: Data("\n}".utf8),
             listDelimiter: Data(",\n".utf8),
             quote: Data("\"".utf8),
             colon: Data(": ".utf8)

@@ -38,7 +38,11 @@ public struct ConvertAction: Action, RecreatingContext {
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
     let diagnosticEngine: DiagnosticEngine
-
+    
+    let transformForStaticHosting: Bool
+    let hostingBasePath: String?
+    
+    
     private(set) var context: DocumentationContext {
         didSet {
             // current platforms?
@@ -88,7 +92,10 @@ public struct ConvertAction: Action, RecreatingContext {
         diagnosticEngine: DiagnosticEngine? = nil,
         emitFixits: Bool = false,
         inheritDocs: Bool = false,
-        experimentalEnableCustomTemplates: Bool = false) throws
+        experimentalEnableCustomTemplates: Bool = false,
+        transformForStaticHosting: Bool = false,
+        hostingBasePath: String? = nil
+    ) throws
     {
         self.rootURL = documentationBundleURL
         self.outOfProcessResolver = outOfProcessResolver
@@ -101,7 +108,9 @@ public struct ConvertAction: Action, RecreatingContext {
         self.injectedDataProvider = dataProvider
         self.fileManager = fileManager
         self.documentationCoverageOptions = documentationCoverageOptions
-
+        self.transformForStaticHosting = transformForStaticHosting
+        self.hostingBasePath = hostingBasePath
+        
         let filterLevel: DiagnosticSeverity
         if analyze {
             filterLevel = .information
@@ -150,7 +159,7 @@ public struct ConvertAction: Action, RecreatingContext {
             dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
         } else {
             self.context.externalMetadata.isGeneratedBundle = true
-            dataProvider = try GeneratedDataProvider(options: bundleDiscoveryOptions, symbolGraphDataLoader: { url in
+            dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { url in
                 fileManager.contents(atPath: url.path)
             })
         }
@@ -189,7 +198,9 @@ public struct ConvertAction: Action, RecreatingContext {
         diagnosticEngine: DiagnosticEngine? = nil,
         emitFixits: Bool = false,
         inheritDocs: Bool = false,
-        experimentalEnableCustomTemplates: Bool = false
+        experimentalEnableCustomTemplates: Bool = false,
+        transformForStaticHosting: Bool,
+        hostingBasePath: String?
     ) throws {
         // Note: This public initializer exists separately from the above internal one
         // because the FileManagerProtocol type we use to enable mocking in tests
@@ -217,7 +228,9 @@ public struct ConvertAction: Action, RecreatingContext {
             diagnosticEngine: diagnosticEngine,
             emitFixits: emitFixits,
             inheritDocs: inheritDocs,
-            experimentalEnableCustomTemplates: experimentalEnableCustomTemplates
+            experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
+            transformForStaticHosting: transformForStaticHosting,
+            hostingBasePath: hostingBasePath
         )
     }
 
@@ -240,7 +253,7 @@ public struct ConvertAction: Action, RecreatingContext {
     mutating func cancel() throws {
         /// If the action is not running, there is nothing to cancel
         guard isPerforming.sync({ $0 }) == true else { return }
-
+        
         /// If the action is already cancelled throw `cancelPending`.
         if isCancelled.sync({ $0 }) == true {
             throw Error.cancelPending
@@ -277,6 +290,28 @@ public struct ConvertAction: Action, RecreatingContext {
         
         let temporaryFolder = try createTempFolder(
             with: htmlTemplateDirectory)
+        
+        var indexHTMLData: Data?
+
+        // The `template-index.html` is a duplicate version of `index.html` with extra template
+        // tokens that allow for customizing the base-path.
+        // If a base bath is provided we will transform the template using the base path
+        // to produce a replacement index.html file.
+        // After any required transforming has been done the template file will be removed.
+        let templateURL: URL = temporaryFolder.appendingPathComponent(HTMLTemplate.templateFileName.rawValue)
+        if fileManager.fileExists(atPath: templateURL.path) {
+            // If the `transformForStaticHosting` is not set but there is a `hostingBasePath`
+            // then transform the index template
+            if !transformForStaticHosting,
+               let hostingBasePath = hostingBasePath,
+               !hostingBasePath.isEmpty  {
+                indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: temporaryFolder, hostingBasePath: hostingBasePath)
+                let indexURL = temporaryFolder.appendingPathComponent(HTMLTemplate.indexFileName.rawValue)
+                try indexHTMLData!.write(to: indexURL)
+            }
+            
+            try fileManager.removeItem(at: templateURL)
+        }
         
         defer {
             try? fileManager.removeItem(at: temporaryFolder)
@@ -330,15 +365,26 @@ public struct ConvertAction: Action, RecreatingContext {
             allProblems.append(contentsOf: indexerProblems)
         }
 
+        // Process Static Hosting as needed.
+        if transformForStaticHosting, let templateDirectory = htmlTemplateDirectory {
+            if indexHTMLData == nil {
+                indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: templateDirectory, hostingBasePath: hostingBasePath)
+            }
+            
+            let dataProvider = try LocalFileSystemDataProvider(rootURL: temporaryFolder.appendingPathComponent(NodeURLGenerator.Path.dataFolderName))
+            let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: temporaryFolder, indexHTMLData: indexHTMLData!)
+            try transformer.transform()
+        }
+        
         // We should generally only replace the current build output if we didn't encounter errors
         // during conversion. However, if the `emitDigest` flag is true,
         // we should replace the current output with our digest of problems.
         if !allProblems.containsErrors || emitDigest {
             try moveOutput(from: temporaryFolder, to: targetDirectory)
         }
-                
+
         // Log the output size.
-        benchmark(add: Benchmark.OutputSize(dataURL: targetDirectory.appendingPathComponent("data")))
+        benchmark(add: Benchmark.OutputSize(dataURL: targetDirectory.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)))
         
         if Benchmark.main.isEnabled {
             // Write the benchmark files directly in the target directory.
@@ -363,6 +409,7 @@ public struct ConvertAction: Action, RecreatingContext {
     }
     
     func createTempFolder(with templateURL: URL?) throws -> URL {
+        
         let targetURL = URL(fileURLWithPath: NSTemporaryDirectory())
             .appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
         

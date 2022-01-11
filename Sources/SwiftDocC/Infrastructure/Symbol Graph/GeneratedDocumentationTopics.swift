@@ -71,14 +71,24 @@ enum GeneratedDocumentationTopics {
     
     private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext, bundle: DocumentationBundle) throws {
         let automaticCurationSourceLanguage: SourceLanguage
+        let automaticCurationSourceLanguages: Set<SourceLanguage>
         if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
             automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
+            automaticCurationSourceLanguages = Set(identifiers.flatMap(\.sourceLanguages))
         } else {
             automaticCurationSourceLanguage = .swift
+            automaticCurationSourceLanguages = Set([.swift])
         }
         
         // Create the collection topic reference
-        let collectionReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: NodeURLGenerator.Path.documentationCuration(parentPath: parent.path, articleName: title).stringValue, sourceLanguage: automaticCurationSourceLanguage)
+        let collectionReference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: NodeURLGenerator.Path.documentationCuration(
+                parentPath: parent.path,
+                articleName: title
+            ).stringValue,
+            sourceLanguages: automaticCurationSourceLanguages
+        )
         
         // Add the topic graph node
         let collectionTopicGraphNode = TopicGraph.Node(reference: collectionReference, kind: .collection, source: .external, title: title, isResolvable: false)
@@ -136,12 +146,13 @@ enum GeneratedDocumentationTopics {
             reference: collectionReference,
             kind: .collectionGroup,
             sourceLanguage: automaticCurationSourceLanguage,
+            availableSourceLanguages: automaticCurationSourceLanguages,
             name: DocumentationNode.Name.conceptual(title: title),
             markup: Document(parsing: ""),
             semantic: Article(markup: nil, metadata: nil, redirects: nil)
         )
         
-        let collectionTaskGroups = try AutomaticCuration.topics(for: temporaryCollectionNode, context: context)
+        let collectionTaskGroups = try AutomaticCuration.topics(for: temporaryCollectionNode, withTrait: nil, context: context)
             .map({ AutomaticTaskGroupSection(title: $0.title, references: $0.references, renderPositionPreference: .bottom) })
 
         // Add the curation task groups to the article
@@ -152,6 +163,7 @@ enum GeneratedDocumentationTopics {
             reference: collectionReference,
             kind: .collectionGroup,
             sourceLanguage: automaticCurationSourceLanguage,
+            availableSourceLanguages: automaticCurationSourceLanguages,
             name: DocumentationNode.Name.conceptual(title: title),
             markup: Document(parsing: ""),
             semantic: collectionArticle

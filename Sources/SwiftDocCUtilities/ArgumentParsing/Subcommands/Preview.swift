@@ -35,11 +35,9 @@ extension Docc {
             // The default template wasn't validated by the Convert command.
             // If a template was configured as an environmental variable, that would have already been validated in TemplateOption.
             if previewOptions.convertCommand.templateOption.templateURL == nil {
-                throw ValidationError(
-                    """
-                    Invalid or missing HTML template directory, relative to the docc executable, at: \(previewOptions.convertCommand.templateOption.defaultTemplateURL.path)
-                    Set the '\(TemplateOption.environmentVariableKey)' environment variable to use a custom HTML template.
-                    """)
+                throw TemplateOption.missingHTMLTemplateError(
+                    path: previewOptions.convertCommand.templateOption.defaultTemplateURL.path
+                )
             }
         }
 
