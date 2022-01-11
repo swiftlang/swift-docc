@@ -9,47 +9,53 @@
 */
 
 import Foundation
+import SymbolKit
 
 /// A type that provides documentation bundles that it discovers by traversing the local file system.
 public struct GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     public var identifier: String = UUID().uuidString
     
-    /// Options to configure how the provider generates documentation bundles.
-    public var options: BundleDiscoveryOptions
-    
-    private let info: DocumentationBundle.Info
-    private let topLevelPage: URL
     public typealias SymbolGraphDataLoader = (URL) -> Data?
     private let symbolGraphDataLoader: SymbolGraphDataLoader
     
-    /// Creates a new provider that recursively traverses the content of the given root URL to discover documentation bundles.
+    /// Creates a new provider that generates documentation bundles from the ``BundleDiscoveryOptions`` it is passed in ``bundles(options:)``.
     ///
     /// - Parameters:
-    ///   - options: Options to configure how the converter discovers documentation bundles.
     ///   - symbolGraphDataLoader: A closure that loads the raw data for a symbol graph file at a given URL.
-    public init(options: BundleDiscoveryOptions, symbolGraphDataLoader: @escaping SymbolGraphDataLoader) throws {
-        self.options = options
+    public init(symbolGraphDataLoader: @escaping SymbolGraphDataLoader) {
         self.symbolGraphDataLoader = symbolGraphDataLoader
+    }
+    
+    public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
+        let info: DocumentationBundle.Info
         do {
-            self.info = try DocumentationBundle.Info(bundleDiscoveryOptions: options)
+            info = try DocumentationBundle.Info(bundleDiscoveryOptions: options)
         } catch {
             throw Error.notEnoughDataToGenerateBundle(options: options, underlyingError: error)
         }
         
-        self.topLevelPage = URL(string: "\(info.displayName.replacingWhitespaceAndPunctuation(with: "-")).md")!
-    }
-    
-    public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
         guard !options.additionalSymbolGraphFiles.isEmpty else {
             return []
         }
+        
+        // Find all the unique module names from the symbol graph files and generate a top level module page for each of them.
+        var moduleNames = Set<String>()
+        for url in options.additionalSymbolGraphFiles {
+            guard let data = symbolGraphDataLoader(url) else {
+                throw Error.unableToLoadSymbolGraphData(url: url)
+            }
+            let container = try JSONDecoder().decode(SymbolGraphModuleContainer.self, from: data)
+            moduleNames.insert(container.module.name)
+        }
+        
+        let topLevelPages = moduleNames.map { URL(string: $0 + ".md")! }
         
         return [
             DocumentationBundle(
                 info: info,
                 attributedCodeListings: [:],
                 symbolGraphURLs: options.additionalSymbolGraphFiles,
-                markupURLs: [topLevelPage],
+                markupURLs: topLevelPages,
                 miscResourceURLs: []
             )
         ]
@@ -92,10 +98,11 @@ public struct GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     }
     
     public func contentsOfURL(_ url: URL) throws -> Data {
-        if url == topLevelPage {
-            let markdown = "# ``\(info.displayName)``"
+        if DocumentationBundleFileTypes.isMarkupFile(url) {
+            let moduleName = url.deletingPathExtension().lastPathComponent
+            let markdown = "# ``\(moduleName)``"
             return Data(markdown.utf8)
-        } else if options.additionalSymbolGraphFiles.contains(url) {
+        } else if DocumentationBundleFileTypes.isSymbolGraphFile(url) {
             guard let data = symbolGraphDataLoader(url) else {
                 throw Error.unableToLoadSymbolGraphData(url: url)
             }
@@ -103,5 +110,19 @@ public struct GeneratedDataProvider: DocumentationWorkspaceDataProvider {
         } else {
             preconditionFailure("Unexpected url '\(url)'.")
         }
+    }
+}
+
+/// A wrapper type that decodes only the module in the symbol graph.
+private struct SymbolGraphModuleContainer: Decodable {
+    /// The decoded symbol graph module.
+    let module: SymbolGraph.Module
+    
+    typealias CodingKeys = SymbolGraph.CodingKeys
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.module = try container.decode(SymbolGraph.Module.self, forKey: .module)
     }
 }

@@ -159,7 +159,7 @@ public struct ConvertAction: Action, RecreatingContext {
             dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
         } else {
             self.context.externalMetadata.isGeneratedBundle = true
-            dataProvider = try GeneratedDataProvider(options: bundleDiscoveryOptions, symbolGraphDataLoader: { url in
+            dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { url in
                 fileManager.contents(atPath: url.path)
             })
         }
