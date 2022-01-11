@@ -57,11 +57,11 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         ]
 
         let encoder = RenderJSONEncoder.makeEncoder()
-        let cache = Synchronized<[String: Data]>([:])
+        let cache = RenderReferenceCache([:])
         var data = try node.encodeToJSON(with: encoder, renderReferenceCache: cache)
         
         // Insert the references in the node
-        TopicRenderReferenceEncoder.addRenderReferences(to: &data,
+        try TopicRenderReferenceEncoder.addRenderReferences(to: &data,
             references: node.references,
             encoder: encoder,
             renderReferenceCache: cache
@@ -84,12 +84,12 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // Now change the cached reference
         let newReference = TopicRenderReference(identifier: .init("reference1"), title: "NEW TITLE", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil)
         try cache.sync({
-            $0["reference1"] = try encoder.encode(newReference)
+            $0["reference1"] = (try encoder.encode(newReference), [])
         })
         
         // Encode again, using the stubbed cache
         var newData = try node.encodeToJSON(with: encoder, renderReferenceCache: cache)
-        TopicRenderReferenceEncoder.addRenderReferences(to: &newData,
+        try TopicRenderReferenceEncoder.addRenderReferences(to: &newData,
             references: node.references,
             encoder: encoder,
             renderReferenceCache: cache
@@ -129,7 +129,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
                 return node
             })
 
-        let cache = Synchronized<[String: Data]>([:])
+        let cache = RenderReferenceCache([:])
         let encodingErrors = Synchronized<[Error]>([])
         
         DispatchQueue.concurrentPerform(iterations: nodes.count) { i in
@@ -138,7 +138,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
                 var data = try nodes[i].encodeToJSON(with: encoder, renderReferenceCache: cache)
                 
                 // Insert the references in the node
-                TopicRenderReferenceEncoder.addRenderReferences(to: &data,
+                try TopicRenderReferenceEncoder.addRenderReferences(to: &data,
                     references: nodes[i].references,
                     encoder: encoder,
                     renderReferenceCache: cache
@@ -165,7 +165,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         let encoder = RenderJSONEncoder.makeEncoder()
         encoder.outputFormatting = .sortedKeys
         
-        let cache = Synchronized<[String: Data]>([:])
+        let cache = RenderReferenceCache([:])
 
         // For reach topic encode its render node and verify the references are in alphabetical order.
         for reference in context.knownPages {

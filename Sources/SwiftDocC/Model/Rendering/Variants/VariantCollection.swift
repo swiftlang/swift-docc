@@ -77,9 +77,13 @@ public struct VariantCollection<Value: Codable>: Codable {
                         patchOperation = .add(value: value)
                     }
                     
+                    let jsonPointer = (
+                        pointer ?? JSONPointer(from: encoder.codingPath)
+                    ).prependingPathComponents(encoder.baseJSONPatchPath ?? [])
+                    
                     return JSONPatchOperation(
                         variantPatchOperation: patchOperation,
-                        pointer: pointer ?? JSONPointer(from: encoder.codingPath)
+                        pointer: jsonPointer
                     )
                 }
             )

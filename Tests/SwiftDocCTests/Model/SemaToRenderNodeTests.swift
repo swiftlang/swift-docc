@@ -914,17 +914,6 @@ class SemaToRenderNodeTests: XCTestCase {
         )
     }
     
-    private func extractParagraphText(_ block: RenderBlockContent) -> String? {
-        switch block {
-        case .paragraph(inlineContent: let children):
-            switch children[0] {
-            case .text(let text): return text
-            default: return nil
-            }
-        default: return nil
-        }
-    }
-    
     func testCompileSymbol() throws {
         let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
             // Remove the SideClass sub heading to match the expectations of this test
@@ -1010,7 +999,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         XCTAssertEqual(content.kind, RenderSectionKind.content)
         
-        let discussionParagraphPrefixes = content.content.compactMap(extractParagraphText)
+        let discussionParagraphPrefixes = content.content.paragraphText
         
         XCTAssertEqual(discussionParagraphPrefixes, [
             "Further discussion.",
@@ -1051,7 +1040,7 @@ class SemaToRenderNodeTests: XCTestCase {
 
         // Test all identifiers have been resolved to the ``MyClass`` symbol
         XCTAssertEqual(renderNode.topicSections[0].title, "Task Group Excercising Symbol Links")
-        XCTAssertEqual(renderNode.topicSections[0].abstract?.map{ RenderBlockContent.paragraph(inlineContent: [$0]) }.compactMap(extractParagraphText).joined(), "Task Group abstract text.")
+        XCTAssertEqual(renderNode.topicSections[0].abstract?.map{ RenderBlockContent.paragraph(inlineContent: [$0]) }.paragraphText.joined(), "Task Group abstract text.")
         
         guard let discussion = renderNode.topicSections[0].discussion as? ContentRenderSection else {
             XCTFail("Could not find group discussion")
@@ -1065,7 +1054,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(children.first?.name, "Task Group Excercising Symbol Links")
         XCTAssertEqual(children.first?.references.count, 3)
         
-        let groupDiscussionParagraphPrefixes = discussion.content.compactMap(extractParagraphText)
+        let groupDiscussionParagraphPrefixes = discussion.content.paragraphText
         
         // Check the text content of the discussion
         XCTAssertEqual(groupDiscussionParagraphPrefixes, [
@@ -1095,7 +1084,7 @@ class SemaToRenderNodeTests: XCTestCase {
 
         // Test all identifiers have been resolved to the ``MyClass`` symbol
         XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
-        XCTAssertEqual(renderNode.seeAlsoSections[0].abstract?.map{ RenderBlockContent.paragraph(inlineContent: [$0]) }.compactMap(extractParagraphText).joined(), "Further Reading abstract text.")
+        XCTAssertEqual(renderNode.seeAlsoSections[0].abstract?.map{ RenderBlockContent.paragraph(inlineContent: [$0]) }.paragraphText.joined(), "Further Reading abstract text.")
         XCTAssertNil(renderNode.seeAlsoSections[0].discussion)
         guard renderNode.seeAlsoSections[0].identifiers.count == 5 else {
             XCTFail("The amount of identifiers in See Also was not expected")
@@ -1251,10 +1240,10 @@ class SemaToRenderNodeTests: XCTestCase {
                     reference: reference,
                     kind: .collection,
                     sourceLanguage: .swift,
-                    name: .conceptual(title: "Title for \(reference.url!.path)"),
+                    name: .conceptual(title: "Title for \(reference.url.path)"),
                     markup: Document(
                         Paragraph(
-                            Text("Abstract for \(reference.url!.path)")
+                            Text("Abstract for \(reference.url.path)")
                         )
                     ),
                     semantic: nil
