@@ -24,7 +24,7 @@ extension ResolvedTopicReference {
                 bundleIdentifier: bundle.documentationRootReference.bundleIdentifier,
                 path: bundle.documentationRootReference.appendingPath(moduleName + path).path,
                 fragment: nil,
-                sourceLanguage: symbolReference.interfaceLanguage
+                sourceLanguages: symbolReference.interfaceLanguages
             )
         } else {
             self = bundle.documentationRootReference.appendingPath(moduleName + path)

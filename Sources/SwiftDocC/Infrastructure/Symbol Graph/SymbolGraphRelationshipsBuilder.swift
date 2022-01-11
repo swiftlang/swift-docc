@@ -134,7 +134,10 @@ struct SymbolGraphRelationshipsBuilder {
             conformanceNodeReference = .unresolved(unresolved)
             
             if let targetFallback = edge.targetFallback {
-                conformingSymbol.relationships.targetFallbacks[.unresolved(unresolved)] = targetFallback
+                conformingSymbol.relationshipsVariants[
+                    DocumentationDataVariantsTrait(interfaceLanguage: conformingNode.sourceLanguage.id),
+                    default: RelationshipsSection()
+                ].targetFallbacks[.unresolved(unresolved)] = targetFallback
             }
         }
         
@@ -143,16 +146,28 @@ struct SymbolGraphRelationshipsBuilder {
 
         // Add relationships depending whether it's class inheritance or protocol conformance
         if conformingSymbol.kind.identifier == .protocol {
-            conformingSymbol.relationships.addRelationship(.inheritsFrom(conformanceNodeReference))
+            conformingSymbol.relationshipsVariants[
+                DocumentationDataVariantsTrait(interfaceLanguage: conformingNode.sourceLanguage.id),
+                default: RelationshipsSection()
+            ].addRelationship(.inheritsFrom(conformanceNodeReference))
         } else {
-            conformingSymbol.relationships.addRelationship(.conformsTo(conformanceNodeReference, relationshipConstraints?.constraints))
+            conformingSymbol.relationshipsVariants[
+                DocumentationDataVariantsTrait(interfaceLanguage: conformingNode.sourceLanguage.id),
+                default: RelationshipsSection()
+            ].addRelationship(.conformsTo(conformanceNodeReference, relationshipConstraints?.constraints))
         }
         
-        if let conformanceSymbol = optionalConformanceNode?.semantic as? Symbol {
+        if let conformanceNode = optionalConformanceNode, let conformanceSymbol = conformanceNode.semantic as? Symbol {
             if let rawSymbol = conformingNode.symbol, rawSymbol.kind.identifier == .protocol {
-                conformanceSymbol.relationships.addRelationship(.inheritedBy(.successfullyResolved(conformingNode.reference)))
+                conformanceSymbol.relationshipsVariants[
+                    DocumentationDataVariantsTrait(interfaceLanguage: conformanceNode.sourceLanguage.id),
+                    default: RelationshipsSection()
+                ].addRelationship(.inheritedBy(.successfullyResolved(conformingNode.reference)))
             } else {
-                conformanceSymbol.relationships.addRelationship(.conformingType(.successfullyResolved(conformingNode.reference), relationshipConstraints?.constraints))
+                conformanceSymbol.relationshipsVariants[
+                    DocumentationDataVariantsTrait(interfaceLanguage: conformanceNode.sourceLanguage.id),
+                    default: RelationshipsSection()
+                ].addRelationship(.conformingType(.successfullyResolved(conformingNode.reference), relationshipConstraints?.constraints))
             }
         }
     }
@@ -196,10 +211,16 @@ struct SymbolGraphRelationshipsBuilder {
         }
         
         // Add relationships
-        childSymbol.relationships.addRelationship(.inheritsFrom(parentNodeReference))
+        childSymbol.relationshipsVariants[
+            DocumentationDataVariantsTrait(interfaceLanguage: childNode.sourceLanguage.id),
+            default: RelationshipsSection()
+        ].addRelationship(.inheritsFrom(parentNodeReference))
         
-        if let parentSymbol = optionalParentNode?.semantic as? Symbol {
-            parentSymbol.relationships.addRelationship(.inheritedBy(.successfullyResolved(childNode.reference)))
+        if let parentNode = optionalParentNode, let parentSymbol = parentNode.semantic as? Symbol {
+            parentSymbol.relationshipsVariants[
+                DocumentationDataVariantsTrait(interfaceLanguage: parentNode.sourceLanguage.id),
+                default: RelationshipsSection()
+            ].addRelationship(.inheritedBy(.successfullyResolved(childNode.reference)))
         }
     }
     
@@ -244,8 +265,8 @@ struct SymbolGraphRelationshipsBuilder {
             // Remove any inherited docs from the original symbol if the feature is disabled.
             // However, when the docs are inherited from within the same module, its content can be resolved in
             // the local context, so keeping those inherited docs provide a better user experience.
-            if !context.externalMetadata.inheritDocs && node.symbol?.isDocCommentFromSameModule == false {
-                node.symbol?.docComment = nil
+            if !context.externalMetadata.inheritDocs && node.unifiedSymbol?.documentedSymbol?.isDocCommentFromSameModule == false {
+                node.unifiedSymbol?.docComment.removeAll()
             }
         }
         
