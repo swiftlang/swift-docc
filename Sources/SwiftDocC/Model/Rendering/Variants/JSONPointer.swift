@@ -35,6 +35,10 @@ public struct JSONPointer: Codable, CustomStringConvertible {
         JSONPointer(pathComponents: pathComponents.dropFirst())
     }
     
+    func prependingPathComponents(_ components: [String]) -> JSONPointer {
+        JSONPointer(pathComponents: components + pathComponents)
+    }
+    
     /// An enum representing characters that need escaping in JSON Pointer values.
     ///
     /// The characters that need to be escaped in JSON Pointer values are defined in

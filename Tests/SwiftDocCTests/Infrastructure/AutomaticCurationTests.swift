@@ -349,4 +349,64 @@ class AutomaticCurationTests: XCTestCase {
             )
         }
     }
+    
+    func testRelevantLanguagesAreAutoCuratedInMixedLanguageFramework() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+        
+        let frameworkDocumentationNode = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/MixedLanguageFramework",
+                sourceLanguages: [.swift, .objectiveC]
+            )
+        )
+        
+        let swiftTopics = try AutomaticCuration.topics(
+            for: frameworkDocumentationNode,
+            withTrait: .swift,
+            context: context
+        )
+        
+        XCTAssertEqual(
+            swiftTopics.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.references.map(\.path)
+            },
+            [
+                "Classes",
+                "/documentation/MixedLanguageFramework/Bar",
+                
+                "Structures",
+                "/documentation/MixedLanguageFramework/Foo-swift.struct",
+                "/documentation/MixedLanguageFramework/SwiftOnlyStruct",
+            ]
+        )
+        
+        let objectiveCTopics = try AutomaticCuration.topics(
+            for: frameworkDocumentationNode,
+            withTrait: DocumentationDataVariantsTrait(interfaceLanguage: "occ"),
+            context: context
+        )
+        
+        XCTAssertEqual(
+            objectiveCTopics.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.references.map(\.path)
+            },
+            [
+                "Classes",
+                "/documentation/MixedLanguageFramework/Bar",
+                
+                "Variables",
+                "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
+                "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
+                
+                "Type Aliases",
+                "/documentation/MixedLanguageFramework/Foo-occ.typealias",
+                
+                "Enumerations",
+                "/documentation/MixedLanguageFramework/Foo-swift.struct",
+            ]
+        )
+    }
 }

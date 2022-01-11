@@ -15,7 +15,7 @@ public struct Docc: ParsableCommand {
 
     public static var configuration = CommandConfiguration(
         abstract: "Documentation Compiler: compile, analyze, and preview documentation.",
-        subcommands: [Convert.self, Index.self, Preview.self])
+        subcommands: [Convert.self, Index.self, Preview.self, ProcessArchive.self])
 
     public init() {}
 }

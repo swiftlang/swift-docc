@@ -46,6 +46,9 @@ protocol FileManagerProtocol {
     func createDirectory(at: URL, withIntermediateDirectories: Bool, attributes: [FileAttributeKey : Any]?) throws
     /// Removes a file from the given location.
     func removeItem(at: URL) throws
+    /// Returns a list of items in a directory
+    func contentsOfDirectory(atPath path: String) throws -> [String]
+    func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL]
 
     /// Creates a file with the specified `contents` at the specified location.
     ///
@@ -77,4 +80,5 @@ extension FileManager: FileManagerProtocol {
     func createFile(at location: URL, contents: Data) throws {
         try contents.write(to: location, options: .atomic)
     }
+    
 }

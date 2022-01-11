@@ -76,11 +76,6 @@ extension RenderNode: Codable {
         try container.encode(identifier, forKey: .identifier)
         try container.encode(sections.map(CodableRenderSection.init), forKey: .sections)
         
-        // Encode references if the `.skipsEncodingReferences` value is unset or false.
-        if (encoder.userInfo[.skipsEncodingReferences] as? Bool) != true {
-            try container.encode(references.mapValues(CodableRenderReference.init), forKey: .references)
-        }
-        
         try container.encode(metadata, forKey: .metadata)
         try container.encode(kind, forKey: .kind)
         try container.encode(hierarchy, forKey: .hierarchy)
@@ -101,11 +96,22 @@ extension RenderNode: Codable {
         try container.encodeIfPresent(diffAvailability, forKey: .diffAvailability)
         try container.encodeIfPresent(variants, forKey: .variants)
         
-        // Emit the variant overrides that are defined on the render node, if present. Otherwise, the variant overrides
-        // that have been accumulated while encoding the properties of the render node.
-        if let variantOverrides = variantOverrides ?? encoder.userInfo[.variantOverrides] as? VariantOverrides,
+        if !encoder.skipsEncodingReferences {
+            try container.encode(references.mapValues(CodableRenderReference.init), forKey: .references)
+        }
+        
+        // We should only encode variant overrides now if we're _not_ skipping the encoding of
+        // references or if there are just no references to encode.
+        //
+        // Otherwise, any variant overrides that are accumulated while encoding the references
+        // later on, will be missed.
+        if !encoder.skipsEncodingReferences || references.isEmpty,
+            let variantOverrides = variantOverrides ?? encoder.userInfoVariantOverrides,
             !variantOverrides.isEmpty
         {
+            // Emit the variant overrides that are defined on the render node, if present.
+            // Otherwise, the variant overrides
+            // that have been accumulated while encoding the properties of the render node.
             try container.encode(variantOverrides, forKey: .variantOverrides)
         }
     }
