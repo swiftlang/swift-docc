@@ -60,9 +60,9 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             url: URL(string: "doc://com.test.bundle/something")!,
             title: "Resolved Title",
             abstract: "Resolved abstract for this topic.",
-            language: .init(name: "Language Name 1", id: "com.test.language.id"),
+            language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
             availableLanguages: [
-                .init(name: "Language Name 1", id: "com.test.language.id"),
+                .swift,
                 .init(name: "Language Name 2", id: "com.test.another-language.id"),
             ],
             platforms: [
@@ -74,13 +74,12 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             ]),
             variants: [
                 .init(
-                    // This trait identifier is written to account for the sort order of variants (rdar://86580516)
                     traits: [.interfaceLanguage("com.test.another-language.id")],
                     kind: .init(name: "Variant Kind Name", id: "com.test.kind2.id", isSymbol: true),
                     url: nil,
                     title: "Resolved Variant Title",
                     abstract: "Resolved variant abstract for this topic.",
-                    language: .init(name: "Language Name 2", id: "com.test.language2.id"),
+                    language: .init(name: "Language Name 2", id: "com.test.another-language.id"),
                     declarationFragments: .init(declarationFragments: [
                         .init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)
                     ])
@@ -112,7 +111,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         XCTAssertEqual(symbol.title, "Resolved Title")
         
-        XCTAssertEqual(node.name, .conceptual(title: testMetadata.title))
+        XCTAssertEqual(node.name, .symbol(declaration: .init([.plain(testMetadata.title)])))
         
         XCTAssertEqual(node.sourceLanguage.name, testMetadata.language.name)
         XCTAssertEqual(node.sourceLanguage.id, testMetadata.language.id)
@@ -223,9 +222,9 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             url: URL(string: "/relative/path/to/symbol")!,
             title: "Resolved Title",
             abstract: "Resolved abstract for this topic.",
-            language: .init(name: "Language Name 1", id: "com.test.language.id"),
+            language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
             availableLanguages: [
-                .init(name: "Language Name 1", id: "com.test.language.id"),
+                .swift,
                 .init(name: "Language Name 2", id: "com.test.another-language.id"),
             ],
             platforms: [
@@ -237,13 +236,12 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             ]),
             variants: [
                 .init(
-                    // This trait identifier is written to account for the sort order of variants (rdar://86580516)
                     traits: [.interfaceLanguage("com.test.another-language.id")],
                     kind: .init(name: "Variant Kind Name", id: "com.test.kind2.id", isSymbol: true),
                     url: nil,
                     title: "Resolved Variant Title",
                     abstract: "Resolved variant abstract for this topic.",
-                    language: .init(name: "Language Name 2", id: "com.test.language2.id"),
+                    language: .init(name: "Language Name 2", id: "com.test.another-language.id"),
                     declarationFragments: .init(declarationFragments: [
                         .init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)
                     ])
@@ -272,7 +270,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                        "When the node kind doesn't map to a known value it should fallback to a `.class` kind.")
         XCTAssertEqual(symbol.title, "Resolved Title")
         
-        XCTAssertEqual(symbolNode.name, .conceptual(title: testMetadata.title))
+        XCTAssertEqual(symbolNode.name, .symbol(declaration: .init([.plain(testMetadata.title)])))
         
         XCTAssertEqual(symbolNode.sourceLanguage.name, testMetadata.language.name)
         XCTAssertEqual(symbolNode.sourceLanguage.id, testMetadata.language.id)
@@ -547,8 +545,11 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                 url: URL(string: "scheme://host.name/path/")!,
                 title: "Resolved Title",
                 abstract: "Resolved abstract for this topic.",
-                language: .init(name: "Language Name", id: "com.test.language.id"),
-                availableLanguages: [.init(name: "Language Name", id: "com.test.language.id")],
+                language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
+                availableLanguages: [
+                    .swift,
+                    .init(name: "Variant Language Name", id: "com.test.other-language.id")
+                ],
                 platforms: [.init(name: "Platform Name", introduced: "1.0.0", isBeta: false)],
                 declarationFragments: .init(declarationFragments: [
                     .init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)

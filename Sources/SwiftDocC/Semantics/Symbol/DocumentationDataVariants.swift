@@ -103,22 +103,22 @@ extension DocumentationDataVariants {
         return DocumentationDataVariants<Variant>(values: [:], defaultVariantValue: nil)
     }
     
-    private var firstVariantElement: (trait: DocumentationDataVariantsTrait, variant: Variant)? {
-        // A Dictionary's order isn't stable across program executions.
-        //
-        // These values are sorted in descending order so that elements with interface languages come before the
-        // fallback value and so that Swift comes before Objective-C.
-        //
-        // Having a stable order sufficient to make the tests stable but can still have surprising results (rdar://86580516)
-        return allValues.sorted(by: { lhs, rhs in
-            lhs.trait.interfaceLanguage ?? "" > rhs.trait.interfaceLanguage ?? ""
-        }).first
-    }
-    
     /// Convenience API to access the first variant, or the default value if there are no registered variants.
+    ///
+    /// > Important:
+    /// > Do not use this property in new code.
+    /// > It exists to transition existing code from only working with Swift symbols to working with multi-language symbols.
+    /// > This property should be considered deprecated but isn't formally deprecated to avoid the ~50 warnings that would make it
+    /// > harder to spot new warnings. (rdar://86580516)
     var firstValue: Variant? {
-        get { firstVariantElement?.variant }
-        set { self[firstVariantElement?.trait ?? .fallback] = newValue }
+        // A Dictionary's order isn't stable across program executions so accessing the `first` value would
+        // result in indeterministic behavior and also flaky tests.
+        //
+        // Since this convenience accessor exist to transition existing code from only working with Swift symbols,
+        // it accesses the Swift value first, if it exist, and otherwise accesses the real indeterministic first value.
+        // This assumes that variant only represents one non-Swift language.
+        get { self[.swift] ?? self.values.first?.value }
+        set { self[.swift] = newValue }
     }
 }
 
