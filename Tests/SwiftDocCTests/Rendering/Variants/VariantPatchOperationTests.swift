@@ -40,7 +40,7 @@ class VariantPatchOperationTests: XCTestCase {
     }
     
     func testApplyingSeriesOfPatchOperations() {
-        let stringPatches: [VariantPatchOperation] = [
+        let stringPatches: [VariantPatchOperation<String>] = [
             .replace(value: "ABC"),
             .remove,
             .replace(value: "DEF"),
@@ -62,7 +62,7 @@ class VariantPatchOperationTests: XCTestCase {
             "MNOPQR",
         ]
         for (index, expectedValue) in expectedValues.enumerated() {
-            let stringVariant = VariantCollection<String>.Variant(traits: [], patch: Array(stringPatches.prefix(index)))
+            let stringVariant = VariantCollection<String>.Variant<String>(traits: [], patch: Array(stringPatches.prefix(index)))
             XCTAssertEqual(stringVariant.applyingPatchTo("A"), expectedValue)
         }
     }
