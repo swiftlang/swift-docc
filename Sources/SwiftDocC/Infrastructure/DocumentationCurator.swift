@@ -42,9 +42,7 @@ struct DocumentationCurator {
             return cached
         }
         
-        guard let unresolved = ValidatedURL(destination).map(UnresolvedTopicReference.init(topicURL:)) else {
-            return nil
-        }
+        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(symbolDestination: destination)) 
         let maybeResolved = context.resolve(.unresolved(unresolved), in: resolved, fromSymbolLink: true)
         
         if case let .success(resolved) = maybeResolved {

@@ -155,6 +155,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     var assetManagers = [BundleIdentifier: DataAssetManager]()
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
+    /// A list of reference aliases.
+    ///
+    /// When multiple references resolve to the same documentation, use this to find the main reference that is associated with the node in the topic graph.
+    var referenceAliases = [ResolvedTopicReference: ResolvedTopicReference]()
     
     /// A list of all the problems that was encountered while registering and processing the documentation bundles in this context.
     public var problems: [Problem] {
@@ -884,7 +888,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// Creates a topic graph node and a documentation node for the given symbol.
-    private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, module: SymbolGraph.Module, bundle: DocumentationBundle, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
+    private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, referenceAliases: [ResolvedTopicReference], module: SymbolGraph.Module, bundle: DocumentationBundle, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
         let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, platformName: module.platform.name, moduleName: module.name, bystanderModules: module.bystanders)
         let source: TopicGraph.Node.ContentLocation // TODO: use a list of URLs for the files in a unified graph
         if let symbolGraphURL = symbolGraphURL {
@@ -894,7 +898,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         let graphNode = TopicGraph.Node(reference: reference, kind: documentation.kind, source: source, title: symbol.defaultSymbol!.names.title)
 
-        return ((reference, symbol.uniqueIdentifier, graphNode, documentation), [])
+        return ((reference, symbol.uniqueIdentifier, graphNode, documentation, referenceAliases), [])
     }
     
     /// Returns a map between symbol identifiers and topic references.
@@ -902,83 +906,92 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - symbolGraph: The complete symbol graph to walk through.
     ///   - bundle: The bundle to use when creating symbol references.
-    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], bundle: DocumentationBundle) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
+    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], bundle: DocumentationBundle) -> [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]] {
         /// Temporary data structure to form symbol/module pairs.
         struct SymbolInModule {
             let symbol: UnifiedSymbolGraph.Symbol
             let moduleName: String
         }
         
-        var result = [SymbolGraph.Symbol.Identifier: ResolvedTopicReference]()
+        var result = [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]]()
         
         // Keep count of how many times a path is used and for what kinds.
         var pathCount = [String: [SymbolInModule]]()
         
+        let totalSymbolCount = unifiedGraphs.values.map { $0.symbols.count }.reduce(0, +)
+        // The amount of symbols is a conservative estimate since each symbol have at least one path.
+        pathCount.reserveCapacity(totalSymbolCount)
+        result.reserveCapacity(totalSymbolCount)
+        
         // Group symbols by path from all of the available symbol graphs
         for (moduleName, symbolGraph) in unifiedGraphs {
             let symbols = Array(symbolGraph.symbols.values)
-            let paths: [String] = symbols.concurrentMap { referenceFor($0, moduleName: moduleName, bundle: bundle).path.lowercased() }
-            
-            // Increase the index storage size as we merge more symbol graphs.
-            if pathCount.capacity < paths.count {
-                pathCount.reserveCapacity(paths.count)
-            }
-            if result.capacity < paths.count {
-                result.reserveCapacity(paths.count)
-            }
+            let paths: [[String]] = symbols.concurrentMap { referencesFor($0, moduleName: moduleName, bundle: bundle).map { $0.path.lowercased() } }
 
             for (index, symbol) in symbols.enumerated() {
-                let path = paths[index]
-
-                if let existingReferences = pathCount[path] {
-                    // It's only a collision if it's a different precise identifier,
-                    // otherwise it's just the same symbol.
-                    if existingReferences.allSatisfy({ pair -> Bool in
-                        return pair.symbol.uniqueIdentifier != symbol.uniqueIdentifier
-                    }) {
-                        // A collision - different symbol but same paths
-                        pathCount[path]!.append(SymbolInModule(symbol: symbol, moduleName: moduleName))
+                for path in paths[index] {
+                    if let existingReferences = pathCount[path] {
+                        // It's only a collision if it's a different precise identifier,
+                        // otherwise it's just the same symbol.
+                        if existingReferences.allSatisfy({ pair -> Bool in
+                            return pair.symbol.uniqueIdentifier != symbol.uniqueIdentifier
+                        }) {
+                            // A collision - different symbol but same paths
+                            pathCount[path]!.append(SymbolInModule(symbol: symbol, moduleName: moduleName))
+                        }
+                    } else {
+                        // First occurrence of this path
+                        pathCount[path] = [SymbolInModule(symbol: symbol, moduleName: moduleName)]
                     }
-                } else {
-                    // First occurance of this path
-                    pathCount[path] = [SymbolInModule(symbol: symbol, moduleName: moduleName)]
                 }
             }
         }
         
-        // Translate symbols to topic references, adjust paths where neccessary
+        // Translate symbols to topic references, adjust paths where necessary.
         for collisions in pathCount.values {
             let disambiguationSuffixes = collisions.map(\.symbol).requiredDisambiguationSuffixes
             
             for (collision, disambiguationSuffix) in zip(collisions, disambiguationSuffixes) {
-                result[collision.symbol.defaultIdentifier] = referenceFor(collision.symbol, moduleName: collision.moduleName, bundle: bundle, shouldAddHash: disambiguationSuffix.shouldAddIdHash, shouldAddKind: disambiguationSuffix.shouldAddKind)
+                result[collision.symbol.defaultIdentifier, default: []].append(
+                    contentsOf: referencesFor(collision.symbol, moduleName: collision.moduleName, bundle: bundle, shouldAddHash: disambiguationSuffix.shouldAddIdHash, shouldAddKind: disambiguationSuffix.shouldAddKind)
+                )
             }
         }
         
         return result
     }
     
-    private func referenceFor(_ symbol: UnifiedSymbolGraph.Symbol, moduleName: String, bundle: DocumentationBundle, shouldAddHash: Bool = false, shouldAddKind: Bool = false) -> ResolvedTopicReference {
-        let symbolReference: SymbolReference
+    private func referencesFor(_ symbol: UnifiedSymbolGraph.Symbol, moduleName: String, bundle: DocumentationBundle, shouldAddHash: Bool = false, shouldAddKind: Bool = false) -> [ResolvedTopicReference] {
         if let pathComponents = knownDisambiguatedSymbolPathComponents?[symbol.uniqueIdentifier],
            let componentsCount = symbol.defaultSymbol?.pathComponents.count,
            pathComponents.count == componentsCount
         {
-            symbolReference = SymbolReference(
-                pathComponents: pathComponents,
-                interfaceLanguages: symbol.sourceLanguages
-            )
-        } else {
-            symbolReference = SymbolReference(
+            let symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguages: symbol.sourceLanguages)
+            return [ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)]
+        }
+        
+        // A unified symbol that exist in multiple languages may have multiple references.
+        
+        // Find all of the relevant selectors, starting with the `defaultSelector`.
+        // Any reference after the first is considered an alias/alternative to the first reference
+        // and will resolve to the first reference.
+        var symbolSelectors = [symbol.defaultSelector]
+        if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
+            for selector in symbol.mainGraphSelectors where !symbolSelectors.contains(selector) {
+                symbolSelectors.append(selector)
+            }
+        }
+        
+        return symbolSelectors.map { selector  in
+            let symbolReference = SymbolReference(
                 symbol.uniqueIdentifier,
                 interfaceLanguages: symbol.sourceLanguages,
-                defaultSymbol: symbol.defaultSymbol,
+                defaultSymbol: symbol.symbol(forSelector: selector),
                 shouldAddHash: shouldAddHash,
                 shouldAddKind: shouldAddKind
             )
+            return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
         }
-
-        return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
     }
 
     private func parentChildRelationship(from edge: SymbolGraph.Relationship) -> (ResolvedTopicReference, ResolvedTopicReference)? {
@@ -1002,7 +1015,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
 
     /// The result of converting a symbol into a documentation node.
-    private typealias AddSymbolResult = (reference: ResolvedTopicReference, preciseIdentifier: String, topicGraphNode: TopicGraph.Node, node: DocumentationNode)
+    private typealias AddSymbolResult = (reference: ResolvedTopicReference, preciseIdentifier: String, topicGraphNode: TopicGraph.Node, node: DocumentationNode, referenceAliases: [ResolvedTopicReference])
     /// An optional result of converting a symbol into a documentation along with any related problems.
     private typealias AddSymbolResultWithProblems = (AddSymbolResult, problems: [Problem])
     
@@ -1025,14 +1038,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///  └──────────────────┘             `───────────'
     ///                                       Symbol
     /// ```
-    private func addSymbolsToTopicGraph(symbolGraph: UnifiedSymbolGraph, url: URL?, symbolReferences: [SymbolGraph.Symbol.Identifier : ResolvedTopicReference], bundle: DocumentationBundle) {
+    private func addSymbolsToTopicGraph(symbolGraph: UnifiedSymbolGraph, url: URL?, symbolReferences: [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]], bundle: DocumentationBundle) {
         let symbols = Array(symbolGraph.symbols.values)
         let results: [AddSymbolResultWithProblems] = symbols.concurrentPerform { symbol, results in
             if let selector = symbol.defaultSelector, let module = symbol.modules[selector] {
-                let reference = symbolReferences[symbol.defaultIdentifier]!
+                guard let references = symbolReferences[symbol.defaultIdentifier], let reference = references.first else {
+                    diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolDeclarationNotFound", summary: "Symbol with identifier '\(symbol.uniqueIdentifier)' has no declaration"), possibleSolutions: []))
+                    return // continue with the next symbol without updating the results
+                }
+                
                 let result = preparedSymbolData(
                     symbol,
                     reference: reference,
+                    referenceAliases: Array(references.dropFirst()),
                     module: module,
                     bundle: bundle,
                     fileURL: url
@@ -1050,6 +1068,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         documentationCache[symbolData.reference] = symbolData.node
         symbolIndex[symbolData.preciseIdentifier] = symbolData.node
 
+        for alias in symbolData.referenceAliases where alias != symbolData.reference {
+            referenceAliases[alias] = symbolData.reference
+        }
+        
         for anchor in result.0.node.anchorSections {
             nodeAnchorSections[anchor.reference] = anchor
         }
@@ -1159,7 +1181,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
                         addPreparedSymbolToContext(
-                            preparedSymbolData(.init(fromSingleSymbol: moduleSymbol, module: rootModule, isMainGraph: true), reference: moduleReference, module: rootModule, bundle: bundle, fileURL: fileURL)
+                            preparedSymbolData(.init(fromSingleSymbol: moduleSymbol, module: rootModule, isMainGraph: true), reference: moduleReference, referenceAliases: [], module: rootModule, bundle: bundle, fileURL: fileURL)
                         )
                     }
 
@@ -1417,7 +1439,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
-    func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference], bundle: DocumentationBundle, fileURL otherSymbolGraphURL: URL?) throws {
+    func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]], bundle: DocumentationBundle, fileURL otherSymbolGraphURL: URL?) throws {
         let mergeError = Synchronized<Error?>(nil)
         
         let results: [AddSymbolResultWithProblems] = Array(otherSymbolGraph.symbols.values).concurrentPerform { symbol, result in
@@ -1435,8 +1457,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             guard let existingNode = symbolIndex[symbol.uniqueIdentifier], existingNode.semantic is Symbol else {
                 // New symbols that didn't exist in the previous graphs should be added.
+                guard let references = references[symbol.defaultIdentifier], let reference = references.first else {
+                    diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolDeclarationNotFound", summary: "Symbol with identifier '\(symbol.uniqueIdentifier)' has no declaration"), possibleSolutions: []))
+                    return
+                }
+                
                 result.append(
-                    preparedSymbolData(symbol, reference: references[symbol.defaultIdentifier]!, module: module, bundle: bundle, fileURL: otherSymbolGraphURL)
+                    preparedSymbolData(symbol, reference: reference, referenceAliases: Array(references.dropFirst()), module: module, bundle: bundle, fileURL: otherSymbolGraphURL)
                 )
                 return
             }
@@ -2071,6 +2098,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      - Throws: ``ContextError/notFound(_:)`` if a documentation node with the given identifier was not found.
      */
     public func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
+        let reference = referenceAliases[reference] ?? reference
         if let cached = documentationCache[reference] {
             return cached
         }
@@ -2248,6 +2276,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     return .success(resolved)
                 } else if reference.fragment != nil, nodeAnchorSections.keys.contains(reference) {
                     return .success(reference)
+                } else if let alias = referenceAliases[reference] {
+                    return .success(alias)
                 } else {
                     allCandidateURLs.append(reference.url)
                     return nil

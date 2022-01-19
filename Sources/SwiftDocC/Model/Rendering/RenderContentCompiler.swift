@@ -145,9 +145,9 @@ struct RenderContentCompiler: MarkupVisitor {
         }
         
         // Try local context
-        if let unresolved = ValidatedURL(destination).map(UnresolvedTopicReference.init(topicURL:)),
-            case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier, fromSymbolLink: true) {
-                resolvedReference = resolved
+        let unresolved = UnresolvedTopicReference(topicURL: .init(symbolDestination: destination))
+        if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier, fromSymbolLink: true) {
+            resolvedReference = resolved
         }
 
         guard let resolved = resolvedReference else {
