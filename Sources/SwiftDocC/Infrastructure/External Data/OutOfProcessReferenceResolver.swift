@@ -793,10 +793,11 @@ extension OutOfProcessReferenceResolver {
             return nil
         }
         
-        let mainTrait = DocumentationDataVariantsTrait(interfaceLanguage: language.id)
-        var availabilityVariants = [DocumentationDataVariantsTrait: SymbolGraph.Symbol.Availability]()
-        if let platforms = platforms {
-            let availability = SymbolGraph.Symbol.Availability(availability: platforms.map {
+        // The symbol semantic is created in three steps.
+        
+        // First, compute the common availability for all variants.
+        let availability = platforms.map { platforms in
+            return SymbolGraph.Symbol.Availability(availability: platforms.map {
                 let domain = $0.name.map { name in
                     return SymbolGraph.Symbol.Availability.Domain(
                         rawValue: name == "Mac Catalyst" ? SymbolGraph.Symbol.Availability.Domain.macCatalyst : name
@@ -817,9 +818,10 @@ extension OutOfProcessReferenceResolver {
                     willEventuallyBeDeprecated: false // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
                 )
             })
-            availabilityVariants[mainTrait] = availability
         }
         
+        // Second, create data variants values with the main resolved information, as values for the main language variant trait.
+        let mainTrait = DocumentationDataVariantsTrait(interfaceLanguage: language.id)
         var kindVariants = [mainTrait: symbolKind(forNodeKind: kind)]
         var titleVariants = [mainTrait: title]
         var subHeadingVariants = [DocumentationDataVariantsTrait: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
@@ -827,6 +829,7 @@ extension OutOfProcessReferenceResolver {
         var abstractVariants = [DocumentationDataVariantsTrait: AbstractSection]()
         abstractVariants[mainTrait] = abstract.map { AbstractSection(paragraph: Paragraph([Text($0)])) }
         
+        // Third, add additional values for each variant's resolved information.
         for variant in variants ?? [] {
             guard case .interfaceLanguage(let language) = variant.traits.first else { continue }
             let trait = DocumentationDataVariantsTrait(interfaceLanguage: language)
@@ -841,6 +844,8 @@ extension OutOfProcessReferenceResolver {
                 abstractVariants[trait] = AbstractSection(paragraph: Paragraph([Text(variantAbstract)]))
             }
             if let variantDeclarationFragments = variant.declarationFragments {
+                // The declaration fragments is an optional value. If the resolved information contains an explicit `nil` value we set that as the variant value.
+                // This behavior enables a symbol's variant to not have a declaration when the main symbol does have a declaration.
                 subHeadingVariants[trait] = variantDeclarationFragments?.declarationFragments
             }
         }
