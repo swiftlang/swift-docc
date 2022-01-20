@@ -851,19 +851,19 @@ extension OutOfProcessReferenceResolver {
         }
         
         return Symbol(
-            kindVariants: .init(values: kindVariants, defaultVariantValue: nil),
-            titleVariants:  .init(values: titleVariants, defaultVariantValue: nil),
-            subHeadingVariants: .init(values: subHeadingVariants, defaultVariantValue: nil),
+            kindVariants: .init(values: kindVariants),
+            titleVariants:  .init(values: titleVariants),
+            subHeadingVariants: .init(values: subHeadingVariants),
             navigatorVariants: .empty,
-            roleHeadingVariants: .init(values: [mainTrait: ""], defaultVariantValue: nil), // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
+            roleHeadingVariants: .init(values: [:], defaultVariantValue: ""), // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
             platformNameVariants: .empty,
-            moduleNameVariants: .init(values: [mainTrait: ""], defaultVariantValue: nil), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
+            moduleNameVariants: .init(values: [:], defaultVariantValue: ""), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
             externalIDVariants: .empty,
             accessLevelVariants: .empty,
-            availabilityVariants: .init(values: availabilityVariants, defaultVariantValue: nil),
+            availabilityVariants: .init(values: [:], defaultVariantValue: availability),
             deprecatedSummaryVariants: .empty,
             mixinsVariants: .empty,
-            abstractSectionVariants: .init(values: abstractVariants, defaultVariantValue: nil),
+            abstractSectionVariants: .init(values: abstractVariants),
             discussionVariants: .empty,
             topicsVariants: .empty,
             seeAlsoVariants: .empty,
