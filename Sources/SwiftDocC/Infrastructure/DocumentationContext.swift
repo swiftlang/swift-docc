@@ -159,6 +159,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// A list of reference aliases.
     ///
     /// When multiple references resolve to the same documentation, use this to find the main reference that is associated with the node in the topic graph.
+    ///
+    /// The key to lookup the main reference is the alias reference. A main reference can have many aliases but an alias can only have one main reference.
     var referenceAliases = [ResolvedTopicReference: ResolvedTopicReference]()
     
     /// A list of all the problems that was encountered while registering and processing the documentation bundles in this context.
@@ -250,7 +252,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// This storage is only used while the documentation context is being built. Once the documentation bundles have been fully registered and the topic graph
     /// has been built, this list of uncurated documentation extensions will be empty.
     ///
-    /// The key to lookup a documentaion exteion file sis the symbol reference from its title (level 1 heading).
+    /// The key to lookup a documentation extension file is the symbol reference from its title (level 1 heading).
     ///
     /// - Warning: It's possible—but not supported—for multiple documentation extension files to specify the same symbol link.
     var uncuratedDocumentationExtensions = [ResolvedTopicReference: [SemanticResult<Article>]]()
