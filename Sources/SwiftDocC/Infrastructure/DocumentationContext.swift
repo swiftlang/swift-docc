@@ -1046,8 +1046,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let results: [AddSymbolResultWithProblems] = symbols.concurrentPerform { symbol, results in
             if let selector = symbol.defaultSelector, let module = symbol.modules[selector] {
                 guard let references = symbolReferences[symbol.defaultIdentifier], let reference = references.first else {
-                    diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolDeclarationNotFound", summary: "Symbol with identifier '\(symbol.uniqueIdentifier)' has no declaration"), possibleSolutions: []))
-                    return // continue with the next symbol without updating the results
+                    fatalError("Symbol with identifier '\(symbol.uniqueIdentifier)' has no reference. A symbol will always have at least one reference.")
                 }
                 
                 let result = preparedSymbolData(
@@ -1461,8 +1460,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             guard let existingNode = symbolIndex[symbol.uniqueIdentifier], existingNode.semantic is Symbol else {
                 // New symbols that didn't exist in the previous graphs should be added.
                 guard let references = references[symbol.defaultIdentifier], let reference = references.first else {
-                    diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.SymbolDeclarationNotFound", summary: "Symbol with identifier '\(symbol.uniqueIdentifier)' has no declaration"), possibleSolutions: []))
-                    return
+                    fatalError("Symbol with identifier '\(symbol.uniqueIdentifier)' has no reference. A symbol will always have at least one reference.")
                 }
                 
                 result.append(
