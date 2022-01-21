@@ -312,7 +312,7 @@ extension LinkDestinationSummary {
                 subHeading.map { DeclarationRenderSection.Token(fragment: $0, identifier: nil) }
             }
             
-            let abstractVariant: Abstract?? = symbol.abstractVariants[trait].map { renderSymbolAbstract($0) }
+            let abstractVariant: Variant.VariantValue<Abstract?> = symbol.abstractVariants[trait].map { renderSymbolAbstract($0) }
             
             func nilIfEqual<Value: Equatable>(main: Value, variant: Value?) -> Value? {
                 return main == variant ? nil : variant
