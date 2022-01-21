@@ -36,8 +36,8 @@ public struct ValidatedURL: Hashable, Equatable {
     /// > For example; an Objective-C instance method named `someMethodWithFirstValue:secondValue:` would be parsed as a
     /// > URL with the "someMethodWithFirstValue" scheme which is a valid link but which won't resolve to the intended symbol.
     /// >
-    init?(_ string: String) {
     /// > When working with symbol destinations use ``init(symbolPath:)`` instead.
+    init?(parsing string: String) {
         guard let components = URLComponents(string: string) else {
             return nil
         }

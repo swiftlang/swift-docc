@@ -96,7 +96,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         guard let destination = link.destination else {
             return link
         }
-        guard let url = ValidatedURL(destination) else {
+        guard let url = ValidatedURL(parsing: destination) else {
             problems.append(invalidLinkDestinationProblem(destination: destination, source: source, range: link.range, severity: .warning))
             return link
         }

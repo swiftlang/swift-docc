@@ -43,8 +43,10 @@ public struct AbsoluteSymbolLink: CustomStringConvertible {
     /// - doc://org.swift.docc.example/documentation/ModuleName/ParentType/Test-swift.class/testFunc()-k2k9d
     /// - doc://org.swift.docc.example/documentation/ModuleName/ClassName/functionName(firstParameter:secondParameter:)
     public init?(string: String) {
-        // Begin by constructing a validated URL from the given string
-        guard let validatedURL = ValidatedURL(string)?.requiring(scheme: ResolvedTopicReference.urlScheme) else {
+        // Begin by constructing a validated URL from the given string.
+        // Normally symbol links would be validated with `init(symbolPath:)` but since this is expected
+        // to be an absolute URL we parse it with `init(parsing:)` instead.
+        guard let validatedURL = ValidatedURL(parsing: string)?.requiring(scheme: ResolvedTopicReference.urlScheme) else {
             return nil
         }
         
