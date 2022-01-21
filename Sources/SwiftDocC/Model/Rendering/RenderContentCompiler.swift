@@ -138,7 +138,7 @@ struct RenderContentCompiler: MarkupVisitor {
             return cached
         } 
 
-        let unresolved = UnresolvedTopicReference(topicURL: .init(symbolDestination: destination))
+        let unresolved = UnresolvedTopicReference(topicURL: .init(symbolPath: destination))
         if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier, fromSymbolLink: true) {
             return resolved
         }
