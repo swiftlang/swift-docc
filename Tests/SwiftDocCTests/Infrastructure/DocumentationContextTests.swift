@@ -1149,6 +1149,9 @@ let expected = """
    ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi
      ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn
  doc://org.swift.docc.example/documentation/SideKit/NonExistent/UncuratedClass
+ doc://org.swift.docc.example/documentation/Test
+ ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup
+   ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup/MySnippet
  doc://org.swift.docc.example/tutorials/TestOverview
  ╰ doc://org.swift.docc.example/tutorials/TestOverview/$volume
    ╰ doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1

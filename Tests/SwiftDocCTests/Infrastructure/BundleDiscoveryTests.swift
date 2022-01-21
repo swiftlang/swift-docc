@@ -91,11 +91,12 @@ class BundleDiscoveryTests: XCTestCase {
         
         func checkBundle(_ bundle: DocumentationBundle) {
             XCTAssertEqual(bundle.displayName, "Test Bundle")
-            XCTAssertEqual(bundle.symbolGraphURLs.count, 4)
+            XCTAssertEqual(bundle.symbolGraphURLs.count, 5)
             XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("mykit-iOS.symbols.json"))
             XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("MyKit@SideKit.symbols.json"))
             XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("sidekit.symbols.json"))
             XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("FillIntroduced.symbols.json"))
+            XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("Test-snippets.symbols.json"))
             XCTAssertFalse(bundle.markupURLs.isEmpty)
             XCTAssertTrue(bundle.miscResourceURLs.map { $0.lastPathComponent }.sorted().contains("intro.png"))
         }
