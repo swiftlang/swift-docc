@@ -111,6 +111,26 @@ struct MarkupReferenceResolver: MarkupRewriter {
         link.destination = resolvedURL.absoluteString
         return link
     }
+
+    mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> String {
+        if let cached = context.referenceFor(absoluteSymbolPath: unresolvedDestination, parent: rootReference) {
+            guard context.topicGraph.isLinkable(cached) == true else {
+                problems.append(disabledLinkDestinationProblem(reference: cached, source: source, range: range, severity: .warning))
+                return unresolvedDestination
+            }
+            return cached.absoluteString
+        }
+
+        // We don't require a scheme here as the link can be a relative one, e.g. ``SwiftUI/View``
+        let url = ValidatedURL(symbolDestination: unresolvedDestination)
+        let unresolved = TopicReference.unresolved(.init(topicURL: url))
+        guard let resolvedURL = resolve(reference: unresolved, range: range, severity: .warning, fromSymbolLink: true) else {
+            return unresolvedDestination
+        }
+
+        return resolvedURL.absoluteString
+
+    }
     
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> Markup? {
         guard let destination = symbolLink.destination else {
@@ -118,24 +138,22 @@ struct MarkupReferenceResolver: MarkupRewriter {
         }
         
         var symbolLink = symbolLink
-        if let cached = context.referenceFor(absoluteSymbolPath: destination, parent: rootReference) {
-            guard context.topicGraph.isLinkable(cached) == true else {
-                problems.append(disabledLinkDestinationProblem(reference: cached, source: source, range: symbolLink.range, severity: .warning))
-                return symbolLink
-            }
-            symbolLink.destination = cached.absoluteString
-            return symbolLink
-        }
-
-        // We don't require a scheme here as the link can be a relative one, e.g. ``SwiftUI/View``
-        let url = ValidatedURL(symbolDestination: destination)
-        let unresolved = TopicReference.unresolved(.init(topicURL: url))
-        guard let resolvedURL = resolve(reference: unresolved, range: symbolLink.range, severity: .warning, fromSymbolLink: true) else {
-            return symbolLink
-        }
-        
-        symbolLink.destination = resolvedURL.absoluteString
+        symbolLink.destination = resolveAbsoluteSymbolLink(unresolvedDestination: destination, elementRange: symbolLink.range)
         return symbolLink
+    }
+
+    mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> Markup? {
+        switch blockDirective.name {
+        case Snippet.directiveName:
+            var problems = [Problem]()
+            guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, in: context, problems: &problems) else {
+                return blockDirective
+            }
+            let resolvedDestination = resolveAbsoluteSymbolLink(unresolvedDestination: snippet.path, elementRange: blockDirective.range)
+            return BlockDirective(name: Snippet.directiveName, argumentText: "path: \"\(resolvedDestination)\"", children: [])
+        default:
+            return defaultVisit(blockDirective)
+        }
     }
 }
 

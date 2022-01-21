@@ -24,7 +24,9 @@ extension DocumentationNode {
             case .unknown,
                  .volume,
                  .chapter,
-                 .onPageLandmark:
+                 .onPageLandmark,
+                 .snippet,
+                 .snippetGroup:
                 return false
             default:
                 return true
@@ -152,6 +154,11 @@ extension DocumentationNode.Kind {
     public static let propertyList = DocumentationNode.Kind(name: "Property List", id: "org.swift.docc.kind.propertyList", isSymbol: false)
     /// Documentation about an object.
     public static let object = DocumentationNode.Kind(name: "Object", id: "org.swift.docc.kind.dictionary", isSymbol: true)
+    /// A snippet.
+    public static let snippet = DocumentationNode.Kind(name: "Snippet", id: "org.swift.docc.kind.snippet", isSymbol: true)
+    /// A group of snippets.
+    public static let snippetGroup = DocumentationNode.Kind(name: "Snippet Group", id: "org.swift.docc.kind.snippetGroup", isSymbol: true)
+
 
     /// The list of all known kinds of documentation nodes.
     /// - Note: The `unknown` value is not included.
