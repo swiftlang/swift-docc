@@ -401,8 +401,7 @@ class AutomaticCurationTests: XCTestCase {
                 "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
                 "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
                 
-                "Type Aliases",
-                "/documentation/MixedLanguageFramework/Foo-occ.typealias",
+                // 'MixedLanguageFramework/Foo-occ.typealias' is manually curated in a task group titled "Custom" under 'MixedLanguageFramework/Bar/myStringFunction:error:'
                 
                 "Enumerations",
                 "/documentation/MixedLanguageFramework/Foo-swift.struct",

@@ -1182,7 +1182,10 @@ class ConvertActionTests: XCTestCase {
             XCTFail("Can't find linkable-entities.json in output")
             return
         }
-        XCTAssertEqual(resultLikableEntities.sorted(by: linkableEntitiesSort), linkableEntities.sorted(by: linkableEntitiesSort))
+        XCTAssertEqual(resultLikableEntities.count, linkableEntities.count)
+        for (resultEntity, entity) in zip(resultLikableEntities.sorted(by: linkableEntitiesSort), linkableEntities.sorted(by: linkableEntitiesSort)) {
+            XCTAssertEqual(resultEntity, entity)
+        }
         
         // Verify images
         guard let resultAssets: Digest.Assets = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("assets.json")) else {
@@ -1977,6 +1980,7 @@ class ConvertActionTests: XCTestCase {
             "Bar",
             "Type Methods",
             "class func myStringFunction(String) throws -> String",
+            "Custom",
             "Structures",
             "Foo",
             "Initializers",
@@ -2017,12 +2021,12 @@ class ConvertActionTests: XCTestCase {
             "Classes",
             "Bar",
             "Type Methods",
-            "class func myStringFunction(String) throws -> String",
+            "typedef enum Foo : NSString {\n    ...\n} Foo;",
+            "Custom",
+            "Foo",
             "Variables",
             "_MixedLanguageFrameworkVersionNumber",
             "_MixedLanguageFrameworkVersionString",
-            "Type Aliases",
-            "Foo",
             "Enumerations",
             "Foo",
             "Enumeration Cases",

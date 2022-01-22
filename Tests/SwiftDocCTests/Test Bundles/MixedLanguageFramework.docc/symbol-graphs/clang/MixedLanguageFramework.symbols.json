@@ -55,7 +55,7 @@
     },
     {
       "kind" : "memberOf",
-      "source" : "c:objc(cs)Bar(cm)MyStringFunction:error:",
+      "source" : "c:objc(cs)Bar(cm)myStringFunction:error:",
       "target" : "c:objc(cs)Bar",
       "targetFallback" : null
     }
@@ -65,8 +65,25 @@
       "accessLevel" : "public",
       "declarationFragments" : [
         {
+          "kind" : "keyword",
+          "spelling" : "@interface"
+        },
+        {
           "kind" : "text",
-          "spelling" : "BAR"
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "Bar"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " : "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "NSObject",
+          "preciseIdentifier": "c:objc(cs)NSObject"
         }
       ],
       "docComment" : {
@@ -102,7 +119,30 @@
         "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
-        "title" : "Bar"
+        "title" : "Bar",
+        "subHeading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "@interface"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Bar"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " : "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "NSObject",
+            "preciseIdentifier": "c:objc(cs)NSObject"
+          }
+        ]
       },
       "pathComponents" : [
         "Bar"
@@ -113,7 +153,50 @@
       "declarationFragments" : [
         {
           "kind" : "text",
-          "spelling" : "MYSTRINGFUNCTION:ERROR:"
+          "spelling" : "+ ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "NSString",
+          "preciseIdentifier": "c:objc(cs)NSString"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " *) "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myStringFunction"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "NSString",
+          "preciseIdentifier": "c:objc(cs)NSString"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " *)string"
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "error"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "NSError",
+          "preciseIdentifier": "c:objc(cs)NSError"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " **)error;"
         }
       ],
       "docComment" : {
@@ -134,12 +217,103 @@
           {
             "range" : {
               "end" : {
-                "character" : 41,
+                "character" : 4,
                 "line" : 35
               },
               "start" : {
                 "character" : 4,
                 "line" : 35
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 13,
+                "line" : 36
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 36
+              }
+            },
+            "text" : "## Topics"
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 4,
+                "line" : 37
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 37
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 14,
+                "line" : 38
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 38
+              }
+            },
+            "text" : "### Custom"
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 4,
+                "line" : 39
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 39
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 27,
+                "line" : 40
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 40
+              }
+            },
+            "text" : "- ``Foo-occ.typealias``"
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 4,
+                "line" : 41
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 41
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 41,
+                "line" : 42
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 42
               }
             },
             "text" : "- parameter string: The given string."
@@ -148,11 +322,11 @@
             "range" : {
               "end" : {
                 "character" : 24,
-                "line" : 36
+                "line" : 43
               },
               "start" : {
                 "character" : 4,
-                "line" : 36
+                "line" : 43
               }
             },
             "text" : "- returns: A string."
@@ -161,7 +335,7 @@
       },
       "identifier" : {
         "interfaceLanguage" : "occ",
-        "precise" : "c:objc(cs)Bar(cm)MyStringFunction:error:"
+        "precise" : "c:objc(cs)Bar(cm)myStringFunction:error:"
       },
       "kind" : {
         "displayName" : "Class Method",
@@ -175,19 +349,99 @@
         "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
-        "title" : "MyStringFunction:error:"
+        "title" : "myStringFunction:error:",
+        "subHeading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "typedef"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "keyword",
+            "spelling" : "enum"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Foo"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " : "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "NSString",
+            "preciseIdentifier": "c:@T@NSInteger"
+          },
+          {
+            "kind": "text",
+            "spelling": " {\n    ...\n} "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Foo"
+          },
+          {
+            "kind": "text",
+            "spelling": ";"
+          }
+        ]
       },
       "pathComponents" : [
         "Bar",
-        "MyStringFunction:error:"
+        "myStringFunction:error:"
       ]
     },
     {
       "accessLevel" : "public",
       "declarationFragments" : [
         {
+          "kind" : "keyword",
+          "spelling" : "typedef"
+        },
+        {
           "kind" : "text",
-          "spelling" : "FOO"
+          "spelling" : " "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "enum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "Foo"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " : "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "NSString",
+          "preciseIdentifier": "c:@T@NSInteger"
+        },
+        {
+          "kind": "text",
+          "spelling": " {\n    ...\n} "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Foo"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
         }
       ],
       "identifier" : {
@@ -229,8 +483,45 @@
       "accessLevel" : "public",
       "declarationFragments" : [
         {
+          "kind" : "keyword",
+          "spelling" : "typedef"
+        },
+        {
           "kind" : "text",
-          "spelling" : "FOO"
+          "spelling" : " "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "enum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "Foo"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " : "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "NSString",
+          "preciseIdentifier": "c:@T@NSInteger"
+        },
+        {
+          "kind": "text",
+          "spelling": " {\n    ...\n} "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Foo"
+        },
+        {
+          "kind": "text",
+          "spelling": ";"
         }
       ],
       "identifier" : {
@@ -249,7 +540,50 @@
         "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
-        "title" : "Foo"
+        "title" : "Foo",
+        "subHeading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "typedef"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "keyword",
+            "spelling" : "enum"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Foo"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " : "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "NSString",
+            "preciseIdentifier": "c:@T@NSInteger",
+          },
+          {
+            "kind": "text",
+            "spelling": " {\n    ...\n} "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Foo"
+          },
+          {
+            "kind": "text",
+            "spelling": ";"
+          }
+        ]
       },
       "pathComponents" : [
         "Foo"
