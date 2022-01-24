@@ -452,6 +452,8 @@ public struct DocumentationNode {
         case .`method`: return .instanceMethod
         case .`property`: return .instanceProperty
         case .`protocol`: return .protocol
+        case .snippet: return .snippet
+        case .snippetGroup: return .snippetGroup
         case .`struct`: return .structure
         case .`subscript`: return .instanceSubscript
         case .`typeMethod`: return .typeMethod

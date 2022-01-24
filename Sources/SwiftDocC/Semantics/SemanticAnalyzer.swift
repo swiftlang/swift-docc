@@ -147,6 +147,14 @@ struct SemanticAnalyzer: MarkupVisitor {
             return Redirect(from: blockDirective, source: source, for: bundle, in: context, problems: &problems)
         case DocumentationExtension.directiveName:
             return DocumentationExtension(from: blockDirective, source: source, for: bundle, in: context, problems: &problems)
+        case Snippet.directiveName:
+            // A snippet directive does not need to stay around as a Semantic object.
+            // we only need to check the path argument and that it doesn't
+            // have any inner content as a convenience to the author.
+            // The path will resolve as a symbol link later in the
+            // MarkupReferenceResolver.
+            _ = Snippet(from: blockDirective, source: source, for: bundle, in: context, problems: &problems)
+            return nil
         default:
             let diagnostic = Diagnostic(source: source, severity: .warning, range: blockDirective.range, identifier: "org.swift.docc.unknownDirective", summary: "Unknown directive \(blockDirective.name.singleQuoted); this element will be ignored")
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
