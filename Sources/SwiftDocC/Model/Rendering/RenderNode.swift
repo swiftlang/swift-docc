@@ -109,7 +109,7 @@ public struct RenderNode: VariantContainer {
     /// > Note: The patch value is currently unused and always set to `0`.
     public var schemaVersion = SemanticVersion(
         major: 0,
-        minor: 1,
+        minor: 2,
         patch: 0
     )
     

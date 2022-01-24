@@ -29,6 +29,15 @@ public struct DocumentationNode {
     /// All the languages in which the node is available.
     public var availableSourceLanguages: Set<SourceLanguage>
     
+    /// All of the traits that make up the different variants of this node.
+    public var availableVariantTraits: Set<DocumentationDataVariantsTrait> {
+        return Set(
+            availableSourceLanguages
+                .map(\.id)
+                .map(DocumentationDataVariantsTrait.init(interfaceLanguage:))
+        )
+    }
+    
     /// The names of the platforms for which the node is available.
     public var platformNames: Set<String>?
     
@@ -79,16 +88,16 @@ public struct DocumentationNode {
     /// linked to from other nodes' content.
     private mutating func updateAnchorSections() {
         // Scrub article discussion headings.
-        var discussion: DiscussionSection?
-        switch semantic {
-            case let article as Article:
-                discussion = article.discussion
-            case let symbol as Symbol:
-                discussion = symbol.discussion
-            default: break
+        let discussionSections: [DiscussionSection]
+        if let discussion = (semantic as? Article)?.discussion {
+            discussionSections = [discussion]
+        } else if let discussionVariants = (semantic as? Symbol)?.discussionVariants {
+            discussionSections = discussionVariants.allValues.map(\.variant)
+        } else {
+            return
         }
         
-        if let discussion = discussion {
+        for discussion in discussionSections {
             for child in discussion.content {
                 // For any H2/H3 sections found in the topic's discussion
                 // create an `AnchorSection` and add it to `anchorSections`
@@ -160,71 +169,134 @@ public struct DocumentationNode {
             )
         }
         
-        guard let symbol = unifiedSymbol.defaultSymbol else {
+        guard let defaultSymbol = unifiedSymbol.defaultSymbol else {
             fatalError("Unexpectedly failed to get 'defaultSymbol' from 'unifiedSymbol'.")
         }
         
-        self.kind = Self.kind(for: symbol)
+        self.kind = Self.kind(for: defaultSymbol)
         self.sourceLanguage = reference.sourceLanguage
-        self.name = .symbol(declaration: .init([.plain(symbol.names.title)]))
-        self.symbol = symbol
+        self.name = .symbol(declaration: .init([.plain(defaultSymbol.names.title)]))
+        self.symbol = defaultSymbol
         self.unifiedSymbol = unifiedSymbol
         
         self.markup = Document()
         self.docChunks = []
         self.tags = (returns: [], throws: [], parameters: [])
         
-        let symbolAvailability = symbol.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
+        let symbolAvailabilityVariants = DocumentationDataVariants(
+            symbolData: unifiedSymbol.mixins,
+            platformName: platformName
+        ) { mixins in
+            mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
+        }
+        
         var languages = Set([reference.sourceLanguage])
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
-        let availabilityDomains = symbolAvailability?.availability.compactMap({ $0.domain?.rawValue })
-        if let (sourceLanguages, otherDomains) = availabilityDomains?.categorize(where: SourceLanguage.init(knownLanguageName:)) {
+        for (_, symbolAvailability) in symbolAvailabilityVariants.allValues {
+            let (sourceLanguages, otherDomains) = symbolAvailability.availability
+                .compactMap({ $0.domain?.rawValue })
+                .categorize(where: SourceLanguage.init(knownLanguageName:))
+            
             languages.formUnion(sourceLanguages)
             operatingSystemName.formUnion(otherDomains)
         }
-        platformNames = Set(operatingSystemName.map { PlatformName(operatingSystemName: $0).rawValue })
-        availableSourceLanguages = languages
         
-        let extendedModule = (symbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension)?.extendedModule
-
-        let sema = Symbol(
-            kindVariants: .init(swiftVariant: symbol.kind),
-            titleVariants: .init(swiftVariant: symbol.names.title),
-            subHeadingVariants: .init(swiftVariant: symbol.names.subHeading),
-            navigatorVariants: .init(swiftVariant: symbol.names.navigator),
-            roleHeadingVariants: .init(swiftVariant: symbol.kind.displayName),
-            platformNameVariants: .init(swiftVariant: platformName.map(PlatformName.init(operatingSystemName:))),
-            moduleNameVariants: .init(swiftVariant: moduleName),
-            extendedModuleVariants: .init(swiftVariant: extendedModule),
-            externalIDVariants: .init(swiftVariant: symbol.identifier.precise),
-            accessLevelVariants: .init(swiftVariant: symbol.accessLevel.rawValue),
-            availabilityVariants: .init(swiftVariant: symbolAvailability),
-            deprecatedSummaryVariants: .init(swiftVariant: nil),
-            mixinsVariants: .init(swiftVariant: symbol.mixins),
-            relationshipsVariants: .init(swiftVariant: RelationshipsSection()),
-            abstractSectionVariants: .init(swiftVariant: AbstractSection(paragraph: .init([Text("Placeholder Abstract")]))),
-            discussionVariants: .init(swiftVariant: nil),
-            topicsVariants: .init(swiftVariant: nil),
-            seeAlsoVariants: .init(swiftVariant: nil),
-            returnsSectionVariants: .init(swiftVariant: nil),
-            parametersSectionVariants: .init(swiftVariant: nil),
-            redirectsVariants: .init(swiftVariant: nil),
-            bystanderModuleNamesVariants: .init(swiftVariant: bystanderModules)
+        self.platformNames = Set(
+            operatingSystemName.map { name in
+                PlatformName(operatingSystemName: name).rawValue
+            }
+        )
+        
+        self.availableSourceLanguages = reference.sourceLanguages
+        
+        let extendedModuleVariants = DocumentationDataVariants(
+            symbolData: unifiedSymbol.mixins,
+            platformName: platformName
+        ) { mixins in
+            return mixins.getValueIfPresent(
+                for: SymbolGraph.Symbol.Swift.Extension.self
+            )?.extendedModule
+        }
+        
+        let semanticSymbol = Symbol(
+            kindVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.kind,
+                platformName: platformName
+            ),
+            titleVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.names,
+                platformName: platformName,
+                keyPath: \.title
+            ),
+            subHeadingVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.names,
+                platformName: platformName,
+                keyPath: \.subHeading
+            ),
+            navigatorVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.names,
+                platformName: platformName,
+                keyPath: \.navigator
+            ),
+            roleHeadingVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.kind,
+                platformName: platformName,
+                keyPath: \.displayName
+            ),
+            platformNameVariants: DocumentationDataVariants(
+                defaultVariantValue: platformName.map(PlatformName.init(operatingSystemName:))
+            ),
+            moduleNameVariants: DocumentationDataVariants(defaultVariantValue: moduleName),
+            extendedModuleVariants: extendedModuleVariants,
+            externalIDVariants: DocumentationDataVariants(defaultVariantValue: unifiedSymbol.uniqueIdentifier),
+            accessLevelVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.accessLevel,
+                platformName: platformName,
+                keyPath: \.rawValue
+            ),
+            availabilityVariants: symbolAvailabilityVariants,
+            deprecatedSummaryVariants: .empty,
+            mixinsVariants: DocumentationDataVariants(
+                symbolData: unifiedSymbol.mixins,
+                platformName: platformName
+            ),
+            relationshipsVariants: DocumentationDataVariants(
+                defaultVariantValue: RelationshipsSection()
+            ),
+            abstractSectionVariants: DocumentationDataVariants(
+                defaultVariantValue: AbstractSection(
+                    paragraph: .init([Text("Placeholder Abstract")])
+                )
+            ),
+            discussionVariants: .empty,
+            topicsVariants: .empty,
+            seeAlsoVariants: .empty,
+            returnsSectionVariants: .empty,
+            parametersSectionVariants: .empty,
+            redirectsVariants: .empty,
+            bystanderModuleNamesVariants: DocumentationDataVariants(
+                defaultVariantValue: bystanderModules
+            )
         )
 
-        try! sema.mergeDeclarations(unifiedSymbol: unifiedSymbol)
-
-        self.semantic = sema
+        try! semanticSymbol.mergeDeclarations(unifiedSymbol: unifiedSymbol)
+        self.semantic = semanticSymbol
     }
 
-    /// Given an optional article updates the node's content.
+    /// Given an optional documentation extension, initializes the node's documentation content.
+    ///
     /// - Parameters:
     ///   - article: An optional documentation extension article.
     ///   - engine: A diagnostics engine.
-    mutating func initializeSymbolContent(article: Article?, engine: DiagnosticEngine) {
-        precondition(symbol != nil, "You can only call initializeSymbolContent() on a symbol node.")
-        let (markup, docChunks) = Self.contentFrom(symbol: symbol!, article: article, engine: engine)
+    mutating func initializeSymbolContent(documentationExtension: Article?, engine: DiagnosticEngine) {
+        precondition(unifiedSymbol != nil && symbol != nil, "You can only call initializeSymbolContent() on a symbol node.")
+        
+        let (markup, docChunks) = Self.contentFrom(
+            documentedSymbol: unifiedSymbol?.documentedSymbol,
+            documentationExtension: documentationExtension,
+            engine: engine
+        )
         
         self.markup = markup
         self.docChunks = docChunks
@@ -232,7 +304,7 @@ public struct DocumentationNode {
         // Parse the structured markup
         let markupModel = DocumentationMarkup(markup: markup)
         
-        let symbolAvailability = symbol!.mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
+        let symbolAvailability = symbol!.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Availability.self)
         
         // Use a deprecation summary from the symbol docs or article content.
         var deprecated: DeprecatedSection? = markupModel.deprecation.map { DeprecatedSection.init(content: $0.elements) }
@@ -247,19 +319,35 @@ public struct DocumentationNode {
         let semantic = self.semantic as! Symbol
         
         // Symbol is a by-reference type so we're updating the original `semantic` property instance.
-        semantic.abstractSection = markupModel.abstractSection
-        semantic.discussion = markupModel.discussionSection
-        semantic.topics = markupModel.topicsSection
-        semantic.seeAlso = markupModel.seeAlsoSection
-        semantic.deprecatedSummary = deprecated
-        semantic.redirects = article?.redirects
+        semantic.abstractSectionVariants = DocumentationDataVariants(
+            defaultVariantValue: markupModel.abstractSection
+        )
+        semantic.discussionVariants = DocumentationDataVariants(
+            defaultVariantValue: markupModel.discussionSection
+        )
+        semantic.topicsVariants = DocumentationDataVariants(
+            defaultVariantValue: markupModel.topicsSection
+        )
+        semantic.seeAlsoVariants = DocumentationDataVariants(
+            defaultVariantValue: markupModel.seeAlsoSection
+        )
+        semantic.deprecatedSummaryVariants = DocumentationDataVariants(
+            defaultVariantValue: deprecated
+        )
+        semantic.redirectsVariants = DocumentationDataVariants(
+            defaultVariantValue: documentationExtension?.redirects
+        )
         
         if let returns = markupModel.discussionTags?.returns, !returns.isEmpty {
-            semantic.returnsSection = ReturnsSection(content: returns[0].contents)
+            semantic.returnsSectionVariants = DocumentationDataVariants(
+                defaultVariantValue: ReturnsSection(content: returns[0].contents)
+            )
         }
         
         if let parameters = markupModel.discussionTags?.parameters, !parameters.isEmpty {
-            semantic.parametersSection = ParametersSection(parameters: parameters)
+            semantic.parametersSectionVariants = DocumentationDataVariants(
+                defaultVariantValue: ParametersSection(parameters: parameters)
+            )
         }
         
         updateAnchorSections()
@@ -271,29 +359,33 @@ public struct DocumentationNode {
     ///   - article: An optional article with documentation content.
     ///   - engine: A diagnostics engine to use for problems found while parsing content.
     /// - Returns: The prepared node documentation content.
-    static func contentFrom(symbol: SymbolGraph.Symbol, article: Article?, engine: DiagnosticEngine)
-        -> (markup: Markup, docChunks: [DocumentationChunk]) {
-        
+    static func contentFrom(
+        documentedSymbol: SymbolGraph.Symbol?,
+        documentationExtension: Article?,
+        engine: DiagnosticEngine
+    ) -> (markup: Markup, docChunks: [DocumentationChunk]) {
         let markup: Markup
-        let docChunks: [DocumentationChunk]
+        var documentationChunks: [DocumentationChunk]
         
-        switch (article?.markup.flatMap{_ in article}, symbol.docComment) {
-        case (nil, nil):
-            markup = Document()
-            docChunks = [DocumentationChunk(source: .sourceCode(location: nil), markup: markup)]
-            
-        case (let article?, nil),
-             (let article?, _) where article.metadata?.documentationOptions?.behavior == .override:
-            markup = article.markup!
-            docChunks = [DocumentationChunk(source: .documentationExtension, markup: markup)]
-            
-        case (_, let docComment?):
+        // We should ignore the symbol's documentation comment if it wasn't provided
+        // or if the documentation extension was set to override.
+        let ignoreDocComment = documentedSymbol?.docComment == nil
+            || documentationExtension?.metadata?.documentationOptions?.behavior == .override
+        
+        if let documentationExtensionMarkup = documentationExtension?.markup, ignoreDocComment {
+            markup = documentationExtensionMarkup
+            documentationChunks = [
+                DocumentationChunk(source: .documentationExtension, markup: documentationExtensionMarkup)
+            ]
+        } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
             let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
             let docCommentMarkup = Document(parsing: docCommentString, options: [.parseBlockDirectives, .parseSymbolLinks])
             
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
             if !docCommentDirectives.isEmpty {
-                let location = (symbol.mixins[SymbolGraph.Symbol.Location.mixinKey] as? SymbolGraph.Symbol.Location)?.url()
+                let location = symbol.mixins.getValueIfPresent(
+                    for: SymbolGraph.Symbol.Location.self
+                )?.url()
                 
                 for comment in docCommentDirectives {
                     let range = docCommentMarkup.child(at: comment.indexInParent)?.range
@@ -315,21 +407,29 @@ public struct DocumentationNode {
                 }
             }
 
-            var docs: [DocumentationChunk] = [DocumentationChunk(source: .sourceCode(location: symbol.mixins[SymbolGraph.Symbol.Location.mixinKey] as? SymbolGraph.Symbol.Location), markup: docCommentMarkup)]
+            documentationChunks = [
+                DocumentationChunk(
+                    source: .sourceCode(location: symbol.mixins.getValueIfPresent(for: SymbolGraph.Symbol.Location.self)),
+                    markup: docCommentMarkup
+                )
+            ]
 
-            if let articleMarkup = article?.markup {
+            if let documentationExtensionMarkup = documentationExtension?.markup {
                 // An `Article` always starts with a level 1 heading (and return `nil` if that's not the first child).
                 // For documentation extension files, this heading is a link to the symbol—which isn't part of the content—so it is ignored.
-                let articleChildren = articleMarkup.children.dropFirst().compactMap { $0 as? BlockMarkup }
-                docs.append(DocumentationChunk(source: .documentationExtension, markup: articleMarkup))
-                markup = Document(Array(docCommentMarkup.blockChildren) + articleChildren)
+                let documentationExtensionChildren = documentationExtensionMarkup.children.dropFirst().compactMap { $0 as? BlockMarkup }
+                
+                documentationChunks.append(DocumentationChunk(source: .documentationExtension, markup: documentationExtensionMarkup))
+                markup = Document(Array(docCommentMarkup.blockChildren) + documentationExtensionChildren)
             } else {
                 markup = docCommentMarkup
             }
-            docChunks = docs
+        } else {
+            markup = Document()
+            documentationChunks = [DocumentationChunk(source: .sourceCode(location: nil), markup: markup)]
         }
         
-        return (markup: markup, docChunks: docChunks)
+        return (markup: markup, docChunks: documentationChunks)
     }
 
     /// Returns a documentation node kind for the given symbol kind.
@@ -352,6 +452,8 @@ public struct DocumentationNode {
         case .`method`: return .instanceMethod
         case .`property`: return .instanceProperty
         case .`protocol`: return .protocol
+        case .snippet: return .snippet
+        case .snippetGroup: return .snippetGroup
         case .`struct`: return .structure
         case .`subscript`: return .instanceSubscript
         case .`typeMethod`: return .typeMethod
@@ -393,7 +495,7 @@ public struct DocumentationNode {
         // Prefer content sections coming from an article (documentation extension file)
         var deprecated: DeprecatedSection?
         
-        let (markup, docChunks) = Self.contentFrom(symbol: symbol, article: article, engine: engine)
+        let (markup, docChunks) = Self.contentFrom(documentedSymbol: symbol, documentationExtension: article, engine: engine)
         self.markup = markup
         self.docChunks = docChunks
         

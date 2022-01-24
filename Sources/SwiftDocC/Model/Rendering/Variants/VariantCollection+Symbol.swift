@@ -84,6 +84,45 @@ public extension VariantCollection {
         self.init(defaultValue: defaultValue, variants: variants)
     }
     
+    /// Creates a variant collection from a given set of variant traits.
+    ///
+    /// If there are no variants for the given traits, this initializer returns `nil`.
+    ///
+    /// This initializer picks a variant (the Swift variant, if available)
+    /// of the given symbol data as the default value for the variant collection. Other variants
+    /// are encoded in the variant collection's ``variants``.
+    ///
+    /// - Parameters:
+    ///   - traits: The traits to consider when creating a variant collection.
+    ///   - fallbackDefaultValue: A fallback value to use if the given `transform` function
+    ///     returns nil for the default trait.
+    ///   - transform: The function that should be used to transform the a given variant trait
+    ///     to a value for the variant collection
+    init?(
+        from traits: Set<DocumentationDataVariantsTrait>,
+        fallbackDefaultValue: Value,
+        transform: (DocumentationDataVariantsTrait) -> Value?
+    ) {
+        var traits = traits
+        guard let defaultTrait = traits.removeFirstTraitForRendering() else {
+            return nil
+        }
+        
+        let defaultValue = transform(defaultTrait) ?? fallbackDefaultValue
+        
+        let variants = traits.compactMap { trait in
+            guard let value = transform(trait) else {
+                return nil
+            }
+            
+            return (trait, value)
+        }.compactMap { trait, value in
+            Self.createVariant(trait: trait, value: value)
+        }
+        
+        self.init(defaultValue: defaultValue, variants: variants)
+    }
+    
     /// Creates a variant collection from two symbol variants data using the given transformation closure.
     ///
     /// If the first symbol data variants value is empty, this initializer returns `nil`. If the second data variants value is empty, the transform closure is passed
@@ -272,6 +311,21 @@ private extension DocumentationDataVariants {
     }
 }
 
+private extension Set where Element == DocumentationDataVariantsTrait {
+    /// Removes and returns the trait that should be considered as the default value
+    /// for rendering.
+    ///
+    /// The default value used for rendering is the Swift variant of the symbol data if available,
+    /// otherwise it's the first one that's been registered.
+    mutating func removeFirstTraitForRendering() -> DocumentationDataVariantsTrait? {
+        if isEmpty {
+            return nil
+        } else {
+            return remove(.swift) ?? removeFirst()
+        }
+    }
+}
+
 /// Creates a dictionary out of two sequences of pairs of the same key type.
 ///
 /// ```swift
@@ -342,7 +396,7 @@ private func zipPairsByKey<Key, Value1, Value2>(
     )
 }
 
-/// Creates a dictionary out of three sequences of pairs of the same key type
+/// Creates a dictionary out of three sequences of pairs of the same key type.
 ///
 /// ```swift
 /// let words = [("a", "one"), ("b", "two")]

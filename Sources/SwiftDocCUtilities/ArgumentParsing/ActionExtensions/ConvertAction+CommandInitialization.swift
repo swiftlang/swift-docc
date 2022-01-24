@@ -72,6 +72,7 @@ extension ConvertAction {
             emitDigest: convert.emitDigest,
             currentPlatforms: parsedPlatforms,
             buildIndex: convert.index,
+            temporaryDirectory: FileManager.default.temporaryDirectory,
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions
             ),
@@ -79,7 +80,9 @@ extension ConvertAction {
             diagnosticLevel: convert.diagnosticLevel,
             emitFixits: convert.emitFixits,
             inheritDocs: convert.enableInheritedDocs,
-            experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates
+            experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
+            transformForStaticHosting: convert.transformForStaticHosting,
+            hostingBasePath: convert.hostingBasePath
         )
     }
 }

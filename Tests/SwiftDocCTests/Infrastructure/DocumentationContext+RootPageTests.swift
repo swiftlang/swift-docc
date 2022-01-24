@@ -11,10 +11,11 @@
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class DocumentationContext_RootPageTests: XCTestCase {
     func testNoSGFBundle() throws {
-        let tempFolder = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             Folder(name: "no-sgf-test.docc", content: [
                 // Root page for the collection
                 TextFile(name: "ReleaseNotes.md", utf8Content: """
@@ -41,7 +42,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
         // Parse this test content
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolder.url.appendingPathComponent("no-sgf-test.docc"))
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL.appendingPathComponent("no-sgf-test.docc"))
         try workspace.registerProvider(dataProvider)
         
         // Verify all articles were loaded in the context
@@ -56,7 +57,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
     }
 
     func testWarnForSidecarRootPage() throws {
-        let tempFolder = try TempFolder(content: [
+        let tempFolderURL = try createTempFolder(content: [
             Folder(name: "no-sgf-test.docc", content: [
                 // Root page for the collection
                 TextFile(name: "ReleaseNotes.md", utf8Content: """
@@ -83,7 +84,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
         // Parse this test content
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolder.url.appendingPathComponent("no-sgf-test.docc"))
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolderURL.appendingPathComponent("no-sgf-test.docc"))
         try workspace.registerProvider(dataProvider)
         
         // Verify that we emit a warning when trying to make a symbol a root page

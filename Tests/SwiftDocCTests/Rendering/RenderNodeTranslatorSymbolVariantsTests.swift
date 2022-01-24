@@ -265,6 +265,9 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 symbol.navigatorVariants[.objectiveC] = [
                     .init(kind: .keyword, spelling: "objc", preciseIdentifier: nil)
                 ]
+                
+                symbol.titleVariants[.swift] = "Swift Title"
+                symbol.titleVariants[.objectiveC] = "Objective-C Title"
             },
             assertOriginalRenderNode: { renderNode in
                 XCTAssertEqual(
@@ -636,7 +639,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 )
             },
             assertAfterApplyingVariant: { renderNode in
-                XCTAssertEqual(renderNode.topicSections.count, 3)
+                XCTAssertEqual(renderNode.topicSections.count, 1)
                 let taskGroup = try XCTUnwrap(renderNode.topicSections.first)
                 XCTAssertEqual(taskGroup.title, "Objective-C Task Group")
                 
@@ -651,6 +654,9 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testTopicsSectionVariantsNoUserProvidedTopics() throws {
         try assertMultiVariantSymbol(
             configureSymbol: { symbol in
+                symbol.automaticTaskGroupsVariants[.fallback] = []
+                symbol.topicsVariants[.fallback] = nil
+                
                 symbol.automaticTaskGroupsVariants[.swift] = []
                 symbol.topicsVariants[.swift] = nil
                 
@@ -858,6 +864,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
         
         try configureContext(context, identifier)
+        context.documentationCache[identifier]?.availableSourceLanguages = [.swift, .objectiveC]
         
         let node = try context.entity(with: identifier)
         

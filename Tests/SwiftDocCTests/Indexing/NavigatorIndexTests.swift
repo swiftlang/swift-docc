@@ -165,11 +165,7 @@ Root
     }
     
     func testNavigationTreeDumpAndRead() throws {
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: targetURL)
-        }
+        let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
         
         let root = generateSmallTree()
@@ -219,11 +215,7 @@ Root
   
     func testNavigationTreeLargeDumpAndRead() throws {
 #if os(OSX)
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: targetURL)
-        }
+        let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
         let root = generateLargeTree()
         let original = NavigatorTree(root: root)
@@ -237,13 +229,9 @@ Root
     
     // This test has been disabled because of frequent failures in Swift CI.
     //
-    // rdar://85055022 tracks updating this test to remove any flakiness.
+    // rdar://87737744 tracks updating this test to remove any flakiness.
     func disabled_testNavigationTreeLargeDumpAndReadAsync() throws {
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: targetURL)
-        }
+        let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
         
         let root = generateLargeTree()
@@ -284,11 +272,7 @@ Root
     }
     
     func testNavigatorIndexGenerationEmpty() throws {
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: targetURL)
-        }
+        let targetURL = try createTemporaryDirectory()
         
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
         builder.setup()
@@ -303,11 +287,7 @@ Root
     }
     
     func testNavigatorIndexGenerationOneNode() throws {
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: targetURL)
-        }
+        let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
         
         let original = NavigatorTree(root: NavigatorTree.rootNode(bundleIdentifier: NavigatorIndex.UnknownBundleIdentifier))
@@ -337,11 +317,7 @@ Root
         
         let renderNode = try RenderNode.decode(fromJSON: Data(contentsOf: operatorURL))
 
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: targetURL, withIntermediateDirectories: true, attributes: nil)
-        defer {
-            try? FileManager.default.removeItem(at: targetURL)
-        }
+        let targetURL = try createTemporaryDirectory()
 
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
         builder.setup()
@@ -359,7 +335,7 @@ Root
         
         // Create an index 10 times to ensure we have not undeterministic behavior across builds
         for _ in 0..<10 {
-            let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+            let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
             builder.setup()
             
@@ -405,7 +381,7 @@ Root
         let jsonFile = Bundle.module.url(forResource: "Variant-render-node", withExtension: "json", subdirectory: "Test Resources")!
         let jsonData = try Data(contentsOf: jsonFile)
         
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         
@@ -441,7 +417,7 @@ Root
         
         // Create an index 10 times to ensure we have not undeterministic behavior across builds
         for _ in 0..<10 {
-            let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+            let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, usePageTitle: true)
             builder.setup()
             
@@ -490,7 +466,7 @@ Root
         
         // Create an index 10 times to ensure we have not undeterministic behavior across builds
         for _ in 0..<10 {
-            let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+            let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, writePathsOnDisk: false)
             builder.setup()
             
@@ -532,7 +508,6 @@ Root
             
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
-            try FileManager.default.removeItem(at: targetURL)
         }
         
         XCTAssertEqual(results.count, 1)
@@ -544,7 +519,7 @@ Root
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         
@@ -594,7 +569,7 @@ Root
         
         // Create an index 10 times to ensure we have no undeterministic behavior across builds
         for _ in 0..<10 {
-            let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+            let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
             builder.setup()
             
@@ -654,7 +629,7 @@ Root
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
         builder.setup()
         
@@ -751,7 +726,7 @@ Root
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
         builder.setup()
         
@@ -1007,8 +982,7 @@ Root
         XCTAssertEqual(availabilityIndex.versions(for: .iOS)?.count, 4)
         XCTAssertEqual(availabilityIndex.versions(for: .macOS)?.count, 1)
         
-        let targetFolder = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
-        try FileManager.default.createDirectory(at: targetFolder, withIntermediateDirectories: true)
+        let targetFolder = try createTemporaryDirectory()
         let targetURL = targetFolder.appendingPathComponent("availability.index")
         let jsonEncoder = JSONEncoder()
         let data = try jsonEncoder.encode(availabilityIndex)
@@ -1161,7 +1135,7 @@ Root
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         
-        let targetURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        let targetURL = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: "org.swift.docc.test", sortRootChildrenByName: true)
         builder.setup()
         

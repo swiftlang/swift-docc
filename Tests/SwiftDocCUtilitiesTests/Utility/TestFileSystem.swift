@@ -9,8 +9,10 @@
 */
 
 import Foundation
+import XCTest
 @testable import SwiftDocCUtilities
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 /// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
 ///
@@ -69,7 +71,6 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         
         // Default system paths
         files["/"] = Self.folderFixtureData
-        files[NSTemporaryDirectory()] = Self.folderFixtureData
  
         // Import given folders
         try updateDocumentationBundles(withFolders: folders)
@@ -93,7 +94,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
                     info: DocumentationBundle.Info(
                         displayName: info.content.displayName,
                         identifier: info.content.identifier,
-                        version: Version(versionString: info.content.versionString)!
+                        version: info.content.versionString
                     ),
                     symbolGraphURLs: graphs,
                     markupURLs: markupFiles,
@@ -277,6 +278,49 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
 
         return files[atPath]
     }
+    
+    func contentsOfDirectory(atPath path: String) throws -> [String] {
+        filesLock.lock()
+        defer { filesLock.unlock() }
+        
+        var results = Set<String>()
+        
+        let paths = files.keys.filter { $0.hasPrefix(path) }
+        for p in paths {
+            let endOfPath = String(p.dropFirst(path.count))
+            guard !endOfPath.isEmpty else { continue }
+            let pathParts = endOfPath.components(separatedBy: "/")
+            if pathParts.count == 1 {
+                results.insert(pathParts[0])
+            }
+        }
+        return Array(results)
+    }
+
+
+
+    func contentsOfDirectory(at url: URL, includingPropertiesForKeys keys: [URLResourceKey]?, options mask: FileManager.DirectoryEnumerationOptions) throws -> [URL] {
+
+        if let keys = keys {
+            XCTAssertTrue(
+                keys.isEmpty,
+                "includingPropertiesForKeys is not implemented in contentsOfDirectory in TestFileSystem"
+            )
+        }
+        
+        if mask != .skipsHiddenFiles && mask.isEmpty {
+            XCTFail("The given directory enumeration option(s) have not been implemented in the test file system: \(mask)")
+        }
+
+        let skipHiddenFiles = mask == .skipsHiddenFiles
+        let contents = try contentsOfDirectory(atPath: url.path)
+        let output: [URL] = contents.filter({ skipHiddenFiles ? !$0.hasPrefix(".") : true}).map {
+            url.appendingPathComponent($0)
+        }
+
+        return output
+    }
+
     
     enum Errors: DescribedError {
         case invalidPath(String)

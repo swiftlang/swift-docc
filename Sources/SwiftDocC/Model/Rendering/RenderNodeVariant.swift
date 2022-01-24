@@ -25,7 +25,7 @@ extension RenderNode {
     public struct Variant: Codable, Equatable {
         
         /// A trait describing an aspect of the render variant.
-        public enum Trait: Codable, Equatable {
+        public enum Trait: Codable, Hashable {
             /// Presentation language (e.g. Swift or Obj-C).
             case interfaceLanguage(String)
             

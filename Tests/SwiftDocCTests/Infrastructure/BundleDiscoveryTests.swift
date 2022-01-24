@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class BundleDiscoveryTests: XCTestCase {
     
@@ -20,8 +21,7 @@ class BundleDiscoveryTests: XCTestCase {
         .filter { !$0.pathComponents.dropFirst(testBundleLocation.pathComponents.count).contains(where: { $0.hasPrefix(".") }) }
     
     func testFirstBundle() throws {
-        let url = URL(fileURLWithPath: NSTemporaryDirectory().appending(UUID().uuidString))
-        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+        let url = try createTemporaryDirectory()
         // Create 3 minimal doc bundles
         for i in 1 ... 3 {
             let nestedBundle = Folder(name: "TestBundle\(i).docc", content: [
@@ -38,8 +38,6 @@ class BundleDiscoveryTests: XCTestCase {
             ])
             _ = try nestedBundle.write(inside: url)
         }
-
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
@@ -74,9 +72,7 @@ class BundleDiscoveryTests: XCTestCase {
             ]),
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         let workspaceURL = try workspace.write(inside: tempURL)
 
@@ -95,11 +91,12 @@ class BundleDiscoveryTests: XCTestCase {
         
         func checkBundle(_ bundle: DocumentationBundle) {
             XCTAssertEqual(bundle.displayName, "Test Bundle")
-            XCTAssertEqual(bundle.symbolGraphURLs.count, 4)
+            XCTAssertEqual(bundle.symbolGraphURLs.count, 5)
             XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("mykit-iOS.symbols.json"))
             XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("MyKit@SideKit.symbols.json"))
             XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("sidekit.symbols.json"))
             XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("FillIntroduced.symbols.json"))
+            XCTAssertTrue(bundle.symbolGraphURLs.map { $0.lastPathComponent }.contains("Test-snippets.symbols.json"))
             XCTAssertFalse(bundle.markupURLs.isEmpty)
             XCTAssertTrue(bundle.miscResourceURLs.map { $0.lastPathComponent }.sorted().contains("intro.png"))
         }
@@ -111,9 +108,7 @@ class BundleDiscoveryTests: XCTestCase {
     
     func testBundleFormat() throws {
         func parsedBundle(from folder: File) throws -> DocumentationBundle? {
-            let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-            try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-            defer { try? FileManager.default.removeItem(at: tempURL) }
+            let tempURL = try createTemporaryDirectory()
             
             let workspaceURL = try folder.write(inside: tempURL)
             let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
@@ -209,9 +204,7 @@ class BundleDiscoveryTests: XCTestCase {
             CopyOfFolder(original: testBundleLocation, newName: "Not a doc bundle", filter: { DocumentationBundleFileTypes.isSymbolGraphFile($0) }),
         ])
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         let workspaceURL = try workspace.write(inside: tempURL)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
@@ -255,9 +248,7 @@ class BundleDiscoveryTests: XCTestCase {
         
         XCTAssertFalse(workspace.recursiveContent.contains(where: { $0.name == "Info.plist" }), "This bundle shouldn't contain an Info.plist file")
         
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
         
         let workspaceURL = try workspace.write(inside: tempURL)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
@@ -279,7 +270,7 @@ class BundleDiscoveryTests: XCTestCase {
         // The bundle information was specified via the options
         XCTAssertEqual(bundle.identifier, "com.fallback.bundle.identifier")
         XCTAssertEqual(bundle.displayName, "Fallback Display Name")
-        XCTAssertEqual(bundle.version, Version(arrayLiteral: 1, 2, 3))
+        XCTAssertEqual(bundle.version, "1.2.3")
     }
 
     func testNoCustomTemplates() throws {
@@ -287,9 +278,7 @@ class BundleDiscoveryTests: XCTestCase {
             CopyOfFolder(original: testBundleLocation),
         ])
 
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
 
         let workspaceURL = try workspace.write(inside: tempURL)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
@@ -319,9 +308,7 @@ class BundleDiscoveryTests: XCTestCase {
             ]
         )
 
-        let tempURL = Foundation.URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(ProcessInfo.processInfo.globallyUniqueString)
-        try FileManager.default.createDirectory(at: tempURL, withIntermediateDirectories: true, attributes: nil)
-        defer { try? FileManager.default.removeItem(at: tempURL) }
+        let tempURL = try createTemporaryDirectory()
 
         let workspaceURL = try workspace.write(inside: tempURL)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)

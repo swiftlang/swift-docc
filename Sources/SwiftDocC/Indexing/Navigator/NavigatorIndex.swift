@@ -189,7 +189,7 @@ public class NavigatorIndex {
      */
     fileprivate init(withEmptyTree url: URL, bundleIdentifier: String) throws {
         self.url = url
-        self.environment = try LMDB.Environment(path: url.path, flags: [], maxDBs: 4, mapSize: 100 * 1024 * 1024) // mapSize = 100MB
+        self.environment = try LMDB.Environment(path: url.path, flags: [.noLock], maxDBs: 4, mapSize: 100 * 1024 * 1024) // mapSize = 100MB
         self.database = try environment.openDatabase(named: "index", flags: [.create])
         self.information = try environment.openDatabase(named: "information", flags: [.create])
         self.availability = try environment.openDatabase(named: "availability", flags: [.create])
@@ -411,7 +411,41 @@ public class NavigatorIndex {
     }
 }
 
+extension ResolvedTopicReference {
+    func navigatorIndexIdentifier(
+        forLanguage languageIdentifier: InterfaceLanguage.ID
+    ) -> NavigatorIndex.Identifier {
+        return NavigatorIndex.Identifier(
+            bundleIdentifier: bundleIdentifier,
+            path: path,
+            fragment: fragment,
+            languageIdentifier: languageIdentifier
+        )
+    }
+}
+
 extension NavigatorIndex {
+    /// A unique identifier for navigator index items.
+    ///
+    /// Used to identify relationships in the navigator index during the index build process.
+    public struct Identifier: Hashable {
+        let bundleIdentifier: String
+        let path: String
+        let fragment: String?
+        let languageIdentifier: InterfaceLanguage.ID
+        
+        init(
+            bundleIdentifier: String,
+            path: String,
+            fragment: String? = nil,
+            languageIdentifier: InterfaceLanguage.ID
+        ) {
+            self.bundleIdentifier = bundleIdentifier
+            self.path = path
+            self.fragment = fragment
+            self.languageIdentifier = languageIdentifier
+        }
+    }
     
     /**
      A `Builder` is a utility class to build a navigator index.
@@ -450,22 +484,22 @@ extension NavigatorIndex {
         public private(set) var isCompleted = false
         
         /// The map of identifier to navigation item.
-        private var identifierToNode = [ResolvedTopicReference: NavigatorTree.Node]()
+        private var identifierToNode = [Identifier: NavigatorTree.Node]()
         
         /// The map of identifier to children.
-        private var identifierToChildren = [ResolvedTopicReference: [ResolvedTopicReference]]()
+        private var identifierToChildren = [Identifier: [Identifier]]()
         
         /// A temporary list of pending references that are waiting for their parent to be indexed.
-        private var pendingUncuratedReferences = Set<ResolvedTopicReference>()
+        private var pendingUncuratedReferences = Set<Identifier>()
         
         /// A map with all nodes that are curated mutliple times in the tree and need to be processed at the very end.
-        private var multiCurated = [ResolvedTopicReference: NavigatorTree.Node]()
+        private var multiCurated = [Identifier: NavigatorTree.Node]()
         
         /// A set with all nodes that are curated mutliple times, but still have to be visited.
-        private var multiCuratedUnvisited = Set<ResolvedTopicReference>()
+        private var multiCuratedUnvisited = Set<Identifier>()
         
         /// A set with all nodes that are curated.
-        private var curatedIdentifiers = Set<ResolvedTopicReference>()
+        private var curatedIdentifiers = Set<Identifier>()
         
         /// Maps an arbitrary InterfaceLanguage string to an InterfaceLanguage.
         private var nameToLanguage = [String: InterfaceLanguage]()
@@ -547,14 +581,6 @@ extension NavigatorIndex {
             guard let title = (usePageTitle) ? renderNode.metadata.title : renderNode.navigatorTitle() else {
                 throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title and so can't have a usable entry in the index.")
             }
-
-            let identifier = renderNode.identifier
-            guard identifierToNode[identifier] == nil else {
-                return // skip as item exists already.
-            }
-            
-            // Get the identifier path
-            let identifierPath = NodeURLGenerator().urlForReference(identifier, lowercased: true).path
             
             // Process the language
             let interfaceLanguage = renderNode.identifier.sourceLanguage.id
@@ -566,6 +592,14 @@ extension NavigatorIndex {
                 let language = InterfaceLanguage(interfaceLanguage, id: nameToLanguage.count)
                 nameToLanguage[interfaceLanguage.lowercased()] = language
             }
+
+            let identifier = renderNode.identifier.navigatorIndexIdentifier(forLanguage: language.mask)
+            guard identifierToNode[identifier] == nil else {
+                return // skip as item exists already.
+            }
+            
+            // Get the identifier path
+            let identifierPath = NodeURLGenerator().urlForReference(renderNode.identifier, lowercased: true).path
             
             // Store the language inside the availability index.
             navigatorIndex.availabilityIndex.add(language: language)
@@ -634,7 +668,7 @@ extension NavigatorIndex {
             let navigatorNode = NavigatorTree.Node(item: navigationItem, bundleIdentifier: bundleIdentifier)
             
             // Process the children
-            var children = [ResolvedTopicReference]()
+            var children = [Identifier]()
             for (index, child) in childrenRelationship.enumerated() {
                 guard let title = child.name else {
                      throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title for a task group.")
@@ -642,10 +676,12 @@ extension NavigatorIndex {
                 
                 let fragment = "\(title)#\(index)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
                 
-                let groupIdentifier = ResolvedTopicReference(bundleIdentifier: identifier.bundleIdentifier,
-                                                             path: identifierPath,
-                                                             fragment: fragment,
-                                                             sourceLanguage: identifier.sourceLanguage)
+                let groupIdentifier = Identifier(
+                    bundleIdentifier: identifier.bundleIdentifier,
+                    path: identifierPath,
+                    fragment: fragment,
+                    languageIdentifier: language.mask
+                )
                 
                 let groupItem = NavigatorItem(pageType: UInt8(PageType.groupMarker.rawValue),
                                               languageID: language.mask,
@@ -659,13 +695,15 @@ extension NavigatorIndex {
                 identifierToNode[groupIdentifier] = navigatorGroup
                 children.append(groupIdentifier)
                 
-                let identifiers = child.references.map { (reference: TopicRenderReference) -> ResolvedTopicReference in
-                    return ResolvedTopicReference(bundleIdentifier: bundleIdentifier.lowercased(),
-                                                  path: reference.url.lowercased(),
-                                                  sourceLanguage: identifier.sourceLanguage)
+                let identifiers = child.references.map { reference in
+                    return Identifier(
+                        bundleIdentifier: bundleIdentifier.lowercased(),
+                        path: reference.url.lowercased(),
+                        languageIdentifier: language.mask
+                    )
                 }
                 
-                var nestedChildren = [ResolvedTopicReference]()
+                var nestedChildren = [Identifier]()
                 for identifier in identifiers {
                     if child.referencesAreNested {
                         nestedChildren.append(identifier)
@@ -688,7 +726,10 @@ extension NavigatorIndex {
                 }
             }
             
-            let normalizedIdentifier = identifier.normalizedForNavigation
+            let normalizedIdentifier = renderNode
+                .identifier
+                .normalizedForNavigation
+                .navigatorIndexIdentifier(forLanguage: language.mask)
             
             // Keep track of the node
             identifierToNode[normalizedIdentifier] = navigatorNode
@@ -701,8 +742,20 @@ extension NavigatorIndex {
                 multiCuratedUnvisited.remove(normalizedIdentifier)
             }
             
+            // Bump the nodes counter.
+            counter += 1
+            
+            // We only want to check for an objective-c variant
+            // if we're currently indexing a swift variant.
+            guard language == .swift else {
+                return
+            }
+            
             // Check if the render node has a variant for Objective-C
-            let objCVariantTrait = renderNode.variantOverrides?.values.flatMap({ $0.traits }).first { trait in
+            //
+            // Note that we need to check the `variants` property here, not the `variantsOverride`
+            // property because `variantsOverride` is only populated when the RenderNode is encoded.
+            let objCVariantTrait = renderNode.variants?.flatMap(\.traits).first { trait in
                 switch trait {
                 case .interfaceLanguage(let language):
                     return InterfaceLanguage.from(string: language) == .objc
@@ -716,9 +769,6 @@ extension NavigatorIndex {
                 let variantRenderNode = try RenderNode.decode(fromJSON: transformedData)
                 try index(renderNode: variantRenderNode)
             }
-            
-            // Bump the nodes counter.
-            counter += 1
         }
         
         /// An internal struct to store data about a single navigator entry.
@@ -741,8 +791,8 @@ extension NavigatorIndex {
             
             // Assign the children to the parents, starting with multi curated nodes
             var nodesMultiCurated = multiCurated.map { ($0, $1) }
-            var index = 0
-            while index < nodesMultiCurated.count {
+            
+            for index in 0..<nodesMultiCurated.count {
                 let (nodeID, parent) = nodesMultiCurated[index]
                 let placeholders = identifierToChildren[nodeID]!
                 for reference in placeholders {
@@ -759,8 +809,6 @@ extension NavigatorIndex {
                 }
                 // Once assigned, placeholders can be removed as we use copy later.
                 identifierToChildren[nodeID]!.removeAll()
-                // Increase the counter
-                index += 1
             }
             
             for (nodeIdentifier, placeholders) in identifierToChildren {
@@ -991,7 +1039,7 @@ extension ResolvedTopicReference {
         return ResolvedTopicReference(bundleIdentifier: bundleIdentifier.lowercased(),
                                       path: normalizedPath.lowercased(),
                                       fragment: fragment,
-                                      sourceLanguage: sourceLanguage)
+                                      sourceLanguages: sourceLanguages)
     }
     
 }

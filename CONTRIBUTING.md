@@ -209,28 +209,22 @@ by running the test suite in a Docker environment that simulates Swift on Linux.
 
 1. Install [Docker Desktop for Mac](https://www.docker.com/products/docker-desktop).
 
-2. Get the newest Swift Docker image with:
+2. Build Swift-DocC (see [Building Swift-DocC](#building-swift-docc)).
 
-    ```bash
-    docker pull swift
-    ```
-
-3. Build Swift-DocC (see [Building Swift-DocC](#building-swift-docc)).
-
-4. Run the following command from the root of this repository
+3. Run the following command from the root of this repository
    to build the Swift-DocC Docker image:
 
     ```bash
     docker build -t swift-docc:latest .
     ```
 
-5. Run the following command to run the test suite:
+4. Run the following command to run the test suite:
 
     ```bash
-    docker run -v `pwd`:/swift-docc swift-docc sh -c 'swift test --package-path /swift-docc --enable-test-discovery --skip-update'
+    docker run -v `pwd`:/swift-docc swift-docc sh -c 'swift test --package-path /swift-docc --parallel --skip-update'
     ```
 
-6. To interactively test the command line interface,
+5. To interactively test the command line interface,
    first log into the container with:
 
     ```bash

@@ -45,10 +45,23 @@ public struct AutomaticCuration {
     ///   - node: A node for which to generate topics groups.
     ///   - context: A documentation context.
     /// - Returns: An array of title and references list tuples.
-    static func topics(for node: DocumentationNode, context: DocumentationContext) throws -> [TaskGroup] {
+    static func topics(
+        for node: DocumentationNode,
+        withTrait variantsTrait: DocumentationDataVariantsTrait?,
+        context: DocumentationContext
+    ) throws -> [TaskGroup] {
         // Get any default implementation relationships for this symbol
+        //
+        // It's okay to include all variants here because we just use this set to filter
+        // out these values from automatic curation.
         let defaultImplementationReferences = Set<String>(
-            (node.semantic as? Symbol)?.defaultImplementations.implementations.compactMap { $0.reference.url?.absoluteString } ?? []
+            (node.semantic as? Symbol)?.defaultImplementationsVariants.allValues
+                .lazy
+                .map(\.variant)
+                .flatMap(\.implementations)
+                .compactMap { implementation in
+                    implementation.reference.url?.absoluteString
+                } ?? []
         )
         
         return try context.children(of: node.reference)
@@ -65,15 +78,28 @@ public struct AutomaticCuration {
                 }
                 
                 let childNode = try context.entity(with: child.reference)
-                if let childSymbol = childNode.semantic as? Symbol {
-                    groupsIndex[childSymbol.kind.identifier]?.references.append(child.reference)
+                guard let childSymbol = childNode.semantic as? Symbol else {
+                    return
+                }
+                
+                // If we have a specific trait to collect topics for, we only want
+                // to include children that have a kind available for that trait.
+                //
+                // Otherwise, we'll fall back to the first kind variant.
+                let childSymbolKindIdentifier: SymbolGraph.Symbol.KindIdentifier?
+                if let variantsTrait = variantsTrait {
+                    childSymbolKindIdentifier = childSymbol.kindVariants[variantsTrait]?.identifier
+                } else {
+                    childSymbolKindIdentifier = childSymbol.kindVariants.firstValue?.identifier
+                }
+                
+                if let childSymbolKindIdentifier = childSymbolKindIdentifier {
+                    groupsIndex[childSymbolKindIdentifier]?.references.append(child.reference)
                 }
             }
             .lazy
             // Sort the groups in the order intended for rendering
-            .sorted(by: { (lhs, rhs) -> Bool in
-                return lhs.value.sortOrder < rhs.value.sortOrder
-            })
+            .sorted(by: \.value.sortOrder)
             // Map to sorted tuples
             .compactMap { groupIndex in
                 let group = groupIndex.value
@@ -147,6 +173,8 @@ extension AutomaticCuration {
             case .`method`: return "Instance Methods"
             case .`property`: return "Instance Properties"
             case .`protocol`: return "Protocols"
+            case .snippet: return "Snippets"
+            case .snippetGroup: return "Snippet Groups"
             case .`struct`: return "Structures"
             case .`subscript`: return "Subscripts"
             case .`typeMethod`: return "Type Methods"

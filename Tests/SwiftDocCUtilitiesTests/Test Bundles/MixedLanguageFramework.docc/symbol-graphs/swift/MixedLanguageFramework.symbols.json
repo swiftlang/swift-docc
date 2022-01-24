@@ -1,0 +1,1004 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.5"
+    },
+    "module": {
+        "name": "MixedLanguageFramework",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 11,
+                    "minor": 0,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.class",
+                "displayName": "Class"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)Bar",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Bar"
+            ],
+            "names": {
+                "title": "Bar",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "Bar"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "class"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "Bar"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "class"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "Bar"
+                }
+            ],
+            "accessLevel": "open"
+        },
+        {
+            "kind": {
+                "identifier": "swift.init",
+                "displayName": "Initializer"
+            },
+            "identifier": {
+                "precise": "s:So3FooV8rawValueABSu_tcfc",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo",
+                "init(rawValue:)"
+            ],
+            "names": {
+                "title": "init(rawValue:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "init"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "externalParam",
+                        "spelling": "rawValue"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "UInt",
+                        "preciseIdentifier": "s:Su"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ")"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "init"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "externalParam",
+                    "spelling": "rawValue"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "UInt",
+                    "preciseIdentifier": "s:Su"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ")"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "c:@E@Foo",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo"
+            ],
+            "names": {
+                "title": "Foo",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "Foo"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "struct"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "Foo"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "struct"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "Foo"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.type.property",
+                "displayName": "Type Property"
+            },
+            "identifier": {
+                "precise": "c:@E@Foo@second",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo",
+                "second"
+            ],
+            "names": {
+                "title": "second",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "var"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "second"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Foo",
+                        "preciseIdentifier": "c:@E@Foo"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "var"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "second"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Foo",
+                    "preciseIdentifier": "c:@E@Foo"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " { "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "get"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " }"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "s:22MixedLanguageFramework15SwiftOnlyStructV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SwiftOnlyStruct"
+            ],
+            "names": {
+                "title": "SwiftOnlyStruct",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "SwiftOnlyStruct"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "struct"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "SwiftOnlyStruct"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 9,
+                                "character": 4
+                            },
+                            "end": {
+                                "line": 9,
+                                "character": 51
+                            }
+                        },
+                        "text": "This is a struct that is only exposed to Swift."
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "struct"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "SwiftOnlyStruct"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file://path/to/MixedLanguageFramework/MixedLanguageFramework/SwiftFile.swift",
+                "position": {
+                    "line": 10,
+                    "character": 14
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "s:22MixedLanguageFramework15SwiftOnlyStructV4tadayyF",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SwiftOnlyStruct",
+                "tada()"
+            ],
+            "names": {
+                "title": "tada()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "tada"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 11,
+                                "character": 8
+                            },
+                            "end": {
+                                "line": 11,
+                                "character": 12
+                            }
+                        },
+                        "text": "🥳"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "tada"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file://path/to/MixedLanguageFramework/MixedLanguageFramework/SwiftFile.swift",
+                "position": {
+                    "line": 12,
+                    "character": 16
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.type.property",
+                "displayName": "Type Property"
+            },
+            "identifier": {
+                "precise": "c:@E@Foo@first",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo",
+                "first"
+            ],
+            "names": {
+                "title": "first",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "var"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "first"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Foo",
+                        "preciseIdentifier": "c:@E@Foo"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "var"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "first"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Foo",
+                    "preciseIdentifier": "c:@E@Foo"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " { "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "get"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " }"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.type.property",
+                "displayName": "Type Property"
+            },
+            "identifier": {
+                "precise": "c:@E@Foo@fourth",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo",
+                "fourth"
+            ],
+            "names": {
+                "title": "fourth",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "var"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "fourth"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Foo",
+                        "preciseIdentifier": "c:@E@Foo"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "var"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "fourth"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Foo",
+                    "preciseIdentifier": "c:@E@Foo"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " { "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "get"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " }"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.type.method",
+                "displayName": "Type Method"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)Bar(cm)myStringFunction:error:",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Bar",
+                "myStringFunction(_:)"
+            ],
+            "names": {
+                "title": "myStringFunction(_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "class"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "myStringFunction"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "String",
+                        "preciseIdentifier": "s:SS"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "throws"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "String",
+                        "preciseIdentifier": "s:SS"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "string",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "string"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "String",
+                                "preciseIdentifier": "s:SS"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "String",
+                        "preciseIdentifier": "s:SS"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "class"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "myStringFunction"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "externalParam",
+                    "spelling": "_"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "string"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "String",
+                    "preciseIdentifier": "s:SS"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "throws"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "String",
+                    "preciseIdentifier": "s:SS"
+                }
+            ],
+            "accessLevel": "open"
+        },
+        {
+            "kind": {
+                "identifier": "swift.type.property",
+                "displayName": "Type Property"
+            },
+            "identifier": {
+                "precise": "c:@E@Foo@third",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Foo",
+                "third"
+            ],
+            "names": {
+                "title": "third",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "var"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "third"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Foo",
+                        "preciseIdentifier": "c:@E@Foo"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "var"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "third"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Foo",
+                    "preciseIdentifier": "c:@E@Foo"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " { "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "get"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " }"
+                }
+            ],
+            "accessLevel": "public"
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)Bar",
+            "target": "s:s7CVarArgP",
+            "targetFallback": "Swift.CVarArg"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)Bar",
+            "target": "s:SQ",
+            "targetFallback": "Swift.Equatable"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:@E@Foo",
+            "target": "s:SQ",
+            "targetFallback": "Swift.Equatable"
+        },
+        {
+            "kind": "memberOf",
+            "source": "c:@E@Foo@first",
+            "target": "c:@E@Foo"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)Bar",
+            "target": "s:s28CustomDebugStringConvertibleP",
+            "targetFallback": "Swift.CustomDebugStringConvertible"
+        },
+        {
+            "kind": "memberOf",
+            "source": "c:objc(cs)Bar(cm)myStringFunction:error:",
+            "target": "c:objc(cs)Bar"
+        },
+        {
+            "kind": "memberOf",
+            "source": "c:@E@Foo@fourth",
+            "target": "c:@E@Foo"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:@E@Foo",
+            "target": "s:s8SendableP",
+            "targetFallback": "Swift.Sendable"
+        },
+        {
+            "kind": "memberOf",
+            "source": "c:@E@Foo@third",
+            "target": "c:@E@Foo"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:@E@Foo",
+            "target": "s:s25ExpressibleByArrayLiteralP",
+            "targetFallback": "Swift.ExpressibleByArrayLiteral"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:22MixedLanguageFramework15SwiftOnlyStructV4tadayyF",
+            "target": "s:22MixedLanguageFramework15SwiftOnlyStructV"
+        },
+        {
+            "kind": "inheritsFrom",
+            "source": "c:objc(cs)Bar",
+            "target": "c:objc(cs)NSObject",
+            "targetFallback": "ObjectiveC.NSObject"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)Bar",
+            "target": "s:s23CustomStringConvertibleP",
+            "targetFallback": "Swift.CustomStringConvertible"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:@E@Foo",
+            "target": "s:s9OptionSetP",
+            "targetFallback": "Swift.OptionSet"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:So3FooV8rawValueABSu_tcfc",
+            "target": "c:@E@Foo"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)Bar",
+            "target": "s:SH",
+            "targetFallback": "Swift.Hashable"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)Bar",
+            "target": "c:objc(pl)NSObject",
+            "targetFallback": "ObjectiveC.NSObjectProtocol"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:@E@Foo",
+            "target": "s:SY",
+            "targetFallback": "Swift.RawRepresentable"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:@E@Foo",
+            "target": "s:s10SetAlgebraP",
+            "targetFallback": "Swift.SetAlgebra"
+        },
+        {
+            "kind": "memberOf",
+            "source": "c:@E@Foo@second",
+            "target": "c:@E@Foo"
+        },
+    ]
+}

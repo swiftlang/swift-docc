@@ -22,7 +22,7 @@ extension DocumentationBundle {
         public var identifier: String
         
         /// The version of the bundle.
-        public var version: Version
+        public var version: String?
         
         /// The default language identifier for code listings in the bundle.
         public var defaultCodeListingLanguage: String?
@@ -34,7 +34,7 @@ extension DocumentationBundle {
         public var defaultModuleKind: String?
         
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
-        static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier, .version]
+        static let requiredKeys: Set<CodingKeys> = [.displayName, .identifier]
         
         enum CodingKeys: String, CodingKey, CaseIterable {
             case displayName = "CFBundleDisplayName"
@@ -162,7 +162,7 @@ extension DocumentationBundle {
             
             self.displayName = try decodeOrFallback(String.self, with: .displayName)
             self.identifier = try decodeOrFallback(String.self, with: .identifier)
-            self.version = try decodeOrFallback(Version.self, with: .version)
+            self.version = try decodeOrFallbackIfPresent(String.self, with: .version)
             
             // Finally, decode the optional keys if they're present.
             
@@ -174,7 +174,7 @@ extension DocumentationBundle {
         init(
             displayName: String,
             identifier: String,
-            version: Version,
+            version: String? = nil,
             defaultCodeListingLanguage: String? = nil,
             defaultModuleKind: String? = nil,
             defaultAvailability: DefaultAvailability? = nil
