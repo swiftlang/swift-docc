@@ -113,7 +113,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "c:@E@Foo@second",
                 "c:@E@Foo@third",
                 "c:objc(cs)Bar",
-                "c:objc(cs)Bar(cm)MyStringFunction:error:",
+                "c:objc(cs)Bar(cm)myStringFunction:error:",
             ]
         )
     }
@@ -140,7 +140,6 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             ],
             referenceTitles: [
                 "Bar",
-                "Foo",
                 "Foo",
                 "MixedLanguageFramework",
                 "SwiftOnlyStruct",
@@ -180,12 +179,10 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-occ.typealias",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
                 "Bar",
-                "Foo",
                 "Foo",
                 "MixedLanguageFramework",
                 "SwiftOnlyStruct",
@@ -193,7 +190,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "_MixedLanguageFrameworkVersionString"
             ],
             referenceFragments: [
-                "class Bar",
+                "@interface Bar : NSObject",
                 "struct Foo",
                 "struct SwiftOnlyStruct",
             ],
@@ -269,7 +266,16 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             navigatorTitle: "Foo",
             abstract: "A foo.",
             declarationTokens: [
-                "FOO",
+                "typedef",
+                " ",
+                "enum",
+                " ",
+                "Foo",
+                " : ",
+                "NSString",
+                " {\n    ...\n} ",
+                "Foo",
+                ";",
             ],
             discussionSection: [
                 "This is the foo’s description.",

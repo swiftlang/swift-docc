@@ -155,21 +155,29 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             fatalError("A topic reference that has already been resolved should always exist in the cache.")
         }
         
-        let kind = DocumentationNode.Kind(name: resolvedInformation.kind.name, id: resolvedInformation.kind.id, isSymbol: resolvedInformation.kind.isSymbol)
-        
         let maybeSymbol = OutOfProcessReferenceResolver.symbolSemantic(
-            kind: kind,
+            kind: resolvedInformation.kind,
+            language: resolvedInformation.language,
             title: resolvedInformation.title,
+            abstract: resolvedInformation.abstract,
             declarationFragments: resolvedInformation.declarationFragments,
-            platforms: resolvedInformation.platforms
+            platforms: resolvedInformation.platforms,
+            variants: resolvedInformation.variants
         )
+        
+        let name: DocumentationNode.Name
+        if maybeSymbol != nil {
+            name = .symbol(declaration: .init([.plain(resolvedInformation.title)]))
+        } else {
+            name = .conceptual(title: resolvedInformation.title)
+        }
         
         return DocumentationNode(
             reference: reference,
-            kind: kind,
+            kind: resolvedInformation.kind,
             sourceLanguage: .init(name: resolvedInformation.language.name, id: resolvedInformation.language.id),
             availableSourceLanguages: Set(resolvedInformation.availableLanguages.map { .init(name: $0.name, id: $0.id) }),
-            name: .conceptual(title: resolvedInformation.title),
+            name: name,
             markup: Document(parsing: resolvedInformation.abstract, options: []),
             semantic: maybeSymbol,
             platformNames: resolvedInformation.platformNames
@@ -221,8 +229,6 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     public func symbolEntity(withPreciseIdentifier preciseIdentifier: String) throws -> DocumentationNode {
         let resolvedInformation = try resolveInformationForSymbolIdentifier(preciseIdentifier)
         
-        let kind = DocumentationNode.Kind(name: resolvedInformation.kind.name, id: resolvedInformation.kind.id, isSymbol: resolvedInformation.kind.isSymbol)
-        
         // Construct a resolved reference for this symbol. It uses a known bundle identifier and the symbol's precise identifier so that the
         // already resolved information can be looked up when determining the URL for this symbol.
         let reference = ResolvedTopicReference(
@@ -232,18 +238,21 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         )
         
         let symbol = OutOfProcessReferenceResolver.symbolSemantic(
-            kind: kind,
+            kind: resolvedInformation.kind,
+            language: resolvedInformation.language,
             title: resolvedInformation.title,
+            abstract: resolvedInformation.abstract,
             declarationFragments: resolvedInformation.declarationFragments,
-            platforms: resolvedInformation.platforms
+            platforms: resolvedInformation.platforms,
+            variants: resolvedInformation.variants
         )! // This entity was resolved from a symbol USR and is known to be a symbol.
         
         return DocumentationNode(
             reference: reference,
-            kind: kind,
+            kind: resolvedInformation.kind,
             sourceLanguage: resolvedInformation.language,
             availableSourceLanguages: sourceLanguages(for: resolvedInformation),
-            name: .conceptual(title: resolvedInformation.title),
+            name: .symbol(declaration: .init([.plain(resolvedInformation.title)])),
             markup: Document(parsing: resolvedInformation.abstract, options: [.parseBlockDirectives, .parseSymbolLinks]),
             semantic: symbol,
             platformNames: resolvedInformation.platformNames
@@ -550,6 +559,9 @@ extension OutOfProcessReferenceResolver {
 }
 
 extension OutOfProcessReferenceResolver {
+    
+    // MARK: Request & Response
+    
     /// A request message to send to the external link resolver.
     ///
     /// This can either be a request to resolve a topic URL or to resolve a symbol based on its precise identifier.
@@ -657,6 +669,8 @@ extension OutOfProcessReferenceResolver {
         }
     }
     
+    // MARK: Resolved Information
+    
     /// A type used to transfer information about a resolved reference to DocC from from a reference resolver in another executable.
     public struct ResolvedInformation: Codable {
         /// Information about the resolved kind.
@@ -689,6 +703,9 @@ extension OutOfProcessReferenceResolver {
             return platforms.map { platforms in Set(platforms.compactMap { $0.name }) }
         }
         
+        /// The variants of content (kind, url, title, abstract, language, declaration) for this resolver information.
+        public let variants: [Variant]?
+        
         /// Creates a new resolved information value with all its values.
         ///
         /// - Parameters:
@@ -700,6 +717,7 @@ extension OutOfProcessReferenceResolver {
         ///   - availableLanguages: The languages where the resolved node is available.
         ///   - platforms: The platforms and their versions where the resolved node is available, if any.
         ///   - declarationFragments: The resolved declaration fragments, if any.
+        ///   - variants: The variants of content for this resolver information.
         public init(
             kind: DocumentationNode.Kind,
             url: URL,
@@ -708,7 +726,8 @@ extension OutOfProcessReferenceResolver {
             language: SourceLanguage,
             availableLanguages: Set<SourceLanguage>,
             platforms: [PlatformAvailability]?,
-            declarationFragments: DeclarationFragments?
+            declarationFragments: DeclarationFragments?,
+            variants: [Variant]? = nil
         ) {
             self.kind = kind
             self.url = url
@@ -718,6 +737,35 @@ extension OutOfProcessReferenceResolver {
             self.availableLanguages = availableLanguages
             self.platforms = platforms
             self.declarationFragments = declarationFragments
+            self.variants = variants
+        }
+        
+        /// A variant of content for the resolved information.
+        ///
+        /// - Note: All properties except for ``traits`` are optional. If a property is `nil` it means that the value is the same as the resolved information's value.
+        public struct Variant: Codable {
+            /// The traits of the variant.
+            public let traits: [RenderNode.Variant.Trait]
+            
+            /// A wrapper for variant values that can either be specified, meaning the variant has a custom value, or not, meaning the variant has the same value as the resolved information.
+            ///
+            /// This alias is used to make the property declarations more explicit while at the same time offering the convenient syntax of optionals.
+            public typealias VariantValue = Optional
+            
+            /// The kind of the variant or `nil` if the kind is the same as the resolved information.
+            public let kind: VariantValue<DocumentationNode.Kind>
+            /// The url of the variant or `nil` if the url is the same as the resolved information.
+            public let url: VariantValue<URL>
+            /// The title of the variant or `nil` if the title is the same as the resolved information.
+            public let title: VariantValue<String>
+            /// The abstract of the variant or `nil` if the abstract is the same as the resolved information.
+            public let abstract: VariantValue<String>
+            /// The language of the variant or `nil` if the language is the same as the resolved information.
+            public let language: VariantValue<SourceLanguage>
+            /// The declaration fragments of the variant or `nil` if the declaration is the same as the resolved information.
+            ///
+            /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
+            public let declarationFragments: VariantValue<DeclarationFragments?>
         }
     }
     
@@ -725,23 +773,31 @@ extension OutOfProcessReferenceResolver {
     ///
     /// - Parameters:
     ///   - kind: The kind of the resolved node.
-    ///   - title: The title of the resolved node
+    ///   - language: The source language for the resolved node.
+    ///   - title: The title of the resolved node.
+    ///   - abstract: The abstract of the resolved node.
     ///   - declarationFragments: The declaration fragments, if any, from the resolved node.
     ///   - platforms: The platform availability information, if any, from the resolved node.
+    ///   - variants: The content variants for the resolved node.
     /// - Returns: A new symbol semantic, or `nil` if the kind is not a symbol.
-    public static func symbolSemantic(
+    private static func symbolSemantic(
         kind: DocumentationNode.Kind,
+        language: SourceLanguage,
         title: String,
+        abstract: String?,
         declarationFragments: ResolvedInformation.DeclarationFragments?,
-        platforms: [ResolvedInformation.PlatformAvailability]?
+        platforms: [ResolvedInformation.PlatformAvailability]?,
+        variants: [ResolvedInformation.Variant]?
     ) -> Symbol? {
         guard kind.isSymbol else {
             return nil
         }
         
-        let availability: SymbolGraph.Symbol.Availability?
-        if let platforms = platforms {
-            availability = SymbolGraph.Symbol.Availability(availability: platforms.map {
+        // The symbol semantic is created in three steps.
+        
+        // First, compute the common availability for all variants.
+        let availability = platforms.map { platforms in
+            return SymbolGraph.Symbol.Availability(availability: platforms.map {
                 let domain = $0.name.map { name in
                     return SymbolGraph.Symbol.Availability.Domain(
                         rawValue: name == "Mac Catalyst" ? SymbolGraph.Symbol.Availability.Domain.macCatalyst : name
@@ -762,30 +818,58 @@ extension OutOfProcessReferenceResolver {
                     willEventuallyBeDeprecated: false // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
                 )
             })
-        } else {
-            availability = nil
+        }
+        
+        // Second, create data variants values with the main resolved information, as values for the main language variant trait.
+        let mainTrait = DocumentationDataVariantsTrait(interfaceLanguage: language.id)
+        var kindVariants = [mainTrait: symbolKind(forNodeKind: kind)]
+        var titleVariants = [mainTrait: title]
+        var subHeadingVariants = [DocumentationDataVariantsTrait: [SymbolGraph.Symbol.DeclarationFragments.Fragment]]()
+        subHeadingVariants[mainTrait] = declarationFragments?.declarationFragments
+        var abstractVariants = [DocumentationDataVariantsTrait: AbstractSection]()
+        abstractVariants[mainTrait] = abstract.map { AbstractSection(paragraph: Paragraph([Text($0)])) }
+        
+        // Third, add additional values for each variant's resolved information.
+        for variant in variants ?? [] {
+            guard case .interfaceLanguage(let language) = variant.traits.first else { continue }
+            let trait = DocumentationDataVariantsTrait(interfaceLanguage: language)
+            
+            if let variantKind = variant.kind {
+                kindVariants[trait] = symbolKind(forNodeKind: variantKind)
+            }
+            if let variantTitle = variant.title {
+                titleVariants[trait] = variantTitle
+            }
+            if let variantAbstract = variant.abstract {
+                abstractVariants[trait] = AbstractSection(paragraph: Paragraph([Text(variantAbstract)]))
+            }
+            if let variantDeclarationFragments = variant.declarationFragments {
+                // The declaration fragments is an optional value. If the resolved information contains an explicit `nil` value we set that as the variant value.
+                // This behavior enables a symbol's variant to not have a declaration when the main symbol does have a declaration.
+                subHeadingVariants[trait] = variantDeclarationFragments?.declarationFragments
+            }
         }
         
         return Symbol(
-            kindVariants: .init(swiftVariant: symbolKind(forNodeKind: kind)),
-            titleVariants: .init(swiftVariant: title),
-            subHeadingVariants: .init(swiftVariant: declarationFragments?.declarationFragments),
-            navigatorVariants: .init(swiftVariant: nil),
-            roleHeadingVariants: .init(swiftVariant: ""), // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
-            platformNameVariants: .init(swiftVariant: nil),
-            moduleNameVariants: .init(swiftVariant: ""), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
-            externalIDVariants: .init(swiftVariant: nil),
-            accessLevelVariants: .init(swiftVariant: nil),
-            availabilityVariants: .init(swiftVariant: availability),
-            deprecatedSummaryVariants: .init(swiftVariant: nil),
-            mixinsVariants: .init(swiftVariant: nil),
-            abstractSectionVariants: .init(swiftVariant: nil),
-            discussionVariants: .init(swiftVariant: nil),
-            topicsVariants: .init(swiftVariant: nil),
-            seeAlsoVariants: .init(swiftVariant: nil),
-            returnsSectionVariants: .init(swiftVariant: nil),
-            parametersSectionVariants: .init(swiftVariant: nil),
-            redirectsVariants: .init(swiftVariant: nil)
+            kindVariants: .init(values: kindVariants),
+            titleVariants:  .init(values: titleVariants),
+            subHeadingVariants: .init(values: subHeadingVariants),
+            navigatorVariants: .empty,
+            roleHeadingVariants: .init(values: [:], defaultVariantValue: ""), // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
+            platformNameVariants: .empty,
+            moduleNameVariants: .init(values: [:], defaultVariantValue: ""), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
+            externalIDVariants: .empty,
+            accessLevelVariants: .empty,
+            availabilityVariants: .init(values: [:], defaultVariantValue: availability),
+            deprecatedSummaryVariants: .empty,
+            mixinsVariants: .empty,
+            abstractSectionVariants: .init(values: abstractVariants),
+            discussionVariants: .empty,
+            topicsVariants: .empty,
+            seeAlsoVariants: .empty,
+            returnsSectionVariants: .empty,
+            parametersSectionVariants: .empty,
+            redirectsVariants: .empty
         )
     }
 }

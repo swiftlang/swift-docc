@@ -357,7 +357,7 @@
             ],
             "accessLevel": "public",
             "location": {
-                "uri": "file:///Users/ethankusters/Downloads/MixedLanguageFramework/MixedLanguageFramework/SwiftFile.swift",
+                "uri": "file://path/to/MixedLanguageFramework/MixedLanguageFramework/SwiftFile.swift",
                 "position": {
                     "line": 10,
                     "character": 14
@@ -443,7 +443,7 @@
             ],
             "accessLevel": "public",
             "location": {
-                "uri": "file:///Users/ethankusters/Downloads/MixedLanguageFramework/MixedLanguageFramework/SwiftFile.swift",
+                "uri": "file://path/to/MixedLanguageFramework/MixedLanguageFramework/SwiftFile.swift",
                 "position": {
                     "line": 12,
                     "character": 16
@@ -640,7 +640,7 @@
                 "displayName": "Type Method"
             },
             "identifier": {
-                "precise": "c:objc(cs)Bar(cm)MyStringFunction:error:",
+                "precise": "c:objc(cs)Bar(cm)myStringFunction:error:",
                 "interfaceLanguage": "swift"
             },
             "pathComponents": [
@@ -918,7 +918,7 @@
         },
         {
             "kind": "memberOf",
-            "source": "c:objc(cs)Bar(cm)MyStringFunction:error:",
+            "source": "c:objc(cs)Bar(cm)myStringFunction:error:",
             "target": "c:objc(cs)Bar"
         },
         {
