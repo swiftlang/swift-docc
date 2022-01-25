@@ -261,7 +261,7 @@ def docc_bin_path(swift_exec, args, env, verbose):
   if verbose:
     print(' '.join([escape_cmd_arg(arg) for arg in cmd]))
   return os.path.join(
-    subprocess.check_output(cmd, env=env).strip(), 'docc')
+    subprocess.check_output(cmd, env=env).strip().decode(), 'docc')
 
 def create_intermediate_directories(dir_path, verbose):
   cmd = ["mkdir", "-p", dir_path]
