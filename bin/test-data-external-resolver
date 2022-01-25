@@ -1,0 +1,97 @@
+#!/bin/bash
+#
+# This source file is part of the Swift.org open source project
+#
+# Copyright (c) 2021 Apple Inc. and the Swift project authors
+# Licensed under Apache License v2.0 with Runtime Library Exception
+#
+# See https://swift.org/LICENSE.txt for license information
+# See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+#
+
+# This is a test external resolver that always returns the same resolved information for every request.
+# It can be used in local development to test how Swift-DocC interacts with information from an external source.
+#
+# To set this up, set the `DOCC_LINK_RESOLVER_EXECUTABLE` environmental variable to the path of this script.
+#
+# Swift-DocC will call this executable for unresolved symbol references in the processed symbol graph files and for
+# absolute documentation links with the "com.test.bundle" identifier. For example: <doc://com.test.bundle/something>
+
+RESPONSE='{
+  "resolvedInformation" : {
+    "abstract" : "Resolved abstract.",
+    "availableLanguages" : [
+      {
+        "id" : "swift",
+        "name" : "Language Name"
+      },
+      {
+        "id" : "occ",
+        "name" : "Variant Language Name"
+      }
+    ],
+    "declarationFragments" : [
+      {
+        "kind" : "text",
+        "spelling" : "declaration fragment"
+      }
+    ],
+    "kind" : {
+      "id" : "com.test.kind.id",
+      "isSymbol" : true,
+      "name" : "Kind Name"
+    },
+    "language" : {
+      "id" : "swift",
+      "name" : "Language Name"
+    },
+    "platforms" : [
+      {
+        "beta" : false,
+        "introducedAt" : "1.0.0",
+        "name" : "Platform Name"
+      }
+    ],
+    "title" : "Resolved Title",
+    "url" : "doc:\/\/com.test.bundle\/resolved/path\/",
+    "variants" : [
+      {
+        "abstract" : "Resolved variant abstract for this topic.",
+        "declarationFragments" : [
+          {
+            "kind" : "text",
+            "spelling" : "variant declaration fragment"
+          }
+        ],
+        "kind" : {
+          "id" : "com.test.other-kind.id",
+          "isSymbol" : true,
+          "name" : "Variant Kind Name"
+        },
+        "language" : {
+          "id" : "occ",
+          "name" : "Variant Language Name"
+        },
+        "title" : "Resolved Variant Title",
+        "traits" : [
+          {
+            "interfaceLanguage" : "occ"
+          }
+        ]
+      }
+    ]
+  }
+}'
+
+# Write this resolver's bundle identifier
+echo '{"bundleIdentifier":"com.test.bundle"}'
+
+# Forever, wait for DocC to send a request and respond the resolved information
+while true
+do
+    # Wait for a request
+    read
+    
+    # Respond the resolved information
+    echo -e $RESPONSE
+done

@@ -55,4 +55,33 @@ class DocumentationDataVariantsTests: XCTestCase {
         XCTAssertEqual(DocumentationDataVariants<String>(swiftVariant: "Swift")[.swift], "Swift")
         XCTAssertNil(DocumentationDataVariants<String>(swiftVariant: nil)[.swift])
     }
+    
+    func testFirstValue() throws {
+        // This is testing that the first value has a stable and deterministic behavior (rdar://86580516)
+        let objectiveCTrait = DocumentationDataVariantsTrait(interfaceLanguage: "objc")
+        
+        XCTAssertEqual(DocumentationDataVariants<String>(values: [:]).firstValue, nil)
+
+        XCTAssertEqual(DocumentationDataVariants<String>(values: [.swift : "Swift"]).firstValue, "Swift")
+        XCTAssertEqual(DocumentationDataVariants<String>(values: [objectiveCTrait : "Objective-C"]).firstValue, "Objective-C")
+
+        // Swift is treated as the first value when there are multiple values
+        XCTAssertEqual(DocumentationDataVariants<String>(values: [
+            objectiveCTrait : "Objective-C",
+            .swift: "Swift"
+        ]).firstValue, "Swift")
+        
+        XCTAssertEqual(DocumentationDataVariants<String>(values: [
+            objectiveCTrait : "Objective-C",
+            .swift: "Swift",
+            .fallback: "Fallback"
+        ]).firstValue, "Swift")
+        
+        var variants = DocumentationDataVariants<String>(defaultVariantValue: "Default value")
+        XCTAssertEqual(variants.firstValue, "Default value")
+        variants[.swift] = "Swift"
+        XCTAssertEqual(variants.firstValue, "Swift")
+        variants[objectiveCTrait] = "Objective-C"
+        XCTAssertEqual(variants.firstValue, "Swift") // Swift is still treated as the default value.
+    }
 }

@@ -25,7 +25,7 @@ public struct DocumentationDataVariants<Variant> {
     ///
     /// The default variant value, if one exists, is the last element of the returned array.
     public var allValues: [(trait: DocumentationDataVariantsTrait, variant: Variant)] {
-        values.map { $0 }
+        values.map { (trait: $0.key, variant: $0.value) }
             // Append the default variant value if there is one.
             + (defaultVariantValue.map { [(.fallback, $0)] } ?? [])
     }
@@ -104,9 +104,21 @@ extension DocumentationDataVariants {
     }
     
     /// Convenience API to access the first variant, or the default value if there are no registered variants.
+    ///
+    /// > Important:
+    /// > Do not use this property in new code.
+    /// > It exists to transition existing code from only working with Swift symbols to working with multi-language symbols.
+    /// > This property should be considered deprecated but isn't formally deprecated to avoid the ~50 warnings that would make it
+    /// > harder to spot new warnings. (rdar://86580516)
     var firstValue: Variant? {
-        get { allValues.first?.variant }
-        set { self[allValues.first?.trait ?? .fallback] = newValue }
+        // A Dictionary's order isn't stable across program executions so accessing the `first` value would
+        // result in indeterministic behavior and also flaky tests.
+        //
+        // Since this convenience accessor exist to transition existing code from only working with Swift symbols,
+        // it accesses the Swift value first, if it exist, and otherwise accesses the real indeterministic first value.
+        // This assumes that variant only represents one non-Swift language.
+        get { self[.swift] ?? self.values.first?.value }
+        set { self[.swift] = newValue }
     }
 }
 
