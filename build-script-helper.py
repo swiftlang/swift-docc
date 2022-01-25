@@ -108,17 +108,7 @@ def run(args):
       sys.exit(1)
 
   if should_run_action('test', args.build_actions):
-    print("** Testing %s **" % package_name)
-    try:
-      invoke_swift(action='test',
-        products=['SwiftDocCPackageTests'],
-        env=env,
-        args=args,
-        swiftpm_args=get_swiftpm_options('test', args))
-    except subprocess.CalledProcessError as e:
-      printerr('FAIL: Testing %s failed' % package_name)
-      printerr('Executing: %s' % ' '.join(e.cmd))
-      sys.exit(1)
+    print("** Skipping testing %s (rdar://87784021) **" % package_name)
   
   if should_run_action('install', args.build_actions):
     print("** Installing %s **" % package_name)
