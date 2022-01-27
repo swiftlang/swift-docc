@@ -1097,6 +1097,81 @@ class DocumentationContextTests: XCTestCase {
         )
     }
     
+    func testCanResolveArticleFromTutorial() throws {
+        struct TestData {
+            let symbolGraphNames: [String]
+            
+            var symbolGraphFiles: [File] {
+                return symbolGraphNames.map { name in
+                    CopyOfFile(original: Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+                        .appendingPathComponent(name + ".symbols.json"))
+                }
+            }
+                
+            var expectsToResolveArticleReference: Bool {
+                return symbolGraphNames.count == 1
+            }
+        }
+        
+        // Verify that the article can be resolved when there's a single module but not otherwise.
+        let combinationsToTest = [
+            TestData(symbolGraphNames: []),
+            TestData(symbolGraphNames: ["mykit-iOS"]),
+            TestData(symbolGraphNames: ["sidekit"]),
+            TestData(symbolGraphNames: ["mykit-iOS", "sidekit"]),
+        ]
+        
+        for testData in combinationsToTest {
+            let testBundle = Folder(name: "TestCanResolveArticleFromTutorial.docc", content: [
+                InfoPlist(displayName: "TestCanResolveArticleFromTutorial", identifier: "com.example.documentation"),
+                
+                TextFile(name: "extra-article.md", utf8Content: """
+                # Extra article
+                
+                This is an extra article that will be automatically curated.
+                """),
+                    
+                TextFile(name: "TestOverview.tutorial", utf8Content: """
+                @Tutorials(name: "Technology X") {
+                   @Intro(title: "Technology X") {
+                      Reference the extra article in tutorial content: <doc:extra-article>
+                   }
+                }
+                """),
+            ] + testData.symbolGraphFiles)
+            
+            let tempURL = try createTemporaryDirectory()
+            let bundleURL = try testBundle.write(inside: tempURL)
+            
+            let workspace = DocumentationWorkspace()
+            let context = try DocumentationContext(dataProvider: workspace)
+            let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+            try workspace.registerProvider(dataProvider)
+            
+            let bundle = try XCTUnwrap(workspace.bundles.values.first)
+            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+            
+            let identifier = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+            let node = try context.entity(with: identifier)
+            
+            let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+            
+            let source = context.fileURL(for: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: node, at: source))
+            
+            XCTAssertEqual(
+                !testData.expectsToResolveArticleReference,
+                context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }),
+                "Expected to \(testData.expectsToResolveArticleReference ? "resolve" : "not resolve") article reference from tutorial content when there are \(testData.symbolGraphNames.count) modules."
+            )
+            XCTAssertEqual(
+                testData.expectsToResolveArticleReference,
+                renderNode.references.keys.contains("doc://com.example.documentation/documentation/TestCanResolveArticleFromTutorial/extra-article"),
+                "Expected to \(testData.expectsToResolveArticleReference ? "find" : "not find") article among the tutorial's references when there are \(testData.symbolGraphNames.count) modules."
+            )
+        }
+    }
+    
     func testCuratesSymbolsAndArticlesCorrectly() throws {
         let (_, context) = try testBundleAndContext(named: "TestBundle")
 
