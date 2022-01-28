@@ -8,7 +8,7 @@
 
 ### Command Line Options
 
-- ``DocumentationArchiveOption``
+- ``DocCArchiveOption``
 - ``DocumentationBundleOption``
 - ``OutOfProcessLinkResolverOption``
 - ``PreviewExternalConnectionOptions``
