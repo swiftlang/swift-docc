@@ -312,7 +312,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
     func testSymbolLinkWorkInMultipleLanguages() throws {
         enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
         
-        let (url, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # ``MixedLanguageFramework/Bar``
             
@@ -324,11 +324,10 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             
             - ``MixedLanguageFramework/Bar/myStringFunction(_:)``
             - ``myStringFunction(_:)``
-            - ``MixedLanguageFramework/Bar/MyStringFunction:error:``
-            - ``MyStringFunction:error:``
+            - ``MixedLanguageFramework/Bar/myStringFunction:error:``
+            - ``myStringFunction:error:``
             """.write(to: url.appendingPathComponent("bar.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -343,7 +342,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
         // These two references are equivalent and depending on the order that the symbols are processed, either one of them could be considered the canonical reference.
         let referenceAliases = [
             "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)",
-            "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/MyStringFunction:error:",
+            "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
         ]
         
         // Find which alias is the canonical reference and which is the other
