@@ -230,90 +230,12 @@
           {
             "range" : {
               "end" : {
-                "character" : 13,
-                "line" : 36
-              },
-              "start" : {
-                "character" : 4,
-                "line" : 36
-              }
-            },
-            "text" : "## Topics"
-          },
-          {
-            "range" : {
-              "end" : {
-                "character" : 4,
-                "line" : 37
-              },
-              "start" : {
-                "character" : 4,
-                "line" : 37
-              }
-            },
-            "text" : ""
-          },
-          {
-            "range" : {
-              "end" : {
-                "character" : 14,
-                "line" : 38
-              },
-              "start" : {
-                "character" : 4,
-                "line" : 38
-              }
-            },
-            "text" : "### Custom"
-          },
-          {
-            "range" : {
-              "end" : {
-                "character" : 4,
-                "line" : 39
-              },
-              "start" : {
-                "character" : 4,
-                "line" : 39
-              }
-            },
-            "text" : ""
-          },
-          {
-            "range" : {
-              "end" : {
-                "character" : 27,
-                "line" : 40
-              },
-              "start" : {
-                "character" : 4,
-                "line" : 40
-              }
-            },
-            "text" : "- ``Foo-occ.typealias``"
-          },
-          {
-            "range" : {
-              "end" : {
-                "character" : 4,
-                "line" : 41
-              },
-              "start" : {
-                "character" : 4,
-                "line" : 41
-              }
-            },
-            "text" : ""
-          },
-          {
-            "range" : {
-              "end" : {
                 "character" : 41,
-                "line" : 42
+                "line" : 36
               },
               "start" : {
                 "character" : 4,
-                "line" : 42
+                "line" : 36
               }
             },
             "text" : "- parameter string: The given string."
@@ -322,6 +244,84 @@
             "range" : {
               "end" : {
                 "character" : 24,
+                "line" : 37
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 37
+              }
+            },
+            "text" : "- returns: A string."
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 4,
+                "line" : 38
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 38
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 13,
+                "line" : 39
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 39
+              }
+            },
+            "text" : "## Topics"
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 4,
+                "line" : 40
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 40
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 14,
+                "line" : 41
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 41
+              }
+            },
+            "text" : "### Custom"
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 5,
+                "line" : 42
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 42
+              }
+            },
+            "text" : " "
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 27,
                 "line" : 43
               },
               "start" : {
@@ -329,7 +329,7 @@
                 "line" : 43
               }
             },
-            "text" : "- returns: A string."
+            "text" : "- ``Foo-occ.typealias``"
           }
         ]
       },
