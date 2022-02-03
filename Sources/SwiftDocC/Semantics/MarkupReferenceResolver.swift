@@ -96,7 +96,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         guard let destination = link.destination else {
             return link
         }
-        guard let url = ValidatedURL(destination) else {
+        guard let url = ValidatedURL(parsing: destination) else {
             problems.append(invalidLinkDestinationProblem(destination: destination, source: source, range: link.range, severity: .warning))
             return link
         }
@@ -121,12 +121,8 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return cached.absoluteString
         }
 
-        // We don't require a scheme here as the link can be a relative one, e.g. ``SwiftUI/View``
-        guard let url = ValidatedURL(unresolvedDestination) else {
-            problems.append(invalidLinkDestinationProblem(destination: unresolvedDestination, source: source, range: range, severity: .warning))
-            return unresolvedDestination
-        }
-
+        // We don't require a scheme here as the link can be a relative one, e.g. ``SwiftUI/View``.
+        let url = ValidatedURL(parsing: unresolvedDestination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: unresolvedDestination)
         let unresolved = TopicReference.unresolved(.init(topicURL: url))
         guard let resolvedURL = resolve(reference: unresolved, range: range, severity: .warning, fromSymbolLink: true) else {
             return unresolvedDestination
