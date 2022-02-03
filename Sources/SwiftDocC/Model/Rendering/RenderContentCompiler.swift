@@ -136,12 +136,14 @@ struct RenderContentCompiler: MarkupVisitor {
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
         if let cached = context.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
             return cached
-        } else if let unresolved = ValidatedURL(destination).map(UnresolvedTopicReference.init(topicURL:)),
-            case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier, fromSymbolLink: true) {
-                return resolved
-        } else {
-            return nil
+        } 
+
+        let unresolved = UnresolvedTopicReference(topicURL: .init(symbolPath: destination))
+        if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier, fromSymbolLink: true) {
+            return resolved
         }
+
+        return nil
     }
     
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> [RenderContent] {
@@ -160,7 +162,7 @@ struct RenderContentCompiler: MarkupVisitor {
 
         return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
     }
-
+    
     mutating func visitSoftBreak(_ softBreak: SoftBreak) -> [RenderContent] {
         return [RenderInlineContent.text(" ")]
     }

@@ -309,6 +309,61 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
         )
     }
     
+    func testSymbolLinkWorkInMultipleLanguages() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+            try """
+            # ``MixedLanguageFramework/Bar``
+            
+            Test that symbol references using multi source language spellings all resolve successfully.
+            
+            ## Topics
+            
+            ### Symbol links in multiple source languages
+            
+            - ``MixedLanguageFramework/Bar/myStringFunction(_:)``
+            - ``myStringFunction(_:)``
+            - ``MixedLanguageFramework/Bar/myStringFunction:error:``
+            - ``myStringFunction:error:``
+            """.write(to: url.appendingPathComponent("bar.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        
+        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
+        
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
+        
+        XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
+        
+        // These two references are equivalent and depending on the order that the symbols are processed, either one of them could be considered the canonical reference.
+        let referenceAliases = [
+            "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)",
+            "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
+        ]
+        
+        // Find which alias is the canonical reference and which is the other
+        let canonicalReference = try XCTUnwrap(referenceAliases.first(where: { renderNode.references.keys.contains($0) }))
+        let nonCanonicalReference = try XCTUnwrap(referenceAliases.filter { $0 != canonicalReference }.first)
+        
+        XCTAssertNotNil(renderNode.references[canonicalReference])
+        XCTAssertNil(renderNode.references[nonCanonicalReference], "The non canonical reference shouldn't have its own entry in the render node's references.")
+        
+        XCTAssertEqual(renderNode.topicSections.count, 1)
+        let topicGroup = try XCTUnwrap(renderNode.topicSections.first)
+        
+        XCTAssertEqual(topicGroup.identifiers.count, 4)
+        XCTAssertEqual(topicGroup.identifiers, [
+            canonicalReference,
+            canonicalReference,
+            canonicalReference,
+            canonicalReference,
+        ], "Both spellings of the symbol link should resolve to the canonical reference.")
+    }
+    
     func assertExpectedContent(
         _ renderNode: RenderNode,
         sourceLanguage expectedSourceLanguage: String,

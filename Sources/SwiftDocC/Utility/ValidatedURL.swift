@@ -30,7 +30,14 @@ public struct ValidatedURL: Hashable, Equatable {
     ///
     /// Will return `nil` when the given `string` is not a valid URL.
     /// - Parameter string: Source URL address as string
-    init?(_ string: String) {
+    ///
+    /// > Note:
+    /// > Attempting to parse a symbol path as a URL may result in unexpected URL components depending on the source language.
+    /// > For example; an Objective-C instance method named `someMethodWithFirstValue:secondValue:` would be parsed as a
+    /// > URL with the "someMethodWithFirstValue" scheme which is a valid link but which won't resolve to the intended symbol.
+    /// >
+    /// > When working with symbol destinations use ``init(symbolPath:)`` instead.
+    init?(parsing string: String) {
         guard let components = URLComponents(string: string) else {
             return nil
         }
@@ -45,6 +52,16 @@ public struct ValidatedURL: Hashable, Equatable {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             return nil
         }
+        self.components = components
+    }
+    
+    /// Creates a new RFC 3986 valid URL by using the given symbol path.
+    ///
+    /// - Parameter symbolDestination: A symbol path as a string, with path components separated by "/".
+    init(symbolPath: String) {
+        // Symbol links are assumed to be written as the path only, without a scheme or host component.
+        var components = URLComponents()
+        components.path = symbolPath
         self.components = components
     }
     
