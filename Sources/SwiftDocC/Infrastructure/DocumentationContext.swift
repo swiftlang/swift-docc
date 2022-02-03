@@ -1788,6 +1788,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         try shouldContinueRegistration()
         
+        // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
+        let rootNodeForAutomaticCuration = rootModules.count == 1 ? rootModules.first.flatMap(topicGraph.nodeWithReference) : nil
+        if rootNodeForAutomaticCuration != nil {
+            registerArticles(otherArticles, in: bundle)
+            try shouldContinueRegistration()
+        }
+        
         // Third, any processing that relies on resolving other content is done, mainly resolving links.
         try preResolveExternalLinks(semanticObjects:
             technologies.map(referencedSemanticObject) +
@@ -1824,8 +1831,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Automatically curate articles that haven't been manually curated
         // Article curation is only done automatically if there is only one root module
-        if rootModules.count == 1, let root = rootModules.first, let rootNode = topicGraph.nodeWithReference(root) {
-            registerArticles(otherArticles, in: bundle)
+        if let rootNode = rootNodeForAutomaticCuration {
             let articleReferences = try autoCurateArticles(otherArticles, in: bundle, startingFrom: rootNode)
             try preResolveExternalLinks(references: articleReferences, bundle: bundle)
             resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
