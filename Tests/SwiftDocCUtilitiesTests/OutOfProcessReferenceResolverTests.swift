@@ -315,6 +315,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     }
     
     func testForwardsErrorOutputProcess() throws {
+        throw XCTSkip("This test is flaky rdar://88498898")
+
         #if os(macOS)
         let temporaryFolder = try createTemporaryDirectory()
         
