@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,18 +20,30 @@ public struct FeatureFlags: Codable {
     /// to docc.
     public var isExperimentalObjectiveCSupportEnabled = false
     
+    /// Whether or not experimental support for emitting a JSON representation of the converted
+    /// documentation's navigator index is enabled.
+    ///
+    /// This can be enabled on the command-line by passing `--enable-experimental-json-index`.
+    /// to docc.
+    public var isExperimentalJSONIndexEnabled = false
+    
     /// Creates a set of feature flags with the given values.
     ///
     /// - Parameters:
     ///   - enableObjectiveCSupport: Whether or not experimental language support for Objective-C should be enabled.
+    ///
+    ///   - enableExperimentalJSONIndex: Whether or not experimental support for emitting a JSON
+    ///     representation of the navigator index should be enabled.
     ///
     ///   - additionalFlags: Any additional flags to set.
     ///
     ///     This field allows clients to set feature flags without adding new API.
     public init(
         enableExperimentalObjectiveCSupport: Bool = false,
+        enableExperimentalJSONIndex: Bool = false,
         additionalFlags: [String : Bool] = [:]
     ) {
         self.isExperimentalObjectiveCSupportEnabled = enableExperimentalObjectiveCSupport
+        self.isExperimentalJSONIndexEnabled = enableExperimentalJSONIndex
     }
 }
