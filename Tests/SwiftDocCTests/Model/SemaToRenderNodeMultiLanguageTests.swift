@@ -156,14 +156,8 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             }
         )
         
-        let objectiveCVariantData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(
-            in: RenderJSONEncoder.makeEncoder().encode(mixedLanguageFrameworkRenderNode),
-            for: [.interfaceLanguage("occ")]
-        )
-        
-        let objectiveCVariantNode = try RenderJSONDecoder.makeDecoder().decode(
-            RenderNode.self,
-            from: objectiveCVariantData
+        let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(
+            to: mixedLanguageFrameworkRenderNode
         )
         
         assertExpectedContent(
@@ -248,15 +242,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             }
         )
         
-        let objectiveCVariantData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(
-            in: RenderJSONEncoder.makeEncoder().encode(fooRenderNode),
-            for: [.interfaceLanguage("occ")]
-        )
-        
-        let objectiveCVariantNode = try RenderJSONDecoder.makeDecoder().decode(
-            RenderNode.self,
-            from: objectiveCVariantData
-        )
+        let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: fooRenderNode)
         
         assertExpectedContent(
             objectiveCVariantNode,
@@ -364,10 +350,75 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
         ], "Both spellings of the symbol link should resolve to the canonical reference.")
     }
     
+    func testArticleInMixedLanguageFramework() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        let outputConsumer = try mixedLanguageFrameworkConsumer() { url in
+            try """
+            # MyArticle
+            
+            An article in a mixed-language framework. This symbol link should display the correct title depending on \
+            the language we're browsing this article in: ``MixedLanguageFramework/Bar/myStringFunction(_:)``.
+            """.write(to: url.appendingPathComponent("bar.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let articleRenderNode = try outputConsumer.renderNode(withTitle: "MyArticle")
+        
+        assertExpectedContent(
+            articleRenderNode,
+            sourceLanguage: "swift",
+            title: "MyArticle",
+            navigatorTitle: nil,
+            abstract: """
+            An article in a mixed-language framework. This symbol link should display the correct title depending on \
+            the language we’re browsing this article in: .
+            """,
+            declarationTokens: nil,
+            discussionSection: nil,
+            topicSectionIdentifiers: [],
+            referenceTitles: [
+                "MixedLanguageFramework",
+                "myStringFunction(_:)",
+            ],
+            referenceFragments: [
+                "class func myStringFunction(String) throws -> String",
+            ],
+            failureMessage: { fieldName in
+                "Swift variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
+            }
+        )
+        
+        let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: articleRenderNode)
+        
+        assertExpectedContent(
+            objectiveCVariantNode,
+            sourceLanguage: "occ",
+            title: "MyArticle",
+            navigatorTitle: nil,
+            abstract: """
+            An article in a mixed-language framework. This symbol link should display the correct title depending on \
+            the language we’re browsing this article in: .
+            """,
+            declarationTokens: nil,
+            discussionSection: nil,
+            topicSectionIdentifiers: [],
+            referenceTitles: [
+                "MixedLanguageFramework",
+                "myStringFunction:error:",
+            ],
+            referenceFragments: [
+                "typedef enum Foo : NSString {\n    ...\n} Foo;",
+            ],
+            failureMessage: { fieldName in
+                "Swift variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
+            }
+        )
+    }
+    
     func assertExpectedContent(
         _ renderNode: RenderNode,
         sourceLanguage expectedSourceLanguage: String,
-        symbolKind expectedSymbolKind: String,
+        symbolKind expectedSymbolKind: String? = nil,
         title expectedTitle: String,
         navigatorTitle expectedNavigatorTitle: String?,
         abstract expectedAbstract: String,
@@ -467,6 +518,18 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             line: line
         )
     }
+    
+    func renderNodeApplyingObjectiveCVariantOverrides(to renderNode: RenderNode) throws -> RenderNode {
+        let objectiveCVariantData = try RenderNodeVariantOverridesApplier().applyVariantOverrides(
+            in: RenderJSONEncoder.makeEncoder().encode(renderNode),
+            for: [.interfaceLanguage("occ")]
+        )
+        
+        return try RenderJSONDecoder.makeDecoder().decode(
+            RenderNode.self,
+            from: objectiveCVariantData
+        )
+    }
 }
 
 private class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
@@ -508,9 +571,17 @@ extension TestRenderNodeOutputConsumer {
     }
     
     func renderNode(withIdentifier identifier: String) throws -> RenderNode {
+        try renderNode(where: { renderNode in renderNode.metadata.externalID == identifier })
+    }
+    
+    func renderNode(withTitle title: String) throws -> RenderNode {
+        try renderNode(where: { renderNode in renderNode.metadata.title == title })
+    }
+    
+    private func renderNode(where predicate: (RenderNode) -> Bool) throws -> RenderNode {
         let renderNode = renderNodes.sync { renderNodes in
             renderNodes.first { renderNode in
-                renderNode.metadata.externalID == identifier
+                predicate(renderNode)
             }
         }
         
@@ -519,8 +590,13 @@ extension TestRenderNodeOutputConsumer {
 }
 
 fileprivate extension SemaToRenderNodeMixedLanguageTests {
-    func mixedLanguageFrameworkConsumer() throws -> TestRenderNodeOutputConsumer {
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework")
+    func mixedLanguageFrameworkConsumer(
+        configureBundle: ((URL) throws -> Void)? = nil
+    ) throws -> TestRenderNodeOutputConsumer {
+        let (bundleURL, _, context) = try testBundleAndContext(
+            copying: "MixedLanguageFramework",
+            configureBundle: configureBundle
+        )
         
         var converter = DocumentationConverter(
             documentationBundleURL: bundleURL,
