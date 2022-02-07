@@ -1339,17 +1339,6 @@ let expected = """
         let canonicalPathFFF = try XCTUnwrap(context.pathsTo(fffNode.reference).first)
         XCTAssertEqual(["/documentation/MyKit"], canonicalPathFFF.map({ $0.path }))
     }
-    
-    func testLanguageForNode() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
-        let articleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
-        let articleLanguage = try context.interfaceLanguageFor(articleReference)
-        XCTAssertEqual(articleLanguage, SourceLanguage.swift)
-    }
 
     // Verify that a symbol that has no parents in the symbol graph is automatically curated under the module node.
     func testRootSymbolsAreCureatedInModule() throws {
@@ -3027,6 +3016,91 @@ let expected = """
             symbolsInDocumentationCache,
             symbolsInSymbolIndex,
             "Expected the symbol instances in the documentationCache and symbolIndex dictionaries to be the same"
+        )
+    }
+    
+    func assertArticleAvailableSourceLanguages(
+        moduleAvailableLanguages: Set<SourceLanguage>,
+        expectedArticleDefaultLanguage: SourceLanguage,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        precondition(
+            moduleAvailableLanguages.allSatisfy { [.swift, .objectiveC].contains($0) },
+            "moduleAvailableLanguages can only contain Swift and Objective-C as languages."
+        )
+        
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+            try """
+            # MyArticle
+            
+            The framework this article is documenting is available in the following languages: \
+            \(moduleAvailableLanguages.map(\.name).joined(separator: ",")).
+            """.write(to: url.appendingPathComponent("myarticle.md"), atomically: true, encoding: .utf8)
+            
+            func removeSymbolGraph(compiler: String) throws {
+                try FileManager.default.removeItem(
+                    at: url.appendingPathComponent("symbol-graphs").appendingPathComponent(compiler)
+                )
+            }
+            
+            if !moduleAvailableLanguages.contains(.swift) {
+                try removeSymbolGraph(compiler: "swift")
+            }
+            
+            if !moduleAvailableLanguages.contains(.objectiveC) {
+                try removeSymbolGraph(compiler: "clang")
+            }
+        }
+        
+        let articleNode = try XCTUnwrap(
+            context.documentationCache.first {
+                $0.key.path == "/documentation/MixedLanguageFramework/myarticle"
+            }?.value,
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            articleNode.availableSourceLanguages,
+            moduleAvailableLanguages,
+            "Expected the article's source languages to have inherited from the module's available source languages.",
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            articleNode.sourceLanguage,
+            expectedArticleDefaultLanguage,
+            file: file,
+            line: line
+        )
+    }
+    
+    func testArticleAvailableSourceLanguagesIsSwiftInSwiftModule() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        try assertArticleAvailableSourceLanguages(
+            moduleAvailableLanguages: [.swift],
+            expectedArticleDefaultLanguage: .swift
+        )
+    }
+    
+    func testArticleAvailableSourceLanguagesIsMixedLanguageInMixedLanguageModule() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        try assertArticleAvailableSourceLanguages(
+            moduleAvailableLanguages: [.swift, .objectiveC],
+            expectedArticleDefaultLanguage: .swift
+        )
+    }
+    
+    func testArticleAvailableSourceLanguagesIsObjectiveCInObjectiveCModule() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        try assertArticleAvailableSourceLanguages(
+            moduleAvailableLanguages: [.objectiveC],
+            expectedArticleDefaultLanguage: .objectiveC
         )
     }
 }
