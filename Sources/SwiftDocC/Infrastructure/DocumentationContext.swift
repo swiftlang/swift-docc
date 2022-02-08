@@ -138,15 +138,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// The root module nodes of the Topic Graph.
-    public var rootModules: [ResolvedTopicReference] {
-        return topicGraph.nodes.values.compactMap { node in
-            guard node.kind == .module,
-                  !onlyHasSnippetRelatedChildren(for: node.reference) else {
-                return nil
-            }
-            return node.reference
-        }
-    }
+    ///
+    /// This property is initialized during the registration of a documentation bundle.
+    public private(set) var rootModules: [ResolvedTopicReference]!
     
     /// The topic reference of the root module, if it's the only registered module.
     var soleRootModuleReference: ResolvedTopicReference? {
@@ -1858,6 +1852,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         symbolGraphLoader = nil
         
         try shouldContinueRegistration()
+        
+        // Keep track of the root modules registered from symbol graph files, we'll need them to automatically
+        // curate articles.
+        rootModules = topicGraph.nodes.values.compactMap { node in
+            guard node.kind == .module,
+                  !onlyHasSnippetRelatedChildren(for: node.reference) else {
+                return nil
+            }
+            return node.reference
+        }
         
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
         let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
