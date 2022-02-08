@@ -21,10 +21,10 @@ public struct BuildMetadata: Codable {
     )
     
     /// The display name of the documentation bundle that DocC built.
-    public var bundleDisplayName: String
+    public let bundleDisplayName: String
     
     /// The bundle identifier of the documentation bundle that DocC built.
-    public var bundleIdentifier: String
+    public let bundleIdentifier: String
     
     /// Creates a build metadata value for a documentation bundle built by DocC.
     ///

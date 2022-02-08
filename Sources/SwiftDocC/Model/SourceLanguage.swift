@@ -11,9 +11,9 @@
 /// A programming language.
 public struct SourceLanguage: Hashable, Codable {
     /// The display name of the programming language.
-    public var name: String
+    public let name: String
     /// A globally unique identifier for the language.
-    public var id: String
+    public let id: String
     
     /// Creates a new language with a given name and identifier.
     /// - Parameters:

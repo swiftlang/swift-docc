@@ -12,11 +12,11 @@ extension DocumentationNode {
     /// The kind of a documentation node.
     public struct Kind: Hashable, Codable {
         /// The name of the kind, suitable for display.
-        public var name: String
+        public let name: String
         /// A globally unique identifier for the kind, typically a reverse-dns name.
-        public var id: String
+        public let id: String
         /// `true` if the documentation node is about a symbol, `false` otherwise.
-        public var isSymbol: Bool
+        public let isSymbol: Bool
         
         /// `true` if the documentation has its own "page", `false` if it only exists in another node.
         public var isPage: Bool {

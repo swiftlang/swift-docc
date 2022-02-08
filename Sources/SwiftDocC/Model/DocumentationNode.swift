@@ -21,10 +21,10 @@ public struct DocumentationNode {
     public var reference: ResolvedTopicReference
     
     /// The type of node.
-    public var kind: Kind
+    public let kind: Kind
     
     /// The programming language in which the node is relevant.
-    public var sourceLanguage: SourceLanguage
+    public let sourceLanguage: SourceLanguage
     
     /// All the languages in which the node is available.
     public var availableSourceLanguages: Set<SourceLanguage>
@@ -42,7 +42,7 @@ public struct DocumentationNode {
     public var platformNames: Set<String>?
     
     /// The name of the node.
-    public var name: Name
+    public let name: Name
     
     /// The markup that makes up the content of this documentation node.
     ///
