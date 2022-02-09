@@ -386,7 +386,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
         XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
          
-        let didReadErrorOutputExpectation = AsyncronousExpectation(description: "Did read forwarded error output.")
+        let didReadErrorOutputExpectation = AsynchronousExpectation(description: "Did read forwarded error output.")
         DispatchQueue.global().async {
             let resolver = try? OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: {
                 errorMessage in
