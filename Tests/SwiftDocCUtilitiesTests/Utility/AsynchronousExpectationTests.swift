@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 
 /// Asynchronous expectation that works on Linux.
-class AsyncronousExpectation {
+class AsynchronousExpectation {
     enum Result {
         case success
         case timedOut
@@ -56,15 +56,15 @@ class AsyncronousExpectation {
     }
 }
 
-class AsyncronousExpectationTests: XCTestCase {
+class AsynchronousExpectationTests: XCTestCase {
     func testExpectationTimesOut() throws {
-        let expectation1 = AsyncronousExpectation(description: "expectation")
+        let expectation1 = AsynchronousExpectation(description: "expectation")
         let result = expectation1.wait(timeout: 2)
         XCTAssertEqual(result, .timedOut)
     }
 
     func testExpectationFulfills() throws {
-        let expectation1 = AsyncronousExpectation(description: "expectation")
+        let expectation1 = AsynchronousExpectation(description: "expectation")
         DispatchQueue.global(qos: .utility).asyncAfter(deadline: .now() + 0.5) { 
             expectation1.fulfill()
         }

@@ -49,7 +49,7 @@ class PreviewServerTests {
         let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
 
         // Assert server starts
-        let expectationStarted = AsyncronousExpectation(description: "Server before start")
+        let expectationStarted = AsynchronousExpectation(description: "Server before start")
         DispatchQueue.global().async {
             do {
                 try server.start() {
@@ -129,7 +129,7 @@ class PreviewServerTests {
         let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
 
         // Start the server
-        let expectationStarted = AsyncronousExpectation(description: "Server before start")
+        let expectationStarted = AsynchronousExpectation(description: "Server before start")
         DispatchQueue.global().async {
             do {
                 try server.start() {
@@ -176,7 +176,7 @@ class PreviewServerTests {
         let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
 
         // Start the server
-        let expectationStarted = AsyncronousExpectation(description: "Server before start")
+        let expectationStarted = AsynchronousExpectation(description: "Server before start")
         DispatchQueue.global().async {
             do {
                 try server.start() {
