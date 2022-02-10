@@ -61,7 +61,7 @@ enum SymbolGraphConcurrentDecoder {
         let symbols = Synchronized<[String: SymbolGraph.Symbol]>([:])
 
         let group = DispatchGroup()
-        let queue = DispatchQueue(label: "com.swift.SymbolGraphConcurrentDecoder", qos: .unspecified, attributes: .concurrent)
+        let queue = DispatchQueue(label: "org.swift.docc.SymbolGraphConcurrentDecoder", qos: .unspecified, attributes: .concurrent)
         
         // Concurrently decode metadata and relationships.
         group.async(queue: queue) {
