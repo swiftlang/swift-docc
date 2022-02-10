@@ -79,6 +79,16 @@ struct SymbolGraphLoader {
                         return
                     }
                 }
+                
+                // Only keep symbols that are available on at least one platform.
+                symbolGraph.symbols = symbolGraph.symbols.filter { (_, symbol) in
+                    guard let availability = symbol.availability?.availability else {
+                        // If the symbol doesn't have availability information, keep it.
+                        return true
+                    }
+                    
+                    return availability.contains { !$0.isUnconditionallyUnavailable }
+                }
 
                 // `moduleNameFor(_:at:)` is static because it's pure function.
                 let (moduleName, _) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
@@ -387,5 +397,11 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
         var newValue = self
         newValue.introducedVersion = platformVersion
         return newValue
+    }
+}
+
+private extension SymbolGraph.Symbol {
+    var availability: SymbolGraph.Symbol.Availability? {
+        mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
     }
 }

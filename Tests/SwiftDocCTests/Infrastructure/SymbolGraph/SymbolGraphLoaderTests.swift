@@ -321,6 +321,85 @@ class SymbolGraphLoaderTests: XCTestCase {
         }
     }
     
+    func testDoesNotLoadSymbolsThatAreUnconditionallyUnavailableOnAllPlatforms() throws {
+        func symbol(
+            withName name: String,
+            availability: [SymbolGraph.Symbol.Availability.AvailabilityItem]?
+        ) -> SymbolGraph.Symbol {
+            var mixins = [String: Mixin]()
+            
+            if let availability = availability {
+                mixins[
+                    SymbolGraph.Symbol.Availability.mixinKey
+                ] = SymbolGraph.Symbol.Availability(availability: availability)
+            }
+            
+            return SymbolGraph.Symbol(
+                identifier: SymbolGraph.Symbol.Identifier(precise: name, interfaceLanguage: "swift"),
+                names: SymbolGraph.Symbol.Names(title: name, navigator: nil, subHeading: nil, prose: nil),
+                pathComponents: [],
+                docComment: nil,
+                accessLevel: .init(rawValue: "public"),
+                kind: .init(rawIdentifier: "", displayName: ""),
+                mixins: mixins
+            )
+        }
+        
+        func availability(isUnconditionallyDeprecated: Bool) -> SymbolGraph.Symbol.Availability.AvailabilityItem {
+            .init(
+                domain: nil,
+                introducedVersion: nil,
+                deprecatedVersion: nil,
+                obsoletedVersion: nil,
+                message: nil,
+                renamed: nil,
+                isUnconditionallyDeprecated: false,
+                isUnconditionallyUnavailable: isUnconditionallyDeprecated,
+                willEventuallyBeDeprecated: false
+            )
+        }
+        
+        var symbolGraph = makeEmptySymbolGraph(moduleName: "ModuleName")
+        
+        symbolGraph.symbols = [
+            "noAvailability" : symbol(
+                withName: "noAvailability",
+                availability: nil
+            ),
+            
+            "unconditionallyUnavailableOnAllPlatforms" : symbol(
+                withName: "unconditionallyUnavailableOnAllPlatforms",
+                availability: [
+                    availability(isUnconditionallyDeprecated: true),
+                    availability(isUnconditionallyDeprecated: true),
+                ]
+            ),
+            
+            "unconditionallyUnavailableOnSomePlatforms" : symbol(
+                withName: "unconditionallyUnavailableOnSomePlatforms",
+                availability: [
+                    availability(isUnconditionallyDeprecated: false),
+                    availability(isUnconditionallyDeprecated: true),
+                ]
+            ),
+        ]
+        
+        let temporaryURL = try createTemporaryDirectory()
+        let symbolGraphURL = temporaryURL.appendingPathComponent("Test.symbols.json")
+        try JSONEncoder().encode(symbolGraph).write(to: symbolGraphURL)
+        
+        var loader = try makeSymbolGraphLoader(symbolGraphURLs: [symbolGraphURL])
+        try loader.loadAll()
+        
+        var isMainSymbolGraph = false
+        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
+            XCTAssertEqual(
+                graph.symbolGraph.symbols.map(\.key).sorted(),
+                ["unconditionallyUnavailableOnSomePlatforms", "noAvailability"].sorted()
+            )
+        }
+    }
+    
     // MARK: - Helpers
     
     private func makeEmptySymbolGraph(moduleName: String) -> SymbolGraph {
