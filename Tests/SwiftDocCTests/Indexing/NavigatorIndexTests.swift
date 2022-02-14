@@ -716,7 +716,7 @@ Root
         XCTAssertFalse(availabilityInfo.isAvailable(on: Platform(name: .iOS, version: Platform.Version(string: "10.0")!)))
         
         // Ensure we can't write to an index which is read-only.
-        let availabilityDB = try navigatorIndex.environment.openDatabase(named: "availability")
+        let availabilityDB = try XCTUnwrap(navigatorIndex.environment).openDatabase(named: "availability")
         XCTAssertThrowsError(try availabilityDB.put(key: "content", value: "test"))
         XCTAssertNil(availabilityDB.get(type: String.self, forKey: "content"))
     }
