@@ -499,7 +499,7 @@ extension NavigatorIndex {
         private var curatedIdentifiers = Set<Identifier>()
         
         /// Maps an arbitrary InterfaceLanguage string to an InterfaceLanguage.
-        private var nameToLanguage = [String: InterfaceLanguage]()
+        private var idToLanguage = [String: InterfaceLanguage]()
         
         /// Maps an arbitrary Platform name string to a Platform.Name instance.
         private var nameToPlatform = [String: Platform.Name]()
@@ -559,7 +559,7 @@ extension NavigatorIndex {
             
             // Setup the default known values for Platforms and Languages
             for language in InterfaceLanguage.apple {
-                nameToLanguage[language.name.lowercased()] = language
+                idToLanguage[language.id.lowercased()] = language
             }
             
             for platformName in Platform.Name.apple {
@@ -580,14 +580,18 @@ extension NavigatorIndex {
             }
             
             // Process the language
-            let interfaceLanguage = renderNode.identifier.sourceLanguage.id
-            var language = InterfaceLanguage.from(string: interfaceLanguage)
-            if let storedLanguage = nameToLanguage[interfaceLanguage.lowercased()], language == .undefined {
+            let interfaceLanguage = renderNode.identifier.sourceLanguage
+            let interfaceLanguageID = interfaceLanguage.id.lowercased()
+            
+            let language: InterfaceLanguage
+            if InterfaceLanguage.from(string: interfaceLanguageID) != .undefined {
+                language = InterfaceLanguage.from(string: interfaceLanguageID)
+            } else if let storedLanguage = idToLanguage[interfaceLanguageID] {
                 language = storedLanguage
-            } else if language == .undefined {
+            } else {
                 // It's a new language, create a new instance.
-                let language = InterfaceLanguage(interfaceLanguage, id: nameToLanguage.count)
-                nameToLanguage[interfaceLanguage.lowercased()] = language
+                language = InterfaceLanguage(interfaceLanguage.name, id: interfaceLanguage.id, mask: idToLanguage.count)
+                idToLanguage[interfaceLanguageID] = language
             }
 
             let identifier = renderNode.identifier.navigatorIndexIdentifier(forLanguage: language.mask)
