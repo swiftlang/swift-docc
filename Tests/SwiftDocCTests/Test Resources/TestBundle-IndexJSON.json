@@ -1,0 +1,770 @@
+{
+  "interfaceLanguages" : {
+    "swift" : [
+      {
+        "title" : "Functions",
+        "type" : "groupMarker"
+      },
+      {
+        "path" : "\/documentation\/fillintroduced\/iosmacosonly()",
+        "title" : "func iOSMacOSOnly()",
+        "type" : "func"
+      },
+      {
+        "path" : "\/documentation\/fillintroduced\/iosonlydeprecated()",
+        "title" : "func iOSOnlyDeprecated()",
+        "type" : "func"
+      },
+      {
+        "path" : "\/documentation\/fillintroduced\/iosonlyintroduced()",
+        "title" : "func iOSOnlyIntroduced()",
+        "type" : "func"
+      },
+      {
+        "path" : "\/documentation\/fillintroduced\/maccatalystonlydeprecated()",
+        "title" : "func macCatalystOnlyDeprecated()",
+        "type" : "func"
+      },
+      {
+        "path" : "\/documentation\/fillintroduced\/maccatalystonlyintroduced()",
+        "title" : "func macCatalystOnlyIntroduced()",
+        "type" : "func"
+      },
+      {
+        "path" : "\/documentation\/fillintroduced\/macosonlydeprecated()",
+        "title" : "func macOSOnlyDeprecated()",
+        "type" : "func"
+      },
+      {
+        "path" : "\/documentation\/fillintroduced\/macosonlyintroduced()",
+        "title" : "func macOSOnlyIntroduced()",
+        "type" : "func"
+      },
+      {
+        "title" : "Basics",
+        "type" : "groupMarker"
+      },
+      {
+        "children" : [
+          {
+            "title" : "Task Group Excercising Symbol Links",
+            "type" : "groupMarker"
+          },
+          {
+            "children" : [
+              {
+                "title" : "MyClass members (relative)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (module level)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (absolute)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (topic relative)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (topic module level)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (topic absolute)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              }
+            ],
+            "path" : "\/documentation\/mykit\/myclass",
+            "title" : "MyClass",
+            "type" : "class"
+          },
+          {
+            "children" : [
+              {
+                "title" : "MyClass members (relative)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (module level)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (absolute)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (topic relative)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (topic module level)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (topic absolute)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              }
+            ],
+            "path" : "\/documentation\/mykit\/myclass",
+            "title" : "MyClass",
+            "type" : "class"
+          },
+          {
+            "children" : [
+              {
+                "title" : "MyClass members (relative)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (module level)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (absolute)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (topic relative)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (topic module level)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              },
+              {
+                "title" : "MyClass members (topic absolute)",
+                "type" : "groupMarker"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+                "title" : "init()",
+                "type" : "init"
+              },
+              {
+                "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+                "title" : "myFunction()",
+                "type" : "method"
+              }
+            ],
+            "path" : "\/documentation\/mykit\/myclass",
+            "title" : "MyClass",
+            "type" : "class"
+          }
+        ],
+        "path" : "\/documentation\/mykit\/myprotocol",
+        "title" : "MyProtocol",
+        "type" : "protocol"
+      },
+      {
+        "children" : [
+          {
+            "title" : "MyClass members (relative)",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+            "title" : "myFunction()",
+            "type" : "method"
+          },
+          {
+            "title" : "MyClass members (module level)",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+            "title" : "myFunction()",
+            "type" : "method"
+          },
+          {
+            "title" : "MyClass members (absolute)",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+            "title" : "myFunction()",
+            "type" : "method"
+          },
+          {
+            "title" : "MyClass members (topic relative)",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+            "title" : "myFunction()",
+            "type" : "method"
+          },
+          {
+            "title" : "MyClass members (topic module level)",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+            "title" : "myFunction()",
+            "type" : "method"
+          },
+          {
+            "title" : "MyClass members (topic absolute)",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-33vaw",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/init()-3743d",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "path" : "\/documentation\/mykit\/myclass\/myfunction()",
+            "title" : "myFunction()",
+            "type" : "method"
+          }
+        ],
+        "path" : "\/documentation\/mykit\/myclass",
+        "title" : "MyClass",
+        "type" : "class"
+      },
+      {
+        "title" : "MyKit in Practice",
+        "type" : "groupMarker"
+      },
+      {
+        "children" : [
+          {
+            "title" : "A Topic",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/test-bundle\/article2",
+            "title" : "Article 2",
+            "type" : "symbol"
+          },
+          {
+            "path" : "\/documentation\/test-bundle\/article3",
+            "title" : "Article 3",
+            "type" : "article"
+          },
+          {
+            "title" : "An Article and a Tutorial",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/test-bundle\/article3",
+            "title" : "Article 3",
+            "type" : "article"
+          },
+          {
+            "path" : "\/tutorials\/test-bundle\/testtutorial",
+            "title" : "Basic Augmented Reality App",
+            "type" : "project"
+          },
+          {
+            "title" : "Duplicated",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/test-bundle\/article2",
+            "title" : "Article 2",
+            "type" : "symbol"
+          },
+          {
+            "title" : "Duplicated",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/test-bundle\/article2",
+            "title" : "Article 2",
+            "type" : "symbol"
+          }
+        ],
+        "path" : "\/documentation\/test-bundle\/article",
+        "title" : "My Cool Article",
+        "type" : "symbol"
+      },
+      {
+        "path" : "\/documentation\/test-bundle\/article2",
+        "title" : "Article 2",
+        "type" : "symbol"
+      },
+      {
+        "path" : "\/documentation\/test-bundle\/default-code-listing-syntax",
+        "title" : "Default Code Listing Syntax",
+        "type" : "article"
+      },
+      {
+        "title" : "Global symbols",
+        "type" : "groupMarker"
+      },
+      {
+        "path" : "\/documentation\/mykit\/globalfunction(_:considering:)",
+        "title" : "func globalFunction(Data, considering: Int)",
+        "type" : "func"
+      },
+      {
+        "title" : "Extensions to other frameworks",
+        "type" : "groupMarker"
+      },
+      {
+        "path" : "\/documentation\/sidekit\/uncuratedclass\/angle",
+        "title" : "angle",
+        "type" : "var"
+      },
+      {
+        "title" : "Basics",
+        "type" : "groupMarker"
+      },
+      {
+        "children" : [
+          {
+            "title" : "Enumeration Cases",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/sidekit\/sideclass\/value(_:)",
+            "title" : "case Value(Int)",
+            "type" : "enum.case"
+          },
+          {
+            "title" : "Initializers",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/sidekit\/sideclass\/init()",
+            "title" : "init()",
+            "type" : "init"
+          },
+          {
+            "title" : "Instance Properties",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/sidekit\/sideclass\/path",
+            "title" : "var path: String",
+            "type" : "property"
+          },
+          {
+            "path" : "\/documentation\/sidekit\/sideclass\/url",
+            "title" : "var url: URL",
+            "type" : "property"
+          },
+          {
+            "title" : "Instance Methods",
+            "type" : "groupMarker"
+          },
+          {
+            "path" : "\/documentation\/sidekit\/sideclass\/myfunction()",
+            "title" : "func myFunction()",
+            "type" : "method"
+          },
+          {
+            "title" : "Type Aliases",
+            "type" : "groupMarker"
+          },
+          {
+            "children" : [
+              {
+                "title" : "Default Implementations",
+                "type" : "groupMarker"
+              },
+              {
+                "children" : [
+                  {
+                    "title" : "Instance Methods",
+                    "type" : "groupMarker"
+                  },
+                  {
+                    "path" : "\/documentation\/sidekit\/sideclass\/element\/inherited()",
+                    "title" : "inherited()",
+                    "type" : "method"
+                  }
+                ],
+                "path" : "\/documentation\/sidekit\/sideclass\/element\/protocol-implementations",
+                "title" : "Protocol Implementations",
+                "type" : "symbol"
+              }
+            ],
+            "path" : "\/documentation\/sidekit\/sideclass\/element",
+            "title" : "Element",
+            "type" : "typealias"
+          }
+        ],
+        "path" : "\/documentation\/sidekit\/sideclass",
+        "title" : "SideClass",
+        "type" : "class"
+      },
+      {
+        "children" : [
+          {
+            "title" : "Instance Methods",
+            "type" : "groupMarker"
+          },
+          {
+            "children" : [
+              {
+                "children" : [
+                  {
+                    "path" : "\/documentation\/sidekit\/sideprotocol\/func()-2dxqn",
+                    "title" : "func1()",
+                    "type" : "method"
+                  }
+                ],
+                "title" : "SideProtocol Implementations",
+                "type" : "groupMarker"
+              }
+            ],
+            "path" : "\/documentation\/sidekit\/sideprotocol\/func()-6ijsi",
+            "title" : "func1()",
+            "type" : "method"
+          }
+        ],
+        "path" : "\/documentation\/sidekit\/sideprotocol",
+        "title" : "SideProtocol",
+        "type" : "protocol"
+      },
+      {
+        "title" : "Chapter 1",
+        "type" : "groupMarker"
+      },
+      {
+        "path" : "\/tutorials\/test-bundle\/testtutorial",
+        "title" : "Basic Augmented Reality App",
+        "type" : "project"
+      },
+      {
+        "path" : "\/tutorials\/test-bundle\/testtutorialarticle",
+        "title" : "Making an Augmented Reality App",
+        "type" : "article"
+      },
+      {
+        "path" : "\/tutorials\/test-bundle\/testtutorial2",
+        "title" : "Advanced Augmented Reality App",
+        "type" : "project"
+      },
+      {
+        "path" : "\/tutorials\/test-bundle\/tutorialmediawithspaces",
+        "title" : "Basic Augmented Reality App",
+        "type" : "project"
+      }
+    ]
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 1,
+    "patch" : 0
+  }
+}

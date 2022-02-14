@@ -21,6 +21,7 @@ Each rendering model element adopts the ``TextIndexing`` protocol in order to pr
 
 - ``NavigatorIndex``
 - ``NavigatorTree``
+- ``Index``
 - ``NavigatorItem``
 
 ### Navigation Metadata
@@ -36,4 +37,4 @@ Each rendering model element adopts the ``TextIndexing`` protocol in order to pr
 - ``Platform``
 - ``LMDBData``
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->

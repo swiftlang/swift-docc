@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -779,7 +779,27 @@ extension NavigatorIndex {
         }
         
         /// Finalize the process by writing the content on disk.
-        public func finalize(estimatedCount: Int? = nil) {
+        ///
+        /// By default this function writes out the navigator index to disk as an LMDB database
+        /// but emitting a JSON representation of the index is also supported.
+        ///
+        /// - Parameters:
+        ///   - estimatedCount: An estimate of the number of nodes in the navigator index.
+        ///
+        ///   - emitJSONRepresentation: Whether or not a JSON representation of the index should
+        ///     be written to disk.
+        ///
+        ///     Defaults to `false`.
+        ///
+        ///   - emitLMDBRepresentation: Whether or not an LMDB representation of the index should
+        ///     written to disk.
+        ///
+        ///     Defaults to `true`.
+        public func finalize(
+            estimatedCount: Int? = nil,
+            emitJSONRepresentation: Bool = true,
+            emitLMDBRepresentation: Bool = true
+        ) {
             precondition(!isCompleted, "Finalizing an already completed index build multiple times is not possible.")
             
             guard let navigatorIndex = navigatorIndex else {
@@ -879,6 +899,36 @@ extension NavigatorIndex {
                     }
                     root.add(child: otherNode)
                 }
+            }
+            
+            if emitJSONRepresentation {
+                let index = Index.fromNavigatorIndex(navigatorIndex)
+                
+                let jsonEncoder = JSONEncoder()
+                if shouldPrettyPrintOutputJSON {
+                    jsonEncoder.outputFormatting = [.sortedKeys, .prettyPrinted]
+                } else {
+                    jsonEncoder.outputFormatting = [.sortedKeys]
+                }
+                
+                let jsonNavigatorIndexURL = outputURL.appendingPathComponent("index.json")
+                do {
+                    let indexData = try jsonEncoder.encode(index)
+                    try indexData.write(to: jsonNavigatorIndexURL)
+                } catch {
+                    self.problems.append(
+                        error.problem(
+                            source: nil,
+                            severity: .error,
+                            summaryPrefix: "Failed to write navigator index JSON to '\(jsonNavigatorIndexURL)': "
+                        )
+                    )
+                }
+                
+            }
+            
+            guard emitLMDBRepresentation else {
+                return
             }
             
             let environment: LMDB.Environment
@@ -1116,7 +1166,7 @@ extension NavigatorIndex {
 fileprivate extension Error {
     
     /// Returns a problem from an `Error`.
-    func problem(source: URL, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Problem {
+    func problem(source: URL?, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Problem {
         let diagnostic = Diagnostic(source: source,
                                          severity: severity,
                                          range: nil,
