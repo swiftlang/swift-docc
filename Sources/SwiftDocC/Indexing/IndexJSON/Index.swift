@@ -220,45 +220,45 @@ extension NavigatorIndex.PageType {
         case .symbol:
             return  RenderNode.Kind.symbol.rawValue
         case .framework:
-            return SymbolGraph.Symbol.KindIdentifier.module.identifier
+            return SymbolGraph.Symbol.KindIdentifier.module.renderingIdentifier
         case .class:
-            return SymbolGraph.Symbol.KindIdentifier.class.identifier
+            return SymbolGraph.Symbol.KindIdentifier.class.renderingIdentifier
         case .structure:
-            return SymbolGraph.Symbol.KindIdentifier.struct.identifier
+            return SymbolGraph.Symbol.KindIdentifier.struct.renderingIdentifier
         case .protocol:
-            return SymbolGraph.Symbol.KindIdentifier.protocol.identifier
+            return SymbolGraph.Symbol.KindIdentifier.protocol.renderingIdentifier
         case .enumeration:
-            return SymbolGraph.Symbol.KindIdentifier.enum.identifier
+            return SymbolGraph.Symbol.KindIdentifier.enum.renderingIdentifier
         case .function:
-            return SymbolGraph.Symbol.KindIdentifier.func.identifier
+            return SymbolGraph.Symbol.KindIdentifier.func.renderingIdentifier
         case .extension:
             return "extension"
         case .localVariable, .globalVariable, .instanceVariable:
-            return SymbolGraph.Symbol.KindIdentifier.var.identifier
+            return SymbolGraph.Symbol.KindIdentifier.var.renderingIdentifier
         case .typeAlias:
-            return SymbolGraph.Symbol.KindIdentifier.typealias.identifier
+            return SymbolGraph.Symbol.KindIdentifier.typealias.renderingIdentifier
         case .associatedType:
-            return SymbolGraph.Symbol.KindIdentifier.associatedtype.identifier
+            return SymbolGraph.Symbol.KindIdentifier.associatedtype.renderingIdentifier
         case .operator:
-            return SymbolGraph.Symbol.KindIdentifier.operator.identifier
+            return SymbolGraph.Symbol.KindIdentifier.operator.renderingIdentifier
         case .macro:
             return "macro"
         case .union:
             return "union"
         case .enumerationCase:
-            return SymbolGraph.Symbol.KindIdentifier.case.identifier
+            return SymbolGraph.Symbol.KindIdentifier.case.renderingIdentifier
         case .initializer:
-            return SymbolGraph.Symbol.KindIdentifier.`init`.identifier
+            return SymbolGraph.Symbol.KindIdentifier.`init`.renderingIdentifier
         case .instanceMethod:
-            return SymbolGraph.Symbol.KindIdentifier.method.identifier
+            return SymbolGraph.Symbol.KindIdentifier.method.renderingIdentifier
         case .instanceProperty:
-            return SymbolGraph.Symbol.KindIdentifier.property.identifier
+            return SymbolGraph.Symbol.KindIdentifier.property.renderingIdentifier
         case .subscript:
-            return SymbolGraph.Symbol.KindIdentifier.subscript.identifier
+            return SymbolGraph.Symbol.KindIdentifier.subscript.renderingIdentifier
         case .typeMethod:
-            return SymbolGraph.Symbol.KindIdentifier.typeMethod.identifier
+            return SymbolGraph.Symbol.KindIdentifier.typeMethod.renderingIdentifier
         case .typeProperty:
-            return SymbolGraph.Symbol.KindIdentifier.typeProperty.identifier
+            return SymbolGraph.Symbol.KindIdentifier.typeProperty.renderingIdentifier
         case .buildSetting:
             return "buildSetting"
         case .propertyListKey:

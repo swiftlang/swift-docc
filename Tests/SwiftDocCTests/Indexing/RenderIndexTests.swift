@@ -124,22 +124,22 @@ final class RenderIndexTests: XCTestCase {
                           {
                             "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/first",
                             "title": "static var first: Foo",
-                            "type": "enum.case"
+                            "type": "case"
                           },
                           {
                             "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/fourth",
                             "title": "static var fourth: Foo",
-                            "type": "enum.case"
+                            "type": "case"
                           },
                           {
                             "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/second",
                             "title": "static var second: Foo",
-                            "type": "enum.case"
+                            "type": "case"
                           },
                           {
                             "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/third",
                             "title": "static var third: Foo",
-                            "type": "enum.case"
+                            "type": "case"
                           }
                         ],
                         "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct",

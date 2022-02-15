@@ -637,7 +637,7 @@
           {
             "path" : "\/documentation\/sidekit\/sideclass\/value(_:)",
             "title" : "case Value(Int)",
-            "type" : "enum.case"
+            "type" : "case"
           },
           {
             "title" : "Initializers",

@@ -20,4 +20,20 @@ extension SymbolGraph.Symbol.KindIdentifier {
         default: return true
         }
     }
+    
+    /// Returns the kind identifier in the form expected when creating render models.
+    ///
+    /// Used for ``RenderNode`` and ``RenderIndex`` creation.
+    var renderingIdentifier: String {
+        // This code was originally added to remove `swift.` name-spacing.
+        //
+        // Since then, SymbolKit has removed language name-spacing from symbol kinds and introduced
+        // some kinds that actually rely on name-spacing (like 'type.method' vs. 'method'
+        // and 'func.op').
+        //
+        // However, existing clients are relying on this behavior so we should continue this way
+        // for now until we can make a coordinate change to remove this logic and just use the
+        // base identifier, including any dot-separated specifics.
+        return identifier.components(separatedBy: ".").last ?? identifier
+    }
 }
