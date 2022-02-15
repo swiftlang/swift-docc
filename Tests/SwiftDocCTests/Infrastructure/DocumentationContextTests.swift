@@ -3103,6 +3103,24 @@ let expected = """
             expectedArticleDefaultLanguage: .objectiveC
         )
     }
+    
+    func testDocumentationExtensionURLForReference() throws {
+        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle")
+        
+        XCTAssertEqual(
+            context.documentationExtensionURL(
+                for: ResolvedTopicReference(
+                    bundleIdentifier: "org.swift.docc.example",
+                    path: "/documentation/MyKit/MyClass",
+                    fragment: nil,
+                    sourceLanguage: .swift
+                )
+            ),
+            bundleURL
+                .appendingPathComponent("documentation")
+                .appendingPathComponent("myclass.md")
+        )
+    }
 }
 
 func assertEqualDumps(_ lhs: String, _ rhs: String, file: StaticString = #file, line: UInt = #line) {
