@@ -11,26 +11,26 @@
 import XCTest
 @testable import SwiftDocC
 
-final class IndexJSONTests: XCTestCase {
-    func testTestBundleIndexJSONGeneration() throws {
+final class RenderIndexTests: XCTestCase {
+    func testTestBundleRenderIndexGeneration() throws {
         let expectedIndexURL = try XCTUnwrap(
             Bundle.module.url(
-                forResource: "TestBundle-IndexJSON",
+                forResource: "TestBundle-RenderIndex",
                 withExtension: "json",
                 subdirectory: "Test Resources"
             )
         )
         
         try XCTAssertEqual(
-            generatedJSONIndex(for: "TestBundle", with: "org.swift.docc.example"),
-            Index.fromURL(expectedIndexURL)
+            generatedRenderIndex(for: "TestBundle", with: "org.swift.docc.example"),
+            RenderIndex.fromURL(expectedIndexURL)
         )
     }
     
-    func testIndexJSONGenerationForBundleWithTechnologyRoot() throws {
+    func testRenderIndexGenerationForBundleWithTechnologyRoot() throws {
         try XCTAssertEqual(
-            generatedJSONIndex(for: "BundleWithTechnologyRoot", with: "org.swift.docc.example"),
-            Index.fromString(#"""
+            generatedRenderIndex(for: "BundleWithTechnologyRoot", with: "org.swift.docc.example"),
+            RenderIndex.fromString(#"""
                 {
                   "interfaceLanguages": {
                     "swift": [
@@ -57,12 +57,12 @@ final class IndexJSONTests: XCTestCase {
         )
     }
     
-    func testIndexJSONGenerationForMixedLanguageFramework() throws {
+    func testRenderIndexGenerationForMixedLanguageFramework() throws {
         enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
         
         XCTAssertEqual(
-            try generatedJSONIndex(for: "MixedLanguageFramework", with: "org.swift.MixedLanguageFramework"),
-            try Index.fromString(#"""
+            try generatedRenderIndex(for: "MixedLanguageFramework", with: "org.swift.MixedLanguageFramework"),
+            try RenderIndex.fromString(#"""
                 {
                   "interfaceLanguages": {
                     "occ": [
@@ -247,7 +247,7 @@ final class IndexJSONTests: XCTestCase {
         )
     }
     
-    func generatedJSONIndex(for testBundleName: String, with bundleIdentifier: String) throws -> Index {
+    func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) throws -> RenderIndex {
         let (bundle, context) = try testBundleAndContext(named: testBundleName)
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
@@ -275,19 +275,19 @@ final class IndexJSONTests: XCTestCase {
             "More than one file was emitted while finalizing the index builder and only requesting the JSON representation."
         )
         
-        return try Index.fromURL(indexDirectory.appendingPathComponent("index.json"))
+        return try RenderIndex.fromURL(indexDirectory.appendingPathComponent("index.json"))
     }
     
 }
 
-extension Index {
-    static func fromString(_ string: String) throws -> Index {
+extension RenderIndex {
+    static func fromString(_ string: String) throws -> RenderIndex {
         let decoder = JSONDecoder()
-        return try decoder.decode(Index.self, from: Data(string.utf8))
+        return try decoder.decode(RenderIndex.self, from: Data(string.utf8))
     }
     
-    static func fromURL(_ url: URL) throws -> Index {
+    static func fromURL(_ url: URL) throws -> RenderIndex {
         let data = try Data(contentsOf: url)
-        return try JSONDecoder().decode(Index.self, from: data)
+        return try JSONDecoder().decode(RenderIndex.self, from: data)
     }
 }

@@ -2269,7 +2269,7 @@ class ConvertActionTests: XCTestCase {
         )
     }
     
-    func testIndexJSONGeneration() throws {
+    func testRenderIndexJSONGeneration() throws {
         let catalog = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
@@ -2297,13 +2297,13 @@ class ConvertActionTests: XCTestCase {
         try action.performAndHandleResult()
         
         let indexDirectory = targetDirectory.appendingPathComponent("index", isDirectory: true)
-        let indexJSON = indexDirectory.appendingPathComponent("index.json", isDirectory: false)
+        let renderIndexJSON = indexDirectory.appendingPathComponent("index.json", isDirectory: false)
         
         enableFeatureFlag(\.isExperimentalJSONIndexEnabled)
         
         try action.performAndHandleResult()
         XCTAssertTrue(FileManager.default.directoryExists(atPath: indexDirectory.path))
-        XCTAssertTrue(FileManager.default.fileExists(atPath: indexJSON.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: renderIndexJSON.path))
         try XCTAssertEqual(FileManager.default.contentsOfDirectory(at: indexDirectory, includingPropertiesForKeys: nil).count, 1)
     }
     

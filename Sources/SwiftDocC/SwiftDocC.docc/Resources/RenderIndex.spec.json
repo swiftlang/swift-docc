@@ -3,12 +3,12 @@
     "info": {
         "description": "Specification of the Swift-DocC Index.json file.",
         "version": "0.1.0",
-        "title": "Index"
+        "title": "RenderIndex"
     },
     "paths": {},
     "components": {
         "schemas": {
-            "Index": {
+            "RenderIndex": {
                 "type": "object",
                 "required": [
                     "schemaVersion",

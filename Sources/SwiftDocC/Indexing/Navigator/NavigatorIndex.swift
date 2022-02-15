@@ -902,7 +902,7 @@ extension NavigatorIndex {
             }
             
             if emitJSONRepresentation {
-                let index = Index.fromNavigatorIndex(navigatorIndex)
+                let renderIndex = RenderIndex.fromNavigatorIndex(navigatorIndex)
                 
                 let jsonEncoder = JSONEncoder()
                 if shouldPrettyPrintOutputJSON {
@@ -913,14 +913,14 @@ extension NavigatorIndex {
                 
                 let jsonNavigatorIndexURL = outputURL.appendingPathComponent("index.json")
                 do {
-                    let indexData = try jsonEncoder.encode(index)
-                    try indexData.write(to: jsonNavigatorIndexURL)
+                    let renderIndexData = try jsonEncoder.encode(renderIndex)
+                    try renderIndexData.write(to: jsonNavigatorIndexURL)
                 } catch {
                     self.problems.append(
                         error.problem(
                             source: nil,
                             severity: .error,
-                            summaryPrefix: "Failed to write navigator index JSON to '\(jsonNavigatorIndexURL)': "
+                            summaryPrefix: "Failed to write render index JSON to '\(jsonNavigatorIndexURL)': "
                         )
                     )
                 }

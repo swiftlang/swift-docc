@@ -286,8 +286,8 @@ Root
         XCTAssertThrowsError(try readTree.read(from: indexURL, interfaceLanguages: [.swift], timeout: 0.25, queue: DispatchQueue.main, broadcast: nil))
         
         try XCTAssertEqual(
-            Index.fromURL(targetURL.appendingPathComponent("index.json")),
-            Index.fromString(
+            RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
+            RenderIndex.fromString(
                 """
                 {
                   "interfaceLanguages": {},
@@ -364,13 +364,13 @@ Root
             
             builder.finalize()
             
-            let indexJSON = try Index.fromURL(targetURL.appendingPathComponent("index.json"))
-            XCTAssertEqual(indexJSON.interfaceLanguages.keys.count, 1)
-            XCTAssertEqual(indexJSON.interfaceLanguages["swift"]?.count, 27)
+            let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+            XCTAssertEqual(renderIndex.interfaceLanguages.keys.count, 1)
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.count, 27)
             
-            XCTAssertEqual(indexJSON.interfaceLanguages["swift"]?.first?.title, "Functions")
-            XCTAssertEqual(indexJSON.interfaceLanguages["swift"]?.first?.path, nil)
-            XCTAssertEqual(indexJSON.interfaceLanguages["swift"]?.first?.type, "groupMarker")
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.title, "Functions")
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.path, nil)
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.type, "groupMarker")
             
             let navigatorIndex = builder.navigatorIndex!
             
@@ -432,8 +432,8 @@ Root
         """)
         
         try XCTAssertEqual(
-            Index.fromURL(targetURL.appendingPathComponent("index.json")),
-            Index.fromString(#"""
+            RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
+            RenderIndex.fromString(#"""
                 {
                   "interfaceLanguages": {
                     "occ": [

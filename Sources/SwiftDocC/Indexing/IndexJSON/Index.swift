@@ -10,28 +10,28 @@
 
 import SymbolKit
 
-/// A navigation index of the content in a DocC archive.
+/// A navigation index of the content in a DocC archive, optimized for rendering.
 ///
 /// The structure of this data is determined by the topic groups authored in
 /// the processed documentation content.
 ///
 /// This is an alternative representation of the data that is also handled by the
 /// ``NavigatorIndex`` in a ``NavigatorTree``. This index is specifically designed to be emitted
-/// to disk as JSON file and implements the Index JSON spec.
+/// to disk as JSON file and implements the RenderIndex JSON spec.
 ///
-/// An OpenAPI specification for Index is available in the repo at
-/// `Sources/SwiftDocC/SwiftDocC.docc/Resources/Index.spec.json`.
-public struct Index: Codable, Equatable {
+/// An OpenAPI specification for RenderIndex is available in the repo at
+/// `Sources/SwiftDocC/SwiftDocC.docc/Resources/RenderIndex.spec.json`.
+public struct RenderIndex: Codable, Equatable {
     /// The current schema version of the Index JSON spec.
     public static let currentSchemaVersion = SemanticVersion(major: 0, minor: 1, patch: 0)
     
-    /// The version of the Index JSON spec that was followed when creating this Index.
+    /// The version of the RenderIndex spec that was followed when creating this index.
     public let schemaVersion: SemanticVersion
     
     /// A mapping of interface languages to the index nodes they contain.
     public let interfaceLanguages: [String: [Node]]
     
-    /// Creates a new Index with the given interface language to node mapping.
+    /// Creates a new render index with the given interface language to node mapping.
     public init(
         interfaceLanguages: [String: [Node]]
     ) {
@@ -40,8 +40,8 @@ public struct Index: Codable, Equatable {
     }
 }
 
-extension Index {
-    /// A documentation node in a navigator index.
+extension RenderIndex {
+    /// A documentation node in a documentation render index.
     public struct Node: Codable, Hashable {
         /// The title of the node, suitable for presentation.
         public let title: String
@@ -60,7 +60,7 @@ extension Index {
         /// A Boolean value that is true if the current node belongs to an external
         /// documentation archive.
         ///
-        /// Allows renderers to use a specific design treatment for index nodes
+        /// Allows renderers to use a specific design treatment for render index nodes
         /// that lead to external documentation content.
         public let isExternal: Bool
 
@@ -142,9 +142,9 @@ extension Index {
                 return
             }
             
-            self.type = pageType.indexPageType
+            self.type = pageType.renderIndexPageType
             
-            if pageType.pathShouldBeIncludedInIndex {
+            if pageType.pathShouldBeIncludedInRenderIndex {
                 self.path = path
             } else {
                 self.path = nil
@@ -153,15 +153,15 @@ extension Index {
     }
 }
 
-extension Index {
-    static func fromNavigatorIndex(_ navigatorIndex: NavigatorIndex) -> Index {
+extension RenderIndex {
+    static func fromNavigatorIndex(_ navigatorIndex: NavigatorIndex) -> RenderIndex {
         // The immediate children of the root represent the interface languages
         // described in this navigator tree.
         let interfaceLanguageRoots = navigatorIndex.navigatorTree.root.children
         
         let languageMaskToLanguage = navigatorIndex.languageMaskToLanguage
         
-        return Index(
+        return RenderIndex(
             interfaceLanguages: Dictionary(
                 interfaceLanguageRoots.compactMap { interfaceLanguageRoot in
                     // If an interface language in the given navigator tree does not exist
@@ -171,7 +171,7 @@ extension Index {
                     
                     return (
                         language: languageID,
-                        children: interfaceLanguageRoot.children.map(Index.Node.fromNavigatorTreeNode)
+                        children: interfaceLanguageRoot.children.map(RenderIndex.Node.fromNavigatorTreeNode)
                     )
                 },
                 uniquingKeysWith: +
@@ -180,19 +180,19 @@ extension Index {
     }
 }
 
-extension Index.Node {
-    static func fromNavigatorTreeNode(_ node: NavigatorTree.Node) -> Index.Node {
-        return Index.Node(
+extension RenderIndex.Node {
+    static func fromNavigatorTreeNode(_ node: NavigatorTree.Node) -> RenderIndex.Node {
+        return RenderIndex.Node(
             title: node.item.title,
             path: node.item.path,
             pageType: NavigatorIndex.PageType(rawValue: node.item.pageType),
-            children: node.children.map(Index.Node.fromNavigatorTreeNode)
+            children: node.children.map(RenderIndex.Node.fromNavigatorTreeNode)
         )
     }
 }
 
 extension NavigatorIndex.PageType {
-    var pathShouldBeIncludedInIndex: Bool {
+    var pathShouldBeIncludedInRenderIndex: Bool {
         switch self {
         case .root, .section, .groupMarker:
             return false
@@ -201,7 +201,7 @@ extension NavigatorIndex.PageType {
         }
     }
     
-    var indexPageType: String {
+    var renderIndexPageType: String {
         switch self {
         case .root:
             return "root"

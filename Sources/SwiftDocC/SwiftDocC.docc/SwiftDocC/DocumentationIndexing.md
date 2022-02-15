@@ -21,7 +21,7 @@ Each rendering model element adopts the ``TextIndexing`` protocol in order to pr
 
 - ``NavigatorIndex``
 - ``NavigatorTree``
-- ``Index``
+- ``RenderIndex``
 - ``NavigatorItem``
 
 ### Navigation Metadata
