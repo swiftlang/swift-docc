@@ -31,7 +31,7 @@ class RoleTests: XCTestCase {
         // Compile docs and verify contents
         for (path, expectedRole) in expectedRoles {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: path, fragment: nil, sourceLanguage: .swift)
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             do {
                 let node = try context.entity(with: identifier)
                 var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
@@ -49,7 +49,7 @@ class RoleTests: XCTestCase {
         defer { try? FileManager.default.removeItem(at: url) }
 
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-        let source = context.fileURL(for: identifier)
+        let source = context.documentURL(for: identifier)
         let node = try context.entity(with: identifier)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
         let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -64,7 +64,7 @@ class RoleTests: XCTestCase {
         defer { try? FileManager.default.removeItem(at: url) }
 
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", fragment: nil, sourceLanguage: .swift)
-        let source = context.fileURL(for: identifier)
+        let source = context.documentURL(for: identifier)
         let node = try context.entity(with: identifier)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
         let renderNode = translator.visit(node.semantic) as! RenderNode

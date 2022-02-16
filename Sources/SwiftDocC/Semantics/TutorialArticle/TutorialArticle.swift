@@ -178,7 +178,7 @@ extension TutorialArticle {
             .compactMap({ context.topicGraph.nodeWithReference($0) })
             .first(where: { $0.kind == .technology || $0.kind == .chapter || $0.kind == .volume })
         guard technologyParent != nil else {
-            let url = context.fileURL(for: node.reference)
+            let url = context.documentURL(for: node.reference)
             engine.emit(.init(
                 diagnostic: Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Unreferenced\(TutorialArticle.self)", summary: "The article \(node.reference.path.components(separatedBy: "/").last!.singleQuoted) must be referenced from a Tutorial Table of Contents"),
                 possibleSolutions: [

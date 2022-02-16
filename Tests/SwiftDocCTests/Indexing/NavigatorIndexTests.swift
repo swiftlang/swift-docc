@@ -356,7 +356,7 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.fileURL(for: identifier)
+                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
                 try builder.index(renderNode: renderNode)
@@ -505,7 +505,7 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.fileURL(for: identifier)
+                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
                 try builder.index(renderNode: renderNode)
@@ -554,7 +554,7 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.fileURL(for: identifier)
+                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
                 let renderNode = try converter.convert(entity, at: source)
                 try builder.index(renderNode: renderNode)
@@ -607,7 +607,7 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
             try builder.index(renderNode: renderNode)
@@ -657,7 +657,7 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.fileURL(for: identifier)
+                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
                 var renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
                 
@@ -717,7 +717,7 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
             try builder.index(renderNode: renderNode)
@@ -817,7 +817,7 @@ Root
         builder.navigatorIndex?.pathHasher = .fnv1
         
         for identifier in context.knownPages {
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
             try builder.index(renderNode: renderNode)
@@ -1223,7 +1223,7 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             let renderNode = try converter.convert(entity, at: source)
             try builder.index(renderNode: renderNode)

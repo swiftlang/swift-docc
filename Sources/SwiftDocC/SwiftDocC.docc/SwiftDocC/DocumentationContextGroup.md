@@ -37,7 +37,7 @@ let node = try context.entity(with: reference)
 To find out the location of the source file for a given documentation node use:
 
 ```swift
-let sourceFileURL = try context.fileURL(for: reference)
+let sourceFileURL = try context.documentURL(for: reference)
 ```
 
 And finally to print all known paths in the context:
