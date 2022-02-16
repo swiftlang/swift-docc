@@ -330,7 +330,8 @@ public struct ConvertAction: Action, RecreatingContext {
         // An optional indexer, if indexing while converting is enabled.
         var indexer: Indexer? = nil
         
-        if buildIndex, let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
+        let shouldBuildIndex = buildIndex || FeatureFlags.current.isExperimentalJSONIndexEnabled
+        if shouldBuildIndex, let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
             // Create an index builder and prepare it to receive nodes.
             indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
         }
@@ -366,7 +367,10 @@ public struct ConvertAction: Action, RecreatingContext {
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
         if let indexer = indexer {
-            let indexerProblems = indexer.finalize()
+            let indexerProblems = indexer.finalize(
+                emitJSON: FeatureFlags.current.isExperimentalJSONIndexEnabled,
+                emitLMDB: buildIndex
+            )
             allProblems.append(contentsOf: indexerProblems)
         }
 

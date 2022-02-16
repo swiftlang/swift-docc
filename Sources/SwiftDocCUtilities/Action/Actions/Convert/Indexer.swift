@@ -38,7 +38,6 @@ extension ConvertAction {
         ///   - bundleIdentifier: The identifier of the bundle being indexed.
         init(outputURL: URL, bundleIdentifier: String) throws {
             let indexURL = outputURL.appendingPathComponent("index")
-            try FileManager.default.createDirectory(at: indexURL, withIntermediateDirectories: false, attributes: nil)
             indexBuilder = Synchronized<NavigatorIndex.Builder>(
                 NavigatorIndex.Builder(renderNodeProvider: nil,
                     outputURL: indexURL,
@@ -71,9 +70,16 @@ extension ConvertAction {
         
         /// Finalizes the index and writes it on disk.
         /// - Returns: Returns a list of problems if any were encountered during indexing.
-        func finalize() -> [Problem] {
+        func finalize(emitJSON: Bool, emitLMDB: Bool) -> [Problem] {
             let startTime = ProcessInfo.processInfo.systemUptime
-            indexBuilder.sync({ $0.finalize(estimatedCount: nodeCount) })
+            indexBuilder.sync { indexBuilder in
+                indexBuilder.finalize(
+                    estimatedCount: nodeCount,
+                    emitJSONRepresentation: emitJSON,
+                    emitLMDBRepresentation: emitLMDB
+                )
+            }
+            
             duration += ProcessInfo.processInfo.systemUptime - startTime
             
             benchmark(add: Benchmark.Duration(id: "navigation-index", duration: duration))

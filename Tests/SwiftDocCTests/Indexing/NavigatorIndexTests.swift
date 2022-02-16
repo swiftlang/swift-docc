@@ -284,6 +284,22 @@ Root
                 
         let readTree = NavigatorTree()
         XCTAssertThrowsError(try readTree.read(from: indexURL, interfaceLanguages: [.swift], timeout: 0.25, queue: DispatchQueue.main, broadcast: nil))
+        
+        try XCTAssertEqual(
+            RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
+            RenderIndex.fromString(
+                """
+                {
+                  "interfaceLanguages": {},
+                  "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0
+                  }
+                }
+                """
+            )
+        )
     }
     
     func testNavigatorIndexGenerationOneNode() throws {
@@ -322,7 +338,7 @@ Root
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
         builder.setup()
         try builder.index(renderNode: renderNode)
-        builder.finalize()
+        builder.finalize(emitJSONRepresentation: false, emitLMDBRepresentation: false)
                
         XCTAssertNotNil(builder.navigatorIndex)
     }
@@ -347,6 +363,14 @@ Root
             }
             
             builder.finalize()
+            
+            let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+            XCTAssertEqual(renderIndex.interfaceLanguages.keys.count, 1)
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.count, 27)
+            
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.title, "Functions")
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.path, nil)
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.type, "groupMarker")
             
             let navigatorIndex = builder.navigatorIndex!
             
@@ -406,6 +430,65 @@ Root
             ┣╸Task Group 2
             ┗╸Task Group 3
         """)
+        
+        try XCTAssertEqual(
+            RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
+            RenderIndex.fromString(#"""
+                {
+                  "interfaceLanguages": {
+                    "occ": [
+                      {
+                        "children": [
+                          {
+                            "title": "Task Group 1",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Task Group 2",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Task Group 3",
+                            "type": "groupMarker"
+                          }
+                        ],
+                        "path": "\/documentation\/mykit\/my-article",
+                        "title": "My Article in Objective-C",
+                        "type": "article"
+                      }
+                    ],
+                    "swift": [
+                      {
+                        "children": [
+                          {
+                            "title": "Task Group 1",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Task Group 2",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Task Group 3",
+                            "type": "groupMarker"
+                          }
+                        ],
+                        "path": "\/documentation\/mykit\/my-article",
+                        "title": "My Article",
+                        "type": "article"
+                      }
+                    ]
+                  },
+                  "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0
+                  }
+                }
+                """#
+            )
+        )
+        
         try FileManager.default.removeItem(at: targetURL)
     }
     
@@ -716,7 +799,7 @@ Root
         XCTAssertFalse(availabilityInfo.isAvailable(on: Platform(name: .iOS, version: Platform.Version(string: "10.0")!)))
         
         // Ensure we can't write to an index which is read-only.
-        let availabilityDB = try navigatorIndex.environment.openDatabase(named: "availability")
+        let availabilityDB = try XCTUnwrap(navigatorIndex.environment).openDatabase(named: "availability")
         XCTAssertThrowsError(try availabilityDB.put(key: "content", value: "test"))
         XCTAssertNil(availabilityDB.get(type: String.self, forKey: "content"))
     }

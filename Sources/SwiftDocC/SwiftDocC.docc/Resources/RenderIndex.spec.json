@@ -1,0 +1,122 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Specification of the Swift-DocC Index.json file.",
+        "version": "0.1.0",
+        "title": "RenderIndex"
+    },
+    "paths": {},
+    "components": {
+        "schemas": {
+            "RenderIndex": {
+                "type": "object",
+                "required": [
+                    "schemaVersion",
+                    "interfaceLanguages"
+                ],
+                "properties": {
+                    "identifier": {
+                        "$ref": "#/components/schemas/SchemaVersion"
+                    },
+                    "interfaceLanguages": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/components/schemas/Node"
+                            }
+                        }
+                    }
+                }
+            },
+            "Node": {
+                "type": "object",
+                "required": [
+                    "title"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "article",
+                            "associatedtype",
+                            "buildSetting",
+                            "case",
+                            "collection",
+                            "class",
+                            "container",
+                            "dictionarySymbol",
+                            "enum",
+                            "extension",
+                            "func",
+                            "groupMarker",
+                            "httpRequest",
+                            "init",
+                            "languageGroup",
+                            "learn",
+                            "macro",
+                            "method",
+                            "module",
+                            "op",
+                            "overview",
+                            "project",
+                            "property",
+                            "propertyListKey",
+                            "propertyListKeyReference",
+                            "protocol",
+                            "resources",
+                            "root",
+                            "sampleCode",
+                            "section",
+                            "struct",
+                            "subscript",
+                            "symbol",
+                            "typealias",
+                            "union",
+                            "var"
+                        ]
+                    },
+                    "path": {
+                        "type": "string"
+                    },
+                    "isExternal": {
+                        "type": "boolean",
+                        "default": "false"
+                    },
+                    "children": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Node"
+                        }
+                    }
+                }
+            },
+            "SchemaVersion": {
+                "type": "object",
+                "required": [
+                    "major",
+                    "minor",
+                    "patch"
+                ],
+                "properties": {
+                    "major": {
+                        "type": "integer"
+                    },
+                    "minor": {
+                        "type": "integer"
+                    },
+                    "patch": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}

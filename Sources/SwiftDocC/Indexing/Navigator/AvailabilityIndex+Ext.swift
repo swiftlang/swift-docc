@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -75,13 +75,22 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
     /// A user friendly name for the language.
     public let name: String
     
-    /// A mask to use to identify the `ProgrammingLanguage`.
+    /// An identifier for the language.
+    ///
+    /// For example, Swift's identifier is `"swift"` and Objective-C's is "`occ`".
+    ///
+    /// > Tip: You can initialize an ``InterfaceLanguage`` from a known identifier, with the
+    /// > ``from(string:)`` function.
+    public let id: String
+    
+    /// A mask to use to identify the interface language..
     public let mask: ID
     
     /// Initialize an instance of interface language.
-    private init(name: String, mask: ID) {
+    private init(name: String, id: String, mask: ID) {
         self.name = name
         self.mask = mask
+        self.id = id
     }
     
     // This would return "Swift" or "Objective-C" for example.
@@ -97,9 +106,28 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
         - name: The name of the platform used also for display. Note: case sensitive.
         - id: The ID of the platform.
      */
+    @available(*, deprecated, renamed: "init(_:id:mask:)")
     public init(_ name: String, id: Int) {
-        precondition(id > 2 && id < 8 , "Only IDs between 3 and 7 are allowed.")
-        self.init(name: name, mask: (1 << id))
+        self.init(name, id: name, mask: id)
+    }
+    
+    /// Create an interface language with the given display name, id, and integer mask.
+    ///
+    /// - Parameters:
+    ///    - name: The display name of the interface language.
+    ///
+    ///      For example, this might be `"Swift"`, or `"Objective-C"`.
+    ///
+    ///    - id: An identifier for the language.
+    ///
+    ///      For example, Swift's identifier is `"swift"` and Objective-C's is "`occ`".
+    ///
+    ///    - mask: An integer mask used to uniquely identify the language.
+    ///
+    ///      > Warning: Only integer values between 3 and 7 are supported.
+    public init(_ name: String, id: String, mask: Int) {
+        precondition(mask > 2 && mask < 8 , "Only IDs between 3 and 7 are allowed.")
+        self.init(name: name, id: id, mask: (1 << mask))
     }
     
     // String to Language
@@ -117,15 +145,15 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
     }
     
     // A list of pre-defined Apple platforms
-    public static let swift = InterfaceLanguage(name: "Swift", mask: 1 << 0)
-    public static let objc  = InterfaceLanguage(name: "Objective-C", mask: 1 << 1)
-    public static let data  = InterfaceLanguage(name: "Data", mask: 1 << 2)
+    public static let swift = InterfaceLanguage(name: "Swift", id: "swift", mask: 1 << 0)
+    public static let objc  = InterfaceLanguage(name: "Objective-C", id: "occ", mask: 1 << 1)
+    public static let data  = InterfaceLanguage(name: "Data", id: "data", mask: 1 << 2)
     
     // A mask indicating an undefined language
-    public static let undefined = InterfaceLanguage(name: "Other", mask: 0)
+    public static let undefined = InterfaceLanguage(name: "Other", id: "other", mask: 0)
     
     // A mask including all the languages
-    public static let any = InterfaceLanguage(name: "any", mask: ID.max)
+    public static let any = InterfaceLanguage(name: "any", id: "any", mask: ID.max)
     
     // A set containing all the Apple's pre-defined interface languages
     public static let apple = Set([InterfaceLanguage.swift, InterfaceLanguage.objc, InterfaceLanguage.data])

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -48,7 +48,7 @@ class ConvertActionIndexerTests: XCTestCase {
             try FileManager.default.createDirectory(at: testBundleURL.appendingPathComponent("index1"), withIntermediateDirectories: false, attributes: nil)
             let indexer = try ConvertAction.Indexer(outputURL: testBundleURL.appendingPathComponent("index1"), bundleIdentifier: context.registeredBundles.first!.identifier)
             indexer.index(renderNode)
-            XCTAssertTrue(indexer.finalize().isEmpty)
+            XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)
             let treeDump = try XCTUnwrap(indexer.dumpTree())
             XCTAssertEqual(treeDump, """
             [Root]
@@ -74,7 +74,7 @@ class ConvertActionIndexerTests: XCTestCase {
             let indexer = try ConvertAction.Indexer(outputURL: testBundleURL.appendingPathComponent("index2"), bundleIdentifier: context.registeredBundles.first!.identifier)
             indexer.index(renderNode1)
             indexer.index(renderNode2)
-            XCTAssertTrue(indexer.finalize().isEmpty)
+            XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)
             
             let treeDump = try XCTUnwrap(indexer.dumpTree())
             XCTAssertEqual(treeDump, """
