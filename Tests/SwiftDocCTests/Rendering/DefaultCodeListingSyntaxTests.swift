@@ -29,7 +29,7 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         func renderSection(for bundle: DocumentationBundle, in context: DocumentationContext) -> ContentRenderSection {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
 
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
 
             let node = try! context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)

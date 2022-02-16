@@ -50,7 +50,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the default availability is used for modules
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -61,7 +61,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the default availability is used for symbols with no explicit availability
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-3743d", fragment: nil, sourceLanguage: .swift)
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -72,7 +72,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the default availability is NOT used for symbols with explicit availability
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", fragment: nil, sourceLanguage: .swift)
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -100,7 +100,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // verify that the Mac Catalyst platform's name (including a space) is rendered correctly
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -116,7 +116,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test whether we:
         // 1) Fallback on iOS when Mac Catalyst availability is missing
         // 2) Render [Beta] or not for Mac Catalyst's inherited iOS availability
-        let source = context.fileURL(for: reference)
+        let source = context.documentURL(for: reference)
         let node = try context.entity(with: reference)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: source)
         let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -190,7 +190,7 @@ class DefaultAvailabilityTests: XCTestCase {
         // Test if the module availability is not "beta" for the "macOS" platform (since 10.15.1 != 10.16)
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
             let renderNode = translator.visit(node.semantic) as! RenderNode
@@ -212,7 +212,7 @@ class DefaultAvailabilityTests: XCTestCase {
         
         do {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", fragment: nil, sourceLanguage: .swift)
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let node = try context.entity(with: identifier)
             
             // Add some available and unavailable platforms to the symbol
