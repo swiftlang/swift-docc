@@ -66,7 +66,7 @@ class DocumentationContextTests: XCTestCase {
         let expectedURL = URL(string: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial")
         XCTAssertEqual(expectedURL, resolved.url)
         
-        guard context.fileURL(for: resolved) != nil else {
+        guard context.documentURL(for: resolved) != nil else {
             XCTFail("Couldn't resolve file URL for \(resolved)")
             return
         }
@@ -1156,7 +1156,7 @@ class DocumentationContextTests: XCTestCase {
             
             let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
             
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: node, at: source))
             
             XCTAssertEqual(
@@ -3101,6 +3101,40 @@ let expected = """
         try assertArticleAvailableSourceLanguages(
             moduleAvailableLanguages: [.objectiveC],
             expectedArticleDefaultLanguage: .objectiveC
+        )
+    }
+    
+    func testDocumentationExtensionURLForReferenceReturnsURLForSymbolReference() throws {
+        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle")
+        
+        XCTAssertEqual(
+            context.documentationExtensionURL(
+                for: ResolvedTopicReference(
+                    bundleIdentifier: "org.swift.docc.example",
+                    path: "/documentation/MyKit/MyClass",
+                    fragment: nil,
+                    sourceLanguage: .swift
+                )
+            ),
+            bundleURL
+                .appendingPathComponent("documentation")
+                .appendingPathComponent("myclass.md")
+        )
+    }
+    
+    func testDocumentationExtensionURLForReferenceReturnsNilForTutorialReference() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle")
+        
+        XCTAssertNil(
+            context.documentationExtensionURL(
+                for: ResolvedTopicReference(
+                    bundleIdentifier: "org.swift.docc.example",
+                    path: "/tutorials/TestOverview",
+                    fragment: nil,
+                    sourceLanguage: .swift
+                )
+            ),
+            "Expectedly returned non-nil value for non-symbol content."
         )
     }
 }

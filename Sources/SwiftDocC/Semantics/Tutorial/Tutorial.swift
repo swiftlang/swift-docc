@@ -147,7 +147,7 @@ public final class Tutorial: Semantic, DirectiveConvertible, Abstracted, Titled,
 
 extension Tutorial {
     static func analyze(_ node: TopicGraph.Node, completedContext context: DocumentationContext, engine: DiagnosticEngine) {
-        let url = context.fileURL(for: node.reference)
+        let url = context.documentURL(for: node.reference)
 
         if let project = try? context.entity(with: node.reference).semantic as? Tutorial, let projectFiles = project.projectFiles {
             if context.resolveAsset(named: projectFiles.url.lastPathComponent, in: node.reference) == nil {

@@ -78,7 +78,7 @@ class RenderMetadataTests: XCTestCase {
             let renderContext = RenderContext(documentationContext: context, bundle: bundle)
             let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
             for identifier in context.knownPages {
-                let source = context.fileURL(for: identifier)
+                let source = context.documentURL(for: identifier)
                 
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
