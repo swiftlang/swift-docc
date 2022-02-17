@@ -1430,6 +1430,64 @@ let expected = """
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.enum.case", sourceLanguage: .swift)))
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var", sourceLanguage: .swift)))
     }
+    
+    func testModuleLanguageFallsBackToSwiftIfItHasNoSymbols() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+            // Delete all the symbol graph files.
+            let symbolGraphFiles = try XCTUnwrap(
+                FileManager.default.enumerator(
+                    at: root,
+                    includingPropertiesForKeys: [.isRegularFileKey],
+                    options: []
+                )?.compactMap { item in
+                    item as? URL
+                }.filter { url in
+                    url.absoluteString.hasSuffix(".symbols.json")
+                }
+            )
+            
+            for symbolGraphFile in symbolGraphFiles {
+                try FileManager.default.removeItem(at: symbolGraphFile)
+            }
+            
+            // Add a symbol graph file with no symbols.
+            try """
+            {
+              "metadata": {
+                "formatVersion": {
+                  "major": 0,
+                  "minor": 5,
+                  "patch": 0
+                },
+                "generator": "MyGenerator"
+              },
+              "module" : {
+                "name" : "MyKit",
+                "platform" : {
+                  "architecture" : "x86_64",
+                  "vendor" : "apple",
+                  "operatingSystem" : {
+                    "name" : "ios",
+                    "minimumVersion" : {
+                      "major" : 13,
+                      "minor" : 0,
+                      "patch" : 0
+                    }
+                  }
+                }
+              },
+              "relationships": [],
+              "symbols": []
+            }
+            """.write(to: root.appendingPathComponent("MyKit.symbols.json"), atomically: true, encoding: .utf8)
+        }
+        
+        XCTAssertEqual(
+            context.soleRootModuleReference?.sourceLanguages,
+            [.swift],
+            "Expected the module to have language 'Swift' since it has 0 symbols."
+        )
+    }
 
     func testOverloadPlustNonOverloadCollisionPaths() throws {
         // Add some symbol collisions to graph
