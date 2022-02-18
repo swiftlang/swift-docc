@@ -1125,9 +1125,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     // This is a very inefficient way to gather the source languages
                     // represented in a symbol graph. Adding a dedicated SymbolKit API is tracked
                     // with SR-15551 and rdar://85982095.
-                    moduleInterfaceLanguages = Set(
+                    let symbolGraphLanguages = Set(
                         unifiedSymbolGraph.symbols.flatMap(\.value.sourceLanguages)
                     )
+                    
+                    // If the symbol graph has no symbols, we cannot determine what languages is it available for,
+                    // so fall back to Swift.
+                    moduleInterfaceLanguages = symbolGraphLanguages.isEmpty ? [.swift] : symbolGraphLanguages
                 } else {
                     moduleInterfaceLanguages = [.swift]
                 }
