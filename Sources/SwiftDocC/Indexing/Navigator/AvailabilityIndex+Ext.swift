@@ -86,6 +86,13 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
     /// A mask to use to identify the interface language..
     public let mask: ID
     
+    
+    enum CodingKeys: String, CodingKey {
+        case name
+        case id
+        case mask
+    }
+    
     /// Initialize an instance of interface language.
     private init(name: String, id: String, mask: ID) {
         self.name = name
@@ -96,6 +103,25 @@ public struct InterfaceLanguage: Hashable, CustomStringConvertible, Codable, Equ
     // This would return "Swift" or "Objective-C" for example.
     public var description: String {
         return name
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let name = try values.decode(String.self, forKey: .name)
+        self.name = name
+        
+        let id = try values.decodeIfPresent(String.self, forKey: .id)
+        if let id = id {
+            self.id = id
+        } else {
+            // Default to a lowercased version of the name if an ID isn't provided
+            // to allow for backwards compatibility with existing availability indexes
+            // that do not include an id.
+            self.id = name.lowercased()
+        }
+        
+        self.mask = try values.decode(ID.self, forKey: .mask)
     }
     
     /**
