@@ -201,7 +201,7 @@ extension NavigatorIndex.PageType {
         }
     }
     
-    var renderIndexPageType: String {
+    var renderIndexPageType: String? {
         switch self {
         case .root:
             return "root"

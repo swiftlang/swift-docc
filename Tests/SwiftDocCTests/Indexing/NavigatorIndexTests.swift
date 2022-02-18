@@ -1085,6 +1085,45 @@ Root
         #endif
     }
     
+    func testAvailabilityIndexInterfaceLanguageBackwardsCompatibility() throws {
+        // Tests for backwards compatibility with an encoded `InterfaceLanguage` that does not include
+        // an `id`.
+        
+        let plistWithoutLanguageID = """
+            <plist version="1.0">
+            <dict>
+                <key>data</key>
+                <dict>
+                </dict>
+                <key>interfaceLanguages</key>
+                <array>
+                    <dict>
+                        <key>mask</key>
+                        <integer>1</integer>
+                        <key>name</key>
+                        <string>Swift</string>
+                    </dict>
+                </array>
+                <key>languageToPlatforms</key>
+                <array>
+                </array>
+                <key>platforms</key>
+                <array>
+                </array>
+            </dict>
+            </plist>
+            """
+        
+        let availabilityIndex = try PropertyListDecoder().decode(
+            AvailabilityIndex.self,
+            from: Data(plistWithoutLanguageID.utf8)
+        )
+        
+        XCTAssertEqual(availabilityIndex.interfaceLanguages.first?.name, "Swift")
+        XCTAssertEqual(availabilityIndex.interfaceLanguages.first?.id, "swift")
+        XCTAssertEqual(availabilityIndex.interfaceLanguages.first?.mask, 1)
+    }
+    
     func testRenderNodeToPageType() {
         
         XCTAssertEqual(PageType(role: "symbol"), .symbol)
