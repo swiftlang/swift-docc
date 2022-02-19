@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -87,7 +87,7 @@ public class NavigatorIndex {
     public let url: URL
     
     /// The LMDB environment.
-    let environment: LMDB.Environment
+    var environment: LMDB.Environment?
     
     /// The path hasher.
     ///
@@ -96,13 +96,13 @@ public class NavigatorIndex {
     var pathHasher: PathHasher = .md5
     
     /// The index database in LMDB.
-    private let database: LMDB.Database
+    private var database: LMDB.Database?
     
     /// The information dedicated database to store data such as the bundle identifier or the number of items indexed.
-    private let information: LMDB.Database
+    private var information: LMDB.Database?
     
     /// The availability dedicated database.
-    private let availability: LMDB.Database
+    private var availability: LMDB.Database?
     
     /// The navigator tree.
     public let navigatorTree: NavigatorTree
@@ -132,7 +132,7 @@ public class NavigatorIndex {
     
     /// The number of item indexed.
     public lazy var count: Int = {
-        return self.information.get(type: Int.self, forKey: NavigatorIndex.itemsIndexKey) ?? 0
+        return self.information?.get(type: Int.self, forKey: NavigatorIndex.itemsIndexKey) ?? 0
     }()
     
     /**
@@ -151,7 +151,8 @@ public class NavigatorIndex {
         self.url = url
         
         // To avoid performing a filesystem lock which might fail without write permission, we pass `.readOnly` and `.noLock` to open the index.
-        self.environment = try LMDB.Environment(path: url.path, flags: [.readOnly, .noLock], maxDBs: 4, mapSize: 100 * 1024 * 1024) // mapSize = 100MB
+        let environment = try LMDB.Environment(path: url.path, flags: [.readOnly, .noLock], maxDBs: 4, mapSize: 100 * 1024 * 1024) // mapSize = 100MB
+        self.environment = environment
         self.database = try environment.openDatabase(named: "index", flags: [])
         self.availability = try environment.openDatabase(named: "availability", flags: [])
         
@@ -189,10 +190,6 @@ public class NavigatorIndex {
      */
     fileprivate init(withEmptyTree url: URL, bundleIdentifier: String) throws {
         self.url = url
-        self.environment = try LMDB.Environment(path: url.path, flags: [.noLock], maxDBs: 4, mapSize: 100 * 1024 * 1024) // mapSize = 100MB
-        self.database = try environment.openDatabase(named: "index", flags: [.create])
-        self.information = try environment.openDatabase(named: "information", flags: [.create])
-        self.availability = try environment.openDatabase(named: "availability", flags: [.create])
         self.bundleIdentifier = bundleIdentifier
         self.presentationIdentifier = nil
         self.navigatorTree = NavigatorTree(root: NavigatorTree.rootNode(bundleIdentifier: bundleIdentifier))
@@ -377,7 +374,7 @@ public class NavigatorIndex {
     
     /// Returns an array of availabilities based on a single id.
     public func availabilities(for id: UInt64) -> [AvailabilityIndex.Info] {
-        let array = availability.get(type: [Int].self, forKey: id)
+        let array = availability?.get(type: [Int].self, forKey: id)
         return array?.compactMap{ availabilityIndex.info(for: $0) } ?? []
     }
     
@@ -389,13 +386,13 @@ public class NavigatorIndex {
     /// - Returns: The path of a given USR, if available.
     public func path(for usr: String, language: InterfaceLanguage = .swift, hashed: Bool = false) -> String? {
         let usrKey = language.name + "-" + ((hashed) ? usr : ExternalIdentifier.usr(usr).hash)
-        guard let nodeID = database.get(type: UInt32.self, forKey: usrKey) else { return nil }
+        guard let nodeID = database?.get(type: UInt32.self, forKey: usrKey) else { return nil }
         return path(for: nodeID)
     }
     
     /// If available, returns the path from the numeric ID inside the navigator tree.
     public func path(for id: UInt32) -> String? {
-        guard var path = database.get(type: String.self, forKey: id) else { return nil }
+        guard var path = database?.get(type: String.self, forKey: id) else { return nil }
         // Remove the language prefix.
         if let slashRange = path.range(of: "/") {
             path.removeSubrange(path.startIndex..<slashRange.lowerBound)
@@ -407,7 +404,7 @@ public class NavigatorIndex {
     public func id(for path: String, with interfaceLanguage: InterfaceLanguage) -> UInt32? {
         // The fullPath needs to account for the language.
         let fullPath = interfaceLanguage.name.lowercased() + path
-        return database.get(type: UInt32.self, forKey: pathHasher.hash(fullPath))
+        return database?.get(type: UInt32.self, forKey: pathHasher.hash(fullPath))
     }
 }
 
@@ -502,7 +499,7 @@ extension NavigatorIndex {
         private var curatedIdentifiers = Set<Identifier>()
         
         /// Maps an arbitrary InterfaceLanguage string to an InterfaceLanguage.
-        private var nameToLanguage = [String: InterfaceLanguage]()
+        private var idToLanguage = [String: InterfaceLanguage]()
         
         /// Maps an arbitrary Platform name string to a Platform.Name instance.
         private var nameToPlatform = [String: Platform.Name]()
@@ -562,7 +559,7 @@ extension NavigatorIndex {
             
             // Setup the default known values for Platforms and Languages
             for language in InterfaceLanguage.apple {
-                nameToLanguage[language.name.lowercased()] = language
+                idToLanguage[language.id.lowercased()] = language
             }
             
             for platformName in Platform.Name.apple {
@@ -583,14 +580,18 @@ extension NavigatorIndex {
             }
             
             // Process the language
-            let interfaceLanguage = renderNode.identifier.sourceLanguage.id
-            var language = InterfaceLanguage.from(string: interfaceLanguage)
-            if let storedLanguage = nameToLanguage[interfaceLanguage.lowercased()], language == .undefined {
+            let interfaceLanguage = renderNode.identifier.sourceLanguage
+            let interfaceLanguageID = interfaceLanguage.id.lowercased()
+            
+            let language: InterfaceLanguage
+            if InterfaceLanguage.from(string: interfaceLanguageID) != .undefined {
+                language = InterfaceLanguage.from(string: interfaceLanguageID)
+            } else if let storedLanguage = idToLanguage[interfaceLanguageID] {
                 language = storedLanguage
-            } else if language == .undefined {
+            } else {
                 // It's a new language, create a new instance.
-                let language = InterfaceLanguage(interfaceLanguage, id: nameToLanguage.count)
-                nameToLanguage[interfaceLanguage.lowercased()] = language
+                language = InterfaceLanguage(interfaceLanguage.name, id: interfaceLanguage.id, mask: idToLanguage.count)
+                idToLanguage[interfaceLanguageID] = language
             }
 
             let identifier = renderNode.identifier.navigatorIndexIdentifier(forLanguage: language.mask)
@@ -647,7 +648,6 @@ extension NavigatorIndex {
                     availabilityToID[entryIDs] = newID
                     availabilityIDs[newID] = entryIDs
                     availabilityID = newID
-                    try navigatorIndex.availability.put(key: newID, value: entryIDs)
                 }
             }
             
@@ -779,7 +779,27 @@ extension NavigatorIndex {
         }
         
         /// Finalize the process by writing the content on disk.
-        public func finalize(estimatedCount: Int? = nil) {
+        ///
+        /// By default this function writes out the navigator index to disk as an LMDB database
+        /// but emitting a JSON representation of the index is also supported.
+        ///
+        /// - Parameters:
+        ///   - estimatedCount: An estimate of the number of nodes in the navigator index.
+        ///
+        ///   - emitJSONRepresentation: Whether or not a JSON representation of the index should
+        ///     be written to disk.
+        ///
+        ///     Defaults to `false`.
+        ///
+        ///   - emitLMDBRepresentation: Whether or not an LMDB representation of the index should
+        ///     written to disk.
+        ///
+        ///     Defaults to `true`.
+        public func finalize(
+            estimatedCount: Int? = nil,
+            emitJSONRepresentation: Bool = true,
+            emitLMDBRepresentation: Bool = true
+        ) {
             precondition(!isCompleted, "Finalizing an already completed index build multiple times is not possible.")
             
             guard let navigatorIndex = navigatorIndex else {
@@ -881,6 +901,134 @@ extension NavigatorIndex {
                 }
             }
             
+            if emitJSONRepresentation {
+                let renderIndex = RenderIndex.fromNavigatorIndex(navigatorIndex)
+                
+                let jsonEncoder = JSONEncoder()
+                if shouldPrettyPrintOutputJSON {
+                    jsonEncoder.outputFormatting = [.sortedKeys, .prettyPrinted]
+                } else {
+                    jsonEncoder.outputFormatting = [.sortedKeys]
+                }
+                
+                let jsonNavigatorIndexURL = outputURL.appendingPathComponent("index.json")
+                do {
+                    let renderIndexData = try jsonEncoder.encode(renderIndex)
+                    try renderIndexData.write(to: jsonNavigatorIndexURL)
+                } catch {
+                    self.problems.append(
+                        error.problem(
+                            source: nil,
+                            severity: .error,
+                            summaryPrefix: "Failed to write render index JSON to '\(jsonNavigatorIndexURL)': "
+                        )
+                    )
+                }
+                
+            }
+            
+            guard emitLMDBRepresentation else {
+                return
+            }
+            
+            let environment: LMDB.Environment
+            if let alreadyDefinedEnvironment = navigatorIndex.environment {
+                environment = alreadyDefinedEnvironment
+            } else {
+                do {
+                    environment = try LMDB.Environment(
+                        path: navigatorIndex.url.path,
+                        flags: [.noLock],
+                        maxDBs: 4, mapSize: 100 * 1024 * 1024 // mapSize = 100MB
+                    )
+                    navigatorIndex.environment = environment
+                } catch {
+                    problems.append(
+                        error.problem(
+                            source: nil,
+                            severity: .error,
+                            summaryPrefix: "Failed to create navigator index LMDB environment: "
+                        )
+                    )
+                    
+                    return
+                }
+            }
+            
+            let database: LMDB.Database
+            if let alreadyDefinedDatabase = navigatorIndex.database {
+                database = alreadyDefinedDatabase
+            } else {
+                do {
+                    database = try environment.openDatabase(named: "index", flags: [.create])
+                    navigatorIndex.database = database
+                } catch {
+                    problems.append(
+                        error.problem(
+                            source: nil,
+                            severity: .error,
+                            summaryPrefix: "Failed to create navigator index LMDB database: "
+                        )
+                    )
+                    
+                    return
+                }
+            }
+            
+            let information: LMDB.Database
+            if let alreadyDefinedInformation = navigatorIndex.information {
+                information = alreadyDefinedInformation
+            } else {
+                do {
+                    information = try environment.openDatabase(named: "information", flags: [.create])
+                    navigatorIndex.information = information
+                } catch {
+                    problems.append(
+                        error.problem(
+                            source: nil,
+                            severity: .error,
+                            summaryPrefix: "Failed to create navigator index LMDB information database: "
+                        )
+                    )
+                    
+                    return
+                }
+            }
+            
+            let availability: LMDB.Database
+            if let alreadyDefinedAvailability = navigatorIndex.availability {
+                availability = alreadyDefinedAvailability
+            } else {
+                do {
+                    availability = try environment.openDatabase(named: "availability", flags: [.create])
+                    navigatorIndex.availability = availability
+                } catch {
+                    problems.append(
+                        error.problem(
+                            source: nil,
+                            severity: .error,
+                            summaryPrefix: "Failed to navigator index LMDB availability database: "
+                        )
+                    )
+                    
+                    return
+                }
+            }
+            
+            do {
+                for (newID, entryIDs) in availabilityIDs {
+                    try availability.put(key: newID, value: entryIDs)
+                }
+            } catch {
+                problems.append(
+                    error.problem(
+                        source: nil,
+                        severity: .error,
+                        summaryPrefix: "Failed to write navigator index availability information: "
+                    )
+                )
+            }
+            
             do {
                 var records = [Record]()
                 if let estimatedCount = estimatedCount {
@@ -913,7 +1061,7 @@ extension NavigatorIndex {
                 
                 do {
                     // Write all records to disk in a single transaction.
-                    try self.navigatorIndex?.database.put(records: records)
+                    try database.put(records: records)
                 }
                 // `put(records:)` throws only `LMDB.Database.NodeError.errorForPath`
                 catch LMDB.Database.NodeError.errorForPath(let path, let error) {
@@ -947,11 +1095,11 @@ extension NavigatorIndex {
             
             // Insert the data about bundle identifier and items processed.
             do {
-                let txn = navigatorIndex.environment.transaction()
+                let txn = environment.transaction()
                 try txn.begin()
-                try txn.put(key: NavigatorIndex.bundleKey, value: bundleIdentifier, in: navigatorIndex.information)
-                try txn.put(key: NavigatorIndex.pathHasherKey, value: navigatorIndex.pathHasher.rawValue, in: navigatorIndex.information)
-                try txn.put(key: NavigatorIndex.itemsIndexKey, value: counter, in: navigatorIndex.information)
+                try txn.put(key: NavigatorIndex.bundleKey, value: bundleIdentifier, in: information)
+                try txn.put(key: NavigatorIndex.pathHasherKey, value: navigatorIndex.pathHasher.rawValue, in: information)
+                try txn.put(key: NavigatorIndex.itemsIndexKey, value: counter, in: information)
                 try txn.commit()
             } catch {
                 problems.append(error.problem(source: outputURL,
@@ -1018,7 +1166,7 @@ extension NavigatorIndex {
 fileprivate extension Error {
     
     /// Returns a problem from an `Error`.
-    func problem(source: URL, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Problem {
+    func problem(source: URL?, severity: DiagnosticSeverity, summaryPrefix: String = "") -> Problem {
         let diagnostic = Diagnostic(source: source,
                                          severity: severity,
                                          range: nil,

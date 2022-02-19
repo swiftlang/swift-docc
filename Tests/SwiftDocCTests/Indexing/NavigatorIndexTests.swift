@@ -284,6 +284,22 @@ Root
                 
         let readTree = NavigatorTree()
         XCTAssertThrowsError(try readTree.read(from: indexURL, interfaceLanguages: [.swift], timeout: 0.25, queue: DispatchQueue.main, broadcast: nil))
+        
+        try XCTAssertEqual(
+            RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
+            RenderIndex.fromString(
+                """
+                {
+                  "interfaceLanguages": {},
+                  "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0
+                  }
+                }
+                """
+            )
+        )
     }
     
     func testNavigatorIndexGenerationOneNode() throws {
@@ -322,7 +338,7 @@ Root
         let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
         builder.setup()
         try builder.index(renderNode: renderNode)
-        builder.finalize()
+        builder.finalize(emitJSONRepresentation: false, emitLMDBRepresentation: false)
                
         XCTAssertNotNil(builder.navigatorIndex)
     }
@@ -340,13 +356,21 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.fileURL(for: identifier)
+                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
                 try builder.index(renderNode: renderNode)
             }
             
             builder.finalize()
+            
+            let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
+            XCTAssertEqual(renderIndex.interfaceLanguages.keys.count, 1)
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.count, 27)
+            
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.title, "Functions")
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.path, nil)
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.type, "groupMarker")
             
             let navigatorIndex = builder.navigatorIndex!
             
@@ -406,6 +430,65 @@ Root
             ┣╸Task Group 2
             ┗╸Task Group 3
         """)
+        
+        try XCTAssertEqual(
+            RenderIndex.fromURL(targetURL.appendingPathComponent("index.json")),
+            RenderIndex.fromString(#"""
+                {
+                  "interfaceLanguages": {
+                    "occ": [
+                      {
+                        "children": [
+                          {
+                            "title": "Task Group 1",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Task Group 2",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Task Group 3",
+                            "type": "groupMarker"
+                          }
+                        ],
+                        "path": "\/documentation\/mykit\/my-article",
+                        "title": "My Article in Objective-C",
+                        "type": "article"
+                      }
+                    ],
+                    "swift": [
+                      {
+                        "children": [
+                          {
+                            "title": "Task Group 1",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Task Group 2",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Task Group 3",
+                            "type": "groupMarker"
+                          }
+                        ],
+                        "path": "\/documentation\/mykit\/my-article",
+                        "title": "My Article",
+                        "type": "article"
+                      }
+                    ]
+                  },
+                  "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0
+                  }
+                }
+                """#
+            )
+        )
+        
         try FileManager.default.removeItem(at: targetURL)
     }
     
@@ -422,7 +505,7 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.fileURL(for: identifier)
+                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
                 try builder.index(renderNode: renderNode)
@@ -471,7 +554,7 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.fileURL(for: identifier)
+                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
                 let renderNode = try converter.convert(entity, at: source)
                 try builder.index(renderNode: renderNode)
@@ -524,7 +607,7 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
             try builder.index(renderNode: renderNode)
@@ -574,7 +657,7 @@ Root
             builder.setup()
             
             for identifier in context.knownPages {
-                let source = context.fileURL(for: identifier)
+                let source = context.documentURL(for: identifier)
                 let entity = try context.entity(with: identifier)
                 var renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
                 
@@ -634,7 +717,7 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
             try builder.index(renderNode: renderNode)
@@ -716,7 +799,7 @@ Root
         XCTAssertFalse(availabilityInfo.isAvailable(on: Platform(name: .iOS, version: Platform.Version(string: "10.0")!)))
         
         // Ensure we can't write to an index which is read-only.
-        let availabilityDB = try navigatorIndex.environment.openDatabase(named: "availability")
+        let availabilityDB = try XCTUnwrap(navigatorIndex.environment).openDatabase(named: "availability")
         XCTAssertThrowsError(try availabilityDB.put(key: "content", value: "test"))
         XCTAssertNil(availabilityDB.get(type: String.self, forKey: "content"))
     }
@@ -734,7 +817,7 @@ Root
         builder.navigatorIndex?.pathHasher = .fnv1
         
         for identifier in context.knownPages {
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
             try builder.index(renderNode: renderNode)
@@ -1002,6 +1085,45 @@ Root
         #endif
     }
     
+    func testAvailabilityIndexInterfaceLanguageBackwardsCompatibility() throws {
+        // Tests for backwards compatibility with an encoded `InterfaceLanguage` that does not include
+        // an `id`.
+        
+        let plistWithoutLanguageID = """
+            <plist version="1.0">
+            <dict>
+                <key>data</key>
+                <dict>
+                </dict>
+                <key>interfaceLanguages</key>
+                <array>
+                    <dict>
+                        <key>mask</key>
+                        <integer>1</integer>
+                        <key>name</key>
+                        <string>Swift</string>
+                    </dict>
+                </array>
+                <key>languageToPlatforms</key>
+                <array>
+                </array>
+                <key>platforms</key>
+                <array>
+                </array>
+            </dict>
+            </plist>
+            """
+        
+        let availabilityIndex = try PropertyListDecoder().decode(
+            AvailabilityIndex.self,
+            from: Data(plistWithoutLanguageID.utf8)
+        )
+        
+        XCTAssertEqual(availabilityIndex.interfaceLanguages.first?.name, "Swift")
+        XCTAssertEqual(availabilityIndex.interfaceLanguages.first?.id, "swift")
+        XCTAssertEqual(availabilityIndex.interfaceLanguages.first?.mask, 1)
+    }
+    
     func testRenderNodeToPageType() {
         
         XCTAssertEqual(PageType(role: "symbol"), .symbol)
@@ -1140,7 +1262,7 @@ Root
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             let renderNode = try converter.convert(entity, at: source)
             try builder.index(renderNode: renderNode)

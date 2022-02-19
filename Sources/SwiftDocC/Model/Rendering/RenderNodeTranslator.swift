@@ -586,16 +586,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchy = hierarchy
         
-        // Find the language of the symbol that curated the article in the graph
-        // and use it as the interface language for that article.
-        if let language = try! context.interfaceLanguageFor(identifier)?.id {
-            let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
-            node.variants = [
-                .init(traits: [.interfaceLanguage(language)], paths: [
-                    generator.presentationURLForReference(identifier).path
-                ])
-            ]
-        }
+        node.variants = variants(for: documentationNode)
         
         if let abstract = article.abstractSection,
             let abstractContent = visitMarkup(abstract.content) as? [RenderInlineContent] {
@@ -951,34 +942,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.titleVariants = VariantCollection<String?>(from: symbol.titleVariants)
         node.metadata.externalIDVariants = VariantCollection<String?>(from: symbol.externalIDVariants)
         
-        // Remove any optional namespace (e.g. "swift.") for rendering
         node.metadata.symbolKindVariants = VariantCollection<String?>(from: symbol.kindVariants) { _, kindVariants in
-            kindVariants.identifier.identifier.components(separatedBy: ".").last
+            kindVariants.identifier.renderingIdentifier
         } ?? .init(defaultValue: nil)
         
         node.metadata.conformance = contentRenderer.conformanceSectionFor(identifier, collectedConstraints: collectedConstraints)
         node.metadata.fragmentsVariants = contentRenderer.subHeadingFragments(for: documentationNode)
         node.metadata.navigatorTitleVariants = contentRenderer.navigatorFragments(for: documentationNode)
         
-        let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
-        
-        node.variants = documentationNode.availableSourceLanguages
-            .sorted(by: { language1, language2 in
-                // Emit Swift first, then alphabetically.
-                switch (language1, language2) {
-                case (.swift, _): return true
-                case (_, .swift): return false
-                default: return language1.id < language2.id
-                }
-            })
-            .map { sourceLanguage in
-                RenderNode.Variant(
-                    traits: [.interfaceLanguage(sourceLanguage.id)],
-                    paths: [
-                        generator.presentationURLForReference(identifier).path
-                    ]
-                )
-            }
+        node.variants = variants(for: documentationNode)
         
         collectedTopicReferences.append(identifier)
         
@@ -1404,6 +1376,28 @@ public struct RenderNodeTranslator: SemanticVisitor {
         translators.compactMap { translator in
             translator.translateSection(for: symbol, renderNode: &renderNode, renderNodeTranslator: &self)
         }
+    }
+    
+    private func variants(for documentationNode: DocumentationNode) -> [RenderNode.Variant] {
+        let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+        
+        return documentationNode.availableSourceLanguages
+            .sorted(by: { language1, language2 in
+                // Emit Swift first, then alphabetically.
+                switch (language1, language2) {
+                case (.swift, _): return true
+                case (_, .swift): return false
+                default: return language1.id < language2.id
+                }
+            })
+            .map { sourceLanguage in
+                RenderNode.Variant(
+                    traits: [.interfaceLanguage(sourceLanguage.id)],
+                    paths: [
+                        generator.presentationURLForReference(identifier).path
+                    ]
+                )
+            }
     }
     
     init(

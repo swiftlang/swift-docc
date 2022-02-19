@@ -138,14 +138,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// The root module nodes of the Topic Graph.
-    public var rootModules: [ResolvedTopicReference] {
-        return topicGraph.nodes.values.compactMap { node in
-            guard node.kind == .module,
-                  !onlyHasSnippetRelatedChildren(for: node.reference) else {
-                return nil
-            }
-            return node.reference
-        }
+    ///
+    /// This property is initialized during the registration of a documentation bundle.
+    public private(set) var rootModules: [ResolvedTopicReference]!
+    
+    /// The topic reference of the root module, if it's the only registered module.
+    var soleRootModuleReference: ResolvedTopicReference? {
+        rootModules.count == 1 ? rootModules.first : nil
     }
         
     /// Map of document URLs to topic references.
@@ -1126,9 +1125,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     // This is a very inefficient way to gather the source languages
                     // represented in a symbol graph. Adding a dedicated SymbolKit API is tracked
                     // with SR-15551 and rdar://85982095.
-                    moduleInterfaceLanguages = Set(
+                    let symbolGraphLanguages = Set(
                         unifiedSymbolGraph.symbols.flatMap(\.value.sourceLanguages)
                     )
+                    
+                    // If the symbol graph has no symbols, we cannot determine what languages is it available for,
+                    // so fall back to Swift.
+                    moduleInterfaceLanguages = symbolGraphLanguages.isEmpty ? [.swift] : symbolGraphLanguages
                 } else {
                     moduleInterfaceLanguages = [.swift]
                 }
@@ -1624,9 +1627,23 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - articles: Articles to register with the documentation cache.
     ///   - bundle: The bundle containing the articles.
-    private func registerArticles(_ articles: DocumentationContext.Articles, in bundle: DocumentationBundle) {
-        for article in articles {
-            guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(for: article, kind: .article, in: bundle) else { continue }
+    /// - Returns: The articles that were registered, with their topic graph node updated to what's been added to the topic graph.
+    private func registerArticles(
+        _ articles: DocumentationContext.Articles,
+        in bundle: DocumentationBundle
+    ) -> DocumentationContext.Articles {
+        articles.map { article in
+            guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(
+                for: article,
+                
+                // Articles are available in the same languages the only root module is available in. If there is more
+                // than one module, we cannot determine what languages it's available in and default to Swift.
+                availableSourceLanguages: soleRootModuleReference?.sourceLanguages,
+                kind: .article,
+                in: bundle
+            ) else {
+                return article
+            }
             let reference = documentation.reference
             
             documentationCache[reference] = documentation
@@ -1638,6 +1655,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
             }
+            
+            var article = article
+            // Update the article's topic graph node with the one we just added to the topic graph.
+            article.topicGraphNode = graphNode
+            return article
         }
     }
     
@@ -1648,16 +1670,45 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - kind: The kind that should be used to create the returned documentation node.
     ///   - bundle: The documentation bundle this article belongs to.
     /// - Returns: A documentation node and title for the given article semantic result.
-    static func documentationNodeAndTitle(for article: DocumentationContext.SemanticResult<Article>, kind: DocumentationNode.Kind, in bundle: DocumentationBundle) -> (node: DocumentationNode, title: String)? {
+    static func documentationNodeAndTitle(
+        for article: DocumentationContext.SemanticResult<Article>,
+        availableSourceLanguages: Set<SourceLanguage>? = nil,
+        kind: DocumentationNode.Kind,
+        in bundle: DocumentationBundle
+    ) -> (node: DocumentationNode, title: String)? {
         guard let articleMarkup = article.value.markup else {
             return nil
         }
         
         let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, bundle: bundle)
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+        
+        // If available source languages are provided and it contains Swift, use Swift as the default language of
+        // the article.
+        let defaultSourceLanguage = availableSourceLanguages.map { availableSourceLanguages in
+            if availableSourceLanguages.contains(.swift) {
+                return .swift
+            } else {
+                return availableSourceLanguages.first ?? .swift
+            }
+        } ?? SourceLanguage.swift
+        
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: path,
+            sourceLanguages: availableSourceLanguages ?? [.swift]
+        )
+        
         let title = article.topicGraphNode.title
         
-        let documentationNode = DocumentationNode(reference: reference, kind: kind, sourceLanguage: .swift, name: .conceptual(title: title), markup: articleMarkup, semantic: article.value)
+        let documentationNode = DocumentationNode(
+            reference: reference,
+            kind: kind,
+            sourceLanguage: defaultSourceLanguage,
+            availableSourceLanguages: availableSourceLanguages,
+            name: .conceptual(title: title),
+            markup: articleMarkup,
+            semantic: article.value
+        )
         
         return (documentationNode, title)
     }
@@ -1693,11 +1744,29 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         let articleReferences = autoCuratedArticles.map(\.topicGraphNode.reference)
-        let autoArticlesSection = AutomaticTaskGroupSection(title: "Articles", references: articleReferences, renderPositionPreference: .top)
+        
+        func createAutomaticTaskGroupSection(references: [ResolvedTopicReference]) -> AutomaticTaskGroupSection {
+            AutomaticTaskGroupSection(
+                title: "Articles",
+                references: references,
+                renderPositionPreference: .top
+            )
+        }
         
         let node = try entity(with: rootNode.reference)
-        if var taskGroupProviding = node.semantic as? AutomaticTaskGroupsProviding {
-            taskGroupProviding.automaticTaskGroups = [autoArticlesSection]
+        
+        // If the node we're automatically curating the article under is a symbol, automatically curate the article
+        // for each language it's available in.
+        if let symbol = node.semantic as? Symbol {
+            for sourceLanguage in node.availableSourceLanguages {
+                symbol.automaticTaskGroupsVariants[
+                    .init(interfaceLanguage: sourceLanguage.id)
+                ] = [createAutomaticTaskGroupSection(references: articleReferences)]
+            }
+        } else if var taskGroupProviding = node.semantic as? AutomaticTaskGroupsProviding {
+            taskGroupProviding.automaticTaskGroups = [
+                createAutomaticTaskGroupSection(references: articleReferences)
+            ]
         }
         
         return articleReferences
@@ -1779,7 +1848,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // All discovery went well, process the inputs.
         let (technologies, tutorials, tutorialArticles, allArticles) = result
-        let (otherArticles, rootPageArticles) = splitArticles(allArticles)
+        var (otherArticles, rootPageArticles) = splitArticles(allArticles)
 
         let rootPages = registerRootPages(from: rootPageArticles, in: bundle)
         let (moduleReferences, symbolsURLHierarchy) = try registerSymbols(from: bundle, symbolGraphLoader: symbolGraphLoader)
@@ -1788,10 +1857,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         try shouldContinueRegistration()
         
+        // Keep track of the root modules registered from symbol graph files, we'll need them to automatically
+        // curate articles.
+        rootModules = topicGraph.nodes.values.compactMap { node in
+            guard node.kind == .module,
+                  !onlyHasSnippetRelatedChildren(for: node.reference) else {
+                return nil
+            }
+            return node.reference
+        }
+        
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
-        let rootNodeForAutomaticCuration = rootModules.count == 1 ? rootModules.first.flatMap(topicGraph.nodeWithReference) : nil
+        let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
         if rootNodeForAutomaticCuration != nil {
-            registerArticles(otherArticles, in: bundle)
+            otherArticles = registerArticles(otherArticles, in: bundle)
             try shouldContinueRegistration()
         }
         
@@ -2152,15 +2231,35 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return topicGraph.reverseEdges[reference] ?? []
     }
     
-    /// Attempt to locate the file for a given `reference`.
+    /// Returns the document URL for the given article or tutorial reference.
     ///
     /// - Parameter reference: The identifier for the topic whose file URL to locate.
-    /// - Returns: The absolute file URL of the topic if it could be found in a matching registered documentation bundle, otherwise `nil`.
+    /// - Returns: If the reference is a reference to a known Markdown document, this function returns the article's URL, otherwise `nil`.
+    @available(*, deprecated, renamed: "documentURL(for:)")
     public func fileURL(for reference: ResolvedTopicReference) -> URL? {
+        documentURL(for: reference)
+    }
+    
+    /// Returns the document URL for the given article or tutorial reference.
+    ///
+    /// - Parameter reference: The identifier for the topic whose file URL to locate.
+    /// - Returns: If the reference is a reference to a known Markdown document, this function returns the article's URL, otherwise `nil`.
+    public func documentURL(for reference: ResolvedTopicReference) -> URL? {
         if let node = topicGraph.nodes[reference], case .file(let url) = node.source {
             return url
         }
         return nil
+    }
+    
+    /// Returns the URL of the documentation extension of the given reference.
+    ///
+    /// - Parameter reference: The reference to the symbol this function should return the documentation extension URL for.
+    /// - Returns: The document URL of the given symbol reference. If the given reference is not a symbol reference, returns `nil`.
+    public func documentationExtensionURL(for reference: ResolvedTopicReference) -> URL? {
+        guard (try? entity(with: reference))?.kind.isSymbol == true else {
+            return nil
+        }
+        return documentLocationMap[reference]
     }
     
     /// Attempt to locate the reference for a given file.
@@ -2548,32 +2647,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         return results
-    }
-    
-    /// Finds the presentation language the symbol is curated under by walking
-    /// the documentation graph upwards and finding a parent that has an interface language.
-    /// Will return `nil` if no parent with assigned interface language is found
-    /// (e.g. in a tutorials only bundle).
-    func interfaceLanguageFor(_ reference: ResolvedTopicReference) throws -> SourceLanguage? {
-        let node = try entity(with: reference)
-        guard !(node.semantic is Symbol) else {
-            // For symbols just return the source language
-            return node.sourceLanguage
-        }
-        
-        // `pathsTo()` returns the canonical path first
-        guard let canonical = pathsTo(reference).first else {
-            // Uncurated symbol, if not expected a warning will be emitted elsewhere
-            return nil
-        }
-
-        // Return the language of the first symbol entity
-        return canonical.mapFirst { reference -> SourceLanguage? in
-            guard let node = try? entity(with: reference), node.semantic is Symbol else {
-                return nil
-            }
-            return node.sourceLanguage
-        }
     }
     
     func dumpGraph() -> String {

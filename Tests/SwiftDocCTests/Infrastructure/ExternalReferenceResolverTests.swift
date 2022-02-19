@@ -245,7 +245,7 @@ Document @1:1-1:35
             let converter = DocumentationNodeConverter(bundle: bundle, context: context)
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
             
-            guard let fileURL = context.fileURL(for: node.reference) else {
+            guard let fileURL = context.documentURL(for: node.reference) else {
                 XCTFail("Unable to find the file for \(node.reference.path)")
                 return
             }
@@ -300,7 +300,7 @@ Document @1:1-1:35
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
-        guard let fileURL = context.fileURL(for: node.reference) else {
+        guard let fileURL = context.documentURL(for: node.reference) else {
             XCTFail("Unable to find the file for \(node.reference.path)")
             return
         }
@@ -348,7 +348,7 @@ Document @1:1-1:35
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
-        guard let fileURL = context.fileURL(for: node.reference) else {
+        guard let fileURL = context.documentURL(for: node.reference) else {
             XCTFail("Unable to find the file for \(node.reference.path)")
             return
         }

@@ -2269,6 +2269,44 @@ class ConvertActionTests: XCTestCase {
         )
     }
     
+    func testRenderIndexJSONGeneration() throws {
+        let catalog = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
+        ])
+
+        let temporaryDirectory = try createTemporaryDirectory()
+        let catalogURL = try catalog.write(inside: temporaryDirectory)
+        
+        let targetDirectory = temporaryDirectory.appendingPathComponent("target", isDirectory: true)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
+        
+        var action = try ConvertAction(
+            documentationBundleURL: catalog.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: nil,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: dataProvider,
+            fileManager: FileManager.default,
+            temporaryDirectory: createTemporaryDirectory()
+        )
+        
+        try action.performAndHandleResult()
+        
+        let indexDirectory = targetDirectory.appendingPathComponent("index", isDirectory: true)
+        let renderIndexJSON = indexDirectory.appendingPathComponent("index.json", isDirectory: false)
+        
+        enableFeatureFlag(\.isExperimentalJSONIndexEnabled)
+        
+        try action.performAndHandleResult()
+        XCTAssertTrue(FileManager.default.directoryExists(atPath: indexDirectory.path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: renderIndexJSON.path))
+        try XCTAssertEqual(FileManager.default.contentsOfDirectory(at: indexDirectory, includingPropertiesForKeys: nil).count, 1)
+    }
+    
     /// Verifies that a metadata.json file is created in the output folder with additional metadata.
     func testCreatesBuildMetadataFileForBundleWithInfoPlistValues() throws {
         let bundle = Folder(

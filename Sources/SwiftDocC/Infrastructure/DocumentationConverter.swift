@@ -268,7 +268,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             // If cancelled skip all concurrent conversion work in this block.
             guard !isConversionCancelled() else { return }
 
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             
             // Wrap JSON encoding in an autorelease pool to avoid retaining the autoreleased ObjC objects returned by `JSONSerialization`
             autoreleasepool {

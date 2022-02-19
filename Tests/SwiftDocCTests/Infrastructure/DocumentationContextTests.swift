@@ -66,7 +66,7 @@ class DocumentationContextTests: XCTestCase {
         let expectedURL = URL(string: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial")
         XCTAssertEqual(expectedURL, resolved.url)
         
-        guard context.fileURL(for: resolved) != nil else {
+        guard context.documentURL(for: resolved) != nil else {
             XCTFail("Couldn't resolve file URL for \(resolved)")
             return
         }
@@ -1156,7 +1156,7 @@ class DocumentationContextTests: XCTestCase {
             
             let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
             
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: node, at: source))
             
             XCTAssertEqual(
@@ -1339,17 +1339,6 @@ let expected = """
         let canonicalPathFFF = try XCTUnwrap(context.pathsTo(fffNode.reference).first)
         XCTAssertEqual(["/documentation/MyKit"], canonicalPathFFF.map({ $0.path }))
     }
-    
-    func testLanguageForNode() throws {
-        let workspace = DocumentationWorkspace()
-        let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
-        try workspace.registerProvider(dataProvider)
-        let articleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
-        let articleLanguage = try context.interfaceLanguageFor(articleReference)
-        XCTAssertEqual(articleLanguage, SourceLanguage.swift)
-    }
 
     // Verify that a symbol that has no parents in the symbol graph is automatically curated under the module node.
     func testRootSymbolsAreCureatedInModule() throws {
@@ -1440,6 +1429,64 @@ let expected = """
         // Verify the non-overload collisions were resolved
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.enum.case", sourceLanguage: .swift)))
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var", sourceLanguage: .swift)))
+    }
+    
+    func testModuleLanguageFallsBackToSwiftIfItHasNoSymbols() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+            // Delete all the symbol graph files.
+            let symbolGraphFiles = try XCTUnwrap(
+                FileManager.default.enumerator(
+                    at: root,
+                    includingPropertiesForKeys: [.isRegularFileKey],
+                    options: []
+                )?.compactMap { item in
+                    item as? URL
+                }.filter { url in
+                    url.absoluteString.hasSuffix(".symbols.json")
+                }
+            )
+            
+            for symbolGraphFile in symbolGraphFiles {
+                try FileManager.default.removeItem(at: symbolGraphFile)
+            }
+            
+            // Add a symbol graph file with no symbols.
+            try """
+            {
+              "metadata": {
+                "formatVersion": {
+                  "major": 0,
+                  "minor": 5,
+                  "patch": 0
+                },
+                "generator": "MyGenerator"
+              },
+              "module" : {
+                "name" : "MyKit",
+                "platform" : {
+                  "architecture" : "x86_64",
+                  "vendor" : "apple",
+                  "operatingSystem" : {
+                    "name" : "ios",
+                    "minimumVersion" : {
+                      "major" : 13,
+                      "minor" : 0,
+                      "patch" : 0
+                    }
+                  }
+                }
+              },
+              "relationships": [],
+              "symbols": []
+            }
+            """.write(to: root.appendingPathComponent("MyKit.symbols.json"), atomically: true, encoding: .utf8)
+        }
+        
+        XCTAssertEqual(
+            context.soleRootModuleReference?.sourceLanguages,
+            [.swift],
+            "Expected the module to have language 'Swift' since it has 0 symbols."
+        )
     }
 
     func testOverloadPlustNonOverloadCollisionPaths() throws {
@@ -3027,6 +3074,125 @@ let expected = """
             symbolsInDocumentationCache,
             symbolsInSymbolIndex,
             "Expected the symbol instances in the documentationCache and symbolIndex dictionaries to be the same"
+        )
+    }
+    
+    func assertArticleAvailableSourceLanguages(
+        moduleAvailableLanguages: Set<SourceLanguage>,
+        expectedArticleDefaultLanguage: SourceLanguage,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        precondition(
+            moduleAvailableLanguages.allSatisfy { [.swift, .objectiveC].contains($0) },
+            "moduleAvailableLanguages can only contain Swift and Objective-C as languages."
+        )
+        
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+            try """
+            # MyArticle
+            
+            The framework this article is documenting is available in the following languages: \
+            \(moduleAvailableLanguages.map(\.name).joined(separator: ",")).
+            """.write(to: url.appendingPathComponent("myarticle.md"), atomically: true, encoding: .utf8)
+            
+            func removeSymbolGraph(compiler: String) throws {
+                try FileManager.default.removeItem(
+                    at: url.appendingPathComponent("symbol-graphs").appendingPathComponent(compiler)
+                )
+            }
+            
+            if !moduleAvailableLanguages.contains(.swift) {
+                try removeSymbolGraph(compiler: "swift")
+            }
+            
+            if !moduleAvailableLanguages.contains(.objectiveC) {
+                try removeSymbolGraph(compiler: "clang")
+            }
+        }
+        
+        let articleNode = try XCTUnwrap(
+            context.documentationCache.first {
+                $0.key.path == "/documentation/MixedLanguageFramework/myarticle"
+            }?.value,
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            articleNode.availableSourceLanguages,
+            moduleAvailableLanguages,
+            "Expected the article's source languages to have inherited from the module's available source languages.",
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            articleNode.sourceLanguage,
+            expectedArticleDefaultLanguage,
+            file: file,
+            line: line
+        )
+    }
+    
+    func testArticleAvailableSourceLanguagesIsSwiftInSwiftModule() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        try assertArticleAvailableSourceLanguages(
+            moduleAvailableLanguages: [.swift],
+            expectedArticleDefaultLanguage: .swift
+        )
+    }
+    
+    func testArticleAvailableSourceLanguagesIsMixedLanguageInMixedLanguageModule() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        try assertArticleAvailableSourceLanguages(
+            moduleAvailableLanguages: [.swift, .objectiveC],
+            expectedArticleDefaultLanguage: .swift
+        )
+    }
+    
+    func testArticleAvailableSourceLanguagesIsObjectiveCInObjectiveCModule() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        try assertArticleAvailableSourceLanguages(
+            moduleAvailableLanguages: [.objectiveC],
+            expectedArticleDefaultLanguage: .objectiveC
+        )
+    }
+    
+    func testDocumentationExtensionURLForReferenceReturnsURLForSymbolReference() throws {
+        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle")
+        
+        XCTAssertEqual(
+            context.documentationExtensionURL(
+                for: ResolvedTopicReference(
+                    bundleIdentifier: "org.swift.docc.example",
+                    path: "/documentation/MyKit/MyClass",
+                    fragment: nil,
+                    sourceLanguage: .swift
+                )
+            ),
+            bundleURL
+                .appendingPathComponent("documentation")
+                .appendingPathComponent("myclass.md")
+        )
+    }
+    
+    func testDocumentationExtensionURLForReferenceReturnsNilForTutorialReference() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle")
+        
+        XCTAssertNil(
+            context.documentationExtensionURL(
+                for: ResolvedTopicReference(
+                    bundleIdentifier: "org.swift.docc.example",
+                    path: "/tutorials/TestOverview",
+                    fragment: nil,
+                    sourceLanguage: .swift
+                )
+            ),
+            "Expectedly returned non-nil value for non-symbol content."
         )
     }
 }
