@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -81,15 +81,16 @@ extension Semantic.Analyses {
         func analyze(_ directive: BlockDirective, arguments: [String: Markdown.DirectiveArgument], problems: inout [Problem]) -> Converter.ArgumentValue? {
             let arguments = directive.arguments(problems: &problems)
             let source = directive.range?.lowerBound.source
+            let diagnosticArgumentName = Converter.argumentName.isEmpty ? "unlabeled" : Converter.argumentName
             guard let argument = arguments[Converter.argumentName] else {
                 if let severity = severityIfNotFound {
-                    let diagnostic = Diagnostic(source: source, severity: severity, range: directive.range, identifier: "org.swift.docc.HasArgument.\(Converter.argumentName)", summary: "\(Parent.directiveName) expects an argument \(Converter.argumentName.singleQuoted) that's convertible to '\(Converter.ArgumentValue.self)'")
+                    let diagnostic = Diagnostic(source: source, severity: severity, range: directive.range, identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName)", summary: "\(Parent.directiveName) expects an argument \(Converter.argumentName.singleQuoted) that's convertible to '\(Converter.ArgumentValue.self)'")
                     problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
                 }
                 return nil
             }
             guard let value = Converter.convert(argument.value) else {
-                let diagnostic = Diagnostic(source: source, severity: .warning, range: argument.valueRange, identifier: "org.swift.docc.HasArgument.\(Converter.argumentName).ConversionFailed", summary: "Can't convert \(argument.value.singleQuoted) to type \(Converter.ArgumentValue.self)")
+                let diagnostic = Diagnostic(source: source, severity: .warning, range: argument.valueRange, identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName).ConversionFailed", summary: "Can't convert \(argument.value.singleQuoted) to type \(Converter.ArgumentValue.self)")
                 let solutions = Converter.allowedValues().map { allowedValues -> [Solution] in
                     return allowedValues.compactMap { allowedValue -> Solution? in
                         guard let range = argument.valueRange else {

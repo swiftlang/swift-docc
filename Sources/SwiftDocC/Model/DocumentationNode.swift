@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -318,6 +318,18 @@ public struct DocumentationNode {
         // Merge in the symbol documentation content
         let semantic = self.semantic as! Symbol
         
+        if let displayName = documentationExtension?.metadata?.displayName {
+            switch displayName.style {
+            case .conceptual:
+                self.name = .conceptual(title: displayName.name)
+            case .symbol:
+                self.name = .symbol(declaration: .init([.plain(displayName.name)]))
+            }
+            semantic.titleVariants = semantic.titleVariants.map { _ in
+                displayName.name
+            }
+        }
+        
         // Symbol is a by-reference type so we're updating the original `semantic` property instance.
         semantic.abstractSectionVariants = DocumentationDataVariants(
             defaultVariantValue: markupModel.abstractSection
@@ -489,7 +501,16 @@ public struct DocumentationNode {
         }
         self.kind = Self.kind(for: symbol)
         self.sourceLanguage = reference.sourceLanguage
-        self.name = .symbol(declaration: .init([.plain(symbol.names.title)]))
+        if let displayName = article?.metadata?.displayName {
+            switch displayName.style {
+            case .conceptual:
+                self.name = .conceptual(title: displayName.name)
+            case .symbol:
+                self.name = .symbol(declaration: .init([.plain(displayName.name)]))
+            }
+        } else {
+            self.name = .symbol(declaration: .init([.plain(symbol.names.title)]))
+        }
         self.symbol = symbol
         
         // Prefer content sections coming from an article (documentation extension file)
