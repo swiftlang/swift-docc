@@ -12,11 +12,12 @@ import Foundation
 import SymbolKit
 
 /// A type that provides documentation bundles that it discovers by traversing the local file system.
-public struct GeneratedDataProvider: DocumentationWorkspaceDataProvider {
+public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     public var identifier: String = UUID().uuidString
     
     public typealias SymbolGraphDataLoader = (URL) -> Data?
     private let symbolGraphDataLoader: SymbolGraphDataLoader
+    private var generatedMarkdownFiles: [String: Data] = [:]
     
     /// Creates a new provider that generates documentation bundles from the ``BundleDiscoveryOptions`` it is passed in ``bundles(options:)``.
     ///
@@ -48,7 +49,21 @@ public struct GeneratedDataProvider: DocumentationWorkspaceDataProvider {
             moduleNames.insert(container.module.name)
         }
         
-        let topLevelPages = moduleNames.map { URL(string: $0 + ".md")! }
+        if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName {
+            generatedMarkdownFiles[moduleName] = Data("""
+                # ``\(moduleName)``
+
+                @Metadata {
+                  @DisplayName("\(info.displayName)")
+                }
+                """.utf8)
+        } else {
+            for moduleName in moduleNames {
+                generatedMarkdownFiles[moduleName] = Data("# ``\(moduleName)``".utf8)
+            }
+        }
+        
+        let topLevelPages = generatedMarkdownFiles.keys.map { URL(string: $0 + ".md")! }
         
         return [
             DocumentationBundle(
@@ -98,10 +113,8 @@ public struct GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     }
     
     public func contentsOfURL(_ url: URL) throws -> Data {
-        if DocumentationBundleFileTypes.isMarkupFile(url) {
-            let moduleName = url.deletingPathExtension().lastPathComponent
-            let markdown = "# ``\(moduleName)``"
-            return Data(markdown.utf8)
+        if DocumentationBundleFileTypes.isMarkupFile(url), let content = generatedMarkdownFiles[url.deletingPathExtension().lastPathComponent] {
+            return content
         } else if DocumentationBundleFileTypes.isSymbolGraphFile(url) {
             guard let data = symbolGraphDataLoader(url) else {
                 throw Error.unableToLoadSymbolGraphData(url: url)
