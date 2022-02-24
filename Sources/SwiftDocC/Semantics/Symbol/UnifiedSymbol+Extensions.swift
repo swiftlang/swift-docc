@@ -12,20 +12,58 @@ import SymbolKit
 
 extension UnifiedSymbolGraph.Symbol {
     var defaultSelector: UnifiedSymbolGraph.Selector? {
-        if let mainSelector = self.mainGraphSelectors.first, mainSelector.interfaceLanguage == "swift" {
-            return mainSelector
-        }
-
-        let defaultSelector = UnifiedSymbolGraph.Selector(interfaceLanguage: "swift", platform: nil)
-
-        if self.pathComponents.keys.contains(defaultSelector) {
-            return defaultSelector
-        } else if let firstSwiftSelector = self.pathComponents.keys.first(where: { $0.interfaceLanguage == "swift" }) {
-            return firstSwiftSelector
-        } else if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
-            return mainGraphSelectors.first ?? pathComponents.keys.first
-        } else {
-            return nil
+        // Return the default selector from the main graph selectors, or if one could not be determined, from all
+        // the symbol's selectors including ones for extension symbol graphs.
+        return defaultSelector(in: mainGraphSelectors) ?? defaultSelector(in: pathComponents.keys)
+    }
+    
+    private func defaultSelector<Selectors: Sequence>(
+        in selectors: Selectors
+    ) -> UnifiedSymbolGraph.Selector? where Selectors.Element == UnifiedSymbolGraph.Selector {
+        let selectors = selectors
+            .filter { selector in
+                if !FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
+                    return selector.interfaceLanguage == "swift"
+                }
+                return true
+            }
+        
+        // Return the default selector based on the ordering defined below.
+        return selectors.sorted { lhsSelector, rhsSelector in
+            switch (lhsSelector.interfaceLanguage, rhsSelector.interfaceLanguage) {
+                
+            // If both selectors are Swift, pick the one that has the most matching platforms with the other selectors.
+            case ("swift", "swift"):
+                let nonSwiftSelectors = selectors.filter { $0.interfaceLanguage != "swift" }
+                
+                let lhsMatchingPlatformsCount = nonSwiftSelectors.filter { $0.platform == lhsSelector.platform }.count
+                let rhsMatchingPlatformsCount = nonSwiftSelectors.filter { $0.platform == rhsSelector.platform }.count
+                
+                if lhsMatchingPlatformsCount == rhsMatchingPlatformsCount {
+                    // If they have the same number of matching platforms, return the alphabetically smallest platform.
+                    return arePlatformsInIncreasingOrder(lhsSelector.platform, rhsSelector.platform)
+                }
+                
+                return lhsMatchingPlatformsCount > rhsMatchingPlatformsCount
+            case ("swift", _):
+                return true
+            case (_, "swift"):
+                return false
+            default:
+                // Return the alphabetically smallest platform.
+                return arePlatformsInIncreasingOrder(lhsSelector.platform, rhsSelector.platform)
+            }
+        }.first
+    }
+    
+    private func arePlatformsInIncreasingOrder(_ platform1: String?, _ platform2: String?) -> Bool {
+        switch (platform1, platform2) {
+        case (nil, _):
+            return true
+        case (_, nil):
+            return false
+        case (let platform1?, let platform2?):
+            return platform1 < platform2
         }
     }
 
