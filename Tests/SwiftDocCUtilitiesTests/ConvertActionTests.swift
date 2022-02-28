@@ -1868,7 +1868,6 @@ class ConvertActionTests: XCTestCase {
             temporaryDirectory: createTemporaryDirectory()
         )
         
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
         _ = try action.perform(logHandle: .none)
         
         let index = try NavigatorIndex(url: targetDirectory.appendingPathComponent("index"))
@@ -1897,8 +1896,6 @@ class ConvertActionTests: XCTestCase {
     }
     
     func testMixedLanguageNavigatorIndexGeneration() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         // The navigator index needs to test with the real File Manager
         let temporaryTestOutputDirectory = try createTemporaryDirectory()
         
@@ -2231,41 +2228,6 @@ class ConvertActionTests: XCTestCase {
         let diagnostics = try RenderJSONDecoder.makeDecoder().decode([Digest.Diagnostic].self, from: data)
         XCTAssertEqual(diagnostics.count, 1)
 
-    }
-    
-    func testObjectiveCFeatureFlag() throws {
-        let bundle = Folder(name: "unit-test-objc.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
-            CopyOfFile(original: objectiveCSymbolGraphFile),
-        ])
-
-        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
-        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath).appendingPathComponent("target", isDirectory: true)
-
-        var action = try ConvertAction(
-            documentationBundleURL: bundle.absoluteURL,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: targetDirectory,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: true,
-            currentPlatforms: nil,
-            dataProvider: testDataProvider,
-            fileManager: testDataProvider,
-            temporaryDirectory: createTemporaryDirectory()
-        )
-        
-        try action.performAndHandleResult()
-        XCTAssertFalse(
-            testDataProvider.fileExists(atPath: targetDirectory.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).path)
-        )
-        
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
-        try action.performAndHandleResult()
-        XCTAssertTrue(
-            testDataProvider.fileExists(atPath: targetDirectory.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).path)
-        )
     }
     
     func testRenderIndexJSONGeneration() throws {

@@ -280,8 +280,6 @@ class ExternalLinkableTests: XCTestCase {
     }
     
     func testVariantSummaries() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         

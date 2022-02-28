@@ -44,8 +44,6 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
     }
     
     func testDefaultSelectorReturnsObjectiveCIfThereIsNoSwift() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         assertDefaultSelectorForSymbol(
             infos: [
                 (language: "occ", platform: "macos", isMainGraph: true),
@@ -55,8 +53,6 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
     }
     
     func testDefaultSelectorReturnsSwiftSelectorWithTheMostCommonPlatforms() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         assertDefaultSelectorForSymbol(
             infos: [
                 (language: "swift", platform: "ios", isMainGraph: true),
@@ -68,8 +64,6 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
     }
     
     func testDefaultSelectorReturnsSwiftSelectorWithAlphabeticallySmallestPlatformIfTheyHaveTheSameNumberOfCommonPlatforms() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         assertDefaultSelectorForSymbol(
             infos: [
                 (language: "swift", platform: nil, isMainGraph: true),
@@ -82,8 +76,6 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
     }
     
     func testDefaultSelectorIsMainGraphSelectorIfOneExists() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         assertDefaultSelectorForSymbol(
             infos: [
                 (language: "occ", platform: nil, isMainGraph: true),
@@ -94,8 +86,6 @@ class UnifiedSymbol_ExtensionsTests: XCTestCase {
     }
     
     func testDefaultSelectorIsExtensionSelectorIfOneExists() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         assertDefaultSelectorForSymbol(
             infos: [
                 (language: "occ", platform: nil, isMainGraph: false),

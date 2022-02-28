@@ -19,8 +19,6 @@ extension ConvertAction {
     public init(fromConvertCommand convert: Docc.Convert, withFallbackTemplate fallbackTemplateURL: URL? = nil) throws {
         var standardError = LogHandle.standardError
         let outOfProcessResolver: OutOfProcessReferenceResolver?
-
-        FeatureFlags.current.isExperimentalObjectiveCSupportEnabled = convert.enableExperimentalObjectiveCSupport
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.

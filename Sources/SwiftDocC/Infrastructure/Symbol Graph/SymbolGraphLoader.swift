@@ -71,14 +71,6 @@ struct SymbolGraphLoader {
                 case .concurrentlyEachFileInBatches:
                     symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
                 }
-                
-                if let firstSymbolLanguage = symbolGraph.symbols.first?.value.identifier.interfaceLanguage {
-                    guard FeatureFlags.current.isExperimentalObjectiveCSupportEnabled
-                            || InterfaceLanguage.from(string: firstSymbolLanguage) == .swift
-                    else {
-                        return
-                    }
-                }
 
                 // `moduleNameFor(_:at:)` is static because it's pure function.
                 let (moduleName, _) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)

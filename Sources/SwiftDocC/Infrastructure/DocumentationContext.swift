@@ -1065,10 +1065,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Any reference after the first is considered an alias/alternative to the first reference
         // and will resolve to the first reference.
         var symbolSelectors = [symbol.defaultSelector]
-        if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
-            for selector in symbol.mainGraphSelectors where !symbolSelectors.contains(selector) {
-                symbolSelectors.append(selector)
-            }
+        for selector in symbol.mainGraphSelectors where !symbolSelectors.contains(selector) {
+            symbolSelectors.append(selector)
         }
         
         return symbolSelectors.map { selector  in
@@ -1208,21 +1206,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let fileURL = symbolGraphLoader.mainModuleURL(forModule: moduleName)
                 
                 let moduleInterfaceLanguages: Set<SourceLanguage>
-                if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
-                    // FIXME: Update with new SymbolKit API once available.
-                    // This is a very inefficient way to gather the source languages
-                    // represented in a symbol graph. Adding a dedicated SymbolKit API is tracked
-                    // with SR-15551 and rdar://85982095.
-                    let symbolGraphLanguages = Set(
-                        unifiedSymbolGraph.symbols.flatMap(\.value.sourceLanguages)
-                    )
-                    
-                    // If the symbol graph has no symbols, we cannot determine what languages is it available for,
-                    // so fall back to Swift.
-                    moduleInterfaceLanguages = symbolGraphLanguages.isEmpty ? [.swift] : symbolGraphLanguages
-                } else {
-                    moduleInterfaceLanguages = [.swift]
-                }
+                // FIXME: Update with new SymbolKit API once available.
+                // This is a very inefficient way to gather the source languages
+                // represented in a symbol graph. Adding a dedicated SymbolKit API is tracked
+                // with SR-15551 and rdar://85982095.
+                let symbolGraphLanguages = Set(
+                    unifiedSymbolGraph.symbols.flatMap(\.value.sourceLanguages)
+                )
+                
+                // If the symbol graph has no symbols, we cannot determine what languages is it available for,
+                // so fall back to Swift.
+                moduleInterfaceLanguages = symbolGraphLanguages.isEmpty ? [.swift] : symbolGraphLanguages
                 
                 // If it's an existing module, update the interface languages
                 moduleReferences[moduleName] = moduleReferences[moduleName]?.addingSourceLanguages(moduleInterfaceLanguages)

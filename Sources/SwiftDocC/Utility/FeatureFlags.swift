@@ -16,8 +16,11 @@ public struct FeatureFlags: Codable {
     
     /// Whether or not experimental language support for Objective-C is enabled.
     ///
-    /// This can be enabled on the command-line by passing `--enable-experimental-objective-c-support`
-    /// to docc.
+    /// > Note: Objective-C support is now enabled by default. Setting this property has no effect.
+    @available(
+        *, deprecated,
+        message: "Objective-C support is enabled by default. Setting this property has no effect."
+    )
     public var isExperimentalObjectiveCSupportEnabled = false
     
     /// Whether or not experimental support for emitting a JSON representation of the converted
@@ -28,15 +31,11 @@ public struct FeatureFlags: Codable {
     /// Creates a set of feature flags with the given values.
     ///
     /// - Parameters:
-    ///   - enableObjectiveCSupport: Whether or not experimental language support for Objective-C should be enabled.
-    ///
     ///   - additionalFlags: Any additional flags to set.
     ///
     ///     This field allows clients to set feature flags without adding new API.
     public init(
-        enableExperimentalObjectiveCSupport: Bool = false,
         additionalFlags: [String : Bool] = [:]
     ) {
-        self.isExperimentalObjectiveCSupportEnabled = enableExperimentalObjectiveCSupport
     }
 }

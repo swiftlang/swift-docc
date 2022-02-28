@@ -60,8 +60,6 @@ final class RenderIndexTests: XCTestCase {
     }
     
     func testRenderIndexGenerationForMixedLanguageFramework() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         XCTAssertEqual(
             try generatedRenderIndex(for: "MixedLanguageFramework", with: "org.swift.MixedLanguageFramework"),
             try RenderIndex.fromString(#"""

@@ -19,15 +19,11 @@ extension ResolvedTopicReference {
     init(symbolReference: SymbolReference, moduleName: String, bundle: DocumentationBundle) {
         let path = symbolReference.path.isEmpty ? "" : "/" + symbolReference.path
         
-        if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
-            self.init(
-                bundleIdentifier: bundle.documentationRootReference.bundleIdentifier,
-                path: bundle.documentationRootReference.appendingPath(moduleName + path).path,
-                fragment: nil,
-                sourceLanguages: symbolReference.interfaceLanguages
-            )
-        } else {
-            self = bundle.documentationRootReference.appendingPath(moduleName + path)
-        }
+        self.init(
+            bundleIdentifier: bundle.documentationRootReference.bundleIdentifier,
+            path: bundle.documentationRootReference.appendingPath(moduleName + path).path,
+            fragment: nil,
+            sourceLanguages: symbolReference.interfaceLanguages
+        )
     }
 }
