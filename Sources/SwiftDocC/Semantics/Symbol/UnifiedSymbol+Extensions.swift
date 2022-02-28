@@ -20,14 +20,6 @@ extension UnifiedSymbolGraph.Symbol {
     private func defaultSelector<Selectors: Sequence>(
         in selectors: Selectors
     ) -> UnifiedSymbolGraph.Selector? where Selectors.Element == UnifiedSymbolGraph.Selector {
-        let selectors = selectors
-            .filter { selector in
-                if !FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
-                    return selector.interfaceLanguage == "swift"
-                }
-                return true
-            }
-        
         // Return the default selector based on the ordering defined below.
         return selectors.sorted { lhsSelector, rhsSelector in
             switch (lhsSelector.interfaceLanguage, rhsSelector.interfaceLanguage) {
@@ -96,19 +88,11 @@ extension UnifiedSymbolGraph.Symbol {
     
     /// Returns the primary symbol to use as documentation source.
     var documentedSymbol: SymbolGraph.Symbol? {
-        guard FeatureFlags.current.isExperimentalObjectiveCSupportEnabled else {
-            return defaultSymbol
-        }
-        
         return symbol(forSelector: documentedSymbolSelector)
     }
     
     /// Returns the primary symbol selector to use as documentation source.
     var documentedSymbolSelector: UnifiedSymbolGraph.Selector? {
-        guard FeatureFlags.current.isExperimentalObjectiveCSupportEnabled else {
-            return defaultSelector
-        }
-        
         // We'll prioritize the first documented 'swift' symbol, if we have
         // one.
         return docComment.keys.first { selector  in
@@ -124,10 +108,6 @@ extension UnifiedSymbolGraph.Symbol {
     }
 
     var defaultIdentifier: SymbolGraph.Symbol.Identifier {
-        guard FeatureFlags.current.isExperimentalObjectiveCSupportEnabled else {
-            return identifier(forLanguage: "swift")
-        }
-        
         if let defaultInterfaceLanguage = defaultSelector?.interfaceLanguage {
             return identifier(forLanguage: defaultInterfaceLanguage)
         } else {

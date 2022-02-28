@@ -3136,8 +3136,6 @@ let expected = """
     }
     
     func testArticleAvailableSourceLanguagesIsSwiftInSwiftModule() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         try assertArticleAvailableSourceLanguages(
             moduleAvailableLanguages: [.swift],
             expectedArticleDefaultLanguage: .swift
@@ -3145,8 +3143,6 @@ let expected = """
     }
     
     func testArticleAvailableSourceLanguagesIsMixedLanguageInMixedLanguageModule() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         try assertArticleAvailableSourceLanguages(
             moduleAvailableLanguages: [.swift, .objectiveC],
             expectedArticleDefaultLanguage: .swift
@@ -3154,8 +3150,6 @@ let expected = """
     }
     
     func testArticleAvailableSourceLanguagesIsObjectiveCInObjectiveCModule() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         try assertArticleAvailableSourceLanguages(
             moduleAvailableLanguages: [.objectiveC],
             expectedArticleDefaultLanguage: .objectiveC

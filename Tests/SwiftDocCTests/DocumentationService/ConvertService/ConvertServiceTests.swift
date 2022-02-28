@@ -848,53 +848,6 @@ class ConvertServiceTests: XCTestCase {
         #endif
     }
     
-    func testObjectiveCFeatureFlag() throws {
-        let symbolGraphFile = Bundle.module.url(
-            forResource: "DeckKit-Objective-C",
-            withExtension: "symbols.json",
-            subdirectory: "Test Resources"
-        )!
-        
-        let symbolGraph = try Data(contentsOf: symbolGraphFile)
-        
-        var request = ConvertRequest(
-            bundleInfo: testBundleInfo,
-            externalIDsToConvert: ["c:@EA@Rank"],
-            documentPathsToConvert: [],
-            symbolGraphs: [symbolGraph],
-            markupFiles: [],
-            miscResourceURLs: []
-        )
-        
-        try processAndAssert(request: request) { message in
-            XCTAssertEqual(message.type, "convert-response")
-            XCTAssertEqual(message.identifier, "test-identifier-response")
-            
-            let renderNodes = try JSONDecoder().decode(
-                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
-            
-            XCTAssertTrue(
-                renderNodes.isEmpty,
-                "Expected empty response when converting obj-c symbol with experimental feature flag disabled."
-            )
-        }
-        
-        request.featureFlags.isExperimentalObjectiveCSupportEnabled = true
-        
-        try processAndAssert(request: request) { message in
-            XCTAssertEqual(message.type, "convert-response")
-            XCTAssertEqual(message.identifier, "test-identifier-response")
-            
-            let renderNodes = try JSONDecoder().decode(
-                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
-            
-            XCTAssertFalse(
-                renderNodes.isEmpty,
-                "Expected non-empty response when converting obj-c symbol with experimental feature flag enabled."
-            )
-        }
-    }
-    
     func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithCuratedArticles() throws {
         #if os(Linux)
         throw XCTSkip("""

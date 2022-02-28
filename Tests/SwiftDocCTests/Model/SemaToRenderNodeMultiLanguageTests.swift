@@ -13,7 +13,7 @@ import Foundation
 import SymbolKit
 import XCTest
 
-class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
+class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     func testBaseRenderNodeFromMixedLanguageFramework() throws {
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
@@ -364,8 +364,6 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
     }
     
     func testSymbolLinkWorkInMultipleLanguages() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # ``MixedLanguageFramework/Bar``
@@ -419,8 +417,6 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
     }
     
     func testArticleInMixedLanguageFramework() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         let outputConsumer = try mixedLanguageFrameworkConsumer() { url in
             try """
             # MyArticle
@@ -484,8 +480,6 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
     }
     
     func testAPICollectionInMixedLanguageFramework() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         let outputConsumer = try mixedLanguageFrameworkConsumer()
         
         let articleRenderNode = try outputConsumer.renderNode(withTitle: "APICollection")

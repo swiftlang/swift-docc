@@ -172,10 +172,6 @@ private extension Array where Element == String {
 
 extension UnifiedSymbolGraph.Symbol {
     var sourceLanguages: Set<SourceLanguage> {
-        guard FeatureFlags.current.isExperimentalObjectiveCSupportEnabled else {
-            return [.swift]
-        }
-        
         // FIXME: Replace with new SymbolKit API once available.
         // Adding a dedicated SymbolKit API for this purpose is tracked
         // with SR-15551 and rdar://85982095.

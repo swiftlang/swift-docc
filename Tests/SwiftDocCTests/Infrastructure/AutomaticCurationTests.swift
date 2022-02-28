@@ -351,8 +351,6 @@ class AutomaticCurationTests: XCTestCase {
     }
     
     func testRelevantLanguagesAreAutoCuratedInMixedLanguageFramework() throws {
-        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
-        
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
         let frameworkDocumentationNode = try context.entity(

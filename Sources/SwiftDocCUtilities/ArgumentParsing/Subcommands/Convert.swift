@@ -119,7 +119,7 @@ extension Docc {
         
         /// A user-provided value that is true if the user enables experimental Objective-C language support.
         ///
-        /// Defaults to false.
+        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
         @Flag(help: .hidden)
         public var enableExperimentalObjectiveCSupport = false
         

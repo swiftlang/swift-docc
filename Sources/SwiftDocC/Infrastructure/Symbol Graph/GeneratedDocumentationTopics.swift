@@ -72,13 +72,8 @@ enum GeneratedDocumentationTopics {
     private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext, bundle: DocumentationBundle) throws {
         let automaticCurationSourceLanguage: SourceLanguage
         let automaticCurationSourceLanguages: Set<SourceLanguage>
-        if FeatureFlags.current.isExperimentalObjectiveCSupportEnabled {
-            automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
-            automaticCurationSourceLanguages = Set(identifiers.flatMap(\.sourceLanguages))
-        } else {
-            automaticCurationSourceLanguage = .swift
-            automaticCurationSourceLanguages = Set([.swift])
-        }
+        automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
+        automaticCurationSourceLanguages = Set(identifiers.flatMap(\.sourceLanguages))
         
         // Create the collection topic reference
         let collectionReference = ResolvedTopicReference(
