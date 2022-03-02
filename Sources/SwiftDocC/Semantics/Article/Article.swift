@@ -143,7 +143,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         let isDocumentationExtension = title.child(at: 0) is AnyLink
         if !isDocumentationExtension, let metadata = optionalMetadata, let displayName = metadata.displayName {
             let diagnosticSummary = """
-            A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extensions files. To customize the display name of an article, change the content of the level-1 heading.
+            A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.
             """
 
             let diagnostic = Diagnostic(source: source, severity: .warning, range: metadata.originalMarkup.range, identifier: "org.swift.docc.Article.DisplayName.NotSupported", summary: diagnosticSummary, explanation: nil, notes: [])

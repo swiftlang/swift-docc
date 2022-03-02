@@ -912,9 +912,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let moduleName = context.moduleName(forModuleReference: symbol.moduleReference)
         
-        node.metadata.modulesVariants = VariantCollection(defaultValue: moduleName.map {
-            [RenderMetadata.Module(name: $0, relatedModules: symbol.bystanderModuleNames)]
-        })
+        node.metadata.modulesVariants = VariantCollection(defaultValue:
+            [RenderMetadata.Module(name: moduleName, relatedModules: symbol.bystanderModuleNames)]
+        )
         
         node.metadata.extendedModuleVariants = VariantCollection<String?>(defaultValue: symbol.extendedModule)
         
@@ -935,11 +935,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
-        } ?? .init(defaultValue: moduleName.flatMap {
-            defaultAvailability(for: bundle, moduleName: $0, currentPlatforms: context.externalMetadata.currentPlatforms)?
+        } ?? .init(defaultValue:
+            defaultAvailability(for: bundle, moduleName: moduleName, currentPlatforms: context.externalMetadata.currentPlatforms)?
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
-        })
+        )
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
         node.metadata.role = contentRenderer.role(for: documentationNode.kind).rawValue

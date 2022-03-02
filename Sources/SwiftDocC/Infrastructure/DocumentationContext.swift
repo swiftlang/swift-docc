@@ -383,10 +383,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// Find the known plain string module name for a given module reference.
     ///
+    /// - Note: Looking up module names requires that the module names have been pre-resolved. This happens automatically at the end of bundle registration.
+    ///
     /// - Parameter moduleReference: The module reference to find the module name for.
     /// - Returns: The plain string name for the referenced module.
-    func moduleName(forModuleReference moduleReference: ResolvedTopicReference) -> String? {
-        return moduleNameCache[moduleReference]
+    func moduleName(forModuleReference moduleReference: ResolvedTopicReference) -> String {
+        if let name = moduleNameCache[moduleReference]  {
+            return name
+        }
+        // If no name is found it's considered a programmer error; either that the names haven't been resolved yet
+        // or that the passed argument isn't a reference to a known module.
+        if moduleNameCache.isEmpty {
+            fatalError("Incorrect use of API: '\(#function)' requires that bundles have finished registering.")
+        }
+        fatalError("Incorrect use of API: '\(#function)' can only be used with known module references")
     }
     
     /// Attempts to resolve the module names of all root modules.

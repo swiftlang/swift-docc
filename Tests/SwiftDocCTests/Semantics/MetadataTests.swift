@@ -201,7 +201,7 @@ class MetadataTests: XCTestCase {
         let problem = try XCTUnwrap(problems.first)
         
         XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.Article.DisplayName.NotSupported")
-        XCTAssertEqual(problem.diagnostic.localizedSummary, "A 'DisplayName' directive is only supported in documentation extensions files. To customize the display name of an article, change the content of the level-1 heading.")
+        XCTAssertEqual(problem.diagnostic.localizedSummary, "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.")
         
         XCTAssertEqual(problem.possibleSolutions.count, 1)
         let solution = try XCTUnwrap(problem.possibleSolutions.first)
