@@ -105,6 +105,38 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         XCTAssertEqual(inherited.destinations.first?.url?.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/A")
     }
     
+    func testInheritanceRelationshipFromOtherFramework() throws {
+        let bundle = try testBundle(named: "TestBundle")
+        var symbolIndex = [String: DocumentationNode]()
+        let engine = DiagnosticEngine()
+        
+        let sourceIdentifier = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
+        let targetIdentifier = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
+        
+        let sourceRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/A", sourceLanguage: .swift)
+        
+        let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
+        
+        symbolIndex["A"] = DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleName: "MyKit", article: nil, engine: engine)
+        XCTAssert(engine.problems.isEmpty)
+        
+        let edge = SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .inheritsFrom, targetFallback: "MyOtherKit.B")
+        
+        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        
+        let relationships = (symbolIndex["A"]!.semantic as! Symbol).relationships
+        guard let inheritsShouldHaveFallback = relationships.groups.first(where: { group -> Bool in
+            return group.kind == RelationshipsGroup.Kind.inheritsFrom
+        }) else {
+            XCTFail("Inherits from not added")
+            return
+        }
+        
+        XCTAssert(inheritsShouldHaveFallback.destinations.contains(where: { destination -> Bool in
+            return relationships.targetFallbacks[destination] == "MyOtherKit.B"
+        }), "Could not fallback for parent in inherits from relationship")
+    }
+    
     func testRequirementRelationship() throws {
         let bundle = try testBundle(named: "TestBundle")
         var symbolIndex = [String: DocumentationNode]()
