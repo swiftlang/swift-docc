@@ -2897,6 +2897,11 @@ Document @1:1-11:19
             XCTAssertEqual(navigatorVariant.patch.description, "My custom conceptual name")
         }
         
+        XCTAssertEqual((moduleRenderNode.metadata.modules ?? []).map { $0.name }, ["My custom conceptual name"])
+        for moduleVariant in moduleRenderNode.metadata.modulesVariants.variants {
+            XCTAssertEqual(moduleVariant.patch.description, "My custom conceptual name")
+        }
+        
         // Verify the MyProtocol node
         
         XCTAssertEqual((moduleRenderNode.references[protocolReference.absoluteString] as? TopicRenderReference)?.title, "My custom symbol name")
@@ -2915,6 +2920,11 @@ Document @1:1-11:19
         XCTAssertEqual(protocolRenderNode.navigatorTitle(), "My custom symbol name")
         for navigatorVariant in protocolRenderNode.metadata.navigatorTitleVariants.variants {
             XCTAssertEqual(navigatorVariant.patch.description, "My custom symbol name")
+        }
+        
+        XCTAssertEqual((protocolRenderNode.metadata.modules ?? []).map { $0.name }, ["My custom conceptual name"])
+        for moduleVariant in protocolRenderNode.metadata.modulesVariants.variants {
+            XCTAssertEqual(moduleVariant.patch.description, "My custom conceptual name")
         }
     }
     
