@@ -1174,7 +1174,7 @@ class SemaToRenderNodeTests: XCTestCase {
                     navigatorVariants: .init(swiftVariant: nil),
                     roleHeadingVariants: .init(swiftVariant: "ExternalResolvedSymbolRoleHeading"),
                     platformNameVariants: .init(swiftVariant: nil),
-                    moduleNameVariants: .init(swiftVariant: "ExternalResolvedSymbolModuleName"),
+                    moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
                     externalIDVariants: .init(swiftVariant: nil),
                     accessLevelVariants: .init(swiftVariant: nil),
                     availabilityVariants: .init(swiftVariant: nil),

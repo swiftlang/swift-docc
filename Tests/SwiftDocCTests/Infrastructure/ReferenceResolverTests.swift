@@ -523,13 +523,10 @@ class ReferenceResolverTests: XCTestCase {
             populateObjCVariantAndCreateAssertion(keyPath: \.navigatorVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.roleHeadingVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.platformNameVariants),
-            populateObjCVariantAndCreateAssertion(keyPath: \.moduleNameVariants),
-            populateObjCVariantAndCreateAssertion(keyPath: \.extendedModuleVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.isRequiredVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.externalIDVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.accessLevelVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.redirectsVariants),
-            populateObjCVariantAndCreateAssertion(keyPath: \.bystanderModuleNamesVariants),
             populateObjCVariantAndCreateAssertion(keyPath: \.originVariants),
             
             // Otherwise, for variants properties that don't a value that is Equatable, populate the Objective-C variant

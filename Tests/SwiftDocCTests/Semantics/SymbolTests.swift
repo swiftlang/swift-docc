@@ -716,7 +716,7 @@ class SymbolTests: XCTestCase {
         }
         
         let engine = DiagnosticEngine()
-        let node = DocumentationNode(reference: original.reference, symbol: symbol, platformName: symbolSemantic.platformName.map { $0.rawValue }, moduleName: symbolSemantic.moduleName, article: article, engine: engine)
+        let node = DocumentationNode(reference: original.reference, symbol: symbol, platformName: symbolSemantic.platformName.map { $0.rawValue }, moduleReference: symbolSemantic.moduleReference, article: article, engine: engine)
         let semantic = try XCTUnwrap(node.semantic as? Symbol)
         return (semantic, engine.problems)
     }

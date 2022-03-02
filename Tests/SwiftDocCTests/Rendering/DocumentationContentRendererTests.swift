@@ -210,7 +210,7 @@ private extension DocumentationContentRendererTests {
             ]),
             roleHeadingVariants: .init(swiftVariant: ""),
             platformNameVariants: .init(swiftVariant: nil),
-            moduleNameVariants: .init(swiftVariant: ""),
+            moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
             externalIDVariants: .init(swiftVariant: nil),
             accessLevelVariants: .init(swiftVariant: nil),
             availabilityVariants: .init(swiftVariant: Availability(availability: [])),

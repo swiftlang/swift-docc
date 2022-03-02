@@ -255,8 +255,8 @@ struct SymbolGraphRelationshipsBuilder {
             
             // Check if the origin symbol is present.
             if let parent = originNode,
-                let parentModule = (parent.semantic as? Symbol)?.moduleName,
-                let nodeModule = (node.semantic as? Symbol)?.moduleName,
+                let parentModule = (parent.semantic as? Symbol)?.moduleReference,
+                let nodeModule = (node.semantic as? Symbol)?.moduleReference,
                 parentModule == nodeModule {
                 // If the origin is in the same bundle - always inherit the docs.
                 return

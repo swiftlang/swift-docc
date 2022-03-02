@@ -148,7 +148,8 @@ public struct DocumentationNode {
     /// > Warning: Using this initializer will not report any diagnostics raised during the initialization of `DocumentationNode`.
     @available(*, deprecated, message: "Use init(reference:symbol:platformName:moduleName:article:engine:) instead")
     public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, problems: inout [Problem]) {
-        self.init(reference: reference, symbol: symbol, platformName: platformName, moduleName: moduleName, article: article, engine: DiagnosticEngine())
+        let assumedModuleReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
+        self.init(reference: reference, symbol: symbol, platformName: platformName, moduleReference: assumedModuleReference, article: article, engine: DiagnosticEngine())
     }
 
     /// Initializes a node without parsing its documentation source.
@@ -158,7 +159,7 @@ public struct DocumentationNode {
     ///   - symbol: The symbol to create a documentation node for.
     ///   - platformName: The name of the platforms for which the node is available.
     ///   - moduleName: The name of the module that the symbol belongs to.
-    init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, platformName: String?, moduleName: String, bystanderModules: [String]? = nil) {
+    init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, bystanderModules: [String]? = nil) {
         self.reference = reference
         
         guard reference.sourceLanguage == .swift || FeatureFlags.current.isExperimentalObjectiveCSupportEnabled else {
@@ -210,14 +211,9 @@ public struct DocumentationNode {
         
         self.availableSourceLanguages = reference.sourceLanguages
         
-        let extendedModuleVariants = DocumentationDataVariants(
-            symbolData: unifiedSymbol.mixins,
-            platformName: platformName
-        ) { mixins in
-            return mixins.getValueIfPresent(
-                for: SymbolGraph.Symbol.Swift.Extension.self
-            )?.extendedModule
-        }
+        let extendedModule: String? = unifiedSymbol.mixins
+            .first(where: { $0.0.platform == platformName })?.value
+            .getValueIfPresent(for: SymbolGraph.Symbol.Swift.Extension.self)?.extendedModule
         
         let semanticSymbol = Symbol(
             kindVariants: DocumentationDataVariants(
@@ -247,8 +243,8 @@ public struct DocumentationNode {
             platformNameVariants: DocumentationDataVariants(
                 defaultVariantValue: platformName.map(PlatformName.init(operatingSystemName:))
             ),
-            moduleNameVariants: DocumentationDataVariants(defaultVariantValue: moduleName),
-            extendedModuleVariants: extendedModuleVariants,
+            moduleReference: moduleReference,
+            extendedModule: extendedModule,
             externalIDVariants: DocumentationDataVariants(defaultVariantValue: unifiedSymbol.uniqueIdentifier),
             accessLevelVariants: DocumentationDataVariants(
                 symbolData: unifiedSymbol.accessLevel,
@@ -275,9 +271,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
             redirectsVariants: .empty,
-            bystanderModuleNamesVariants: DocumentationDataVariants(
-                defaultVariantValue: bystanderModules
-            )
+            bystanderModuleNames: bystanderModules
         )
 
         try! semanticSymbol.mergeDeclarations(unifiedSymbol: unifiedSymbol)
@@ -489,7 +483,7 @@ public struct DocumentationNode {
     ///   - article: The documentation extension content for this symbol.
     ///   - engine:The engine that collects any problems encountered during initialization.
     ///   - bystanderModules: An optional list of cross-import module names.
-    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, engine: DiagnosticEngine, bystanderModules: [String]? = nil) {
+    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, engine: DiagnosticEngine, bystanderModules: [String]? = nil) {
         self.reference = reference
         
         guard reference.sourceLanguage == .swift else {
@@ -552,7 +546,7 @@ public struct DocumentationNode {
             navigatorVariants: .init(swiftVariant: symbol.names.navigator),
             roleHeadingVariants: .init(swiftVariant: symbol.kind.displayName),
             platformNameVariants: .init(swiftVariant: platformName.map(PlatformName.init(operatingSystemName:))),
-            moduleNameVariants: .init(swiftVariant: moduleName),
+            moduleReference: moduleReference,
             externalIDVariants: .init(swiftVariant: symbol.identifier.precise),
             accessLevelVariants: .init(swiftVariant: symbol.accessLevel.rawValue),
             availabilityVariants: .init(swiftVariant: symbolAvailability),
@@ -566,7 +560,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
             redirectsVariants: .init(swiftVariant: article?.redirects),
-            bystanderModuleNamesVariants: .init(swiftVariant: bystanderModules)
+            bystanderModuleNames: bystanderModules
         )
         
         updateAnchorSections()

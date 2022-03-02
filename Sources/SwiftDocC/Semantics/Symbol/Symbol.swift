@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -28,9 +28,9 @@ import SymbolKit
 /// - ``roleHeadingVariants``
 /// - ``kindVariants``
 /// - ``platformNameVariants``
-/// - ``moduleNameVariants``
-/// - ``extendedModuleVariants``
-/// - ``bystanderModuleNamesVariants``
+/// - ``moduleReference``
+/// - ``extendedModule``
+/// - ``bystanderModuleNames``
 /// - ``isRequiredVariants``
 /// - ``externalIDVariants``
 /// - ``accessLevelVariants``
@@ -63,11 +63,8 @@ import SymbolKit
 /// - ``navigator``
 /// - ``roleHeading``
 /// - ``platformName``
-/// - ``moduleName``
 /// - ``isRequired``
 /// - ``externalID``
-/// - ``extendedModule``
-/// - ``bystanderModuleNames``
 /// - ``deprecatedSummary``
 /// - ``declaration``
 /// - ``location``
@@ -111,14 +108,14 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// The symbol's platform in each language variant the symbol is available in.
     internal(set) public var platformNameVariants: DocumentationDataVariants<PlatformName>
     
-    /// The presentation-friendly name of the symbol's framework in each language variant the symbol is available in.
-    internal(set) public var moduleNameVariants: DocumentationDataVariants<String>
+    /// The reference to the documentation node that represents this symbol's module symbol.
+    internal(set) public var moduleReference: ResolvedTopicReference
     
-    /// The name of the module extension in which the symbol is defined, if applicable, in each language variant the symbol is available in.
-    internal(set) public var extendedModuleVariants: DocumentationDataVariants<String>
+    /// The name of the module extension in which the symbol is defined, if applicable.
+    internal(set) public var extendedModule: String?
     
-    /// Optional cross-import module names of the symbol, in each language variant the symbol is available in.
-    internal(set) public var bystanderModuleNamesVariants: DocumentationDataVariants<[String]>
+    /// Optional cross-import module names of the symbol.
+    internal(set) public var bystanderModuleNames: [String]?
     
     /// Whether the symbol is required in its context, in each language variant the symbol is available in.
     public var isRequiredVariants: DocumentationDataVariants<Bool>
@@ -212,8 +209,8 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         navigatorVariants: DocumentationDataVariants<[SymbolGraph.Symbol.DeclarationFragments.Fragment]>,
         roleHeadingVariants: DocumentationDataVariants<String>,
         platformNameVariants: DocumentationDataVariants<PlatformName>,
-        moduleNameVariants: DocumentationDataVariants<String>,
-        extendedModuleVariants: DocumentationDataVariants<String> = .init(),
+        moduleReference: ResolvedTopicReference,
+        extendedModule: String? = nil,
         requiredVariants: DocumentationDataVariants<Bool> = .init(defaultVariantValue: false),
         externalIDVariants: DocumentationDataVariants<String>,
         accessLevelVariants: DocumentationDataVariants<String>,
@@ -230,7 +227,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         returnsSectionVariants: DocumentationDataVariants<ReturnsSection>,
         parametersSectionVariants: DocumentationDataVariants<ParametersSection>,
         redirectsVariants: DocumentationDataVariants<[Redirect]>,
-        bystanderModuleNamesVariants: DocumentationDataVariants<[String]> = .init(),
+        bystanderModuleNames: [String]? = nil,
         originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
         automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: [])
     ) {
@@ -240,8 +237,8 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.navigatorVariants = navigatorVariants
         self.roleHeadingVariants = roleHeadingVariants
         self.platformNameVariants = platformNameVariants
-        self.moduleNameVariants = moduleNameVariants
-        self.bystanderModuleNamesVariants = bystanderModuleNamesVariants
+        self.moduleReference = moduleReference
+        self.bystanderModuleNames = bystanderModuleNames
         self.isRequiredVariants = requiredVariants
         self.externalIDVariants = externalIDVariants
         self.accessLevelVariants = accessLevelVariants
@@ -290,7 +287,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.redirectsVariants = redirectsVariants
         self.originVariants = originVariants
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
-        self.extendedModuleVariants = extendedModuleVariants
+        self.extendedModule = extendedModule
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {
@@ -487,9 +484,6 @@ extension Symbol {
     /// The first variant of the symbol's platform, if available.
     public var platformName: PlatformName? { platformNameVariants.firstValue }
     
-    /// The presentation-friendly name of the first variant of the symbol's framework.
-    public var moduleName: String { moduleNameVariants.firstValue! }
-    
     /// Whether the first variant of the symbol is required in its context.
     public var isRequired: Bool {
         get { isRequiredVariants.firstValue! }
@@ -500,12 +494,6 @@ extension Symbol {
         get { externalIDVariants.firstValue }
         set { externalIDVariants.firstValue = nil }
     }
-    
-    /// The name of the module extension in which the first variant of the symbol is defined, if applicable.
-    public var extendedModule: String? { extendedModuleVariants.firstValue }
-    
-    /// Optional cross-import module names of the first variant of the symbol.
-    public var bystanderModuleNames: [String]? { bystanderModuleNamesVariants.firstValue }
     
     /// The first variant of the symbol's deprecation information, if deprecated.
     public var deprecatedSummary: DeprecatedSection? {
