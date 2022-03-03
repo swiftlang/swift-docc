@@ -567,14 +567,23 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.title = article.title!.plainText
         
         // Detect the article modules from its breadcrumbs.
-        let modules = context.pathsTo(identifier).compactMap({ path -> String? in
+        let modules = context.pathsTo(identifier).compactMap({ path -> ResolvedTopicReference? in
             return path.mapFirst(where: { ancestor in
                 guard let ancestorNode = try? context.entity(with: ancestor) else { return nil }
-                return (ancestorNode.semantic as? Symbol)?.moduleName
+                return (ancestorNode.semantic as? Symbol)?.moduleReference
             })
         })
-        if !modules.isEmpty {
-            node.metadata.modules = Array(Set(modules)).map({
+        let moduleNames = Set(modules).compactMap { reference -> String? in
+            guard let node = try? context.entity(with: reference) else { return nil }
+            switch node.name {
+            case .conceptual(let title):
+                return title
+            case .symbol(let declaration):
+                return declaration.tokens.map { $0.description }.joined(separator: " ")
+            }
+        }
+        if !moduleNames.isEmpty {
+            node.metadata.modules = moduleNames.map({
                 return RenderMetadata.Module(name: $0, relatedModules: nil)
             })
         }
@@ -901,20 +910,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
             ref = grandparent
         }
         
-        node.metadata.modulesVariants = VariantCollection<[RenderMetadata.Module]?>(
-            from: symbol.moduleNameVariants,
-            optionalValue: symbol.bystanderModuleNamesVariants
-        ) { _, moduleName, bystanderModuleNames in
-            [RenderMetadata.Module(name: moduleName, relatedModules: bystanderModuleNames)]
-        } ?? .init(defaultValue: nil)
+        let moduleName = context.moduleName(forModuleReference: symbol.moduleReference)
         
-        node.metadata.extendedModuleVariants = VariantCollection<String?>(from: symbol.extendedModuleVariants)
+        node.metadata.modulesVariants = VariantCollection(defaultValue:
+            [RenderMetadata.Module(name: moduleName, relatedModules: symbol.bystanderModuleNames)]
+        )
         
-        node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(
-            from: symbol.moduleNameVariants,
-            optionalValue: symbol.availabilityVariants
-        ) { _, moduleName, availability in
-            (availability?.availability
+        node.metadata.extendedModuleVariants = VariantCollection<String?>(defaultValue: symbol.extendedModule)
+        
+        node.metadata.platformsVariants = VariantCollection<[AvailabilityRenderItem]?>(from: symbol.availabilityVariants) { _, availability in
+            availability.availability
                 .compactMap { availability -> AvailabilityRenderItem? in
                     // Filter items with insufficient availability data
                     guard availability.introducedVersion != nil else {
@@ -927,14 +932,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
                           }
                     
                     return AvailabilityRenderItem(availability, current: currentPlatform)
-                } ?? defaultAvailability(
-                    for: bundle,
-                    moduleName: moduleName,
-                    currentPlatforms: context.externalMetadata.currentPlatforms
-                )
-            )?.filter({ !($0.unconditionallyUnavailable == true) })
+                }
+                .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
-        } ?? .init(defaultValue: nil)
+        } ?? .init(defaultValue:
+            defaultAvailability(for: bundle, moduleName: moduleName, currentPlatforms: context.externalMetadata.currentPlatforms)?
+                .filter({ !($0.unconditionallyUnavailable == true) })
+                .sorted(by: AvailabilityRenderOrder.compare)
+        )
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
         node.metadata.role = contentRenderer.role(for: documentationNode.kind).rawValue

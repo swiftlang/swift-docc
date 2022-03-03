@@ -34,40 +34,42 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     
     func testMultipleModules() throws {
         try assertMultiVariantSymbol(
-            configureSymbol: { symbol in
-                symbol.moduleNameVariants[.swift] = "Swift Title"
-                symbol.moduleNameVariants[.objectiveC] = "Objective-C Title"
+            configureContext: { context, resolvedTopicReference in
+                let moduleReference = ResolvedTopicReference(bundleIdentifier: resolvedTopicReference.bundleIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+                context.documentationCache[moduleReference]?.name = .conceptual(title: "Custom Module Title")
+                context.preResolveModuleNames()
             },
             assertOriginalRenderNode: { renderNode in
-                try assertModule(renderNode.metadata.modules, expectedName: "Swift Title")
+                try assertModule(renderNode.metadata.modules, expectedName: "Custom Module Title")
             },
             assertAfterApplyingVariant: { renderNode in
-                try assertModule(renderNode.metadata.modules, expectedName: "Objective-C Title")
+                try assertModule(renderNode.metadata.modules, expectedName: "Custom Module Title")
             }
         )
     }
     
     func testMultipleModulesWithBystanderModule() throws {
         try assertMultiVariantSymbol(
+            configureContext: { context, resolvedTopicReference in
+                let moduleReference = ResolvedTopicReference(bundleIdentifier: resolvedTopicReference.bundleIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+                context.documentationCache[moduleReference]?.name = .conceptual(title: "Custom Module Title")
+                context.preResolveModuleNames()
+            },
             configureSymbol: { symbol in
-                symbol.moduleNameVariants[.swift] = "Swift Title"
-                symbol.moduleNameVariants[.objectiveC] = "Objective-C Title"
-                
-                symbol.bystanderModuleNamesVariants[.swift] = ["Swift Bystander Title"]
-                symbol.bystanderModuleNamesVariants[.objectiveC] = ["Objective-C Bystander Title"]
+                symbol.bystanderModuleNames = ["Custom Bystander Title"]
             },
             assertOriginalRenderNode: { renderNode in
                 try assertModule(
                     renderNode.metadata.modules,
-                    expectedName: "Swift Title",
-                    expectedRelatedModules: ["Swift Bystander Title"]
+                    expectedName: "Custom Module Title",
+                    expectedRelatedModules: ["Custom Bystander Title"]
                 )
             },
             assertAfterApplyingVariant: { renderNode in
                 try assertModule(
                     renderNode.metadata.modules,
-                    expectedName: "Objective-C Title",
-                    expectedRelatedModules: ["Objective-C Bystander Title"]
+                    expectedName: "Custom Module Title",
+                    expectedRelatedModules: ["Custom Bystander Title"]
                 )
             }
         )
@@ -76,23 +78,26 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testExtendedModuleVariants() throws {
         try assertMultiVariantSymbol(
             configureSymbol: { symbol in
-                symbol.extendedModuleVariants[.swift] = "Swift Title"
-                symbol.extendedModuleVariants[.objectiveC] = "Objective-C Title"
+                symbol.extendedModule = "Custom Title"
             },
             assertOriginalRenderNode: { renderNode in
-                XCTAssertEqual(renderNode.metadata.extendedModule, "Swift Title")
+                XCTAssertEqual(renderNode.metadata.extendedModule, "Custom Title")
             },
             assertAfterApplyingVariant: { renderNode in
-                XCTAssertEqual(renderNode.metadata.extendedModule, "Objective-C Title")
+                XCTAssertEqual(renderNode.metadata.extendedModule, "Custom Title")
             }
         )
     }
     
     func testPlatformsVariantsDefaultAvailability() throws {
         try assertMultiVariantSymbol(
+            configureContext: { context, resolvedTopicReference in
+                let moduleReference = ResolvedTopicReference(bundleIdentifier: resolvedTopicReference.bundleIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+                context.documentationCache[moduleReference]?.name = .conceptual(title: "Custom Module Title")
+                context.preResolveModuleNames()
+            },
             configureSymbol: { symbol in
-                symbol.moduleNameVariants[.swift] = "Swift Title"
-                symbol.moduleNameVariants[.objectiveC] = "Objective-C Title"
+                // no configuration changes
             },
             assertOriginalRenderNode: { renderNode in
                 XCTAssert(renderNode.metadata.platforms?.isEmpty == false)
@@ -106,9 +111,6 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testPlatformsVariantsCustomAvailability() throws {
         try assertMultiVariantSymbol(
             configureSymbol: { symbol in
-                symbol.moduleNameVariants[.swift] = "Swift Title"
-                symbol.moduleNameVariants[.objectiveC] = "Objective-C Title"
-                
                 symbol.availabilityVariants[.swift] = SymbolGraph.Symbol.Availability(availability: [
                     SymbolGraph.Symbol.Availability.AvailabilityItem(
                         domain: nil,
@@ -854,8 +856,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         assertOriginalRenderNode: (RenderNode) throws -> (),
         assertAfterApplyingVariant: (RenderNode) throws -> ()
     ) throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle")
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
         
         let identifier = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,

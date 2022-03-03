@@ -22,12 +22,14 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let sourceRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/A", sourceLanguage: .swift)
         let targetRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/B", sourceLanguage: .swift)
         
+        let moduleRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
         let targetSymbol = SymbolGraph.Symbol(identifier: targetIdentifier, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Protocol"), mixins: [:])
         
         let engine = DiagnosticEngine()
-        symbolIndex["A"] = DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleName: "MyKit", article: nil, engine: engine)
-        symbolIndex["B"] = DocumentationNode(reference: targetRef, symbol: targetSymbol, platformName: "macOS", moduleName: "MyKit", article: nil, engine: engine)
+        symbolIndex["A"] = DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine)
+        symbolIndex["B"] = DocumentationNode(reference: targetRef, symbol: targetSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine)
         XCTAssert(engine.problems.isEmpty)
         
         return SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .defaultImplementationOf, targetFallback: nil)
@@ -114,10 +116,11 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let targetIdentifier = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
         
         let sourceRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/A", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
         
-        symbolIndex["A"] = DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleName: "MyKit", article: nil, engine: engine)
+        symbolIndex["A"] = DocumentationNode(reference: sourceRef, symbol: sourceSymbol, platformName: "macOS", moduleReference: moduleRef, article: nil, engine: engine)
         XCTAssert(engine.problems.isEmpty)
         
         let edge = SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .inheritsFrom, targetFallback: "MyOtherKit.B")

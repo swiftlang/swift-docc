@@ -405,8 +405,8 @@ struct ReferenceResolver: SemanticVisitor {
             navigatorVariants: symbol.navigatorVariants,
             roleHeadingVariants: symbol.roleHeadingVariants,
             platformNameVariants: symbol.platformNameVariants,
-            moduleNameVariants: symbol.moduleNameVariants,
-            extendedModuleVariants: symbol.extendedModuleVariants,
+            moduleReference: symbol.moduleReference,
+            extendedModule: symbol.extendedModule,
             requiredVariants: symbol.isRequiredVariants,
             externalIDVariants: symbol.externalIDVariants,
             accessLevelVariants: symbol.accessLevelVariants,
@@ -423,7 +423,7 @@ struct ReferenceResolver: SemanticVisitor {
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
             redirectsVariants: symbol.redirectsVariants,
-            bystanderModuleNamesVariants: symbol.bystanderModuleNamesVariants,
+            bystanderModuleNames: symbol.bystanderModuleNames,
             originVariants: symbol.originVariants,
             automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants
         )

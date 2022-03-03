@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -134,7 +134,37 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             return Metadata(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
         }
         
-        self.init(markup: markup, metadata: metadata.first, redirects: redirects.isEmpty ? nil : redirects)
+        for extraMetadata in metadata.dropFirst() {
+            problems.append(Problem(diagnostic: Diagnostic(source: source, severity: .warning, range: extraMetadata.originalMarkup.range, identifier: "org.swift.docc.HasAtMostOne<\(Article.self), \(Metadata.self)>.DuplicateChildren", summary: "Duplicate \(Metadata.directiveName.singleQuoted) child directive", explanation: nil, notes: []), possibleSolutions: []))
+        }
+        
+        var optionalMetadata = metadata.first
+                
+        let isDocumentationExtension = title.child(at: 0) is AnyLink
+        if !isDocumentationExtension, let metadata = optionalMetadata, let displayName = metadata.displayName {
+            let diagnosticSummary = """
+            A \(DisplayName.directiveName.singleQuoted) directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.
+            """
+
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: metadata.originalMarkup.range, identifier: "org.swift.docc.Article.DisplayName.NotSupported", summary: diagnosticSummary, explanation: nil, notes: [])
+            
+            let solutions: [Solution]
+            if let displayNameRange = displayName.originalMarkup.range, let titleRange = title.range {
+                let removeDisplayNameReplacement = Replacement(range: displayNameRange, replacement: "")
+                let changeTitleReplacement = Replacement(range: titleRange, replacement: "# \(displayName.name)")
+                
+                solutions = [Solution(summary: "Change the title", replacements: [removeDisplayNameReplacement, changeTitleReplacement])]
+            } else {
+                solutions = []
+            }
+            
+            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+            
+            // Remove the display name customization from the article's metadata.
+            optionalMetadata = Metadata(originalMarkup: metadata.originalMarkup, documentationExtension: metadata.documentationOptions, technologyRoot: metadata.technologyRoot, displayName: nil)
+        }
+        
+        self.init(markup: markup, metadata: optionalMetadata, redirects: redirects.isEmpty ? nil : redirects)
     }
     
     /// Visit the article using a semantic visitor and return the result of visiting the article.

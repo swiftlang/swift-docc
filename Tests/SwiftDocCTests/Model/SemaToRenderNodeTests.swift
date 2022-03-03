@@ -1174,7 +1174,7 @@ class SemaToRenderNodeTests: XCTestCase {
                     navigatorVariants: .init(swiftVariant: nil),
                     roleHeadingVariants: .init(swiftVariant: "ExternalResolvedSymbolRoleHeading"),
                     platformNameVariants: .init(swiftVariant: nil),
-                    moduleNameVariants: .init(swiftVariant: "ExternalResolvedSymbolModuleName"),
+                    moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
                     externalIDVariants: .init(swiftVariant: nil),
                     accessLevelVariants: .init(swiftVariant: nil),
                     availabilityVariants: .init(swiftVariant: nil),
@@ -2838,6 +2838,94 @@ Document @1:1-11:19
         
         let reference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyProtocol"] as? TopicRenderReference)
         XCTAssertTrue(reference.isDeprecated)
+    }
+    
+    func testCustomSymbolDisplayNames() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            try """
+            # ``MyKit``
+            
+            @Metadata {
+                @DisplayName("My custom conceptual name")
+            }
+            
+            Abstract for `MyKit` with a custom conceptual display name.
+            
+            Discussion with reference to symbol with customized display name: ``MyKit/MyProtocol``
+            
+            ## Topics
+            
+            ### Example
+            
+            - ``MyKit/MyProtocol``
+            """.write(to: url.appendingPathComponent("documentation").appendingPathComponent("mykit.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MyKit/MyProtocol``
+            
+            @Metadata {
+                @DisplayName("My custom symbol name", style: symbol)
+            }
+            
+            Abstract for `MyProtocol` with a custom symbol display name.
+            """.write(to: url.appendingPathComponent("documentation").appendingPathComponent("myprotocol.md"), atomically: true, encoding: .utf8)
+        })
+         
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let protocolReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+        
+        // Verify the MyKit module
+        
+        let moduleNode = try context.entity(with: moduleReference)
+        XCTAssertEqual(moduleNode.name, .conceptual(title: "My custom conceptual name"))
+        let moduleSymbol = try XCTUnwrap(moduleNode.semantic as? Symbol)
+        
+        XCTAssertEqual(moduleSymbol.title, "My custom conceptual name")
+        for titleVariant in moduleSymbol.titleVariants.allValues {
+            XCTAssertEqual(titleVariant.variant, "My custom conceptual name")
+        }
+        
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleNode.reference, source: nil)
+        let moduleRenderNode = try XCTUnwrap(translator.visit(moduleSymbol) as? RenderNode)
+        
+        XCTAssertEqual(moduleRenderNode.metadata.title, "My custom conceptual name")
+        for titleVariant in moduleRenderNode.metadata.titleVariants.variants {
+            XCTAssertEqual(titleVariant.patch.description, "My custom conceptual name")
+        }
+        XCTAssertEqual(moduleRenderNode.navigatorTitle(), "My custom conceptual name")
+        for navigatorVariant in moduleRenderNode.metadata.navigatorTitleVariants.variants {
+            XCTAssertEqual(navigatorVariant.patch.description, "My custom conceptual name")
+        }
+        
+        XCTAssertEqual((moduleRenderNode.metadata.modules ?? []).map { $0.name }, ["My custom conceptual name"])
+        for moduleVariant in moduleRenderNode.metadata.modulesVariants.variants {
+            XCTAssertEqual(moduleVariant.patch.description, "My custom conceptual name")
+        }
+        
+        // Verify the MyProtocol node
+        
+        XCTAssertEqual((moduleRenderNode.references[protocolReference.absoluteString] as? TopicRenderReference)?.title, "My custom symbol name")
+        
+        let protocolNode = try context.entity(with: protocolReference)
+        XCTAssertEqual(protocolNode.name, .symbol(declaration: .init([.plain("My custom symbol name")])))
+        let protocolSymbol = try XCTUnwrap(protocolNode.semantic as? Symbol)
+        XCTAssertEqual(protocolSymbol.title, "My custom symbol name")
+        
+        let protocolRenderNode = try XCTUnwrap(translator.visit(protocolSymbol) as? RenderNode)
+        
+        XCTAssertEqual(protocolRenderNode.metadata.title, "My custom symbol name")
+        for titleVariant in protocolRenderNode.metadata.titleVariants.variants {
+            XCTAssertEqual(titleVariant.patch.description, "My custom symbol name")
+        }
+        XCTAssertEqual(protocolRenderNode.navigatorTitle(), "My custom symbol name")
+        for navigatorVariant in protocolRenderNode.metadata.navigatorTitleVariants.variants {
+            XCTAssertEqual(navigatorVariant.patch.description, "My custom symbol name")
+        }
+        
+        XCTAssertEqual((protocolRenderNode.metadata.modules ?? []).map { $0.name }, ["My custom conceptual name"])
+        for moduleVariant in protocolRenderNode.metadata.modulesVariants.variants {
+            XCTAssertEqual(moduleVariant.patch.description, "My custom conceptual name")
+        }
     }
     
     /// Tests that we correctly resolve links in automatic inherited API Collections.

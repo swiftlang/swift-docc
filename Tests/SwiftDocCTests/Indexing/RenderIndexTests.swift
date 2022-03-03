@@ -261,7 +261,7 @@ final class RenderIndexTests: XCTestCase {
         builder.setup()
         
         for identifier in context.knownPages {
-            let source = context.fileURL(for: identifier)
+            let source = context.documentURL(for: identifier)
             let entity = try context.entity(with: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
             try builder.index(renderNode: renderNode)

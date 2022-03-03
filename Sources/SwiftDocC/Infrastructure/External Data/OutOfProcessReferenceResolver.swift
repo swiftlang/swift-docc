@@ -857,7 +857,7 @@ extension OutOfProcessReferenceResolver {
             navigatorVariants: .empty,
             roleHeadingVariants: .init(values: [:], defaultVariantValue: ""), // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
             platformNameVariants: .empty,
-            moduleNameVariants: .init(values: [:], defaultVariantValue: ""), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
+            moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: language), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
             externalIDVariants: .empty,
             accessLevelVariants: .empty,
             availabilityVariants: .init(values: [:], defaultVariantValue: availability),

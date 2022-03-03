@@ -49,7 +49,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                     navigatorVariants: .init(swiftVariant: nil),
                     roleHeadingVariants: .init(swiftVariant: ""), // This information isn't used anywhere.
                     platformNameVariants: .init(swiftVariant: nil),
-                    moduleNameVariants: .init(swiftVariant: ""), // This information isn't used anywhere.
+                    moduleReference: reference, // This information isn't used anywhere.
                     externalIDVariants: .init(swiftVariant: nil),
                     accessLevelVariants: .init(swiftVariant: nil),
                     availabilityVariants: .init(swiftVariant: nil),

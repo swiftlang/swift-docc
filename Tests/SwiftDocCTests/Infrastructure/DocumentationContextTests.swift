@@ -716,7 +716,7 @@ class DocumentationContextTests: XCTestCase {
         
         XCTAssertEqual(Array(myClassSymbol.declaration.keys), [[PlatformName(operatingSystemName: "ios")]])
         XCTAssertEqual(myClassSymbol.declaration[[PlatformName(operatingSystemName: "ios")]]?.declarationFragments.map { $0.spelling }.joined(), "class MyClass")
-        XCTAssertEqual(myClassSymbol.moduleName, "MyKit")
+        XCTAssertEqual(myClassSymbol.moduleReference.absoluteString, "doc://com.example.documentation/documentation/MyKit")
         XCTAssertTrue(myClassSymbol.relationships.groups.contains { group -> Bool in
             return group.kind == .conformsTo && Array(group.destinations.map({ $0.url?.absoluteString })) == ["doc://com.example.documentation/documentation/MyKit/MyProtocol"]
         })
