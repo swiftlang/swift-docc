@@ -473,6 +473,12 @@ public struct DocumentationNode {
         }
     }
 
+    @available(*, deprecated, message: "Use init(reference:symbol:platformName:moduleReference:article:engine:bystanderModules:) instead")
+    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, engine: DiagnosticEngine, bystanderModules: [String]? = nil) {
+        let assumedModuleReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
+        self.init(reference: reference, symbol: symbol, platformName: platformName, moduleReference: assumedModuleReference, article: article, engine: engine, bystanderModules: bystanderModules)
+    }
+    
     /// Initializes a documentation node to represent a symbol from a symbol graph.
     ///
     /// - Parameters:
