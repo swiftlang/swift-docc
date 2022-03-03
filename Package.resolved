@@ -48,10 +48,10 @@
       },
       {
         "package": "swift-markdown",
-        "repositoryURL": "https://github.com/d-ronnqvist/swift-markdown.git",
+        "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
-          "branch": "unlabeled-directive-argument",
-          "revision": "5cb5ae2c69fe2d0d490fe62fb119bd724fd98ac6",
+          "branch": "main",
+          "revision": "caafc56d3794a08c2203fe417b3aff81e2ab2fc1",
           "version": null
         }
       },
