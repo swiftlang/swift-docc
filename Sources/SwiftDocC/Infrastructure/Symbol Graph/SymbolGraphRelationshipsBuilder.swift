@@ -208,6 +208,14 @@ struct SymbolGraphRelationshipsBuilder {
                 return
             }
             parentNodeReference = .unresolved(unresolved)
+            
+            // At this point the parent node we are inheriting from is unresolved, so let's add a fallback in case we can not resolve it later.
+            if let targetFallback = edge.targetFallback {
+                childSymbol.relationshipsVariants[
+                    DocumentationDataVariantsTrait(interfaceLanguage: language.id),
+                    default: RelationshipsSection()
+                ].targetFallbacks[.unresolved(unresolved)] = targetFallback
+            }
         }
         
         // Add relationships
