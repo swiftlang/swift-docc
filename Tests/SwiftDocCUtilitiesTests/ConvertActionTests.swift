@@ -1980,7 +1980,6 @@ class ConvertActionTests: XCTestCase {
             "Bar",
             "Type Methods",
             "class func myStringFunction(String) throws -> String",
-            "Custom",
             "Structures",
             "Foo",
             "Initializers",

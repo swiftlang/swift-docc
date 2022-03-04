@@ -69,6 +69,15 @@ final class RenderIndexTests: XCTestCase {
                   "interfaceLanguages": {
                     "occ": [
                       {
+                        "title": "Objective-C–only APIs",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "\/documentation\/mixedlanguageframework\/_mixedlanguageframeworkversionnumber",
+                        "title": "_MixedLanguageFrameworkVersionNumber",
+                        "type": "var"
+                      },
+                      {
                         "title": "Classes",
                         "type": "groupMarker"
                       },
@@ -102,11 +111,6 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "title": "Variables",
                         "type": "groupMarker"
-                      },
-                      {
-                        "path": "\/documentation\/mixedlanguageframework\/_mixedlanguageframeworkversionnumber",
-                        "title": "_MixedLanguageFrameworkVersionNumber",
-                        "type": "var"
                       },
                       {
                         "path": "\/documentation\/mixedlanguageframework\/_mixedlanguageframeworkversionstring",
@@ -151,6 +155,26 @@ final class RenderIndexTests: XCTestCase {
                     ],
                     "swift": [
                       {
+                        "title": "Swift-only APIs",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "children": [
+                          {
+                            "title": "Instance Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "path": "\/documentation\/mixedlanguageframework\/swiftonlystruct\/tada()",
+                            "title": "func tada()",
+                            "type": "method"
+                          }
+                        ],
+                        "path": "\/documentation\/mixedlanguageframework\/swiftonlystruct",
+                        "title": "SwiftOnlyStruct",
+                        "type": "struct"
+                      },
+                      {
                         "title": "Classes",
                         "type": "groupMarker"
                       },
@@ -161,12 +185,6 @@ final class RenderIndexTests: XCTestCase {
                             "type": "groupMarker"
                           },
                           {
-                            "children": [
-                              {
-                                "title": "Custom",
-                                "type": "groupMarker"
-                              }
-                            ],
                             "path": "\/documentation\/mixedlanguageframework\/bar\/mystringfunction(_:)",
                             "title": "class func myStringFunction(String) throws -> String",
                             "type": "method"
@@ -218,22 +236,6 @@ final class RenderIndexTests: XCTestCase {
                         ],
                         "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct",
                         "title": "Foo",
-                        "type": "struct"
-                      },
-                      {
-                        "children": [
-                          {
-                            "title": "Instance Methods",
-                            "type": "groupMarker"
-                          },
-                          {
-                            "path": "\/documentation\/mixedlanguageframework\/swiftonlystruct\/tada()",
-                            "title": "func tada()",
-                            "type": "method"
-                          }
-                        ],
-                        "path": "\/documentation\/mixedlanguageframework\/swiftonlystruct",
-                        "title": "SwiftOnlyStruct",
                         "type": "struct"
                       }
                     ]
