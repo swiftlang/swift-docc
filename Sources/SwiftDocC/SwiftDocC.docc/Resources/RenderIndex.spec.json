@@ -82,7 +82,7 @@
                     "path": {
                         "type": "string"
                     },
-                    "isExternal": {
+                    "external": {
                         "type": "boolean",
                         "default": "false"
                     },

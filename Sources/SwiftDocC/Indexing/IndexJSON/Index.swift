@@ -69,7 +69,7 @@ extension RenderIndex {
             case path
             case type
             case children
-            case isExternal
+            case external
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -83,7 +83,7 @@ extension RenderIndex {
             
             // `isExternal` defaults to false so only encode it if it's true
             if isExternal {
-                try container.encode(isExternal, forKey: .isExternal)
+                try container.encode(isExternal, forKey: .external)
             }
         }
         
@@ -97,7 +97,7 @@ extension RenderIndex {
             children = try values.decodeIfPresent([Node].self, forKey: .children)
             
             // `isExternal` defaults to false if it's not specified
-            isExternal = try values.decodeIfPresent(Bool.self, forKey: .isExternal) ?? false
+            isExternal = try values.decodeIfPresent(Bool.self, forKey: .external) ?? false
         }
         
         /// Creates a new node with the given title, path, type, and children.

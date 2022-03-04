@@ -247,6 +247,33 @@ final class RenderIndexTests: XCTestCase {
         )
     }
     
+    func testRenderIndexGenerationWithExternalNode() throws {
+        let renderIndexWithExternalNode = try RenderIndex.fromString(#"""
+            {
+              "interfaceLanguages": {
+                "swift": [
+                  {
+                    "path": "\/documentation\/framework\/foo-swift.struct",
+                    "title": "Foo",
+                    "type": "struct",
+                    "external": true
+                  }
+                ]
+              },
+              "schemaVersion": {
+                "major": 0,
+                "minor": 1,
+                "patch": 0
+              }
+            }
+            """#
+        )
+        // Let's check that the "external" key is correctly parsed into the isExternal field of RenderIndex.Node.
+        XCTAssertTrue(renderIndexWithExternalNode.interfaceLanguages["swift"]![0].isExternal)
+        // Let's make sure it gets emitted properly by testing if we can roundtrip to JSON.
+        try assertRoundTripCoding(renderIndexWithExternalNode)
+    }
+    
     func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) throws -> RenderIndex {
         let (bundle, context) = try testBundleAndContext(named: testBundleName)
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
