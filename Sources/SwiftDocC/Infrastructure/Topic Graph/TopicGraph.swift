@@ -92,6 +92,15 @@ struct TopicGraph {
             self.isResolvable = isResolvable
         }
         
+        func withReference(_ reference: ResolvedTopicReference) -> Node {
+            Node(
+                reference: reference,
+                kind: kind,
+                source: source,
+                title: title
+            )
+        }
+        
         func hash(into hasher: inout Hasher) {
             hasher.combine(reference)
         }
@@ -164,6 +173,11 @@ struct TopicGraph {
         if let parentReference = parentReference, let parentNode = nodeWithReference(parentReference) {
             addEdge(from: parentNode, to: newNode)
         }
+    }
+    
+    /// Updates the node with the given reference with a new reference.
+    mutating func updateReference(_ reference: ResolvedTopicReference, newReference: ResolvedTopicReference) {
+        nodes[reference] = nodes[reference]?.withReference(newReference)
     }
     
     /// Adds a topic edge but it doesn't verify if the nodes exist for the given references.

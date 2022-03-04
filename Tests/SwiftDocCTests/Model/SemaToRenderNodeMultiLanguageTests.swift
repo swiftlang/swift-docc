@@ -16,7 +16,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
     func testBaseRenderNodeFromMixedLanguageFramework() throws {
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
-        for documentationNode in context.documentationCache.values {
+        for documentationNode in context.documentationCache.values where documentationNode.kind.isSymbol {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
             
             let expectedSwiftOnlyUSRs: Set<String> = [
@@ -61,6 +61,16 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 )
             }
         }
+        
+        for documentationNode in context.documentationCache.values
+            where !documentationNode.kind.isSymbol && documentationNode.kind.isPage
+        {
+            XCTAssertEqual(
+                documentationNode.availableSourceLanguages,
+                [.swift, .objectiveC],
+                "Expected non-symbol page to be available in both Swift and Objective-C: \(documentationNode.name)"
+            )
+        }
     }
     
     func testOutputsMultiLanguageRenderNodes() throws {
@@ -103,7 +113,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
         XCTAssertEqual(
             Set(
                 outputConsumer.renderNodes(withInterfaceLanguages: ["swift", "occ"])
-                    .map { $0.metadata.externalID }
+                    .map { $0.metadata.externalID ?? $0.metadata.title }
             ),
             [
                 "MixedLanguageFramework",
@@ -114,6 +124,10 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "c:@E@Foo@third",
                 "c:objc(cs)Bar",
                 "c:objc(cs)Bar(cm)myStringFunction:error:",
+                "Article",
+                "MixedLanguageFramework Tutorials",
+                "Tutorial Article",
+                "Tutorial",
             ]
         )
     }
@@ -135,14 +149,22 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             discussionSection: nil,
             topicSectionIdentifiers: [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct",
+                "doc://org.swift.MixedLanguageFramework/tutorials/TutorialOverview",
+                "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/TutorialArticle",
+                "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/Tutorial",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
+                "Article",
                 "Bar",
                 "Foo",
                 "MixedLanguageFramework",
+                "MixedLanguageFramework Tutorials",
                 "SwiftOnlyStruct",
+                "Tutorial",
+                "Tutorial Article",
                 "_MixedLanguageFrameworkVersionNumber",
                 "_MixedLanguageFrameworkVersionString"
             ],
@@ -171,15 +193,23 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             discussionSection: nil,
             topicSectionIdentifiers: [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
+                "doc://org.swift.MixedLanguageFramework/tutorials/TutorialOverview",
+                "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/TutorialArticle",
+                "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/Tutorial",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
+                "Article",
                 "Bar",
                 "Foo",
                 "MixedLanguageFramework",
+                "MixedLanguageFramework Tutorials",
                 "SwiftOnlyStruct",
+                "Tutorial",
+                "Tutorial Article",
                 "_MixedLanguageFrameworkVersionNumber",
                 "_MixedLanguageFrameworkVersionString"
             ],
@@ -553,17 +583,26 @@ private class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
 }
 
 extension TestRenderNodeOutputConsumer {
-    func renderNodes(withInterfaceLanguages interfaceLanguages: Set<String>) -> [RenderNode] {
+    func renderNodes(withInterfaceLanguages interfaceLanguages: Set<String>?) -> [RenderNode] {
         renderNodes.sync { renderNodes in
             renderNodes.filter { renderNode in
-                let actualInterfaceLanguages: [String] = renderNode.variants?.flatMap { variant in
+                guard let interfaceLanguages = interfaceLanguages else {
+                    // If there are no interface languages set, return the nodes with no variants.
+                    return renderNode.variants == nil
+                }
+                
+                guard let variants = renderNode.variants else {
+                    return false
+                }
+                
+                let actualInterfaceLanguages: [String] = variants.flatMap { variant in
                     variant.traits.compactMap { trait in
                         guard case .interfaceLanguage(let interfaceLanguage) = trait else {
                             return nil
                         }
                         return interfaceLanguage
                     }
-                } ?? []
+                }
                 
                 return Set(actualInterfaceLanguages) == interfaceLanguages
             }

@@ -1,0 +1,5 @@
+@Article(time: 10) {
+    @Intro(title: "Tutorial Article") {}
+}
+
+<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
