@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -618,7 +618,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if let topics = article.topics, !topics.taskGroups.isEmpty {
             // Don't set an eyebrow as collections and groups don't have one; append the authored Topics section
-            node.topicSections.append(contentsOf: renderGroups(topics, allowExternalLinks: false, contentCompiler: &contentCompiler))
+            node.topicSections.append(
+                contentsOf: renderGroups(
+                    topics,
+                    allowExternalLinks: false,
+                    allowedTraits: documentationNode.availableVariantTraits,
+                    contentCompiler: &contentCompiler
+                )
+            )
         }
         
         // Place "top" rendering preference automatic task groups
@@ -666,7 +673,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         // Authored See Also section
         if let seeAlso = article.seeAlso, !seeAlso.taskGroups.isEmpty {
-            node.seeAlsoSections.append(contentsOf: renderGroups(seeAlso, allowExternalLinks: true, contentCompiler: &contentCompiler))
+            node.seeAlsoSections.append(
+                contentsOf: renderGroups(
+                    seeAlso,
+                    allowExternalLinks: true,
+                    allowedTraits: documentationNode.availableVariantTraits,
+                    contentCompiler: &contentCompiler
+                )
+            )
         }
         
         // Automatic See Also section
@@ -811,7 +825,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     /// Renders a list of topic groups.
-    private mutating func renderGroups(_ topics: GroupedSection, allowExternalLinks: Bool, contentCompiler: inout RenderContentCompiler) -> [TaskGroupRenderSection] {
+    private mutating func renderGroups(
+        _ topics: GroupedSection,
+        allowExternalLinks: Bool,
+        allowedTraits: Set<DocumentationDataVariantsTrait>,
+        contentCompiler: inout RenderContentCompiler
+    ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
             
             let abstractContent = group.abstract.map {
@@ -821,6 +840,22 @@ public struct RenderNodeTranslator: SemanticVisitor {
             let discussion = group.discussion.map { discussion -> ContentRenderSection in
                 let discussionContent = visitMarkupContainer(MarkupContainer(discussion.content)) as! [RenderBlockContent]
                 return ContentRenderSection(kind: .content, content: discussionContent, heading: "Discussion")
+            }
+            
+            /// Returns whether the topic with the given identifier is available in one of the traits in `allowedTraits`.
+            func isAvailableInAllowedTrait(identifier: String) -> Bool {
+                guard let reference = contentCompiler.collectedTopicReferences[identifier] else {
+                    // If there's no reference in `contentCompiler.collectedTopicReferences`, the reference refers to
+                    // a non-documentation URL (e.g., 'https://' URL), in which case it is available in all traits.
+                    return true
+                }
+                
+                return reference.sourceLanguages
+                    .contains { sourceLanguage in
+                        allowedTraits.contains { trait in
+                            trait.interfaceLanguage == sourceLanguage.id
+                        }
+                    }
             }
             
             let taskGroupRenderSection = TaskGroupRenderSection(
@@ -838,29 +873,43 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         }
                         
                         if let referenceInlines = contentCompiler.visitLink(link) as? [RenderInlineContent],
-                            let renderReference = referenceInlines.first(where: { inline in
-                            switch inline {
-                            case .reference(_,_,_,_):
-                                return true
-                            default:
-                                return false
-                            }
-                        }),
-                           case let RenderInlineContent.reference(identifier: identifier, isActive: _, overridingTitle: _, overridingTitleInlineContent: _) = renderReference {
-                            return identifier.identifier
+                           let renderReference = referenceInlines.first(where: { inline in
+                               switch inline {
+                               case .reference(_,_,_,_):
+                                   return true
+                               default:
+                                   return false
+                               }
+                           }),
+                           case let RenderInlineContent.reference(
+                             identifier: identifier,
+                             isActive: _,
+                             overridingTitle: _,
+                             overridingTitleInlineContent: _
+                           ) = renderReference
+                        {
+                            return isAvailableInAllowedTrait(identifier: identifier.identifier)
+                                ? identifier.identifier : nil
                         }
                     case let link as SymbolLink:
                         if let referenceInlines = contentCompiler.visitSymbolLink(link) as? [RenderInlineContent],
-                            let renderReference = referenceInlines.first(where: { inline in
-                            switch inline {
-                            case .reference:
-                                return true
-                            default:
-                                return false
-                            }
-                        }),
-                           case let RenderInlineContent.reference(identifier: identifier, isActive: _, overridingTitle: _, overridingTitleInlineContent: _) = renderReference {
-                            return identifier.identifier
+                           let renderReference = referenceInlines.first(where: { inline in
+                               switch inline {
+                               case .reference:
+                                   return true
+                               default:
+                                   return false
+                               }
+                           }),
+                           case let RenderInlineContent.reference(
+                             identifier: identifier,
+                             isActive: _,
+                             overridingTitle: _,
+                             overridingTitleInlineContent: _
+                           ) = renderReference
+                        {
+                            return isAvailableInAllowedTrait(identifier: identifier.identifier)
+                                ? identifier.identifier : nil
                         }
                     default: break
                     }
@@ -1011,7 +1060,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     DeclarationsSectionTranslator(),
                     ReturnsSectionTranslator(),
                     ParametersSectionTranslator(),
-                    DiscussionSectionTranslator()
+                    DiscussionSectionTranslator(),
                 ]
             )
         )
@@ -1098,7 +1147,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
             var sections = [TaskGroupRenderSection]()
             if let topics = topics, !topics.taskGroups.isEmpty {
                 sections.append(
-                    contentsOf: renderGroups(topics, allowExternalLinks: false, contentCompiler: &contentCompiler)
+                    contentsOf: renderGroups(
+                        topics,
+                        allowExternalLinks: false,
+                        allowedTraits: [trait],
+                        contentCompiler: &contentCompiler
+                    )
                 )
             }
             
@@ -1199,7 +1253,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             if let seeAlso = symbol.seeAlsoVariants[trait] {
                 seeAlsoSections.append(
-                    contentsOf: renderGroups(seeAlso, allowExternalLinks: true, contentCompiler: &contentCompiler)
+                    contentsOf: renderGroups(
+                        seeAlso,
+                        allowExternalLinks: true,
+                        allowedTraits: [trait],
+                        contentCompiler: &contentCompiler
+                    )
                 )
             }
             

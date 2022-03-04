@@ -346,7 +346,7 @@ public class DocumentationContentRenderer {
         }
         
         // Collect the reference dependencies.
-        dependencies.topicReferences = contentCompiler.collectedTopicReferences
+        dependencies.topicReferences = Array(contentCompiler.collectedTopicReferences)
         dependencies.linkReferences = Array(contentCompiler.linkReferences.values)
 
         let isRequired = (node?.semantic as? Symbol)?.isRequired ?? false

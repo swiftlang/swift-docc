@@ -24,7 +24,7 @@ struct RenderContentCompiler: MarkupVisitor {
     var identifier: ResolvedTopicReference
     var imageReferences: [String: ImageReference] = [:]
     /// Resolved topic references that were seen by the visitor. These should be used to populate the references dictionary.
-    var collectedTopicReferences: [ResolvedTopicReference] = []
+    var collectedTopicReferences = GroupedSequence<String, ResolvedTopicReference> { $0.absoluteString }
     var linkReferences: [String: LinkReference] = [:]
     
     init(context: DocumentationContext, bundle: DocumentationBundle, identifier: ResolvedTopicReference) {

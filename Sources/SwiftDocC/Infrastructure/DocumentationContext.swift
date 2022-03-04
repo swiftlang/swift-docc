@@ -2417,13 +2417,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             ///
             /// Adds any non-resolving reference to the `allCandidateURLs` collection.
             func attemptToResolve(_ reference: ResolvedTopicReference) -> TopicReferenceResolutionResult? {
-                if topicGraph.nodeWithReference(reference) != nil {
-                    let resolved = ResolvedTopicReference(
-                        bundleIdentifier: referenceBundleIdentifier,
-                        path: reference.url.path,
-                        fragment: reference.fragment,
-                        sourceLanguages: reference.sourceLanguages
-                    )
+                if let resolved = topicGraph.nodeWithReference(reference)?.reference {
                     // If resolving a symbol link, only match symbol nodes.
                     if isCurrentlyResolvingSymbolLink && !(documentationCache[resolved]?.semantic is Symbol) {
                         allCandidateURLs.append(reference.url)

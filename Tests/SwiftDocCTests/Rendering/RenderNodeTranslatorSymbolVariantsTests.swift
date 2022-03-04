@@ -617,6 +617,33 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     
     func testTopicsSectionVariants() throws {
         try assertMultiVariantSymbol(
+            configureContext: { context, reference in
+                // Make MyProtocol available in Swift and Objective-C.
+                
+                let myProtocolReference = ResolvedTopicReference(
+                    bundleIdentifier: reference.bundleIdentifier,
+                    path: "/documentation/MyKit/MyProtocol",
+                    sourceLanguage: .swift
+                )
+                
+                let newMyProtocolReference = ResolvedTopicReference(
+                    bundleIdentifier: reference.bundleIdentifier,
+                    path: "/documentation/MyKit/MyProtocol",
+                    sourceLanguages: [.swift, .objectiveC]
+                )
+                
+                let myProtocolNode = try XCTUnwrap(context.topicGraph.nodes[myProtocolReference])
+                
+                let newMyProtocolNode = TopicGraph.Node(
+                    reference: newMyProtocolReference,
+                    kind: myProtocolNode.kind,
+                    source: myProtocolNode.source,
+                    title: myProtocolNode.title
+                )
+                
+                context.topicGraph.nodes[myProtocolReference] = nil
+                context.topicGraph.nodes[newMyProtocolReference] = newMyProtocolNode
+            },
             configureSymbol: { symbol in
                 symbol.automaticTaskGroupsVariants[.swift] = []
                 symbol.topicsVariants[.swift] = makeTopicsSection(
@@ -766,9 +793,9 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 )
             },
             assertAfterApplyingVariant: { renderNode in
-                XCTAssertEqual(renderNode.seeAlsoSections.count, 2)
+                XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
                 let taskGroup = try XCTUnwrap(renderNode.seeAlsoSections.first)
-                XCTAssertEqual(taskGroup.title, "Related Documentation")
+                XCTAssertEqual(taskGroup.title, "Basics")
                 
                 XCTAssertEqual(
                     taskGroup.identifiers,
@@ -936,6 +963,36 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 ListItem(Paragraph(Link(destination: destination)))
             )
         ])
+    }
+    
+    private func makeSymbolAvailableOnSwiftAndObjectiveC(
+        symbolPath: String,
+        bundleIdentifier: String,
+        context: DocumentationContext
+    ) throws {
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            path: symbolPath,
+            sourceLanguage: .swift
+        )
+        
+        let newReference = ResolvedTopicReference(
+            bundleIdentifier: bundleIdentifier,
+            path: symbolPath,
+            sourceLanguages: [.swift, .objectiveC]
+        )
+        
+        let node = try XCTUnwrap(context.topicGraph.nodes[newReference])
+        
+        let newNode = TopicGraph.Node(
+            reference: newReference,
+            kind: node.kind,
+            source: node.source,
+            title: node.title
+        )
+        
+        context.topicGraph.nodes[reference] = nil
+        context.topicGraph.nodes[newReference] = newNode
     }
 }
 
