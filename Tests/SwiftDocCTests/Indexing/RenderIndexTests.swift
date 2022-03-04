@@ -78,6 +78,50 @@ final class RenderIndexTests: XCTestCase {
                         "type": "var"
                       },
                       {
+                        "title": "Tutorials",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "/tutorials/tutorialoverview",
+                        "title": "MixedLanguageFramework Tutorials",
+                        "type": "overview",
+                        "children": [
+                          {
+                            "title": "Chapter",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Tutorial",
+                            "path": "/tutorials/mixedlanguageframework/tutorial",
+                            "type": "project"
+                          },
+                          {
+                            "title": "Tutorial Article",
+                            "path": "/tutorials/mixedlanguageframework/tutorialarticle",
+                            "type": "article"
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Tutorial Article",
+                        "path": "/tutorials/mixedlanguageframework/tutorialarticle",
+                        "type": "article"
+                      },
+                      {
+                        "title": "Tutorial",
+                        "path": "/tutorials/mixedlanguageframework/tutorial",
+                        "type": "project"
+                      },
+                      {
+                        "title": "Articles",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "title": "Article",
+                        "path": "/documentation/mixedlanguageframework/article",
+                        "type": "article"
+                      },
+                      {
                         "title": "Classes",
                         "type": "groupMarker"
                       },
@@ -173,6 +217,50 @@ final class RenderIndexTests: XCTestCase {
                         "path": "\/documentation\/mixedlanguageframework\/swiftonlystruct",
                         "title": "SwiftOnlyStruct",
                         "type": "struct"
+                      },
+                      {
+                        "title": "Tutorials",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "/tutorials/tutorialoverview",
+                        "title": "MixedLanguageFramework Tutorials",
+                        "type": "overview",
+                        "children": [
+                          {
+                            "title": "Chapter",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "Tutorial",
+                            "path": "/tutorials/mixedlanguageframework/tutorial",
+                            "type": "project"
+                          },
+                          {
+                            "title": "Tutorial Article",
+                            "path": "/tutorials/mixedlanguageframework/tutorialarticle",
+                            "type": "article"
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Tutorial Article",
+                        "path": "/tutorials/mixedlanguageframework/tutorialarticle",
+                        "type": "article"
+                      },
+                      {
+                        "title": "Tutorial",
+                        "path": "/tutorials/mixedlanguageframework/tutorial",
+                        "type": "project"
+                      },
+                      {
+                        "title": "Articles",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "title": "Article",
+                        "path": "/documentation/mixedlanguageframework/article",
+                        "type": "article"
                       },
                       {
                         "title": "Classes",

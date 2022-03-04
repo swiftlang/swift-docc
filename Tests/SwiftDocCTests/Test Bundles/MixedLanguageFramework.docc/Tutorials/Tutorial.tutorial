@@ -1,0 +1,13 @@
+@Tutorial(time: 10) {
+    @Intro(title: "Tutorial") {}
+    
+    @Section(title: "Section") {
+        @Steps {
+            @Step {
+                Step 1.
+            }
+        }
+    }
+}
+
+<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->

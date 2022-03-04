@@ -129,6 +129,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.hierarchy = hierarchy.hierarchy
         node.metadata.category = technology.name
         
+        let documentationNode = try! context.entity(with: identifier)
+        node.variants = variants(for: documentationNode)
+        
         node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
                 
         var intro = visitIntro(tutorial.intro) as! IntroRenderSection
@@ -358,6 +361,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
         node.metadata.estimatedTime = totalEstimatedDuration(for: technology)
         node.metadata.role = contentRenderer.role(for: .technology).rawValue
+        
+        let documentationNode = try! context.entity(with: identifier)
+        node.variants = variants(for: documentationNode)
 
         var intro = visitIntro(technology.intro) as! IntroRenderSection
         if let firstTutorial = self.firstTutorial(ofTechnology: identifier) {
@@ -730,6 +736,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // and produce the list of modules for the render hierarchy to display in the tutorial local navigation.
         node.hierarchy = hierarchy.hierarchy
         
+        let documentationNode = try! context.entity(with: identifier)
+        node.variants = variants(for: documentationNode)
         
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         
@@ -843,8 +851,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
             
             /// Returns whether the topic with the given identifier is available in one of the traits in `allowedTraits`.
-            func isAvailableInAllowedTrait(identifier: String) -> Bool {
-                guard let reference = contentCompiler.collectedTopicReferences[identifier] else {
+            func isTopicAvailableInAllowedTraits(identifier topicIdentifier: String) -> Bool {
+                guard let reference = contentCompiler.collectedTopicReferences[topicIdentifier] else {
                     // If there's no reference in `contentCompiler.collectedTopicReferences`, the reference refers to
                     // a non-documentation URL (e.g., 'https://' URL), in which case it is available in all traits.
                     return true
@@ -888,7 +896,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                              overridingTitleInlineContent: _
                            ) = renderReference
                         {
-                            return isAvailableInAllowedTrait(identifier: identifier.identifier)
+                            return isTopicAvailableInAllowedTraits(identifier: identifier.identifier)
                                 ? identifier.identifier : nil
                         }
                     case let link as SymbolLink:
@@ -908,7 +916,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                              overridingTitleInlineContent: _
                            ) = renderReference
                         {
-                            return isAvailableInAllowedTrait(identifier: identifier.identifier)
+                            return isTopicAvailableInAllowedTraits(identifier: identifier.identifier)
                                 ? identifier.identifier : nil
                         }
                     default: break
