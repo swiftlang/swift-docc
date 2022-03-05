@@ -78,12 +78,18 @@ extension RenderNode {
     
     /// Returns a navigator title preferring the fragments inside the metadata, if applicable.
     func navigatorTitle() -> String? {
-        let pageType = navigatorPageType()
-        guard ![.framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType].contains(pageType) else { return metadata.title }
-        guard let fragments = metadata.fragments else { return metadata.title }
-        return fragments.map { token in
-            return token.text
-        }.joined()
+        let fragments: [DeclarationRenderSection.Token]?
+        
+        // FIXME: Use `metadata.navigatorTitle` for all Swift symbols (SR-15947).
+        if identifier.sourceLanguage == .swift || (metadata.navigatorTitle ?? []).isEmpty {
+            let pageType = navigatorPageType()
+            guard ![.framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType].contains(pageType) else { return metadata.title }
+            fragments = metadata.fragments
+        } else {
+            fragments = metadata.navigatorTitle
+        }
+        
+        return fragments?.map(\.text).joined() ?? metadata.title
     }
     
     /// Returns the NavigatorIndex.PageType indicating the type of the page.
