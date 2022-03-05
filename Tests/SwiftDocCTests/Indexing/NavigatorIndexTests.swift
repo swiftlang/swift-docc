@@ -1287,32 +1287,7 @@ Root
     }
     
     func testNavigatorTitle() throws {
-        
-        func buildJSON(title: String, symbolKind: String, fragments: String) -> String {
-            return """
-        {
-          "abstract": [],
-          "hierarchy": { "paths": [] },
-          "identifier": { "interfaceLanguage": "swift", "url": "doc://org.swift.docc.example/documentation/test-item" },
-          "kind": "symbol",
-          "metadata": {
-            "modules": [ { "name": "MyKit" } ],
-            "roleHeading": "My Heading",
-            "title": "\(title)",
-            "symbolKind": "\(symbolKind)",
-            "fragments": \(fragments)
-          },
-          "primaryContentSections": [],
-          "references": {},
-          "schemaVersion": { "major": 1, "minor": 0, "patch": 0 },
-          "sections": [],
-          "seeAlsoSections": [],
-          "topicSections": []
-        }
-        """
-        }
-        
-        var json = buildJSON(title: "Failure", symbolKind: "associatedtype", fragments: """
+        var json = buildRenderJSON(title: "Failure", symbolKind: "associatedtype", fragments: """
             [
                 {
                     "text": "associatedtype",
@@ -1341,7 +1316,7 @@ Root
         var renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
         XCTAssertEqual(renderNode.navigatorTitle(), "Failure")
         
-        json = buildJSON(title: "Subscriber", symbolKind: "protocol", fragments: """
+        json = buildRenderJSON(title: "Subscriber", symbolKind: "protocol", fragments: """
             [
                 {
                     "text": "protocol",
@@ -1361,7 +1336,7 @@ Root
         renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
         XCTAssertEqual(renderNode.navigatorTitle(), "Subscriber")
         
-        json = buildJSON(title: "receive(subscription:)", symbolKind: "method", fragments: """
+        json = buildRenderJSON(title: "receive(subscription:)", symbolKind: "method", fragments: """
         [
             {
                 "kind": "keyword",
@@ -1402,7 +1377,7 @@ Root
         renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
         XCTAssertEqual(renderNode.navigatorTitle(), "func receive(subscription: Subscription)")
         
-        json = buildJSON(title: "init(_:)", symbolKind: "structctr", fragments: """
+        json = buildRenderJSON(title: "init(_:)", symbolKind: "structctr", fragments: """
         [
             {
                 "kind": "identifier",
@@ -1417,6 +1392,28 @@ Root
         )
         renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
         XCTAssertEqual(renderNode.navigatorTitle(), "init(Double)")
+    }
+    
+    func testNavigatorTitleForEmptyMetadataNavigatorTitle() throws {
+        let json = buildRenderJSON(
+            title: "init(_:)",
+            symbolKind: "not-struct",
+            fragments: """
+            [
+              {
+                "kind": "identifier",
+                "text": "Fragment Value"
+              }
+            ]
+            """,
+            language: "occ"
+        )
+        
+        let renderNode = try RenderNode.decode(fromJSON: Data(json.utf8))
+        XCTAssertEqual(
+            renderNode.navigatorTitle(),
+            "Fragment Value"
+        )
     }
     
     func testSavesNodePresentationDisambiguator() {
@@ -1507,4 +1504,33 @@ fileprivate func testTree(named name: String) throws -> String {
     let fileURL = Bundle.module.url(
         forResource: name, withExtension: "txt", subdirectory: "Test Resources")!
     return try String(contentsOf: fileURL).trimmingCharacters(in: .newlines)
+}
+
+fileprivate func buildRenderJSON(
+    title: String,
+    symbolKind: String,
+    fragments: String,
+    language: String = "swift"
+) -> String {
+    return """
+{
+  "abstract": [],
+  "hierarchy": { "paths": [] },
+  "identifier": { "interfaceLanguage": "\(language)", "url": "doc://org.swift.docc.example/documentation/test-item" },
+  "kind": "symbol",
+  "metadata": {
+    "modules": [ { "name": "MyKit" } ],
+    "roleHeading": "My Heading",
+    "title": "\(title)",
+    "symbolKind": "\(symbolKind)",
+    "fragments": \(fragments)
+  },
+  "primaryContentSections": [],
+  "references": {},
+  "schemaVersion": { "major": 1, "minor": 0, "patch": 0 },
+  "sections": [],
+  "seeAlsoSections": [],
+  "topicSections": []
+}
+"""
 }

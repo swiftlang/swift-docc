@@ -2021,7 +2021,7 @@ class ConvertActionTests: XCTestCase {
             "Classes",
             "Bar",
             "Type Methods",
-            "typedef enum Foo : NSString {\n    ...\n} Foo;",
+            "myStringFunction:error: (navigator title)",
             "Custom",
             "Foo",
             "Variables",
@@ -2030,16 +2030,16 @@ class ConvertActionTests: XCTestCase {
             "Enumerations",
             "Foo",
             "Enumeration Cases",
-            "static var first: Foo",
-            "static var fourth: Foo",
-            "static var second: Foo",
-            "static var third: Foo",
+            "first",
+            "fourth",
+            "second",
+            "third",
         ]
         
         XCTAssertEqual(
             objectiveCNavigatorEntries,
             expectedObjectiveNavigatorEntries,
-            "Swift navigator contained unexpected content."
+            "Objective-C navigator contained unexpected content."
         )
     }
     

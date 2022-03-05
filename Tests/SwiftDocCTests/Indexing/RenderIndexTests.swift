@@ -89,7 +89,7 @@ final class RenderIndexTests: XCTestCase {
                               }
                             ],
                             "path": "\/documentation\/mixedlanguageframework\/bar\/mystringfunction(_:)",
-                            "title": "typedef enum Foo : NSString {\n    ...\n} Foo;",
+                            "title": "myStringFunction:error: (navigator title)",
                             "type": "method"
                           }
                         ],
@@ -123,22 +123,22 @@ final class RenderIndexTests: XCTestCase {
                           },
                           {
                             "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/first",
-                            "title": "static var first: Foo",
+                            "title": "first",
                             "type": "case"
                           },
                           {
                             "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/fourth",
-                            "title": "static var fourth: Foo",
+                            "title": "fourth",
                             "type": "case"
                           },
                           {
                             "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/second",
-                            "title": "static var second: Foo",
+                            "title": "second",
                             "type": "case"
                           },
                           {
                             "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/third",
-                            "title": "static var third: Foo",
+                            "title": "third",
                             "type": "case"
                           }
                         ],

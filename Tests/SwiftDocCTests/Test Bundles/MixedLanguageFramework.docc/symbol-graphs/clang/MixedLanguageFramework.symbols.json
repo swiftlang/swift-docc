@@ -350,6 +350,12 @@
       },
       "names" : {
         "title" : "myStringFunction:error:",
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myStringFunction:error: (navigator title)"
+          }
+        ],
         "subHeading" : [
           {
             "kind" : "keyword",
@@ -630,7 +636,13 @@
         "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
-        "title" : "first"
+        "title" : "first",
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "first"
+          }
+        ],
       },
       "pathComponents" : [
         "Foo",
@@ -678,7 +690,13 @@
         "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
-        "title" : "fourth"
+        "title" : "fourth",
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "fourth"
+          }
+        ],
       },
       "pathComponents" : [
         "Foo",
@@ -726,7 +744,13 @@
         "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
-        "title" : "second"
+        "title" : "second",
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "second"
+          }
+        ],
       },
       "pathComponents" : [
         "Foo",
@@ -774,7 +798,13 @@
         "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
-        "title" : "third"
+        "title" : "third",
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "third"
+          }
+        ],
       },
       "pathComponents" : [
         "Foo",
