@@ -1,0 +1,121 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.101.10 clang-1400.0.10.4.2)"
+    },
+    "module": {
+        "name": "MyLibrary",
+        "platform": {
+            "architecture": "x86_64",
+            "operatingSystem": {
+                "minimumVersion": {
+                    "major": 10,
+                    "minor": 10,
+                    "patch": 0
+                },
+                "name": "macosx"
+            },
+            "vendor": "apple"
+        }
+    },
+    "relationships": [],
+    "symbols": [
+        {
+            "accessLevel": "public",
+            "availability": [
+                {
+                    "deprecated": {
+                        "major": 10,
+                        "minor": 15
+                    },
+                    "domain": "macOS",
+                    "introduced": {
+                        "major": 10,
+                        "minor": 10
+                    }
+                }
+            ],
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "foo"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "() -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Si",
+                    "spelling": "Int"
+                }
+            ],
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Si",
+                        "spelling": "Int"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9MyLibrary3fooSiyF"
+            },
+            "kind": {
+                "displayName": "Function",
+                "identifier": "swift.func"
+            },
+            "location": {
+                "position": {
+                    "character": 12,
+                    "line": 2
+                },
+                "uri": "file:///MyLibrary/Sources/MyLibrary/MyLibrary.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "foo"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "() -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Si",
+                        "spelling": "Int"
+                    }
+                ],
+                "title": "foo()"
+            },
+            "pathComponents": [
+                "foo()"
+            ]
+        }
+    ]
+}
+

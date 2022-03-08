@@ -9,6 +9,8 @@
 */
 
 import XCTest
+import SwiftDocCTestUtilities
+
 @testable import SwiftDocC
 
 final class RenderIndexTests: XCTestCase {
@@ -248,34 +250,108 @@ final class RenderIndexTests: XCTestCase {
     }
     
     func testRenderIndexGenerationWithExternalNode() throws {
-        let renderIndexWithExternalNode = try RenderIndex.fromString(#"""
-            {
-              "interfaceLanguages": {
-                "swift": [
-                  {
-                    "path": "\/documentation\/framework\/foo-swift.struct",
-                    "title": "Foo",
-                    "type": "struct",
-                    "external": true
-                  }
-                ]
-              },
-              "schemaVersion": {
-                "major": 0,
-                "minor": 1,
-                "patch": 0
-              }
-            }
-            """#
+        try testRenderIndexGenerationFromJSON(
+            makeRenderIndexJSONSingleNode(withOptionalProperty: "external")
+        ) { renderIndex in
+            // Let's check that the "external" key is correctly parsed into the isExternal field of RenderIndex.Node.
+            XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["swift"])[0].isExternal)
+        }
+    }
+    
+    func testRenderIndexGenerationWithDeprecatedNode() throws {
+        try testRenderIndexGenerationFromJSON(
+            makeRenderIndexJSONSingleNode(withOptionalProperty: "deprecated")
+        ) { renderIndex in
+            // Let's check that the "deprecated" key is correctly parsed into the isDeprecated field of RenderIndex.Node.
+            XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["swift"])[0].isDeprecated)
+        }
+    }
+    
+    func makeRenderIndexJSONSingleNode(withOptionalProperty property: String) -> String {
+        return """
+    {
+      "interfaceLanguages": {
+        "swift": [
+          {
+            "path": "/documentation/framework/foo-swift.struct",
+            "title": "Foo",
+            "type": "struct",
+            "\(property)": true
+          }
+        ]
+      },
+      "schemaVersion": {
+        "major": 0,
+        "minor": 1,
+        "patch": 0
+      }
+    }
+"""
+    }
+    
+    func testRenderIndexGenerationFromJSON(_ json: String, check: (RenderIndex) throws -> Void) throws {
+        let renderIndexFromJSON = try RenderIndex.fromString(json)
+        
+        try check(renderIndexFromJSON)
+        try assertRoundTripCoding(renderIndexFromJSON)
+    }
+    
+    func testRenderIndexGenerationWithDeprecatedSymbol() throws {
+        let swiftWithDeprecatedSymbolGraphFile = Bundle.module.url(
+                forResource: "Deprecated",
+                withExtension: "symbols.json",
+                subdirectory: "Test Resources"
+            )!
+
+        let bundle = Folder(name: "unit-test-swift.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: swiftWithDeprecatedSymbolGraphFile)
+        ])
+
+        // The navigator index needs to test with the real File Manager
+        let testTemporaryDirectory = try createTemporaryDirectory()
+
+        let bundleDirectory = testTemporaryDirectory.appendingPathComponent(
+           bundle.name,
+           isDirectory: true
         )
-        // Let's check that the "external" key is correctly parsed into the isExternal field of RenderIndex.Node.
-        XCTAssertTrue(renderIndexWithExternalNode.interfaceLanguages["swift"]![0].isExternal)
-        // Let's make sure it gets emitted properly by testing if we can roundtrip to JSON.
-        try assertRoundTripCoding(renderIndexWithExternalNode)
+        try bundle.write(to: bundleDirectory)
+
+        let (_, loadedBundle, context) = try loadBundle(from: bundleDirectory)
+
+        XCTAssertEqual(
+            try generatedRenderIndex(for: loadedBundle, withIdentifier: "com.test.example", withContext: context),
+            try RenderIndex.fromString(#"""
+            {
+                "interfaceLanguages": {
+                    "swift": [
+                        {
+                            "title": "Functions",
+                            "type": "groupMarker"
+                        },
+                        {
+                            "deprecated": true,
+                            "path": "/documentation/mylibrary/foo()",
+                            "title": "func foo() -> Int",
+                            "type": "func"
+                        }
+                    ]
+                },
+                "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0
+                }
+            }
+            """#))
     }
     
     func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) throws -> RenderIndex {
         let (bundle, context) = try testBundleAndContext(named: testBundleName)
+        return try generatedRenderIndex(for: bundle, withIdentifier: bundleIdentifier, withContext: context)
+    }
+    
+    func generatedRenderIndex(for bundle: DocumentationBundle, withIdentifier bundleIdentifier: String, withContext context: DocumentationContext) throws -> RenderIndex {
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         let indexDirectory = try createTemporaryDirectory()
