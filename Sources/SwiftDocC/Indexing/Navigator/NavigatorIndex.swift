@@ -504,13 +504,24 @@ extension NavigatorIndex {
         /// Maps an arbitrary Platform name string to a Platform.Name instance.
         private var nameToPlatform = [String: Platform.Name]()
         
+        // availabilityIDs and availabilityToID serve as a bidirectional map to lookup entries in the
+        // availabilityIndex of the NavigatorIndex. NavigatorItem stores an availabilityID that corresponds
+        // to the key of availabilityIDs. The associated value for that availabilityID corresponds
+        // to a list of IDs which is used to get the availability information from the availability index.
+        // availabilityToID is used to reuse the same availabilityID if two NavigatorItem have the same
+        // availability information.
+        
+        private static let availabilityIDWithNoAvailabilities = 0
+        
         /// The map of the availabilities from a single availabilityID to an array of availabilities inside the availability index.
         /// This approach gives us the opportunity to map multiple availabilities with the same entries using a single ID.
         /// Ex. An item with: iOS 13.0 and macOS 10.15 can share the same ID with other items having exactly the same availability.
-        private var availabilityIDs = [Int: [Int]]()
+        /// We use the `0` value to indicate that there are no associated availabilityIndex entries.
+        private var availabilityIDs: [Int: [Int]] = [availabilityIDWithNoAvailabilities: []]
         
         /// The map of the availabilities to their ID, the opposite of `availabilityIDs`.
-        private var availabilityToID = [[Int]: Int]()
+        /// Conversely we make sure that an empty list of IDs into the availabilityIndex maps back to the `0` value.
+        private var availabilityToID: [[Int]: Int] = [[]: availabilityIDWithNoAvailabilities]
         
         /// Indicates if the path component inside the navigator item needs to be persisted or not.
         private let writePathsOnDisk: Bool
@@ -687,7 +698,7 @@ extension NavigatorIndex {
                                               languageID: language.mask,
                                               title: title,
                                               platformMask: platformID,
-                                              availabilityID: UInt64(availabilityID))
+                                              availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities))
                 groupItem.path = groupIdentifier.path + "#" + fragment
 
                 let navigatorGroup = NavigatorTree.Node(item: groupItem, bundleIdentifier: bundleIdentifier)
@@ -849,7 +860,7 @@ extension NavigatorIndex {
                                                                               languageID: language.mask,
                                                                               title: language.name,
                                                                               platformMask: Platform.Name.any.mask,
-                                                                              availabilityID: 0),
+                                                                              availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities)),
                                                           bundleIdentifier: bundleIdentifier)
                     languageMaskToNode[language.mask] = languageNode
                     root.add(child: languageNode)
@@ -889,7 +900,7 @@ extension NavigatorIndex {
                                                                            languageID: InterfaceLanguage.undefined.mask,
                                                                            title: "Other",
                                                                            platformMask: Platform.Name.any.mask,
-                                                                           availabilityID: 0,
+                                                                           availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities),
                                                                            path: ""),
                                                                            bundleIdentifier: bundleIdentifier)
                     languageMaskToNode[InterfaceLanguage.any.mask] = otherNode
@@ -902,7 +913,7 @@ extension NavigatorIndex {
             }
             
             if emitJSONRepresentation {
-                let renderIndex = RenderIndex.fromNavigatorIndex(navigatorIndex)
+                let renderIndex = RenderIndex.fromNavigatorIndex(navigatorIndex, with: self)
                 
                 let jsonEncoder = JSONEncoder()
                 if shouldPrettyPrintOutputJSON {
@@ -1159,6 +1170,9 @@ extension NavigatorIndex {
             return problems
         }
         
+        func availabilityEntryIDs(for availabilityID: UInt64) -> [Int]? {
+            return availabilityIDs[Int(availabilityID)]
+        }
     }
     
 }

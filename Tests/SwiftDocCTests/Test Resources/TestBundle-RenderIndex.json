@@ -13,7 +13,8 @@
       {
         "path" : "\/documentation\/fillintroduced\/iosonlydeprecated()",
         "title" : "func iOSOnlyDeprecated()",
-        "type" : "func"
+        "type" : "func",
+        "deprecated" : true
       },
       {
         "path" : "\/documentation\/fillintroduced\/iosonlyintroduced()",
@@ -23,7 +24,8 @@
       {
         "path" : "\/documentation\/fillintroduced\/maccatalystonlydeprecated()",
         "title" : "func macCatalystOnlyDeprecated()",
-        "type" : "func"
+        "type" : "func",
+        "deprecated" : true
       },
       {
         "path" : "\/documentation\/fillintroduced\/maccatalystonlyintroduced()",
@@ -33,7 +35,8 @@
       {
         "path" : "\/documentation\/fillintroduced\/macosonlydeprecated()",
         "title" : "func macOSOnlyDeprecated()",
-        "type" : "func"
+        "type" : "func",
+        "deprecated" : true
       },
       {
         "path" : "\/documentation\/fillintroduced\/macosonlyintroduced()",
