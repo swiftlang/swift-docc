@@ -90,6 +90,10 @@
                         "type": "boolean",
                         "default": "false"
                     },
+                    "beta": {
+                        "type": "boolean",
+                        "default": "false"
+                    },
                     "children": {
                         "type": "array",
                         "items": {

@@ -267,6 +267,15 @@ final class RenderIndexTests: XCTestCase {
         }
     }
     
+    func testRenderIndexGenerationWithBetaNode() throws {
+        try testRenderIndexGenerationFromJSON(
+            makeRenderIndexJSONSingleNode(withOptionalProperty: "beta")
+        ) { renderIndex in
+            // Let's check that the "deprecated" key is correctly parsed into the isDeprecated field of RenderIndex.Node.
+            XCTAssertTrue(try XCTUnwrap(renderIndex.interfaceLanguages["swift"])[0].isBeta)
+        }
+    }
+    
     func makeRenderIndexJSONSingleNode(withOptionalProperty property: String) -> String {
         return """
     {

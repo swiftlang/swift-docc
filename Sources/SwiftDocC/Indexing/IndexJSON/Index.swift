@@ -68,6 +68,11 @@ extension RenderIndex {
         /// Allows renderers to use a specific design treatment for render index nodes
         /// that lead to external documentation content.
         public let isExternal: Bool
+        
+        /// A Boolean value that is true if the current node has been marked as is beta
+        ///
+        /// Allows renderers to use a specific design treatment for render index nodes that mark the node as in beta.
+        public let isBeta: Bool
 
         enum CodingKeys: String, CodingKey {
             case title
@@ -76,6 +81,7 @@ extension RenderIndex {
             case children
             case deprecated
             case external
+            case beta
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -96,6 +102,11 @@ extension RenderIndex {
             if isExternal {
                 try container.encode(isExternal, forKey: .external)
             }
+            
+            // `isBeta` defaults to false so only encode it if it's true
+            if isBeta {
+                try container.encode(isBeta, forKey: .beta)
+            }
         }
         
         public init(from decoder: Decoder) throws {
@@ -112,6 +123,9 @@ extension RenderIndex {
             
             // `isExternal` defaults to false if it's not specified
             isExternal = try values.decodeIfPresent(Bool.self, forKey: .external) ?? false
+            
+            // `isBeta` defaults to false if it's not specified
+            isBeta = try values.decodeIfPresent(Bool.self, forKey: .beta) ?? false
         }
         
         /// Creates a new node with the given title, path, type, and children.
@@ -124,6 +138,7 @@ extension RenderIndex {
         ///   - isDeprecated : If the current node has been marked as deprecated.
         ///   - isExternal: If the current node belongs to an external
         ///     documentation archive.
+        ///   - isBeta: If the current node is in beta.
         public init(
             title: String,
             path: String?,
@@ -131,6 +146,7 @@ extension RenderIndex {
             children: [Node]?,
             isDeprecated: Bool,
             isExternal: Bool,
+            isBeta: Bool
         ) {
             self.title = title
             self.path = path
@@ -138,6 +154,7 @@ extension RenderIndex {
             self.children = children
             self.isDeprecated = isDeprecated
             self.isExternal = isExternal
+            self.isBeta = isBeta
         }
         
         init(
@@ -155,6 +172,8 @@ extension RenderIndex {
             // Currently Swift-DocC doesn't support resolving links to external DocC archives
             // so we default to `false` here.
             self.isExternal = false
+            
+            self.isBeta = false
             
             guard let pageType = pageType else {
                 self.type = nil
