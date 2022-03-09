@@ -21,7 +21,6 @@ extension ConvertAction {
         let outOfProcessResolver: OutOfProcessReferenceResolver?
 
         FeatureFlags.current.isExperimentalObjectiveCSupportEnabled = convert.enableExperimentalObjectiveCSupport
-        FeatureFlags.current.isExperimentalJSONIndexEnabled = convert.enableExperimentalJSONIndex
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
@@ -72,7 +71,7 @@ extension ConvertAction {
             htmlTemplateDirectory: convert.templateOption.templateURL ?? fallbackTemplateURL,
             emitDigest: convert.emitDigest,
             currentPlatforms: parsedPlatforms,
-            buildIndex: convert.index,
+            buildIndex: convert.emitLMDBIndex || convert.index,
             temporaryDirectory: FileManager.default.temporaryDirectory,
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions

@@ -34,7 +34,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let emitDigest: Bool
     let inheritDocs: Bool
     let experimentalEnableCustomTemplates: Bool
-    let buildIndex: Bool
+    let buildLMDBIndex: Bool
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
     let diagnosticEngine: DiagnosticEngine
@@ -105,7 +105,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.targetDirectory = targetDirectory
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.emitDigest = emitDigest
-        self.buildIndex = buildIndex
+        self.buildLMDBIndex = buildIndex
         self.workspace = workspace
         self.injectedDataProvider = dataProvider
         self.fileManager = fileManager
@@ -330,8 +330,7 @@ public struct ConvertAction: Action, RecreatingContext {
         // An optional indexer, if indexing while converting is enabled.
         var indexer: Indexer? = nil
         
-        let shouldBuildIndex = buildIndex || FeatureFlags.current.isExperimentalJSONIndexEnabled
-        if shouldBuildIndex, let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
+        if let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
             // Create an index builder and prepare it to receive nodes.
             indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
         }
@@ -367,10 +366,7 @@ public struct ConvertAction: Action, RecreatingContext {
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
         if let indexer = indexer {
-            let indexerProblems = indexer.finalize(
-                emitJSON: FeatureFlags.current.isExperimentalJSONIndexEnabled,
-                emitLMDB: buildIndex
-            )
+            let indexerProblems = indexer.finalize(emitLMDB: buildLMDBIndex)
             allProblems.append(contentsOf: indexerProblems)
         }
 

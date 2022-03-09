@@ -294,7 +294,20 @@ class ConvertSubcommandTests: XCTestCase {
         
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         
-        XCTAssertEqual(action.buildIndex, true)
+        XCTAssertEqual(action.buildLMDBIndex, true)
+    }
+    
+    func testEmitLMDBIndex() throws {
+        let convertOptions = try Docc.Convert.parse([
+            testBundleURL.path,
+            "--emit-lmdb-index",
+        ])
+        
+        XCTAssertEqual(convertOptions.emitLMDBIndex, true)
+        
+        let action = try ConvertAction(fromConvertCommand: convertOptions)
+        
+        XCTAssertEqual(action.buildLMDBIndex, true)
     }
     
     func testWithoutBundle() throws {
