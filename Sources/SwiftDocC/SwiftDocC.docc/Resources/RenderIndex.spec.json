@@ -82,7 +82,15 @@
                     "path": {
                         "type": "string"
                     },
-                    "isExternal": {
+                    "deprecated": {
+                        "type": "boolean",
+                        "default": "false"
+                    },
+                    "external": {
+                        "type": "boolean",
+                        "default": "false"
+                    },
+                    "beta": {
                         "type": "boolean",
                         "default": "false"
                     },

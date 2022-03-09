@@ -57,19 +57,31 @@ extension RenderIndex {
         /// The children of this node.
         public let children: [Node]?
         
+        /// A Boolean value that is true if the current node has been marked as deprecated on any platform.
+        ///
+        /// Allows renderers to use a specific design treatment for render index nodes that mark the node as deprecated.
+        public let isDeprecated: Bool
+
         /// A Boolean value that is true if the current node belongs to an external
         /// documentation archive.
         ///
         /// Allows renderers to use a specific design treatment for render index nodes
         /// that lead to external documentation content.
         public let isExternal: Bool
+        
+        /// A Boolean value that is true if the current node has been marked as is beta
+        ///
+        /// Allows renderers to use a specific design treatment for render index nodes that mark the node as in beta.
+        public let isBeta: Bool
 
         enum CodingKeys: String, CodingKey {
             case title
             case path
             case type
             case children
-            case isExternal
+            case deprecated
+            case external
+            case beta
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -81,9 +93,19 @@ extension RenderIndex {
             try container.encodeIfPresent(type, forKey: .type)
             try container.encodeIfPresent(children, forKey: .children)
             
+            // `isDeprecated` defaults to false so only encode it if it's true
+            if isDeprecated {
+                try container.encode(isDeprecated, forKey: .deprecated)
+            }
+            
             // `isExternal` defaults to false so only encode it if it's true
             if isExternal {
-                try container.encode(isExternal, forKey: .isExternal)
+                try container.encode(isExternal, forKey: .external)
+            }
+            
+            // `isBeta` defaults to false so only encode it if it's true
+            if isBeta {
+                try container.encode(isBeta, forKey: .beta)
             }
         }
         
@@ -96,8 +118,14 @@ extension RenderIndex {
             type = try values.decodeIfPresent(String.self, forKey: .type)
             children = try values.decodeIfPresent([Node].self, forKey: .children)
             
+            // `isDeprecated` defaults to false if it's not specified
+            isDeprecated = try values.decodeIfPresent(Bool.self, forKey: .deprecated) ?? false
+            
             // `isExternal` defaults to false if it's not specified
-            isExternal = try values.decodeIfPresent(Bool.self, forKey: .isExternal) ?? false
+            isExternal = try values.decodeIfPresent(Bool.self, forKey: .external) ?? false
+            
+            // `isBeta` defaults to false if it's not specified
+            isBeta = try values.decodeIfPresent(Bool.self, forKey: .beta) ?? false
         }
         
         /// Creates a new node with the given title, path, type, and children.
@@ -107,34 +135,45 @@ extension RenderIndex {
         ///   - path: The relative path to the page represented by this node.
         ///   - type: The type of this node.
         ///   - children: The children of this node.
+        ///   - isDeprecated : If the current node has been marked as deprecated.
         ///   - isExternal: If the current node belongs to an external
         ///     documentation archive.
+        ///   - isBeta: If the current node is in beta.
         public init(
             title: String,
             path: String?,
             type: String,
             children: [Node]?,
-            isExternal: Bool
+            isDeprecated: Bool,
+            isExternal: Bool,
+            isBeta: Bool
         ) {
             self.title = title
             self.path = path
             self.type = type
             self.children = children
+            self.isDeprecated = isDeprecated
             self.isExternal = isExternal
+            self.isBeta = isBeta
         }
         
         init(
             title: String,
             path: String,
             pageType: NavigatorIndex.PageType?,
+            isDeprecated: Bool,
             children: [Node]
         ) {
             self.title = title
             self.children = children.isEmpty ? nil : children
             
+            self.isDeprecated = isDeprecated
+            
             // Currently Swift-DocC doesn't support resolving links to external DocC archives
             // so we default to `false` here.
             self.isExternal = false
+            
+            self.isBeta = false
             
             guard let pageType = pageType else {
                 self.type = nil
@@ -154,7 +193,7 @@ extension RenderIndex {
 }
 
 extension RenderIndex {
-    static func fromNavigatorIndex(_ navigatorIndex: NavigatorIndex) -> RenderIndex {
+    static func fromNavigatorIndex(_ navigatorIndex: NavigatorIndex, with builder: NavigatorIndex.Builder) -> RenderIndex {
         // The immediate children of the root represent the interface languages
         // described in this navigator tree.
         let interfaceLanguageRoots = navigatorIndex.navigatorTree.root.children
@@ -171,7 +210,9 @@ extension RenderIndex {
                     
                     return (
                         language: languageID,
-                        children: interfaceLanguageRoot.children.map(RenderIndex.Node.fromNavigatorTreeNode)
+                        children: interfaceLanguageRoot.children.map {
+                            RenderIndex.Node.fromNavigatorTreeNode($0, in: navigatorIndex, with: builder)
+                        }
                     )
                 },
                 uniquingKeysWith: +
@@ -181,12 +222,27 @@ extension RenderIndex {
 }
 
 extension RenderIndex.Node {
-    static func fromNavigatorTreeNode(_ node: NavigatorTree.Node) -> RenderIndex.Node {
+    static func fromNavigatorTreeNode(_ node: NavigatorTree.Node, in navigatorIndex: NavigatorIndex, with builder: NavigatorIndex.Builder) -> RenderIndex.Node {
+        // If this node was deprecated on any platform version mark it as deprecated.
+        let isDeprecated: Bool
+        
+        let availabilityIndexEntryIDsForNode = builder.availabilityEntryIDs(for: node.item.availabilityID)
+        if let entryIDs = availabilityIndexEntryIDsForNode {
+            let availabilityInfosForNode = entryIDs.map { ID in navigatorIndex.availabilityIndex.info(for: ID) }
+            // Mark node as deprecated if we have an explicit deprecation version
+            isDeprecated = availabilityInfosForNode.contains { $0?.deprecated != nil }
+        } else {
+            isDeprecated = false
+        }
+        
         return RenderIndex.Node(
             title: node.item.title,
             path: node.item.path,
             pageType: NavigatorIndex.PageType(rawValue: node.item.pageType),
-            children: node.children.map(RenderIndex.Node.fromNavigatorTreeNode)
+            isDeprecated: isDeprecated,
+            children: node.children.map {
+                RenderIndex.Node.fromNavigatorTreeNode($0, in: navigatorIndex, with: builder)
+            }
         )
     }
 }
