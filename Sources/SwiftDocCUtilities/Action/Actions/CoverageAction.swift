@@ -29,7 +29,8 @@ public struct CoverageAction: Action {
     public mutating func perform(logHandle: LogHandle) throws -> ActionResult {
         switch documentationCoverageOptions.level {
         case .brief, .detailed:
-            Swift.print("   --- Experimental coverage output enabled. ---")
+            var logHandle = logHandle
+            print("   --- Experimental coverage output enabled. ---", to: &logHandle)
 
             let summaryString = try CoverageDataEntry.generateSummary(
                 ofDataAt: workingDirectory.appendingPathComponent(
@@ -38,7 +39,7 @@ public struct CoverageAction: Action {
                 shouldGenerateBrief: true,
                 shouldGenerateDetailed: (documentationCoverageOptions.level == .detailed)
             )
-            print(summaryString)
+            print(summaryString, to: &logHandle)
         case .none:
             break
         }
