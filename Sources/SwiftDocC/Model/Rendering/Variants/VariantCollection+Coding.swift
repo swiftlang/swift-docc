@@ -39,7 +39,7 @@ extension KeyedEncodingContainer {
         )
     }
     
-    /// Encodes the given variant collection.
+    /// Encodes the given variant collection for its non-empty values.
     mutating func encodeVariantCollectionIfNotEmpty<Value>(
         _ variantCollection: VariantCollection<Value>,
         forKey key: Key,
@@ -47,7 +47,11 @@ extension KeyedEncodingContainer {
     ) throws where Value: Collection {
         try encodeIfNotEmpty(variantCollection.defaultValue, forKey: key)
         
-        variantCollection.addVariantsToEncoder(
+        variantCollection.mapValues { value in
+            // Encode `nil` if the value is empty, so that when the patch is applied, it effectively
+            // removes the default value.
+            value.isEmpty ? nil : value
+        }.addVariantsToEncoder(
             encoder,
             
             // Add the key to the encoder's coding path, since the coding path refers to the value's parent.

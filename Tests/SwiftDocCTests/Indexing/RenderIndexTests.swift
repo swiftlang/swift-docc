@@ -122,6 +122,22 @@ final class RenderIndexTests: XCTestCase {
                         "type": "article"
                       },
                       {
+                        "title": "APICollection",
+                        "path": "/documentation/mixedlanguageframework/apicollection",
+                        "type": "symbol",
+                        "children": [
+                            {
+                              "title": "Objective-C–only APIs",
+                              "type": "groupMarker"
+                            },
+                            {
+                              "title": "_MixedLanguageFrameworkVersionNumber",
+                              "path": "/documentation/mixedlanguageframework/_mixedlanguageframeworkversionnumber",
+                              "type": "var"
+                            }
+                        ]
+                      },
+                      {
                         "title": "Classes",
                         "type": "groupMarker"
                       },
@@ -261,6 +277,33 @@ final class RenderIndexTests: XCTestCase {
                         "title": "Article",
                         "path": "/documentation/mixedlanguageframework/article",
                         "type": "article"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/apicollection",
+                        "title": "APICollection",
+                        "type": "symbol",
+                        "children": [
+                          {
+                            "title": "Swift-only APIs",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "path": "/documentation/mixedlanguageframework/swiftonlystruct",
+                            "title": "SwiftOnlyStruct",
+                            "type": "struct",
+                            "children": [
+                              {
+                                "title": "Instance Methods",
+                                "type": "groupMarker"
+                              },
+                              {
+                                "title": "func tada()",
+                                "path": "/documentation/mixedlanguageframework/swiftonlystruct/tada()",
+                                "type": "method"
+                              }
+                            ]
+                          }
+                        ]
                       },
                       {
                         "title": "Classes",
