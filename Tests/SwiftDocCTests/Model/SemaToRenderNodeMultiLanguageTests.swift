@@ -125,6 +125,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "c:objc(cs)Bar",
                 "c:objc(cs)Bar(cm)myStringFunction:error:",
                 "Article",
+                "APICollection",
                 "MixedLanguageFramework Tutorials",
                 "Tutorial Article",
                 "Tutorial",
@@ -153,10 +154,12 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/TutorialArticle",
                 "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/Tutorial",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
+                "APICollection",
                 "Article",
                 "Bar",
                 "Foo",
@@ -197,11 +200,13 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/TutorialArticle",
                 "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/Tutorial",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
+                "APICollection",
                 "Article",
                 "Bar",
                 "Foo",
@@ -440,7 +445,67 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "typedef enum Foo : NSString {\n    ...\n} Foo;",
             ],
             failureMessage: { fieldName in
-                "Swift variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
+                "Objective-C variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
+            }
+        )
+    }
+    
+    func testAPICollectionInMixedLanguageFramework() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        let outputConsumer = try mixedLanguageFrameworkConsumer()
+        
+        let articleRenderNode = try outputConsumer.renderNode(withTitle: "APICollection")
+        
+        assertExpectedContent(
+            articleRenderNode,
+            sourceLanguage: "swift",
+            title: "APICollection",
+            navigatorTitle: nil,
+            abstract: "This is an API collection.",
+            declarationTokens: nil,
+            discussionSection: nil,
+            topicSectionIdentifiers: [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct"
+            ],
+            referenceTitles: [
+                "Article",
+                "MixedLanguageFramework",
+                "SwiftOnlyStruct",
+                "_MixedLanguageFrameworkVersionNumber",
+            ],
+            referenceFragments: [
+                "struct SwiftOnlyStruct",
+            ],
+            failureMessage: { fieldName in
+                "Swift variant of 'APICollection' article has unexpected content for '\(fieldName)'."
+            }
+        )
+        
+        let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: articleRenderNode)
+        
+        assertExpectedContent(
+            objectiveCVariantNode,
+            sourceLanguage: "occ",
+            title: "APICollection",
+            navigatorTitle: nil,
+            abstract: "This is an API collection.",
+            declarationTokens: nil,
+            discussionSection: nil,
+            topicSectionIdentifiers: [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber"
+            ],
+            referenceTitles: [
+                "Article",
+                "MixedLanguageFramework",
+                "SwiftOnlyStruct",
+                "_MixedLanguageFrameworkVersionNumber",
+            ],
+            referenceFragments: [
+                "struct SwiftOnlyStruct",
+            ],
+            failureMessage: { fieldName in
+                "Objective-C variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
             }
         )
     }

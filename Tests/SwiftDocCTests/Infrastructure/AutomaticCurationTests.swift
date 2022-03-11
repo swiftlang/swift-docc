@@ -379,7 +379,9 @@ class AutomaticCurationTests: XCTestCase {
                 
                 "Structures",
                 "/documentation/MixedLanguageFramework/Foo-swift.struct",
-                "/documentation/MixedLanguageFramework/SwiftOnlyStruct",
+                
+                // SwiftOnlyStruct is manually curated.
+                // "/documentation/MixedLanguageFramework/SwiftOnlyStruct",
             ]
         )
         
@@ -398,7 +400,10 @@ class AutomaticCurationTests: XCTestCase {
                 "/documentation/MixedLanguageFramework/Bar",
                 
                 "Variables",
-                "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
+                
+                // _MixedLanguageFrameworkVersionNumber is manually curated.
+                // "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
+                
                 "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
                 
                 // 'MixedLanguageFramework/Foo-occ.typealias' is manually curated in a task group titled "Custom" under 'MixedLanguageFramework/Bar/myStringFunction:error:'

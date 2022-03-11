@@ -622,54 +622,75 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.primaryContentSections.append(ContentRenderSection(kind: .content, content: discussionContent, heading: title))
         }
         
-        if let topics = article.topics, !topics.taskGroups.isEmpty {
-            // Don't set an eyebrow as collections and groups don't have one; append the authored Topics section
-            node.topicSections.append(
-                contentsOf: renderGroups(
-                    topics,
-                    allowExternalLinks: false,
-                    allowedTraits: documentationNode.availableVariantTraits,
-                    contentCompiler: &contentCompiler
-                )
-            )
-        }
-        
-        // Place "top" rendering preference automatic task groups
-        // after any user-defined task groups but before automatic curation.
-        if !article.automaticTaskGroups.isEmpty {
-            node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(article.automaticTaskGroups.filter({ $0.renderPositionPreference == .top }), contentCompiler: &contentCompiler))
-        }
-
-        // If there are no manually curated topics, and no automatic groups, try generating automatic groups by child kind.
-        if (article.topics == nil || article.topics?.taskGroups.isEmpty == true) &&
-            article.automaticTaskGroups.isEmpty {
-            // If there are no authored child topics in docs or markdown,
-            // inspect the topic graph, find this node's children, and
-            // for the ones found curate them automatically in task groups.
-            // Automatic groups are named after the child's kind, e.g.
-            // "Methods", "Variables", etc.
-            let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
-            let groups = try! AutomaticCuration.topics(for: documentationNode, withTrait: nil, context: context)
-                .compactMap({ group -> AutomaticCuration.TaskGroup? in
-                    // Remove references that have been already curated.
-                    let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
-                    // Remove groups that have no uncurated references
-                    guard !newReferences.isEmpty else { return nil }
-
-                    return (title: group.title, references: newReferences)
-                })
+        node.topicSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
+            from: documentationNode.availableVariantTraits,
+            fallbackDefaultValue: []
+        ) { trait in
+            var sections = [TaskGroupRenderSection]()
             
-            // Collect all child topic references.
-            contentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
-            // Add the final groups to the node.
-            node.topicSections.append(contentsOf: groups.map(TaskGroupRenderSection.init(taskGroup:)))
-        }
+            if let topics = article.topics, !topics.taskGroups.isEmpty {
+                // Don't set an eyebrow as collections and groups don't have one; append the authored Topics section
+                sections.append(
+                    contentsOf: renderGroups(
+                        topics,
+                        allowExternalLinks: false,
+                        allowedTraits: [trait],
+                        contentCompiler: &contentCompiler
+                    )
+                )
+            }
+            
+            // Place "top" rendering preference automatic task groups
+            // after any user-defined task groups but before automatic curation.
+            if !article.automaticTaskGroups.isEmpty {
+                sections.append(
+                    contentsOf: renderAutomaticTaskGroupsSection(
+                        article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
+                        contentCompiler: &contentCompiler
+                    )
+                )
+            }
+            
+            // If there are no manually curated topics, and no automatic groups, try generating automatic groups by
+            // child kind.
+            if (article.topics == nil || article.topics?.taskGroups.isEmpty == true) &&
+                article.automaticTaskGroups.isEmpty {
+                // If there are no authored child topics in docs or markdown,
+                // inspect the topic graph, find this node's children, and
+                // for the ones found curate them automatically in task groups.
+                // Automatic groups are named after the child's kind, e.g.
+                // "Methods", "Variables", etc.
+                let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
+                let groups = try! AutomaticCuration.topics(for: documentationNode, withTrait: nil, context: context)
+                    .compactMap({ group -> AutomaticCuration.TaskGroup? in
+                        // Remove references that have been already curated.
+                        let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
+                        // Remove groups that have no uncurated references
+                        guard !newReferences.isEmpty else { return nil }
+                        
+                        return (title: group.title, references: newReferences)
+                    })
+                
+                // Collect all child topic references.
+                contentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
+                // Add the final groups to the node.
+                sections.append(contentsOf: groups.map(TaskGroupRenderSection.init(taskGroup:)))
+            }
+            
+            // Place "bottom" rendering preference automatic task groups
+            // after any user-defined task groups but before automatic curation.
+            if !article.automaticTaskGroups.isEmpty {
+                sections.append(
+                    contentsOf: renderAutomaticTaskGroupsSection(
+                        article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
+                        contentCompiler: &contentCompiler
+                    )
+                )
+            }
+            
+            return sections
+        } ?? .init(defaultValue: [])
         
-        // Place "bottom" rendering preference automatic task groups
-        // after any user-defined task groups but before automatic curation.
-        if !article.automaticTaskGroups.isEmpty {
-            node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(article.automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }), contentCompiler: &contentCompiler))
-        }
 
         if node.topicSections.isEmpty {
             // Set an eyebrow for articles

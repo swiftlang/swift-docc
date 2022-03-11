@@ -75,7 +75,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     private(set) public var abstractSection: AbstractSection?
     
     /// The Topic curation section of the article.
-    private(set) public var topics: TopicsSection?
+    internal(set) public var topics: TopicsSection?
     
     /// The See Also section of the article.
     private(set) public var seeAlso: SeeAlsoSection?
