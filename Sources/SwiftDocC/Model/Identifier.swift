@@ -396,22 +396,11 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let sourceLanguages: Set<SourceLanguage>
         let identifierPathAndFragment: String
         
-        lazy var url: URL = {
-            var components = URLComponents()
-            components.scheme = ResolvedTopicReference.urlScheme
-            components.host = bundleIdentifier
-            components.path = path
-            components.fragment = fragment
-            return components.url!
-        }()
+        let url: URL
         
-        lazy var pathComponents: [String] = {
-            return url.pathComponents
-        }()
+        let pathComponents: [String]
         
-        lazy var absoluteString: String = {
-            return url.absoluteString
-        }()
+        let absoluteString: String
         
         init(
             bundleIdentifier: String,
@@ -424,6 +413,15 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             self.fragment = fragment
             self.sourceLanguages = sourceLanguages
             self.identifierPathAndFragment = "\(bundleIdentifier)\(path)\(fragment ?? "")"
+            
+            var components = URLComponents()
+            components.scheme = ResolvedTopicReference.urlScheme
+            components.host = bundleIdentifier
+            components.path = path
+            components.fragment = fragment
+            self.url = components.url!
+            self.pathComponents = self.url.pathComponents
+            self.absoluteString = self.url.absoluteString
         }
     }
 }

@@ -61,4 +61,21 @@ class ResolvedTopicReferenceTests: XCTestCase {
             XCTAssertEqual(appended.path, resolvedOriginal.appendingPath("---").path)
         }
     }
+    
+    func testStorageIsConcurrentlyAccessible() throws {
+        let topicReference = ResolvedTopicReference(
+            bundleIdentifier: "com.apple.example",
+            path: "/documentation/path/sub-path",
+            fragment: nil,
+            sourceLanguage: .swift
+        )
+        
+        // TSan should not report a data race for these three accesses.
+        // TODO: Run TSan in Swift-CI (rdar://90157829).
+        DispatchQueue.concurrentPerform(iterations: 5) { _ in
+            _ = topicReference.url
+            _ = topicReference.pathComponents
+            _ = topicReference.absoluteString
+        }
+    }
 }
