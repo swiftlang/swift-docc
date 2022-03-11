@@ -12,4 +12,8 @@ This is an API collection.
 
 - <doc:_MixedLanguageFrameworkVersionNumber>
 
+## See Also
+
+- ``SwiftOnlyStruct``
+
 <!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->

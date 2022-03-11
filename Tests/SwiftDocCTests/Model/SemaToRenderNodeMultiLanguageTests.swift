@@ -468,6 +468,10 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             topicSectionIdentifiers: [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct"
             ],
+            seeAlsoSectionIdentifiers: [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+            ],
             referenceTitles: [
                 "Article",
                 "MixedLanguageFramework",
@@ -495,6 +499,9 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             topicSectionIdentifiers: [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber"
             ],
+            seeAlsoSectionIdentifiers: [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+            ],
             referenceTitles: [
                 "Article",
                 "MixedLanguageFramework",
@@ -520,6 +527,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
         declarationTokens expectedDeclarationTokens: [String]?,
         discussionSection expectedDiscussionSection: [String]?,
         topicSectionIdentifiers expectedTopicSectionIdentifiers: [String],
+        seeAlsoSectionIdentifiers expectedSeeAlsoSectionIdentifiers: [String]? = nil,
         referenceTitles expectedReferenceTitles: [String],
         referenceFragments expectedReferenceFragments: [String],
         failureMessage failureMessageForField: (_ field: String) -> String,
@@ -592,6 +600,16 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             file: file,
             line: line
         )
+        
+        if let expectedSeeAlsoSectionIdentifiers = expectedSeeAlsoSectionIdentifiers {
+            XCTAssertEqual(
+                renderNode.seeAlsoSections.flatMap(\.identifiers),
+                expectedSeeAlsoSectionIdentifiers,
+                failureMessageForField("see also sections identifiers"),
+                file: file,
+                line: line
+            )
+        }
         
         XCTAssertEqual(
             renderNode.references.map(\.value).compactMap { reference in
