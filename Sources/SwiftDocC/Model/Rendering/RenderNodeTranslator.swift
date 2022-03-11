@@ -698,29 +698,44 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         node.metadata.role = contentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
 
-        // Authored See Also section
-        if let seeAlso = article.seeAlso, !seeAlso.taskGroups.isEmpty {
-            node.seeAlsoSections.append(
-                contentsOf: renderGroups(
-                    seeAlso,
-                    allowExternalLinks: true,
-                    allowedTraits: documentationNode.availableVariantTraits,
-                    contentCompiler: &contentCompiler
+        node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
+            from: documentationNode.availableVariantTraits,
+            fallbackDefaultValue: []
+        ) { trait in
+            var seeAlsoSections = [TaskGroupRenderSection]()
+            
+            // Authored See Also section
+            if let seeAlso = article.seeAlso, !seeAlso.taskGroups.isEmpty {
+                seeAlsoSections.append(
+                    contentsOf: renderGroups(
+                        seeAlso,
+                        allowExternalLinks: true,
+                        allowedTraits: [trait],
+                        contentCompiler: &contentCompiler
+                    )
                 )
-            )
-        }
-        
-        // Automatic See Also section
-        if let seeAlso = try! AutomaticCuration.seeAlso(for: documentationNode, context: context, bundle: bundle, renderContext: renderContext, renderer: contentRenderer) {
-            contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
-            node.seeAlsoSections.append(TaskGroupRenderSection(
-                title: seeAlso.title,
-                abstract: nil,
-                discussion: nil,
-                identifiers: seeAlso.references.map { $0.absoluteString },
-                generated: true
-            ))
-        }
+            }
+            
+            // Automatic See Also section
+            if let seeAlso = try! AutomaticCuration.seeAlso(
+                for: documentationNode,
+                context: context,
+                bundle: bundle,
+                renderContext: renderContext,
+                renderer: contentRenderer
+            ) {
+                contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
+                seeAlsoSections.append(TaskGroupRenderSection(
+                    title: seeAlso.title,
+                    abstract: nil,
+                    discussion: nil,
+                    identifiers: seeAlso.references.map { $0.absoluteString },
+                    generated: true
+                ))
+            }
+            
+            return seeAlsoSections
+        } ?? .init(defaultValue: [])
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
