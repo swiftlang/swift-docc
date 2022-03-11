@@ -366,7 +366,9 @@ public struct ConvertAction: Action, RecreatingContext {
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
         if let indexer = indexer {
-            let indexerProblems = indexer.finalize(emitLMDB: buildLMDBIndex)
+            // Always emit a JSON representation of the index but only emit the LMDB
+            // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
+            let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
             allProblems.append(contentsOf: indexerProblems)
         }
 
