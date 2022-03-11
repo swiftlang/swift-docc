@@ -91,25 +91,16 @@ public struct VariantCollection<Value: Codable>: Codable {
         
         encoder.userInfoVariantOverrides?.add(contentsOf: overrides)
     }
-}
-
-public extension VariantCollection {
-    /// A variant for a render node value.
-    struct Variant<Value: Codable> {
-        /// The traits associated with the override.
-        public var traits: [RenderNode.Variant.Trait]
-        
-        /// The patch to apply as part of the override.
-        public var patch: [VariantPatchOperation<Value>]
-        
-        /// Creates an override value for the given traits.
-        ///
-        /// - Parameters:
-        ///   - traits: The traits associated with this override value.
-        ///   - patch: The patch to apply as part of the override.
-        public init(traits: [RenderNode.Variant.Trait], patch: [VariantPatchOperation<Value>]) {
-            self.traits = traits
-            self.patch = patch
-        }
+    
+    /// Returns a variant collection containing the results of calling the given transformation with each value of this variant collection.
+    public func mapValues<TransformedValue>(
+        _ transform: (Value) -> TransformedValue
+    ) -> VariantCollection<TransformedValue> {
+        VariantCollection<TransformedValue>(
+            defaultValue: transform(defaultValue),
+            variants: variants.map { variant in
+                variant.mapPatch(transform)
+            }
+        )
     }
 }

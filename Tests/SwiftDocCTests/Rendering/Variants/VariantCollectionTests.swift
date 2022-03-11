@@ -74,4 +74,23 @@ class VariantCollectionTests: XCTestCase {
             XCTAssertEqual(value.value as! String, expectedValue)
         }
     }
+    
+    func testMapValues() {
+        let testCollection = testCollection.mapValues { value -> String? in
+            if value == "default value" {
+               return "default value transformed"
+            }
+            
+            return nil
+        }
+        
+        XCTAssertEqual(testCollection.defaultValue, "default value transformed")
+        
+        guard case .replace(let value)? = testCollection.variants.first?.patch.first else {
+            XCTFail()
+            return
+        }
+        
+        XCTAssertNil(value)
+    }
 }

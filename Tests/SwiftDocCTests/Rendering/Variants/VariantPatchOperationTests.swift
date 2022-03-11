@@ -66,4 +66,29 @@ class VariantPatchOperationTests: XCTestCase {
             XCTAssertEqual(stringVariant.applyingPatchTo("A"), expectedValue)
         }
     }
+    
+    func testMap() throws {
+        let transform: (String) -> String = { "\($0) transformed" }
+        let replace = VariantPatchOperation<String>.replace(value: "replace")
+        guard case .replace(let value) = replace.map(transform) else {
+            XCTFail("Expected replace operation")
+            return
+        }
+        
+        XCTAssertEqual(value, "replace transformed")
+        
+        let add = VariantPatchOperation<String>.add(value: "add")
+        guard case .add(let value) = add.map(transform) else {
+            XCTFail("Expected add operation")
+            return
+        }
+        
+        XCTAssertEqual(value, "add transformed")
+        
+        let remove = VariantPatchOperation<String>.remove.map(transform)
+        guard case .remove = remove else {
+            XCTFail("Expected remove operation")
+            return
+        }
+    }
 }
