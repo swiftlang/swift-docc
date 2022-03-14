@@ -366,6 +366,81 @@
         },
         {
             "kind": {
+                "identifier": "swift.class",
+                "displayName": "Class"
+            },
+            "identifier": {
+                "precise": "s:22MixedLanguageFramework15SwiftOnlyClassV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SwiftOnlyClass"
+            ],
+            "names": {
+                "title": "SwiftOnlyClass",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "SwiftOnlyClass"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "class"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "SwiftOnlyClass"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 20,
+                                "character": 4
+                            },
+                            "end": {
+                                "line": 20,
+                                "character": 51
+                            }
+                        },
+                        "text": "This is a class that is only exposed to Swift."
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "class"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "SwiftOnlyClass"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file://path/to/MixedLanguageFramework/MixedLanguageFramework/SwiftFile.swift",
+                "position": {
+                    "line": 20,
+                    "character": 14
+                }
+            }
+        },
+        {
+            "kind": {
                 "identifier": "swift.method",
                 "displayName": "Instance Method"
             },

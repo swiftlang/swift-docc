@@ -78,6 +78,47 @@ final class RenderIndexTests: XCTestCase {
                         "type": "var"
                       },
                       {
+                        "title": "Some Swift-only APIs, some Objective-C–only APIs, some mixed",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "\/documentation\/mixedlanguageframework\/_mixedlanguageframeworkversionstring",
+                        "title": "_MixedLanguageFrameworkVersionString",
+                        "type": "var"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/bar",
+                        "title": "Bar",
+                        "type": "class",
+                        "children": [
+                          {
+                            "title": "Type Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "path": "/documentation/mixedlanguageframework/bar/mystringfunction(_:)",
+                            "title": "myStringFunction:error: (navigator title)",
+                            "type": "method",
+                            "children": [
+                              {
+                                "title": "Custom",
+                                "type": "groupMarker"
+                              },
+                              {
+                                "title": "Foo",
+                                "path": "/documentation/mixedlanguageframework/foo-occ.typealias",
+                                "type": "typealias"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Article",
+                        "path": "/documentation/mixedlanguageframework/article",
+                        "type": "article"
+                      },
+                      {
                         "title": "Tutorials",
                         "type": "groupMarker"
                       },
@@ -142,33 +183,6 @@ final class RenderIndexTests: XCTestCase {
                         "type": "groupMarker"
                       },
                       {
-                        "children": [
-                          {
-                            "title": "Type Methods",
-                            "type": "groupMarker"
-                          },
-                          {
-                            "children": [
-                              {
-                                "title": "Custom",
-                                "type": "groupMarker"
-                              },
-                              {
-                                "path": "\/documentation\/mixedlanguageframework\/foo-occ.typealias",
-                                "title": "Foo",
-                                "type": "typealias"
-                              }
-                            ],
-                            "path": "\/documentation\/mixedlanguageframework\/bar\/mystringfunction(_:)",
-                            "title": "myStringFunction:error: (navigator title)",
-                            "type": "method"
-                          }
-                        ],
-                        "path": "\/documentation\/mixedlanguageframework\/bar",
-                        "title": "Bar",
-                        "type": "class"
-                      },
-                      {
                         "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol",
                         "title": "MixedLanguageClassConformingToProtocol",
                         "type": "class",
@@ -223,15 +237,6 @@ final class RenderIndexTests: XCTestCase {
                             "type": "method"
                           }
                         ]
-                      },
-                      {
-                        "title": "Variables",
-                        "type": "groupMarker"
-                      },
-                      {
-                        "path": "\/documentation\/mixedlanguageframework\/_mixedlanguageframeworkversionstring",
-                        "title": "_MixedLanguageFrameworkVersionString",
-                        "type": "var"
                       },
                       {
                         "title": "Enumerations",
@@ -289,6 +294,36 @@ final class RenderIndexTests: XCTestCase {
                         "path": "\/documentation\/mixedlanguageframework\/swiftonlystruct",
                         "title": "SwiftOnlyStruct",
                         "type": "struct"
+                      },
+                      {
+                        "title": "Some Swift-only APIs, some Objective-C–only APIs, some mixed",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "title": "SwiftOnlyClass",
+                        "path": "/documentation/mixedlanguageframework/swiftonlyclass",
+                        "type": "class"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/bar",
+                        "title": "Bar",
+                        "type": "class",
+                        "children": [
+                          {
+                            "title": "Type Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "class func myStringFunction(String) throws -> String",
+                            "path": "/documentation/mixedlanguageframework/bar/mystringfunction(_:)",
+                            "type": "method"
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Article",
+                        "path": "/documentation/mixedlanguageframework/article",
+                        "type": "article"
                       },
                       {
                         "title": "Tutorials",
@@ -364,22 +399,6 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "title": "Classes",
                         "type": "groupMarker"
-                      },
-                      {
-                        "children": [
-                          {
-                            "title": "Type Methods",
-                            "type": "groupMarker"
-                          },
-                          {
-                            "path": "\/documentation\/mixedlanguageframework\/bar\/mystringfunction(_:)",
-                            "title": "class func myStringFunction(String) throws -> String",
-                            "type": "method"
-                          }
-                        ],
-                        "path": "\/documentation\/mixedlanguageframework\/bar",
-                        "title": "Bar",
-                        "type": "class"
                       },
                       {
                         "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol",
