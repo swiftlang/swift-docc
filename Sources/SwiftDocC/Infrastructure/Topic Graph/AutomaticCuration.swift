@@ -115,7 +115,14 @@ public struct AutomaticCuration {
     ///   - bundle: A documentation bundle.
     /// - Returns: A group title and the group's references or links.
     ///   `nil` if the method can't find any relevant links to automatically generate a See Also content.
-    static func seeAlso(for node: DocumentationNode, context: DocumentationContext, bundle: DocumentationBundle, renderContext: RenderContext?, renderer: DocumentationContentRenderer) throws -> TaskGroup? {
+    static func seeAlso(
+        for node: DocumentationNode,
+        withTrait variantsTrait: DocumentationDataVariantsTrait,
+        context: DocumentationContext,
+        bundle: DocumentationBundle,
+        renderContext: RenderContext?,
+        renderer: DocumentationContentRenderer
+    ) throws -> TaskGroup? {
         // First try getting the canonical path from a render context, default to the documentation context
         guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.pathsTo(node.reference).first,
             !canonicalPath.isEmpty else {
@@ -124,6 +131,19 @@ public struct AutomaticCuration {
         }
         
         let parentReference = canonicalPath.last!
+        
+        func filterReferences(_ references: [ResolvedTopicReference]) throws -> [ResolvedTopicReference] {
+            try references
+                // Don't include the current node.
+                .filter { $0 != node.reference }
+            
+                // Filter out nodes that aren't available in the given trait.
+                .filter { reference in
+                    try context.entity(with: reference)
+                        .availableVariantTraits
+                        .contains(variantsTrait)
+                }
+        }
         
         // Look up the render context first
         if let taskGroups = renderContext?.store.content(for: parentReference)?.taskGroups,
@@ -134,7 +154,7 @@ public struct AutomaticCuration {
         {
             // Group match in render context, verify if there are any other references besides the current one.
             guard linkingGroup.references.count > 1 else { return nil }
-            return (title: linkingGroup.title, references: linkingGroup.references.filter { $0 != node.reference })
+            return (title: linkingGroup.title, references: try filterReferences(linkingGroup.references))
         }
         
         // Get the parent's task groups
@@ -152,7 +172,7 @@ public struct AutomaticCuration {
             return nil
         }
         
-        return (title: group.title, references: group.references.filter { $0 != node.reference })
+        return (title: group.title, references: try filterReferences(group.references))
     }
 }
 

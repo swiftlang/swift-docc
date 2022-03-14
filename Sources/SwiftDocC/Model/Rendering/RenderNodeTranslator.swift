@@ -661,15 +661,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 // Automatic groups are named after the child's kind, e.g.
                 // "Methods", "Variables", etc.
                 let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
-                let groups = try! AutomaticCuration.topics(for: documentationNode, withTrait: nil, context: context)
-                    .compactMap({ group -> AutomaticCuration.TaskGroup? in
-                        // Remove references that have been already curated.
-                        let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
-                        // Remove groups that have no uncurated references
-                        guard !newReferences.isEmpty else { return nil }
-                        
-                        return (title: group.title, references: newReferences)
-                    })
+                let groups = try! AutomaticCuration.topics(
+                    for: documentationNode,
+                    withTrait: trait,
+                    context: context
+                ).compactMap { group -> AutomaticCuration.TaskGroup? in
+                    // Remove references that have been already curated.
+                    let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
+                    // Remove groups that have no uncurated references
+                    guard !newReferences.isEmpty else { return nil }
+                    
+                    return (title: group.title, references: newReferences)
+                }
                 
                 // Collect all child topic references.
                 contentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
@@ -719,6 +722,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Automatic See Also section
             if let seeAlso = try! AutomaticCuration.seeAlso(
                 for: documentationNode,
+                withTrait: trait,
                 context: context,
                 bundle: bundle,
                 renderContext: renderContext,
@@ -1309,6 +1313,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Curate the current node's siblings as further See Also groups.
             if let seeAlso = try! AutomaticCuration.seeAlso(
                 for: documentationNode,
+                withTrait: trait,
                 context: context,
                 bundle: bundle,
                 renderContext: renderContext,
