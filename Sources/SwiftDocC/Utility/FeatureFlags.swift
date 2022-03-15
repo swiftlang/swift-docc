@@ -22,9 +22,6 @@ public struct FeatureFlags: Codable {
     
     /// Whether or not experimental support for emitting a JSON representation of the converted
     /// documentation's navigator index is enabled.
-    ///
-    /// This can be enabled on the command-line by passing `--enable-experimental-json-index`.
-    /// to docc.
     @available(*, deprecated, message: "Render Index JSON is now emitted by default.")
     public var isExperimentalJSONIndexEnabled = true
     

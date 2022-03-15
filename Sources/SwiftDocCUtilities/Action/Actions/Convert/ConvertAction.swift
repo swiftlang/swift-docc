@@ -72,6 +72,10 @@ public struct ConvertAction: Action, RecreatingContext {
     private var durationMetric: Benchmark.Duration?
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
+    /// - Parameter buildIndex: Whether or not the convert action should emit an LMDB representation
+    ///   of the navigator index.
+    ///
+    ///   A JSON representation is built and emitted regardless of this value.
     /// - Parameter workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
     /// - Parameter context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
     /// - Parameter dataProvider: A data provider to use when registering bundles
