@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Render Node API",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "title": "Render Node API"
     },
     "paths": { },

@@ -22,28 +22,21 @@ public struct FeatureFlags: Codable {
     
     /// Whether or not experimental support for emitting a JSON representation of the converted
     /// documentation's navigator index is enabled.
-    ///
-    /// This can be enabled on the command-line by passing `--enable-experimental-json-index`.
-    /// to docc.
-    public var isExperimentalJSONIndexEnabled = false
+    @available(*, deprecated, message: "Render Index JSON is now emitted by default.")
+    public var isExperimentalJSONIndexEnabled = true
     
     /// Creates a set of feature flags with the given values.
     ///
     /// - Parameters:
     ///   - enableObjectiveCSupport: Whether or not experimental language support for Objective-C should be enabled.
     ///
-    ///   - enableExperimentalJSONIndex: Whether or not experimental support for emitting a JSON
-    ///     representation of the navigator index should be enabled.
-    ///
     ///   - additionalFlags: Any additional flags to set.
     ///
     ///     This field allows clients to set feature flags without adding new API.
     public init(
         enableExperimentalObjectiveCSupport: Bool = false,
-        enableExperimentalJSONIndex: Bool = false,
         additionalFlags: [String : Bool] = [:]
     ) {
         self.isExperimentalObjectiveCSupportEnabled = enableExperimentalObjectiveCSupport
-        self.isExperimentalJSONIndexEnabled = enableExperimentalJSONIndex
     }
 }

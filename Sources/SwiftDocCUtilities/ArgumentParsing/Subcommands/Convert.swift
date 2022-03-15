@@ -82,10 +82,21 @@ extension Docc {
         @Flag(help: "Writes additional metadata files to the output directory.")
         public var emitDigest = false
 
-        /// A user-provided value that is true if the navigator index should be produced.
+        /// A user-provided value that is true if the LMDB representation of the
+        /// navigator index should be produced.
         ///
         /// Defaults to false.
-        @Flag(help: "Writes the navigator index to the output directory.")
+        @Flag(
+            help: ArgumentHelp(
+                "Writes an LMDB representation of the navigator index to the output directory.",
+                discussion: "A JSON representation of the navigator index is emitted by default."
+            )
+        )
+        public var emitLMDBIndex = false
+        
+        /// This value is provided for backwards compatibility with existing clients but
+        /// will be removed soon. Renamed to '--emit-lmdb-index'.
+        @Flag(help: .hidden)
         public var index = false
         
         /// A user-provided value that is true if fix-its should be written to output.
@@ -115,8 +126,10 @@ extension Docc {
         /// A user-provided value that is true if the user enables experimental support for emitting
         /// a JSON index.
         ///
-        /// Defaults to false.
+        /// This property exists for backwards compatibility with existing clients but is
+        /// deprecated and will be removed soon.
         @Flag(help: .hidden)
+        @available(*, deprecated, message: "Render Index JSON is now emitted by default.")
         public var enableExperimentalJSONIndex = false
 
         /// A user-provided value that is true if experimental documentation inheritance is to be enabled.

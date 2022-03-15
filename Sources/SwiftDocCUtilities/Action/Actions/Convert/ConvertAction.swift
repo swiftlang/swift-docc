@@ -34,7 +34,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let emitDigest: Bool
     let inheritDocs: Bool
     let experimentalEnableCustomTemplates: Bool
-    let buildIndex: Bool
+    let buildLMDBIndex: Bool
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
     let diagnosticEngine: DiagnosticEngine
@@ -72,6 +72,10 @@ public struct ConvertAction: Action, RecreatingContext {
     private var durationMetric: Benchmark.Duration?
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
+    /// - Parameter buildIndex: Whether or not the convert action should emit an LMDB representation
+    ///   of the navigator index.
+    ///
+    ///   A JSON representation is built and emitted regardless of this value.
     /// - Parameter workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
     /// - Parameter context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
     /// - Parameter dataProvider: A data provider to use when registering bundles
@@ -105,7 +109,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.targetDirectory = targetDirectory
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.emitDigest = emitDigest
-        self.buildIndex = buildIndex
+        self.buildLMDBIndex = buildIndex
         self.workspace = workspace
         self.injectedDataProvider = dataProvider
         self.fileManager = fileManager
@@ -330,8 +334,7 @@ public struct ConvertAction: Action, RecreatingContext {
         // An optional indexer, if indexing while converting is enabled.
         var indexer: Indexer? = nil
         
-        let shouldBuildIndex = buildIndex || FeatureFlags.current.isExperimentalJSONIndexEnabled
-        if shouldBuildIndex, let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
+        if let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
             // Create an index builder and prepare it to receive nodes.
             indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
         }
@@ -367,10 +370,9 @@ public struct ConvertAction: Action, RecreatingContext {
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
         if let indexer = indexer {
-            let indexerProblems = indexer.finalize(
-                emitJSON: FeatureFlags.current.isExperimentalJSONIndexEnabled,
-                emitLMDB: buildIndex
-            )
+            // Always emit a JSON representation of the index but only emit the LMDB
+            // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
+            let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
             allProblems.append(contentsOf: indexerProblems)
         }
 

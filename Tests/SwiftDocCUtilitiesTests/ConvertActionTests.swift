@@ -2298,8 +2298,6 @@ class ConvertActionTests: XCTestCase {
         let indexDirectory = targetDirectory.appendingPathComponent("index", isDirectory: true)
         let renderIndexJSON = indexDirectory.appendingPathComponent("index.json", isDirectory: false)
         
-        enableFeatureFlag(\.isExperimentalJSONIndexEnabled)
-        
         try action.performAndHandleResult()
         XCTAssertTrue(FileManager.default.directoryExists(atPath: indexDirectory.path))
         XCTAssertTrue(FileManager.default.fileExists(atPath: renderIndexJSON.path))
