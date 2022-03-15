@@ -111,13 +111,6 @@
         "displayName" : "Class",
         "identifier" : "class"
       },
-      "location" : {
-        "position" : {
-          "character" : 11,
-          "line" : 31
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "Bar",
         "subHeading" : [
@@ -341,13 +334,6 @@
         "displayName" : "Class Method",
         "identifier" : "type.method"
       },
-      "location" : {
-        "position" : {
-          "character" : 0,
-          "line" : 37
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "myStringFunction:error:",
         "navigator" : [
@@ -458,13 +444,6 @@
         "displayName" : "Enumeration",
         "identifier" : "enum"
       },
-      "location" : {
-        "position" : {
-          "character" : 8,
-          "line" : 18
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "Foo"
       },
@@ -537,13 +516,6 @@
       "kind" : {
         "displayName" : "Typedef",
         "identifier" : "typealias"
-      },
-      "location" : {
-        "position" : {
-          "character" : 8,
-          "line" : 18
-        },
-        "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
         "title" : "Foo",
@@ -628,13 +600,6 @@
         "displayName" : "Case",
         "identifier" : "enum.case"
       },
-      "location" : {
-        "position" : {
-          "character" : 4,
-          "line" : 21
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "first",
         "navigator" : [
@@ -681,13 +646,6 @@
       "kind" : {
         "displayName" : "Case",
         "identifier" : "enum.case"
-      },
-      "location" : {
-        "position" : {
-          "character" : 4,
-          "line" : 27
-        },
-        "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
         "title" : "fourth",
@@ -736,13 +694,6 @@
         "displayName" : "Case",
         "identifier" : "enum.case"
       },
-      "location" : {
-        "position" : {
-          "character" : 4,
-          "line" : 23
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "second",
         "navigator" : [
@@ -789,13 +740,6 @@
       "kind" : {
         "displayName" : "Case",
         "identifier" : "enum.case"
-      },
-      "location" : {
-        "position" : {
-          "character" : 4,
-          "line" : 25
-        },
-        "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
         "title" : "third",
@@ -844,13 +788,6 @@
         "displayName" : "Global Variable",
         "identifier" : "var"
       },
-      "location" : {
-        "position" : {
-          "character" : 25,
-          "line" : 10
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "_MixedLanguageFrameworkVersionNumber"
       },
@@ -890,13 +827,6 @@
       "kind" : {
         "displayName" : "Global Variable",
         "identifier" : "var"
-      },
-      "location" : {
-        "position" : {
-          "character" : 38,
-          "line" : 13
-        },
-        "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
         "title" : "_MixedLanguageFrameworkVersionString"
