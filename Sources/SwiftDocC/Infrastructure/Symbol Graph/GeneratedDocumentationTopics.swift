@@ -98,16 +98,24 @@ enum GeneratedDocumentationTopics {
         
         let node = try context.entity(with: parent)
         if let symbol = node.semantic as? Symbol {
-            if let matchIndex = symbol.automaticTaskGroups.firstIndex(where: { $0.title == defaultImplementationGroupTitle }) {
-                // Update the existing group
-                var inheritedSection = symbol.automaticTaskGroups[matchIndex]
-                inheritedSection.references.append(collectionReference)
-                inheritedSection.references.sort(by: \.lastPathComponent)
-                symbol.automaticTaskGroups[matchIndex] = inheritedSection
-            } else {
-                // Add a new group
-                let inheritedSection = AutomaticTaskGroupSection(title: defaultImplementationGroupTitle, references: [collectionReference], renderPositionPreference: .bottom)
-                symbol.automaticTaskGroups.append(inheritedSection)
+            for trait in node.availableVariantTraits {
+                guard let language = trait.interfaceLanguage,
+                      collectionReference.sourceLanguages.lazy.map(\.id).contains(language)
+                else {
+                    // If the collection is not available in this trait, don't curate it in this symbol's variant.
+                    continue
+                }
+                if let matchIndex = symbol.automaticTaskGroupsVariants[trait]?.firstIndex(where: { $0.title == defaultImplementationGroupTitle }) {
+                    // Update the existing group
+                    var inheritedSection = symbol.automaticTaskGroupsVariants[trait]![matchIndex]
+                    inheritedSection.references.append(collectionReference)
+                    inheritedSection.references.sort(by: \.lastPathComponent)
+                    symbol.automaticTaskGroupsVariants[trait]?[matchIndex] = inheritedSection
+                } else {
+                    // Add a new group
+                    let inheritedSection = AutomaticTaskGroupSection(title: defaultImplementationGroupTitle, references: [collectionReference], renderPositionPreference: .bottom)
+                    symbol.automaticTaskGroupsVariants[trait]?.append(inheritedSection)
+                }
             }
         } else {
             fatalError("createCollectionNode() should be used only to add nodes under symbols.")

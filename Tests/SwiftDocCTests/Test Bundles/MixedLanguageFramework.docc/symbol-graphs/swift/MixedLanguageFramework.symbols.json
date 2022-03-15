@@ -884,7 +884,306 @@
                 }
             ],
             "accessLevel": "public"
-        }
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "MixedLanguageProtocol",
+                "mixedLanguageMethod()"
+            ],
+            "names": {
+                "title": "mixedLanguageMethod()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "mixedLanguageMethod"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "attribute",
+                    "spelling": "@objc"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "mixedLanguageMethod"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "MixedLanguageClassConformingToProtocol",
+                "mixedLanguageMethod()"
+            ],
+            "names": {
+                "title": "mixedLanguageMethod()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "mixedLanguageMethod"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "TestFramework"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "mixedLanguageMethod"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.protocol",
+                "displayName": "Protocol"
+            },
+            "identifier": {
+                "precise": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "MixedLanguageProtocol"
+            ],
+            "names": {
+                "title": "MixedLanguageProtocol",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "MixedLanguageProtocol"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "protocol"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "MixedLanguageProtocol"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "attribute",
+                    "spelling": "@objc"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "protocol"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "MixedLanguageProtocol"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.class",
+                "displayName": "Class"
+            },
+            "identifier": {
+                "precise": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "MixedLanguageClassConformingToProtocol"
+            ],
+            "names": {
+                "title": "MixedLanguageClassConformingToProtocol",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "MixedLanguageClassConformingToProtocol"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "class"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "MixedLanguageClassConformingToProtocol"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "attribute",
+                    "spelling": "@objc"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "class"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "MixedLanguageClassConformingToProtocol"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+          "kind": {
+            "identifier": "swift.init",
+            "displayName": "Initializer"
+          },
+          "identifier": {
+            "precise": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
+            "interfaceLanguage": "swift"
+          },
+          "pathComponents": [
+            "MixedLanguageClassConformingToProtocol",
+            "init()"
+          ],
+          "names": {
+            "title": "init()",
+            "subHeading": [
+              {
+                "kind": "keyword",
+                "spelling": "init"
+              },
+              {
+                "kind": "text",
+                "spelling": "()"
+              }
+            ]
+          },
+          "declarationFragments": [
+            {
+              "kind": "keyword",
+              "spelling": "override"
+            },
+            {
+              "kind": "text",
+              "spelling": " "
+            },
+            {
+              "kind": "keyword",
+              "spelling": "init"
+            },
+            {
+              "kind": "text",
+              "spelling": "()"
+            }
+          ],
+          "accessLevel": "public"
+        },
     ],
     "relationships": [
         {
@@ -999,6 +1298,25 @@
             "kind": "memberOf",
             "source": "c:@E@Foo@second",
             "target": "c:@E@Foo"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+            "target": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol"
+        },
+        {
+            "kind": "memberOf",
+            "source": "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
+            "target": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+            "sourceOrigin": {
+                "identifier": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
+                "displayName": "MixedLanguageProtocol.mixedLanguageMethod()"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
+            "target": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol"
         }
     ]
 }

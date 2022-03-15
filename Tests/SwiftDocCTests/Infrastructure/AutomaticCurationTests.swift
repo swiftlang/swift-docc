@@ -376,6 +376,10 @@ class AutomaticCurationTests: XCTestCase {
             [
                 "Classes",
                 "/documentation/MixedLanguageFramework/Bar",
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
+                
+                "Protocols",
+                "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
                 
                 "Structures",
                 "/documentation/MixedLanguageFramework/Foo-swift.struct",
@@ -398,6 +402,10 @@ class AutomaticCurationTests: XCTestCase {
             [
                 "Classes",
                 "/documentation/MixedLanguageFramework/Bar",
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
+                
+                "Protocols",
+                "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
                 
                 "Variables",
                 

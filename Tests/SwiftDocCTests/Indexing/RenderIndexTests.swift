@@ -169,6 +169,62 @@ final class RenderIndexTests: XCTestCase {
                         "type": "class"
                       },
                       {
+                        "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol",
+                        "title": "MixedLanguageClassConformingToProtocol",
+                        "type": "class",
+                        "children": [
+                          {
+                            "title": "Instance Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "init",
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/init()",
+                            "type": "method"
+                          },
+                          {
+                            "title": "Default Implementations",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
+                            "title": "MixedLanguageProtocol Implementations",
+                            "type": "symbol",
+                            "children": [
+                              {
+                                "title": "Instance Methods",
+                                "type": "groupMarker"
+                              },
+                              {
+                                "title": "mixedLanguageMethod",
+                                "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguagemethod()",
+                                "type": "method"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Protocols",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/mixedlanguageprotocol",
+                        "title": "MixedLanguageProtocol",
+                        "type": "protocol",
+                        "children": [
+                          {
+                            "title": "Instance Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "mixedLanguageMethod",
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageprotocol/mixedlanguagemethod()",
+                            "type": "method"
+                          }
+                        ]
+                      },
+                      {
                         "title": "Variables",
                         "type": "groupMarker"
                       },
@@ -324,6 +380,62 @@ final class RenderIndexTests: XCTestCase {
                         "path": "\/documentation\/mixedlanguageframework\/bar",
                         "title": "Bar",
                         "type": "class"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol",
+                        "title": "MixedLanguageClassConformingToProtocol",
+                        "type": "class",
+                        "children": [
+                          {
+                            "title": "Initializers",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "init()",
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/init()",
+                            "type": "init"
+                          },
+                          {
+                            "title": "Default Implementations",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
+                            "title": "MixedLanguageProtocol Implementations",
+                            "type": "symbol",
+                            "children": [
+                              {
+                                "title": "Instance Methods",
+                                "type": "groupMarker"
+                              },
+                              {
+                                "title": "func mixedLanguageMethod()",
+                                "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguagemethod()",
+                                "type": "method"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Protocols",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/mixedlanguageprotocol",
+                        "title": "MixedLanguageProtocol",
+                        "type": "protocol",
+                        "children": [
+                          {
+                            "title": "Instance Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "func mixedLanguageMethod()",
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageprotocol/mixedlanguagemethod()",
+                            "type": "method"
+                          }
+                        ]
                       },
                       {
                         "title": "Structures",
