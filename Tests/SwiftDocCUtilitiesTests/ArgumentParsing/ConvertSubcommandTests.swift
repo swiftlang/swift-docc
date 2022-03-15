@@ -303,11 +303,11 @@ class ConvertSubcommandTests: XCTestCase {
             "--emit-lmdb-index",
         ])
         
-        XCTAssertEqual(convertOptions.emitLMDBIndex, true)
+        XCTAssertTrue(convertOptions.emitLMDBIndex)
         
         let action = try ConvertAction(fromConvertCommand: convertOptions)
         
-        XCTAssertEqual(action.buildLMDBIndex, true)
+        XCTAssertTrue(action.buildLMDBIndex)
     }
     
     func testWithoutBundle() throws {
