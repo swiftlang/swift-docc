@@ -608,6 +608,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                               tutorials: [SemanticResult<Tutorial>],
                               tutorialArticles: [SemanticResult<TutorialArticle>],
                               bundle: DocumentationBundle) {
+        
+        let sourceLanguages = soleRootModuleReference?.sourceLanguages ?? [.swift]
+
         // Technologies
         
         for technologyResult in technologies {
@@ -621,15 +624,30 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // Add to document map
                 documentLocationMap[url] = technologyResult.topicGraphNode.reference
                 
-                let sourceLanguage = SourceLanguage.swift
-                let node = DocumentationNode(reference: technologyResult.topicGraphNode.reference, kind: .technology, sourceLanguage: sourceLanguage, name: .conceptual(title: technology.intro.title), markup: technology.originalMarkup, semantic: technology)
-                documentationCache[technologyResult.topicGraphNode.reference] = node
+                let technologyReference = technologyResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
+                
+                let technologyNode = DocumentationNode(
+                    reference: technologyReference,
+                    kind: .technology,
+                    sourceLanguage: Self.defaultLanguage(in: sourceLanguages),
+                    availableSourceLanguages: sourceLanguages,
+                    name: .conceptual(title: technology.intro.title),
+                    markup: technology.originalMarkup,
+                    semantic: technology
+                )
+                documentationCache[technologyReference] = technologyNode
+                
+                // Update the reference in the topic graph with the technology's available languages.
+                topicGraph.updateReference(
+                    technologyResult.topicGraphNode.reference,
+                    newReference: technologyReference
+                )
 
                 let anonymousVolumeName = "$volume"
                 
                 for volume in technology.volumes {
                     // Graph node: Volume
-                    let volumeReference = node.reference.appendingPath(volume.name ?? anonymousVolumeName)
+                    let volumeReference = technologyNode.reference.appendingPath(volume.name ?? anonymousVolumeName)
                     let volumeNode = TopicGraph.Node(reference: volumeReference, kind: .volume, source: .file(url: url), title: volume.name ?? anonymousVolumeName)
                     topicGraph.addNode(volumeNode)
                     
@@ -640,7 +658,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         // Graph node: Module
                         let baseNodeReference: ResolvedTopicReference
                         if volume.name == nil {
-                            baseNodeReference = node.reference
+                            baseNodeReference = technologyNode.reference
                         } else {
                             baseNodeReference = volumeNode.reference
                         }
@@ -678,8 +696,24 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // Add to document map
                 documentLocationMap[url] = tutorialResult.topicGraphNode.reference
                 
-                let tutorialNode = DocumentationNode(reference: tutorialResult.topicGraphNode.reference, kind: .tutorial, sourceLanguage: tutorialResult.topicGraphNode.reference.sourceLanguage, name: .conceptual(title: tutorial.intro.title), markup: tutorial.originalMarkup, semantic: tutorial)
-                documentationCache[tutorialResult.topicGraphNode.reference] = tutorialNode
+                let tutorialReference = tutorialResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
+                
+                let tutorialNode = DocumentationNode(
+                    reference: tutorialReference,
+                    kind: .tutorial,
+                    sourceLanguage: Self.defaultLanguage(in: sourceLanguages),
+                    availableSourceLanguages: sourceLanguages,
+                    name: .conceptual(title: tutorial.intro.title),
+                    markup: tutorial.originalMarkup,
+                    semantic: tutorial
+                )
+                documentationCache[tutorialReference] = tutorialNode
+                
+                // Update the reference in the topic graph with the tutorial's available languages.
+                topicGraph.updateReference(
+                    tutorialResult.topicGraphNode.reference,
+                    newReference: tutorialReference
+                )
             }
         }
         
@@ -695,9 +729,25 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             
                 // Add to document map
                 documentLocationMap[url] = articleResult.topicGraphNode.reference
+
+                let articleReference = articleResult.topicGraphNode.reference.withSourceLanguages(sourceLanguages)
                 
-                let articleNode = DocumentationNode(reference: articleResult.topicGraphNode.reference, kind: .tutorialArticle, sourceLanguage: articleResult.topicGraphNode.reference.sourceLanguage, name: .conceptual(title: article.title ?? ""), markup: article.originalMarkup, semantic: article)
-                documentationCache[articleResult.topicGraphNode.reference] = articleNode
+                let articleNode = DocumentationNode(
+                    reference: articleReference,
+                    kind: .tutorialArticle,
+                    sourceLanguage: Self.defaultLanguage(in: sourceLanguages),
+                    availableSourceLanguages: sourceLanguages,
+                    name: .conceptual(title: article.title ?? ""),
+                    markup: article.originalMarkup,
+                    semantic: article
+                )
+                documentationCache[articleReference] = articleNode
+                
+                // Update the reference in the topic graph with the article's available languages.
+                topicGraph.updateReference(
+                    articleResult.topicGraphNode.reference,
+                    newReference: articleReference
+                )
             }
         }
         
@@ -1722,13 +1772,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // If available source languages are provided and it contains Swift, use Swift as the default language of
         // the article.
-        let defaultSourceLanguage = availableSourceLanguages.map { availableSourceLanguages in
-            if availableSourceLanguages.contains(.swift) {
-                return .swift
-            } else {
-                return availableSourceLanguages.first ?? .swift
-            }
-        } ?? SourceLanguage.swift
+        let defaultSourceLanguage = defaultLanguage(in: availableSourceLanguages)
         
         let reference = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,
@@ -2417,13 +2461,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             ///
             /// Adds any non-resolving reference to the `allCandidateURLs` collection.
             func attemptToResolve(_ reference: ResolvedTopicReference) -> TopicReferenceResolutionResult? {
-                if topicGraph.nodeWithReference(reference) != nil {
-                    let resolved = ResolvedTopicReference(
-                        bundleIdentifier: referenceBundleIdentifier,
-                        path: reference.url.path,
-                        fragment: reference.fragment,
-                        sourceLanguages: reference.sourceLanguages
-                    )
+                if let resolved = topicGraph.nodeWithReference(reference)?.reference {
                     // If resolving a symbol link, only match symbol nodes.
                     if isCurrentlyResolvingSymbolLink && !(documentationCache[resolved]?.semantic is Symbol) {
                         allCandidateURLs.append(reference.url)
@@ -2697,6 +2735,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 self.topicGraph.dump(startingAt: node, keyPath: \.reference.absoluteString)
             }
             .joined()
+    }
+    
+    private static func defaultLanguage(in sourceLanguages: Set<SourceLanguage>?) -> SourceLanguage {
+        sourceLanguages.map { sourceLanguages in
+            if sourceLanguages.contains(.swift) {
+                return .swift
+            } else {
+                return sourceLanguages.first ?? .swift
+            }
+        } ?? SourceLanguage.swift
     }
 }
 

@@ -16,7 +16,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
     func testBaseRenderNodeFromMixedLanguageFramework() throws {
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
-        for documentationNode in context.documentationCache.values {
+        for documentationNode in context.documentationCache.values where documentationNode.kind.isSymbol {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
             
             let expectedSwiftOnlyUSRs: Set<String> = [
@@ -61,6 +61,16 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 )
             }
         }
+        
+        for documentationNode in context.documentationCache.values
+            where !documentationNode.kind.isSymbol && documentationNode.kind.isPage
+        {
+            XCTAssertEqual(
+                documentationNode.availableSourceLanguages,
+                [.swift, .objectiveC],
+                "Expected non-symbol page to be available in both Swift and Objective-C: \(documentationNode.name)"
+            )
+        }
     }
     
     func testOutputsMultiLanguageRenderNodes() throws {
@@ -103,7 +113,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
         XCTAssertEqual(
             Set(
                 outputConsumer.renderNodes(withInterfaceLanguages: ["swift", "occ"])
-                    .map { $0.metadata.externalID }
+                    .map { $0.metadata.externalID ?? $0.metadata.title }
             ),
             [
                 "MixedLanguageFramework",
@@ -114,6 +124,11 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "c:@E@Foo@third",
                 "c:objc(cs)Bar",
                 "c:objc(cs)Bar(cm)myStringFunction:error:",
+                "Article",
+                "APICollection",
+                "MixedLanguageFramework Tutorials",
+                "Tutorial Article",
+                "Tutorial",
             ]
         )
     }
@@ -130,19 +145,29 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             symbolKind: "module",
             title: "MixedLanguageFramework",
             navigatorTitle: nil,
-            abstract: "No overview available.",
+            abstract: "This framework is available to both Swift and Objective-C clients.",
             declarationTokens: nil,
             discussionSection: nil,
             topicSectionIdentifiers: [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct",
+                "doc://org.swift.MixedLanguageFramework/tutorials/TutorialOverview",
+                "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/TutorialArticle",
+                "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/Tutorial",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct",
             ],
             referenceTitles: [
+                "APICollection",
+                "Article",
                 "Bar",
                 "Foo",
                 "MixedLanguageFramework",
+                "MixedLanguageFramework Tutorials",
                 "SwiftOnlyStruct",
+                "Tutorial",
+                "Tutorial Article",
                 "_MixedLanguageFrameworkVersionNumber",
                 "_MixedLanguageFrameworkVersionString"
             ],
@@ -166,20 +191,30 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             symbolKind: "module",
             title: "MixedLanguageFramework",
             navigatorTitle: nil,
-            abstract: "No overview available.",
+            abstract: "This framework is available to both Swift and Objective-C clients.",
             declarationTokens: nil,
             discussionSection: nil,
             topicSectionIdentifiers: [
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
+                "doc://org.swift.MixedLanguageFramework/tutorials/TutorialOverview",
+                "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/TutorialArticle",
+                "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/Tutorial",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
+                "APICollection",
+                "Article",
                 "Bar",
                 "Foo",
                 "MixedLanguageFramework",
+                "MixedLanguageFramework Tutorials",
                 "SwiftOnlyStruct",
+                "Tutorial",
+                "Tutorial Article",
                 "_MixedLanguageFrameworkVersionNumber",
                 "_MixedLanguageFrameworkVersionString"
             ],
@@ -410,7 +445,74 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "typedef enum Foo : NSString {\n    ...\n} Foo;",
             ],
             failureMessage: { fieldName in
-                "Swift variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
+                "Objective-C variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
+            }
+        )
+    }
+    
+    func testAPICollectionInMixedLanguageFramework() throws {
+        enableFeatureFlag(\.isExperimentalObjectiveCSupportEnabled)
+        
+        let outputConsumer = try mixedLanguageFrameworkConsumer()
+        
+        let articleRenderNode = try outputConsumer.renderNode(withTitle: "APICollection")
+        
+        assertExpectedContent(
+            articleRenderNode,
+            sourceLanguage: "swift",
+            title: "APICollection",
+            navigatorTitle: nil,
+            abstract: "This is an API collection.",
+            declarationTokens: nil,
+            discussionSection: nil,
+            topicSectionIdentifiers: [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct"
+            ],
+            seeAlsoSectionIdentifiers: [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+            ],
+            referenceTitles: [
+                "Article",
+                "MixedLanguageFramework",
+                "SwiftOnlyStruct",
+                "_MixedLanguageFrameworkVersionNumber",
+            ],
+            referenceFragments: [
+                "struct SwiftOnlyStruct",
+            ],
+            failureMessage: { fieldName in
+                "Swift variant of 'APICollection' article has unexpected content for '\(fieldName)'."
+            }
+        )
+        
+        let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: articleRenderNode)
+        
+        assertExpectedContent(
+            objectiveCVariantNode,
+            sourceLanguage: "occ",
+            title: "APICollection",
+            navigatorTitle: nil,
+            abstract: "This is an API collection.",
+            declarationTokens: nil,
+            discussionSection: nil,
+            topicSectionIdentifiers: [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber"
+            ],
+            seeAlsoSectionIdentifiers: [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+            ],
+            referenceTitles: [
+                "Article",
+                "MixedLanguageFramework",
+                "SwiftOnlyStruct",
+                "_MixedLanguageFrameworkVersionNumber",
+            ],
+            referenceFragments: [
+                "struct SwiftOnlyStruct",
+            ],
+            failureMessage: { fieldName in
+                "Objective-C variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
             }
         )
     }
@@ -425,6 +527,7 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
         declarationTokens expectedDeclarationTokens: [String]?,
         discussionSection expectedDiscussionSection: [String]?,
         topicSectionIdentifiers expectedTopicSectionIdentifiers: [String],
+        seeAlsoSectionIdentifiers expectedSeeAlsoSectionIdentifiers: [String]? = nil,
         referenceTitles expectedReferenceTitles: [String],
         referenceFragments expectedReferenceFragments: [String],
         failureMessage failureMessageForField: (_ field: String) -> String,
@@ -498,6 +601,16 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             line: line
         )
         
+        if let expectedSeeAlsoSectionIdentifiers = expectedSeeAlsoSectionIdentifiers {
+            XCTAssertEqual(
+                renderNode.seeAlsoSections.flatMap(\.identifiers),
+                expectedSeeAlsoSectionIdentifiers,
+                failureMessageForField("see also sections identifiers"),
+                file: file,
+                line: line
+            )
+        }
+        
         XCTAssertEqual(
             renderNode.references.map(\.value).compactMap { reference in
                 (reference as? TopicRenderReference)?.title
@@ -553,17 +666,26 @@ private class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
 }
 
 extension TestRenderNodeOutputConsumer {
-    func renderNodes(withInterfaceLanguages interfaceLanguages: Set<String>) -> [RenderNode] {
+    func renderNodes(withInterfaceLanguages interfaceLanguages: Set<String>?) -> [RenderNode] {
         renderNodes.sync { renderNodes in
             renderNodes.filter { renderNode in
-                let actualInterfaceLanguages: [String] = renderNode.variants?.flatMap { variant in
+                guard let interfaceLanguages = interfaceLanguages else {
+                    // If there are no interface languages set, return the nodes with no variants.
+                    return renderNode.variants == nil
+                }
+                
+                guard let variants = renderNode.variants else {
+                    return false
+                }
+                
+                let actualInterfaceLanguages: [String] = variants.flatMap { variant in
                     variant.traits.compactMap { trait in
                         guard case .interfaceLanguage(let interfaceLanguage) = trait else {
                             return nil
                         }
                         return interfaceLanguage
                     }
-                } ?? []
+                }
                 
                 return Set(actualInterfaceLanguages) == interfaceLanguages
             }

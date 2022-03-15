@@ -1,0 +1,12 @@
+@Tutorials(name: "MixedLanguageFramework Tutorials") {
+    @Intro(title: "MixedLanguageFramework Tutorials") {}
+    
+    @Chapter(name: "Chapter") {
+        @Image(source: "image.png", alt: "Alt text")
+        
+        @TutorialReference(tutorial: "doc:Tutorial")
+        @TutorialReference(tutorial: "doc:TutorialArticle")
+    }
+}
+
+<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->

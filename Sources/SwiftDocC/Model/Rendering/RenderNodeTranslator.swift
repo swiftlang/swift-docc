@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -128,6 +128,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         node.hierarchy = hierarchy.hierarchy
         node.metadata.category = technology.name
+        
+        let documentationNode = try! context.entity(with: identifier)
+        node.variants = variants(for: documentationNode)
         
         node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
                 
@@ -358,6 +361,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.categoryPathComponent = identifier.url.lastPathComponent
         node.metadata.estimatedTime = totalEstimatedDuration(for: technology)
         node.metadata.role = contentRenderer.role(for: .technology).rawValue
+        
+        let documentationNode = try! context.entity(with: identifier)
+        node.variants = variants(for: documentationNode)
 
         var intro = visitIntro(technology.intro) as! IntroRenderSection
         if let firstTutorial = self.firstTutorial(ofTechnology: identifier) {
@@ -616,47 +622,75 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.primaryContentSections.append(ContentRenderSection(kind: .content, content: discussionContent, heading: title))
         }
         
-        if let topics = article.topics, !topics.taskGroups.isEmpty {
-            // Don't set an eyebrow as collections and groups don't have one; append the authored Topics section
-            node.topicSections.append(contentsOf: renderGroups(topics, allowExternalLinks: false, contentCompiler: &contentCompiler))
-        }
-        
-        // Place "top" rendering preference automatic task groups
-        // after any user-defined task groups but before automatic curation.
-        if !article.automaticTaskGroups.isEmpty {
-            node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(article.automaticTaskGroups.filter({ $0.renderPositionPreference == .top }), contentCompiler: &contentCompiler))
-        }
-
-        // If there are no manually curated topics, and no automatic groups, try generating automatic groups by child kind.
-        if (article.topics == nil || article.topics?.taskGroups.isEmpty == true) &&
-            article.automaticTaskGroups.isEmpty {
-            // If there are no authored child topics in docs or markdown,
-            // inspect the topic graph, find this node's children, and
-            // for the ones found curate them automatically in task groups.
-            // Automatic groups are named after the child's kind, e.g.
-            // "Methods", "Variables", etc.
-            let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
-            let groups = try! AutomaticCuration.topics(for: documentationNode, withTrait: nil, context: context)
-                .compactMap({ group -> AutomaticCuration.TaskGroup? in
-                    // Remove references that have been already curated.
-                    let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
-                    // Remove groups that have no uncurated references
-                    guard !newReferences.isEmpty else { return nil }
-
-                    return (title: group.title, references: newReferences)
-                })
+        node.topicSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
+            from: documentationNode.availableVariantTraits,
+            fallbackDefaultValue: []
+        ) { trait in
+            var sections = [TaskGroupRenderSection]()
             
-            // Collect all child topic references.
-            contentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
-            // Add the final groups to the node.
-            node.topicSections.append(contentsOf: groups.map(TaskGroupRenderSection.init(taskGroup:)))
-        }
+            if let topics = article.topics, !topics.taskGroups.isEmpty {
+                // Don't set an eyebrow as collections and groups don't have one; append the authored Topics section
+                sections.append(
+                    contentsOf: renderGroups(
+                        topics,
+                        allowExternalLinks: false,
+                        allowedTraits: [trait],
+                        contentCompiler: &contentCompiler
+                    )
+                )
+            }
+            
+            // Place "top" rendering preference automatic task groups
+            // after any user-defined task groups but before automatic curation.
+            if !article.automaticTaskGroups.isEmpty {
+                sections.append(
+                    contentsOf: renderAutomaticTaskGroupsSection(
+                        article.automaticTaskGroups.filter { $0.renderPositionPreference == .top },
+                        contentCompiler: &contentCompiler
+                    )
+                )
+            }
+            
+            // If there are no manually curated topics, and no automatic groups, try generating automatic groups by
+            // child kind.
+            if (article.topics == nil || article.topics?.taskGroups.isEmpty == true) &&
+                article.automaticTaskGroups.isEmpty {
+                // If there are no authored child topics in docs or markdown,
+                // inspect the topic graph, find this node's children, and
+                // for the ones found curate them automatically in task groups.
+                // Automatic groups are named after the child's kind, e.g.
+                // "Methods", "Variables", etc.
+                let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
+                let groups = try! AutomaticCuration.topics(for: documentationNode, withTrait: nil, context: context)
+                    .compactMap({ group -> AutomaticCuration.TaskGroup? in
+                        // Remove references that have been already curated.
+                        let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
+                        // Remove groups that have no uncurated references
+                        guard !newReferences.isEmpty else { return nil }
+                        
+                        return (title: group.title, references: newReferences)
+                    })
+                
+                // Collect all child topic references.
+                contentCompiler.collectedTopicReferences.append(contentsOf: groups.flatMap(\.references))
+                // Add the final groups to the node.
+                sections.append(contentsOf: groups.map(TaskGroupRenderSection.init(taskGroup:)))
+            }
+            
+            // Place "bottom" rendering preference automatic task groups
+            // after any user-defined task groups but before automatic curation.
+            if !article.automaticTaskGroups.isEmpty {
+                sections.append(
+                    contentsOf: renderAutomaticTaskGroupsSection(
+                        article.automaticTaskGroups.filter { $0.renderPositionPreference == .bottom },
+                        contentCompiler: &contentCompiler
+                    )
+                )
+            }
+            
+            return sections
+        } ?? .init(defaultValue: [])
         
-        // Place "bottom" rendering preference automatic task groups
-        // after any user-defined task groups but before automatic curation.
-        if !article.automaticTaskGroups.isEmpty {
-            node.topicSections.append(contentsOf: renderAutomaticTaskGroupsSection(article.automaticTaskGroups.filter({ $0.renderPositionPreference == .bottom }), contentCompiler: &contentCompiler))
-        }
 
         if node.topicSections.isEmpty {
             // Set an eyebrow for articles
@@ -664,22 +698,44 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         node.metadata.role = contentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
 
-        // Authored See Also section
-        if let seeAlso = article.seeAlso, !seeAlso.taskGroups.isEmpty {
-            node.seeAlsoSections.append(contentsOf: renderGroups(seeAlso, allowExternalLinks: true, contentCompiler: &contentCompiler))
-        }
-        
-        // Automatic See Also section
-        if let seeAlso = try! AutomaticCuration.seeAlso(for: documentationNode, context: context, bundle: bundle, renderContext: renderContext, renderer: contentRenderer) {
-            contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
-            node.seeAlsoSections.append(TaskGroupRenderSection(
-                title: seeAlso.title,
-                abstract: nil,
-                discussion: nil,
-                identifiers: seeAlso.references.map { $0.absoluteString },
-                generated: true
-            ))
-        }
+        node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
+            from: documentationNode.availableVariantTraits,
+            fallbackDefaultValue: []
+        ) { trait in
+            var seeAlsoSections = [TaskGroupRenderSection]()
+            
+            // Authored See Also section
+            if let seeAlso = article.seeAlso, !seeAlso.taskGroups.isEmpty {
+                seeAlsoSections.append(
+                    contentsOf: renderGroups(
+                        seeAlso,
+                        allowExternalLinks: true,
+                        allowedTraits: [trait],
+                        contentCompiler: &contentCompiler
+                    )
+                )
+            }
+            
+            // Automatic See Also section
+            if let seeAlso = try! AutomaticCuration.seeAlso(
+                for: documentationNode,
+                context: context,
+                bundle: bundle,
+                renderContext: renderContext,
+                renderer: contentRenderer
+            ) {
+                contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
+                seeAlsoSections.append(TaskGroupRenderSection(
+                    title: seeAlso.title,
+                    abstract: nil,
+                    discussion: nil,
+                    identifiers: seeAlso.references.map { $0.absoluteString },
+                    generated: true
+                ))
+            }
+            
+            return seeAlsoSections
+        } ?? .init(defaultValue: [])
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
@@ -716,6 +772,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // and produce the list of modules for the render hierarchy to display in the tutorial local navigation.
         node.hierarchy = hierarchy.hierarchy
         
+        let documentationNode = try! context.entity(with: identifier)
+        node.variants = variants(for: documentationNode)
         
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         
@@ -811,7 +869,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     /// Renders a list of topic groups.
-    private mutating func renderGroups(_ topics: GroupedSection, allowExternalLinks: Bool, contentCompiler: inout RenderContentCompiler) -> [TaskGroupRenderSection] {
+    private mutating func renderGroups(
+        _ topics: GroupedSection,
+        allowExternalLinks: Bool,
+        allowedTraits: Set<DocumentationDataVariantsTrait>,
+        contentCompiler: inout RenderContentCompiler
+    ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
             
             let abstractContent = group.abstract.map {
@@ -821,6 +884,22 @@ public struct RenderNodeTranslator: SemanticVisitor {
             let discussion = group.discussion.map { discussion -> ContentRenderSection in
                 let discussionContent = visitMarkupContainer(MarkupContainer(discussion.content)) as! [RenderBlockContent]
                 return ContentRenderSection(kind: .content, content: discussionContent, heading: "Discussion")
+            }
+            
+            /// Returns whether the topic with the given identifier is available in one of the traits in `allowedTraits`.
+            func isTopicAvailableInAllowedTraits(identifier topicIdentifier: String) -> Bool {
+                guard let reference = contentCompiler.collectedTopicReferences[topicIdentifier] else {
+                    // If there's no reference in `contentCompiler.collectedTopicReferences`, the reference refers to
+                    // a non-documentation URL (e.g., 'https://' URL), in which case it is available in all traits.
+                    return true
+                }
+                
+                return reference.sourceLanguages
+                    .contains { sourceLanguage in
+                        allowedTraits.contains { trait in
+                            trait.interfaceLanguage == sourceLanguage.id
+                        }
+                    }
             }
             
             let taskGroupRenderSection = TaskGroupRenderSection(
@@ -838,29 +917,43 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         }
                         
                         if let referenceInlines = contentCompiler.visitLink(link) as? [RenderInlineContent],
-                            let renderReference = referenceInlines.first(where: { inline in
-                            switch inline {
-                            case .reference(_,_,_,_):
-                                return true
-                            default:
-                                return false
-                            }
-                        }),
-                           case let RenderInlineContent.reference(identifier: identifier, isActive: _, overridingTitle: _, overridingTitleInlineContent: _) = renderReference {
-                            return identifier.identifier
+                           let renderReference = referenceInlines.first(where: { inline in
+                               switch inline {
+                               case .reference(_,_,_,_):
+                                   return true
+                               default:
+                                   return false
+                               }
+                           }),
+                           case let RenderInlineContent.reference(
+                             identifier: identifier,
+                             isActive: _,
+                             overridingTitle: _,
+                             overridingTitleInlineContent: _
+                           ) = renderReference
+                        {
+                            return isTopicAvailableInAllowedTraits(identifier: identifier.identifier)
+                                ? identifier.identifier : nil
                         }
                     case let link as SymbolLink:
                         if let referenceInlines = contentCompiler.visitSymbolLink(link) as? [RenderInlineContent],
-                            let renderReference = referenceInlines.first(where: { inline in
-                            switch inline {
-                            case .reference:
-                                return true
-                            default:
-                                return false
-                            }
-                        }),
-                           case let RenderInlineContent.reference(identifier: identifier, isActive: _, overridingTitle: _, overridingTitleInlineContent: _) = renderReference {
-                            return identifier.identifier
+                           let renderReference = referenceInlines.first(where: { inline in
+                               switch inline {
+                               case .reference:
+                                   return true
+                               default:
+                                   return false
+                               }
+                           }),
+                           case let RenderInlineContent.reference(
+                             identifier: identifier,
+                             isActive: _,
+                             overridingTitle: _,
+                             overridingTitleInlineContent: _
+                           ) = renderReference
+                        {
+                            return isTopicAvailableInAllowedTraits(identifier: identifier.identifier)
+                                ? identifier.identifier : nil
                         }
                     default: break
                     }
@@ -1011,7 +1104,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     DeclarationsSectionTranslator(),
                     ReturnsSectionTranslator(),
                     ParametersSectionTranslator(),
-                    DiscussionSectionTranslator()
+                    DiscussionSectionTranslator(),
                 ]
             )
         )
@@ -1098,7 +1191,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
             var sections = [TaskGroupRenderSection]()
             if let topics = topics, !topics.taskGroups.isEmpty {
                 sections.append(
-                    contentsOf: renderGroups(topics, allowExternalLinks: false, contentCompiler: &contentCompiler)
+                    contentsOf: renderGroups(
+                        topics,
+                        allowExternalLinks: false,
+                        allowedTraits: [trait],
+                        contentCompiler: &contentCompiler
+                    )
                 )
             }
             
@@ -1199,7 +1297,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             if let seeAlso = symbol.seeAlsoVariants[trait] {
                 seeAlsoSections.append(
-                    contentsOf: renderGroups(seeAlso, allowExternalLinks: true, contentCompiler: &contentCompiler)
+                    contentsOf: renderGroups(
+                        seeAlso,
+                        allowExternalLinks: true,
+                        allowedTraits: [trait],
+                        contentCompiler: &contentCompiler
+                    )
                 )
             }
             

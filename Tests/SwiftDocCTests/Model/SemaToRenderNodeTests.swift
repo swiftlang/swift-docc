@@ -35,7 +35,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         
-        XCTAssertNil(renderNode.variants)
+        XCTAssertEqual(renderNode.variants?.flatMap(\.traits), [.interfaceLanguage("swift")])
         
         do {
             // Comment content should never make it into the render node JSON.
@@ -423,7 +423,7 @@ class SemaToRenderNodeTests: XCTestCase {
         try assertTutorialWithPath("/tutorials/Test-Bundle/TestTutorial2", hasBackground: "introposter2.png")
     }
     
-    func testCompileArticle() throws {
+    func testCompileTutorialArticle() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
         
@@ -432,6 +432,8 @@ class SemaToRenderNodeTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
         let renderNode = translator.visit(article) as! RenderNode
+        
+        XCTAssertEqual(renderNode.variants?.flatMap(\.traits), [.interfaceLanguage("swift")])
 
         guard renderNode.sections.count == 3 else {
             XCTFail("Unexpected section count.")
@@ -581,6 +583,8 @@ class SemaToRenderNodeTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
         let renderNode = translator.visit(technology) as! RenderNode
+        
+        XCTAssertEqual(renderNode.variants?.flatMap(\.traits), [.interfaceLanguage("swift")])
         
         XCTAssertEqual(renderNode.sections.count, 3, "Unexpected section count")
         

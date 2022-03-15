@@ -17,6 +17,9 @@ public enum VariantPatchOperation<Value: Codable> {
     /// - Parameter value: The value to use in the replacement.
     case replace(value: Value)
     
+    /// An addition operation.
+    ///
+    /// - Parameter value: The value to use in the addition.
     case add(value: Value)
     
     /// A removal operation.
@@ -29,6 +32,24 @@ public enum VariantPatchOperation<Value: Codable> {
             return .replace
         case .add(_):
             return .add
+        case .remove:
+            return .remove
+        }
+    }
+    
+    /// Returns a new patch operation with its value transformed using the given closure.
+    ///
+    /// If the patch operation doesn't have a value—for example, if it's a removal operation—the operation is returned unmodified.
+    func map<TransformedValue>(
+        _ transform: (Value) -> TransformedValue
+    ) -> VariantPatchOperation<TransformedValue> {
+        switch self {
+        case .replace(let value):
+            return VariantPatchOperation<TransformedValue>.replace(value: transform(value))
+            
+        case .add(let value):
+            return VariantPatchOperation<TransformedValue>.add(value: transform(value))
+            
         case .remove:
             return .remove
         }

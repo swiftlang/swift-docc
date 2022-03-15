@@ -352,17 +352,14 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.kind, .typeMethod)
             
             XCTAssertEqual(summary.abstract, [.text("Does a string function.")])
-            XCTAssertEqual(summary.taskGroups, [
-                .init(
-                    title: "Custom",
-                    identifiers: [
-                        summary.referenceURL
-                            .deletingLastPathComponent() // myStringFunction:error:
-                            .deletingLastPathComponent() // Bar
-                            .appendingPathComponent("Foo-occ.typealias").absoluteString,
-                    ]
-                )
-            ])
+            XCTAssertEqual(
+                summary.taskGroups,
+                [],
+                """
+                Expected no task groups for the Swift documentation because the symbol \
+                it curates (``Foo-occ.typealias``) is available in Objective-C only.
+                """
+            )
             
             XCTAssertEqual(summary.availableLanguages.sorted(by: \.id), [.objectiveC, .swift])
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
@@ -405,7 +402,20 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(variant.path, nil)
             XCTAssertEqual(variant.usr, nil)
             XCTAssertEqual(variant.kind, nil)
-            XCTAssertEqual(variant.taskGroups, nil)
+            XCTAssertEqual(
+                variant.taskGroups,
+                [
+                    .init(
+                        title: "Custom",
+                        identifiers: [
+                            summary.referenceURL
+                                .deletingLastPathComponent() // myStringFunction:error:
+                                .deletingLastPathComponent() // Bar
+                                .appendingPathComponent("Foo-occ.typealias").absoluteString,
+                        ]
+                    )
+                ]
+            )
         }
     }
     
