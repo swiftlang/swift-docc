@@ -193,31 +193,26 @@ mkdir .build/swift-docc-symbol-graphs \
 The best place to get started with Swift-DocC-Render is with the
 instructions in the [project's README](https://github.com/apple/swift-docc-render).
 
-If you have Xcode 13 installed, you can use the version of Swift-DocC-Render
-that comes included in Xcode (instead of building a copy locally) with:
+If you have Xcode 13 or later installed, you can use the version of Swift-DocC-Render
+that comes included in Xcode with:
 
 ```sh
 export DOCC_HTML_DIR="$(dirname $(xcrun --find docc))/../share/docc/render"
 ```
 
-Alternatively, you can clone Swift-DocC-Render and build a local
-copy of the renderer with these instructions:
-
-> **Note:** Swift-DocC-Render 
-> requires [Node.js](https://nodejs.org/en/download/) v14.
+Alternatively, you can clone the 
+[Swift-DocC-Render-Artifact repository](https://github.com/apple/swift-docc-render-artifact)
+and use a recent pre-built copy of the renderer:
 
 ```sh
-git clone https://github.com/apple/swift-docc-render.git
-cd swift-docc-render
-npm install
-npm run build
+git clone https://github.com/apple/swift-docc-render-artifact.git
 ```
 
 Then point the `DOCC_HTML_DIR` environment variable
-to the generated `/dist` folder.
+to the repository's `/dist` folder.
 
 ```sh
-export DOCC_HTML_DIR="/path/to/swift-docc-render/dist"
+export DOCC_HTML_DIR="/path/to/swift-docc-render-artifact/dist"
 ```
 
 ### 3. Preview your documentation
@@ -239,7 +234,7 @@ You should now see the following in your terminal:
 
 ```
 Input: ~/Developer/swift-docc/Sources/SwiftDocC/SwiftDocC.docc
-Template: ~/Developer/swift-docc-render/dist
+Template: ~/Developer/swift-docc-render-artifact/dist
 ========================================
 Starting Local Preview Server
    Address: http://localhost:8000/documentation/swiftdocc
