@@ -58,6 +58,29 @@
       "source" : "c:objc(cs)Bar(cm)myStringFunction:error:",
       "target" : "c:objc(cs)Bar",
       "targetFallback" : null
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
+      "target": "c:objc(cs)MixedLanguageClassConformingToProtocol",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
+      "target": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol",
+      "targetFallback": null
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+      "target": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
+      "target": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+      "targetFallback": null
     }
   ],
   "symbols" : [
@@ -110,13 +133,6 @@
       "kind" : {
         "displayName" : "Class",
         "identifier" : "class"
-      },
-      "location" : {
-        "position" : {
-          "character" : 11,
-          "line" : 31
-        },
-        "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
         "title" : "Bar",
@@ -341,13 +357,6 @@
         "displayName" : "Class Method",
         "identifier" : "type.method"
       },
-      "location" : {
-        "position" : {
-          "character" : 0,
-          "line" : 37
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "myStringFunction:error:",
         "navigator" : [
@@ -458,13 +467,6 @@
         "displayName" : "Enumeration",
         "identifier" : "enum"
       },
-      "location" : {
-        "position" : {
-          "character" : 8,
-          "line" : 18
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "Foo"
       },
@@ -537,13 +539,6 @@
       "kind" : {
         "displayName" : "Typedef",
         "identifier" : "typealias"
-      },
-      "location" : {
-        "position" : {
-          "character" : 8,
-          "line" : 18
-        },
-        "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
         "title" : "Foo",
@@ -628,13 +623,6 @@
         "displayName" : "Case",
         "identifier" : "enum.case"
       },
-      "location" : {
-        "position" : {
-          "character" : 4,
-          "line" : 21
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "first",
         "navigator" : [
@@ -681,13 +669,6 @@
       "kind" : {
         "displayName" : "Case",
         "identifier" : "enum.case"
-      },
-      "location" : {
-        "position" : {
-          "character" : 4,
-          "line" : 27
-        },
-        "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
         "title" : "fourth",
@@ -736,13 +717,6 @@
         "displayName" : "Case",
         "identifier" : "enum.case"
       },
-      "location" : {
-        "position" : {
-          "character" : 4,
-          "line" : 23
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "second",
         "navigator" : [
@@ -789,13 +763,6 @@
       "kind" : {
         "displayName" : "Case",
         "identifier" : "enum.case"
-      },
-      "location" : {
-        "position" : {
-          "character" : 4,
-          "line" : 25
-        },
-        "uri" : "MixedLanguageFramework.h"
       },
       "names" : {
         "title" : "third",
@@ -844,13 +811,6 @@
         "displayName" : "Global Variable",
         "identifier" : "var"
       },
-      "location" : {
-        "position" : {
-          "character" : 25,
-          "line" : 10
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "_MixedLanguageFrameworkVersionNumber"
       },
@@ -891,18 +851,293 @@
         "displayName" : "Global Variable",
         "identifier" : "var"
       },
-      "location" : {
-        "position" : {
-          "character" : 38,
-          "line" : 13
-        },
-        "uri" : "MixedLanguageFramework.h"
-      },
       "names" : {
         "title" : "_MixedLanguageFrameworkVersionString"
       },
       "pathComponents" : [
         "_MixedLanguageFrameworkVersionString"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "@interface"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MixedLanguageClassConformingToProtocol"
+        },
+        {
+          "kind": "text",
+          "spelling": " : "
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:objc(cs)NSObject",
+          "spelling": "NSObject"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "class"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MixedLanguageClassConformingToProtocol"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "MixedLanguageClassConformingToProtocol"
+          }
+        ],
+        "title": "MixedLanguageClassConformingToProtocol"
+      },
+      "pathComponents": [
+        "MixedLanguageClassConformingToProtocol"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "- ("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:v",
+          "spelling": "void"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        },
+        {
+          "kind": "identifier",
+          "spelling": "mixedLanguageMethod"
+        }
+      ],
+      "functionSignature": {
+        "parameters": [],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:v",
+            "spelling": "void"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "method"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "mixedLanguageMethod"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "text",
+            "spelling": "- "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "mixedLanguageMethod"
+          }
+        ],
+        "title": "mixedLanguageMethod"
+      },
+      "pathComponents": [
+        "MixedLanguageClassConformingToProtocol",
+        "mixedLanguageMethod"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "@protocol"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "MixedLanguageProtocol"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol"
+      },
+      "kind": {
+        "displayName": "Protocol",
+        "identifier": "protocol"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MixedLanguageProtocol"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "identifier",
+            "spelling": "MixedLanguageProtocol"
+          }
+        ],
+        "title": "MixedLanguageProtocol"
+      },
+      "pathComponents": [
+        "MixedLanguageProtocol"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "- ("
+        },
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "c:v",
+          "spelling": "void"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        },
+        {
+          "kind": "identifier",
+          "spelling": "mixedLanguageMethod"
+        }
+      ],
+      "functionSignature": {
+        "parameters": [],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "c:v",
+            "spelling": "void"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "method"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "mixedLanguageMethod"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "text",
+            "spelling": "- "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "mixedLanguageMethod"
+          }
+        ],
+        "title": "mixedLanguageMethod"
+      },
+      "pathComponents": [
+        "MixedLanguageProtocol",
+        "mixedLanguageMethod"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "- ("
+        },
+        {
+          "kind": "keyword",
+          "spelling": "id"
+        },
+        {
+          "kind": "text",
+          "spelling": ")"
+        },
+        {
+          "kind": "identifier",
+          "spelling": "init"
+        }
+      ],
+      "functionSignature": {
+        "parameters": [],
+        "returns": [
+          {
+            "kind": "keyword",
+            "spelling": "id"
+          }
+        ]
+      },
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init"
+      },
+      "kind": {
+        "displayName": "Instance Method",
+        "identifier": "method"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "init"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "text",
+            "spelling": "- "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "init"
+          }
+        ],
+        "title": "init"
+      },
+      "pathComponents": [
+        "MixedLanguageClassConformingToProtocol",
+        "init"
       ]
     }
   ]

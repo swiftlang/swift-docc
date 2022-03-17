@@ -78,6 +78,47 @@ final class RenderIndexTests: XCTestCase {
                         "type": "var"
                       },
                       {
+                        "title": "Some Swift-only APIs, some Objective-C–only APIs, some mixed",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "\/documentation\/mixedlanguageframework\/_mixedlanguageframeworkversionstring",
+                        "title": "_MixedLanguageFrameworkVersionString",
+                        "type": "var"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/bar",
+                        "title": "Bar",
+                        "type": "class",
+                        "children": [
+                          {
+                            "title": "Type Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "path": "/documentation/mixedlanguageframework/bar/mystringfunction(_:)",
+                            "title": "myStringFunction:error: (navigator title)",
+                            "type": "method",
+                            "children": [
+                              {
+                                "title": "Custom",
+                                "type": "groupMarker"
+                              },
+                              {
+                                "title": "Foo",
+                                "path": "/documentation/mixedlanguageframework/foo-occ.typealias",
+                                "type": "typealias"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Article",
+                        "path": "/documentation/mixedlanguageframework/article",
+                        "type": "article"
+                      },
+                      {
                         "title": "Tutorials",
                         "type": "groupMarker"
                       },
@@ -142,40 +183,60 @@ final class RenderIndexTests: XCTestCase {
                         "type": "groupMarker"
                       },
                       {
+                        "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol",
+                        "title": "MixedLanguageClassConformingToProtocol",
+                        "type": "class",
                         "children": [
                           {
-                            "title": "Type Methods",
+                            "title": "Instance Methods",
                             "type": "groupMarker"
                           },
                           {
+                            "title": "init",
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/init()",
+                            "type": "method"
+                          },
+                          {
+                            "title": "Default Implementations",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
+                            "title": "MixedLanguageProtocol Implementations",
+                            "type": "symbol",
                             "children": [
                               {
-                                "title": "Custom",
+                                "title": "Instance Methods",
                                 "type": "groupMarker"
                               },
                               {
-                                "path": "\/documentation\/mixedlanguageframework\/foo-occ.typealias",
-                                "title": "Foo",
-                                "type": "typealias"
+                                "title": "mixedLanguageMethod",
+                                "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguagemethod()",
+                                "type": "method"
                               }
-                            ],
-                            "path": "\/documentation\/mixedlanguageframework\/bar\/mystringfunction(_:)",
-                            "title": "myStringFunction:error: (navigator title)",
-                            "type": "method"
+                            ]
                           }
-                        ],
-                        "path": "\/documentation\/mixedlanguageframework\/bar",
-                        "title": "Bar",
-                        "type": "class"
+                        ]
                       },
                       {
-                        "title": "Variables",
+                        "title": "Protocols",
                         "type": "groupMarker"
                       },
                       {
-                        "path": "\/documentation\/mixedlanguageframework\/_mixedlanguageframeworkversionstring",
-                        "title": "_MixedLanguageFrameworkVersionString",
-                        "type": "var"
+                        "path": "/documentation/mixedlanguageframework/mixedlanguageprotocol",
+                        "title": "MixedLanguageProtocol",
+                        "type": "protocol",
+                        "children": [
+                          {
+                            "title": "Instance Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "mixedLanguageMethod",
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageprotocol/mixedlanguagemethod()",
+                            "type": "method"
+                          }
+                        ]
                       },
                       {
                         "title": "Enumerations",
@@ -233,6 +294,36 @@ final class RenderIndexTests: XCTestCase {
                         "path": "\/documentation\/mixedlanguageframework\/swiftonlystruct",
                         "title": "SwiftOnlyStruct",
                         "type": "struct"
+                      },
+                      {
+                        "title": "Some Swift-only APIs, some Objective-C–only APIs, some mixed",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "title": "SwiftOnlyClass",
+                        "path": "/documentation/mixedlanguageframework/swiftonlyclass",
+                        "type": "class"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/bar",
+                        "title": "Bar",
+                        "type": "class",
+                        "children": [
+                          {
+                            "title": "Type Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "class func myStringFunction(String) throws -> String",
+                            "path": "/documentation/mixedlanguageframework/bar/mystringfunction(_:)",
+                            "type": "method"
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Article",
+                        "path": "/documentation/mixedlanguageframework/article",
+                        "type": "article"
                       },
                       {
                         "title": "Tutorials",
@@ -310,20 +401,60 @@ final class RenderIndexTests: XCTestCase {
                         "type": "groupMarker"
                       },
                       {
+                        "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol",
+                        "title": "MixedLanguageClassConformingToProtocol",
+                        "type": "class",
                         "children": [
                           {
-                            "title": "Type Methods",
+                            "title": "Initializers",
                             "type": "groupMarker"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/bar\/mystringfunction(_:)",
-                            "title": "class func myStringFunction(String) throws -> String",
+                            "title": "init()",
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/init()",
+                            "type": "init"
+                          },
+                          {
+                            "title": "Default Implementations",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguageprotocol-implementations",
+                            "title": "MixedLanguageProtocol Implementations",
+                            "type": "symbol",
+                            "children": [
+                              {
+                                "title": "Instance Methods",
+                                "type": "groupMarker"
+                              },
+                              {
+                                "title": "func mixedLanguageMethod()",
+                                "path": "/documentation/mixedlanguageframework/mixedlanguageclassconformingtoprotocol/mixedlanguagemethod()",
+                                "type": "method"
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "title": "Protocols",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/mixedlanguageprotocol",
+                        "title": "MixedLanguageProtocol",
+                        "type": "protocol",
+                        "children": [
+                          {
+                            "title": "Instance Methods",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "func mixedLanguageMethod()",
+                            "path": "/documentation/mixedlanguageframework/mixedlanguageprotocol/mixedlanguagemethod()",
                             "type": "method"
                           }
-                        ],
-                        "path": "\/documentation\/mixedlanguageframework\/bar",
-                        "title": "Bar",
-                        "type": "class"
+                        ]
                       },
                       {
                         "title": "Structures",

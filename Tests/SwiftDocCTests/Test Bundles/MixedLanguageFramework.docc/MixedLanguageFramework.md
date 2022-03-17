@@ -12,6 +12,13 @@ This framework is available to both Swift and Objective-C clients.
 
 - <doc:_MixedLanguageFrameworkVersionNumber>
 
+### Some Swift-only APIs, some Objective-C–only APIs, some mixed
+
+- ``SwiftOnlyClass``
+- <doc:_MixedLanguageFrameworkVersionString>
+- ``Bar``
+- <doc:Article>
+
 ### Tutorials
 
 - <doc:TutorialOverview>

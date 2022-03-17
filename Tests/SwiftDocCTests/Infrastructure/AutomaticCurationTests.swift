@@ -376,11 +376,16 @@ class AutomaticCurationTests: XCTestCase {
             [
                 "Classes",
                 "/documentation/MixedLanguageFramework/Bar",
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
+                "/documentation/MixedLanguageFramework/SwiftOnlyClass",
+
+                "Protocols",
+                "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
                 
                 "Structures",
                 "/documentation/MixedLanguageFramework/Foo-swift.struct",
                 
-                // SwiftOnlyStruct is manually curated.
+                // SwiftOnlyStruct is manually curated in APICollection.md.
                 // "/documentation/MixedLanguageFramework/SwiftOnlyStruct",
             ]
         )
@@ -398,10 +403,14 @@ class AutomaticCurationTests: XCTestCase {
             [
                 "Classes",
                 "/documentation/MixedLanguageFramework/Bar",
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
+                
+                "Protocols",
+                "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
                 
                 "Variables",
                 
-                // _MixedLanguageFrameworkVersionNumber is manually curated.
+                // _MixedLanguageFrameworkVersionNumber is manually curated in APICollection.md.
                 // "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
                 
                 "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",

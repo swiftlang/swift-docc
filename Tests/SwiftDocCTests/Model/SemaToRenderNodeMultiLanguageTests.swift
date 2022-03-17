@@ -10,6 +10,7 @@
 
 import Foundation
 @testable import SwiftDocC
+import SymbolKit
 import XCTest
 
 class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
@@ -22,6 +23,9 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             let expectedSwiftOnlyUSRs: Set<String> = [
                 // Swift-only struct - ``SwiftOnlyStruct``:
                 "s:22MixedLanguageFramework15SwiftOnlyStructV",
+                
+                // Swift-only class - ``SwiftOnlyClass``:
+                "s:22MixedLanguageFramework15SwiftOnlyClassV",
                 
                 // Member of Swift-only struct - ``SwiftOnlyStruct/tada()``:
                 "s:22MixedLanguageFramework15SwiftOnlyStructV4tadayyF",
@@ -85,6 +89,9 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 // Swift-only struct - ``SwiftOnlyStruct``:
                 "s:22MixedLanguageFramework15SwiftOnlyStructV",
                 
+                // Swift-only class - ``SwiftOnlyClass``:
+                "s:22MixedLanguageFramework15SwiftOnlyClassV",
+                
                 // Member of Swift-only struct - ``SwiftOnlyStruct/tada()``:
                 "s:22MixedLanguageFramework15SwiftOnlyStructV4tadayyF",
                 
@@ -124,6 +131,13 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "c:@E@Foo@third",
                 "c:objc(cs)Bar",
                 "c:objc(cs)Bar(cm)myStringFunction:error:",
+                "c:@M@TestFramework@objc(pl)MixedLanguageProtocol",
+                "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol",
+                "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
+                "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
+                "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
+             
+                "MixedLanguageProtocol Implementations",
                 "Article",
                 "APICollection",
                 "MixedLanguageFramework Tutorials",
@@ -150,12 +164,16 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             discussionSection: nil,
             topicSectionIdentifiers: [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyStruct",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyClass",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
                 "doc://org.swift.MixedLanguageFramework/tutorials/TutorialOverview",
                 "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/TutorialArticle",
                 "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/Tutorial",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageProtocol",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
@@ -163,8 +181,11 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "Article",
                 "Bar",
                 "Foo",
+                "MixedLanguageClassConformingToProtocol",
                 "MixedLanguageFramework",
                 "MixedLanguageFramework Tutorials",
+                "MixedLanguageProtocol",
+                "SwiftOnlyClass",
                 "SwiftOnlyStruct",
                 "Tutorial",
                 "Tutorial Article",
@@ -173,6 +194,9 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             ],
             referenceFragments: [
                 "class Bar",
+                "class MixedLanguageClassConformingToProtocol",
+                "class SwiftOnlyClass",
+                "protocol MixedLanguageProtocol",
                 "struct Foo",
                 "struct SwiftOnlyStruct",
             ],
@@ -196,13 +220,16 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             discussionSection: nil,
             topicSectionIdentifiers: [
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
                 "doc://org.swift.MixedLanguageFramework/tutorials/TutorialOverview",
                 "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/TutorialArticle",
                 "doc://org.swift.MixedLanguageFramework/tutorials/MixedLanguageFramework/Tutorial",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageProtocol",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
             ],
             referenceTitles: [
@@ -210,8 +237,11 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
                 "Article",
                 "Bar",
                 "Foo",
+                "MixedLanguageClassConformingToProtocol",
                 "MixedLanguageFramework",
                 "MixedLanguageFramework Tutorials",
+                "MixedLanguageProtocol",
+                "SwiftOnlyClass",
                 "SwiftOnlyStruct",
                 "Tutorial",
                 "Tutorial Article",
@@ -220,6 +250,9 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             ],
             referenceFragments: [
                 "@interface Bar : NSObject",
+                "MixedLanguageClassConformingToProtocol",
+                "MixedLanguageProtocol",
+                "class SwiftOnlyClass",
                 "struct Foo",
                 "struct SwiftOnlyStruct",
             ],
@@ -514,6 +547,140 @@ class SemaToRenderNodeMixedLanguageTests: ExperimentalObjectiveCTestCase {
             failureMessage: { fieldName in
                 "Objective-C variant of 'MyArticle' article has unexpected content for '\(fieldName)'."
             }
+        )
+    }
+    
+    func testGeneratedImplementationsCollectionIsCuratedInAllAvailableLanguages() throws {
+        let outputConsumer = try mixedLanguageFrameworkConsumer()
+        
+        let protocolRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageClassConformingToProtocol")
+        
+        XCTAssertEqual(
+            protocolRenderNode.topicSections.flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+            ]
+        )
+        
+        let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: protocolRenderNode)
+        
+        XCTAssertEqual(
+            objectiveCVariantNode.topicSections.flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+            ]
+        )
+    }
+    
+    func testGeneratedImplementationsCollectionDoesNotCurateInAllUnavailableLanguages() throws {
+        let outputConsumer = try mixedLanguageFrameworkConsumer { bundleURL in
+            // Update the clang symbol graph to remove the protocol method requirement, so that it's effectively
+            // available in Swift only.
+            
+            let clangSymbolGraphLocation = bundleURL
+                .appendingPathComponent("symbol-graphs")
+                .appendingPathComponent("clang")
+                .appendingPathComponent("MixedLanguageFramework.symbols.json")
+            
+            var clangSymbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: clangSymbolGraphLocation))
+            
+            clangSymbolGraph.symbols = clangSymbolGraph.symbols.filter { preciseIdentifier, _ in
+                !preciseIdentifier.contains("mixedLanguageMethod")
+            }
+            
+            try JSONEncoder().encode(clangSymbolGraph).write(to: clangSymbolGraphLocation)
+        }
+        
+        let protocolRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageClassConformingToProtocol")
+        
+        XCTAssertEqual(
+            protocolRenderNode.topicSections.flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
+            ]
+        )
+        
+        let objectiveCVariantNode = try renderNodeApplyingObjectiveCVariantOverrides(to: protocolRenderNode)
+        
+        XCTAssertEqual(
+            objectiveCVariantNode.topicSections.flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
+                // Not the "MixedLanguageProtocol Implementations" page, because it only contains Swift-only symbols.
+            ]
+        )
+    }
+
+    func testAutomaticSeeAlsoOnlyShowsAPIsAvailableInParentsLanguageForSymbol() throws {
+        let outputConsumer = try mixedLanguageFrameworkConsumer()
+        
+        // Swift-only symbol.
+        XCTAssertEqual(
+            try outputConsumer.renderNode(withTitle: "SwiftOnlyClass")
+                .seeAlsoSections
+                .flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+            ]
+        )
+        
+        // Objective-C–only symbol.
+        XCTAssertEqual(
+            try outputConsumer.renderNode(withTitle: "_MixedLanguageFrameworkVersionString")
+                .seeAlsoSections
+                .flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+            ]
+        )
+        
+        // Swift variant of mixed-language symbol.
+        XCTAssertEqual(
+            try outputConsumer.renderNode(withTitle: "Bar")
+                .seeAlsoSections
+                .flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyClass",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+            ]
+        )
+        
+        // Objective-C variant of mixed-language symbol.
+        XCTAssertEqual(
+            try renderNodeApplyingObjectiveCVariantOverrides(to: outputConsumer.renderNode(withTitle: "Bar"))
+                .seeAlsoSections
+                .flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Article",
+            ]
+        )
+        
+        // Swift variant of mixed-language article.
+        XCTAssertEqual(
+            try outputConsumer.renderNode(withTitle: "Article")
+                .seeAlsoSections
+                .flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SwiftOnlyClass",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
+            ]
+        )
+        
+        // Objective-C variant of mixed-language article.
+        XCTAssertEqual(
+            try renderNodeApplyingObjectiveCVariantOverrides(to: outputConsumer.renderNode(withTitle: "Article"))
+                .seeAlsoSections
+                .flatMap(\.identifiers),
+            [
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar",
+            ]
         )
     }
     
