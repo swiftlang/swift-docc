@@ -58,4 +58,10 @@ class SnippetTests: XCTestCase {
         XCTAssertNotNil(snippet)
         XCTAssertTrue(problems.isEmpty)
     }
+
+    func testNoTopLevelPageForSnippetModule() throws {
+        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        XCTAssertEqual(3, context.rootModules.count)
+        XCTAssertFalse(context.rootModules.contains { $0.path == "/documentation/Test" })
+    }
 }
