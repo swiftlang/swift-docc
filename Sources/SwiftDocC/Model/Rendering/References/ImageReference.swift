@@ -74,9 +74,7 @@ public struct ImageReference: MediaReference, URLReference {
         var result = [VariantProxy]()
         // sort assets by URL path for deterministic sorting of images
         asset.variants.sorted(by: \.value.path).forEach { (key, value) in
-            // If a scheme is present it means it's an absolute URL
-            let isAbsoluteWebURL = !value.isFileURL && value.scheme?.isEmpty == false
-            let url = isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent)
+            let url = value.isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent)
             result.append(VariantProxy(url: url, traits: key))
         }
         try container.encode(result, forKey: .variants)
