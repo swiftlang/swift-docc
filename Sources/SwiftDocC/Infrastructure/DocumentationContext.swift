@@ -2622,14 +2622,21 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             return localAsset
         }
         
-        if let externallyResolvedAsset = fallbackAssetResolvers[bundleIdentifier].flatMap({
-            $0.resolve(assetNamed: name, bundleIdentifier: bundleIdentifier)
-        }) {
-            assetManagers[bundleIdentifier, default: DataAssetManager()].register(
-                dataAsset: externallyResolvedAsset, forName: name)
+        if let fallbackAssetResolver = fallbackAssetResolvers[bundleIdentifier],
+           let externallyResolvedAsset = fallbackAssetResolver.resolve(assetNamed: name, bundleIdentifier: bundleIdentifier) {
+            assetManagers[bundleIdentifier, default: DataAssetManager()]
+                .register(dataAsset: externallyResolvedAsset, forName: name)
             return externallyResolvedAsset
         }
         
+        // If no fallbackAssetResolver is set, try to treat it as external media link
+        if let externalMediaLink = URL(string: name),
+           externalMediaLink.isAbsoluteWebURL {
+            var asset = DataAsset()
+            asset.context = .display
+            asset.register(externalMediaLink, with: DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard))
+            return asset
+        }
         return nil
     }
     
