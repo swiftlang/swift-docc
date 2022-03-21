@@ -58,21 +58,11 @@ This archive contains _render JSON_ files, which fully describe the contents
 of a documentation page and can be processed by a renderer such as
 [Swift-DocC-Render](https://github.com/apple/swift-docc-render).
 
-For more in-depth technical information about Swift-DocC, you
-can build and preview the project's technical documentation 
-from the command line with
+For more in-depth technical information about Swift-DocC, please the
+project's technical documentation:
 
-```sh
-bin/preview-docs
-```
-
-> **Note:** The `preview-docs` script expects the `DOCC_HTML_DIR` environment
-> variable to be set with the path to a Swift-DocC renderer. See the
-> [Using `docc` to build and preview documentation](#using-docc-to-build-and-preview-documentation)
-> section below for details.
-
-Alternatively, you can open the package in Xcode 13 and select the "Build Documentation"
-button in the Product menu to view the documentation in Xcode's documentation window.
+- [`SwiftDocC` framework documentation](https://apple.github.io/swift-docc/documentation/swiftdocc/)
+- [`SwiftDocCUtilities` framework documentation](https://apple.github.io/swift-docc/documentation/swiftdoccutilities/)
 
 ### Related Projects
 
