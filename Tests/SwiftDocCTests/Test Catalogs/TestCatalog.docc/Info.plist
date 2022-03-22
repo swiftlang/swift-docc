@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>TestBundle</string>
+	<string>TestCatalog</string>
 	<key>CFBundleDisplayName</key>
 	<string>Test Catalog</string>
 	<key>CFBundleIdentifier</key>

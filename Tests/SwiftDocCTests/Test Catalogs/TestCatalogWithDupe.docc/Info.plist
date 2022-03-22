@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>TestBundle</string>
+	<string>TestCatalog</string>
 	<key>CFBundleDisplayName</key>
-	<string>Test Bundle</string>
+	<string>Test Catalog</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.swift.docc.example</string>
 	<key>CFBundleIconFile</key>
