@@ -1,0 +1,998 @@
+{
+  "abstract" : [
+    {
+      "text" : "A focused semantic analysis of a ",
+      "type" : "text"
+    },
+    {
+      "code" : "BlockDirective",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", recording problems and producing a result.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC16SemanticAnalysisP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "SemanticAnalysis"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "SemanticAnalysis"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "SemanticAnalysis"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "SemanticAnalysis"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "A semantic analysis should check focus on the smallest meaningful aspect of the incoming ",
+              "type" : "text"
+            },
+            {
+              "code" : "BlockDirective",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "This eases testing and helps prevent a tangle of dependencies and side effects. For every analysis, there",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "should be some number of tests for its robustness.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "For example, if an argument is required and is expected to be an integer, a semantic analysis",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "would check only that argument, attempt to convert it to an integer, and return it as the result.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A ",
+                  "type" : "text"
+                },
+                {
+                  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis",
+                  "isActive" : true,
+                  "type" : "reference"
+                },
+                {
+                  "text" : " should not mutate outside state or directly depend on the results",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "of another analysis. This prevents runaway performance problems and strange bugs.",
+                  "type" : "text"
+                },
+                {
+                  "text" : " ",
+                  "type" : "text"
+                },
+                {
+                  "text" : "It also makes it more amenable to parallelization should the need arise.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "important",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/ExtractAll",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/ExtractAllMarkup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasAtLeastOne",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasAtMostOne",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasContent",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOne",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneImageOrVideoMedia",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneMedia",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneOf",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneUnorderedList",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownArguments",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownDirectives",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlySequentialHeadings"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result"
+      ],
+      "title" : "Associated Types"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/analyze(_:children:source:for:in:problems:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/semanticanalysis"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/ExtractAll": {
+  "abstract" : [
+    {
+      "text" : "Separates ",
+      "type" : "text"
+    },
+    {
+      "code" : "children",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " into directives whose names match ",
+      "type" : "text"
+    },
+    {
+      "code" : "Child.directiveName",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " and those remaining, attempting to convert extracted children to the semantic ",
+      "type" : "text"
+    },
+    {
+      "code" : "Child",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ExtractAll"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/ExtractAll",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ExtractAll"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.ExtractAll",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/extractall"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/ExtractAllMarkup": {
+  "abstract" : [
+    {
+      "text" : "Separates ",
+      "type" : "text"
+    },
+    {
+      "code" : "children",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " into markup elements that are of a specific type without performing any further analysis.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ExtractAllMarkup"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/ExtractAllMarkup",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ExtractAllMarkup"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.ExtractAllMarkup",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/extractallmarkup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasAtLeastOne": {
+  "abstract" : [
+    {
+      "text" : "Checks to see if a parent directive has at least one child directive of a specified type. If so, return those that match and those that don’t.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasAtLeastOne"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasAtLeastOne",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasAtLeastOne"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasAtLeastOne",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasatleastone"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasAtMostOne": {
+  "abstract" : [
+    {
+      "text" : "Checks to see if a parent directive has at most one child directive of a specified type. If so, return that child and the remainder.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasAtMostOne"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasAtMostOne",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasAtMostOne"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasAtMostOne",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasatmostone"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasContent": {
+  "abstract" : [
+    {
+      "text" : "Checks to see if a directive has child markup content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasContent"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasContent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasContent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasContent",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hascontent"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasExactlyOne": {
+  "abstract" : [
+    {
+      "text" : "Checks a parent directive for the presence of exactly one child directive to be converted to a type ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ". If so, return that child and the remainder.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOne"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOne",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOne"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasExactlyOne",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasexactlyone"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasExactlyOneImageOrVideoMedia": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneImageOrVideoMedia"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneImageOrVideoMedia",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneImageOrVideoMedia"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasExactlyOneImageOrVideoMedia",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasexactlyoneimageorvideomedia"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasExactlyOneMedia": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneMedia"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneMedia",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneMedia"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasExactlyOneMedia",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasexactlyonemedia"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasExactlyOneOf": {
+  "abstract" : [
+    {
+      "text" : "Checks a parent directive for the presence of exactly one of two child directives—but not both—to be converted to a type ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ". If so, return that child and the remainder.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneOf"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneOf",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneOf"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasExactlyOneOf",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasexactlyoneof"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasExactlyOneUnorderedList": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneUnorderedList"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneUnorderedList",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneUnorderedList"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasExactlyOneUnorderedList",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasexactlyoneunorderedlist"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasOnlyKnownArguments": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasOnlyKnownArguments"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownArguments",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasOnlyKnownArguments"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasOnlyKnownArguments",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasonlyknownarguments"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasOnlyKnownDirectives": {
+  "abstract" : [
+    {
+      "text" : "Checks for any directives that are not valid as direct children of the parent directive.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasOnlyKnownDirectives"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlyKnownDirectives",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasOnlyKnownDirectives"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasOnlyKnownDirectives",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasonlyknowndirectives"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasOnlySequentialHeadings": {
+  "abstract" : [
+    {
+      "text" : "Checks for any direct heading children that do not meet the minimum heading level (",
+      "type" : "text"
+    },
+    {
+      "code" : "startingFromLevel",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ") or that exceed the level of a previous ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "valid",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " heading by more than one.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasOnlySequentialHeadings"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasOnlySequentialHeadings",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasOnlySequentialHeadings"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasOnlySequentialHeadings",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasonlysequentialheadings"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticAnalysis": {
+  "abstract" : [
+    {
+      "text" : "A focused semantic analysis of a ",
+      "type" : "text"
+    },
+    {
+      "code" : "BlockDirective",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", recording problems and producing a result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SemanticAnalysis"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SemanticAnalysis"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SemanticAnalysis",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticanalysis"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticAnalysis/Result": {
+  "abstract" : [
+    {
+      "text" : "The result of the analysis.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "associatedtype"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "Result",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticanalysis\/result"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticAnalysis/analyze(_:children:source:for:in:problems:)": {
+  "abstract" : [
+    {
+      "text" : "Perform the analysis on a directive, collect problems, and attempt to return a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " if required.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "analyze"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Children"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
+      "text" : "BlockDirective"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "children"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Children"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "source"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "for"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "in"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20DocumentationContextC",
+      "text" : "DocumentationContext"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "problems"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
+      "text" : "Problem"
+    },
+    {
+      "kind" : "text",
+      "text" : "]) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/analyze(_:children:source:for:in:problems:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "analyze(_:children:source:for:in:problems:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticanalysis\/analyze(_:children:source:for:in:problems:)"
+}
+}
+}

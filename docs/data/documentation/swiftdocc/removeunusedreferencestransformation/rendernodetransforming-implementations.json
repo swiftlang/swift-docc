@@ -1,0 +1,171 @@
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation\/RenderNodeTransforming-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "RenderNodeTransforming Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation\/then(_:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/removeunusedreferencestransformation\/rendernodetransforming-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PersistingDocumentation": {
+  "abstract" : [
+    {
+      "text" : "Save compiled documentation to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Persisting Documentation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/persistingdocumentation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RemoveUnusedReferencesTransformation": {
+  "abstract" : [
+    {
+      "text" : "A transformation that removes unused references from a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RemoveUnusedReferencesTransformation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RemoveUnusedReferencesTransformation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RemoveUnusedReferencesTransformation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/removeunusedreferencestransformation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RemoveUnusedReferencesTransformation/then(_:)": {
+  "abstract" : [
+    {
+      "text" : "Combines this transformation with another transformation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "then"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22RenderNodeTransformingP",
+      "text" : "RenderNodeTransforming"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC35RenderNodeTransformationCompositionV",
+      "text" : "RenderNodeTransformationComposition"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RemoveUnusedReferencesTransformation\/then(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "then(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/removeunusedreferencestransformation\/then(_:)"
+}
+}
+}

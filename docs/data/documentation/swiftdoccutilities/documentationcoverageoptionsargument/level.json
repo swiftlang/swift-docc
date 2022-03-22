@@ -1,0 +1,278 @@
+{
+  "abstract" : [
+    {
+      "text" : "The desired level of documentation coverage. Options are ",
+      "type" : "text"
+    },
+    {
+      "code" : "none",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", ",
+      "type" : "text"
+    },
+    {
+      "code" : "brief",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", and ",
+      "type" : "text"
+    },
+    {
+      "code" : "detailed",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ". The default is ",
+      "type" : "text"
+    },
+    {
+      "code" : "none",
+      "type" : "codeVoice"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument\/level"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:18SwiftDocCUtilities36DocumentationCoverageOptionsArgumentV5level0aB1C0dE5LevelOvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "level"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC26DocumentationCoverageLevelO",
+        "text" : "DocumentationCoverageLevel"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocCUtilities"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "level"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "level"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC26DocumentationCoverageLevelO",
+              "text" : "DocumentationCoverageLevel"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/level"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocCUtilities",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCoverageOptionsArgument": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates the arguments needed to enable the documentation coverage feature.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptionsArgument"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptionsArgument"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptionsArgument",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationCoverageOptionsArgument/level": {
+  "abstract" : [
+    {
+      "text" : "The desired level of documentation coverage. Options are ",
+      "type" : "text"
+    },
+    {
+      "code" : "none",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", ",
+      "type" : "text"
+    },
+    {
+      "code" : "brief",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", and ",
+      "type" : "text"
+    },
+    {
+      "code" : "detailed",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ". The default is ",
+      "type" : "text"
+    },
+    {
+      "code" : "none",
+      "type" : "codeVoice"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "level"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC26DocumentationCoverageLevelO",
+      "text" : "DocumentationCoverageLevel"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationCoverageOptionsArgument\/level",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "level",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/documentationcoverageoptionsargument\/level"
+}
+}
+}

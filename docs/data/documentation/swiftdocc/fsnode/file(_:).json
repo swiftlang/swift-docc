@@ -1,0 +1,292 @@
+{
+  "abstract" : [
+    {
+      "text" : "A file in a filesystem.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/file(_:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC6FSNodeO4fileyA2C4FileVcACmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "file"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC6FSNodeO",
+        "text" : "FSNode"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC6FSNodeO4FileV",
+        "text" : "File"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "FSNode.file(_:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "file"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC6FSNodeO",
+              "text" : "FSNode"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/File",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC6FSNodeO4FileV",
+              "text" : "File"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/fsnode\/file(_:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
+  "abstract" : [
+    {
+      "text" : "Learn how to explore a documentation workspace and discover bundles.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Bundle Discovery",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FSNode": {
+  "abstract" : [
+    {
+      "text" : "An element in a virtual filesystem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FSNode"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FSNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FSNode",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fsnode"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FSNode/File": {
+  "abstract" : [
+    {
+      "text" : "A file in a virtual file system",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "File"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/File",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "File"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FSNode.File",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fsnode\/file"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FSNode/file(_:)": {
+  "abstract" : [
+    {
+      "text" : "A file in a filesystem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "file"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6FSNodeO",
+      "text" : "FSNode"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6FSNodeO4FileV",
+      "text" : "File"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FSNode\/file(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "FSNode.file(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fsnode\/file(_:)"
+}
+}
+}

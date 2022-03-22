@@ -1,0 +1,796 @@
+{
+  "abstract" : [
+    {
+      "text" : "A reference to a resource.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC15RenderReferenceP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "RenderReference"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "RenderReference"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "RenderReference"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "RenderReference"
+            },
+            {
+              "kind" : "text",
+              "text" : " : "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Se",
+              "text" : "Decodable"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SE",
+              "text" : "Encodable"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The reference can refer to a resource within a documentation bundle (e.g., another symbol) or an external resource (e.g., a web URL).",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "Check the conforming types to browse the different kinds of references.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MediaReference"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherited By",
+      "type" : "inheritedBy"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileTypeReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedRenderReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceCache",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/URLReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType"
+      ],
+      "title" : "References"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference\/identifier",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference\/type"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/renderreference"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DownloadReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to a resource that can be downloaded.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DownloadReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DownloadReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DownloadReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DownloadReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/downloadreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to a file resource.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filereference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileTypeReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to a type of file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileTypeReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileTypeReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileTypeReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileTypeReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/filetypereference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ImageReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to an image.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ImageReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ImageReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ImageReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/imagereference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to a URL.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MediaReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to media, such as an image or a video.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MediaReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MediaReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MediaReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MediaReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/mediareference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to a resource.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReference/identifier": {
+  "abstract" : [
+    {
+      "text" : "The identifier of the reference.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25RenderReferenceIdentifierV",
+      "text" : "RenderReferenceIdentifier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference\/identifier",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "identifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreference\/identifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReference/type": {
+  "abstract" : [
+    {
+      "text" : "The type of the reference.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "type"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19RenderReferenceTypeO",
+      "text" : "RenderReferenceType"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReference\/type",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "type",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreference\/type"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceCache": {
+  "abstract" : [
+    {
+      "text" : "A thread-safe cache for encoded render references.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderReferenceCache"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceCache",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderReferenceCache"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderReferenceCache",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreferencecache"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceType": {
+  "abstract" : [
+    {
+      "text" : "The type of a reference.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderReferenceType"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderReferenceType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderReferenceType",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreferencetype"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicRenderReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to another page of documentation in the current context.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TopicRenderReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicRenderReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TopicRenderReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TopicRenderReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicrenderreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/URLReference": {
+  "abstract" : [
+    {
+      "text" : "A reference that has a file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "URLReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/URLReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "URLReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "URLReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/urlreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/UnresolvedRenderReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to another page which cannot be resolved.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UnresolvedRenderReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UnresolvedRenderReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UnresolvedRenderReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UnresolvedRenderReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/unresolvedrenderreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VideoReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to a video.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VideoReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VideoReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VideoReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/videoreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/XcodeRequirementReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to a version of Xcode that users of your documentation must use.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "XcodeRequirementReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirementReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "XcodeRequirementReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "XcodeRequirementReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/xcoderequirementreference"
+}
+}
+}

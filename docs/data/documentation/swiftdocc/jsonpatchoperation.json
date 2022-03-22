@@ -1,0 +1,1289 @@
+{
+  "abstract" : [
+    {
+      "text" : "A patch operation to update a JSON value.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC18JSONPatchOperationO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "JSONPatchOperation"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "JSONPatchOperation"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "JSONPatchOperation"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "JSONPatchOperation"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Values of this type follow the ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "https:\/\/datatracker.ietf.org\/doc\/html\/rfc6902",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " format.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/variantOverrides",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantOverrides",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantOverride",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantContainer",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantPatchOperation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatch",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer"
+      ],
+      "title" : "Variants"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier"
+      ],
+      "title" : "Applying Patches"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation"
+      ],
+      "title" : "Operations"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/add(pointer:value:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/remove(pointer:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/replace(pointer:value:)"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/init(from:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/init(variantPatchOperation:pointer:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/operation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/pointer"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/encode(to:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/removingPointerFirstPathComponent()"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/add(pointer:encodableValue:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/replace(pointer:encodableValue:)"
+      ],
+      "title" : "Type Methods"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys"
+      ],
+      "title" : "Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/jsonpatchoperation"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatch": {
+  "abstract" : [
+    {
+      "text" : "A patch to update a JSON value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatch"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatch",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatch"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPatch",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatch"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier": {
+  "abstract" : [
+    {
+      "text" : "A utility type for applying JSON patches.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatchApplier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatchApplier"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPatchApplier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation": {
+  "abstract" : [
+    {
+      "text" : "A patch operation to update a JSON value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatchOperation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatchOperation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPatchOperation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/CodingKeys": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CodingKeys"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/CodingKeys",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CodingKeys"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPatchOperation.CodingKeys",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/codingkeys"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/add(pointer:encodableValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "add"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "encodableValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SE",
+      "text" : "Encodable"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18JSONPatchOperationO",
+      "text" : "JSONPatchOperation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/add(pointer:encodableValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "add(pointer:encodableValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/add(pointer:encodablevalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/add(pointer:value:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "add"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "value"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10AnyCodableV",
+      "text" : "AnyCodable"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/add(pointer:value:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "JSONPatchOperation.add(pointer:value:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/add(pointer:value:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/encode(to:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/init(from:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/init(variantPatchOperation:pointer:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a patch to update a JSON value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "variantPatchOperation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC21VariantPatchOperationO",
+      "text" : "VariantPatchOperation"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Value"
+    },
+    {
+      "kind" : "text",
+      "text" : ">, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/init(variantPatchOperation:pointer:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(variantPatchOperation:pointer:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/init(variantpatchoperation:pointer:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/operation": {
+  "abstract" : [
+    {
+      "text" : "The operation to apply.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "operation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14PatchOperationO",
+      "text" : "PatchOperation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/operation",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "operation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/operation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/pointer": {
+  "abstract" : [
+    {
+      "text" : "The pointer to the value to modify.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "pointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/pointer",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "pointer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/pointer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/remove(pointer:)": {
+  "abstract" : [
+    {
+      "text" : "A remove operation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "remove"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/remove(pointer:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "JSONPatchOperation.remove(pointer:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/remove(pointer:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/removingPointerFirstPathComponent()": {
+  "abstract" : [
+    {
+      "text" : "Returns the patch operation with the first path component of the pointer removed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "removingPointerFirstPathComponent"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18JSONPatchOperationO",
+      "text" : "JSONPatchOperation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/removingPointerFirstPathComponent()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "removingPointerFirstPathComponent()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/removingpointerfirstpathcomponent()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/replace(pointer:encodableValue:)": {
+  "abstract" : [
+    {
+      "text" : "A replacement operation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "replace"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "encodableValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SE",
+      "text" : "Encodable"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18JSONPatchOperationO",
+      "text" : "JSONPatchOperation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/replace(pointer:encodableValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "replace(pointer:encodableValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/replace(pointer:encodablevalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation/replace(pointer:value:)": {
+  "abstract" : [
+    {
+      "text" : "A replacement operation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "replace"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "pointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "value"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10AnyCodableV",
+      "text" : "AnyCodable"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation\/replace(pointer:value:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "JSONPatchOperation.replace(pointer:value:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation\/replace(pointer:value:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPointer": {
+  "abstract" : [
+    {
+      "text" : "A pointer to a specific value in a JSON document.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "JSONPointer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "JSONPointer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPointer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpointer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PatchOperation": {
+  "abstract" : [
+    {
+      "text" : "The patch operation to apply.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PatchOperation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PatchOperation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PatchOperation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PatchOperation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/patchoperation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/variantOverrides": {
+  "abstract" : [
+    {
+      "text" : "Language-specific overrides for documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "variantOverrides"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16VariantOverridesC",
+      "text" : "VariantOverrides"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/variantOverrides",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "variantOverrides",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/variantoverrides"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VariantCollection": {
+  "abstract" : [
+    {
+      "text" : "A collection of variants for a render node value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VariantCollection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VariantCollection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VariantCollection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/variantcollection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VariantContainer": {
+  "abstract" : [
+    {
+      "text" : "A type that contains variant collections.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VariantContainer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantContainer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VariantContainer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VariantContainer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/variantcontainer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VariantOverride": {
+  "abstract" : [
+    {
+      "text" : "Defines an override for a JSON value for a set of traits.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VariantOverride"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantOverride",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VariantOverride"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VariantOverride",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/variantoverride"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VariantOverrides": {
+  "abstract" : [
+    {
+      "text" : "Defines the overrides for variants of documentation content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VariantOverrides"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantOverrides",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VariantOverrides"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VariantOverrides",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/variantoverrides"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VariantPatchOperation": {
+  "abstract" : [
+    {
+      "text" : "A patch to update a render node value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VariantPatchOperation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantPatchOperation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VariantPatchOperation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VariantPatchOperation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/variantpatchoperation"
+},
+"https://datatracker.ietf.org/doc/html/rfc6902": {
+  "identifier" : "https:\/\/datatracker.ietf.org\/doc\/html\/rfc6902",
+  "title" : "JSON Patch",
+  "titleInlineContent" : [
+    {
+      "text" : "JSON Patch",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/datatracker.ietf.org\/doc\/html\/rfc6902"
+}
+}
+}

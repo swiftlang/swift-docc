@@ -1,0 +1,1038 @@
+{
+  "abstract" : [
+    {
+      "text" : "An aside style.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC18RenderBlockContentO10AsideStyleO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "AsideStyle"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "AsideStyle"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "RenderBlockContent.AsideStyle"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "AsideStyle"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/s12CaseIterableP",
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/attention",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/author",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/authors",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/bug",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/complexity",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/copyright",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/date",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/experiment",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/important",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/invariant",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/mutatingVariant",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/nonMutatingVariant",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/note",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/postcondition",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/precondition",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/remark",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/requires",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/since",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/throws",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/tip",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/todo",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/version",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/warning"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/displayName()"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/Equatable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SY": {
+  "identifier" : "doc:\/\/SwiftDocC\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent": {
+  "abstract" : [
+    {
+      "text" : "A block content element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderBlockContent"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderBlockContent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle": {
+  "abstract" : [
+    {
+      "text" : "An aside style.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AsideStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AsideStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/rawrepresentable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/attention": {
+  "abstract" : [
+    {
+      "text" : "An attention aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "attention"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/attention",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.attention",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/attention"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/author": {
+  "abstract" : [
+    {
+      "text" : "An author aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "author"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/author",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.author",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/author"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/authors": {
+  "abstract" : [
+    {
+      "text" : "An authors aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "authors"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/authors",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.authors",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/authors"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/bug": {
+  "abstract" : [
+    {
+      "text" : "A bug aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bug"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/bug",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.bug",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/bug"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/complexity": {
+  "abstract" : [
+    {
+      "text" : "A complexity aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "complexity"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/complexity",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.complexity",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/complexity"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/copyright": {
+  "abstract" : [
+    {
+      "text" : "A copyright aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "copyright"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/copyright",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.copyright",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/copyright"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/date": {
+  "abstract" : [
+    {
+      "text" : "A date aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "date"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/date",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.date",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/date"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/displayName()": {
+  "abstract" : [
+    {
+      "text" : "The heading text to use when rendering this style of aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "displayName"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/displayName()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "displayName()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/displayname()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/experiment": {
+  "abstract" : [
+    {
+      "text" : "An experiment aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "experiment"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/experiment",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.experiment",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/experiment"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/important": {
+  "abstract" : [
+    {
+      "text" : "An important aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "important"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/important",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.important",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/important"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/init(rawvalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/invariant": {
+  "abstract" : [
+    {
+      "text" : "An invariant aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "invariant"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/invariant",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.invariant",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/invariant"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/mutatingVariant": {
+  "abstract" : [
+    {
+      "text" : "A mutatingVariant aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "mutatingVariant"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/mutatingVariant",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.mutatingVariant",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/mutatingvariant"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/nonMutatingVariant": {
+  "abstract" : [
+    {
+      "text" : "A nonMutatingVariant aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "nonMutatingVariant"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/nonMutatingVariant",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.nonMutatingVariant",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/nonmutatingvariant"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/note": {
+  "abstract" : [
+    {
+      "text" : "A note aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "note"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/note",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.note",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/note"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/postcondition": {
+  "abstract" : [
+    {
+      "text" : "A postcondition aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "postcondition"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/postcondition",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.postcondition",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/postcondition"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/precondition": {
+  "abstract" : [
+    {
+      "text" : "A precondition aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "precondition"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/precondition",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.precondition",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/precondition"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/remark": {
+  "abstract" : [
+    {
+      "text" : "A remark aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "remark"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/remark",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.remark",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/remark"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/requires": {
+  "abstract" : [
+    {
+      "text" : "A requires aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "requires"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/requires",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.requires",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/requires"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/since": {
+  "abstract" : [
+    {
+      "text" : "A since aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "since"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/since",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.since",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/since"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/throws": {
+  "abstract" : [
+    {
+      "text" : "A throws aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "`throws`"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/throws",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.throws",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/throws"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/tip": {
+  "abstract" : [
+    {
+      "text" : "A tip aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tip"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/tip",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.tip",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/tip"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/todo": {
+  "abstract" : [
+    {
+      "text" : "A todo aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "todo"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/todo",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.todo",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/todo"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/version": {
+  "abstract" : [
+    {
+      "text" : "A version aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "version"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/version",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.version",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/version"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderBlockContent/AsideStyle/warning": {
+  "abstract" : [
+    {
+      "text" : "A warning aside.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "warning"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderBlockContent\/AsideStyle\/warning",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "RenderBlockContent.AsideStyle.warning",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderblockcontent\/asidestyle\/warning"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/s12CaseIterableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s12CaseIterableP",
+  "title" : "Swift.CaseIterable",
+  "type" : "unresolvable"
+}
+}
+}

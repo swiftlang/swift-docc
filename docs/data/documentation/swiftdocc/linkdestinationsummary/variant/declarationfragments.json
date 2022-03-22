@@ -1,0 +1,398 @@
+{
+  "abstract" : [
+    {
+      "text" : "The declaration of the variant or ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the declaration is the same as the summarized element.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/declarationFragments"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC22LinkDestinationSummaryV7VariantV20declarationFragmentsSayAA24DeclarationRenderSectionV5TokenVGSgSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "declarationFragments"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:Sq",
+        "text" : "Optional"
+      },
+      {
+        "kind" : "text",
+        "text" : "<"
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
+        "text" : "LinkDestinationSummary"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV20DeclarationFragmentsa",
+        "text" : "DeclarationFragments"
+      },
+      {
+        "kind" : "text",
+        "text" : "?>"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "declarationFragments"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "declarationFragments"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:Sq",
+              "text" : "Optional"
+            },
+            {
+              "kind" : "text",
+              "text" : "<"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
+              "text" : "LinkDestinationSummary"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments-swift.typealias",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV20DeclarationFragmentsa",
+              "text" : "DeclarationFragments"
+            },
+            {
+              "kind" : "text",
+              "text" : "?>"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If the summarized element has a declaration but the variant doesn’t, this property will be ",
+              "type" : "text"
+            },
+            {
+              "code" : "Optional.some(nil)",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/declarationfragments"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary": {
+  "abstract" : [
+    {
+      "text" : "A summary of an element that you can link to from outside the documentation bundle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkDestinationSummary"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkDestinationSummary"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkDestinationSummary",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/DeclarationFragments-swift.typealias": {
+  "abstract" : [
+    {
+      "text" : "The rendered fragments of a symbol’s declaration.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationFragments"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/DeclarationFragments-swift.typealias",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationFragments"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkDestinationSummary.DeclarationFragments",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/declarationfragments-swift.typealias"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant": {
+  "abstract" : [
+    {
+      "text" : "A variant of content for a summarized element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Variant"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Variant"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "LinkDestinationSummary.Variant",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/LinkDestinationSummary/Variant/declarationFragments": {
+  "abstract" : [
+    {
+      "text" : "The declaration of the variant or ",
+      "type" : "text"
+    },
+    {
+      "code" : "nil",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " if the declaration is the same as the summarized element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "declarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sq",
+      "text" : "Optional"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV",
+      "text" : "LinkDestinationSummary"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22LinkDestinationSummaryV20DeclarationFragmentsa",
+      "text" : "DeclarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/LinkDestinationSummary\/Variant\/declarationFragments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "declarationFragments",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/linkdestinationsummary\/variant\/declarationfragments"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PersistingDocumentation": {
+  "abstract" : [
+    {
+      "text" : "Save compiled documentation to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Persisting Documentation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/persistingdocumentation"
+}
+}
+}

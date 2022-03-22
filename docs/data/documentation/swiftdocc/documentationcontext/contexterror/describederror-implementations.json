@@ -1,0 +1,207 @@
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/DescribedError-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "DescribedError Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/errorDescription-776ke"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/documentationcontext\/contexterror\/describederror-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext": {
+  "abstract" : [
+    {
+      "text" : "The documentation context manages the in-memory model for the built documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationContext"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError": {
+  "abstract" : [
+    {
+      "text" : "An error that’s encountered while interacting with a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ContextError"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ContextError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationContext.ContextError",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContext/ContextError/errorDescription-776ke": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "errorDescription"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContext\/ContextError\/errorDescription-776ke",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "errorDescription",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontext\/contexterror\/errordescription-776ke"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationContextGroup": {
+  "abstract" : [
+    {
+      "text" : "Build and query the in-memory documentation model.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationContextGroup",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Documentation Context",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcontextgroup"
+}
+}
+}

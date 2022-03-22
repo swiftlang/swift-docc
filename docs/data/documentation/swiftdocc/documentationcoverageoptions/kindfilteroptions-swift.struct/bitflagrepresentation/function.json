@@ -1,0 +1,271 @@
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/function"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC28DocumentationCoverageOptionsV010KindFilterE0V21BitFlagRepresentationO8functionyA2GmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "function"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation.function"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "function"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions-swift.struct\/bitflagrepresentation\/function"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCoverageOptions": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates the arguments needed to enable the documentation coverage feature.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationCoverageOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcoverageoptions"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "Represents kinds to select and display documentation coverage statistics for.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "Note: This enum is not meant to be persisted between runs",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "KindFilterOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "KindFilterOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions-swift.struct"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions-swift.struct/BitFlagRepresentation": {
+  "abstract" : [
+    {
+      "text" : "Represents a single kind option. ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "cannot enforce the restriction that it only represents one",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "option when necessary so this type is preferred in when representing individual kinds that can be represented.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "BitFlagRepresentation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "BitFlagRepresentation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions-swift.struct\/bitflagrepresentation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationCoverageOptions/KindFilterOptions-swift.struct/BitFlagRepresentation/function": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "function"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationCoverageOptions\/KindFilterOptions-swift.struct\/BitFlagRepresentation\/function",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DocumentationCoverageOptions.KindFilterOptions.BitFlagRepresentation.function",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationcoverageoptions\/kindfilteroptions-swift.struct\/bitflagrepresentation\/function"
+}
+}
+}

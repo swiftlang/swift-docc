@@ -1,0 +1,280 @@
+{
+  "abstract" : [
+    {
+      "text" : "The checkers that will visit the markup tree.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/checkers"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC16CompositeCheckerV8checkersSayAA03AnyD0VGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "checkers"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC10AnyCheckerV",
+        "text" : "AnyChecker"
+      },
+      {
+        "kind" : "text",
+        "text" : "]"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "checkers"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "checkers"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC10AnyCheckerV",
+              "text" : "AnyChecker"
+            },
+            {
+              "kind" : "text",
+              "text" : "]"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/compositechecker\/checkers"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker": {
+  "abstract" : [
+    {
+      "text" : "A type-erased container for any ",
+      "type" : "text"
+    },
+    {
+      "code" : "Checker",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AnyChecker"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AnyChecker"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AnyChecker",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker": {
+  "abstract" : [
+    {
+      "text" : "A collection of checkers which all visit the same ",
+      "type" : "text"
+    },
+    {
+      "code" : "Markup",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " tree.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CompositeChecker"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CompositeChecker"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CompositeChecker",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/compositechecker"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker/checkers": {
+  "abstract" : [
+    {
+      "text" : "The checkers that will visit the markup tree.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "checkers"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10AnyCheckerV",
+      "text" : "AnyChecker"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker\/checkers",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "checkers",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/compositechecker\/checkers"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
+  "abstract" : [
+    {
+      "text" : "Run static analysis checks on markup files.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Static Analysis",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/staticanalysis"
+}
+}
+}

@@ -1,0 +1,350 @@
+{
+  "abstract" : [
+    {
+      "text" : "Creates a trait collection that contains only the specified user-interface style and display-scale traits.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataTraitCollection"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataTraitCollection\/init(userInterfaceStyle:displayScale:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC19DataTraitCollectionV18userInterfaceStyle12displayScaleAcA04UsergH0OSg_AA07DisplayJ0OSgtcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "userInterfaceStyle"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC18UserInterfaceStyleO",
+        "text" : "UserInterfaceStyle"
+      },
+      {
+        "kind" : "text",
+        "text" : "?, "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "displayScale"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC12DisplayScaleO",
+        "text" : "DisplayScale"
+      },
+      {
+        "kind" : "text",
+        "text" : "?)"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(userInterfaceStyle:displayScale:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "userInterfaceStyle"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC18UserInterfaceStyleO",
+              "text" : "UserInterfaceStyle"
+            },
+            {
+              "kind" : "text",
+              "text" : "? = nil, "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "displayScale"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayScale",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC12DisplayScaleO",
+              "text" : "DisplayScale"
+            },
+            {
+              "kind" : "text",
+              "text" : "? = nil)"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/datatraitcollection\/init(userinterfacestyle:displayscale:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DataTraitCollection": {
+  "abstract" : [
+    {
+      "text" : "A collection of environment traits for an asset variant.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DataTraitCollection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataTraitCollection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DataTraitCollection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DataTraitCollection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/datatraitcollection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DataTraitCollection/init(userInterfaceStyle:displayScale:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a trait collection that contains only the specified user-interface style and display-scale traits.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "userInterfaceStyle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18UserInterfaceStyleO",
+      "text" : "UserInterfaceStyle"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "displayScale"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12DisplayScaleO",
+      "text" : "DisplayScale"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DataTraitCollection\/init(userInterfaceStyle:displayScale:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(userInterfaceStyle:displayScale:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/datatraitcollection\/init(userinterfacestyle:displayscale:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DisplayScale": {
+  "abstract" : [
+    {
+      "text" : "The display-scale factor of a rendering environment.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DisplayScale"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DisplayScale",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DisplayScale"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DisplayScale",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/displayscale"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
+  "abstract" : [
+    {
+      "text" : "Learn how to explore a documentation workspace and discover bundles.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Bundle Discovery",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/UserInterfaceStyle": {
+  "abstract" : [
+    {
+      "text" : "The interface style for a rendering context.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UserInterfaceStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/UserInterfaceStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UserInterfaceStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UserInterfaceStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/userinterfacestyle"
+}
+}
+}

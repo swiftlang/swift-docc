@@ -1,0 +1,1249 @@
+{
+  "abstract" : [
+    {
+      "text" : "A type-erased container for any ",
+      "type" : "text"
+    },
+    {
+      "code" : "Checker",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC10AnyCheckerV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "AnyChecker"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "AnyChecker"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "AnyChecker"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "AnyChecker"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Checker",
+        "doc:\/\/SwiftDocC\/8Markdown13MarkupVisitorP",
+        "doc:\/\/SwiftDocC\/8Markdown12MarkupWalkerP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Checker",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker"
+      ],
+      "title" : "Generic Checks"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/init(_:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/problems"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitBlockQuote(_:)-1cs7e",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitCodeBlock(_:)-3w09r",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitCustomBlock(_:)-8gobd",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitCustomInline(_:)-1hz1b",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitDocument(_:)-53hep",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitEmphasis(_:)-1hda4",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitHTMLBlock(_:)-3s454",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitHeading(_:)-8sg3i",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitImage(_:)-1nao2",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitInlineCode(_:)-7mzyq",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitInlineHTML(_:)-7c3k9",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitLineBreak(_:)-9vbr1",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitLink(_:)-3tdsg",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitListItem(_:)-4i98e",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitOrderedList(_:)-1rl8w",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitParagraph(_:)-3mv04",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitSoftBreak(_:)-98kkt",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitStrong(_:)-1bxwr",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitText(_:)-5400i",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitThematicBreak(_:)-7t5jm",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitUnorderedList(_:)-1nht0"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/Checker-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupVisitor-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupWalker-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/anychecker"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/8Markdown12MarkupWalkerP": {
+  "identifier" : "doc:\/\/SwiftDocC\/8Markdown12MarkupWalkerP",
+  "title" : "Markdown.MarkupWalker",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/8Markdown13MarkupVisitorP": {
+  "identifier" : "doc:\/\/SwiftDocC\/8Markdown13MarkupVisitorP",
+  "title" : "Markdown.MarkupVisitor",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker": {
+  "abstract" : [
+    {
+      "text" : "A type-erased container for any ",
+      "type" : "text"
+    },
+    {
+      "code" : "Checker",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AnyChecker"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AnyChecker"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AnyChecker",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/Checker-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/Checker-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Checker Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/checker-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/MarkupVisitor-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupVisitor-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "MarkupVisitor Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/markupvisitor-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/MarkupWalker-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/MarkupWalker-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "MarkupWalker Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/markupwalker-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/init(_:)": {
+  "abstract" : [
+    {
+      "text" : "Creates an instance that type erases the given checker.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "C"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "C"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/init(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/init(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/problems": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "problems"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
+      "text" : "Problem"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/problems",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "problems",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/problems"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitBlockQuote(_:)-1cs7e": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitBlockQuote"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown10BlockQuoteV",
+      "text" : "BlockQuote"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitBlockQuote(_:)-1cs7e",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitBlockQuote(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitblockquote(_:)-1cs7e"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitCodeBlock(_:)-3w09r": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitCodeBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9CodeBlockV",
+      "text" : "CodeBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitCodeBlock(_:)-3w09r",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitCodeBlock(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitcodeblock(_:)-3w09r"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitCustomBlock(_:)-8gobd": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitCustomBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown11CustomBlockV",
+      "text" : "CustomBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitCustomBlock(_:)-8gobd",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitCustomBlock(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitcustomblock(_:)-8gobd"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitCustomInline(_:)-1hz1b": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitCustomInline"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown12CustomInlineV",
+      "text" : "CustomInline"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitCustomInline(_:)-1hz1b",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitCustomInline(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitcustominline(_:)-1hz1b"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitDocument(_:)-53hep": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDocument"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown8DocumentV",
+      "text" : "Document"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitDocument(_:)-53hep",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDocument(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitdocument(_:)-53hep"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitEmphasis(_:)-1hda4": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitEmphasis"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown8EmphasisV",
+      "text" : "Emphasis"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitEmphasis(_:)-1hda4",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitEmphasis(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitemphasis(_:)-1hda4"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitHTMLBlock(_:)-3s454": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitHTMLBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9HTMLBlockV",
+      "text" : "HTMLBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitHTMLBlock(_:)-3s454",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitHTMLBlock(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visithtmlblock(_:)-3s454"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitHeading(_:)-8sg3i": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitHeading"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown7HeadingV",
+      "text" : "Heading"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitHeading(_:)-8sg3i",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitHeading(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitheading(_:)-8sg3i"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitImage(_:)-1nao2": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitImage"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5ImageV",
+      "text" : "Image"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitImage(_:)-1nao2",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitImage(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitimage(_:)-1nao2"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitInlineCode(_:)-7mzyq": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitInlineCode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown10InlineCodeV",
+      "text" : "InlineCode"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitInlineCode(_:)-7mzyq",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitInlineCode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitinlinecode(_:)-7mzyq"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitInlineHTML(_:)-7c3k9": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitInlineHTML"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown10InlineHTMLV",
+      "text" : "InlineHTML"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitInlineHTML(_:)-7c3k9",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitInlineHTML(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitinlinehtml(_:)-7c3k9"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitLineBreak(_:)-9vbr1": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitLineBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9LineBreakV",
+      "text" : "LineBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitLineBreak(_:)-9vbr1",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitLineBreak(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitlinebreak(_:)-9vbr1"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitLink(_:)-3tdsg": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitLink"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown4LinkV",
+      "text" : "Link"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitLink(_:)-3tdsg",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitLink(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitlink(_:)-3tdsg"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitListItem(_:)-4i98e": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitListItem"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown8ListItemV",
+      "text" : "ListItem"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitListItem(_:)-4i98e",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitListItem(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitlistitem(_:)-4i98e"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitOrderedList(_:)-1rl8w": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitOrderedList"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown11OrderedListV",
+      "text" : "OrderedList"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitOrderedList(_:)-1rl8w",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitOrderedList(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitorderedlist(_:)-1rl8w"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitParagraph(_:)-3mv04": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitParagraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9ParagraphV",
+      "text" : "Paragraph"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitParagraph(_:)-3mv04",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitParagraph(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitparagraph(_:)-3mv04"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitSoftBreak(_:)-98kkt": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitSoftBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9SoftBreakV",
+      "text" : "SoftBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitSoftBreak(_:)-98kkt",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitSoftBreak(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitsoftbreak(_:)-98kkt"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitStrong(_:)-1bxwr": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitStrong"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6StrongV",
+      "text" : "Strong"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitStrong(_:)-1bxwr",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitStrong(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitstrong(_:)-1bxwr"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitText(_:)-5400i": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitText"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown4TextV",
+      "text" : "Text"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitText(_:)-5400i",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitText(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visittext(_:)-5400i"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitThematicBreak(_:)-7t5jm": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitThematicBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13ThematicBreakV",
+      "text" : "ThematicBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitThematicBreak(_:)-7t5jm",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitThematicBreak(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitthematicbreak(_:)-7t5jm"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AnyChecker/visitUnorderedList(_:)-1nht0": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitUnorderedList"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13UnorderedListV",
+      "text" : "UnorderedList"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AnyChecker\/visitUnorderedList(_:)-1nht0",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitUnorderedList(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/anychecker\/visitunorderedlist(_:)-1nht0"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Checker": {
+  "abstract" : [
+    {
+      "text" : "A markup checker.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Checker"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Checker",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Checker"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Checker",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/checker"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CompositeChecker": {
+  "abstract" : [
+    {
+      "text" : "A collection of checkers which all visit the same ",
+      "type" : "text"
+    },
+    {
+      "code" : "Markup",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " tree.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CompositeChecker"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CompositeChecker",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CompositeChecker"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CompositeChecker",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/compositechecker"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
+  "abstract" : [
+    {
+      "text" : "Run static analysis checks on markup files.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Static Analysis",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/staticanalysis"
+}
+}
+}

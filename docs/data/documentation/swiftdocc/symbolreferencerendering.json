@@ -1,0 +1,1539 @@
+{
+  "abstract" : [
+    {
+      "text" : "Render rich reference documentation for programming symbols.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "Symbol Reference Rendering"
+  },
+  "primaryContentSections" : [
+    {
+      "content" : [
+        {
+          "anchor" : "Overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Each section in a rendering node represents a piece of data potentially rendered on a documentation page.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "A documentation abstract is represented by a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractSection",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ", a section listing the declarations on various platform for a symbol is represented by a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationsRenderSection",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ", a See Also section by a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ", and so on.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialsRendering"
+      ],
+      "title" : "Semantic Structures"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy"
+      ],
+      "title" : "Metadata"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecatedSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationsRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReturnsSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiscussionSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection"
+      ],
+      "title" : "Main Sections"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultImplementationsSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImplementationsGroup",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConformanceSection"
+      ],
+      "title" : "Relationship Sections"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParameterRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleStyle",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertiesRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TypeDetails"
+      ],
+      "title" : "Object Description Sections"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeExample"
+      ],
+      "title" : "Other Sections"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SimpleTag",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Return",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Throw"
+      ],
+      "title" : "Callouts"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroupRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentRenderSection"
+      ],
+      "title" : "Generic Sections"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability"
+      ],
+      "title" : "Availability"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/symbolreferencerendering"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbstractSection": {
+  "abstract" : [
+    {
+      "text" : "A one-paragraph section that represents a symbol’s abstract description.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AbstractSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbstractSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AbstractSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AbstractSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/abstractsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AttributesRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a list of attributes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AttributesRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AttributesRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AttributesRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AttributesRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/attributesrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AvailabilityRenderItem": {
+  "abstract" : [
+    {
+      "text" : "Availability information of a symbol on a specific platform.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AvailabilityRenderItem"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AvailabilityRenderItem",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AvailabilityRenderItem"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AvailabilityRenderItem",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/availabilityrenderitem"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeExample": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a code example.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CodeExample"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeExample",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CodeExample"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CodeExample",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codeexample"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConformanceSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a list of generic constraints for a symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConformanceSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConformanceSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConformanceSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConformanceSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/conformancesection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ContentRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section of documentation content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ContentRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ContentRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ContentRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/contentrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a symbol declaration.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationsRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A compound section that contains a list of declaration sections.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationsRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationsRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationsRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationsRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationsrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DefaultImplementationsSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains default implementations of a protocol-requirement, for example a property or a method.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DefaultImplementationsSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultImplementationsSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DefaultImplementationsSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DefaultImplementationsSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/defaultimplementationssection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeprecatedSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains deprecation information.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeprecatedSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeprecatedSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeprecatedSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeprecatedSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/deprecatedsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiffAvailability": {
+  "abstract" : [
+    {
+      "text" : "An availability-change diff for a symbol, if that data is available.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DiffAvailability"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiffAvailability",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DiffAvailability"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DiffAvailability",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diffavailability"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiscussionSection": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DiscussionSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiscussionSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DiscussionSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DiscussionSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/discussionsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/GroupedSection": {
+  "abstract" : [
+    {
+      "text" : "A generic section that contains groups of links.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "GroupedSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "GroupedSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "GroupedSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/groupedsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ImplementationsGroup": {
+  "abstract" : [
+    {
+      "text" : "A group that represents a list of a protocol-requirement implementations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ImplementationsGroup"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImplementationsGroup",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ImplementationsGroup"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ImplementationsGroup",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/implementationsgroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Parameter": {
+  "abstract" : [
+    {
+      "text" : "Documentation about a parameter for a symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Parameter"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Parameter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Parameter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Parameter",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/parameter"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ParameterRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a single, named parameter.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ParameterRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParameterRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ParameterRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ParameterRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/parameterrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ParametersRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a list of parameters.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ParametersRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ParametersRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ParametersRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/parametersrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ParametersSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a function’s parameters.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ParametersSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ParametersSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ParametersSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ParametersSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/parameterssection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PossibleValuesRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that lists a pre-defined list of possible values for a given symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PossibleValuesRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PossibleValuesRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PossibleValuesRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PossibleValuesRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/possiblevaluesrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PropertiesRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a list of properties.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PropertiesRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PropertiesRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PropertiesRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PropertiesRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/propertiesrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RESTEndpointRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a REST API endpoint.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RESTEndpointRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RESTEndpointRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RESTEndpointRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RESTEndpointRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/restendpointrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Relationship": {
+  "abstract" : [
+    {
+      "text" : "A relationship to a node in the topic graph.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Relationship"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Relationship",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Relationship"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Relationship",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationship"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RelationshipsGroup": {
+  "abstract" : [
+    {
+      "text" : "A group of symbol relationships.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsGroup"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsGroup",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsGroup"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RelationshipsGroup",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationshipsgroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RelationshipsRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a list of symbol relationships of the same kind.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RelationshipsRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationshipsrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RelationshipsSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains symbol-relationship groups.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RelationshipsSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RelationshipsSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RelationshipsSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/relationshipssection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderAttribute": {
+  "abstract" : [
+    {
+      "text" : "A single renderable attribute.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderAttribute"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderAttribute",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderAttribute"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderAttribute",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderattribute"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderProperty": {
+  "abstract" : [
+    {
+      "text" : "A named property with a declaration-style type, content, and",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "an optional list of attributes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderProperty"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderProperty",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderProperty"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderProperty",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderproperty"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderReferenceHierarchy": {
+  "abstract" : [
+    {
+      "text" : "A node that represents API symbol hierarchy.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderReferenceHierarchy"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderReferenceHierarchy",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderReferenceHierarchy"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderReferenceHierarchy",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderreferencehierarchy"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Return": {
+  "abstract" : [
+    {
+      "text" : "Documentation about a symbol’s return value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Return"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Return",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Return"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Return",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/return"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ReturnsSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains return value information for a function.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ReturnsSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ReturnsSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ReturnsSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ReturnsSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/returnssection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SampleDownloadSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains download data for a sample project.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SampleDownloadSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SampleDownloadSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SampleDownloadSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SampleDownloadSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/sampledownloadsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SeeAlsoSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains groups of related symbols or external links.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SeeAlsoSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SeeAlsoSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SeeAlsoSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SeeAlsoSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/seealsosection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SimpleTag": {
+  "abstract" : [
+    {
+      "text" : "A generic documentation tag.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SimpleTag"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SimpleTag",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SimpleTag"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SimpleTag",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/simpletag"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TaskGroupRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A task group section that contains links to other symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TaskGroupRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroupRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TaskGroupRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TaskGroupRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/taskgrouprendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Throw": {
+  "abstract" : [
+    {
+      "text" : "Documentation about a symbol’s potential errors.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Throw"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Throw",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Throw"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Throw",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/throw"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TitleStyle": {
+  "abstract" : [
+    {
+      "text" : "A title style for a property list key or an entitlement key.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TitleStyle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TitleStyle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TitleStyle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TitleStyle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/titlestyle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicsSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains groups of symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TopicsSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicsSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TopicsSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TopicsSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicssection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TutorialsRendering": {
+  "abstract" : [
+    {
+      "text" : "Render tutorial-based, interactive, learning experiences.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialsRendering",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Tutorials Rendering",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tutorialsrendering"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TypeDetails": {
+  "abstract" : [
+    {
+      "text" : "A type’s details, including whether it’s an array, and optionally the element’s type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TypeDetails"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TypeDetails",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TypeDetails"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TypeDetails",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/typedetails"
+}
+}
+}

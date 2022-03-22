@@ -1,0 +1,2968 @@
+{
+  "abstract" : [
+    {
+      "text" : "Visits ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " nodes and returns a result.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC15SemanticVisitorP",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "protocol"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "SemanticVisitor"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "SemanticVisitor"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Protocol",
+    "symbolKind" : "protocol",
+    "title" : "SemanticVisitor"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "protocol"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "SemanticVisitor"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "This interface only provides requirements for visiting each kind of node. It does not require each visit method to descend into child nodes.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "note",
+          "type" : "aside"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherited By",
+      "type" : "inheritedBy"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforming Types",
+      "type" : "conformingTypes"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/Result"
+      ],
+      "title" : "Associated Types"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)-8wzl8",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitArticle(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitAssessments(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitChapter(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitChoice(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitCode(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitComment(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitContentAndMedia(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitDeprecationSummary(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitImageMedia(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitIntro(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitJustification(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitMarkupContainer(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitMultipleChoice(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitResources(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitStack(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitStep(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitSteps(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitSymbol(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTechnology(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTile(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorial(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorialArticle(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorialReference(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorialSection(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitVideoMedia(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitVolume(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitXcodeRequirement(_:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/semanticvisitor"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Assessments": {
+  "abstract" : [
+    {
+      "text" : "A collection of questions about the concepts the documentation presents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Assessments"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Assessments"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Assessments",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/assessments"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Chapter": {
+  "abstract" : [
+    {
+      "text" : "A chapter containing ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tutorial",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : "s to complete.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Chapter"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Chapter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Chapter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Chapter",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/chapter"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Choice": {
+  "abstract" : [
+    {
+      "text" : "One of possibly many choices in a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " question.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Choice"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Choice",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Choice"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Choice",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/choice"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Code": {
+  "abstract" : [
+    {
+      "text" : "A code file to display alongside a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Code"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Code",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Code"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Code",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/code"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Comment": {
+  "abstract" : [
+    {
+      "text" : "A general purpose comment directive. All contents inside are stripped from",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Comment"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Comment",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Comment"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Comment",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/comment"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ContentAndMedia": {
+  "abstract" : [
+    {
+      "text" : "A piece of media, such as an image or video, with an attached description.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ContentAndMedia"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ContentAndMedia"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ContentAndMedia",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/contentandmedia"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ImageMedia": {
+  "abstract" : [
+    {
+      "text" : "A block filled with an image.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ImageMedia"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ImageMedia"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ImageMedia",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/imagemedia"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Intro": {
+  "abstract" : [
+    {
+      "text" : "An introductory section for instructional pages.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Intro"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Intro",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Intro"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Intro",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/intro"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Justification": {
+  "abstract" : [
+    {
+      "text" : "A short justification as to whether a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Choice",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " is correct for a question.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Justification"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Justification"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Justification",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/justification"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupContainer": {
+  "abstract" : [
+    {
+      "text" : "A general purpose ",
+      "type" : "text"
+    },
+    {
+      "code" : "Markup",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " semantic container.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MarkupContainer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MarkupContainer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MarkupContainer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markupcontainer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MultipleChoice": {
+  "abstract" : [
+    {
+      "text" : "A multiple-choice question.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MultipleChoice"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MultipleChoice"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MultipleChoice",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/multiplechoice"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTranslator": {
+  "abstract" : [
+    {
+      "text" : "A visitor which converts a semantic model into a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTranslator"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTranslator",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTranslator"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTranslator",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetranslator"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Resources": {
+  "abstract" : [
+    {
+      "text" : "Additional resources that help users learn a technology.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Resources"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Resources",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Resources"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Resources",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/resources"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic": {
+  "abstract" : [
+    {
+      "text" : "A semantic object is an abstract element with children which also are semantic objects.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor": {
+  "abstract" : [
+    {
+      "text" : "Visits ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " nodes and returns a result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SemanticVisitor"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SemanticVisitor"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SemanticVisitor",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/Result": {
+  "abstract" : [
+    {
+      "text" : "The result type returned when visiting a node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "associatedtype"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/Result",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "Result",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/result"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visit(_:)-8wzl8": {
+  "abstract" : [
+    {
+      "text" : "Visit any kind of ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " node and return the result.",
+      "type" : "text"
+    }
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visit"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8SemanticC",
+      "text" : "Semantic"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visit(_:)-8wzl8",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visit(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visit(_:)-8wzl8"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitArticle(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitArticle"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ArticleC",
+      "text" : "Article"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitArticle(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitArticle(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitarticle(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitAssessments(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit an ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Assessments",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " section and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitAssessments"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11AssessmentsC",
+      "text" : "Assessments"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitAssessments(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitAssessments(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitassessments(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitChapter(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Chapter",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitChapter"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ChapterC",
+      "text" : "Chapter"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitChapter(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitChapter(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitchapter(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitChoice(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Choice",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitChoice"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6ChoiceC",
+      "text" : "Choice"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitChoice(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitChoice(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitchoice(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitCode(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Code",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitCode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC4CodeC",
+      "text" : "Code"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitCode(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitCode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitcode(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitComment(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Comment",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitComment"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7CommentC",
+      "text" : "Comment"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitComment(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitComment(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitcomment(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitContentAndMedia(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ContentAndMedia",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitContentAndMedia"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15ContentAndMediaC",
+      "text" : "ContentAndMedia"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitContentAndMedia(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitContentAndMedia(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitcontentandmedia(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitDeprecationSummary(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDeprecationSummary"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18DeprecationSummaryC",
+      "text" : "DeprecationSummary"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitDeprecationSummary(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitDeprecationSummary(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitdeprecationsummary(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitImageMedia(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit an ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ImageMedia",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitImageMedia"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10ImageMediaC",
+      "text" : "ImageMedia"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitImageMedia(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitImageMedia(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitimagemedia(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitIntro(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Intro",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitIntro"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC5IntroC",
+      "text" : "Intro"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitIntro(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitIntro(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitintro(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitJustification(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Justification",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitJustification"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13JustificationC",
+      "text" : "Justification"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitJustification(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitJustification(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitjustification(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitMarkupContainer(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupContainer",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitMarkupContainer"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15MarkupContainerC",
+      "text" : "MarkupContainer"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitMarkupContainer(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitMarkupContainer(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitmarkupcontainer(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitMultipleChoice(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MultipleChoice",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " assessment and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitMultipleChoice"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14MultipleChoiceC",
+      "text" : "MultipleChoice"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitMultipleChoice(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitMultipleChoice(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitmultiplechoice(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitResources(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Resources",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " page and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitResources"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9ResourcesC",
+      "text" : "Resources"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitResources(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitResources(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitresources(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitStack(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitStack"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC5StackC",
+      "text" : "Stack"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitStack(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitStack(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitstack(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitStep(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitStep"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC4StepC",
+      "text" : "Step"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitStep(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitStep(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitstep(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitSteps(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Steps",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitSteps"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC5StepsC",
+      "text" : "Steps"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitSteps(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitSteps(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitsteps(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitSymbol(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitSymbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6SymbolC",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitSymbol(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitSymbol(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitsymbol(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitTechnology(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTechnology"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10TechnologyC",
+      "text" : "Technology"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTechnology(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitTechnology(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visittechnology(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitTile(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTile"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC4TileC",
+      "text" : "Tile"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTile(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitTile(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visittile(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitTutorial(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tutorial",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTutorial"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8TutorialC",
+      "text" : "Tutorial"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorial(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitTutorial(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visittutorial(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitTutorialArticle(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTutorialArticle"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15TutorialArticleC",
+      "text" : "TutorialArticle"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorialArticle(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitTutorialArticle(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visittutorialarticle(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitTutorialReference(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialReference",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTutorialReference"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17TutorialReferenceC",
+      "text" : "TutorialReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorialReference(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitTutorialReference(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visittutorialreference(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitTutorialSection(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialSection",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTutorialSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15TutorialSectionC",
+      "text" : "TutorialSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitTutorialSection(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitTutorialSection(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visittutorialsection(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitVideoMedia(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit an ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoMedia",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitVideoMedia"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC10VideoMediaC",
+      "text" : "VideoMedia"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitVideoMedia(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitVideoMedia(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitvideomedia(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitVolume(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitVolume"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC6VolumeC",
+      "text" : "Volume"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitVolume(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitVolume(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitvolume(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticVisitor/visitXcodeRequirement(_:)": {
+  "abstract" : [
+    {
+      "text" : "Visit an ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirement",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " and return the result.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitXcodeRequirement"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16XcodeRequirementC",
+      "text" : "XcodeRequirement"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticVisitor\/visitXcodeRequirement(_:)",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "visitXcodeRequirement(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticvisitor\/visitxcoderequirement(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticWalker": {
+  "abstract" : [
+    {
+      "text" : "An interface for walking a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " tree without altering it.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SemanticWalker"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticWalker",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SemanticWalker"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SemanticWalker",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticwalker"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Step": {
+  "abstract" : [
+    {
+      "text" : "An instructional step to complete as a part of a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialSection",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ". ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DirectiveConvertible",
+      "isActive" : true,
+      "type" : "reference"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Step"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Step"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Step",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/step"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Steps": {
+  "abstract" : [
+    {
+      "text" : "Wraps a series of ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Step",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : "s in a tutorial task section.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Steps"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Steps",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Steps"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Steps",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/steps"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Technology": {
+  "abstract" : [
+    {
+      "text" : "An overview of the educational materials under a specific technology or technology area.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Technology"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Technology"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Technology",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/technology"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Tile": {
+  "abstract" : [
+    {
+      "text" : "A semantic model for a view that links to a content type that you specify.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Tile"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tile",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Tile"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Tile",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tile"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Tutorial": {
+  "abstract" : [
+    {
+      "text" : "A tutorial to complete in order to gain knowledge of a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Technology",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Tutorial"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tutorial",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Tutorial"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Tutorial",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tutorial"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TutorialReference": {
+  "abstract" : [
+    {
+      "text" : "A reference to a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tutorial",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " or ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialArticle",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " by ",
+      "type" : "text"
+    },
+    {
+      "code" : "URL",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TutorialReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialReference",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TutorialReference"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TutorialReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tutorialreference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TutorialSection": {
+  "abstract" : [
+    {
+      "text" : "A section containing steps to complete to finish a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tutorial",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TutorialSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TutorialSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TutorialSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TutorialSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/tutorialsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VideoMedia": {
+  "abstract" : [
+    {
+      "text" : "A block filled with a video.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VideoMedia"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VideoMedia",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VideoMedia"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VideoMedia",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/videomedia"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Volume": {
+  "abstract" : [
+    {
+      "text" : "A grouping of chapters within a larger collection of tutorials.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Volume"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Volume",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Volume"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Volume",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/volume"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/XcodeRequirement": {
+  "abstract" : [
+    {
+      "text" : "An informal Xcode requirement for completing an instructional ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Tutorial",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "XcodeRequirement"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/XcodeRequirement",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "XcodeRequirement"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "XcodeRequirement",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/xcoderequirement"
+}
+}
+}

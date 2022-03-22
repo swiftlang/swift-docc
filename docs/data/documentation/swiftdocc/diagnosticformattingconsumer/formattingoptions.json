@@ -1,0 +1,267 @@
+{
+  "abstract" : [
+    {
+      "text" : "Options for how problems should be formatted if written to output.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingConsumer"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingConsumer\/formattingOptions"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC28DiagnosticFormattingConsumerP17formattingOptionsAA0cdG0Vvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "formattingOptions"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC27DiagnosticFormattingOptionsV",
+        "text" : "DiagnosticFormattingOptions"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "required" : true,
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "formattingOptions"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "formattingOptions"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC27DiagnosticFormattingOptionsV",
+              "text" : "DiagnosticFormattingOptions"
+            },
+            {
+              "kind" : "text",
+              "text" : " { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "set"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/diagnosticformattingconsumer\/formattingoptions"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingConsumer": {
+  "abstract" : [
+    {
+      "text" : "A type that can format received diagnostics in way that’s suitable for writing to a destination such as a file or ",
+      "type" : "text"
+    },
+    {
+      "code" : "TextOutputStream",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticFormattingConsumer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingConsumer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticFormattingConsumer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DiagnosticFormattingConsumer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticformattingconsumer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingConsumer/formattingOptions": {
+  "abstract" : [
+    {
+      "text" : "Options for how problems should be formatted if written to output.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "formattingOptions"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC27DiagnosticFormattingOptionsV",
+      "text" : "DiagnosticFormattingOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingConsumer\/formattingOptions",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "formattingOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticformattingconsumer\/formattingoptions"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticFormattingOptions": {
+  "abstract" : [
+    {
+      "text" : "A type that encapsulate the possible formatting options for diagnostics.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticFormattingOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticFormattingOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticFormattingOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DiagnosticFormattingOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticformattingoptions"
+}
+}
+}

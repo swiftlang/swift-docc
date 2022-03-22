@@ -1,0 +1,349 @@
+{
+  "abstract" : [
+    {
+      "text" : "Initializes a transformation that applies two transformations, one after the other.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/init(first:second:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC35RenderNodeTransformationCompositionV5first6secondAcA0cD12Transforming_p_AaF_ptcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "first"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC22RenderNodeTransformingP",
+        "text" : "RenderNodeTransforming"
+      },
+      {
+        "kind" : "text",
+        "text" : ", "
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "second"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC22RenderNodeTransformingP",
+        "text" : "RenderNodeTransforming"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(first:second:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "first"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC22RenderNodeTransformingP",
+              "text" : "RenderNodeTransforming"
+            },
+            {
+              "kind" : "text",
+              "text" : ", "
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "second"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC22RenderNodeTransformingP",
+              "text" : "RenderNodeTransforming"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The first transformation to apply.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "first"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The second transformation to apply.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "second"
+        }
+      ]
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/rendernodetransformationcomposition\/init(first:second:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PersistingDocumentation": {
+  "abstract" : [
+    {
+      "text" : "Save compiled documentation to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PersistingDocumentation",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Persisting Documentation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/persistingdocumentation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformationComposition": {
+  "abstract" : [
+    {
+      "text" : "A transformation that applies two transformations, one after the other.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationComposition"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransformationComposition"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransformationComposition",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformationcomposition"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransformationComposition/init(first:second:)": {
+  "abstract" : [
+    {
+      "text" : "Initializes a transformation that applies two transformations, one after the other.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "first"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22RenderNodeTransformingP",
+      "text" : "RenderNodeTransforming"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "second"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22RenderNodeTransformingP",
+      "text" : "RenderNodeTransforming"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransformationComposition\/init(first:second:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(first:second:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransformationcomposition\/init(first:second:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeTransforming": {
+  "abstract" : [
+    {
+      "text" : "A type that modifies a render node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransforming"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeTransforming",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeTransforming"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeTransforming",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodetransforming"
+}
+}
+}

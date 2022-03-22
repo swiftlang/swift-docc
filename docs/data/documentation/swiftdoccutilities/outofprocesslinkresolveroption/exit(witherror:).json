@@ -1,0 +1,484 @@
+{
+  "abstract" : [
+    {
+      "text" : "Terminates execution with a message and exit code that is appropriate",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "for the given error.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/ParsableArguments-Implementations"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/exit(withError:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "ArgumentParser",
+    "externalID" : "s:14ArgumentParser17ParsableArgumentsPAAE4exit9withErrors5NeverOs0G0_pSg_tFZ::SYNTHESIZED::s:18SwiftDocCUtilities30OutOfProcessLinkResolverOptionV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "static"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "exit"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "withError"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5ErrorP",
+        "text" : "Error"
+      },
+      {
+        "kind" : "text",
+        "text" : "?) -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:s5NeverO",
+        "text" : "Never"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocCUtilities"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Type Method",
+    "symbolKind" : "method",
+    "title" : "exit(withError:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "static"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "exit"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "withError"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "error"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5ErrorP",
+              "text" : "Error"
+            },
+            {
+              "kind" : "text",
+              "text" : "? = nil) -> "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:s5NeverO",
+              "text" : "Never"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "kind" : "parameters",
+      "parameters" : [
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "The error to use when exiting, if any.",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "name" : "error"
+        }
+      ]
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "If the ",
+              "type" : "text"
+            },
+            {
+              "code" : "error",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " parameter is ",
+              "type" : "text"
+            },
+            {
+              "code" : "nil",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", this method prints nothing and exits",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "with code ",
+              "type" : "text"
+            },
+            {
+              "code" : "EXIT_SUCCESS",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ". If ",
+              "type" : "text"
+            },
+            {
+              "code" : "error",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " represents a help request or",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "another ",
+              "type" : "text"
+            },
+            {
+              "code" : "CleanExit",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " error, this method prints help information and",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "exits with code ",
+              "type" : "text"
+            },
+            {
+              "code" : "EXIT_SUCCESS",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ". Otherwise, this method prints a relevant",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "error message and exits with code ",
+              "type" : "text"
+            },
+            {
+              "code" : "EX_USAGE",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " or ",
+              "type" : "text"
+            },
+            {
+              "code" : "EXIT_FAILURE",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/exit(witherror:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocCUtilities",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc": {
+  "abstract" : [
+    {
+      "text" : "The default, command-line interface you use to compile and preview documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Docc",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates a link resolve executable URL that points to a link resolver executable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "OutOfProcessLinkResolverOption"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "OutOfProcessLinkResolverOption"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "OutOfProcessLinkResolverOption",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption/ParsableArguments-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/ParsableArguments-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ParsableArguments Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/parsablearguments-implementations"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption/exit(withError:)": {
+  "abstract" : [
+    {
+      "text" : "Terminates execution with a message and exit code that is appropriate",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "for the given error.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "exit"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "withError"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5ErrorP",
+      "text" : "Error"
+    },
+    {
+      "kind" : "text",
+      "text" : "?) -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s5NeverO",
+      "text" : "Never"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/exit(withError:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "exit(withError:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/exit(witherror:)"
+}
+}
+}

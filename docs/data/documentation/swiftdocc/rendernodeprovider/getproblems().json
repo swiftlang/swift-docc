@@ -1,0 +1,298 @@
+{
+  "abstract" : [
+    {
+      "text" : "Returns an array of ",
+      "type" : "text"
+    },
+    {
+      "code" : "Problem",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " indicating which problems the ",
+      "type" : "text"
+    },
+    {
+      "code" : "Provider",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " encountered.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeProvider"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeProvider\/getProblems()"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC18RenderNodeProviderP11getProblemsSayAA7ProblemVGyF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "getProblems"
+      },
+      {
+        "kind" : "text",
+        "text" : "() -> ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
+        "text" : "Problem"
+      },
+      {
+        "kind" : "text",
+        "text" : "]"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "required" : true,
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "getProblems()"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "getProblems"
+            },
+            {
+              "kind" : "text",
+              "text" : "() -> ["
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
+              "text" : "Problem"
+            },
+            {
+              "kind" : "text",
+              "text" : "]"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/rendernodeprovider\/getproblems()"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationIndexing": {
+  "abstract" : [
+    {
+      "text" : "Create documentation indexes optimized for text search or navigation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Documentation Indexing",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationindexing"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Problem": {
+  "abstract" : [
+    {
+      "text" : "A problem with a document along with possible solutions to the problem.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Problem"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Problem",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Problem"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Problem",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/problem"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeProvider": {
+  "abstract" : [
+    {
+      "text" : "A protocol to provide data to be indexed.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeProvider"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeProvider",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNodeProvider"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNodeProvider",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodeprovider"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNodeProvider/getProblems()": {
+  "abstract" : [
+    {
+      "text" : "Returns an array of ",
+      "type" : "text"
+    },
+    {
+      "code" : "Problem",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " indicating which problems the ",
+      "type" : "text"
+    },
+    {
+      "code" : "Provider",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " encountered.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "getProblems"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC7ProblemV",
+      "text" : "Problem"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNodeProvider\/getProblems()",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "getProblems()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernodeprovider\/getproblems()"
+}
+}
+}

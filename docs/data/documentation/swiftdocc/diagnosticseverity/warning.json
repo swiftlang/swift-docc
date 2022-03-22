@@ -1,0 +1,210 @@
+{
+  "abstract" : [
+    {
+      "text" : "A warning.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/warning"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC18DiagnosticSeverityO7warningyA2CmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "warning"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "DiagnosticSeverity.warning"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "warning"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Warnings should ideally be actionable and give the user a clear indication of what must be done to fix the error. A warning severity should be used for issues that don’t block progress but the user ought to address as soon as possible.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/diagnosticseverity\/warning"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity": {
+  "abstract" : [
+    {
+      "text" : "The severity of a diagnostic.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticSeverity"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticSeverity"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DiagnosticSeverity",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticseverity"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity/warning": {
+  "abstract" : [
+    {
+      "text" : "A warning.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "warning"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity\/warning",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DiagnosticSeverity.warning",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticseverity\/warning"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/EmittingDiagnostics": {
+  "abstract" : [
+    {
+      "text" : "Vend warnings and errors as part of an operation’s result.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/EmittingDiagnostics",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Emitting Diagnostics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/emittingdiagnostics"
+}
+}
+}

@@ -1,0 +1,329 @@
+{
+  "abstract" : [
+    {
+      "text" : "This section’s content split into groups by third-level headings.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection\/taskGroups-8xf1r"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection\/taskGroups-4v84"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "SwiftDocC",
+    "externalID" : "s:9SwiftDocC14GroupedSectionPAAE10taskGroupsSayAA9TaskGroupVGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "taskGroups"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC9TaskGroupV",
+        "text" : "TaskGroup"
+      },
+      {
+        "kind" : "text",
+        "text" : "]"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "taskGroups"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "taskGroups"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroup",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC9TaskGroupV",
+              "text" : "TaskGroup"
+            },
+            {
+              "kind" : "text",
+              "text" : "] { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/groupedsection\/taskgroups-4v84"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/GroupedSection": {
+  "abstract" : [
+    {
+      "text" : "A generic section that contains groups of links.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "GroupedSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "GroupedSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "GroupedSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/groupedsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/GroupedSection/taskGroups-4v84": {
+  "abstract" : [
+    {
+      "text" : "This section’s content split into groups by third-level headings.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "taskGroups"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9TaskGroupV",
+      "text" : "TaskGroup"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection\/taskGroups-4v84",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "taskGroups",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/groupedsection\/taskgroups-4v84"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/GroupedSection/taskGroups-8xf1r": {
+  "abstract" : [
+
+  ],
+  "defaultImplementations" : 1,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "taskGroups"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9TaskGroupV",
+      "text" : "TaskGroup"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/GroupedSection\/taskGroups-8xf1r",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "taskGroups",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/groupedsection\/taskgroups-8xf1r"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolReferenceRendering": {
+  "abstract" : [
+    {
+      "text" : "Render rich reference documentation for programming symbols.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Symbol Reference Rendering",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolreferencerendering"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TaskGroup": {
+  "abstract" : [
+    {
+      "text" : "A collection of curated child topics.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TaskGroup"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TaskGroup",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TaskGroup"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TaskGroup",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/taskgroup"
+}
+}
+}

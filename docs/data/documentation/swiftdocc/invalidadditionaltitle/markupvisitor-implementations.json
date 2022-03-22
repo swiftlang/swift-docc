@@ -1,0 +1,1729 @@
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/MarkupVisitor-Implementations"
+  },
+  "kind" : "article",
+  "metadata" : {
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "collectionGroup",
+    "title" : "MarkupVisitor Implementations"
+  },
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/defaultVisit(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visit(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitBlockDirective(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitBlockQuote(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitCodeBlock(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitCustomBlock(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitCustomInline(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitDocument(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitEmphasis(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitHTMLBlock(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitHeading(_:)-7becd",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitImage(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitInlineCode(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitInlineHTML(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitLineBreak(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitLink(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitListItem(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitOrderedList(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitParagraph(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitSoftBreak(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitStrikethrough(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitStrong(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitSymbolLink(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTable(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTableBody(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTableCell(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTableHead(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTableRow(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitText(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitThematicBreak(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitUnorderedList(_:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/invalidadditionaltitle\/markupvisitor-implementations"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle": {
+  "abstract" : [
+    {
+      "text" : "A document should have a single title, i.e. a single first-level heading.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "InvalidAdditionalTitle"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "InvalidAdditionalTitle"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "InvalidAdditionalTitle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/defaultVisit(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "defaultVisit"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/defaultVisit(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "defaultVisit(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/defaultvisit(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visit(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visit"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6MarkupP",
+      "text" : "Markup"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visit(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visit(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visit(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitBlockDirective(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitBlockDirective"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown14BlockDirectiveV",
+      "text" : "BlockDirective"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitBlockDirective(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitBlockDirective(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitblockdirective(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitBlockQuote(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitBlockQuote"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown10BlockQuoteV",
+      "text" : "BlockQuote"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitBlockQuote(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitBlockQuote(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitblockquote(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitCodeBlock(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitCodeBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9CodeBlockV",
+      "text" : "CodeBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitCodeBlock(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitCodeBlock(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitcodeblock(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitCustomBlock(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitCustomBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown11CustomBlockV",
+      "text" : "CustomBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitCustomBlock(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitCustomBlock(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitcustomblock(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitCustomInline(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitCustomInline"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown12CustomInlineV",
+      "text" : "CustomInline"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitCustomInline(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitCustomInline(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitcustominline(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitDocument(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitDocument"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown8DocumentV",
+      "text" : "Document"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitDocument(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitDocument(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitdocument(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitEmphasis(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitEmphasis"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown8EmphasisV",
+      "text" : "Emphasis"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitEmphasis(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitEmphasis(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitemphasis(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitHTMLBlock(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitHTMLBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9HTMLBlockV",
+      "text" : "HTMLBlock"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitHTMLBlock(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitHTMLBlock(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visithtmlblock(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitHeading(_:)-7becd": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitHeading"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown7HeadingV",
+      "text" : "Heading"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitHeading(_:)-7becd",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitHeading(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitheading(_:)-7becd"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitImage(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitImage"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5ImageV",
+      "text" : "Image"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitImage(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitImage(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitimage(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitInlineCode(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitInlineCode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown10InlineCodeV",
+      "text" : "InlineCode"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitInlineCode(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitInlineCode(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitinlinecode(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitInlineHTML(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitInlineHTML"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown10InlineHTMLV",
+      "text" : "InlineHTML"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitInlineHTML(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitInlineHTML(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitinlinehtml(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitLineBreak(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitLineBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9LineBreakV",
+      "text" : "LineBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitLineBreak(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitLineBreak(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitlinebreak(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitLink(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitLink"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown4LinkV",
+      "text" : "Link"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitLink(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitLink(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitlink(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitListItem(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitListItem"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown8ListItemV",
+      "text" : "ListItem"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitListItem(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitListItem(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitlistitem(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitOrderedList(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitOrderedList"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown11OrderedListV",
+      "text" : "OrderedList"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitOrderedList(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitOrderedList(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitorderedlist(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitParagraph(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitParagraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9ParagraphV",
+      "text" : "Paragraph"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitParagraph(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitParagraph(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitparagraph(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitSoftBreak(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitSoftBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9SoftBreakV",
+      "text" : "SoftBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitSoftBreak(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitSoftBreak(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitsoftbreak(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitStrikethrough(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitStrikethrough"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13StrikethroughV",
+      "text" : "Strikethrough"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitStrikethrough(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitStrikethrough(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitstrikethrough(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitStrong(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitStrong"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown6StrongV",
+      "text" : "Strong"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitStrong(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitStrong(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitstrong(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitSymbolLink(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitSymbolLink"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown10SymbolLinkV",
+      "text" : "SymbolLink"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitSymbolLink(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitSymbolLink(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitsymbollink(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitTable(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTable"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5TableV",
+      "text" : "Table"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTable(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitTable(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visittable(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitTableBody(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTableBody"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5TableV",
+      "text" : "Table"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5TableV4BodyV",
+      "text" : "Body"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTableBody(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitTableBody(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visittablebody(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitTableCell(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTableCell"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5TableV",
+      "text" : "Table"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5TableV4CellV",
+      "text" : "Cell"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTableCell(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitTableCell(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visittablecell(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitTableHead(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTableHead"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5TableV",
+      "text" : "Table"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5TableV4HeadV",
+      "text" : "Head"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTableHead(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitTableHead(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visittablehead(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitTableRow(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitTableRow"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5TableV",
+      "text" : "Table"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown5TableV3RowV",
+      "text" : "Row"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitTableRow(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitTableRow(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visittablerow(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitText(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitText"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown4TextV",
+      "text" : "Text"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitText(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitText(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visittext(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitThematicBreak(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitThematicBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13ThematicBreakV",
+      "text" : "ThematicBreak"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitThematicBreak(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitThematicBreak(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitthematicbreak(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/InvalidAdditionalTitle/visitUnorderedList(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "visitUnorderedList"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown13UnorderedListV",
+      "text" : "UnorderedList"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Self"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/InvalidAdditionalTitle\/visitUnorderedList(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "visitUnorderedList(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/invalidadditionaltitle\/visitunorderedlist(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/StaticAnalysis": {
+  "abstract" : [
+    {
+      "text" : "Run static analysis checks on markup files.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/StaticAnalysis",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Static Analysis",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/staticanalysis"
+}
+}
+}

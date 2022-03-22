@@ -1,0 +1,292 @@
+{
+  "abstract" : [
+    {
+      "text" : "A hash of the symbol’s precise identifier.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/preciseIdentifierHash(_:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC18AbsoluteSymbolLinkV0E9ComponentV20DisambiguationSuffixO21preciseIdentifierHashyAGSScAGmF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "case"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "preciseIdentifierHash"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : ")"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Case",
+    "symbolKind" : "case",
+    "title" : "AbsoluteSymbolLink.LinkComponent.DisambiguationSuffix.preciseIdentifierHash(_:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "case"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "preciseIdentifierHash"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : ")"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum\/preciseidentifierhash(_:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink": {
+  "abstract" : [
+    {
+      "text" : "An absolute link to a symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "AbsoluteSymbolLink"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "AbsoluteSymbolLink"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent": {
+  "abstract" : [
+    {
+      "text" : "A component of a symbol link.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LinkComponent"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LinkComponent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink.LinkComponent",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "A suffix attached to a documentation link to disambiguate it from other symbols",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "that share the same base name.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DisambiguationSuffix"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DisambiguationSuffix"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink.LinkComponent.DisambiguationSuffix",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/AbsoluteSymbolLink/LinkComponent/DisambiguationSuffix-swift.enum/preciseIdentifierHash(_:)": {
+  "abstract" : [
+    {
+      "text" : "A hash of the symbol’s precise identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "preciseIdentifierHash"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/AbsoluteSymbolLink\/LinkComponent\/DisambiguationSuffix-swift.enum\/preciseIdentifierHash(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "AbsoluteSymbolLink.LinkComponent.DisambiguationSuffix.preciseIdentifierHash(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/absolutesymbollink\/linkcomponent\/disambiguationsuffix-swift.enum\/preciseidentifierhash(_:)"
+}
+}
+}

@@ -1,0 +1,1267 @@
+{
+  "abstract" : [
+    {
+      "text" : "A request to convert in-memory documentation.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC14ConvertRequestV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ConvertRequest"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ConvertRequest"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "ConvertRequest"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ConvertRequest"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/init(bundleInfo:featureFlags:externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:bundleLocation:symbolGraphs:knownDisambiguatedSymbolPathComponents:markupFiles:miscResourceURLs:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/init(externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:bundleLocation:displayName:identifier:version:symbolGraphs:knownDisambiguatedSymbolPathComponents:markupFiles:miscResourceURLs:defaultCodeListingLanguage:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/bundleInfo",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/bundleLocation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/defaultCodeListingLanguage",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/displayName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/documentPathsToConvert",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/externalIDsToConvert",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/featureFlags",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/identifier",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/includeRenderReferenceStore",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/knownDisambiguatedSymbolPathComponents",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/markupFiles",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/miscResourceURLs",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/symbolGraphs",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/version"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/convertrequest"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest": {
+  "abstract" : [
+    {
+      "text" : "A request to convert in-memory documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ConvertRequest"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ConvertRequest"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ConvertRequest",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/bundleInfo": {
+  "abstract" : [
+    {
+      "text" : "Information about the documentation bundle to convert.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bundleInfo"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV4InfoV",
+      "text" : "Info"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/bundleInfo",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "bundleInfo",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/bundleinfo"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/bundleLocation": {
+  "abstract" : [
+    {
+      "text" : "The file location of the bundle to convert, if any.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bundleLocation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/bundleLocation",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "bundleLocation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/bundlelocation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/defaultCodeListingLanguage": {
+  "abstract" : [
+    {
+      "text" : "The default code listing language for the documentation bundle to convert.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "defaultCodeListingLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/defaultCodeListingLanguage",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "defaultCodeListingLanguage",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/defaultcodelistinglanguage"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/displayName": {
+  "abstract" : [
+    {
+      "text" : "The display name of the documentation bundle to convert.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "displayName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/displayName",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "displayName",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/displayname"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/documentPathsToConvert": {
+  "abstract" : [
+    {
+      "text" : "The paths of the documentation nodes to convert.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "documentPathsToConvert"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/documentPathsToConvert",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "documentPathsToConvert",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/documentpathstoconvert"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/externalIDsToConvert": {
+  "abstract" : [
+    {
+      "text" : "The external IDs of the symbols to convert.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "externalIDsToConvert"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/externalIDsToConvert",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "externalIDsToConvert",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/externalidstoconvert"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/featureFlags": {
+  "abstract" : [
+    {
+      "text" : "Feature flags to enable when performing this convert request.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "featureFlags"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12FeatureFlagsV",
+      "text" : "FeatureFlags"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/featureFlags",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "featureFlags",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/featureflags"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/identifier": {
+  "abstract" : [
+    {
+      "text" : "The identifier of the documentation bundle to convert.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/identifier",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "identifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/identifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/includeRenderReferenceStore": {
+  "abstract" : [
+    {
+      "text" : "Whether the conversion’s render reference store should be included in the response.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "includeRenderReferenceStore"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/includeRenderReferenceStore",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "includeRenderReferenceStore",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/includerenderreferencestore"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/init(bundleInfo:featureFlags:externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:bundleLocation:symbolGraphs:knownDisambiguatedSymbolPathComponents:markupFiles:miscResourceURLs:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a request to convert in-memory documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleInfo"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV",
+      "text" : "DocumentationBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19DocumentationBundleV4InfoV",
+      "text" : "Info"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "featureFlags"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12FeatureFlagsV",
+      "text" : "FeatureFlags"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "externalIDsToConvert"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "documentPathsToConvert"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includeRenderReferenceStore"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleLocation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "symbolGraphs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "knownDisambiguatedSymbolPathComponents"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "markupFiles"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "miscResourceURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/init(bundleInfo:featureFlags:externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:bundleLocation:symbolGraphs:knownDisambiguatedSymbolPathComponents:markupFiles:miscResourceURLs:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(bundleInfo:featureFlags:externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:bundleLocation:symbolGraphs:knownDisambiguatedSymbolPathComponents:markupFiles:miscResourceURLs:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/init(bundleinfo:featureflags:externalidstoconvert:documentpathstoconvert:includerenderreferencestore:bundlelocation:symbolgraphs:knowndisambiguatedsymbolpathcomponents:markupfiles:miscresourceurls:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/init(externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:bundleLocation:displayName:identifier:version:symbolGraphs:knownDisambiguatedSymbolPathComponents:markupFiles:miscResourceURLs:defaultCodeListingLanguage:)": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "externalIDsToConvert"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "documentPathsToConvert"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "includeRenderReferenceStore"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleLocation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "displayName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "version"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "symbolGraphs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "knownDisambiguatedSymbolPathComponents"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]]?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "markupFiles"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "miscResourceURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "defaultCodeListingLanguage"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/init(externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:bundleLocation:displayName:identifier:version:symbolGraphs:knownDisambiguatedSymbolPathComponents:markupFiles:miscResourceURLs:defaultCodeListingLanguage:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:bundleLocation:displayName:identifier:version:symbolGraphs:knownDisambiguatedSymbolPathComponents:markupFiles:miscResourceURLs:defaultCodeListingLanguage:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/init(externalidstoconvert:documentpathstoconvert:includerenderreferencestore:bundlelocation:displayname:identifier:version:symbolgraphs:knowndisambiguatedsymbolpathcomponents:markupfiles:miscresourceurls:defaultcodelistinglanguage:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/init(from:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/knownDisambiguatedSymbolPathComponents": {
+  "abstract" : [
+    {
+      "text" : "The mapping of external symbol identifiers to known disambiguated symbol path components.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "knownDisambiguatedSymbolPathComponents"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/knownDisambiguatedSymbolPathComponents",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "knownDisambiguatedSymbolPathComponents",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/knowndisambiguatedsymbolpathcomponents"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/markupFiles": {
+  "abstract" : [
+    {
+      "text" : "The markup file data included in the documentation bundle to convert.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "markupFiles"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/markupFiles",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "markupFiles",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/markupfiles"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/miscResourceURLs": {
+  "abstract" : [
+    {
+      "text" : "The on-disk resources in the documentation bundle to convert.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "miscResourceURLs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/miscResourceURLs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "miscResourceURLs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/miscresourceurls"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/symbolGraphs": {
+  "abstract" : [
+    {
+      "text" : "The symbols graph data included in the documentation bundle to convert.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "symbolGraphs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation4DataV",
+      "text" : "Data"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/symbolGraphs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "symbolGraphs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/symbolgraphs"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ConvertRequest/version": {
+  "abstract" : [
+    {
+      "text" : "The version of the documentation bundle to convert.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "version"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ConvertRequest\/version",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "version",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/convertrequest\/version"
+}
+}
+}

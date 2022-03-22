@@ -1,0 +1,277 @@
+{
+  "abstract" : [
+    {
+      "text" : "The base URL of the server. Example: ",
+      "type" : "text"
+    },
+    {
+      "code" : "http:\/\/www.example.com",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServer"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServer\/baseURL"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC10FileServerC7baseURL10Foundation0F0Vvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "let"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "baseURL"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:10Foundation3URLV",
+        "text" : "URL"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "baseURL"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "let"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "baseURL"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:10Foundation3URLV",
+              "text" : "URL"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/fileserver\/baseurl"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Communication": {
+  "abstract" : [
+    {
+      "text" : "Offer native integration of DocC in your IDE.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Communication Bridge",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/communication"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileServer": {
+  "abstract" : [
+    {
+      "text" : "FileServer is a struct simulating a web server behavior to serve files.",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "It is useful to interface a custom schema with ",
+      "type" : "text"
+    },
+    {
+      "code" : "WKWebView",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " via ",
+      "type" : "text"
+    },
+    {
+      "code" : "WKURLSchemeHandler",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " or",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "code" : "WebView",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " via a custom ",
+      "type" : "text"
+    },
+    {
+      "code" : "URLProtocol",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FileServer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FileServer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "FileServer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fileserver"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/FileServer/baseURL": {
+  "abstract" : [
+    {
+      "text" : "The base URL of the server. Example: ",
+      "type" : "text"
+    },
+    {
+      "code" : "http:\/\/www.example.com",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "let"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "baseURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/FileServer\/baseURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "baseURL",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/fileserver\/baseurl"
+}
+}
+}

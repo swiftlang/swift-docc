@@ -1,0 +1,354 @@
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneOf"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneOf\/init(severityIfNotFound:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC8SemanticC8AnalysesO15HasExactlyOneOfV18severityIfNotFoundAGy__xq_q0_GAA18DiagnosticSeverityOSg_tcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "severityIfNotFound"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
+        "text" : "DiagnosticSeverity"
+      },
+      {
+        "kind" : "text",
+        "text" : "?)"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(severityIfNotFound:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "severityIfNotFound"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
+              "text" : "DiagnosticSeverity"
+            },
+            {
+              "kind" : "text",
+              "text" : "?)"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/semantic\/analyses\/hasexactlyoneof\/init(severityifnotfound:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DiagnosticSeverity": {
+  "abstract" : [
+    {
+      "text" : "The severity of a diagnostic.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticSeverity"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DiagnosticSeverity",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DiagnosticSeverity"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DiagnosticSeverity",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/diagnosticseverity"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic": {
+  "abstract" : [
+    {
+      "text" : "A semantic object is an abstract element with children which also are semantic objects.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses": {
+  "abstract" : [
+    {
+      "text" : "General purpose analyses that can apply to many directives.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Analyses"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Analyses"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasExactlyOneOf": {
+  "abstract" : [
+    {
+      "text" : "Checks a parent directive for the presence of exactly one of two child directives—but not both—to be converted to a type ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ". If so, return that child and the remainder.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneOf"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneOf",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "HasExactlyOneOf"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic.Analyses.HasExactlyOneOf",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasexactlyoneof"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic/Analyses/HasExactlyOneOf/init(severityIfNotFound:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "severityIfNotFound"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
+      "text" : "DiagnosticSeverity"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic\/Analyses\/HasExactlyOneOf\/init(severityIfNotFound:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(severityIfNotFound:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic\/analyses\/hasexactlyoneof\/init(severityifnotfound:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SemanticAnalysis/Result": {
+  "abstract" : [
+    {
+      "text" : "The result of the analysis.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "associatedtype"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SemanticAnalysis\/Result",
+  "kind" : "symbol",
+  "required" : true,
+  "role" : "symbol",
+  "title" : "Result",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semanticanalysis\/result"
+}
+}
+}

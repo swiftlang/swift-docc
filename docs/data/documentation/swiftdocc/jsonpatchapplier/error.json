@@ -1,0 +1,755 @@
+{
+  "abstract" : [
+    {
+      "text" : "An error that occured during the application of a JSON patch.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC16JSONPatchApplierV5ErrorO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Error"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Error"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "JSONPatchApplier.Error"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Error"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError",
+        "doc:\/\/SwiftDocC\/10Foundation14LocalizedErrorP",
+        "doc:\/\/SwiftDocC\/s5ErrorP",
+        "doc:\/\/SwiftDocC\/s8SendableP"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidArrayPointer(_:index:arrayCount:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidObjectPointer(_:component:availableKeys:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidPatch",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidValuePointer(_:component:jsonValue:)"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/errorDescription-792wm"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidObjectPointer(_:component:availableObjectKeys:)"
+      ],
+      "title" : "Type Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/DescribedError-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/Error-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/LocalizedError-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/jsonpatchapplier\/error"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/10Foundation14LocalizedErrorP": {
+  "identifier" : "doc:\/\/SwiftDocC\/10Foundation14LocalizedErrorP",
+  "title" : "Foundation.LocalizedError",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DescribedError": {
+  "abstract" : [
+    {
+      "text" : "An error that offers a plain-text error message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DescribedError"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DescribedError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DescribedError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DescribedError",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/describederror"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier": {
+  "abstract" : [
+    {
+      "text" : "A utility type for applying JSON patches.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatchApplier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatchApplier"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPatchApplier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error": {
+  "abstract" : [
+    {
+      "text" : "An error that occured during the application of a JSON patch.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Error"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Error"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPatchApplier.Error",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/DescribedError-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/DescribedError-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "DescribedError Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/describederror-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/Error-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/Error-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Error Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/error-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/LocalizedError-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/LocalizedError-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "LocalizedError Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/localizederror-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/errorDescription-792wm": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "errorDescription"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/errorDescription-792wm",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "errorDescription",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/errordescription-792wm"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/invalidArrayPointer(_:index:arrayCount:)": {
+  "abstract" : [
+    {
+      "text" : "An error indicating that the pointer of a patch operation is invalid for a JSON array.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "invalidArrayPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "index"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "arrayCount"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidArrayPointer(_:index:arrayCount:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "JSONPatchApplier.Error.invalidArrayPointer(_:index:arrayCount:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/invalidarraypointer(_:index:arraycount:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/invalidObjectPointer(_:component:availableKeys:)": {
+  "abstract" : [
+    {
+      "text" : "An error indicating that the pointer of a patch operation is invalid for a JSON object.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "invalidObjectPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "component"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "availableKeys"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidObjectPointer(_:component:availableKeys:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "JSONPatchApplier.Error.invalidObjectPointer(_:component:availableKeys:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/invalidobjectpointer(_:component:availablekeys:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/invalidObjectPointer(_:component:availableObjectKeys:)": {
+  "abstract" : [
+    {
+      "text" : "An error indicating that the pointer of a patch operation is invalid for a JSON object.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "invalidObjectPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "Keys"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "component"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "availableObjectKeys"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Keys"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16JSONPatchApplierV",
+      "text" : "JSONPatchApplier"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC16JSONPatchApplierV5ErrorO",
+      "text" : "Error"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidObjectPointer(_:component:availableObjectKeys:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "invalidObjectPointer(_:component:availableObjectKeys:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/invalidobjectpointer(_:component:availableobjectkeys:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/invalidPatch": {
+  "abstract" : [
+    {
+      "text" : "An error indicating that a patch operation is invalid.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "invalidPatch"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidPatch",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "JSONPatchApplier.Error.invalidPatch",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/invalidpatch"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchApplier/Error/invalidValuePointer(_:component:jsonValue:)": {
+  "abstract" : [
+    {
+      "text" : "An error indicating that the pointer of a patch operation is invalid for a JSON value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "invalidValuePointer"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC11JSONPointerV",
+      "text" : "JSONPointer"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "component"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "jsonValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchApplier\/Error\/invalidValuePointer(_:component:jsonValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "JSONPatchApplier.Error.invalidValuePointer(_:component:jsonValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchapplier\/error\/invalidvaluepointer(_:component:jsonvalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPatchOperation": {
+  "abstract" : [
+    {
+      "text" : "A patch operation to update a JSON value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatchOperation"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPatchOperation",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "JSONPatchOperation"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPatchOperation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpatchoperation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/s5ErrorP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s5ErrorP",
+  "title" : "Swift.Error",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/s8SendableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s8SendableP",
+  "title" : "Swift.Sendable",
+  "type" : "unresolvable"
+}
+}
+}

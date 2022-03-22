@@ -1,0 +1,3459 @@
+{
+  "abstract" : [
+    {
+      "text" : "A programming symbol semantic type.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC6SymbolC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Symbol"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Symbol"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "Symbol"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "final"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Symbol"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "This class’s properties are represented using ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariants",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " values which encode the different variants for each piece of information",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "about the symbol. For example, if a symbol is available in multiple programming languages, the ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/titleVariants",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " property represents the title of the symbol",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "for each programming language it’s available in. Use a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariantsTrait",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " to access a specific variant.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic"
+      ],
+      "kind" : "relationships",
+      "title" : "Inherits From",
+      "type" : "inheritsFrom"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/SQ"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/titleVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/subHeadingVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/navigatorVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/roleHeadingVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/kindVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/platformNameVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/moduleReference",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/extendedModule",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/bystanderModuleNames",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isRequiredVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/externalIDVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accessLevelVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/deprecatedSummaryVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/declarationVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/locationVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/constraintsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/originVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/availabilityVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/relationshipsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/abstractSectionVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/discussionVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/topicsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/defaultImplementationsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/seeAlsoVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/returnsSectionVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/parametersSectionVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/redirectsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/abstractVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isDeprecatedVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isSPIVariants"
+      ],
+      "title" : "Properties"
+    },
+    {
+      "abstract" : [
+        {
+          "text" : "Convenience APIs for accessing the first variant of the symbol’s properties.",
+          "type" : "text"
+        }
+      ],
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/kind",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/title",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/subHeading",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/navigator",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/roleHeading",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/platformName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isRequired",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/externalID",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/deprecatedSummary",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/declaration",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/location",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/constraints",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/origin",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/availability",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/relationships",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accessLevel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/discussion",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/abstractSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/topics",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/defaultImplementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/seeAlso",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/redirects",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/returnsSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/parametersSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/abstract",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isDeprecated",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isSPI"
+      ],
+      "title" : "First Variant Accessors"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariantsTrait"
+      ],
+      "title" : "Variants"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/init()"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accept(_:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/Abstracted-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/Redirected-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/symbol"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationDataVariants": {
+  "abstract" : [
+    {
+      "text" : "A model type that encapsulates variants of documentation node data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationDataVariants"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariants",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationDataVariants"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationDataVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationdatavariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationDataVariantsTrait": {
+  "abstract" : [
+    {
+      "text" : "The trait associated with a variant of some piece of information about a documentation node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationDataVariantsTrait"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationDataVariantsTrait",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationDataVariantsTrait"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationDataVariantsTrait",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationdatavariantstrait"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Semantic": {
+  "abstract" : [
+    {
+      "text" : "A semantic object is an abstract element with children which also are semantic objects.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Semantic",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Semantic"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Semantic",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/semantic"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol": {
+  "abstract" : [
+    {
+      "text" : "A programming symbol semantic type.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Symbol",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/Abstracted-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/Abstracted-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Abstracted Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/abstracted-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/Redirected-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/Redirected-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Redirected Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/redirected-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/abstract": {
+  "abstract" : [
+    {
+      "text" : "The first variant of the symbol’s abstract summary as a single paragraph.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "abstract"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9ParagraphV",
+      "text" : "Paragraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/abstract",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "abstract",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/abstract"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/abstractSection": {
+  "abstract" : [
+    {
+      "text" : "An optional, abstract summary for the first variant of the symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "abstractSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15AbstractSectionV",
+      "text" : "AbstractSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/abstractSection",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "abstractSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/abstractsection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/abstractSectionVariants": {
+  "abstract" : [
+    {
+      "text" : "An optional, abstract summary for the symbol, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "abstractSectionVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15AbstractSectionV",
+      "text" : "AbstractSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/abstractSectionVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "abstractSectionVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/abstractsectionvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/abstractVariants": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s abstract summary as a single paragraph, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "abstractVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:8Markdown9ParagraphV",
+      "text" : "Paragraph"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/abstractVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "abstractVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/abstractvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/accept(_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "accept"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "genericParameter",
+      "text" : "V"
+    },
+    {
+      "kind" : "text",
+      "text" : ">("
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "V"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "V"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "text" : "Result"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accept(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "accept(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/accept(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/accessLevel": {
+  "abstract" : [
+    {
+      "text" : "The first variant of the symbol’s access level, if available.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "accessLevel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accessLevel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "accessLevel",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/accesslevel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/accessLevelVariants": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s access level, if available, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "accessLevelVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/accessLevelVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "accessLevelVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/accesslevelvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/availability": {
+  "abstract" : [
+    {
+      "text" : "The platforms on which the first variant of the symbol is available.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "availability"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V12AvailabilityV",
+      "text" : "Availability"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/availability",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "availability",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/availability"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/availabilityVariants": {
+  "abstract" : [
+    {
+      "text" : "The platforms on which the symbol is available in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "availabilityVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V12AvailabilityV",
+      "text" : "Availability"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/availabilityVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "availabilityVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/availabilityvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/bystanderModuleNames": {
+  "abstract" : [
+    {
+      "text" : "Optional cross-import module names of the symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bystanderModuleNames"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/bystanderModuleNames",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "bystanderModuleNames",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/bystandermodulenames"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/constraints": {
+  "abstract" : [
+    {
+      "text" : "The first variant of the symbol’s availability or conformance constraints.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "constraints"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO",
+      "text" : "Swift"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV",
+      "text" : "GenericConstraint"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/constraints",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "constraints",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/constraints"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/constraintsVariants": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s availability or conformance constraints, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "constraintsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO",
+      "text" : "Swift"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV",
+      "text" : "GenericConstraint"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/constraintsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "constraintsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/constraintsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/declaration": {
+  "abstract" : [
+    {
+      "text" : "The first variant of the symbol’s declarations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "declaration"
+    },
+    {
+      "kind" : "text",
+      "text" : ": [["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : "?] : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
+      "text" : "DeclarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/declaration",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "declaration",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/declaration"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/declarationVariants": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s declarations in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "declarationVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<[["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : "?] : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
+      "text" : "DeclarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/declarationVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "declarationVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/declarationvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/defaultImplementations": {
+  "abstract" : [
+    {
+      "text" : "Any default implementations of the first variant of the symbol, if the symbol is a protocol requirement.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "defaultImplementations"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC29DefaultImplementationsSectionV",
+      "text" : "DefaultImplementationsSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/defaultImplementations",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "defaultImplementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/defaultimplementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/defaultImplementationsVariants": {
+  "abstract" : [
+    {
+      "text" : "Any default implementations of the symbol, if the symbol is a protocol requirement, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "defaultImplementationsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC29DefaultImplementationsSectionV",
+      "text" : "DefaultImplementationsSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/defaultImplementationsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "defaultImplementationsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/defaultimplementationsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/deprecatedSummary": {
+  "abstract" : [
+    {
+      "text" : "The first variant of the symbol’s deprecation information, if deprecated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deprecatedSummary"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DeprecatedSectionV",
+      "text" : "DeprecatedSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/deprecatedSummary",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deprecatedSummary",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/deprecatedsummary"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/deprecatedSummaryVariants": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s deprecation information, if deprecated, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deprecatedSummaryVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DeprecatedSectionV",
+      "text" : "DeprecatedSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/deprecatedSummaryVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deprecatedSummaryVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/deprecatedsummaryvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/discussion": {
+  "abstract" : [
+    {
+      "text" : "An optional discussion for the first variant of the symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "discussion"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DiscussionSectionV",
+      "text" : "DiscussionSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/discussion",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "discussion",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/discussion"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/discussionVariants": {
+  "abstract" : [
+    {
+      "text" : "An optional discussion for the symbol, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "discussionVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17DiscussionSectionV",
+      "text" : "DiscussionSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/discussionVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "discussionVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/discussionvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/extendedModule": {
+  "abstract" : [
+    {
+      "text" : "The name of the module extension in which the symbol is defined, if applicable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "extendedModule"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/extendedModule",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "extendedModule",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/extendedmodule"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/externalID": {
+  "abstract" : [
+    {
+      "text" : "The first variant of the symbol’s external identifier, if available.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "externalID"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/externalID",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "externalID",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/externalid"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/externalIDVariants": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s external identifier, if available, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "externalIDVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/externalIDVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "externalIDVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/externalidvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/init()": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/init()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/init()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/isDeprecated": {
+  "abstract" : [
+    {
+      "text" : "Whether the first variant of the symbol is deprecated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isDeprecated"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isDeprecated",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isDeprecated",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/isdeprecated"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/isDeprecatedVariants": {
+  "abstract" : [
+    {
+      "text" : "Whether the symbol is deprecated, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isDeprecatedVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isDeprecatedVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isDeprecatedVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/isdeprecatedvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/isRequired": {
+  "abstract" : [
+    {
+      "text" : "Whether the first variant of the symbol is required in its context.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isRequired"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isRequired",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isRequired",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/isrequired"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/isRequiredVariants": {
+  "abstract" : [
+    {
+      "text" : "Whether the symbol is required in its context, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isRequiredVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isRequiredVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isRequiredVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/isrequiredvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/isSPI": {
+  "abstract" : [
+    {
+      "text" : "Whether the first variant of the symbol is declared as an SPI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isSPI"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isSPI",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isSPI",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/isspi"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/isSPIVariants": {
+  "abstract" : [
+    {
+      "text" : "Whether the symbol is declared as an SPI, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isSPIVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/isSPIVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isSPIVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/isspivariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/kind": {
+  "abstract" : [
+    {
+      "text" : "The kind of the first variant of this symbol, such as protocol or variable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "kind"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V4KindV",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/kind",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "kind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/kind"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/kindVariants": {
+  "abstract" : [
+    {
+      "text" : "The kind of the symbol in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "kindVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V4KindV",
+      "text" : "Kind"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/kindVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "kindVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/kindvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/location": {
+  "abstract" : [
+    {
+      "text" : "The place where the first variant of the symbol was originally declared in a source file.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "location"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V8LocationV",
+      "text" : "Location"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/location",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "location",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/location"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/locationVariants": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "locationVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V8LocationV",
+      "text" : "Location"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/locationVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "locationVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/locationvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/moduleReference": {
+  "abstract" : [
+    {
+      "text" : "The reference to the documentation node that represents this symbol’s module symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "moduleReference"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22ResolvedTopicReferenceV",
+      "text" : "ResolvedTopicReference"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/moduleReference",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "moduleReference",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/modulereference"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/navigator": {
+  "abstract" : [
+    {
+      "text" : "The simplified version of the first variant of this symbol’s declaration to use in navigation UI.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "navigator"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
+      "text" : "DeclarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV",
+      "text" : "Fragment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/navigator",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "navigator",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/navigator"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/navigatorVariants": {
+  "abstract" : [
+    {
+      "text" : "The simplified version of this symbol’s declaration in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "navigatorVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
+      "text" : "DeclarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV",
+      "text" : "Fragment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/navigatorVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "navigatorVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/navigatorvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/origin": {
+  "abstract" : [
+    {
+      "text" : "The inheritance information for the first variant of the symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "origin"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV12RelationshipV",
+      "text" : "Relationship"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV12RelationshipV12SourceOriginV",
+      "text" : "SourceOrigin"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/origin",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "origin",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/origin"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/originVariants": {
+  "abstract" : [
+    {
+      "text" : "The inheritance information for the symbol in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "originVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV12RelationshipV",
+      "text" : "Relationship"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV12RelationshipV12SourceOriginV",
+      "text" : "SourceOrigin"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/originVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "originVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/originvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/parametersSection": {
+  "abstract" : [
+    {
+      "text" : "Any parameters of the first variant of the symbol, if the symbol accepts parameters.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "parametersSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17ParametersSectionV",
+      "text" : "ParametersSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/parametersSection",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "parametersSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/parameterssection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/parametersSectionVariants": {
+  "abstract" : [
+    {
+      "text" : "Any parameters of the symbol, if the symbol accepts parameters, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "parametersSectionVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17ParametersSectionV",
+      "text" : "ParametersSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/parametersSectionVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "parametersSectionVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/parameterssectionvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/platformName": {
+  "abstract" : [
+    {
+      "text" : "The first variant of the symbol’s platform, if available.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "platformName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/platformName",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "platformName",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/platformname"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/platformNameVariants": {
+  "abstract" : [
+    {
+      "text" : "The symbol’s platform in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "platformNameVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC12PlatformNameV",
+      "text" : "PlatformName"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/platformNameVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "platformNameVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/platformnamevariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/redirects": {
+  "abstract" : [
+    {
+      "text" : "Any redirect information of the first variant of the symbol, if the symbol has been moved from another location.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "redirects"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8RedirectC",
+      "text" : "Redirect"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/redirects",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "redirects",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/redirects"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/redirectsVariants": {
+  "abstract" : [
+    {
+      "text" : "Any redirect information of the symbol, if the symbol has been moved from another location, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "redirectsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC8RedirectC",
+      "text" : "Redirect"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/redirectsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "redirectsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/redirectsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/relationships": {
+  "abstract" : [
+    {
+      "text" : "The presentation-friendly relationships of the first variant of this symbol to other symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "relationships"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20RelationshipsSectionV",
+      "text" : "RelationshipsSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/relationships",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "relationships",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/relationships"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/relationshipsVariants": {
+  "abstract" : [
+    {
+      "text" : "The presentation-friendly relationships of this symbol to other symbols, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "relationshipsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC20RelationshipsSectionV",
+      "text" : "RelationshipsSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/relationshipsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "relationshipsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/relationshipsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/returnsSection": {
+  "abstract" : [
+    {
+      "text" : "Any return value information of the first variant of the symbol, if the symbol returns.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "returnsSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14ReturnsSectionV",
+      "text" : "ReturnsSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/returnsSection",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "returnsSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/returnssection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/returnsSectionVariants": {
+  "abstract" : [
+    {
+      "text" : "Any return value information of the symbol, if the symbol returns, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "returnsSectionVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14ReturnsSectionV",
+      "text" : "ReturnsSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/returnsSectionVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "returnsSectionVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/returnssectionvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/roleHeading": {
+  "abstract" : [
+    {
+      "text" : "The presentation-friendly version of the first variant of the symbol’s kind.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "roleHeading"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/roleHeading",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "roleHeading",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/roleheading"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/roleHeadingVariants": {
+  "abstract" : [
+    {
+      "text" : "The presentation-friendly version of the symbol’s kind in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "roleHeadingVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/roleHeadingVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "roleHeadingVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/roleheadingvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/seeAlso": {
+  "abstract" : [
+    {
+      "text" : "Any See Also groups of the first variant of the symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "seeAlso"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14SeeAlsoSectionV",
+      "text" : "SeeAlsoSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/seeAlso",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "seeAlso",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/seealso"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/seeAlsoVariants": {
+  "abstract" : [
+    {
+      "text" : "Any See Also groups of the symbol, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "seeAlsoVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC14SeeAlsoSectionV",
+      "text" : "SeeAlsoSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/seeAlsoVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "seeAlsoVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/seealsovariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/subHeading": {
+  "abstract" : [
+    {
+      "text" : "The simplified version of the first variant of this symbol’s declaration to use inside groups that may contain multiple links.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "subHeading"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
+      "text" : "DeclarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV",
+      "text" : "Fragment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/subHeading",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "subHeading",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/subheading"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/subHeadingVariants": {
+  "abstract" : [
+    {
+      "text" : "The simplified version of the symbol’s declaration in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "subHeadingVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
+      "text" : "DeclarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV",
+      "text" : "Fragment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/subHeadingVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "subHeadingVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/subheadingvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/title": {
+  "abstract" : [
+    {
+      "text" : "The title of the first variant of this symbol, usually a simplified version of the declaration.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "title"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/title",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "title",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/title"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/titleVariants": {
+  "abstract" : [
+    {
+      "text" : "The title of the symbol in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "titleVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/titleVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "titleVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/titlevariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/topics": {
+  "abstract" : [
+    {
+      "text" : "The topics task groups for the first variant of the symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "topics"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13TopicsSectionV",
+      "text" : "TopicsSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/topics",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "topics",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/topics"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Symbol/topicsVariants": {
+  "abstract" : [
+    {
+      "text" : "The topics task groups for the symbol, in each language variant the symbol is available in.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "topicsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC25DocumentationDataVariantsV",
+      "text" : "DocumentationDataVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13TopicsSectionV",
+      "text" : "TopicsSection"
+    },
+    {
+      "kind" : "text",
+      "text" : ">"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Symbol\/topicsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "topicsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbol\/topicsvariants"
+}
+}
+}

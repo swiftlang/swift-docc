@@ -1,0 +1,462 @@
+{
+  "abstract" : [
+    {
+      "text" : "An enum representing characters that need escaping in JSON Pointer values.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC11JSONPointerV17EscapedCharactersO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "EscapedCharacters"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "EscapedCharacters"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "JSONPointer.EscapedCharacters"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "EscapedCharacters"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The characters that need to be escaped in JSON Pointer values are defined in",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "https:\/\/datatracker.ietf.org\/doc\/html\/rfc6901",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/s12CaseIterableP",
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/forwardSlash",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/tilde"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/escaped"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/Equatable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/jsonpointer\/escapedcharacters"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SY": {
+  "identifier" : "doc:\/\/SwiftDocC\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPointer": {
+  "abstract" : [
+    {
+      "text" : "A pointer to a specific value in a JSON document.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "JSONPointer"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "JSONPointer"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPointer",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpointer"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPointer/EscapedCharacters": {
+  "abstract" : [
+    {
+      "text" : "An enum representing characters that need escaping in JSON Pointer values.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "EscapedCharacters"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "EscapedCharacters"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "JSONPointer.EscapedCharacters",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpointer\/escapedcharacters"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPointer/EscapedCharacters/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpointer\/escapedcharacters\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPointer/EscapedCharacters/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpointer\/escapedcharacters\/rawrepresentable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPointer/EscapedCharacters/escaped": {
+  "abstract" : [
+    {
+      "text" : "The escaped character.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "escaped"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/escaped",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "escaped",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpointer\/escapedcharacters\/escaped"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPointer/EscapedCharacters/forwardSlash": {
+  "abstract" : [
+    {
+      "text" : "The forward slash character.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "forwardSlash"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/forwardSlash",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "JSONPointer.EscapedCharacters.forwardSlash",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpointer\/escapedcharacters\/forwardslash"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPointer/EscapedCharacters/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpointer\/escapedcharacters\/init(rawvalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/JSONPointer/EscapedCharacters/tilde": {
+  "abstract" : [
+    {
+      "text" : "The tilde character.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tilde"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/JSONPointer\/EscapedCharacters\/tilde",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "JSONPointer.EscapedCharacters.tilde",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/jsonpointer\/escapedcharacters\/tilde"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/s12CaseIterableP": {
+  "identifier" : "doc:\/\/SwiftDocC\/s12CaseIterableP",
+  "title" : "Swift.CaseIterable",
+  "type" : "unresolvable"
+},
+"https://datatracker.ietf.org/doc/html/rfc6901": {
+  "identifier" : "https:\/\/datatracker.ietf.org\/doc\/html\/rfc6901",
+  "title" : "RFC6901",
+  "titleInlineContent" : [
+    {
+      "text" : "RFC6901",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/datatracker.ietf.org\/doc\/html\/rfc6901"
+}
+}
+}

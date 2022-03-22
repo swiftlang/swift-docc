@@ -1,0 +1,285 @@
+{
+  "abstract" : [
+    {
+      "text" : "A collection of markup elements that you arrange with a specified layout.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupLayout"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC12MarkupLayoutO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "MarkupLayout"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "MarkupLayout"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "MarkupLayout"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "MarkupLayout"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupLayout\/contentAndMedia(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupLayout\/markup(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupLayout\/stack(_:)"
+      ],
+      "title" : "Enumeration Cases"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/markuplayout"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupLayout": {
+  "abstract" : [
+    {
+      "text" : "A collection of markup elements that you arrange with a specified layout.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MarkupLayout"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupLayout",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MarkupLayout"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MarkupLayout",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markuplayout"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupLayout/contentAndMedia(_:)": {
+  "abstract" : [
+    {
+      "text" : "A piece of media with an attached description.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "contentAndMedia"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15ContentAndMediaC",
+      "text" : "ContentAndMedia"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupLayout\/contentAndMedia(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "MarkupLayout.contentAndMedia(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markuplayout\/contentandmedia(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupLayout/markup(_:)": {
+  "abstract" : [
+    {
+      "text" : "A general-purpose markup container.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "markup"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15MarkupContainerC",
+      "text" : "MarkupContainer"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupLayout\/markup(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "MarkupLayout.markup(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markuplayout\/markup(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MarkupLayout/stack(_:)": {
+  "abstract" : [
+    {
+      "text" : "A view that arranges its children in a row.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "stack"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC5StackC",
+      "text" : "Stack"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MarkupLayout\/stack(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "MarkupLayout.stack(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/markuplayout\/stack(_:)"
+}
+}
+}

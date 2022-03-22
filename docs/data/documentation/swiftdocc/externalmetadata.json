@@ -1,0 +1,433 @@
+{
+  "abstract" : [
+    {
+      "text" : "External metadata injected into the documentation compiler, for example via command line arguments.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC16ExternalMetadataV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "ExternalMetadata"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "ExternalMetadata"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "ExternalMetadata"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "ExternalMetadata"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion"
+      ],
+      "title" : "Bundle Metadata"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/currentPlatforms",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/diagnosticLevel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/inheritDocs",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/isGeneratedBundle"
+      ],
+      "title" : "Instance Properties"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/externalmetadata"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DefaultAvailability": {
+  "abstract" : [
+    {
+      "text" : "A collection of modules and the default platform availability for symbols in that module.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DefaultAvailability"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DefaultAvailability",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DefaultAvailability"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DefaultAvailability",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/defaultavailability"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationWorkspaceGroup": {
+  "abstract" : [
+    {
+      "text" : "Learn how to explore a documentation workspace and discover bundles.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationWorkspaceGroup",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Bundle Discovery",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationworkspacegroup"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalMetadata": {
+  "abstract" : [
+    {
+      "text" : "External metadata injected into the documentation compiler, for example via command line arguments.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "ExternalMetadata"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "ExternalMetadata"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "ExternalMetadata",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/externalmetadata"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalMetadata/currentPlatforms": {
+  "abstract" : [
+    {
+      "text" : "The current version and beta information for platforms that may be encountered while processing symbol graph files.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "currentPlatforms"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC15PlatformVersionV",
+      "text" : "PlatformVersion"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/currentPlatforms",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "currentPlatforms",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/externalmetadata\/currentplatforms"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalMetadata/diagnosticLevel": {
+  "abstract" : [
+    {
+      "text" : "The granularity of diagnostics to emit via the engine.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "diagnosticLevel"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18DiagnosticSeverityO",
+      "text" : "DiagnosticSeverity"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/diagnosticLevel",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "diagnosticLevel",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/externalmetadata\/diagnosticlevel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalMetadata/inheritDocs": {
+  "abstract" : [
+    {
+      "text" : "If ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", inherited symbols retain their original docs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "inheritDocs"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/inheritDocs",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "inheritDocs",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/externalmetadata\/inheritdocs"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/ExternalMetadata/isGeneratedBundle": {
+  "abstract" : [
+    {
+      "text" : "If ",
+      "type" : "text"
+    },
+    {
+      "code" : "true",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ", there is no source bundle on disk and the inputs were passed via command line parameters.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "isGeneratedBundle"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/ExternalMetadata\/isGeneratedBundle",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "isGeneratedBundle",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/externalmetadata\/isgeneratedbundle"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/PlatformVersion": {
+  "abstract" : [
+    {
+      "text" : "A pair of a version number and beta information for a platform.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PlatformVersion"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/PlatformVersion",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PlatformVersion"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PlatformVersion",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/platformversion"
+}
+}
+}

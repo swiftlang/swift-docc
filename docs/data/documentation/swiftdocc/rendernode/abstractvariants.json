@@ -1,0 +1,640 @@
+{
+  "abstract" : [
+    {
+      "text" : "The variants of the abstract of the node, which provide a short overview of its contents.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/abstractVariants"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC10RenderNodeV16abstractVariantsAA17VariantCollectionVySayAA0C13InlineContentOGSgGvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "abstractVariants"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+        "text" : "VariantCollection"
+      },
+      {
+        "kind" : "text",
+        "text" : "<["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+        "text" : "RenderInlineContent"
+      },
+      {
+        "kind" : "text",
+        "text" : "]?>"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "abstractVariants"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "abstractVariants"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+              "text" : "VariantCollection"
+            },
+            {
+              "kind" : "text",
+              "text" : "<["
+            },
+            {
+              "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+              "text" : "RenderInlineContent"
+            },
+            {
+              "kind" : "text",
+              "text" : "]?>"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/primaryContentSectionsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/topicSectionsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/relationshipSectionsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/defaultImplementationsSectionsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/seeAlsoSectionsVariants",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/deprecationSummaryVariants"
+      ],
+      "title" : "Multi-Language Reference Documentation Data"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/rendernode\/abstractvariants"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderInlineContent": {
+  "abstract" : [
+    {
+      "text" : "An inline content element.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderInlineContent"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderInlineContent",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderInlineContent"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderInlineContent",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderinlinecontent"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode": {
+  "abstract" : [
+    {
+      "text" : "A rendering-friendly representation of a documentation node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "RenderNode"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "RenderNode"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "RenderNode",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/abstractVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the abstract of the node, which provide a short overview of its contents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "abstractVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC19RenderInlineContentO",
+      "text" : "RenderInlineContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/abstractVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "abstractVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/abstractvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/defaultImplementationsSectionsVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the Default Implementations sections of symbol node, which list APIs that provide a default implementation of the symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "defaultImplementationsSectionsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22TaskGroupRenderSectionV",
+      "text" : "TaskGroupRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/defaultImplementationsSectionsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "defaultImplementationsSectionsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/defaultimplementationssectionsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/deprecationSummaryVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the description of why this symbol is deprecated.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "deprecationSummaryVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC18RenderBlockContentO",
+      "text" : "RenderBlockContent"
+    },
+    {
+      "kind" : "text",
+      "text" : "]?>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/deprecationSummaryVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "deprecationSummaryVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/deprecationsummaryvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/primaryContentSectionsVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the primary content sections of the node, which are the main sections of a reference documentation node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "primaryContentSectionsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<"
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC21CodableContentSectionV",
+      "text" : "CodableContentSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "?>]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/primaryContentSectionsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "primaryContentSectionsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/primarycontentsectionsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/relationshipSectionsVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the Relationships sections of a reference documentation node, which describe how this symbol is related to others.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "relationshipSectionsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC26RelationshipsRenderSectionV",
+      "text" : "RelationshipsRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/relationshipSectionsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "relationshipSectionsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/relationshipsectionsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/seeAlsoSectionsVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants of the See Also sections of a node, which list documentation resources related to this documentation node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "seeAlsoSectionsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22TaskGroupRenderSectionV",
+      "text" : "TaskGroupRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/seeAlsoSectionsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "seeAlsoSectionsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/seealsosectionsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderNode/topicSectionsVariants": {
+  "abstract" : [
+    {
+      "text" : "The variants for the Topics sections of this documentation node, which contain links to useful related documentation nodes.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "topicSectionsVariants"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC17VariantCollectionV",
+      "text" : "VariantCollection"
+    },
+    {
+      "kind" : "text",
+      "text" : "<["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC22TaskGroupRenderSectionV",
+      "text" : "TaskGroupRenderSection"
+    },
+    {
+      "kind" : "text",
+      "text" : "]>"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderNode\/topicSectionsVariants",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "topicSectionsVariants",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/rendernode\/topicsectionsvariants"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/VariantCollection": {
+  "abstract" : [
+    {
+      "text" : "A collection of variants for a render node value.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "VariantCollection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/VariantCollection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "VariantCollection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "VariantCollection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/variantcollection"
+}
+}
+}

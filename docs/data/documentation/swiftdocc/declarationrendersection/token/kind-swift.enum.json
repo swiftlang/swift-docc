@@ -1,0 +1,691 @@
+{
+  "abstract" : [
+    {
+      "text" : "The list of all expected tokens in a declaration.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC24DeclarationRenderSectionV5TokenV4KindO",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "enum"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Kind"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Kind"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Enumeration",
+    "symbolKind" : "enum",
+    "title" : "DeclarationRenderSection.Token.Kind"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "enum"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Kind"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH",
+        "doc:\/\/SwiftDocC\/SY"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/attribute",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/externalParam",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/genericParameter",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/identifier",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/internalParam",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/keyword",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/label",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/number",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/string",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/text",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/typeIdentifier"
+      ],
+      "title" : "Enumeration Cases"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/init(rawValue:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/Equatable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/RawRepresentable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SY": {
+  "identifier" : "doc:\/\/SwiftDocC\/SY",
+  "title" : "Swift.RawRepresentable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection": {
+  "abstract" : [
+    {
+      "text" : "A section that contains a symbol declaration.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationRenderSection"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DeclarationRenderSection"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token": {
+  "abstract" : [
+    {
+      "text" : "A lexical token to use in declarations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Token"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Token"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum": {
+  "abstract" : [
+    {
+      "text" : "The list of all expected tokens in a declaration.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Kind"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Kind"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/RawRepresentable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/RawRepresentable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "RawRepresentable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/rawrepresentable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/attribute": {
+  "abstract" : [
+    {
+      "text" : "An attribute, for example, “@main”.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "attribute"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/attribute",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.attribute",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/attribute"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/externalParam": {
+  "abstract" : [
+    {
+      "text" : "A parameter name to use when calling a function.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "externalParam"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/externalParam",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.externalParam",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/externalparam"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/genericParameter": {
+  "abstract" : [
+    {
+      "text" : "A generic parameter in a function signature.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "genericParameter"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/genericParameter",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.genericParameter",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/genericparameter"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/identifier": {
+  "abstract" : [
+    {
+      "text" : "An identifier, for example a property or a function name.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "identifier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/identifier",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.identifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/identifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/init(rawValue:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "?("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "rawValue"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/init(rawValue:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(rawValue:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/init(rawvalue:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/internalParam": {
+  "abstract" : [
+    {
+      "text" : "A parameter name to use inside a function body.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "internalParam"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/internalParam",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.internalParam",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/internalparam"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/keyword": {
+  "abstract" : [
+    {
+      "text" : "A known keyword, like “class” or “var”.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "keyword"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/keyword",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.keyword",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/keyword"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/label": {
+  "abstract" : [
+    {
+      "text" : "A label that precedes an identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "label"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/label",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.label",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/label"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/number": {
+  "abstract" : [
+    {
+      "text" : "A numeric literal, like “1.25” or “0xff”.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "number"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/number",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.number",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/number"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/string": {
+  "abstract" : [
+    {
+      "text" : "A string literal.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "string"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/string",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.string",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/string"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/text": {
+  "abstract" : [
+    {
+      "text" : "A plain text, such as whitespace or punctuation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/text",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.text",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/text"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DeclarationRenderSection/Token/Kind-swift.enum/typeIdentifier": {
+  "abstract" : [
+    {
+      "text" : "A type identifier, for example, an integer or raw data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "case"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "typeIdentifier"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DeclarationRenderSection\/Token\/Kind-swift.enum\/typeIdentifier",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "DeclarationRenderSection.Token.Kind.typeIdentifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/declarationrendersection\/token\/kind-swift.enum\/typeidentifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/RenderingModel": {
+  "abstract" : [
+    {
+      "text" : "Convert documentation nodes into render nodes and save them to disk.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/RenderingModel",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Rendering Model",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/renderingmodel"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/SymbolReferenceRendering": {
+  "abstract" : [
+    {
+      "text" : "Render rich reference documentation for programming symbols.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/SymbolReferenceRendering",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Symbol Reference Rendering",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/symbolreferencerendering"
+}
+}
+}

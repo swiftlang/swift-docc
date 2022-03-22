@@ -1,0 +1,1526 @@
+{
+  "abstract" : [
+    {
+      "text" : "A collection of colors that a renderer uses to highlight code.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC10CodeColorsV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "CodeColors"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "CodeColors"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "CodeColors"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "CodeColors"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/Se",
+        "doc:\/\/SwiftDocC\/SE",
+        "doc:\/\/SwiftDocC\/SQ"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationSchemeHandler",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceSchemeHandler",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MessageType",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColorsPreferenceKey"
+      ],
+      "title" : "Communication Bridge"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/init(background:text:keyword:identifier:parameterName:numberLiteral:stringLiteral:typeAnnotation:docComment:docCommentField:comment:commentURL:buildConfigKeyword:buildConfigId:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/init(colors:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/background",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/buildConfigId",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/buildConfigKeyword",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/colors",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/comment",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/commentURL",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/docComment",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/docCommentField",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/identifier",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/keyword",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/lineHighlight",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/numberLiteral",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/parameterName",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/stringLiteral",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/text",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/typeAnnotation"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Decodable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Encodable-Implementations",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/codecolors"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SE": {
+  "identifier" : "doc:\/\/SwiftDocC\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/Se": {
+  "identifier" : "doc:\/\/SwiftDocC\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors": {
+  "abstract" : [
+    {
+      "text" : "A collection of colors that a renderer uses to highlight code.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CodeColors"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CodeColors"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CodeColors",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/Decodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Decodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Decodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/decodable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/Encodable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Encodable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Encodable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/encodable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/background": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for code area backgrounds.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "background"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/background",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "background",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/background"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/buildConfigId": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for identifiers in build-configuration code.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "buildConfigId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/buildConfigId",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "buildConfigId",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/buildconfigid"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/buildConfigKeyword": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for keywords in build configuration code.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "buildConfigKeyword"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/buildConfigKeyword",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "buildConfigKeyword",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/buildconfigkeyword"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/colors": {
+  "abstract" : [
+    {
+      "text" : "The content color customizations for this collection.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "colors"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC23CodeColorsPreferenceKeyV",
+      "text" : "CodeColorsPreferenceKey"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/colors",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "colors",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/colors"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/comment": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for comments.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "comment"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/comment",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "comment",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/comment"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/commentURL": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for URLs in comments.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "commentURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/commentURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "commentURL",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/commenturl"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/docComment": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for documentation comments.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "docComment"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/docComment",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "docComment",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/doccomment"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/docCommentField": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for documentation comment fields.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "docCommentField"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/docCommentField",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "docCommentField",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/doccommentfield"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/identifier": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for identifiers.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/identifier",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "identifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/identifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/init(background:text:keyword:identifier:parameterName:numberLiteral:stringLiteral:typeAnnotation:docComment:docCommentField:comment:commentURL:buildConfigKeyword:buildConfigId:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a collection of colors given the given values.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "background"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "text"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "keyword"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "identifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "parameterName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "numberLiteral"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "stringLiteral"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "typeAnnotation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "docComment"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "docCommentField"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "comment"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "commentURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "buildConfigKeyword"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?, "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "buildConfigId"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?)"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/init(background:text:keyword:identifier:parameterName:numberLiteral:stringLiteral:typeAnnotation:docComment:docCommentField:comment:commentURL:buildConfigKeyword:buildConfigId:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(background:text:keyword:identifier:parameterName:numberLiteral:stringLiteral:typeAnnotation:docComment:docCommentField:comment:commentURL:buildConfigKeyword:buildConfigId:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/init(background:text:keyword:identifier:parametername:numberliteral:stringliteral:typeannotation:doccomment:doccommentfield:comment:commenturl:buildconfigkeyword:buildconfigid:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/init(colors:)": {
+  "abstract" : [
+    {
+      "text" : "Creates a collection of colors given key-color pairs.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "colors"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC23CodeColorsPreferenceKeyV",
+      "text" : "CodeColorsPreferenceKey"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/init(colors:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(colors:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/init(colors:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/keyword": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for keywords.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "keyword"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/keyword",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "keyword",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/keyword"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/lineHighlight": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for highlighted lines.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "lineHighlight"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/lineHighlight",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "lineHighlight",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/linehighlight"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/numberLiteral": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for number literals.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "numberLiteral"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/numberLiteral",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "numberLiteral",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/numberliteral"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/parameterName": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for parameter names.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "parameterName"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/parameterName",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "parameterName",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/parametername"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/stringLiteral": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for string literals.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "stringLiteral"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/stringLiteral",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "stringLiteral",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/stringliteral"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/text": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for plain text.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "text"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/text",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "text",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/text"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColors/typeAnnotation": {
+  "abstract" : [
+    {
+      "text" : "The color the renderer uses for type annotations.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "typeAnnotation"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC9SRGBColorV",
+      "text" : "SRGBColor"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColors\/typeAnnotation",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "typeAnnotation",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolors\/typeannotation"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CodeColorsPreferenceKey": {
+  "abstract" : [
+    {
+      "text" : "Represents a code color-customization point for clients.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CodeColorsPreferenceKey"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CodeColorsPreferenceKey",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CodeColorsPreferenceKey"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CodeColorsPreferenceKey",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/codecolorspreferencekey"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Communication": {
+  "abstract" : [
+    {
+      "text" : "Offer native integration of DocC in your IDE.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Communication",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Communication Bridge",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/communication"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CommunicationBridge": {
+  "abstract" : [
+    {
+      "text" : "A bridge that provides bi-directional communication with a documentation renderer.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CommunicationBridge"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridge",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CommunicationBridge"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CommunicationBridge",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/communicationbridge"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/CommunicationBridgeError": {
+  "abstract" : [
+    {
+      "text" : "An error that occurs when using a communication bridge.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CommunicationBridgeError"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/CommunicationBridgeError",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CommunicationBridgeError"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "CommunicationBridgeError",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/communicationbridgeerror"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationSchemeHandler": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationSchemeHandler"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationSchemeHandler",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationSchemeHandler"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationSchemeHandler",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationschemehandler"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/Message": {
+  "abstract" : [
+    {
+      "text" : "A message to send or receive from a documentation renderer using a communication bridge.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Message"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/Message",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Message"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Message",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/message"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/MessageType": {
+  "abstract" : [
+    {
+      "text" : "A description of the intent of a communication-bridge message.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "MessageType"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/MessageType",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "MessageType"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "MessageType",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/messagetype"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/TopicReferenceSchemeHandler": {
+  "abstract" : [
+
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "typealias"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TopicReferenceSchemeHandler"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/TopicReferenceSchemeHandler",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TopicReferenceSchemeHandler"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TopicReferenceSchemeHandler",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/topicreferenceschemehandler"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/WebKitCommunicationBridge": {
+  "abstract" : [
+    {
+      "text" : "Provides bi-directional communication with a documentation renderer via JavaScript calls in a web view.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "WebKitCommunicationBridge"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/WebKitCommunicationBridge",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "WebKitCommunicationBridge"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "WebKitCommunicationBridge",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/webkitcommunicationbridge"
+}
+}
+}

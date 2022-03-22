@@ -1,0 +1,839 @@
+{
+  "abstract" : [
+    {
+      "text" : "Resolves and validates a link resolve executable URL that points to a link resolver executable.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:18SwiftDocCUtilities30OutOfProcessLinkResolverOptionV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "OutOfProcessLinkResolverOption"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocCUtilities"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "OutOfProcessLinkResolverOption"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "OutOfProcessLinkResolverOption"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "OutOfProcessLinkResolverOption"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "This value can be is set via an environment variable.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
+        "doc:\/\/SwiftDocCUtilities\/Se"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "seeAlsoSections" : [
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption"
+      ],
+      "title" : "Command Line Options"
+    }
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/init()",
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/validate()-2xp0s"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/ParsableArguments-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocCUtilities/14ArgumentParser17ParsableArgumentsP": {
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/14ArgumentParser17ParsableArgumentsP",
+  "title" : "ArgumentParser.ParsableArguments",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocCUtilities/Se": {
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities": {
+  "abstract" : [
+    {
+      "text" : "Build custom documentation workflows by leveraging the DocC compiler pipeline.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocCUtilities",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocCArchiveOption": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates a URL value that provides the path to a documentation archive.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocCArchiveOption"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocCArchiveOption",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocCArchiveOption"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocCArchiveOption",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/doccarchiveoption"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/Docc": {
+  "abstract" : [
+    {
+      "text" : "The default, command-line interface you use to compile and preview documentation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/Docc",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Docc"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Docc",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/docc"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/DocumentationBundleOption": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates a URL value that provides the path to a documentation bundle.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationBundleOption"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/DocumentationBundleOption",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "DocumentationBundleOption"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "DocumentationBundleOption",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/documentationbundleoption"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates a link resolve executable URL that points to a link resolver executable.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "OutOfProcessLinkResolverOption"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "OutOfProcessLinkResolverOption"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "OutOfProcessLinkResolverOption",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption/ParsableArguments-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/ParsableArguments-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "ParsableArguments Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/parsablearguments-implementations"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption/init()": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "()"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/init()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/init()"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/init(from:)"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/OutOfProcessLinkResolverOption/validate()-2xp0s": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "validate"
+    },
+    {
+      "kind" : "text",
+      "text" : "() "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/OutOfProcessLinkResolverOption\/validate()-2xp0s",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "validate()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/outofprocesslinkresolveroption\/validate()-2xp0s"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewExternalConnectionOptions": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions\/username",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ", ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions\/password",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ",  ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions\/tlsCertificateChainURL",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ",  and ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions\/tlsCertificateKeyURL",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "values that can be used when configuring the preview server for external connections.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "PreviewExternalConnectionOptions"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "PreviewExternalConnectionOptions"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "PreviewExternalConnectionOptions",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/previewexternalconnectionoptions"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewExternalConnectionOptions/password": {
+  "abstract" : [
+    {
+      "text" : "The password to use when configuring the preview server for external connections",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "as provided by the envrionment variable ",
+      "type" : "text"
+    },
+    {
+      "code" : "DOCC_PREVIEW_PASSWORD",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "password"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions\/password",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "password",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/previewexternalconnectionoptions\/password"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewExternalConnectionOptions/tlsCertificateChainURL": {
+  "abstract" : [
+    {
+      "text" : "The path to the TLS certificate chain to use when configuring the preview server for external connections",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "as provided by the envrionment variable ",
+      "type" : "text"
+    },
+    {
+      "code" : "DOCC_TLS_CERTIFICATE_CHAIN",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tlsCertificateChainURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions\/tlsCertificateChainURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "tlsCertificateChainURL",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/previewexternalconnectionoptions\/tlscertificatechainurl"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewExternalConnectionOptions/tlsCertificateKeyURL": {
+  "abstract" : [
+    {
+      "text" : "The path to the TLS certificate key to use when configuring the preview server for external connections",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "as provided by the envrionment variable ",
+      "type" : "text"
+    },
+    {
+      "code" : "DOCC_TLS_CERTIFICATE_KEY",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "tlsCertificateKeyURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions\/tlsCertificateKeyURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "tlsCertificateKeyURL",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/previewexternalconnectionoptions\/tlscertificatekeyurl"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/PreviewExternalConnectionOptions/username": {
+  "abstract" : [
+    {
+      "text" : "The username to use when configuring the preview server for external connections",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "as provided by the environment variable ",
+      "type" : "text"
+    },
+    {
+      "code" : "DOCC_PREVIEW_USERNAME",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "username"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/PreviewExternalConnectionOptions\/username",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "username",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/previewexternalconnectionoptions\/username"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/TemplateOption": {
+  "abstract" : [
+    {
+      "text" : "Resolves and validates a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/templateURL",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " value that points to an HTML documentation template.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "TemplateOption"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "TemplateOption"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "TemplateOption",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/templateoption"
+},
+"doc://SwiftDocCUtilities/documentation/SwiftDocCUtilities/TemplateOption/templateURL": {
+  "abstract" : [
+    {
+      "text" : "The path to an HTML template to be used during conversion as provided by",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "the environment variable ",
+      "type" : "text"
+    },
+    {
+      "code" : "DOCC_HTML_DIR",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "templateURL"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:10Foundation3URLV",
+      "text" : "URL"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocCUtilities\/documentation\/SwiftDocCUtilities\/TemplateOption\/templateURL",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "templateURL",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdoccutilities\/templateoption\/templateurl"
+}
+}
+}

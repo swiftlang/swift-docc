@@ -1,0 +1,1140 @@
+{
+  "abstract" : [
+    {
+      "text" : "A representation of a node in the tree wrapping a ",
+      "type" : "text"
+    },
+    {
+      "code" : "NavigatorItem",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The node holds the reference to children and parent for fast navigation.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "class"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "Node"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SwiftDocC"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "Node"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Class",
+    "symbolKind" : "class",
+    "title" : "NavigatorTree.Node"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "class"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "Node"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/SQ",
+        "doc:\/\/SwiftDocC\/SH"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/==(_:_:)"
+      ],
+      "title" : "Operators"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/init(item:bundleIdentifier:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/bundleIdentifier",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/children",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/id",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/item",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/parent",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/presentationDisambiguator",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/presentationIdentifier"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/add(child:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/copy()",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/countItems()",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/dumpTree()",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/filter(_:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/hash(into:)",
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/treeLines(_:_:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "generated" : true,
+      "identifiers" : [
+        "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/Equatable-Implementations"
+      ],
+      "title" : "Default Implementations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/swiftdocc\/navigatortree\/node"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://SwiftDocC/SH": {
+  "identifier" : "doc:\/\/SwiftDocC\/SH",
+  "title" : "Swift.Hashable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/SQ": {
+  "identifier" : "doc:\/\/SwiftDocC\/SQ",
+  "title" : "Swift.Equatable",
+  "type" : "unresolvable"
+},
+"doc://SwiftDocC/documentation/SwiftDocC": {
+  "abstract" : [
+    {
+      "text" : "Combine code comments with markup prose to produce structured, semantic documentation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SwiftDocC",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/DocumentationIndexing": {
+  "abstract" : [
+    {
+      "text" : "Create documentation indexes optimized for text search or navigation.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/DocumentationIndexing",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Documentation Indexing",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/documentationindexing"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "code" : "NavigatorTree",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a class holding information about a tree of data that can be navigated using a tree navigator.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "NavigatorTree"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "NavigatorTree"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NavigatorTree",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node": {
+  "abstract" : [
+    {
+      "text" : "A representation of a node in the tree wrapping a ",
+      "type" : "text"
+    },
+    {
+      "code" : "NavigatorItem",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "The node holds the reference to children and parent for fast navigation.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Node"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Node"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "NavigatorTree.Node",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/==(_:_:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "static"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "=="
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
+      "text" : "NavigatorTree"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
+      "text" : "Node"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
+      "text" : "NavigatorTree"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
+      "text" : "Node"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/==(_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "==(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/==(_:_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/Equatable-Implementations": {
+  "abstract" : [
+
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/Equatable-Implementations",
+  "kind" : "article",
+  "role" : "collectionGroup",
+  "title" : "Equatable Implementations",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/equatable-implementations"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/add(child:)": {
+  "abstract" : [
+    {
+      "text" : "Add a child to the current node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "add"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "child"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
+      "text" : "NavigatorTree"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
+      "text" : "Node"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/add(child:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "add(child:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/add(child:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/bundleIdentifier": {
+  "abstract" : [
+    {
+      "text" : "Bundle identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "bundleIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/bundleIdentifier",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "bundleIdentifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/bundleidentifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/children": {
+  "abstract" : [
+    {
+      "text" : "The children of the node.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "children"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
+      "text" : "NavigatorTree"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
+      "text" : "Node"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/children",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "children",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/children"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/copy()": {
+  "abstract" : [
+    {
+      "text" : "Copy the current node and children to new instances preserving the node item.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "copy"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
+      "text" : "NavigatorTree"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
+      "text" : "Node"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/copy()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "copy()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/copy()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/countItems()": {
+  "abstract" : [
+    {
+      "text" : "Counts the number of all the items from a given node, including the current node plus all the descendants.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "countItems"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Si",
+      "text" : "Int"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/countItems()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "countItems()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/countitems()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/dumpTree()": {
+  "abstract" : [
+    {
+      "text" : "Dumps the tree data into a ",
+      "type" : "text"
+    },
+    {
+      "code" : "String",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " in a human readable way.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "dumpTree"
+    },
+    {
+      "kind" : "text",
+      "text" : "() -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/dumpTree()",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "dumpTree()",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/dumptree()"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/filter(_:)": {
+  "abstract" : [
+    {
+      "text" : "Returns a node containing, in order, the elements of the tree that satisfy the given predicate.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "filter"
+    },
+    {
+      "kind" : "text",
+      "text" : "(("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorItemC",
+      "text" : "NavigatorItem"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:Sb",
+      "text" : "Bool"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
+      "text" : "NavigatorTree"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
+      "text" : "Node"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/filter(_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "filter(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/filter(_:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/hash(into:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "hash"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "into"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "inout"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s6HasherV",
+      "text" : "Hasher"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/hash(into:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "hash(into:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/hash(into:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/id": {
+  "abstract" : [
+    {
+      "text" : "An id assigned by a process, for example to dump data into disk.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "id"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s6UInt32V",
+      "text" : "UInt32"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/id",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "id",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/id"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/init(item:bundleIdentifier:)": {
+  "abstract" : [
+    {
+      "text" : "Initialize a node with the given ",
+      "type" : "text"
+    },
+    {
+      "code" : "NavigatorItem",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "item"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorItemC",
+      "text" : "NavigatorItem"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "bundleIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ")"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/init(item:bundleIdentifier:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(item:bundleIdentifier:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/init(item:bundleidentifier:)"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/item": {
+  "abstract" : [
+    {
+      "text" : "The wrapped ",
+      "type" : "text"
+    },
+    {
+      "code" : "NavigatorItem",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "item"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorItemC",
+      "text" : "NavigatorItem"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/item",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "item",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/item"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/parent": {
+  "abstract" : [
+    {
+      "text" : "A weak link to the parent. Useful to fast navigate back up to the root.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "parent"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC",
+      "text" : "NavigatorTree"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SwiftDocC13NavigatorTreeC4NodeC",
+      "text" : "Node"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/parent",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "parent",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/parent"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/presentationDisambiguator": {
+  "abstract" : [
+    {
+      "text" : "A value that can be used for disambiguation purposes in presentation contexts.",
+      "type" : "text"
+    }
+  ],
+  "deprecated" : true,
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "presentationDisambiguator"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/presentationDisambiguator",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "presentationDisambiguator",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/presentationdisambiguator"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/presentationIdentifier": {
+  "abstract" : [
+    {
+      "text" : "A value that can be used for identification purposes in presentation contexts.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "presentationIdentifier"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/presentationIdentifier",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "presentationIdentifier",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/presentationidentifier"
+},
+"doc://SwiftDocC/documentation/SwiftDocC/NavigatorTree/Node/treeLines(_:_:)": {
+  "abstract" : [
+    {
+      "text" : "Creates an array with the tree data formatted in a readable way.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "treeLines"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/SwiftDocC\/documentation\/SwiftDocC\/NavigatorTree\/Node\/treeLines(_:_:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "treeLines(_:_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/swiftdocc\/navigatortree\/node\/treelines(_:_:)"
+}
+}
+}
