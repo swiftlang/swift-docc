@@ -58,7 +58,7 @@ This archive contains _render JSON_ files, which fully describe the contents
 of a documentation page and can be processed by a renderer such as
 [Swift-DocC-Render](https://github.com/apple/swift-docc-render).
 
-For more in-depth technical information about Swift-DocC, please the
+For more in-depth technical information about Swift-DocC, please refer to the
 project's technical documentation:
 
 - [`SwiftDocC` framework documentation](https://apple.github.io/swift-docc/documentation/swiftdocc/)
