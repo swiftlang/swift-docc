@@ -11,7 +11,7 @@ learning experience that includes articles and tutorials, you can easily share t
 developers.
 
 To share your documentation, you create a documentation archive, a
-self-contained catalog that has everything you need, including:
+self-contained bundle that has everything you need, including:
 
 - Compiled documentation from in-source comments, articles, tutorials, and
   resources
@@ -38,7 +38,7 @@ docc convert MyNewPackage.docc --fallback-display-name MyNewPackage --fallback-c
 
 ### Send a Documentation Archive Directly to Developers
 
-Because a documentation archive is a self-contained catalog, you can easily
+Because a documentation archive is a self-contained bundle, you can easily
 share it with other developers. For example, you can send it by email just like
 a regular document, include it with a binary distribution of your framework or
 package, or make it downloadable from a website.
@@ -49,7 +49,7 @@ to display the More button, and then choose Remove.
 ### Host a Documentation Archive on Your Website
 
 When DocC exports a documentation archive, it includes a single-page web app
-in the catalog. This web app renders the documentation content as HTML, letting
+in the bundle. This web app renders the documentation content as HTML, letting
 you host the documentation archive on a web server.
 
 For reference documentation and articles, the web app uses a URL path that
@@ -73,7 +73,7 @@ To host a documentation archive on your website, do the following:
    `MyNewPackage.doccarchive`.
 2. Add a rule on the server to rewrite incoming URLs that begin with
    `/documentation` or `/tutorial` to `MyNewPackage.doccarchive/index.html`.
-3. Add another rule for incoming requests to support catalog resources in the
+3. Add another rule for incoming requests to support bundled resources in the
    documentation archive, such as CSS files and image assets.
 
 The following example `.htaccess` file defines rules suitable for use with Apache:
