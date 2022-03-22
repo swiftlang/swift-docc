@@ -17,7 +17,7 @@ extension Semantic.Analyses {
      */
     public struct HasAtMostOne<Parent: Semantic & DirectiveConvertible, Child: Semantic & DirectiveConvertible>: SemanticAnalysis {
         
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) where Children.Element == Markup {
+        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) where Children.Element == Markup {
             
             let (matches, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective,
@@ -39,7 +39,7 @@ extension Semantic.Analyses {
             }
             
             
-            return (Child(from: match, source: source, for: bundle, in: context, problems: &problems), MarkupContainer(remainder))
+            return (Child(from: match, source: source, for: catalog, in: context, problems: &problems), MarkupContainer(remainder))
         }
     }
 }

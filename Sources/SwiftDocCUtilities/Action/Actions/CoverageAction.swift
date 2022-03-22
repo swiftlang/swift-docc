@@ -11,7 +11,7 @@
 import Foundation
 import SwiftDocC
 
-/// An action that creates documentation coverage info for a documentation bundle.
+/// An action that creates documentation coverage info for a documentation catalog.
 public struct CoverageAction: Action {
     internal init(
         documentationCoverageOptions: DocumentationCoverageOptions,

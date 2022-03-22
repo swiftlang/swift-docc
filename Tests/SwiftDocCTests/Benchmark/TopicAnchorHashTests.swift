@@ -14,7 +14,7 @@ import XCTest
 class TopicAnchorHashTests: XCTestCase {
     func testAnchorSectionsHash() throws {
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (_, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+            let (_, context) = try testCatalogAndContext(named: "CatalogWithLonelyDeprecationDirective")
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicAnchorHash(context: context), benchmarkLog: testBenchmark)
             return testBenchmark.metrics[0].result
@@ -32,7 +32,7 @@ class TopicAnchorHashTests: XCTestCase {
     func testTopicAnchorsChangedHash() throws {
         // Verify that the hash changes if we change the topic graph
         let initialHash: String
-        let (_, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (_, context) = try testCatalogAndContext(named: "CatalogWithLonelyDeprecationDirective")
         
         do {
             let testBenchmark = Benchmark()
@@ -46,12 +46,12 @@ class TopicAnchorHashTests: XCTestCase {
         }
 
         guard context.topicGraph.nodes.values.count > 2 else {
-            XCTFail("Test bundle topic graph contains too few nodes")
+            XCTFail("Test catalog topic graph contains too few nodes")
             return
         }
         
         // Add a new section to verify that the hash will change
-        let newReference = ResolvedTopicReference(bundleIdentifier: "com.bundle.id", path: "/documentation/new#section", sourceLanguage: .swift)
+        let newReference = ResolvedTopicReference(catalogIdentifier: "com.catalog.id", path: "/documentation/new#section", sourceLanguage: .swift)
         context.nodeAnchorSections[newReference] = AnchorSection(reference: newReference, title: "New Sub-section")
 
         // Now verify that the topic anchor hash changed after the change

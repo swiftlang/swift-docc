@@ -10,8 +10,8 @@
 
 import Foundation
 
-/// A collection of functions to check if a file is one of the documentation bundle files types.
-public enum DocumentationBundleFileTypes {
+/// A collection of functions to check if a file is one of the documentation catalog files types.
+public enum DocumentationCatalogFileTypes {
     
     static let referenceFileExtension = "md"
     /// Checks if a file is a reference documentation file.
@@ -45,12 +45,17 @@ public enum DocumentationBundleFileTypes {
         return url.lastPathComponent.hasSuffix(symbolGraphFileExtension)
     }
     
-    private static let documentationBundleFileExtension = "docc"
-    /// Checks if a folder is a documentation bundle.
+    private static let documentationCatalogFileExtension = "docc"
+    /// Checks if a folder is a documentation catalog.
     /// - Parameter url: The folder to check.
-    /// - Returns: Whether or not the folder at `url` is a documentation bundle.
+    /// - Returns: Whether or not the folder at `url` is a documentation catalog.
+    public static func isDocumentationCatalog(_ url: URL) -> Bool {
+        return url.pathExtension.lowercased() == documentationCatalogFileExtension
+    }
+    
+    @available(*, deprecated, renamed: "isDocumentationCatalog(_:)")
     public static func isDocumentationBundle(_ url: URL) -> Bool {
-        return url.pathExtension.lowercased() == documentationBundleFileExtension
+        return isDocumentationCatalog(url)
     }
     
     private static let infoPlistFileName = "Info.plist"
@@ -77,3 +82,6 @@ public enum DocumentationBundleFileTypes {
         return url.lastPathComponent == customFooterFileName
     }
 }
+
+@available(*, deprecated, renamed: "DocumentationCatalogFileTypes")
+public typealias DocumentationBundleFileTypes = DocumentationCatalogFileTypes

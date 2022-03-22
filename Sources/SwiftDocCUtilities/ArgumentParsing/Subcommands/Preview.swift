@@ -20,7 +20,7 @@ extension Docc {
         // MARK: - Configuration
 
         public static var configuration = CommandConfiguration(
-            abstract: "Previews documentation from a source bundle.",
+            abstract: "Previews documentation from a source catalog.",
             shouldDisplay: true)
 
         // MARK: - Command Line Options & Arguments

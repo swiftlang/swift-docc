@@ -12,7 +12,7 @@ import ArgumentParser
 import Foundation
 
 extension Docc {
-    /// Indexes a documentation bundle.
+    /// Indexes a documentation catalog.
     public struct Index: ParsableCommand {
 
         public init() {}
@@ -26,11 +26,33 @@ extension Docc {
 
         /// The user-provided path to a `.doccarchive` documentation archive.
         @OptionGroup()
-        public var documentationBundle: DocCArchiveOption
+        public var documentationCatalog: DocCArchiveOption
+        
+        @available(*, deprecated, renamed: "documentationCatalog")
+        public var documentationBundle: DocCArchiveOption {
+            get {
+                return documentationCatalog
+            }
+            
+            set {
+                documentationCatalog = newValue
+            }
+        }
 
-        /// The user-provided bundle name to use for the produced index.
-        @Option(help: "The bundle name for the index.")
-        public var bundleIdentifier: String
+        /// The user-provided catalog name to use for the produced index.
+        @Option(help: "The catalog name for the index.")
+        public var catalogIdentifier: String
+        
+        @available(*, deprecated, renamed: "catalogIdentifier")
+        public var bundleIdentifier: String {
+            get {
+                return catalogIdentifier
+            }
+            
+            set {
+                catalogIdentifier = newValue
+            }
+        }
 
         /// A user-provided value that is true if additional index information should be outputted to the terminal.
         @Flag(help: "Print out the index information while the process runs.")
@@ -40,7 +62,7 @@ extension Docc {
 
         /// The path to the directory that all build output should be placed in.
         public var outputURL: URL {
-            documentationBundle.urlOrFallback.appendingPathComponent("index")
+            documentationCatalog.urlOrFallback.appendingPathComponent("index")
         }
 
         // MARK: - Execution

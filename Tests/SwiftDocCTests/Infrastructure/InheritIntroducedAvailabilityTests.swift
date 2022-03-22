@@ -21,29 +21,29 @@ fileprivate extension SymbolGraph.Symbol {
 /// Tests inheritability of `introduced` availability versions
 /// when symbols don't have that annotation from source.
 ///
-/// This information should come from a documentation bundle's
+/// This information should come from a documentation catalog's
 /// Info.plist `CDAppleDefaultAvailability` dictionary: the
 /// platform version is assumed to a be a symbols `introduced`
 /// availability version for that platform.
 ///
 /// This test makes use of the `FillIntroduced.symbols.json`
-/// symbol graph file in `TestBundle.docc`, along with its `Info.plist`
+/// symbol graph file in `TestCatalog.docc`, along with its `Info.plist`
 /// with the aforementioned `CDAppleDefaultAvailability` dictionary
 /// added for macOS, iOS, tvOS, and watchOS.
 class InheritIntroducedAvailabilityTests: XCTestCase {
     typealias Domain = SymbolGraph.Symbol.Availability.Domain
     typealias Version = SymbolGraph.SemanticVersion
     
-    var testBundle: DocumentationBundle!
+    var testCatalog: DocumentationCatalog!
     var context: DocumentationContext!
     
     override func setUpWithError() throws {
         try super.setUpWithError()
-        (testBundle, context) = try testBundleAndContext(named: "TestBundle")
+        (testCatalog, context) = try testCatalogAndContext(named: "TestCatalog")
     }
     
     override func tearDown() {
-        testBundle = nil
+        testCatalog = nil
         context = nil
         super.tearDown()
     }

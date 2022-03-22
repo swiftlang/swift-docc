@@ -38,8 +38,13 @@ public struct RenderReferenceStore: Codable {
     }
     
     /// Returns asset information for the given asset name.
+    public func content(forAssetNamed assetName: String, catalogIdentifier: String) -> DataAsset? {
+        assets[AssetReference(assetName: assetName, catalogIdentifier: catalogIdentifier)]
+    }
+    
+    @available(*, deprecated, renamed: "content(forAssetNamed:catalogIdentifier:)")
     public func content(forAssetNamed assetName: String, bundleIdentifier: String) -> DataAsset? {
-        assets[AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)]
+        return content(forAssetNamed: assetName, catalogIdentifier: bundleIdentifier)
     }
 }
 

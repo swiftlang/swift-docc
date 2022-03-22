@@ -34,7 +34,7 @@ struct DataAssetManager {
      If no data is registered that exactly matches the trait collection, the data with the trait
      collection that best matches the requested trait collection is returned.
     */
-    func data(named name: String, bestMatching traitCollection: DataTraitCollection) -> BundleData? {
+    func data(named name: String, bestMatching traitCollection: DataTraitCollection) -> CatalogData? {
         return bestKey(forAssetName: name)
             .flatMap({ storage[$0]?.data(bestMatching: traitCollection) })
     }
@@ -51,10 +51,10 @@ struct DataAssetManager {
     }
     
     /**
-     Returns all the data objects for a given name, respective of Bundle rules.
+     Returns all the data objects for a given name, respective of Catalog rules.
      
      If multiple data objects are registered, the first one will be returned in a non-deterministic way.
-     For example if figure1 is asked and the bundle has figure1.png and figure1.jpg, one of the two will be returned.
+     For example if figure1 is asked and the catalog has figure1.png and figure1.jpg, one of the two will be returned.
      
      Returns `nil` if there is no asset registered with the `name` name.
      */
@@ -71,7 +71,7 @@ struct DataAssetManager {
         try! NSRegularExpression(pattern: "(?!^)(?<=@)[1|2|3]x(?=\\.\\w*$)")
     }()
     
-    private mutating func referenceMetaInformationForDataURL(_ dataURL: URL, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws -> (reference: String, traits: DataTraitCollection) {
+    private mutating func referenceMetaInformationForDataURL(_ dataURL: URL, dataProvider: DocumentationContextDataProvider? = nil, catalog documentationCatalog: DocumentationCatalog? = nil) throws -> (reference: String, traits: DataTraitCollection) {
         var dataReference = dataURL.path
         var traitCollection = DataTraitCollection()
         
@@ -114,9 +114,9 @@ struct DataAssetManager {
      Data objects which have a file name ending with '~dark' are associated to their light variant.
      - Throws: Will throw `Error.invalidImageAsset(URL)` if fails to read the size of an image asset (e.g. the file is corrupt).
      */
-    mutating func register<Datas: Collection>(data datas: Datas, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws where Datas.Element == URL {
+    mutating func register<Datas: Collection>(data datas: Datas, dataProvider: DocumentationContextDataProvider? = nil, catalog documentationCatalog: DocumentationCatalog? = nil) throws where Datas.Element == URL {
         for dataURL in datas {
-            let meta = try referenceMetaInformationForDataURL(dataURL, dataProvider: dataProvider, bundle: documentationBundle)
+            let meta = try referenceMetaInformationForDataURL(dataURL, dataProvider: dataProvider, catalog: documentationCatalog)
 
             // Store the image with given scale information and display scale.
             let name = URL(fileURLWithPath: meta.reference).lastPathComponent
@@ -135,7 +135,7 @@ struct DataAssetManager {
     }
     
     /// Replaces an existing asset with a new one.
-    mutating func update(name: String, asset: DataAsset, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) {
+    mutating func update(name: String, asset: DataAsset, dataProvider: DocumentationContextDataProvider? = nil, catalog documentationCatalog: DocumentationCatalog? = nil) {
         bestKey(forAssetName: name).flatMap({ storage[$0] = asset })
     }
 }
@@ -143,7 +143,7 @@ struct DataAssetManager {
 /// A container for a collection of data that represent multiple ways to describe a single asset.
 ///
 /// Assets can be media files, source code files, or files for download.
-/// A ``DataAsset`` instance represents one bundle asset, which might be represented by multiple files. For example, a single image
+/// A ``DataAsset`` instance represents one catalog asset, which might be represented by multiple files. For example, a single image
 /// asset might have a light and dark variants, and 1x, 2x, and 3x image sizes.
 ///
 /// Each variant of an asset is identified by a ``DataTraitCollection`` and represents the best asset file for the given
@@ -186,7 +186,7 @@ public struct DataAsset: Codable {
     
     /// Returns the data that is registered to the data asset that best matches the given trait collection.
     @available(*, deprecated, renamed: "data(bestMatching:)")
-    public func data(with traitCollection: DataTraitCollection) -> BundleData {
+    public func data(with traitCollection: DataTraitCollection) -> CatalogData {
         return data(bestMatching: traitCollection)
     }
     
@@ -194,16 +194,16 @@ public struct DataAsset: Codable {
     ///
     /// If no variant with the exact given trait collection is found, the variant that has the largest trait collection overlap with the
     /// provided one is returned.
-    public func data(bestMatching traitCollection: DataTraitCollection) -> BundleData {
+    public func data(bestMatching traitCollection: DataTraitCollection) -> CatalogData {
         guard let variant = variants[traitCollection] else {
             // FIXME: If we can't find a variant that matches the given trait collection exactly,
             // we should return the variant that has the largest trait collection overlap with the
             // provided one. (rdar://68632024)
             let first = variants.first!
-            return BundleData(url: first.value, traitCollection: first.key)
+            return CatalogData(url: first.value, traitCollection: first.key)
         }
         
-        return BundleData(url: variant, traitCollection: traitCollection)
+        return CatalogData(url: variant, traitCollection: traitCollection)
     }
     
 }
@@ -328,17 +328,33 @@ fileprivate extension NSRegularExpression {
 public struct AssetReference: Hashable, Codable {
     /// The name of the asset.
     public var assetName: String
-    /// The identifier of the bundle the asset is apart of.
-    public var bundleIdentifier: String
+    /// The identifier of the catalog the asset is apart of.
+    public var catalogIdentifier: String
     
-    /// Creates a reference from a given asset name and the bundle it is apart of.
-    public init(assetName: String, bundleIdentifier: String) {
+    @available(*, deprecated, renamed: "catalogIdentifier")
+    public var bundleIdentifier: String {
+        get {
+            return catalogIdentifier
+        }
+        
+        set {
+            catalogIdentifier = newValue
+        }
+    }
+    
+    /// Creates a reference from a given asset name and the catalog it is apart of.
+    public init(assetName: String, catalogIdentifier: String) {
         self.assetName = assetName
-        self.bundleIdentifier = bundleIdentifier
+        self.catalogIdentifier = catalogIdentifier
+    }
+    
+    @available(*, deprecated, renamed: "init(assetName:catalogIdentifier:)")
+    public init(assetName: String, bundleIdentifier: String) {
+        self = .init(assetName: assetName, catalogIdentifier: bundleIdentifier)
     }
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(assetName)
-        hasher.combine(bundleIdentifier)
+        hasher.combine(catalogIdentifier)
     }
 }

@@ -19,7 +19,7 @@ class RenderHierarchyTests: XCTestCase {
         {
             "path" : "\\/tech",
             "paths" : [[]],
-            "reference" : "doc:\\/\\/bundleid\\/path",
+            "reference" : "doc:\\/\\/catalogid\\/path",
             "modules" : []
         }
         """

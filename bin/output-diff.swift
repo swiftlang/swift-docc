@@ -224,7 +224,7 @@ enum OutputDiff {
             })
         }
 
-        // For larger bundles comparing might be very CPU intensive so we spread over more cores
+        // For larger catalogs comparing might be very CPU intensive so we spread over more cores
         #if os(macOS)
         DispatchQueue.concurrentPerform(iterations: before.count, execute: block)
         #else

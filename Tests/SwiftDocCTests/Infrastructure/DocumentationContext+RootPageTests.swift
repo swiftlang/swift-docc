@@ -14,7 +14,7 @@ import SymbolKit
 import SwiftDocCTestUtilities
 
 class DocumentationContext_RootPageTests: XCTestCase {
-    func testNoSGFBundle() throws {
+    func testNoSGFCatalog() throws {
         let tempFolderURL = try createTempFolder(content: [
             Folder(name: "no-sgf-test.docc", content: [
                 // Root page for the collection
@@ -35,7 +35,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
                 ## See Also
                  - <doc:documentation/TechnologyX/ReleaseNotes>
                 """),
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                InfoPlist(displayName: "TestCatalog", identifier: "com.test.example"),
             ]),
         ])
         
@@ -52,8 +52,8 @@ class DocumentationContext_RootPageTests: XCTestCase {
         XCTAssertEqual(context.rootModules.map({ $0.url.path }), ["/documentation/ReleaseNotes"])
         
         // Verify the root was crawled
-        XCTAssertEqual(context.topicGraph.edges[ResolvedTopicReference(bundleIdentifier: "com.test.example", path: "/documentation/ReleaseNotes", sourceLanguage: .swift)]?.map({ $0.url.path }),
-                       ["/documentation/TestBundle/ReleaseNotes-1.2"])
+        XCTAssertEqual(context.topicGraph.edges[ResolvedTopicReference(catalogIdentifier: "com.test.example", path: "/documentation/ReleaseNotes", sourceLanguage: .swift)]?.map({ $0.url.path }),
+                       ["/documentation/TestCatalog/ReleaseNotes-1.2"])
     }
 
     func testWarnForSidecarRootPage() throws {
@@ -77,7 +77,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
                    @TechnologyRoot
                 }
                 """),
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                InfoPlist(displayName: "TestCatalog", identifier: "com.test.example"),
             ]),
         ])
         

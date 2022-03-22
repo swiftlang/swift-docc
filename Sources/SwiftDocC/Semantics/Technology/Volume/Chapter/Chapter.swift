@@ -56,22 +56,22 @@ public final class Chapter: Semantic, DirectiveConvertible, Abstracted, Redirect
         self.redirects = redirects
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Chapter>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Chapter>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Chapter>(severityIfFound: .warning, allowedDirectives: [TutorialReference.directiveName, ImageMedia.directiveName, VideoMedia.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Chapter>(severityIfFound: .warning, allowedDirectives: [TutorialReference.directiveName, ImageMedia.directiveName, VideoMedia.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let requiredName = Semantic.Analyses.HasArgument<Chapter, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         
         let tutorialReferences: [TutorialReference]
         var remainder: MarkupContainer
-        (tutorialReferences, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, TutorialReference>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (tutorialReferences, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, TutorialReference>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let image: ImageMedia?
-        (image, remainder) = Semantic.Analyses.HasExactlyOne<Chapter, ImageMedia>(severityIfNotFound: .warning).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (image, remainder) = Semantic.Analyses.HasExactlyOne<Chapter, ImageMedia>(severityIfNotFound: .warning).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         let redirects: [Redirect]
-        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         guard let name = requiredName else {
             return nil

@@ -86,15 +86,15 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     /// Any automatically created task groups.
     var automaticTaskGroups: [AutomaticTaskGroupSection]
 
-    /// Initializes a new article with a given markup and source for a given documentation bundle and documentation context.
+    /// Initializes a new article with a given markup and source for a given documentation catalog and documentation context.
     ///
     /// - Parameters:
     ///   - markup: The markup that makes up this article's content.
     ///   - source: The location of the file that this article's content comes from.
-    ///   - bundle: The documentation bundle that the article belongs to.
+    ///   - catalog: The documentation catalog that the article belongs to.
     ///   - context: The documentation context that the article belongs to.
     ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the article.
-    public convenience init?(from markup: Markup, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from markup: Markup, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         guard let title = markup.child(at: 0) as? Heading, title.level == 1 else {
             let range = markup.child(at: 0)?.range ?? SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
             let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.Article.Title.NotFound", summary: "An article is expected to start with a top-level heading title")
@@ -123,7 +123,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             guard let childDirective = child as? BlockDirective, childDirective.name == Redirect.directiveName else {
                 return nil
             }
-            return Redirect(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+            return Redirect(from: childDirective, source: source, for: catalog, in: context, problems: &problems)
         }
         
         let metadata: [Metadata]
@@ -131,7 +131,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             guard let childDirective = child as? BlockDirective, childDirective.name == Metadata.directiveName else {
                 return nil
             }
-            return Metadata(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+            return Metadata(from: childDirective, source: source, for: catalog, in: context, problems: &problems)
         }
         
         for extraMetadata in metadata.dropFirst() {

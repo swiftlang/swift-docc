@@ -52,8 +52,8 @@ enum TypedValueError: DescribedError {
     case missingValue(key: String)
     /// The requested value is of the wrong type.
     case wrongType(key: String, expected: Any.Type, actual: Any.Type)
-    /// One or more required ``DocumentationBundle.Info.Key``s are missing.
-    case missingRequiredKeys([DocumentationBundle.Info.CodingKeys])
+    /// One or more required ``DocumentationCatalog.Info.Key``s are missing.
+    case missingRequiredKeys([DocumentationCatalog.Info.CodingKeys])
     
     var errorDescription: String {
         switch self {
@@ -73,11 +73,11 @@ enum TypedValueError: DescribedError {
                 
                 if let argumentName = key.argumentName {
                     errorMessage += """
-                    Use the \(argumentName.singleQuoted) argument or add \(key.rawValue.singleQuoted) to the bundle Info.plist.
+                    Use the \(argumentName.singleQuoted) argument or add \(key.rawValue.singleQuoted) to the catalog Info.plist.
                     """
                 } else {
                     errorMessage += """
-                    Add \(key.rawValue.singleQuoted) to the bundle Info.plist.
+                    Add \(key.rawValue.singleQuoted) to the catalog Info.plist.
                     """
                 }
             }

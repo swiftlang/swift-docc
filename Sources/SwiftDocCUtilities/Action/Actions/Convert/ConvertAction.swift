@@ -11,15 +11,15 @@
 import Foundation
 import SwiftDocC
 
-/// An action that converts a source bundle into compiled documentation.
+/// An action that converts a source catalog into compiled documentation.
 public struct ConvertAction: Action, RecreatingContext {
     enum Error: DescribedError {
-        case doesNotContainBundle(url: URL)
+        case doesNotContainCatalog(url: URL)
         case cancelPending
         var errorDescription: String {
             switch self {
-            case .doesNotContainBundle(let url):
-                return "The directory at '\(url)' and its subdirectories do not contain at least one valid documentation bundle. A documentation bundle is a directory ending in `.docc`."
+            case .doesNotContainCatalog(let url):
+                return "The directory at '\(url)' and its subdirectories do not contain at least one valid documentation catalog. A documentation catalog is a directory ending in `.docc`."
             case .cancelPending:
                 return "The action is already in the process of being cancelled."
             }
@@ -78,13 +78,13 @@ public struct ConvertAction: Action, RecreatingContext {
     ///   A JSON representation is built and emitted regardless of this value.
     /// - Parameter workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
     /// - Parameter context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
-    /// - Parameter dataProvider: A data provider to use when registering bundles
+    /// - Parameter dataProvider: A data provider to use when registering catalogs
     /// - Parameter fileManager: A file persistence manager
     /// - Parameter documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
     /// - Parameter diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of ``DiagnosticSeverity/information`` is specified, diagnostics with a severity up to and including `.information` will be printed.
     /// - Parameter diagnosticEngine: The engine that will collect and emit diagnostics during this action.
     init(
-        documentationBundleURL: URL?, outOfProcessResolver: OutOfProcessReferenceResolver?,
+        documentationCatalogURL: URL?, outOfProcessResolver: OutOfProcessReferenceResolver?,
         analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool,
         currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool = false,
         workspace: DocumentationWorkspace = DocumentationWorkspace(),
@@ -93,7 +93,7 @@ public struct ConvertAction: Action, RecreatingContext {
         fileManager: FileManagerProtocol = FileManager.default,
         temporaryDirectory: URL,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
-        bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
+        catalogDiscoveryOptions: CatalogDiscoveryOptions = .init(),
         diagnosticLevel: String? = nil,
         diagnosticEngine: DiagnosticEngine? = nil,
         emitFixits: Bool = false,
@@ -103,7 +103,7 @@ public struct ConvertAction: Action, RecreatingContext {
         hostingBasePath: String? = nil
     ) throws
     {
-        self.rootURL = documentationBundleURL
+        self.rootURL = documentationCatalogURL
         self.outOfProcessResolver = outOfProcessResolver
         self.analyze = analyze
         self.targetDirectory = targetDirectory
@@ -165,21 +165,21 @@ public struct ConvertAction: Action, RecreatingContext {
         } else if let rootURL = rootURL {
             dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
         } else {
-            self.context.externalMetadata.isGeneratedBundle = true
+            self.context.externalMetadata.isGeneratedCatalog = true
             dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { url in
                 fileManager.contents(atPath: url.path)
             })
         }
         
         self.converter = DocumentationConverter(
-            documentationBundleURL: documentationBundleURL,
+            documentationCatalogURL: documentationCatalogURL,
             emitDigest: emitDigest,
             documentationCoverageOptions: documentationCoverageOptions,
             currentPlatforms: currentPlatforms,
             workspace: workspace,
             context: self.context,
             dataProvider: dataProvider,
-            bundleDiscoveryOptions: bundleDiscoveryOptions,
+            catalogDiscoveryOptions: catalogDiscoveryOptions,
             isCancelled: isCancelled,
             diagnosticEngine: self.diagnosticEngine
         )
@@ -188,19 +188,19 @@ public struct ConvertAction: Action, RecreatingContext {
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
     /// - Parameter workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
     /// - Parameter context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
-    /// - Parameter dataProvider: A data provider to use when registering bundles
+    /// - Parameter dataProvider: A data provider to use when registering catalogs
     /// - Parameter documentationCoverageOptions: Indicates whether or not to generate coverage output and at what level.
     /// - Parameter diagnosticLevel: The level above which diagnostics will be filtered out. This filter level is inclusive, i.e. if a level of `DiagnosticSeverity.information` is specified, diagnostics with a severity up to and including `.information` will be printed.
     /// - Parameter diagnosticEngine: The engine that will collect and emit diagnostics during this action.
     public init(
-        documentationBundleURL: URL, outOfProcessResolver: OutOfProcessReferenceResolver?,
+        documentationCatalogURL: URL, outOfProcessResolver: OutOfProcessReferenceResolver?,
         analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool,
         currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool = false,
         workspace: DocumentationWorkspace = DocumentationWorkspace(),
         context: DocumentationContext? = nil,
         dataProvider: DocumentationWorkspaceDataProvider? = nil,
         documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
-        bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
+        catalogDiscoveryOptions: CatalogDiscoveryOptions = .init(),
         diagnosticLevel: String? = nil,
         diagnosticEngine: DiagnosticEngine? = nil,
         emitFixits: Bool = false,
@@ -218,7 +218,7 @@ public struct ConvertAction: Action, RecreatingContext {
         // but defaults to `FileManager.default`.
         
         try self.init(
-            documentationBundleURL: documentationBundleURL,
+            documentationCatalogURL: documentationCatalogURL,
             outOfProcessResolver: outOfProcessResolver,
             analyze: analyze,
             targetDirectory: targetDirectory,
@@ -232,7 +232,7 @@ public struct ConvertAction: Action, RecreatingContext {
             fileManager: FileManager.default,
             temporaryDirectory: temporaryDirectory,
             documentationCoverageOptions: documentationCoverageOptions,
-            bundleDiscoveryOptions: bundleDiscoveryOptions,
+            catalogDiscoveryOptions: catalogDiscoveryOptions,
             diagnosticLevel: diagnosticLevel,
             diagnosticEngine: diagnosticEngine,
             emitFixits: emitFixits,
@@ -241,6 +241,28 @@ public struct ConvertAction: Action, RecreatingContext {
             transformForStaticHosting: transformForStaticHosting,
             hostingBasePath: hostingBasePath
         )
+    }
+    
+    @available(*, deprecated, renamed: "init(documentationCatalogURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:workspace:dataProvider:documentationCoverageOptions:catalogDiscoveryOptions:diagnosticLevel:diagnosticEngine:emitFixits:inheritDocs:experimentalEnableCustomTemplates:transformForStaticHosting:hostingBasePath:temporaryDirectory:)")
+    public init(
+        documentationBundleURL: URL, outOfProcessResolver: OutOfProcessReferenceResolver?,
+        analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool,
+        currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool = false,
+        workspace: DocumentationWorkspace = DocumentationWorkspace(),
+        context: DocumentationContext? = nil,
+        dataProvider: DocumentationWorkspaceDataProvider? = nil,
+        documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
+        bundleDiscoveryOptions: CatalogDiscoveryOptions = .init(),
+        diagnosticLevel: String? = nil,
+        diagnosticEngine: DiagnosticEngine? = nil,
+        emitFixits: Bool = false,
+        inheritDocs: Bool = false,
+        experimentalEnableCustomTemplates: Bool = false,
+        transformForStaticHosting: Bool,
+        hostingBasePath: String?,
+        temporaryDirectory: URL
+    ) throws {
+        try self.init(documentationCatalogURL: documentationBundleURL, outOfProcessResolver: outOfProcessResolver, analyze: analyze, targetDirectory: targetDirectory, htmlTemplateDirectory: htmlTemplateDirectory, emitDigest: emitDigest, currentPlatforms: currentPlatforms, workspace: workspace, dataProvider: dataProvider, documentationCoverageOptions: documentationCoverageOptions, catalogDiscoveryOptions: bundleDiscoveryOptions, diagnosticLevel: diagnosticLevel, diagnosticEngine: diagnosticEngine, emitFixits: emitFixits, inheritDocs: inheritDocs, experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,  transformForStaticHosting: transformForStaticHosting, hostingBasePath: hostingBasePath, temporaryDirectory: temporaryDirectory)
     }
 
     /// `true` if the convert action is cancelled.
@@ -280,7 +302,7 @@ public struct ConvertAction: Action, RecreatingContext {
         waitGroup.wait()
     }
 
-    /// Converts each eligible file from the source documentation bundle,
+    /// Converts each eligible file from the source documentation catalog,
     /// saves the results in the given output alongside the template files.
     mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
         
@@ -293,7 +315,7 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         if let outOfProcessResolver = outOfProcessResolver {
-            context.externalReferenceResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
+            context.externalReferenceResolvers[outOfProcessResolver.catalogIdentifier] = outOfProcessResolver
             context.externalSymbolResolver = outOfProcessResolver
         }
         
@@ -334,14 +356,14 @@ public struct ConvertAction: Action, RecreatingContext {
         // An optional indexer, if indexing while converting is enabled.
         var indexer: Indexer? = nil
         
-        if let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
+        if let catalogIdentifier = converter.firstAvailableCatalog()?.identifier {
             // Create an index builder and prepare it to receive nodes.
-            indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
+            indexer = try Indexer(outputURL: temporaryFolder, catalogIdentifier: catalogIdentifier)
         }
 
         let outputConsumer = ConvertFileWritingConsumer(
             targetFolder: temporaryFolder,
-            bundleRootFolder: rootURL,
+            catalogRootFolder: rootURL,
             fileManager: fileManager,
             context: context,
             indexer: indexer,
@@ -402,7 +424,7 @@ public struct ConvertAction: Action, RecreatingContext {
 
             let outputConsumer = ConvertFileWritingConsumer(
                 targetFolder: targetDirectory,
-                bundleRootFolder: rootURL,
+                catalogRootFolder: rootURL,
                 fileManager: fileManager,
                 context: context,
                 indexer: nil

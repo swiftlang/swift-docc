@@ -21,7 +21,7 @@ fileprivate extension Optional {
 }
 
 /**
- Walks a `Semantic` tree and collects any and all links external to the given bundle.
+ Walks a `Semantic` tree and collects any and all links external to the given catalog.
  
  Visits semantic nodes and descends into all their children that do have (indirectly or directly) content.
  When visiting a node that directly contains markup content visits the markup with an instance of ``ExternalMarkupReferenceWalker``
@@ -48,9 +48,9 @@ struct ExternalReferenceWalker: SemanticVisitor {
     }
     
     /// Creates a new semantic walker.
-    /// - Parameter bundle: All links with a bundle ID different than this bundle's are considered external and collected.
-    init(bundle: DocumentationBundle) {
-        self.markupResolver = ExternalMarkupReferenceWalker(bundle: bundle)
+    /// - Parameter catalog: All links with a catalog ID different than this catalog's are considered external and collected.
+    init(catalog: DocumentationCatalog) {
+        self.markupResolver = ExternalMarkupReferenceWalker(catalog: catalog)
     }
     
     mutating func visitCode(_ code: Code) { }

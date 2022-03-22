@@ -12,7 +12,7 @@ import Foundation
 
 /// A reference to a resource.
 ///
-/// The reference can refer to a resource within a documentation bundle (e.g., another symbol) or an external resource (e.g., a web URL).
+/// The reference can refer to a resource within a documentation catalog (e.g., another symbol) or an external resource (e.g., a web URL).
 /// Check the conforming types to browse the different kinds of references.
 public protocol RenderReference: Codable {
     /// The type of the reference.

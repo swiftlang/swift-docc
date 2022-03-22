@@ -16,25 +16,25 @@ class RoleTests: XCTestCase {
     let expectedRoles: [String: String] = [
         "/documentation/MyKit/MyClass": "symbol",
         "/documentation/MyKit/globalFunction(_:considering:)": "symbol",
-        "/tutorials/Test-Bundle/TestTutorial2": "project",
+        "/tutorials/Test-Catalog/TestTutorial2": "project",
         "/documentation/SideKit": "collection",
-        "/documentation/Test-Bundle/article": "collectionGroup", // it has topic groups
-        "/tutorials/Test-Bundle/TestTutorialArticle": "article",
+        "/documentation/Test-Catalog/article": "collectionGroup", // it has topic groups
+        "/tutorials/Test-Catalog/TestTutorialArticle": "article",
         "/tutorials/TestOverview": "overview",
         "/documentation/SideKit/SideClass/init()": "symbol",
     ]
     
     func testNodeRoles() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle")
+        let (url, catalog, context) = try testCatalogAndContext(copying: "TestCatalog")
         defer { try? FileManager.default.removeItem(at: url) }
 
         // Compile docs and verify contents
         for (path, expectedRole) in expectedRoles {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: path, fragment: nil, sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: path, fragment: nil, sourceLanguage: .swift)
             let source = context.documentURL(for: identifier)
             do {
                 let node = try context.entity(with: identifier)
-                var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+                var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: source)
                 let renderNode = translator.visit(node.semantic) as! RenderNode
                 XCTAssertEqual(expectedRole, renderNode.metadata.role, "Unexpected role \(renderNode.metadata.role!.singleQuoted) for identifier \(identifier.path)")
             } catch {
@@ -45,32 +45,32 @@ class RoleTests: XCTestCase {
     }
     
     func testDocumentationRenderReferenceRoles() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle")
+        let (url, catalog, context) = try testCatalogAndContext(copying: "TestCatalog")
         defer { try? FileManager.default.removeItem(at: url) }
 
-        let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
         let source = context.documentURL(for: identifier)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: source)
         let renderNode = translator.visit(node.semantic) as! RenderNode
 
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit"] as? TopicRenderReference)?.role, "collection")
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)"] as? TopicRenderReference)?.role, "symbol")
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/Test-Bundle/article2"] as? TopicRenderReference)?.role, "collectionGroup")
+        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/Test-Catalog/article2"] as? TopicRenderReference)?.role, "collectionGroup")
     }
 
     func testTutorialsRenderReferenceRoles() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle")
+        let (url, catalog, context) = try testCatalogAndContext(copying: "TestCatalog")
         defer { try? FileManager.default.removeItem(at: url) }
 
-        let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", fragment: nil, sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Catalog/TestTutorial", fragment: nil, sourceLanguage: .swift)
         let source = context.documentURL(for: identifier)
         let node = try context.entity(with: identifier)
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: source)
         let renderNode = translator.visit(node.semantic) as! RenderNode
 
         XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/TestOverview"] as? TopicRenderReference)?.role, "overview")
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle"] as? TopicRenderReference)?.role, "article")
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"] as? TopicRenderReference)?.role, "pseudoSymbol")
+        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorialArticle"] as? TopicRenderReference)?.role, "article")
+        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"] as? TopicRenderReference)?.role, "pseudoSymbol")
     }
 }

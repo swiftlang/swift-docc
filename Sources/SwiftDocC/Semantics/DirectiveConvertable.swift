@@ -29,11 +29,11 @@ public protocol DirectiveConvertible {
      Initialize from a `BlockDirective`, performing semantic analyses to determine whether a valid object can form.
      
      - parameter directive: The `BlockDirective` from which you want to form the object.
-     - parameter bundle: The documentation bundle that owns the directive.
-     - parameter context: The documentation context in which the bundle resides.
+     - parameter catalog: The documentation catalog that owns the directive.
+     - parameter context: The documentation context in which the catalog resides.
      - parameter problems: An inout array of ``Problem`` to be collected for later diagnostic reporting.
      */
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem])
+    init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem])
     
     /// Returns a Boolean value indicating whether the `DirectiveConvertible` recognizes the given directive.
     ///

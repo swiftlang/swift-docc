@@ -502,14 +502,14 @@ class SymbolTests: XCTestCase {
     func testWarningWhenDocCommentContainsDirectiveInSubclass() throws {
         let tempURL = try createTemporaryDirectory()
         
-        let bundleURL = try Folder(name: "Inheritance.docc", content: [
+        let catalogURL = try Folder(name: "Inheritance.docc", content: [
             InfoPlist(displayName: "Inheritance", identifier: "com.test.inheritance"),
             CopyOfFile(original: Bundle.module.url(
                 forResource: "Inheritance.symbols", withExtension: "json",
                 subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
-        let (_, _, context) = try loadBundle(from: bundleURL)
+        let (_, _, context) = try loadCatalog(from: catalogURL)
         let problems = context.diagnosticEngine.problems
         XCTAssertEqual(problems.count, 3)
         XCTAssertFalse(problems.containsErrors)
@@ -521,7 +521,7 @@ class SymbolTests: XCTestCase {
     }
 
     func testUnresolvedReferenceWarnignsInDocumentationExtension() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (url, _, context) = try testCatalogAndContext(copying: "TestCatalog") { url in
             let myKitDocumentationExtensionComment = """
             # ``MyKit/MyClass``
 
@@ -561,7 +561,7 @@ class SymbolTests: XCTestCase {
     }
     
     func testUnresolvedReferenceWarnignsInDocComment() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (url, _, context) = try testCatalogAndContext(copying: "TestCatalog") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
             
@@ -681,7 +681,7 @@ class SymbolTests: XCTestCase {
     
     func makeDocumentationNodeSymbol(docComment: String, articleContent: String?, file: StaticString = #file, line: UInt = #line) throws -> (Symbol, [Problem]) {
         let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (url, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             
             let newDocComment = SymbolGraph.LineList(docComment.components(separatedBy: .newlines).enumerated().map { arg -> SymbolGraph.LineList.Line in
@@ -709,7 +709,7 @@ class SymbolTests: XCTestCase {
         let article: Article? = articleContent.flatMap {
             let document = Document(parsing: $0, options: .parseBlockDirectives)
             var problems = [Problem]()
-            let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+            let article = Article(from: document, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(article, "The sidecar Article couldn't be created.", file: (file), line: line)
             XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)", file: (file), line: line)
             return article

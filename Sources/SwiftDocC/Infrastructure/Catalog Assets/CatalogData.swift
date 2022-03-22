@@ -11,19 +11,22 @@
 import Foundation
 
 /// The data associated with a documentation resource, for a specific trait collection.
-public struct BundleData {
+public struct CatalogData {
     /// The location of the resource.
     public var url: URL
     
     /// The trait collection associated with the resource.
     public var traitCollection: DataTraitCollection?
     
-    /// Creates a bundle data value given its location and an associated trait collection.
+    /// Creates a catalog data value given its location and an associated trait collection.
     /// - Parameters:
-    ///   - url: The location of the resource in the documentation bundle.
+    ///   - url: The location of the resource in the documentation catalog.
     ///   - traitCollection: An optional trait collection associated with the resource.
     public init(url: URL, traitCollection: DataTraitCollection?) {
         self.url = url
         self.traitCollection = traitCollection
     }
 }
+
+@available(*, deprecated, renamed: "CatalogData")
+public typealias BundleData = CatalogData

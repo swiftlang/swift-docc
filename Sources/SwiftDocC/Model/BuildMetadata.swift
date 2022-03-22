@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// A value that encapsulates metadata for a documentation bundle that DocC built.
+/// A value that encapsulates metadata for a documentation catalog that DocC built.
 public struct BuildMetadata: Codable {
     
     /// The current version of the build metadata schema.
@@ -20,19 +20,46 @@ public struct BuildMetadata: Codable {
         patch: 0
     )
     
-    /// The display name of the documentation bundle that DocC built.
-    public var bundleDisplayName: String
+    /// The display name of the documentation catalog that DocC built.
+    public var catalogDisplayName: String
     
-    /// The bundle identifier of the documentation bundle that DocC built.
-    public var bundleIdentifier: String
+    @available(*, deprecated, renamed: "catalogDisplayName")
+    public var bundleDisplayName: String {
+        get {
+            return catalogDisplayName
+        }
+        
+        set {
+            catalogDisplayName = newValue
+        }
+    }
     
-    /// Creates a build metadata value for a documentation bundle built by DocC.
+    /// The catalog identifier of the documentation catalog that DocC built.
+    public var catalogIdentifier: String
+    
+    @available(*, deprecated, renamed: "catalogIdentifier")
+    public var bundleIdentifier: String {
+        get {
+            return catalogIdentifier
+        }
+        
+        set {
+            catalogIdentifier = newValue
+        }
+    }
+    
+    /// Creates a build metadata value for a documentation catalog built by DocC.
     ///
     /// - Parameters:
-    ///   - bundleDisplayName: The display name of the documentation bundle.
-    ///   - bundleIdentifier: The bundle identifier of the documentation bundle.
+    ///   - catalogDisplayName: The display name of the documentation catalog.
+    ///   - catalogIdentifier: The catalog identifier of the documentation catalog.
+    public init(catalogDisplayName: String, catalogIdentifier: String) {
+        self.catalogDisplayName = catalogDisplayName
+        self.catalogIdentifier = catalogIdentifier
+    }
+    
+    @available(*, deprecated, renamed: "init(catalogDisplayName:catalogIdentifier:)")
     public init(bundleDisplayName: String, bundleIdentifier: String) {
-        self.bundleDisplayName = bundleDisplayName
-        self.bundleIdentifier = bundleIdentifier
+        self = .init(catalogDisplayName: bundleDisplayName, catalogIdentifier: bundleIdentifier)
     }
 }

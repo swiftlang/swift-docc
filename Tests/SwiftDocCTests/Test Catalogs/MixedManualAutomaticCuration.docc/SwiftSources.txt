@@ -1,4 +1,4 @@
-// Before we have an automated way to regenerate the test bundles
+// Before we have an automated way to regenerate the test catalogs
 // let's keep the source in a text file alongside the extracted symbol graph.
 
 public class TopClass {

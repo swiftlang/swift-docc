@@ -101,7 +101,7 @@ To use DocC to create documentation for an existing example package, follow thes
 4. Launch DocC in preview mode.
 
     ```shell
-    docc preview DeckOfPlayingCards.docc --fallback-display-name DeckOfPlayingCards --fallback-bundle-identifier com.example.DeckOfPlayingCards --fallback-bundle-version 1 --additional-symbol-graph-dir .build
+    docc preview DeckOfPlayingCards.docc --fallback-display-name DeckOfPlayingCards --fallback-catalog-identifier com.example.DeckOfPlayingCards --fallback-catalog-version 1 --additional-symbol-graph-dir .build
     ```
 
 DocC advertises a URL that you use to preview the documentation. In preview mode on macOS, DocC monitors the documentation catalog for changes and automatically updates its preview. On other platforms, you need to quit and restart DocC to recompile the documentation. 

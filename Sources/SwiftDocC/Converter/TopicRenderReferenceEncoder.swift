@@ -111,8 +111,8 @@ enum TopicRenderReferenceEncoder {
                     // In case there is a conformance section, adds conformance hash to the cache key.
                     // In case the reference is once used without conformances and another time with,
                     // the two cache keys are:
-                    // 1. "doc://bundleID/documentation/MyClass"
-                    // 2. "doc://bundleID/documentation/MyClass : aab43583ccd3b5"
+                    // 1. "doc://catalogID/documentation/MyClass"
+                    // 2. "doc://catalogID/documentation/MyClass : aab43583ccd3b5"
                     // so that there are no cache collisions.
                     
                     let conformanceHash = Checksum.md5(of: Data(conformance.constraints.map({ $0.plainText }).joined().utf8))

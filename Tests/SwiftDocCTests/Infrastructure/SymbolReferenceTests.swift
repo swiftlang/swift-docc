@@ -106,7 +106,7 @@ class SymbolReferenceTests: XCTestCase {
     }
 
     func testCreatesUniquePathsForOverloadSymbols() throws {
-        let testBundle = Folder(name: "TestCreatesUniquePathsForOverloadSymbols.docc", content: [
+        let testCatalog = Folder(name: "TestCreatesUniquePathsForOverloadSymbols.docc", content: [
             InfoPlist(displayName: "TestCreatesUniquePathsForOverloadSymbols", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
             ]),
@@ -199,11 +199,11 @@ class SymbolReferenceTests: XCTestCase {
         ])
         
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
+        let catalogURL = try testCatalog.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         // The overloads are sorted and all dupes get a hash suffix.

@@ -42,10 +42,10 @@ extension ConvertAction {
             in: convert.additionalSymbolGraphDirectory
         )
         
-        let bundleDiscoveryOptions = BundleDiscoveryOptions(
-            fallbackDisplayName: convert.fallbackBundleDisplayName,
-            fallbackIdentifier: convert.fallbackBundleIdentifier,
-            fallbackVersion: convert.fallbackBundleVersion,
+        let catalogDiscoveryOptions = CatalogDiscoveryOptions(
+            fallbackDisplayName: convert.fallbackCatalogDisplayName,
+            fallbackIdentifier: convert.fallbackCatalogIdentifier,
+            fallbackVersion: convert.fallbackCatalogVersion,
             fallbackDefaultCodeListingLanguage: convert.defaultCodeListingLanguage,
             fallbackDefaultModuleKind: convert.fallbackDefaultModuleKind,
             additionalSymbolGraphFiles: additionalSymbolGraphFiles
@@ -53,16 +53,16 @@ extension ConvertAction {
         
         // The `preview` and `convert` action defaulting to the current working directory is only supported
         // when running `docc preview` and `docc convert` without any of the fallback options.
-        let documentationBundleURL: URL?
-        if bundleDiscoveryOptions.infoPlistFallbacks.isEmpty {
-            documentationBundleURL = convert.documentationBundle.urlOrFallback
+        let documentationCatalogURL: URL?
+        if catalogDiscoveryOptions.infoPlistFallbacks.isEmpty {
+            documentationCatalogURL = convert.documentationCatalog.urlOrFallback
         } else {
-            documentationBundleURL = convert.documentationBundle.url
+            documentationCatalogURL = convert.documentationCatalog.url
         }
 
         // Initialize the ``ConvertAction`` with the options provided by the ``Convert`` command.
         try self.init(
-            documentationBundleURL: documentationBundleURL,
+            documentationCatalogURL: documentationCatalogURL,
             outOfProcessResolver: outOfProcessResolver,
             analyze: convert.analyze,
             targetDirectory: convert.outputURL,
@@ -74,7 +74,7 @@ extension ConvertAction {
             documentationCoverageOptions: DocumentationCoverageOptions(
                 from: convert.experimentalDocumentationCoverageOptions
             ),
-            bundleDiscoveryOptions: bundleDiscoveryOptions,
+            catalogDiscoveryOptions: catalogDiscoveryOptions,
             diagnosticLevel: convert.diagnosticLevel,
             emitFixits: convert.emitFixits,
             inheritDocs: convert.enableInheritedDocs,
@@ -90,5 +90,5 @@ private func symbolGraphFiles(in directory: URL?) -> [URL] {
     
     let subpaths = FileManager.default.subpaths(atPath: directory.path) ?? []
     return subpaths.map { directory.appendingPathComponent($0) }
-        .filter { DocumentationBundleFileTypes.isSymbolGraphFile($0) }
+        .filter { DocumentationCatalogFileTypes.isSymbolGraphFile($0) }
 }

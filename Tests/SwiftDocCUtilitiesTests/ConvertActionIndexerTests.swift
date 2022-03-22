@@ -18,35 +18,35 @@ class ConvertActionIndexerTests: XCTestCase {
     // Tests the standalone indexer
     func testConvertActionIndexer() throws {
         let originalURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
         
         // Create temo folder.
         let url = try createTemporaryDirectory()
         
-        // Copy TestBundle into a temp folder
-        let testBundleURL = url.appendingPathComponent("TestBundle.docc")
-        try FileManager.default.copyItem(at: originalURL, to: testBundleURL)
+        // Copy TestCatalog into a temp folder
+        let testCatalogURL = url.appendingPathComponent("TestCatalog.docc")
+        try FileManager.default.copyItem(at: originalURL, to: testCatalogURL)
         
-        // Load the test bundle
+        // Load the test catalog
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: testBundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: testCatalogURL)
         try workspace.registerProvider(dataProvider)
 
-        guard !context.registeredBundles.isEmpty else {
-            XCTFail("Didn't load test bundle in test.")
+        guard !context.registeredCatalogs.isEmpty else {
+            XCTFail("Didn't load test catalog in test.")
             return
         }
 
-        let converter = DocumentationNodeConverter(bundle: context.registeredBundles.first!, context: context)
+        let converter = DocumentationNodeConverter(catalog: context.registeredCatalogs.first!, context: context)
         
         // Add /documentation/MyKit to the index, verify the tree dump
         do {
-            let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
             let renderNode = try converter.convert(context.entity(with: reference), at: nil)
 
-            try FileManager.default.createDirectory(at: testBundleURL.appendingPathComponent("index1"), withIntermediateDirectories: false, attributes: nil)
-            let indexer = try ConvertAction.Indexer(outputURL: testBundleURL.appendingPathComponent("index1"), bundleIdentifier: context.registeredBundles.first!.identifier)
+            try FileManager.default.createDirectory(at: testCatalogURL.appendingPathComponent("index1"), withIntermediateDirectories: false, attributes: nil)
+            let indexer = try ConvertAction.Indexer(outputURL: testCatalogURL.appendingPathComponent("index1"), catalogIdentifier: context.registeredCatalogs.first!.identifier)
             indexer.index(renderNode)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)
             let treeDump = try XCTUnwrap(indexer.dumpTree())
@@ -61,17 +61,17 @@ class ConvertActionIndexerTests: XCTestCase {
             """)
         }
 
-        // Add two nodes /documentation/MyKit and /documentation/Test-Bundle/Default-Code-Listing-Syntax to the index
+        // Add two nodes /documentation/MyKit and /documentation/Test-Catalog/Default-Code-Listing-Syntax to the index
         // and verify the tree.
         do {
-            let reference1 = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+            let reference1 = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
             let renderNode1 = try converter.convert(context.entity(with: reference1), at: nil)
 
-            let reference2 = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", sourceLanguage: .swift)
+            let reference2 = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/Test-Catalog/Default-Code-Listing-Syntax", sourceLanguage: .swift)
             let renderNode2 = try converter.convert(context.entity(with: reference2), at: nil)
 
-            try FileManager.default.createDirectory(at: testBundleURL.appendingPathComponent("index2"), withIntermediateDirectories: false, attributes: nil)
-            let indexer = try ConvertAction.Indexer(outputURL: testBundleURL.appendingPathComponent("index2"), bundleIdentifier: context.registeredBundles.first!.identifier)
+            try FileManager.default.createDirectory(at: testCatalogURL.appendingPathComponent("index2"), withIntermediateDirectories: false, attributes: nil)
+            let indexer = try ConvertAction.Indexer(outputURL: testCatalogURL.appendingPathComponent("index2"), catalogIdentifier: context.registeredCatalogs.first!.identifier)
             indexer.index(renderNode1)
             indexer.index(renderNode2)
             XCTAssertTrue(indexer.finalize(emitJSON: false, emitLMDB: false).isEmpty)

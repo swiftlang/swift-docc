@@ -23,7 +23,7 @@ import SymbolKit
 ///               │
 ///      1        ▼
 ///     ┌──────────────────┐
-///     │ Output bundle ID │
+///     │Output catalog ID │
 ///     └──────────────────┘
 ///               │
 ///      2        ▼
@@ -51,12 +51,17 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     
     private let externalLinkResolvingClient: ExternalLinkResolving
     
-    /// The bundle identifier for the reference resolver in the other process.
-    public let bundleIdentifier: String
-    /// The bundle identifier to use for symbol references.
+    /// The catalog identifier for the reference resolver in the other process.
+    public let catalogIdentifier: String
+    
+    @available(*, deprecated, renamed: "catalogIdentifier")
+    public var bundleIdentifier: String {
+        return catalogIdentifier
+    }
+    /// The catalog identifier to use for symbol references.
     ///
     ///
-    private let symbolBundleIdentifier = "com.externally.resolved.symbol"
+    private let symbolCatalogIdentifier = "com.externally.resolved.symbol"
     
     /// Creates a new reference resolver that interacts with another executable.
     ///
@@ -77,11 +82,11 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         
         let longRunningProcess = try LongRunningProcess(location: processLocation, errorOutputHandler: errorOutputHandler)
         
-        guard case let .bundleIdentifier(decodedBundleIdentifier) = try longRunningProcess.sendAndWait(request: nil as Request?) as Response else {
-            throw Error.invalidBundleIdentifierOutputFromExecutable(processLocation)
+        guard case let .catalogIdentifier(decodedCatalogIdentifier) = try longRunningProcess.sendAndWait(request: nil as Request?) as Response else {
+            throw Error.invalidCatalogIdentifierOutputFromExecutable(processLocation)
         }
         
-        self.bundleIdentifier = decodedBundleIdentifier
+        self.catalogIdentifier = decodedCatalogIdentifier
         self.externalLinkResolvingClient = longRunningProcess
     }
 
@@ -90,12 +95,17 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     /// The documentation service is expected to be able to handle messages of kind "resolve-reference".
     ///
     /// - Parameters:
-    ///   - bundleIdentifier: The bundle identifier the server can resolve references for.
+    ///   - catalogIdentifier: The catalog identifier the server can resolve references for.
     ///   - server: The server to send link resolution requests to.
-    public init(bundleIdentifier: String, server: DocumentationServer, convertRequestIdentifier: String?) throws {
-        self.bundleIdentifier = bundleIdentifier
+    public init(catalogIdentifier: String, server: DocumentationServer, convertRequestIdentifier: String?) throws {
+        self.catalogIdentifier = catalogIdentifier
         self.externalLinkResolvingClient = LongRunningService(
             server: server, convertRequestIdentifier: convertRequestIdentifier)
+    }
+    
+    @available(*, deprecated, renamed: "init(catalogIdentifier:server:convertRequestIdentifier:)")
+    public convenience init(bundleIdentifier: String, server: DocumentationServer, convertRequestIdentifier: String?) throws {
+        try self.init(catalogIdentifier: bundleIdentifier, server: server, convertRequestIdentifier: convertRequestIdentifier)
     }
     
     // MARK: External Reference Resolver
@@ -114,10 +124,10 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             return resolved
             
         case let .unresolved(unresolvedReference):
-            guard let bundleIdentifier = unresolvedReference.bundleIdentifier else {
+            guard let catalogIdentifier = unresolvedReference.catalogIdentifier else {
                 fatalError("""
                     Attempted to resolve a local reference externally: \(unresolvedReference.description.singleQuoted).
-                    DocC should never pass a reference to an external resolver unless it matches that resolver's bundle identifier.
+                    DocC should never pass a reference to an external resolver unless it matches that resolver's catalog identifier.
                     """)
             }
             do {
@@ -129,7 +139,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
                 // Don't do anything with this URL. The external URL will be resolved during conversion to render nodes
                 return .success(
                     ResolvedTopicReference(
-                        bundleIdentifier: bundleIdentifier,
+                        catalogIdentifier: catalogIdentifier,
                         path: unresolvedReference.path,
                         fragment: unresolvedReference.fragment,
                         sourceLanguages: sourceLanguages(for: metadata)
@@ -229,10 +239,10 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     public func symbolEntity(withPreciseIdentifier preciseIdentifier: String) throws -> DocumentationNode {
         let resolvedInformation = try resolveInformationForSymbolIdentifier(preciseIdentifier)
         
-        // Construct a resolved reference for this symbol. It uses a known bundle identifier and the symbol's precise identifier so that the
+        // Construct a resolved reference for this symbol. It uses a known catalog identifier and the symbol's precise identifier so that the
         // already resolved information can be looked up when determining the URL for this symbol.
         let reference = ResolvedTopicReference(
-            bundleIdentifier: symbolBundleIdentifier,
+            catalogIdentifier: symbolCatalogIdentifier,
             path: "/" + preciseIdentifier,
             sourceLanguages: sourceLanguages(for: resolvedInformation)
         )
@@ -271,7 +281,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     /// - Parameter reference:The external symbol reference that this resolver previously resolved.
     /// - Returns: The web URL for the resolved external symbol.
     public func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL? {
-        guard reference.bundleIdentifier == symbolBundleIdentifier, let preciseIdentifier = reference.pathComponents.last else {
+        guard reference.catalogIdentifier == symbolCatalogIdentifier, let preciseIdentifier = reference.pathComponents.last else {
             return nil
         }
         guard let resolvedInformation = symbolCache[preciseIdentifier] else {
@@ -293,10 +303,10 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         let url: URL
         switch reference {
         case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
-            guard unresolved.bundleIdentifier == symbolBundleIdentifier else { return nil }
+            guard unresolved.catalogIdentifier == symbolCatalogIdentifier else { return nil }
             url = unresolved.topicURL.url
         case .resolved(.success(let resolved)):
-            guard resolved.bundleIdentifier == symbolBundleIdentifier else { return nil }
+            guard resolved.catalogIdentifier == symbolCatalogIdentifier else { return nil }
             url = resolved.url
         }
         
@@ -305,12 +315,13 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
     
     // MARK: Fallback Asset Resolver
     
+    public func resolve(assetNamed assetName: String, catalogIdentifier: String) -> DataAsset? {
+        return try? resolveInformationForAsset(named: assetName, catalogIdentifier: catalogIdentifier)
+    }
+    
+    @available(*, deprecated, renamed: "resolve(assetNamed:catalogIdentifier:)")
     public func resolve(assetNamed assetName: String, bundleIdentifier: String) -> DataAsset? {
-        do {
-            return try resolveInformationForAsset(named: assetName, bundleIdentifier: bundleIdentifier)
-        } catch {
-            return nil
-        }
+        return resolve(assetNamed: assetName, catalogIdentifier: bundleIdentifier)
     }
     
     // MARK: Implementation
@@ -328,8 +339,8 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         let response: Response = try externalLinkResolvingClient.sendAndWait(request: Request.topic(topicURL))
         
         switch response {
-        case .bundleIdentifier:
-            throw Error.executableSentBundleIdentifierAgain
+        case .catalogIdentifier:
+            throw Error.executableSentCatalogIdentifierAgain
             
         case .errorMessage(let errorMessage):
             throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
@@ -352,8 +363,8 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         let response: Response = try externalLinkResolvingClient.sendAndWait(request: Request.symbol(preciseIdentifier))
         
         switch response {
-        case .bundleIdentifier:
-            throw Error.executableSentBundleIdentifierAgain
+        case .catalogIdentifier:
+            throw Error.executableSentCatalogIdentifierAgain
             
         case .errorMessage(let errorMessage):
             throw Error.forwardedErrorFromClient(errorMessage: errorMessage)
@@ -367,15 +378,15 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         }
     }
     
-    func resolveInformationForAsset(named assetName: String, bundleIdentifier: String) throws -> DataAsset {
-        let assetReference = AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)
+    func resolveInformationForAsset(named assetName: String, catalogIdentifier: String) throws -> DataAsset {
+        let assetReference = AssetReference(assetName: assetName, catalogIdentifier: catalogIdentifier)
         if let asset = assetCache[assetReference] {
             return asset
         }
         
         let response = try externalLinkResolvingClient.sendAndWait(
             request: Request.asset(
-                AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)
+                AssetReference(assetName: assetName, catalogIdentifier: catalogIdentifier)
             )
         ) as Response
         
@@ -506,13 +517,13 @@ extension OutOfProcessReferenceResolver {
         case resolverNotExecutable(URL)
         /// The other process exited unexpectedly while docc was still running.
         case processDidExit(code: Int)
-        /// The other process didn't send a bundle identifier as its first message.
-        case invalidBundleIdentifierOutputFromExecutable(URL)
+        /// The other process didn't send a catalog identifier as its first message.
+        case invalidCatalogIdentifierOutputFromExecutable(URL)
         
         // Loop
         
-        /// The other process sent a bundle identifier again, after it was already received.
-        case executableSentBundleIdentifierAgain
+        /// The other process sent a catalog identifier again, after it was already received.
+        case executableSentCatalogIdentifierAgain
         /// A wrapped error message from the external link resolver.
         case forwardedErrorFromClient(errorMessage: String)
         /// Unable to determine the kind of message received.
@@ -535,15 +546,15 @@ extension OutOfProcessReferenceResolver {
                 return "File at at '\(url.path)' is not executable."
             case .processDidExit(let code):
                 return "Link resolver process did exit unexpectedly while docc was still running. Exit code '\(code)'."
-            case .invalidBundleIdentifierOutputFromExecutable(let resolverLocation):
-                return "Expected bundle identifier output from '\(resolverLocation.lastPathComponent)'."
+            case .invalidCatalogIdentifierOutputFromExecutable(let resolverLocation):
+                return "Expected catalog identifier output from '\(resolverLocation.lastPathComponent)'."
             // Loop
-            case .executableSentBundleIdentifierAgain:
-                return "Executable sent bundle identifier message again, after it was already received."
+            case .executableSentCatalogIdentifierAgain:
+                return "Executable sent catalog identifier message again, after it was already received."
             case .forwardedErrorFromClient(let errorMessage):
                 return errorMessage
             case .invalidResponseKindFromClient:
-                return "Unable to determine message. Expected either 'bundleIdentifier', 'errorMessage', 'resolvedInformation', or 'resolvedSymbolInformationResponse'."
+                return "Unable to determine message. Expected either 'catalogIdentifier', 'errorMessage', 'resolvedInformation', or 'resolvedSymbolInformationResponse'."
             case .unableToDecodeResponseFromClient(let response, let error):
                 let responseString = String(data: response, encoding: .utf8) ?? "<non uft-8 data>"
                 return "Unable to decode response:\n\(responseString)\nError: \(error)"
@@ -613,17 +624,17 @@ extension OutOfProcessReferenceResolver {
             case .symbol(let identifier):
                 return "symbol: \(identifier.singleQuoted)"
             case .asset(let asset):
-                return "asset with name: \(asset.assetName), bundle identifier: \(asset.bundleIdentifier)"
+                return "asset with name: \(asset.assetName), catalog identifier: \(asset.catalogIdentifier)"
             }
         }
     }
 
     /// A response message from the external link resolver.
     public enum Response: Codable {
-        /// A bundle identifier response.
+        /// A catalog identifier response.
         ///
         /// This message should only be sent once, after the external link resolver has launched.
-        case bundleIdentifier(String)
+        case catalogIdentifier(String)
         /// The error message of the problem that the external link resolver encountered while resolving the requested topic or symbol.
         case errorMessage(String)
         /// A response with the resolved information about the requested topic or symbol.
@@ -631,8 +642,13 @@ extension OutOfProcessReferenceResolver {
         /// A response with information about the resolved asset.
         case asset(DataAsset)
         
+        @available(*, deprecated, renamed: "catalogIdentifier(_:)")
+        static func bundleIdentifier(_ identifier: String) -> Response {
+            return .catalogIdentifier(identifier)
+        }
+        
         enum CodingKeys: String, CodingKey {
-            case bundleIdentifier
+            case catalogIdentifier
             case errorMessage
             case resolvedInformation
             case asset
@@ -641,8 +657,8 @@ extension OutOfProcessReferenceResolver {
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch container.allKeys.first {
-            case .bundleIdentifier?:
-                self = .bundleIdentifier(try container.decode(String.self, forKey: .bundleIdentifier))
+            case .catalogIdentifier?:
+                self = .catalogIdentifier(try container.decode(String.self, forKey: .catalogIdentifier))
             case .errorMessage?:
                 self = .errorMessage(try container.decode(String.self, forKey: .errorMessage))
             case .resolvedInformation?:
@@ -657,8 +673,8 @@ extension OutOfProcessReferenceResolver {
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
-            case .bundleIdentifier(let bundleIdentifier):
-                try container.encode(bundleIdentifier, forKey: .bundleIdentifier)
+            case .catalogIdentifier(let catalogIdentifier):
+                try container.encode(catalogIdentifier, forKey: .catalogIdentifier)
             case .errorMessage(let errorMessage):
                 try container.encode(errorMessage, forKey: .errorMessage)
             case .resolvedInformation(let resolvedInformation):
@@ -857,7 +873,7 @@ extension OutOfProcessReferenceResolver {
             navigatorVariants: .empty,
             roleHeadingVariants: .init(values: [:], defaultVariantValue: ""), // This information isn't used anywhere since this node doesn't have its own page, it's just referenced from other pages.
             platformNameVariants: .empty,
-            moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: language), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
+            moduleReference: ResolvedTopicReference(catalogIdentifier: "", path: "", sourceLanguage: language), // This information isn't used anywhere since the `urlForResolvedReference(reference:)` specifies the URL for this node.
             externalIDVariants: .empty,
             accessLevelVariants: .empty,
             availabilityVariants: .init(values: [:], defaultVariantValue: availability),

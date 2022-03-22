@@ -20,8 +20,8 @@ public class DocumentationContextConverter {
     /// The context the converter uses to resolve references it finds in the documentation node's content.
     let context: DocumentationContext
     
-    /// The bundle that contains the content from which the documentation node originated.
-    let bundle: DocumentationBundle
+    /// The catalog that contains the content from which the documentation node originated.
+    let catalog: DocumentationCatalog
     
     /// A context that contains common pre-rendered pieces of content.
     let renderContext: RenderContext
@@ -37,12 +37,12 @@ public class DocumentationContextConverter {
     /// Whether the documentation converter should include access level information for symbols.
     let shouldEmitSymbolAccessLevels: Bool
     
-    /// Creates a new node converter for the given bundle and context.
+    /// Creates a new node converter for the given catalog and context.
     ///
-    /// The converter uses bundle and context to resolve references to other documentation and describe the documentation hierarchy.
+    /// The converter uses catalog and context to resolve references to other documentation and describe the documentation hierarchy.
     ///
     /// - Parameters:
-    ///   - bundle: The bundle that contains the content from which the documentation node originated.
+    ///   - catalog: The catalog that contains the content from which the documentation node originated.
     ///   - context: The context that the converter uses to to resolve references it finds in the documentation node's content.
     ///   - renderContext: A context that contains common pre-rendered pieces of content.
     ///   - emitSymbolSourceFileURIs: Whether the documentation converter should include
@@ -52,17 +52,28 @@ public class DocumentationContextConverter {
     ///     distribution of any created render nodes as there are filesystem privacy and security
     ///     concerns with distributing this data.
     public init(
-        bundle: DocumentationBundle,
+        catalog: DocumentationCatalog,
         context: DocumentationContext,
         renderContext: RenderContext,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false
     ) {
-        self.bundle = bundle
+        self.catalog = catalog
         self.context = context
         self.renderContext = renderContext
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
+    }
+    
+    @available(*, deprecated, renamed: "init(catalog:context:renderContext:emitSymbolSourceFileURIs:emitSymbolAccessLevels:)")
+    public convenience init(
+        bundle: DocumentationCatalog,
+        context: DocumentationContext,
+        renderContext: RenderContext,
+        emitSymbolSourceFileURIs: Bool = false,
+        emitSymbolAccessLevels: Bool = false
+    ) {
+        self.init(catalog: bundle, context: context, renderContext: renderContext, emitSymbolSourceFileURIs: emitSymbolSourceFileURIs, emitSymbolAccessLevels: emitSymbolAccessLevels)
     }
     
     /// Converts a documentation node to a render node.
@@ -85,7 +96,7 @@ public class DocumentationContextConverter {
 
         var translator = RenderNodeTranslator(
             context: context,
-            bundle: bundle,
+            catalog: catalog,
             identifier: node.reference,
             source: source,
             renderContext: renderContext,

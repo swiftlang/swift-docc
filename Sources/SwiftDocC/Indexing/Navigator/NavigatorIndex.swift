@@ -26,7 +26,7 @@ public protocol RenderNodeProvider {
 /**
  A `NavigatorIndex` contains all the necessary information to display the data inside a navigator.
  The data ranges from the tree to the necessary pieces of information to filter the content and perform actions in a fast way.
- A navigator index is created per bundle and needs a bundle identifier to correctly work. Anonymous bundles are allowed, but they limit
+ A navigator index is created per catalog and needs a catalog identifier to correctly work. Anonymous catalogs are allowed, but they limit
  the functionalities of the index.
  
  A `NavigatorIndex` is composed by two main components:
@@ -39,7 +39,7 @@ public protocol RenderNodeProvider {
  while the remaining is loaded in a background thread and presented later in time.
  
  There are few important pieces information a `NavigatorIndex` requires to properly work:
-    - A bundle identifier
+    - A catalog identifier
     - A valid LMDB database for storing availability information
     - A valid navigator tree
  
@@ -47,11 +47,17 @@ public protocol RenderNodeProvider {
  */
 public class NavigatorIndex {
     
-    /// A string indicating an unknown bundle identifier.
-    public static let UnknownBundleIdentifier = ""
+    /// A string indicating an unknown catalog identifier.
+    public static let UnknownCatalogIdentifier = ""
     
-    /// The key used to store the name of the bundle inside the database.
-    public static let bundleKey = "bundleIdentifier"
+    @available(*, deprecated, renamed: "UnknownCatalogIdentifier")
+    public static let UnknownBundleIdentifier = UnknownCatalogIdentifier
+    
+    /// The key used to store the name of the catalog inside the database.
+    public static let catalogKey = "catalogIdentifier"
+    
+    @available(*, deprecated, renamed: "catalogKey")
+    public static let bundleKey = catalogKey
     
     /// The key used to store the name of path hasher inside the database.
     public static let pathHasherKey = "pathHasher"
@@ -62,8 +68,8 @@ public class NavigatorIndex {
     /// A specific error to describe issues when processing a `NavigatorIndex`.
     public enum Error: Swift.Error, DescribedError {
         
-        /// Missing bundle identifier.
-        case missingBundleIndentifier
+        /// Missing catalog identifier.
+        case missingCatalogIndentifier
         
         /// A RenderNode has no title and won't be indexed.
         case missingTitle(description: String)
@@ -73,14 +79,17 @@ public class NavigatorIndex {
         
         public var errorDescription: String {
             switch self  {
-            case .missingBundleIndentifier:
-                return "A navigator index requires a bundle identifier, which is missing."
+            case .missingCatalogIndentifier:
+                return "A navigator index requires a catalog identifier, which is missing."
             case .missingTitle:
                 return "The page has no valid title available."
             case .navigatorIndexIsNil:
                 return "The NavigatorIndex is Nil and can't be processed."
             }
         }
+        
+        @available(*, deprecated, renamed: "missingCatalogIdentifier")
+        public static let missingBundleIdentifier = Error.missingCatalogIndentifier
     }
     
     /// The url of the index.
@@ -98,7 +107,7 @@ public class NavigatorIndex {
     /// The index database in LMDB.
     private var database: LMDB.Database?
     
-    /// The information dedicated database to store data such as the bundle identifier or the number of items indexed.
+    /// The information dedicated database to store data such as the catalog identifier or the number of items indexed.
     private var information: LMDB.Database?
     
     /// The availability dedicated database.
@@ -110,8 +119,19 @@ public class NavigatorIndex {
     /// The availability index.
     public let availabilityIndex: AvailabilityIndex
     
-    /// Bundle Identifier.
-    public var bundleIdentifier: String = NavigatorIndex.UnknownBundleIdentifier
+    /// Catalog Identifier.
+    public var catalogIdentifier: String = NavigatorIndex.UnknownCatalogIdentifier
+    
+    @available(*, deprecated, renamed: "catalogIdentifier")
+    public var bundleIdentifier: String {
+        get {
+            return catalogIdentifier
+        }
+        
+        set {
+            catalogIdentifier = newValue
+        }
+    }
     
     /// A presentation identifier used to disambiguate content in presentation contexts.
     public let presentationIdentifier: String?
@@ -139,7 +159,7 @@ public class NavigatorIndex {
      Initialize an `NavigatorIndex` from a given path.
      
      - Parameter url: The URL pointing to the path from which the index should be read.
-     - Parameter bundleIdentifier: The name of the bundle the index is referring to.
+     - Parameter catalogIdentifier: The name of the catalog the index is referring to.
      - Parameter readNavigatorTree: Indicates if the init needs to read the navigator tree from the disk, if false, then `readNavigatorTree` needs to be called later. Default: `true`.
      - Parameter presentationIdentifier: Indicates if the index has an indentifier useful for presentation contexts.
      
@@ -147,7 +167,7 @@ public class NavigatorIndex {
      
      - Note: The index powered by LMDB opens in `readOnly` mode to avoid performing a filesystem lock which fails without writing permissions. As this initializer opens a built index, write permission is not expected.
      */
-    public init(url: URL, bundleIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
+    public init(url: URL, catalogIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
         self.url = url
         
         // To avoid performing a filesystem lock which might fail without write permission, we pass `.readOnly` and `.noLock` to open the index.
@@ -165,38 +185,44 @@ public class NavigatorIndex {
         self.availabilityIndex = availabilityIndex
         
         self.presentationIdentifier = presentationIdentifier
-        self.bundleIdentifier = bundleIdentifier ?? information.get(type: String.self, forKey: NavigatorIndex.bundleKey) ?? NavigatorIndex.UnknownBundleIdentifier
+        self.catalogIdentifier = catalogIdentifier ?? information.get(type: String.self, forKey: NavigatorIndex.catalogKey) ?? NavigatorIndex.UnknownCatalogIdentifier
         // Use `.fnv1` by default if no path hasher is set for compatibility reasons.
         self.pathHasher = PathHasher(rawValue: information.get(type: String.self, forKey: NavigatorIndex.pathHasherKey) ?? "") ?? .fnv1
         
         if readNavigatorTree {
-            self.navigatorTree = try NavigatorTree.read(from: url.appendingPathComponent("navigator.index"), bundleIdentifier: self.bundleIdentifier, interfaceLanguages: availabilityIndex.interfaceLanguages, presentationIdentifier: presentationIdentifier)
+            self.navigatorTree = try NavigatorTree.read(from: url.appendingPathComponent("navigator.index"), catalogIdentifier: self.catalogIdentifier, interfaceLanguages: availabilityIndex.interfaceLanguages, presentationIdentifier: presentationIdentifier)
         } else {
             self.navigatorTree = NavigatorTree()
         }
         
-        guard self.bundleIdentifier != NavigatorIndex.UnknownBundleIdentifier else {
-            throw Error.missingBundleIndentifier
+        guard self.catalogIdentifier != NavigatorIndex.UnknownCatalogIdentifier else {
+            throw Error.missingCatalogIndentifier
         }
+    }
+    
+    @available(*, deprecated, renamed: "init(url:catalogIdentifier:readNavigatorTree:presentationIdentifier:)")
+    @_disfavoredOverload
+    public convenience init(url: URL, bundleIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
+        try self.init(url: url, catalogIdentifier: bundleIdentifier, readNavigatorTree: readNavigatorTree, presentationIdentifier: presentationIdentifier)
     }
     
     /**
      Initialize an `NavigatorIndex` from a given path with an empty tree.
      
      - Parameter url: The URL pointing to the path from which the index should be read.
-     - Parameter bundleIdentifier: The name of the bundle the index is referring to.
+     - Parameter catalogIdentifier: The name of the catalog the index is referring to.
      
      - Note: Don't exposed this initializer as it's used **ONLY** for building an index.
      */
-    fileprivate init(withEmptyTree url: URL, bundleIdentifier: String) throws {
+    fileprivate init(withEmptyTree url: URL, catalogIdentifier: String) throws {
         self.url = url
-        self.bundleIdentifier = bundleIdentifier
+        self.catalogIdentifier = catalogIdentifier
         self.presentationIdentifier = nil
-        self.navigatorTree = NavigatorTree(root: NavigatorTree.rootNode(bundleIdentifier: bundleIdentifier))
+        self.navigatorTree = NavigatorTree(root: NavigatorTree.rootNode(catalogIdentifier: catalogIdentifier))
         self.availabilityIndex = AvailabilityIndex()
         
-        guard self.bundleIdentifier != NavigatorIndex.UnknownBundleIdentifier else {
-            throw Error.missingBundleIndentifier
+        guard self.catalogIdentifier != NavigatorIndex.UnknownCatalogIdentifier else {
+            throw Error.missingCatalogIndentifier
         }
     }
     
@@ -367,7 +393,7 @@ public class NavigatorIndex {
     */
     public func readNavigatorTree(timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, broadcast: NavigatorTree.BroadcastCallback?) throws {
         let indexURL = url.appendingPathComponent("navigator.index")
-        try navigatorTree.read(from: indexURL, bundleIdentifier: bundleIdentifier, interfaceLanguages: availabilityIndex.interfaceLanguages, timeout: timeout, delay: delay, queue: queue, broadcast: broadcast)
+        try navigatorTree.read(from: indexURL, catalogIdentifier: catalogIdentifier, interfaceLanguages: availabilityIndex.interfaceLanguages, timeout: timeout, delay: delay, queue: queue, broadcast: broadcast)
     }
     
     // MARK: - Data Query
@@ -413,7 +439,7 @@ extension ResolvedTopicReference {
         forLanguage languageIdentifier: InterfaceLanguage.ID
     ) -> NavigatorIndex.Identifier {
         return NavigatorIndex.Identifier(
-            bundleIdentifier: bundleIdentifier,
+            catalogIdentifier: catalogIdentifier,
             path: path,
             fragment: fragment,
             languageIdentifier: languageIdentifier
@@ -426,18 +452,18 @@ extension NavigatorIndex {
     ///
     /// Used to identify relationships in the navigator index during the index build process.
     public struct Identifier: Hashable {
-        let bundleIdentifier: String
+        let catalogIdentifier: String
         let path: String
         let fragment: String?
         let languageIdentifier: InterfaceLanguage.ID
         
         init(
-            bundleIdentifier: String,
+            catalogIdentifier: String,
             path: String,
             fragment: String? = nil,
             languageIdentifier: InterfaceLanguage.ID
         ) {
-            self.bundleIdentifier = bundleIdentifier
+            self.catalogIdentifier = catalogIdentifier
             self.path = path
             self.fragment = fragment
             self.languageIdentifier = languageIdentifier
@@ -459,8 +485,13 @@ extension NavigatorIndex {
         /// The output URL.
         public let outputURL: URL
         
-        /// The bundle name.
-        public let bundleIdentifier: String
+        /// The catalog name.
+        public let catalogIdentifier: String
+        
+        @available(*, deprecated, renamed: "catalogIdentifier")
+        public var bundleIdentifier: String {
+            return catalogIdentifier
+        }
         
         /// Indicates if the root children must be sorted by title.
         public let sortRootChildrenByName: Bool
@@ -534,19 +565,24 @@ extension NavigatorIndex {
          - Parameters:
             - renderNodeProvider: The `RenderNode` provider to use.
             - outputURL: The URL to which the data should be written.
-            - bundleIdentifier: The identifier of the bundle the index is built for.
+            - catalogIdentifier: The identifier of the catalog the index is built for.
             - sortRootChildren: Indicates if the root's children must be sorted by name.
             - groupByLanguage: Indicates if the tree needs to group the entries by language.
             - usePageTitle: Use the page title instead of the navigator title as the entry title.
          */
-        public init(renderNodeProvider: RenderNodeProvider? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
+        public init(renderNodeProvider: RenderNodeProvider? = nil, outputURL: URL, catalogIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
             self.renderNodeProvider = renderNodeProvider
             self.outputURL = outputURL
-            self.bundleIdentifier = bundleIdentifier
+            self.catalogIdentifier = catalogIdentifier
             self.sortRootChildrenByName = sortRootChildrenByName
             self.groupByLanguage = groupByLanguage
             self.writePathsOnDisk = writePathsOnDisk
             self.usePageTitle = usePageTitle
+        }
+        
+        @available(*, deprecated, renamed: "init(renderNodeProvider:outputURL:catalogIdentifier:sortRootChildrenByName:groupByLanguage:writePathsOnDisk:usePageTitle:)")
+        public convenience init(renderNodeProvider: RenderNodeProvider? = nil, outputURL: URL, bundleIdentifier: String, sortRootChildrenByName: Bool = false, groupByLanguage: Bool = false, writePathsOnDisk: Bool = true, usePageTitle: Bool = false) {
+            self.init(renderNodeProvider: renderNodeProvider, outputURL: outputURL, catalogIdentifier: bundleIdentifier, sortRootChildrenByName: sortRootChildrenByName, groupByLanguage: groupByLanguage, writePathsOnDisk: writePathsOnDisk, usePageTitle: usePageTitle)
         }
         
         /// Setup the builder to process render nodes.
@@ -561,7 +597,7 @@ extension NavigatorIndex {
                 }
                 try FileManager.default.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
                 
-                navigatorIndex = try NavigatorIndex(withEmptyTree: outputURL, bundleIdentifier: bundleIdentifier)
+                navigatorIndex = try NavigatorIndex(withEmptyTree: outputURL, catalogIdentifier: catalogIdentifier)
             } catch {
                 problems.append(error.problem(source: outputURL,
                                               severity: .error,
@@ -676,7 +712,7 @@ extension NavigatorIndex {
             
             let childrenRelationship = renderNode.childrenRelationship()
             
-            let navigatorNode = NavigatorTree.Node(item: navigationItem, bundleIdentifier: bundleIdentifier)
+            let navigatorNode = NavigatorTree.Node(item: navigationItem, catalogIdentifier: catalogIdentifier)
             
             // Process the children
             var children = [Identifier]()
@@ -688,7 +724,7 @@ extension NavigatorIndex {
                 let fragment = "\(title)#\(index)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
                 
                 let groupIdentifier = Identifier(
-                    bundleIdentifier: identifier.bundleIdentifier,
+                    catalogIdentifier: identifier.catalogIdentifier,
                     path: identifierPath,
                     fragment: fragment,
                     languageIdentifier: language.mask
@@ -701,14 +737,14 @@ extension NavigatorIndex {
                                               availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities))
                 groupItem.path = groupIdentifier.path + "#" + fragment
 
-                let navigatorGroup = NavigatorTree.Node(item: groupItem, bundleIdentifier: bundleIdentifier)
+                let navigatorGroup = NavigatorTree.Node(item: groupItem, catalogIdentifier: catalogIdentifier)
                 
                 identifierToNode[groupIdentifier] = navigatorGroup
                 children.append(groupIdentifier)
                 
                 let identifiers = child.references.map { reference in
                     return Identifier(
-                        bundleIdentifier: bundleIdentifier.lowercased(),
+                        catalogIdentifier: catalogIdentifier.lowercased(),
                         path: reference.url.lowercased(),
                         languageIdentifier: language.mask
                     )
@@ -818,7 +854,7 @@ extension NavigatorIndex {
             }
             
             let root = navigatorIndex.navigatorTree.root
-            root.bundleIdentifier = bundleIdentifier
+            root.catalogIdentifier = catalogIdentifier
             
             // Assign the children to the parents, starting with multi curated nodes
             var nodesMultiCurated = multiCurated.map { ($0, $1) }
@@ -861,7 +897,7 @@ extension NavigatorIndex {
                                                                               title: language.name,
                                                                               platformMask: Platform.Name.any.mask,
                                                                               availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities)),
-                                                          bundleIdentifier: bundleIdentifier)
+                                                          catalogIdentifier: catalogIdentifier)
                     languageMaskToNode[language.mask] = languageNode
                     root.add(child: languageNode)
                 }
@@ -902,7 +938,7 @@ extension NavigatorIndex {
                                                                            platformMask: Platform.Name.any.mask,
                                                                            availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities),
                                                                            path: ""),
-                                                                           bundleIdentifier: bundleIdentifier)
+                                                                           catalogIdentifier: catalogIdentifier)
                     languageMaskToNode[InterfaceLanguage.any.mask] = otherNode
                     fallouts.forEach { (node) in
                         root.children.removeAll(where: { $0 == node})
@@ -1104,11 +1140,11 @@ extension NavigatorIndex {
                                               summaryPrefix: "Couldn't write the availability index to the disk"))
             }
             
-            // Insert the data about bundle identifier and items processed.
+            // Insert the data about catalog identifier and items processed.
             do {
                 let txn = environment.transaction()
                 try txn.begin()
-                try txn.put(key: NavigatorIndex.bundleKey, value: bundleIdentifier, in: information)
+                try txn.put(key: NavigatorIndex.catalogKey, value: catalogIdentifier, in: information)
                 try txn.put(key: NavigatorIndex.pathHasherKey, value: navigatorIndex.pathHasher.rawValue, in: information)
                 try txn.put(key: NavigatorIndex.itemsIndexKey, value: counter, in: information)
                 try txn.commit()
@@ -1198,7 +1234,7 @@ extension ResolvedTopicReference {
     ///         Changing the logic of this normalization method without fixing the other logic would generate a mismatch and break the navigator index process.
     var normalizedForNavigation: ResolvedTopicReference {
         let normalizedPath = NodeURLGenerator().urlForReference(self).path
-        return ResolvedTopicReference(bundleIdentifier: bundleIdentifier.lowercased(),
+        return ResolvedTopicReference(catalogIdentifier: catalogIdentifier.lowercased(),
                                       path: normalizedPath.lowercased(),
                                       fragment: fragment,
                                       sourceLanguages: sourceLanguages)

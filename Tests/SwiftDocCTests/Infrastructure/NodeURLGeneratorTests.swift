@@ -17,9 +17,9 @@ class NodeURLGeneratorTests: XCTestCase {
     let generator = NodeURLGenerator()
 
     let unchangedURLs = [
-        URL(string: "doc://com.bundle/folder-prefix/type/symbol")!,
-        URL(string: "doc://com.bundle/fol.der-pref.ix./type-swift.class/symbol.name.")!,
-        URL(string: "doc://com.bundle/?folder-prefix/?type?/?symbol")!,
+        URL(string: "doc://com.catalog/folder-prefix/type/symbol")!,
+        URL(string: "doc://com.catalog/fol.der-pref.ix./type-swift.class/symbol.name.")!,
+        URL(string: "doc://com.catalog/?folder-prefix/?type?/?symbol")!,
     ]
     
     /// Tests that a list of URLs are not changed by `NodeURLGenerator.fileSafeURL(_:)`
@@ -28,15 +28,15 @@ class NodeURLGeneratorTests: XCTestCase {
     }
 
     let unsafeInputURLs = [
-        URL(string: "doc://com.bundle/.folder-prefix/.type-swift.class/.symbol.name")!,
-        URL(string: "doc://com.bundle/_folder-prefix/_type-swift.class/_symbol.name")!,
-        URL(string: "doc://com.bundle/!folder-prefix/_type-swift.class/.symbol.name")!,
+        URL(string: "doc://com.catalog/.folder-prefix/.type-swift.class/.symbol.name")!,
+        URL(string: "doc://com.catalog/_folder-prefix/_type-swift.class/_symbol.name")!,
+        URL(string: "doc://com.catalog/!folder-prefix/_type-swift.class/.symbol.name")!,
     ]
     
     let safeOutputURLs = [
-        URL(string: "doc://com.bundle/'.folder-prefix/'.type-swift.class/'.symbol.name")!,
-        URL(string: "doc://com.bundle/_folder-prefix/_type-swift.class/_symbol.name")!,
-        URL(string: "doc://com.bundle/!folder-prefix/_type-swift.class/'.symbol.name")!,
+        URL(string: "doc://com.catalog/'.folder-prefix/'.type-swift.class/'.symbol.name")!,
+        URL(string: "doc://com.catalog/_folder-prefix/_type-swift.class/_symbol.name")!,
+        URL(string: "doc://com.catalog/!folder-prefix/_type-swift.class/'.symbol.name")!,
     ]
     
     /// Tests that a list of URLs are "safe-ified" successfully
@@ -47,34 +47,34 @@ class NodeURLGeneratorTests: XCTestCase {
     /// Tests that baseURL is not "safe-ified" when passed
     func testSafeURLWithBaseURL() throws {
         // This is a realist DerivedData folder.
-        let baseURL = URL(string: "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/")!
+        let baseURL = URL(string: "file:///path/to/catalog/_testcatalog-ctlj/products/documentation.builtcatalog/com.example.testcatalog/data/")!
         let generator = NodeURLGenerator(baseURL: baseURL)
         
-        let basicIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.testbundle",
+        let basicIdentifier = ResolvedTopicReference(catalogIdentifier: "com.example.testcatalog",
                                                      path: "/folder/class/symbol",
                                                      fragment: nil,
                                                      sourceLanguage: .swift)
         
-        XCTAssertEqual(generator.urlForReference(basicIdentifier).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/class/symbol")
+        XCTAssertEqual(generator.urlForReference(basicIdentifier).absoluteString, "file:///path/to/catalog/_testcatalog-ctlj/products/documentation.builtcatalog/com.example.testcatalog/data/folder/class/symbol")
         
-        let symbolIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.testbundle",
+        let symbolIdentifier = ResolvedTopicReference(catalogIdentifier: "com.example.testcatalog",
                                                       path: "/folder/class/.==",
                                                       fragment: nil,
                                                       sourceLanguage: .swift)
-        XCTAssertEqual(generator.urlForReference(symbolIdentifier).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/class/'.==")
+        XCTAssertEqual(generator.urlForReference(symbolIdentifier).absoluteString, "file:///path/to/catalog/_testcatalog-ctlj/products/documentation.builtcatalog/com.example.testcatalog/data/folder/class/'.==")
         
-        let privateIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.testbundle",
+        let privateIdentifier = ResolvedTopicReference(catalogIdentifier: "com.example.testcatalog",
                                                        path: "/folder/class/_privateMethod",
                                                        fragment: nil,
                                                        sourceLanguage: .objectiveC)
-        XCTAssertEqual(generator.urlForReference(privateIdentifier).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/class/_privateMethod")
-        XCTAssertEqual(generator.urlForReference(privateIdentifier, lowercased: true).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/class/_privatemethod")
+        XCTAssertEqual(generator.urlForReference(privateIdentifier).absoluteString, "file:///path/to/catalog/_testcatalog-ctlj/products/documentation.builtcatalog/com.example.testcatalog/data/folder/class/_privateMethod")
+        XCTAssertEqual(generator.urlForReference(privateIdentifier, lowercased: true).absoluteString, "file:///path/to/catalog/_testcatalog-ctlj/products/documentation.builtcatalog/com.example.testcatalog/data/folder/class/_privatemethod")
         
-        let classIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.testbundle",
+        let classIdentifier = ResolvedTopicReference(catalogIdentifier: "com.example.testcatalog",
                                                      path: "/folder/_privateclass/_privatesubclass",
                                                      fragment: nil,
                                                      sourceLanguage: .objectiveC)
-        XCTAssertEqual(generator.urlForReference(classIdentifier).absoluteString, "file:///path/to/bundle/_testbundle-ctlj/products/documentation.builtbundle/com.example.testbundle/data/folder/_privateclass/_privatesubclass")
+        XCTAssertEqual(generator.urlForReference(classIdentifier).absoluteString, "file:///path/to/catalog/_testcatalog-ctlj/products/documentation.builtcatalog/com.example.testcatalog/data/folder/_privateclass/_privatesubclass")
     }
     
     var inputLongPaths = [

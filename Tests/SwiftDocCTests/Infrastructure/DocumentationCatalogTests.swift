@@ -11,9 +11,9 @@
 import XCTest
 @testable import SwiftDocC
 
-class DocumentationBundleTests: XCTestCase {
-    // Test whether the bundle correctly loads a documentation source folder.
-    func testBundleInitWithRootURL() throws {
-        XCTAssertNoThrow(try testBundleFromRootURL(named: "TestBundle"))
+class DocumentationCatalogTests: XCTestCase {
+    // Test whether the catalog correctly loads a documentation source folder.
+    func testCatalogInitWithRootURL() throws {
+        XCTAssertNoThrow(try testCatalogFromRootURL(named: "TestCatalog"))
     }
 }

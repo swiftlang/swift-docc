@@ -101,34 +101,34 @@ public final class TutorialArticle: Semantic, DirectiveConvertible, Abstracted, 
         self.redirects = redirects
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == TutorialArticle.directiveName)
         
         let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialArticle>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName])
-            .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
             
         Semantic.Analyses.HasOnlyKnownDirectives<TutorialArticle>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Stack.directiveName, ContentAndMedia.directiveName, Assessments.directiveName, ImageMedia.directiveName, Redirect.directiveName])
-            .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let optionalTime = Semantic.Analyses.HasArgument<TutorialArticle, Semantics.Time>(severityIfNotFound: .warning)
             .analyze(directive, arguments: arguments, problems: &problems)
             
         var remainder: MarkupContainer
         let optionalIntro: Intro?
-        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (optionalIntro, remainder) = Semantic.Analyses.HasExactlyOne<TutorialArticle, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        let headings = Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
-        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: bundle, in: context, problems: &problems)
+        let content = StackedContentParser.topLevelContent(from: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         let optionalAssessments: Assessments?
-        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (optionalAssessments, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, Assessments>().analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         let optionalCallToActionImage: ImageMedia?
-        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<Technology, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<Technology, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         let redirects: [Redirect]
-            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         self.init(originalMarkup: directive, durationMinutes: optionalTime, intro: optionalIntro, content: content, assessments: optionalAssessments, callToActionImage: optionalCallToActionImage, landmarks: headings, redirects: redirects.isEmpty ? nil : redirects)
     }
@@ -151,14 +151,14 @@ public enum MarkupLayout {
 }
 
 struct StackedContentParser {
-    static func topLevelContent<MarkupCollection: Sequence>(from markup: MarkupCollection, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [MarkupLayout] where MarkupCollection.Element == Markup {
+    static func topLevelContent<MarkupCollection: Sequence>(from markup: MarkupCollection, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) -> [MarkupLayout] where MarkupCollection.Element == Markup {
         return markup.reduce(into: []) { (accumulation, nextBlock) in
             if let directive = nextBlock as? BlockDirective {
                 if directive.name == Stack.directiveName,
-                    let stack = Stack(from: directive, source: source, for: bundle, in: context, problems: &problems) {
+                    let stack = Stack(from: directive, source: source, for: catalog, in: context, problems: &problems) {
                     accumulation.append(.stack(stack))
                 } else if directive.name == ContentAndMedia.directiveName,
-                    let contentAndMedia = ContentAndMedia(from: directive, source: source, for: bundle, in: context, problems: &problems) {
+                    let contentAndMedia = ContentAndMedia(from: directive, source: source, for: catalog, in: context, problems: &problems) {
                     accumulation.append(.contentAndMedia(contentAndMedia))
                 }
             } else {

@@ -17,7 +17,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with no authored See Also and with no curated siblings
     /// does not have a See Also section.
     func testNoSeeAlso() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Article that curates `SideClass`
             try """
             # SideKit
@@ -27,11 +27,11 @@ class AutomaticSeeAlsoTests: XCTestCase {
             - ``SideClass``
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify there is no See Also
@@ -41,7 +41,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with authored See Also and with no curated siblings
     /// does include an authored See Also section
     func testAuthoredSeeAlso() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -59,11 +59,11 @@ class AutomaticSeeAlsoTests: XCTestCase {
             - ``SideKit``
             """.write(to: root.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify there is an authored See Also from markdown
@@ -78,7 +78,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with authored See Also and with curated siblings
     /// does include both in See Also with authored section first
     func testAuthoredAndAutomaticSeeAlso() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -103,11 +103,11 @@ class AutomaticSeeAlsoTests: XCTestCase {
             Side Article abstract.
             """.write(to: root.appendingPathComponent("documentation/sidearticle.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify there is an authored See Also & automatically created See Also
@@ -118,13 +118,13 @@ class AutomaticSeeAlsoTests: XCTestCase {
         XCTAssertEqual(renderNode.seeAlsoSections[0].identifiers, ["doc://org.swift.docc.example/documentation/SideKit"])
 
         XCTAssertEqual(renderNode.seeAlsoSections[1].title, "Basics")
-        XCTAssertEqual(renderNode.seeAlsoSections[1].identifiers, ["doc://org.swift.docc.example/documentation/Test-Bundle/sidearticle"])
+        XCTAssertEqual(renderNode.seeAlsoSections[1].identifiers, ["doc://org.swift.docc.example/documentation/Test-Catalog/sidearticle"])
         XCTAssertEqual(renderNode.seeAlsoSections[1].generated, true)
         
         // Verify that articles get same automatic See Also sections as symbols
         do {
-            let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/sidearticle", sourceLanguage: .swift))
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+            let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/Test-Catalog/sidearticle", sourceLanguage: .swift))
+            var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
             let renderNode = translator.visit(node.semantic as! Article) as! RenderNode
             
             // Verify there is an automacially created See Also

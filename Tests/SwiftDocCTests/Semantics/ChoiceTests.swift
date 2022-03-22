@@ -19,12 +19,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNil(choice)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
             XCTAssertEqual(2, problems.count)
@@ -46,12 +46,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(choice)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
             XCTAssertEqual(1, problems.count)
@@ -69,12 +69,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNil(choice)
             XCTAssertEqual(1, problems.count)
             problems.first.map { problem in
@@ -95,12 +95,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNil(choice)
             XCTAssertEqual(1, problems.count)
             problems.first.map { problem in
@@ -121,12 +121,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNil(choice)
             XCTAssertEqual(1, problems.count)
             problems.first.map { problem in
@@ -151,12 +151,12 @@ class ChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(choice)
             XCTAssertTrue(problems.isEmpty)
             choice.map { choice in
@@ -187,12 +187,12 @@ Choice @1:1-6:2 isCorrect: true
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(choice)
             XCTAssertTrue(problems.isEmpty)
             choice.map { choice in
@@ -221,19 +221,19 @@ Choice @1:1-9:2 isCorrect: true
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Choice.directiveName, directive.name)
-            let choice = Choice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let choice = Choice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(choice)
             XCTAssertTrue(problems.isEmpty)
             choice.map { choice in
                 let expectedDump = """
 Choice @1:1-7:2 isCorrect: true
 ├─ MarkupContainer (empty)
-├─ ImageMedia @2:4-2:11 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "blah.png")' altText: 'blah'
+├─ ImageMedia @2:4-2:11 source: 'ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "blah.png")' altText: 'blah'
 └─ Justification @4:4-6:5
    └─ MarkupContainer (1 element)
 """

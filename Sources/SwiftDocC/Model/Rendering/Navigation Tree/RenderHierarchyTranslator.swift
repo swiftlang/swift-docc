@@ -13,18 +13,18 @@ import Foundation
 /// A hierarchy translator that converts a part of the topic graph into a hierarchy tree.
 struct RenderHierarchyTranslator {
     var context: DocumentationContext
-    var bundle: DocumentationBundle
+    var catalog: DocumentationCatalog
     
     var collectedTopicReferences = Set<ResolvedTopicReference>()
     var linkReferences = [String: LinkReference]()
     
-    /// Creates a new translator for the given bundle in the given context.
+    /// Creates a new translator for the given catalog in the given context.
     /// - Parameters:
     ///   - context: The documentation context for the conversion.
-    ///   - bundle: The documentation bundle for the conversion.
-    init(context: DocumentationContext, bundle: DocumentationBundle) {
+    ///   - catalog: The documentation catalog for the conversion.
+    init(context: DocumentationContext, catalog: DocumentationCatalog) {
         self.context = context
-        self.bundle = bundle
+        self.catalog = catalog
     }
     
     static let assessmentsAnchor = urlReadableFragment(TutorialAssessmentsRenderSection.title)
@@ -75,7 +75,7 @@ struct RenderHierarchyTranslator {
     mutating func visitTechnology(_ technologyReference: ResolvedTopicReference, omittingChapters: Bool = false) -> RenderTutorialsHierarchy {
         let technologyPath = urlGenerator.urlForReference(technologyReference, lowercased: true).path
         collectedTopicReferences.insert(technologyReference)
-        // A technology is a root node in the bundle so passing empty breadcrumb paths
+        // A technology is a root node in the catalog so passing empty breadcrumb paths
         var renderHierarchy = RenderTutorialsHierarchy(reference: RenderReferenceIdentifier(technologyReference.absoluteString), paths: [])
 
         if !omittingChapters {
@@ -164,10 +164,10 @@ struct RenderHierarchyTranslator {
         
         if let tutorial = (try? context.entity(with: tutorialReference).semantic) as? Tutorial, let assessments = tutorial.assessments, !assessments.questions.isEmpty {
             // Add hardcoded assessment section.
-            let assessmentReference = ResolvedTopicReference(bundleIdentifier: tutorialReference.bundleIdentifier, path: tutorialReference.path, fragment: RenderHierarchyTranslator.assessmentsAnchor, sourceLanguage: .swift)
+            let assessmentReference = ResolvedTopicReference(catalogIdentifier: tutorialReference.catalogIdentifier, path: tutorialReference.path, fragment: RenderHierarchyTranslator.assessmentsAnchor, sourceLanguage: .swift)
             renderHierarchyTutorial.landmarks.append(RenderHierarchyLandmark(reference: RenderReferenceIdentifier(assessmentReference.absoluteString), kind: .assessment))
             
-            let urlGenerator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+            let urlGenerator = PresentationURLGenerator(context: context, baseURL: catalog.baseURL)
             let assesmentLinkReference = LinkReference(
                 identifier: RenderReferenceIdentifier(assessmentReference.absoluteString),
                 title: "Check Your Understanding",

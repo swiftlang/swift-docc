@@ -16,7 +16,7 @@ class TopicGraphTests: XCTestCase {
         /// Returns a ``ResolvedTopicReference`` with the given title, with a phony source language, kind, and source. These are not for testing specific relationships, only abstract graph connectivity.
         static func testNodeWithTitle(_ title: String) -> TopicGraph.Node {
             let urlSafeTitle = title.replacingOccurrences(of: " ", with: "_")
-            let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(urlSafeTitle)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(urlSafeTitle)", sourceLanguage: .swift)
             return TopicGraph.Node(reference: reference, kind: .technology, source: .file(url: URL(fileURLWithPath: "/path/to/\(urlSafeTitle)")), title: title)
         }
         

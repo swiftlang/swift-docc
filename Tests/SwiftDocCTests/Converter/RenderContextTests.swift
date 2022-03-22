@@ -14,9 +14,9 @@ import XCTest
 
 class RenderContextTests: XCTestCase {
     func testCreatesRenderReferences() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
         
         // Verify render references are created for all topics
         XCTAssertEqual(Array(renderContext.store.topics.keys.sorted(by: { $0.absoluteString < $1.absoluteString })), context.knownIdentifiers.sorted(by: { $0.absoluteString < $1.absoluteString }), "Didn't create render references for all context topics.")

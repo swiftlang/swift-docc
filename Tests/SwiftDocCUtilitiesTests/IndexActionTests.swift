@@ -18,20 +18,20 @@ import SwiftDocCTestUtilities
 class IndexActionTests: XCTestCase {
     #if !os(iOS)
     func testIndexActionOutputIsDeterministic() throws {
-        // Convert a test bundle as input for the IndexAction
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        // Convert a test catalog as input for the IndexAction
+        let catalogURL = Bundle.module.url(forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
         
         let targetURL = try createTemporaryDirectory()
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
         
-        let targetBundleURL = targetURL.appendingPathComponent("Result.builtdocs")
+        let targetCatalogURL = targetURL.appendingPathComponent("Result.builtdocs")
         
         var action = try ConvertAction(
-            documentationBundleURL: bundleURL,
+            documentationCatalogURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetBundleURL,
+            targetDirectory: targetCatalogURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
@@ -39,9 +39,9 @@ class IndexActionTests: XCTestCase {
         )
         _ = try action.perform(logHandle: .standardOutput)
         
-        let bundleIdentifier = "org.swift.docc.example"
+        let catalogIdentifier = "org.swift.docc.example"
         
-        // Repeatedly index the same bundle and verify that the result is the same every time.
+        // Repeatedly index the same catalog and verify that the result is the same every time.
         
         var resultIndexDumps = Set<String>()
         
@@ -51,9 +51,9 @@ class IndexActionTests: XCTestCase {
             let engine = DiagnosticEngine(filterLevel: .warning)
             
             var indexAction = try IndexAction(
-                documentationBundleURL: targetBundleURL,
+                documentationCatalogURL: targetCatalogURL,
                 outputURL: indexURL,
-                bundleIdentifier: bundleIdentifier,
+                catalogIdentifier: catalogIdentifier,
                 diagnosticEngine: engine
             )
             _ = try indexAction.perform(logHandle: .standardOutput)
@@ -61,7 +61,7 @@ class IndexActionTests: XCTestCase {
             let index = try NavigatorIndex(url: indexURL)
             
             resultIndexDumps.insert(index.navigatorTree.root.dumpTree())
-            XCTAssertTrue(engine.problems.isEmpty, "Indexing bundle at \(targetURL) resulted in unexpected issues")
+            XCTAssertTrue(engine.problems.isEmpty, "Indexing catalog at \(targetURL) resulted in unexpected issues")
         }
         
         // All dumps should be the same, so there should only be one unique index dump

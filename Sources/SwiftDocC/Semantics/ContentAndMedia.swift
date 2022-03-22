@@ -75,17 +75,17 @@ public final class ContentAndMedia: Semantic, DirectiveConvertible {
         self.mediaPosition = mediaPosition
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<ContentAndMedia>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Layout.argumentName, Semantics.Eyebrow.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<ContentAndMedia>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Layout.argumentName, Semantics.Eyebrow.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<ContentAndMedia>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<ContentAndMedia>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let optionalEyebrow = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Eyebrow>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         let optionalTitle = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Title>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         
         let layout = Semantic.Analyses.DeprecatedArgument<ContentAndMedia, Semantics.Layout>.unused(severityIfFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         
-        let (media, remainder) = Semantic.Analyses.HasExactlyOneMedia<ContentAndMedia>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let (media, remainder) = Semantic.Analyses.HasExactlyOneMedia<ContentAndMedia>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let mediaPosition: MediaPosition
         if let firstChildDirective = directive.child(at: 0) as? BlockDirective,

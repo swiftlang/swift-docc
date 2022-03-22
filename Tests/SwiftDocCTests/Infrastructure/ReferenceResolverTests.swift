@@ -23,11 +23,11 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, in: context, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: catalog, in: context, problems: &problems)!
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
+        var resolver = ReferenceResolver(context: context, catalog: catalog, source: nil)
         _ = resolver.visitIntro(intro)
         XCTAssertEqual(resolver.problems.count, 1)
     }
@@ -42,11 +42,11 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)!
+        let contentAndMedia = ContentAndMedia(from: directive, source: nil, for: catalog, in: context, problems: &problems)!
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
+        var resolver = ReferenceResolver(context: context, catalog: catalog, source: nil)
         _ = resolver.visit(contentAndMedia)
         XCTAssertEqual(resolver.problems.count, 1)
     }
@@ -59,11 +59,11 @@ class ReferenceResolverTests: XCTestCase {
     """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let intro = Intro(from: directive, source: nil, for: bundle, in: context, problems: &problems)!
+        let intro = Intro(from: directive, source: nil, for: catalog, in: context, problems: &problems)!
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
+        var resolver = ReferenceResolver(context: context, catalog: catalog, source: nil)
         
         guard let container = resolver.visit(intro).children.first as? MarkupContainer,
               let firstElement = container.elements.first,
@@ -77,7 +77,7 @@ class ReferenceResolverTests: XCTestCase {
     
     // Tests all reference syntax formats to a child symbol
     func testReferencesToChildFromFramework() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -93,15 +93,15 @@ class ReferenceResolverTests: XCTestCase {
             - <doc:documentation/SideKit/SideClass>
             - <doc:/documentation/SideKit/SideClass>
             - <doc://org.swift.docc.example/documentation/SideKit/SideClass>
-            - <doc://TestBundle/documentation/SideKit/SideClass>
+            - <doc://TestCatalog/documentation/SideKit/SideClass>
 
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -111,7 +111,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test relative paths to non-child symbol
     func testReferencesToGrandChildFromFramework() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -124,11 +124,11 @@ class ReferenceResolverTests: XCTestCase {
             - ``/documentation/SideKit/SideClass/myFunction()``
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -138,7 +138,7 @@ class ReferenceResolverTests: XCTestCase {
     
     // Test references to a sibling symbol
     func testReferencesToSiblingFromFramework() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -151,11 +151,11 @@ class ReferenceResolverTests: XCTestCase {
             - ``/documentation/SideKit/SideClass/path``
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -165,7 +165,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test references to symbols in root paths
     func testReferencesToTutorial() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -173,26 +173,26 @@ class ReferenceResolverTests: XCTestCase {
             ## Topics
             ### Basics
             - <doc:TestTutorial>
-            - <doc:Test-Bundle/TestTutorial>
-            - <doc:Test-Bundle/TestTutorial>
-            - <doc:/Test-Bundle/TestTutorial>
+            - <doc:Test-Catalog/TestTutorial>
+            - <doc:Test-Catalog/TestTutorial>
+            - <doc:/Test-Catalog/TestTutorial>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
         XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 4)
-        XCTAssertEqual(renderNode.topicSections.first?.identifiers.allSatisfy { $0 == "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial" }, true)
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers.allSatisfy { $0 == "doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial" }, true)
     }
 
     // Test references to technology pages
     func testReferencesToTechnologyPages() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -204,11 +204,11 @@ class ReferenceResolverTests: XCTestCase {
             - <doc:/tutorials/TestOverview>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -217,8 +217,8 @@ class ReferenceResolverTests: XCTestCase {
     }
 
     // Test external references
-    func testExternalReferencesConsiderBundleIdentifier() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+    func testExternalReferencesConsiderCatalogIdentifier() throws {
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -231,11 +231,11 @@ class ReferenceResolverTests: XCTestCase {
             - <https://www.example.com/MyKit>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         // Verify resolved links
@@ -325,8 +325,8 @@ class ReferenceResolverTests: XCTestCase {
         Referencing an uncurated article will raise a warning: <doc:RegisteredArticle>
         """
         
-        // TestBundle has more than one module, so automatic registration and curation won't happen
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        // TestCatalog has more than one module, so automatic registration and curation won't happen
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             referencingArticleURL = root.appendingPathComponent("article.md")
             try source.write(to: referencingArticleURL, atomically: true, encoding: .utf8)
             
@@ -341,25 +341,25 @@ class ReferenceResolverTests: XCTestCase {
             Its references aren't resolved, so this won't raise a warning: <doc:InvalidReferenceThatWillNotWarn>
             """.write(to: uncuratedArticleFile, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         let diagnostics = context.problems.filter({ $0.diagnostic.source?.standardizedFileURL == uncuratedArticleFile.standardizedFileURL }).map(\.diagnostic)
         let diagnostic = try XCTUnwrap(diagnostics.first(where: { $0.identifier == "org.swift.docc.ArticleUncurated" }))
-        XCTAssertEqual(diagnostic.localizedSummary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Bundle/UncuratedArticle'")
+        XCTAssertEqual(diagnostic.localizedSummary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Catalog/UncuratedArticle'")
         
         let referencingFileDiagnostics = context.problems.map(\.diagnostic).filter({ $0.source?.standardizedFileURL == referencingArticleURL.standardizedFileURL })
         XCTAssertEqual(referencingFileDiagnostics.filter({ $0.identifier == "org.swift.docc.unresolvedTopicReference" }).count, 1)
     }
     
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
-        var bundleIdentifier = "com.external.testbundle"
+        var catalogIdentifier = "com.external.testcatalog"
         var expectedReferencePath = "/externally/resolved/path"
         var resolvedEntityTitle = "Externally Resolved Title"
         var resolvedEntityKind = DocumentationNode.Kind.article
         var expectedAvailableSourceLanguages: Set<SourceLanguage> = [.swift, .objectiveC]
         
         func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
-            return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, sourceLanguage: .swift))
+            return .success(ResolvedTopicReference(catalogIdentifier: catalogIdentifier, path: expectedReferencePath, sourceLanguage: .swift))
         }
         
         func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
@@ -391,11 +391,11 @@ class ReferenceResolverTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
 
-        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems))
-        var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
+        let chapter = try XCTUnwrap(Chapter(from: directive, source: nil, for: catalog, in: context, problems: &problems))
+        var resolver = ReferenceResolver(context: context, catalog: catalog, source: nil)
         _ = resolver.visitChapter(chapter)
         XCTAssertFalse(resolver.problems.containsErrors)
         XCTAssertEqual(resolver.problems.count, 1)
@@ -411,11 +411,11 @@ class ReferenceResolverTests: XCTestCase {
         Discussion link to ``SideKit``.
         """
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
         let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil))
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
+        var resolver = ReferenceResolver(context: context, catalog: catalog, source: nil)
         let resolvedArticle = try XCTUnwrap(resolver.visitArticle(article) as? Article)
         let abstractSection = try XCTUnwrap(resolvedArticle.abstractSection)
         
@@ -443,9 +443,9 @@ class ReferenceResolverTests: XCTestCase {
     }
     
     func testForwardsSymbolPropertiesThatAreUnmodifiedDuringLinkResolution() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
+        var resolver = ReferenceResolver(context: context, catalog: catalog, source: nil)
         
         let symbol = try XCTUnwrap(context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)
         

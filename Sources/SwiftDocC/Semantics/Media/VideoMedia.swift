@@ -26,14 +26,14 @@ public final class VideoMedia: Media, DirectiveConvertible {
         super.init(source: source)
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         let arguments = directive.arguments(problems: &problems)
         let requiredSource = Semantic.Analyses.HasArgument<VideoMedia, Media.Semantics.Source>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems).map { argument in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argument)
+            ResourceReference(catalogIdentifier: catalog.identifier, path: argument)
         }
         
         let optionalPoster = Semantic.Analyses.HasArgument<VideoMedia, Media.Semantics.Poster>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems).map { argument in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argument)
+            ResourceReference(catalogIdentifier: catalog.identifier, path: argument)
         }
         
         guard let source = requiredSource else {

@@ -16,21 +16,21 @@ import Markdown
 
 class SnippetTests: XCTestCase {
     func testNoPath() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         let source = """
         @Snippet()
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        XCTAssertNil(Snippet(from: directive, source: nil, for: bundle, in: context, problems: &problems))
+        XCTAssertNil(Snippet(from: directive, source: nil, for: catalog, in: context, problems: &problems))
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual(.warning, problems[0].diagnostic.severity)
         XCTAssertEqual("org.swift.docc.HasArgument.path", problems[0].diagnostic.identifier)
     }
 
     func testHasInnerContent() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         let source = """
         @Snippet(path: "path/to/snippet") {
             This content shouldn't be here.
@@ -39,21 +39,21 @@ class SnippetTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        XCTAssertNotNil(Snippet(from: directive, source: nil, for: bundle, in: context, problems: &problems))
+        XCTAssertNotNil(Snippet(from: directive, source: nil, for: catalog, in: context, problems: &problems))
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual(.warning, problems[0].diagnostic.severity)
         XCTAssertEqual("org.swift.docc.Snippet.NoInnerContentAllowed", problems[0].diagnostic.identifier)
     }
 
     func testLinkResolves() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         let source = """
         @Snippet(path: "Test/FirstGroup/MySnippet")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
-        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: bundle, in: context, problems: &problems))
+        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: catalog, in: context, problems: &problems))
         XCTAssertEqual("Test/FirstGroup/MySnippet", snippet.path)
         XCTAssertNotNil(snippet)
         XCTAssertTrue(problems.isEmpty)

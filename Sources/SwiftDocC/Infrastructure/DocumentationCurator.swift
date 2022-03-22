@@ -17,14 +17,14 @@ struct DocumentationCurator {
     /// The documentation context to crawl.
     private let context: DocumentationContext
     
-    /// The current bundle.
-    private let bundle: DocumentationBundle
+    /// The current catalog.
+    private let catalog: DocumentationCatalog
     
     private(set) var problems = [Problem]()
     
-    init(in context: DocumentationContext, bundle: DocumentationBundle, initial: Set<ResolvedTopicReference> = []) {
+    init(in context: DocumentationContext, catalog: DocumentationCatalog, initial: Set<ResolvedTopicReference> = []) {
         self.context = context
-        self.bundle = bundle
+        self.catalog = catalog
         self.curatedNodes = initial
     }
     
@@ -81,8 +81,8 @@ struct DocumentationCurator {
         }
         
         // Check if the link has been externally resolved already.
-        if let bundleID = unresolved.topicURL.components.host,
-           context.externalReferenceResolvers[bundleID] != nil || context.fallbackReferenceResolvers[bundleID] != nil {
+        if let catalogID = unresolved.topicURL.components.host,
+           context.externalReferenceResolvers[catalogID] != nil || context.fallbackReferenceResolvers[catalogID] != nil {
             if case .success(let resolvedExternalReference) = context.externallyResolvedLinks[unresolved.topicURL] {
                 return resolvedExternalReference
             } else {
@@ -92,10 +92,10 @@ struct DocumentationCurator {
         
         // Try extracting an article from the cache
         let articleFilename = unresolved.topicURL.components.path.components(separatedBy: "/").last!
-        let sourceArticlePath = NodeURLGenerator.Path.article(bundleName: bundle.displayName, articleName: articleFilename).stringValue
+        let sourceArticlePath = NodeURLGenerator.Path.article(catalogName: catalog.displayName, articleName: articleFilename).stringValue
         
         let reference = ResolvedTopicReference(
-            bundleIdentifier: resolved.bundleIdentifier,
+            catalogIdentifier: resolved.catalogIdentifier,
             path: sourceArticlePath,
             sourceLanguages: resolved.sourceLanguages)
         

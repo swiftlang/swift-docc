@@ -38,14 +38,14 @@ class DirectoryMonitor {
             case .contentsEnumerationFailed(let url): return "Could not enumerate the contnents of \(url.path)"
             case .reachedOpenFileLimit(let fileCount):
                 return """
-                Watching the source bundle failed because it contains \(fileCount) files which is
+                Watching the source catalog failed because it contains \(fileCount) files which is
                 more than your shell session limit for maximum amount of open files.
 
                 Verify your current session limit by running 'ulimit -n'.
 
-                To preview your source bundle, change your shell session's open file limit
+                To preview your source catalog, change your shell session's open file limit
                 by running 'ulimit -n COUNT' where COUNT is the new limit
-                that is higher than the amount of files in your source bundle and adding
+                that is higher than the amount of files in your source catalog and adding
                 some buffer for system processes that also need to open files.
                 """
             }

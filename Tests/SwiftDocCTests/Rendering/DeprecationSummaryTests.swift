@@ -31,12 +31,12 @@ class DeprecationSummaryTests: XCTestCase {
     /// This test verifies that a symbol's deprecation summary comes from its sidecar doc
     /// and it's preferred over the original deprecation note in the code docs.
     func testAuthoredDeprecatedSummary() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         
         guard let renderNode = translator.visit(symbol) as? RenderNode else {
             XCTFail("Could not compile the node")
@@ -48,7 +48,7 @@ class DeprecationSummaryTests: XCTestCase {
 
     /// Test for a warning when symbol is not deprecated
     func testIncorrectlyAuthoredDeprecatedSummary() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
+        let (url, catalog, context) = try testCatalogAndContext(copying: "TestCatalog", excludingPaths: [], codeListings: [:], configureCatalog: { url in
             // Add a sidecar file with wrong deprecated summary
             try """
             # ``SideKit/SideClass``
@@ -68,11 +68,11 @@ class DeprecationSummaryTests: XCTestCase {
         })
         
         // Verify the deprecation is still rendered.
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
         // Compile docs and verify contents
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         
         guard let renderNode = translator.visit(symbol) as? RenderNode else {
             XCTFail("Could not compile the node")
@@ -89,10 +89,10 @@ class DeprecationSummaryTests: XCTestCase {
     /// and it's preferred over the original deprecation note in the code docs.
     /// (r69719494)
     func testAuthoredDeprecatedSummaryAsSoleItemInFile() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (catalog, context) = try testCatalogAndContext(named: "CatalogWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                catalogIdentifier: catalog.identifier,
                 path: "/documentation/CoolFramework/CoolClass",
                 sourceLanguage: .swift
             )
@@ -102,7 +102,7 @@ class DeprecationSummaryTests: XCTestCase {
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(
             context: context,
-            bundle: bundle,
+            catalog: catalog,
             identifier: node.reference,
             source: nil
         )
@@ -128,10 +128,10 @@ class DeprecationSummaryTests: XCTestCase {
     }
     
     func testSymbolDeprecatedSummary() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (catalog, context) = try testCatalogAndContext(named: "CatalogWithLonelyDeprecationDirective")
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                catalogIdentifier: catalog.identifier,
                 path: "/documentation/CoolFramework/CoolClass/doUncoolThings(with:)",
                 sourceLanguage: .swift
             )
@@ -141,7 +141,7 @@ class DeprecationSummaryTests: XCTestCase {
         let symbol = node.semantic as! Symbol
         var translator = RenderNodeTranslator(
             context: context,
-            bundle: bundle,
+            catalog: catalog,
             identifier: node.reference,
             source: nil
         )
@@ -160,10 +160,10 @@ class DeprecationSummaryTests: XCTestCase {
     }
   
   func testDeprecationOverride() throws {
-      let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+      let (catalog, context) = try testCatalogAndContext(named: "CatalogWithLonelyDeprecationDirective")
       let node = try context.entity(
           with: ResolvedTopicReference(
-              bundleIdentifier: bundle.identifier,
+              catalogIdentifier: catalog.identifier,
               path: "/documentation/CoolFramework/CoolClass/init()",
               sourceLanguage: .swift
           )
@@ -173,7 +173,7 @@ class DeprecationSummaryTests: XCTestCase {
       let symbol = node.semantic as! Symbol
       var translator = RenderNodeTranslator(
           context: context,
-          bundle: bundle,
+          catalog: catalog,
           identifier: node.reference,
           source: nil
       )

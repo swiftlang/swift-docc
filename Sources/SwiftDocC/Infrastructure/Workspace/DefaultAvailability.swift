@@ -14,7 +14,7 @@ import Foundation
 ///
 /// Default availability is used as a fallback value for symbols without explicit availability information.
 ///
-/// This information can be authored in the bundle's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs:
+/// This information can be authored in the catalog's Info.plist file, as a dictionary of module names to arrays of platform "name" and "version" pairs:
 /// ```
 /// <key>CDAppleDefaultAvailability</key>
 /// <dict>
@@ -60,7 +60,7 @@ public struct DefaultAvailability: Codable, Equatable {
             platformVersion = try values.decode(String.self, forKey: .platformVersion)
             
             guard let version = Version(versionString: platformVersion), (2...3).contains(version.count) else {
-                throw DocumentationBundle.PropertyListError.invalidVersionString(platformVersion)
+                throw DocumentationCatalog.PropertyListError.invalidVersionString(platformVersion)
             }
         }
     }

@@ -39,21 +39,21 @@ class DocumentationContextTests: XCTestCase {
     func testResolve() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        let catalog = try testCatalog(named: "TestCatalog")
+        let dataProvider = PrebuiltLocalFileSystemDataProvider(catalogs: [catalog])
         try workspace.registerProvider(dataProvider)
         
         // Test resolving
         let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc:/TestTutorial")!)
-        let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "", sourceLanguage: .swift)
+        let parent = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "", sourceLanguage: .swift)
         
         guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
             XCTFail("Couldn't resolve \(unresolved)")
             return
         }
         
-        XCTAssertEqual(parent.bundleIdentifier, resolved.bundleIdentifier)
-        XCTAssertEqual("/tutorials/Test-Bundle/TestTutorial", resolved.path)
+        XCTAssertEqual(parent.catalogIdentifier, resolved.catalogIdentifier)
+        XCTAssertEqual("/tutorials/Test-Catalog/TestTutorial", resolved.path)
         
         // Test lowercasing of path
         let unresolvedUppercase = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc:/TESTTUTORIAL")!)
@@ -63,7 +63,7 @@ class DocumentationContextTests: XCTestCase {
         }
         
         // Test expected URLs
-        let expectedURL = URL(string: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial")
+        let expectedURL = URL(string: "doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial")
         XCTAssertEqual(expectedURL, resolved.url)
         
         guard context.documentURL(for: resolved) != nil else {
@@ -80,13 +80,13 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testLoadEntity() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
-        let identifier = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/Test-Catalog/TestTutorial", sourceLanguage: .swift)
         
-        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "some.other.bundle", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)))
+        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "some.other.catalog", path: "/tutorials/Test-Catalog/TestTutorial", sourceLanguage: .swift)))
         
-        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/Test-Bundle/wrongIdentifier", sourceLanguage: .swift)))
+        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/Test-Catalog/wrongIdentifier", sourceLanguage: .swift)))
 
         let node = try context.entity(with: identifier)
                 
@@ -141,8 +141,8 @@ class DocumentationContextTests: XCTestCase {
 │  │  │  │  ├─ Text "Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This section link refers to this section itself: "
-│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
-│  │  │  │  │  └─ Text "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
+│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Catalog/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
+│  │  │  │  │  └─ Text "doc:/tutorials/Test-Catalog/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
 │  │  │  │  ├─ Text "."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This is an external link to Swift documentation: "
@@ -151,8 +151,8 @@ class DocumentationContextTests: XCTestCase {
 │  │  │  │  ├─ Text "."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This section link refers to the next section in this file: "
-│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection"
-│  │  │  │  │  └─ Text "doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection"
+│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Catalog/TestTutorial#Initiate-ARKit-Plane-Detection"
+│  │  │  │  │  └─ Text "doc:/tutorials/Test-Catalog/TestTutorial#Initiate-ARKit-Plane-Detection"
 │  │  │  │  ├─ Text "."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This link will never resolve: "
@@ -257,13 +257,13 @@ class DocumentationContextTests: XCTestCase {
 │  │  │  │  ├─ Text "ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This section link refers to the previous section: "
-│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
-│  │  │  │  │  └─ Text "doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
+│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Catalog/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
+│  │  │  │  │  └─ Text "doc:/tutorials/Test-Catalog/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB"
 │  │  │  │  ├─ Text "."
 │  │  │  │  ├─ SoftBreak
 │  │  │  │  ├─ Text "This section link refers to the first section in another tutorial: "
-│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Bundle/TestTutorial2#Create-a-New-AR-Project"
-│  │  │  │  │  └─ Text "doc:/tutorials/Test-Bundle/TestTutorial2#Create-a-New-AR-Project"
+│  │  │  │  ├─ Link destination: "doc:/tutorials/Test-Catalog/TestTutorial2#Create-a-New-AR-Project"
+│  │  │  │  │  └─ Text "doc:/tutorials/Test-Catalog/TestTutorial2#Create-a-New-AR-Project"
 │  │  │  │  └─ Text "."
 │  │  │  ├─ Paragraph
 │  │  │  │  └─ Text "Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet."
@@ -416,17 +416,17 @@ class DocumentationContextTests: XCTestCase {
     func testThrowsErrorForMissingResource() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        XCTAssertThrowsError(try context.resource(with: ResourceReference(bundleIdentifier: "com.example.missing", path: "/missing.swift")), "Expected requesting an unknown file to result in an error.")
+        XCTAssertThrowsError(try context.resource(with: ResourceReference(catalogIdentifier: "com.example.missing", path: "/missing.swift")), "Expected requesting an unknown file to result in an error.")
     }
 
     func testThrowsErrorForQualifiedImagePaths() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let id = bundle.identifier
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let id = catalog.identifier
 
-        let figure = ResourceReference(bundleIdentifier: id, path: "figure1.jpg")
-        let imageFigure = ResourceReference(bundleIdentifier: id, path: "images/figure1.jpg")
+        let figure = ResourceReference(catalogIdentifier: id, path: "figure1.jpg")
+        let imageFigure = ResourceReference(catalogIdentifier: id, path: "images/figure1.jpg")
 
-        XCTAssertNoThrow(try context.resource(with: figure), "\(figure.path) expected in \(bundle.displayName)")
+        XCTAssertNoThrow(try context.resource(with: figure), "\(figure.path) expected in \(catalog.displayName)")
         XCTAssertThrowsError(try context.resource(with: imageFigure), "Images should be registered (and referred to) by their name, not by their path.")
     }
     
@@ -455,16 +455,16 @@ class DocumentationContextTests: XCTestCase {
                 }
                 """),
             ]),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            InfoPlist(displayName: "TestCatalog", identifier: "com.test.example"),
         ])
         let tempURL = try createTemporaryDirectory()
         
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
+        let catalogURL = try exampleDocumentation.write(inside: tempURL)
 
         // Parse this test content
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         // Verify all the reference identifiers for this content
@@ -482,12 +482,12 @@ class DocumentationContextTests: XCTestCase {
     func testRegisteredImages() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        let catalog = try testCatalog(named: "TestCatalog")
+        let dataProvider = PrebuiltLocalFileSystemDataProvider(catalogs: [catalog])
         try workspace.registerProvider(dataProvider)
         
         let imagesRegistered = context
-            .registeredImageAssets(forBundleID: bundle.identifier)
+            .registeredImageAssets(forCatalogID: catalog.identifier)
             .flatMap { $0.variants.map { $0.value.lastPathComponent } }
             .sorted()
         
@@ -513,16 +513,16 @@ class DocumentationContextTests: XCTestCase {
     func testDownloadAssets() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        let catalog = try testCatalog(named: "TestCatalog")
+        let dataProvider = PrebuiltLocalFileSystemDataProvider(catalogs: [catalog])
         try workspace.registerProvider(dataProvider)
 
-        let downloadsBefore = context.registeredDownloadsAssets(forBundleID: bundle.identifier)
+        let downloadsBefore = context.registeredDownloadsAssets(forCatalogID: catalog.identifier)
         XCTAssertEqual(downloadsBefore.count, 1)
         XCTAssertEqual(downloadsBefore.first?.variants.values.first?.lastPathComponent, "project.zip")
         
         guard var assetOriginal = context
-            .registeredImageAssets(forBundleID: bundle.identifier)
+            .registeredImageAssets(forCatalogID: catalog.identifier)
             .first(where: { asset -> Bool in
                 return asset.variants.values.first(where: { url -> Bool in
                     return url.path.contains("intro.png")
@@ -534,10 +534,10 @@ class DocumentationContextTests: XCTestCase {
         
         // Update the asset.
         assetOriginal.context = .download
-        context.updateAsset(named: "intro.png", asset: assetOriginal, in: bundle.rootReference)
+        context.updateAsset(named: "intro.png", asset: assetOriginal, in: catalog.rootReference)
         
         guard let assetUpdated = context
-            .registeredImageAssets(forBundleID: bundle.identifier)
+            .registeredImageAssets(forCatalogID: catalog.identifier)
             .first(where: { asset -> Bool in
                 return asset.variants.values.first(where: { url -> Bool in
                     return url.path.contains("intro.png")
@@ -551,7 +551,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual(assetUpdated.context, .download)
         
         // Verify the asset is accessible in the downloads collection.
-        var downloadsAfter = context.registeredDownloadsAssets(forBundleID: bundle.identifier)
+        var downloadsAfter = context.registeredDownloadsAssets(forCatalogID: catalog.identifier)
         XCTAssertEqual(downloadsAfter.count, 2)
         downloadsAfter.removeAll(where: { $0.variants.values.first?.lastPathComponent == "project.zip" })
         XCTAssertEqual(downloadsAfter.count, 1)
@@ -559,14 +559,14 @@ class DocumentationContextTests: XCTestCase {
     }
 
     func testCreatesCorrectIdentifiers() throws {
-        let testBundleLocation = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let testCatalogLocation = Bundle.module.url(
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
         let workspaceContent = Folder(name: "TestWorkspace", content: [
-            CopyOfFolder(original: testBundleLocation),
+            CopyOfFolder(original: testCatalogLocation),
             
-            Folder(name: "TestBundle2.docc", content: [
-                InfoPlist(displayName: "Test Bundle", identifier: "com.example.bundle2"),
-                CopyOfFolder(original: testBundleLocation, newName: "Subfolder", filter: { $0.lastPathComponent != "Info.plist" }),
+            Folder(name: "TestCatalog2.docc", content: [
+                InfoPlist(displayName: "Test Catalog", identifier: "com.example.catalog2"),
+                CopyOfFolder(original: testCatalogLocation, newName: "Subfolder", filter: { $0.lastPathComponent != "Info.plist" }),
             ])
         ])
         
@@ -585,7 +585,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testDetectsReferenceCollision() throws {
-        let (_, context) = try testBundleAndContext(named: "TestBundleWithDupe")
+        let (_, context) = try testCatalogAndContext(named: "TestCatalogWithDupe")
         
         XCTAssert(
             context.problems.contains { problem in
@@ -601,8 +601,8 @@ class DocumentationContextTests: XCTestCase {
         context.addGlobalChecks([{ (context, reference) -> [Problem] in
             return [Problem(diagnostic: Diagnostic(source: reference.url, severity: DiagnosticSeverity.error, range: nil, identifier: "com.tests.testGraphChecks", summary: "test error"), possibleSolutions: [])]
         }])
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        let catalog = try testCatalog(named: "TestCatalog")
+        let dataProvider = PrebuiltLocalFileSystemDataProvider(catalogs: [catalog])
         try workspace.registerProvider(dataProvider)
         
         /// Checks if the custom check added problems to the context.
@@ -628,7 +628,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testIgnoresUnknownMarkupFiles() throws {
-        let testBundle = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
+        let testCatalog = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
                 TextFile(name: "Article1.tutorial", utf8Content: "@Article"),
@@ -637,11 +637,11 @@ class DocumentationContextTests: XCTestCase {
         ])
         
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
+        let catalogURL = try testCatalog.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         XCTAssertEqual(context.knownPages.map { $0.path }, ["/tutorials/TestIgnoresUnknownMarkupFiles/Article1"])
@@ -649,27 +649,27 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testLoadsSymbolData() throws {
-        let testBundle = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
+        let testCatalog = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
                 CopyOfFile(original: Bundle.module.url(
-                    forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+                    forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                     .appendingPathComponent("documentation")
                     .appendingPathComponent("myprotocol.md")),
             ]),
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: Bundle.module.url(
-                    forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+                    forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                     .appendingPathComponent("mykit-iOS.symbols.json")),
             ])
         ])
         
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
+        let catalogURL = try testCatalog.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         // Symbols are loaded
@@ -883,7 +883,7 @@ class DocumentationContextTests: XCTestCase {
     
     func testMergesMultipleSymbolDeclarations() throws {
         let graphContentiOS = try String(contentsOf: Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
             .appendingPathComponent("mykit-iOS.symbols.json"))
 
         let graphContentmacOS = graphContentiOS
@@ -893,7 +893,7 @@ class DocumentationContextTests: XCTestCase {
             .replacingOccurrences(of: "\"name\" : \"ios\"", with: "\"name\" : \"tvos\"")
             .replacingOccurrences(of: "\"spelling\" : \"MyClass\"", with: "\"spelling\" : \"MyClassTV\"")
         
-        let testBundle = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
+        let testCatalog = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Symbols", content: [
                 TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS),
@@ -903,11 +903,11 @@ class DocumentationContextTests: XCTestCase {
         ])
         
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
+        let catalogURL = try testCatalog.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         // MyClass is loaded
@@ -926,7 +926,7 @@ class DocumentationContextTests: XCTestCase {
     
     func testMergedMultipleSymbolDeclarationsIncludesPlatformSpecificSymbols() throws {
         let iOSGraphURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
             .appendingPathComponent("mykit-iOS.symbols.json")
         let graphContentiOS = try String(contentsOf: iOSGraphURL)
 
@@ -957,7 +957,7 @@ class DocumentationContextTests: XCTestCase {
         encoder.outputFormatting = .prettyPrinted
         let newGraphContent = try String(data: encoder.encode(graph), encoding: .utf8)!
         
-        let testBundle = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
+        let testCatalog = Folder(name: "TestIgnoresUnknownMarkupFiles.docc", content: [
             InfoPlist(displayName: "TestIgnoresUnknownMarkupFiles", identifier: "com.example.documentation"),
             Folder(name: "Symbols", content: [
                 TextFile(name: "mykit-iOS.symbols.json", utf8Content: graphContentiOS),
@@ -966,11 +966,11 @@ class DocumentationContextTests: XCTestCase {
         ])
         
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
+        let catalogURL = try testCatalog.write(inside: tempURL)
         
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         // MyFunction is loaded
@@ -985,26 +985,26 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testResolvesSymbolsBetweenSymbolGraphs() throws {
-        let testBundle = Folder(name: "CrossGraphResolving.docc", content: [
+        let testCatalog = Folder(name: "CrossGraphResolving.docc", content: [
             InfoPlist(displayName: "CrossGraphResolving", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
             ]),
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: Bundle.module.url(
-                    forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+                    forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                     .appendingPathComponent("mykit-iOS.symbols.json")),
                 CopyOfFile(original: Bundle.module.url(
-                    forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+                    forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                     .appendingPathComponent("sidekit.symbols.json")),
             ])
         ])
         
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
+        let catalogURL = try testCatalog.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         // SideClass is loaded
@@ -1022,13 +1022,13 @@ class DocumentationContextTests: XCTestCase {
 
     func testLoadsDeclarationWithNoOS() throws {
         var graphContentiOS = try String(contentsOf: Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
             .appendingPathComponent("mykit-iOS.symbols.json"))
         
         // "remove" the operating system information
         graphContentiOS = graphContentiOS.replacingOccurrences(of: "\"operatingSystem\"", with: "\"ignored\"")
         
-        let testBundle = Folder(name: "NoOSDeclaration.docc", content: [
+        let testCatalog = Folder(name: "NoOSDeclaration.docc", content: [
             InfoPlist(displayName: "NoOSDeclaration", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: []),
             Folder(name: "Symbols", content: [
@@ -1037,11 +1037,11 @@ class DocumentationContextTests: XCTestCase {
         ])
         
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
+        let catalogURL = try testCatalog.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         // MyClass is loaded
@@ -1057,12 +1057,12 @@ class DocumentationContextTests: XCTestCase {
     
     func testDetectsDuplicateSymbolArticles() throws {
         let documentationURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
             .appendingPathComponent("documentation")
     
         let myKitURL = documentationURL.appendingPathComponent("mykit.md")
         
-        let testBundle = Folder(name: "TestDetectsDuplicateSymbolArticles.docc", content: [
+        let testCatalog = Folder(name: "TestDetectsDuplicateSymbolArticles.docc", content: [
             InfoPlist(displayName: "TestDetectsDuplicateSymbolArticles", identifier: "com.example.documentation"),
             Folder(name: "Resources", content: [
                 CopyOfFile(original: myKitURL, newName: "mykit.md"),
@@ -1072,17 +1072,17 @@ class DocumentationContextTests: XCTestCase {
             ]),
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: Bundle.module.url(
-                    forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+                    forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                     .appendingPathComponent("mykit-iOS.symbols.json")),
             ])
         ])
         
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try testBundle.write(inside: tempURL)
+        let catalogURL = try testCatalog.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
 
         XCTAssertNotNil(context.problems
@@ -1103,7 +1103,7 @@ class DocumentationContextTests: XCTestCase {
             
             var symbolGraphFiles: [File] {
                 return symbolGraphNames.map { name in
-                    CopyOfFile(original: Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+                    CopyOfFile(original: Bundle.module.url(forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                         .appendingPathComponent(name + ".symbols.json"))
                 }
             }
@@ -1122,7 +1122,7 @@ class DocumentationContextTests: XCTestCase {
         ]
         
         for testData in combinationsToTest {
-            let testBundle = Folder(name: "TestCanResolveArticleFromTutorial.docc", content: [
+            let testCatalog = Folder(name: "TestCanResolveArticleFromTutorial.docc", content: [
                 InfoPlist(displayName: "TestCanResolveArticleFromTutorial", identifier: "com.example.documentation"),
                 
                 TextFile(name: "extra-article.md", utf8Content: """
@@ -1141,20 +1141,20 @@ class DocumentationContextTests: XCTestCase {
             ] + testData.symbolGraphFiles)
             
             let tempURL = try createTemporaryDirectory()
-            let bundleURL = try testBundle.write(inside: tempURL)
+            let catalogURL = try testCatalog.write(inside: tempURL)
             
             let workspace = DocumentationWorkspace()
             let context = try DocumentationContext(dataProvider: workspace)
-            let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+            let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
             try workspace.registerProvider(dataProvider)
             
-            let bundle = try XCTUnwrap(workspace.bundles.values.first)
-            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+            let catalog = try XCTUnwrap(workspace.catalogs.values.first)
+            let renderContext = RenderContext(documentationContext: context, catalog: catalog)
             
-            let identifier = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift)
+            let identifier = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift)
             let node = try context.entity(with: identifier)
             
-            let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+            let converter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
             
             let source = context.documentURL(for: identifier)
             let renderNode = try XCTUnwrap(converter.renderNode(for: node, at: source))
@@ -1173,7 +1173,7 @@ class DocumentationContextTests: XCTestCase {
     }
     
     func testCuratesSymbolsAndArticlesCorrectly() throws {
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testCatalogAndContext(named: "TestCatalog")
 
         // Sort the edges for each node to get consistent results, no matter the order that the symbols were processed.
         for (source, targets) in context.topicGraph.edges {
@@ -1201,15 +1201,15 @@ let expected = """
  │   ╰ doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()
  ├ doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)
  ├ doc://org.swift.docc.example/documentation/SideKit/UncuratedClass/angle
- ├ doc://org.swift.docc.example/documentation/Test-Bundle/Default-Code-Listing-Syntax
- ├ doc://org.swift.docc.example/documentation/Test-Bundle/article
- │ ├ doc://org.swift.docc.example/documentation/Test-Bundle/article2
- │ ├ doc://org.swift.docc.example/documentation/Test-Bundle/article3
- │ ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial
- │   ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB
- │   ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate
- │   ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection
- ╰ doc://org.swift.docc.example/documentation/Test-Bundle/article2
+ ├ doc://org.swift.docc.example/documentation/Test-Catalog/Default-Code-Listing-Syntax
+ ├ doc://org.swift.docc.example/documentation/Test-Catalog/article
+ │ ├ doc://org.swift.docc.example/documentation/Test-Catalog/article2
+ │ ├ doc://org.swift.docc.example/documentation/Test-Catalog/article3
+ │ ╰ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial
+ │   ├ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB
+ │   ├ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial#Duplicate
+ │   ╰ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial#Initiate-ARKit-Plane-Detection
+ ╰ doc://org.swift.docc.example/documentation/Test-Catalog/article2
  doc://org.swift.docc.example/documentation/SideKit
  ├ doc://org.swift.docc.example/documentation/SideKit/SideClass
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element
@@ -1230,32 +1230,32 @@ let expected = """
  doc://org.swift.docc.example/tutorials/TestOverview
  ╰ doc://org.swift.docc.example/tutorials/TestOverview/$volume
    ╰ doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1
-     ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial
-     │ ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB
-     │ ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Duplicate
-     │ ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection
-     ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2
-     │ ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2#Create-a-New-AR-Project
-     ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle
-     │ ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle#A-Section
-     │ ├ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle#This-is-an-H2
-     │ ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorialArticle#This-is-an-H3
-     ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TutorialMediaWithSpaces
-       ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TutorialMediaWithSpaces#Create-a-New-AR-Project
+     ├ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial
+     │ ├ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB
+     │ ├ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial#Duplicate
+     │ ╰ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial#Initiate-ARKit-Plane-Detection
+     ├ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial2
+     │ ╰ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorial2#Create-a-New-AR-Project
+     ├ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorialArticle
+     │ ├ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorialArticle#A-Section
+     │ ├ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorialArticle#This-is-an-H2
+     │ ╰ doc://org.swift.docc.example/tutorials/Test-Catalog/TestTutorialArticle#This-is-an-H3
+     ╰ doc://org.swift.docc.example/tutorials/Test-Catalog/TutorialMediaWithSpaces
+       ╰ doc://org.swift.docc.example/tutorials/Test-Catalog/TutorialMediaWithSpaces#Create-a-New-AR-Project
 """
 
         assertEqualDumps(context.dumpGraph(), expected)
         
         // Test correct symbol hierarchy in context
-        XCTAssertEqual(context.pathsTo(ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
+        XCTAssertEqual(context.pathsTo(ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
                        [["doc://org.swift.docc.example/documentation/MyKit"], ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyProtocol"]])
         
-        XCTAssertEqual(context.pathsTo(ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-33vaw", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
+        XCTAssertEqual(context.pathsTo(ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/init()-33vaw", sourceLanguage: .swift)).map { $0.map {$0.absoluteString} },
                        [["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyClass"], ["doc://org.swift.docc.example/documentation/MyKit", "doc://org.swift.docc.example/documentation/MyKit/MyProtocol", "doc://org.swift.docc.example/documentation/MyKit/MyClass"]])
     }
     
-    func createNode(in context: DocumentationContext, bundle: DocumentationBundle, parent: ResolvedTopicReference, name: String) throws -> (DocumentationNode, TopicGraph.Node) {
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/\(name)", sourceLanguage: .swift)
+    func createNode(in context: DocumentationContext, catalog: DocumentationCatalog, parent: ResolvedTopicReference, name: String) throws -> (DocumentationNode, TopicGraph.Node) {
+        let reference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit/\(name)", sourceLanguage: .swift)
         let node = DocumentationNode(reference: reference, kind: .article, sourceLanguage: .swift, name: .conceptual(title: name), markup: Document(parsing: "# \(name)"), semantic: nil)
         let tgNode = TopicGraph.Node(reference: reference, kind: .article, source: .external, title: name)
         
@@ -1268,19 +1268,19 @@ let expected = """
     }
     
     func testSortingBreadcrumbsOfEqualDistanceToRoot() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
-        let mykit = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let mykit = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         
         ///
         /// Create nodes in alphabetical order
         ///
 
         /// Create /documentation/MyKit/AAA & /documentation/MyKit/BBB
-        let (aaaNode, _) = try createNode(in: context, bundle: bundle, parent: mykit, name: "AAA")
-        let (_, bbbTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "BBB")
+        let (aaaNode, _) = try createNode(in: context, catalog: catalog, parent: mykit, name: "AAA")
+        let (_, bbbTgNode) = try createNode(in: context, catalog: catalog, parent: mykit, name: "BBB")
         /// Create /documentation/MyKit/AAA/CCC, curate also under BBB
-        let (cccNode, cccTgNode) = try createNode(in: context, bundle: bundle, parent: aaaNode.reference, name: "CCC")
+        let (cccNode, cccTgNode) = try createNode(in: context, catalog: catalog, parent: aaaNode.reference, name: "CCC")
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
         
         let canonicalPathCCC = try XCTUnwrap(context.pathsTo(cccNode.reference).first)
@@ -1291,10 +1291,10 @@ let expected = """
         ///
 
         /// Create /documentation/MyKit/DDD & /documentation/MyKit/EEE
-        let (_, dddTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "DDD")
-        let (eeeNode, _) = try createNode(in: context, bundle: bundle, parent: mykit, name: "EEE")
+        let (_, dddTgNode) = try createNode(in: context, catalog: catalog, parent: mykit, name: "DDD")
+        let (eeeNode, _) = try createNode(in: context, catalog: catalog, parent: mykit, name: "EEE")
         /// Create /documentation/MyKit/DDD/FFF, curate also under EEE
-        let (fffNode, fffTgNode) = try createNode(in: context, bundle: bundle, parent: eeeNode.reference, name: "FFF")
+        let (fffNode, fffTgNode) = try createNode(in: context, catalog: catalog, parent: eeeNode.reference, name: "FFF")
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
         
         let canonicalPathFFF = try XCTUnwrap(context.pathsTo(fffNode.reference).first)
@@ -1302,9 +1302,9 @@ let expected = """
     }
     
     func testSortingBreadcrumbsOfDifferentDistancesToRoot() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
-        let mykit = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let mykit = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         let tgMykitNode = try XCTUnwrap(context.topicGraph.nodeWithReference(mykit))
         
         ///
@@ -1312,10 +1312,10 @@ let expected = """
         ///
 
         /// Create /documentation/MyKit/AAA & /documentation/MyKit/BBB
-        let (aaaNode, aaaTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "AAA")
-        let (_, bbbTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "BBB")
+        let (aaaNode, aaaTgNode) = try createNode(in: context, catalog: catalog, parent: mykit, name: "AAA")
+        let (_, bbbTgNode) = try createNode(in: context, catalog: catalog, parent: mykit, name: "BBB")
         /// Create /documentation/MyKit/AAA/CCC and also curate under /documentation/MyKit
-        let (cccNode, cccTgNode) = try createNode(in: context, bundle: bundle, parent: aaaNode.reference, name: "CCC")
+        let (cccNode, cccTgNode) = try createNode(in: context, catalog: catalog, parent: aaaNode.reference, name: "CCC")
         context.topicGraph.addEdge(from: tgMykitNode, to: cccTgNode)
         context.topicGraph.addEdge(from: aaaTgNode, to: cccTgNode)
         context.topicGraph.addEdge(from: bbbTgNode, to: cccTgNode)
@@ -1328,10 +1328,10 @@ let expected = """
         ///
 
         /// Create /documentation/MyKit/DDD & /documentation/MyKit/EEE
-        let (_, dddTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "DDD")
-        let (eeeNode, eeeTgNode) = try createNode(in: context, bundle: bundle, parent: mykit, name: "EEE")
+        let (_, dddTgNode) = try createNode(in: context, catalog: catalog, parent: mykit, name: "DDD")
+        let (eeeNode, eeeTgNode) = try createNode(in: context, catalog: catalog, parent: mykit, name: "EEE")
         /// Create /documentation/MyKit/DDD/FFF, curate also under /documentation/MyKit
-        let (fffNode, fffTgNode) = try createNode(in: context, bundle: bundle, parent: eeeNode.reference, name: "FFF")
+        let (fffNode, fffTgNode) = try createNode(in: context, catalog: catalog, parent: eeeNode.reference, name: "FFF")
         context.topicGraph.addEdge(from: eeeTgNode, to: fffTgNode)
         context.topicGraph.addEdge(from: dddTgNode, to: fffTgNode)
         context.topicGraph.addEdge(from: tgMykitNode, to: fffTgNode)
@@ -1342,7 +1342,7 @@ let expected = """
 
     // Verify that a symbol that has no parents in the symbol graph is automatically curated under the module node.
     func testRootSymbolsAreCureatedInModule() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle")
+        let (url, catalog, context) = try testCatalogAndContext(copying: "TestCatalog")
         defer { try? FileManager.default.removeItem(at: url) }
         
         // Verify that SideClass doesn't have a memberOf relationship at all.
@@ -1353,7 +1353,7 @@ let expected = """
         })
         
         // Verify the node is a child of the module node when the graph is loaded.
-        let sideClassReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
+        let sideClassReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
         let parents = context.parents(of: sideClassReference)
         XCTAssertEqual(parents.map {$0.path}, ["/documentation/SideKit"])
     }
@@ -1361,22 +1361,22 @@ let expected = """
     /// Tests whether tutoral curated multiple times gets the correct breadcrumbs and hierarchy.
     func testCurateTutorialMultipleTimes() throws {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
             ## Topics
 
             ### Tutorials
-             - <doc:/tutorials/Test-Bundle/TestTutorial>
-             - <doc:/tutorials/Test-Bundle/TestTutorial2>
+             - <doc:/tutorials/Test-Catalog/TestTutorial>
+             - <doc:/tutorials/Test-Catalog/TestTutorial2>
             """)
             try text.write(to: myKitURL, atomically: true, encoding: .utf8)
         }
         
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Catalog/TestTutorial", sourceLanguage: .swift))
         
         // Get the breacrumbs as paths
         let paths = context.pathsTo(node.reference).sorted { (path1, path2) -> Bool in
@@ -1385,12 +1385,12 @@ let expected = """
         .map { return $0.map { $0.url.path } }
         
         // Verify the tutorial has multiple paths
-        XCTAssertEqual(paths, [["/documentation/MyKit"], ["/documentation/MyKit", "/documentation/Test-Bundle/article"], ["/tutorials/TestOverview", "/tutorials/TestOverview/$volume", "/tutorials/TestOverview/Chapter-1"]])
+        XCTAssertEqual(paths, [["/documentation/MyKit"], ["/documentation/MyKit", "/documentation/Test-Catalog/article"], ["/tutorials/TestOverview", "/tutorials/TestOverview/$volume", "/tutorials/TestOverview/Chapter-1"]])
     }
 
     func testNonOverloadPaths() throws {
         // Add some symbol collisions to graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
             let text = try String(contentsOf: sideKitURL).replacingOccurrences(of: "\"symbols\" : [", with: """
             "symbols" : [
@@ -1424,15 +1424,15 @@ let expected = """
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
         
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Verify the non-overload collisions were resolved
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.enum.case", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.enum.case", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var", sourceLanguage: .swift)))
     }
     
     func testModuleLanguageFallsBackToSwiftIfItHasNoSymbols() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             // Delete all the symbol graph files.
             let symbolGraphFiles = try XCTUnwrap(
                 FileManager.default.enumerator(
@@ -1491,7 +1491,7 @@ let expected = """
 
     func testOverloadPlustNonOverloadCollisionPaths() throws {
         // Add some symbol collisions to graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
             let text = try String(contentsOf: sideKitURL).replacingOccurrences(of: "\"symbols\" : [", with: """
             "symbols" : [
@@ -1538,31 +1538,31 @@ let expected = """
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
         
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Verify the non-overload collisions were resolved
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-swift.var-9053a", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var-959hd", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-swift.var-9053a", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var-959hd", sourceLanguage: .swift)))
     }
 
     func testUnknownSymbolKind() throws {
         // Change the symbol kind to an unknown and load the symbol graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             let myKitURL = root.appendingPathComponent("mykit-iOS.symbols.json")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "\"identifier\" : \"swift.method\"", with: "\"identifier\" : \"blip-blop\"")
             try text.write(to: myKitURL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Get a function node, verify its kind is uknown
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         XCTAssertEqual(node.kind, .unknown)
     }
     
     func testNonOverloadCollisionFromExtension() throws {
         // Add some symbol collisions to graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: ["mykit-iOS.symbols.json"]) { root in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog", excludingPaths: ["mykit-iOS.symbols.json"]) { root in
             let sideKitURL = root.appendingPathComponent("something@SideKit.symbols.json")
             let text = """
             {
@@ -1613,7 +1613,7 @@ let expected = """
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
         
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         let symbolGraphProblems = context.problems
             .filter { $0.diagnostic.source?.lastPathComponent.hasSuffix(".symbols.json") ?? false }
@@ -1621,9 +1621,9 @@ let expected = """
         XCTAssert(symbolGraphProblems.isEmpty, "There shouldn't be any errors or warnings in the symbol graphs")
         
         // Verify the non-overload collisions form different symbol graph files were resolved
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class/path", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/sideClass-swift.var", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/sideClass-swift.var", sourceLanguage: .swift)))
     }
 
     func testUnresolvedSidecarDiagnostics() throws {
@@ -1637,14 +1637,14 @@ let expected = """
         """
         
         // Add a sidecar file for a symbol that doesn't exist
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             unknownSymbolSidecarURL = root.appendingPathComponent("documentation/unknownSymbol.md")
             otherUnknownSymbolSidecarURL = root.appendingPathComponent("documentation/xanotherSidecarFileForThisUnknownSymbol.md")
             
             try content.write(to: unknownSymbolSidecarURL, atomically: true, encoding: .utf8)
             try content.write(to: otherUnknownSymbolSidecarURL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         let unmatchedSidecarProblem = context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.SymbolUnmatched" })
         
@@ -1673,8 +1673,8 @@ let expected = """
         var unknownSymbolSidecarURL: URL!
         
         // Add an article without curating it anywhere
-        // This will be uncurated because there's more than one module in TestBundle.
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        // This will be uncurated because there's more than one module in TestCatalog.
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             unknownSymbolSidecarURL = root.appendingPathComponent("UncuratedArticle.md")
             
             try """
@@ -1683,18 +1683,18 @@ let expected = """
             This article won't be curated anywhere.
             """.write(to: unknownSymbolSidecarURL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         let curationDiagnostics =  context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ArticleUncurated" }).map(\.diagnostic)
         let sidecarDiagnostic = try XCTUnwrap(curationDiagnostics.first(where: { $0.source?.standardizedFileURL == unknownSymbolSidecarURL.standardizedFileURL }))
         XCTAssertNil(sidecarDiagnostic.range)
-        XCTAssertEqual(sidecarDiagnostic.localizedSummary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Bundle/UncuratedArticle'")
+        XCTAssertEqual(sidecarDiagnostic.localizedSummary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Catalog/UncuratedArticle'")
         XCTAssertEqual(sidecarDiagnostic.severity, .information)
     }
     
     func testUpdatesReferencesForChildrenOfCollisions() throws {
         // Add some symbol collisions to graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
             var text = try String(contentsOf: sideKitURL)
             
@@ -1811,20 +1811,20 @@ let expected = """
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
         
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
 
         // Test that collision symbol reference was updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
         
         // Test that collision symbol child reference was updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/path", sourceLanguage: .swift)))
 
         // Test that nested collisions were updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property", sourceLanguage: .swift)))
         
         // Test that child of nested collision is updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
         
         // Verify that the symbol index has been udpated with the rewritten collision-corrected symbol paths
         XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property")
@@ -1839,7 +1839,7 @@ let expected = """
         var newArticle1URL: URL!
         
         // Add an article without curating it anywhere
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Curate MyKit -> new-article1
             let myKitURL = root.appendingPathComponent("documentation").appendingPathComponent("mykit.md")
             try """
@@ -1869,16 +1869,16 @@ let expected = """
                 """
                 .write(to: newArticle2URL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
         // Verify that there are no problems for new-article1.md (where we resolve the link to new-article2 before it's curated)
         XCTAssertEqual(context.problems.filter { $0.diagnostic.source?.path.hasSuffix(newArticle1URL.lastPathComponent) == true }.count, 0)
     }
 
-    // Modules that are being extended should not have their own symbol in the current bundle's graph.
+    // Modules that are being extended should not have their own symbol in the current catalog's graph.
     func testNoSymbolForTertiarySymbolGraphModules() throws {
         // Add an article without curating it anywhere
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             /// Create an extension only symbol graph.
             let tertiaryURL = root.appendingPathComponent("Tertiary@MyKit.symbols.json")
             try """
@@ -1905,17 +1905,17 @@ let expected = """
                 """
                 .write(to: tertiaryURL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
 
         // Verify that the Tertiary framework has no symbol in the graph
-        XCTAssertNotNil(try? context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)))
-        XCTAssertNil(try? context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Tertiary", sourceLanguage: .swift)))
+        XCTAssertNotNil(try? context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)))
+        XCTAssertNil(try? context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/Tertiary", sourceLanguage: .swift)))
     }
     
     func testDeclarationTokenKinds() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
-        let myFunc = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        let myFunc = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
         
         // Symbol graph declaration tokens, including more esoteric kinds like internalParam, externalParam, and unknown kinds.
         let tokens = (myFunc.symbol!.mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)?
@@ -1927,7 +1927,7 @@ let expected = """
         
         // Render declaration and compare token kinds with symbol graph
         let symbol = myFunc.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myFunc.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: myFunc.reference, source: nil)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         let declarationTokens = renderNode.primaryContentSections.mapFirst { section -> [String]? in
@@ -1949,12 +1949,12 @@ let expected = """
             // Test the scenario where the symbol graph file contains invalid URLs (rdar://77335208).
             ("file:///path with spaces/to/file.swift", "file:///path%20with%20spaces/to/file.swift"),
         ] {
-            // Create an empty bundle
+            // Create an empty catalog
             let targetURL = try createTemporaryDirectory(named: "test.docc")
             
             // Copy test Info.plist
             try FileManager.default.copyItem(at: Bundle.module.url(
-                forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+                forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                                                 .appendingPathComponent("Info.plist"),
                                              to: targetURL.appendingPathComponent("Info.plist")
             )
@@ -2039,8 +2039,8 @@ let expected = """
             """
             try text.write(to: referencesURL, atomically: true, encoding: .utf8)
             
-            // Load the bundle & reference resolve symbol graph docs
-            let (_, _, context) = try loadBundle(from: targetURL, codeListings: [:])
+            // Load the catalog & reference resolve symbol graph docs
+            let (_, _, context) = try loadCatalog(from: targetURL, codeListings: [:])
             
             guard context.problems.count == 5 else {
                 XCTFail("Expected 5 problems during reference resolving; got \(context.problems.count)")
@@ -2063,15 +2063,15 @@ let expected = """
     func renderNodeForPath(path: String) throws -> (DocumentationNode, RenderNode) {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let bundle = try testBundle(named: "TestBundle")
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        let catalog = try testCatalog(named: "TestCatalog")
+        let dataProvider = PrebuiltLocalFileSystemDataProvider(catalogs: [catalog])
         try workspace.registerProvider(dataProvider)
         
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: path, sourceLanguage: .swift)
         let node = try context.entity(with: reference)
 
         let symbol = node.semantic as! Symbol
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: reference, source: nil)
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
 
         return (node, renderNode)
@@ -2108,8 +2108,8 @@ let expected = """
         // Create temp folder
         let tempURL = try createTemporaryDirectory()
 
-        // Create test bundle
-        let bundleURL = try Folder(name: "collisions.docc", content: [
+        // Create test catalog
+        let catalogURL = try Folder(name: "collisions.docc", content: [
             InfoPlist(displayName: "Collisions", identifier: "com.test.collisions"),
             CopyOfFile(original: Bundle.module.url(
                         forResource: "Collisions-iOS.symbols", withExtension: "json",
@@ -2119,11 +2119,11 @@ let expected = """
                         subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
-        // Load test bundle
-        let (_, _, context) = try loadBundle(from: bundleURL)
+        // Load test catalog
+        let (_, _, context) = try loadCatalog(from: catalogURL)
         
         let referenceForPath: (String) -> ResolvedTopicReference = { path in
-            return ResolvedTopicReference(bundleIdentifier: "com.test.collisions", path: "/documentation" + path, sourceLanguage: .swift)
+            return ResolvedTopicReference(catalogIdentifier: "com.test.collisions", path: "/documentation" + path, sourceLanguage: .swift)
         }
         
         // Verify that:
@@ -2140,10 +2140,10 @@ let expected = """
     }
     
     func testContextCachesReferences() throws {
-        // Verify there is no pool bucket for the bundle we're about to test
+        // Verify there is no pool bucket for the catalog we're about to test
         XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
         
-        let (url, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
+        let (url, _, _) = try testCatalogAndContext(copying: "TestCatalog", excludingPaths: [], codeListings: [:], configureCatalog: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
                 .replacingOccurrences(of: "org.swift.docc.example", with: #function)
@@ -2152,7 +2152,7 @@ let expected = """
         
         defer { try! FileManager.default.removeItem(at: url) }
 
-        // Verify there is a pool bucket for the bundle we've loaded
+        // Verify there is a pool bucket for the catalog we've loaded
         XCTAssertNotNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
         
         guard let references = ResolvedTopicReference.sharedPool.sync({ $0[#function] }) else {
@@ -2162,14 +2162,14 @@ let expected = """
         let beforeCount = references.count
         
         // Verify a given identifier exists in the pool by creating it and verifying it wasn't added to the pool
-        let identifier = ResolvedTopicReference(bundleIdentifier: #function, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let identifier = ResolvedTopicReference(catalogIdentifier: #function, path: "/tutorials/Test-Catalog/TestTutorial", sourceLanguage: .swift)
         _ = identifier
         
         // Verify create the reference above did not add to the cache
         XCTAssertEqual(beforeCount, ResolvedTopicReference.sharedPool.sync({ $0[#function]!.count }))
         
-        // Create a new reference for the same bundle that was not loaded with the context
-        let newIdentifier = ResolvedTopicReference(bundleIdentifier: #function, path: "/tutorials/Test-Bundle/TestTutorial/\(#function)", sourceLanguage: .swift)
+        // Create a new reference for the same catalog that was not loaded with the context
+        let newIdentifier = ResolvedTopicReference(catalogIdentifier: #function, path: "/tutorials/Test-Catalog/TestTutorial/\(#function)", sourceLanguage: .swift)
         _ = newIdentifier
         
         // Verify creating a new reference added to the ones loaded with the context
@@ -2180,12 +2180,12 @@ let expected = """
     }
     
     func testAbstractAfterMetadataDirective() throws {
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testCatalogAndContext(named: "TestCatalog")
         
         // Get the SideKit/SideClass/init() node and verify it has an abstract and no discussion.
         // We're verifying that the metadata directive between the title and the abstract didn't cause
         // the content to overflow into the discussion.
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/init()", sourceLanguage: .swift))
         let markupModel = DocumentationMarkup(markup: node.markup)
         XCTAssertNotNil(markupModel.abstractSection)
         
@@ -2198,14 +2198,14 @@ let expected = """
     func testLinkResolutionDoesNotSkipSymbolGraph() throws {
         let tempURL = try createTemporaryDirectory()
         
-        let bundleURL = try Folder(name: "Missing.docc", content: [
+        let catalogURL = try Folder(name: "Missing.docc", content: [
             InfoPlist(displayName: "MissingDocs", identifier: "com.test.missing-docs"),
             CopyOfFile(original: Bundle.module.url(
                         forResource: "MissingDocs.symbols", withExtension: "json",
                         subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
-        let (_, _, context) = try! loadBundle(from: bundleURL)
+        let (_, _, context) = try! loadCatalog(from: catalogURL)
         
         // MissingDocs contains a struct that has a link to a non-existent type.
         // If there are no problems, that indicates that symbol graph link
@@ -2215,7 +2215,7 @@ let expected = """
     
     func testCreatingAnArticleNode() throws {
         // Create documentation node from markup
-        let reference = ResolvedTopicReference(bundleIdentifier: "com.testbundle", path: "/documentation/NewArticle", fragment: nil, sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: "com.testcatalog", path: "/documentation/NewArticle", fragment: nil, sourceLanguage: .swift)
         
         let source = """
         # New Article
@@ -2231,10 +2231,10 @@ let expected = """
     }
     
     func testTaskGroupsPersistInitialRangesFromMarkup() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
 
         // Verify task group ranges are persisted for symbol docs
-        let symbolReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let symbolReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         let symbol = try XCTUnwrap((try? context.entity(with: symbolReference))?.semantic as? Symbol)
         let symbolTopics = try XCTUnwrap(symbol.topics)
         symbolTopics.originalLinkRangesByGroup.forEach { group in
@@ -2242,7 +2242,7 @@ let expected = """
         }
         
         // Verify task group ranges are persisted for articles
-        let articleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
+        let articleReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Test-Catalog/article", sourceLanguage: .swift)
         let article = try XCTUnwrap((try? context.entity(with: articleReference))?.semantic as? Article)
         let articleTopics = try XCTUnwrap(article.topics)
         articleTopics.originalLinkRangesByGroup.forEach { group in
@@ -2268,7 +2268,7 @@ let expected = """
     /// Tests that diagnostics raised during link resolution for symbols have the correct source URLs
     /// - Bug: rdar://63288817
     func testDiagnosticsForSymbolsHaveCorrectSource() throws {
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog") { url in
             let extensionFile = """
             # ``SideKit/SideClass/myFunction()``
 
@@ -2282,7 +2282,7 @@ let expected = """
             let fileURL = url.appendingPathComponent("documentation").appendingPathComponent("myFunction.md")
             try extensionFile.write(to: fileURL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         let problems = context.diagnosticEngine.problems
         let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("myFunction.md") == true }
         XCTAssertEqual(linkResolutionProblems.count, 1)
@@ -2312,12 +2312,12 @@ let expected = """
     func testLinkResolutionDiagnosticsEmittedForTechnologyPages() throws {
         let tempURL = try createTemporaryDirectory()
 
-        let bundleURL = try Folder(name: "module-links.docc", content: [
+        let catalogURL = try Folder(name: "module-links.docc", content: [
             InfoPlist(displayName: "Test", identifier: "com.test.docc"),
             CopyOfFile(original: Bundle.module.url(
-                forResource: "TestBundle",
+                forResource: "TestCatalog",
                 withExtension: "docc",
-                subdirectory: "Test Bundles"
+                subdirectory: "Test Catalogs"
             )!.appendingPathComponent("sidekit.symbols.json")),
             TextFile(name: "sidekit.md", utf8Content: """
                 # ``SideKit``
@@ -2337,7 +2337,7 @@ let expected = """
                 """),
         ]).write(inside: tempURL)
 
-        let (_, _, context) = try loadBundle(from: bundleURL)
+        let (_, _, context) = try loadCatalog(from: catalogURL)
         let problems = context.diagnosticEngine.problems
         let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("sidekit.md") == true }
         XCTAssertEqual(linkResolutionProblems.count, 1)
@@ -2374,10 +2374,10 @@ let expected = """
             InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
         ])
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
+        let catalogURL = try exampleDocumentation.write(inside: tempURL)
 
         // Parse this test content
-        let (_, _, context) = try loadBundle(from: bundleURL)
+        let (_, _, context) = try loadCatalog(from: catalogURL)
 
         let identifier = "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
         let duplicateMarkdownProblems = context.problems.filter({ $0.diagnostic.identifier == identifier })
@@ -2389,7 +2389,7 @@ let expected = """
     /// matched with their documentation extension files. Besides verifying the correct content
     /// it verifies also that the curation in these doc extensions is reflected in the topic graph.
     func testMatchesCorrectlyDocExtensionToChildOfCollisionTopic() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "OverloadedSymbols") { url in
+        let (catalogURL, catalog, context) = try testCatalogAndContext(copying: "OverloadedSymbols") { url in
             // Add an article to be curated from collided nodes' doc extensions.
             try """
             # New Article
@@ -2414,12 +2414,12 @@ let expected = """
             - <doc:NewArticle>
             """.write(to: url.appendingPathComponent("fifthTestMember.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
-        let articleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ShapeKit/NewArticle", sourceLanguage: .swift)
+        let articleReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/ShapeKit/NewArticle", sourceLanguage: .swift)
         
         // Fetch the "OverloadedParentStruct" node
-        let reference1 = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ShapeKit/OverloadedParentStruct-1jr3p", sourceLanguage: .swift)
+        let reference1 = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/ShapeKit/OverloadedParentStruct-1jr3p", sourceLanguage: .swift)
         let node1 = try context.entity(with: reference1)
         let symbol1 = try XCTUnwrap(node1.semantic as? Symbol)
         
@@ -2432,7 +2432,7 @@ let expected = """
         XCTAssertTrue(tgNode1.contains(articleReference))
         
         // Fetch the "fifthTestMember" node
-        let reference2 = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property", sourceLanguage: .swift)
+        let reference2 = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property", sourceLanguage: .swift)
         let node2 = try context.entity(with: reference2)
         let symbol2 = try XCTUnwrap(node2.semantic as? Symbol)
         
@@ -2467,7 +2467,7 @@ let expected = """
         do {
             let tempURL = try createTemporaryDirectory()
             
-            let bundleURL = try Folder(name: "Module.docc", content: [
+            let catalogURL = try Folder(name: "Module.docc", content: [
                 InfoPlist(displayName: "Module", identifier: "org.swift.docc.example"),
                 TextFile(name: "Module.md", utf8Content: """
                 # Autocurated Articles
@@ -2476,17 +2476,17 @@ let expected = """
                   @TechnologyRoot
                 }
                 
-                This bundle contains a single module, and the articles should be automatically curated.
+                This catalog contains a single module, and the articles should be automatically curated.
                 """),
                 articleOne,
                 articleTwo,
             ]).write(inside: tempURL)
-            let (_, bundle, context) = try loadBundle(from: bundleURL)
+            let (_, catalog, context) = try loadCatalog(from: catalogURL)
             
             let identifiers = context.problems.map(\.diagnostic.identifier)
             XCTAssertFalse(identifiers.contains(where: { $0 == "org.swift.docc.ArticleUncurated" }))
             
-            let rootReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Module", sourceLanguage: .swift)
+            let rootReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Module", sourceLanguage: .swift)
             let docNode = try context.entity(with: rootReference)
             let article = try XCTUnwrap(docNode.semantic as? Article)
             XCTAssertNil(article.topics)
@@ -2503,7 +2503,7 @@ let expected = """
         do {
             let tempURL = try createTemporaryDirectory()
             
-            let bundleURL = try Folder(name: "Module.docc", content: [
+            let catalogURL = try Folder(name: "Module.docc", content: [
                 InfoPlist(displayName: "Module", identifier: "org.swift.docc.example"),
                 TextFile(name: "Module.md", utf8Content: """
                     # Autocurated Articles
@@ -2512,7 +2512,7 @@ let expected = """
                       @TechnologyRoot
                     }
                     
-                    This bundle contains a single module, and the articles should be automatically curated.
+                    This catalog contains a single module, and the articles should be automatically curated.
                     
                     ## Topics
                     ### Links
@@ -2521,9 +2521,9 @@ let expected = """
                 articleOne,
                 articleTwo,
             ]).write(inside: tempURL)
-            let (_, bundle, context) = try loadBundle(from: bundleURL)
+            let (_, catalog, context) = try loadCatalog(from: catalogURL)
             
-            let rootReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Module", sourceLanguage: .swift)
+            let rootReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Module", sourceLanguage: .swift)
             let docNode = try context.entity(with: rootReference)
             let article = try XCTUnwrap(docNode.semantic as? Article)
             XCTAssertNotNil(article.topics)
@@ -2534,7 +2534,7 @@ let expected = """
     func testAutomaticTaskGroupsPlacedAfterManualCuration() throws {
         let tempURL = try createTemporaryDirectory()
         
-        let bundleURL = try Folder(name: "Module.docc", content: [
+        let catalogURL = try Folder(name: "Module.docc", content: [
             InfoPlist(displayName: "Module", identifier: "org.swift.docc.example"),
             TextFile(name: "Module.md", utf8Content: """
                 # Autocurated Articles
@@ -2543,7 +2543,7 @@ let expected = """
                   @TechnologyRoot
                 }
                 
-                This bundle contains a single module, and the articles should be automatically curated.
+                This catalog contains a single module, and the articles should be automatically curated.
                 
                 ## Topics
                 ### Links
@@ -2564,9 +2564,9 @@ let expected = """
                 - <doc:Article1>
                 """),
         ]).write(inside: tempURL)
-        let (_, bundle, context) = try loadBundle(from: bundleURL)
+        let (_, catalog, context) = try loadCatalog(from: catalogURL)
         
-        let rootReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Module", sourceLanguage: .swift)
+        let rootReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Module", sourceLanguage: .swift)
         let docNode = try context.entity(with: rootReference)
         let article = try XCTUnwrap(docNode.semantic as? Article)
         
@@ -2587,12 +2587,12 @@ let expected = """
     
     // Verifies if the context resolves linkable nodes.
     func testLinkableNodes() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let moduleReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         let moduleTopicGraphNode = try XCTUnwrap(context.topicGraph.nodeWithReference(moduleReference))
 
         // Add a new resolvable node
-        let resolvableReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/resolvable-article", sourceLanguage: .swift)
+        let resolvableReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Test-Catalog/resolvable-article", sourceLanguage: .swift)
         let resolvableNode = try DocumentationNode(reference: resolvableReference, article: Article(markup: Document(parsing: "# Article1"), metadata: nil, redirects: nil))
         context.documentationCache[resolvableReference] = resolvableNode
         
@@ -2609,8 +2609,8 @@ let expected = """
     
     // Verifies if the context fails to resolve non-resolvable nodes.
     func testNonLinkableNodes() throws {
-        // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        // Create a catalog with variety absolute and relative links and symbol links to a non linkable node.
+        let (url, _, context) = try testCatalogAndContext(copying: "TestCatalog", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureCatalog: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.
@@ -2705,7 +2705,7 @@ let expected = """
      }
      ## Topics
      ### Articles
-      - <doc:/documentation/Test-Bundle/Test>
+      - <doc:/documentation/Test-Catalog/Test>
      """
     
     private let testArticleSource = """
@@ -2718,7 +2718,7 @@ let expected = """
         @Intro(title: "Introduction") { }
      
         @Chapter(name: "Essentials") {
-           @TutorialReference(tutorial: "doc:tutorials/Test-Bundle/Test")
+           @TutorialReference(tutorial: "doc:tutorials/Test-Catalog/Test")
         }
      }
      """
@@ -2733,10 +2733,10 @@ let expected = """
     /// Verify we resolve a relative link to the article if we have
     /// an article, a tutorial, and a symbol with the *same* names.
     func testResolvePrecedenceArticleOverTutorialOverSymbol() throws {
-        // Verify resolves correctly between a bundle with an article and a tutorial.
+        // Verify resolves correctly between a catalog with an article and a tutorial.
         do {
             let infoPlistURL = try XCTUnwrap(Bundle.module.url(forResource: "Info+Availability", withExtension: "plist", subdirectory: "Test Resources"))
-            let testBundle = Folder(name: "test.docc", content: [
+            let testCatalog = Folder(name: "test.docc", content: [
                 CopyOfFile(original: infoPlistURL, newName: "Info.plist"),
                 TextFile(name: "TestRoot.md", utf8Content: testRootPageSource),
                 TextFile(name: "Test.md", utf8Content: testArticleSource),
@@ -2744,21 +2744,21 @@ let expected = """
                 TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
             let tempFolderURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
-            try testBundle.write(to: tempFolderURL)
+            try testCatalog.write(to: tempFolderURL)
             
-            // Load the bundle
-            let (_, bundle, context) = try loadBundle(from: tempFolderURL)
+            // Load the catalog
+            let (_, catalog, context) = try loadCatalog(from: tempFolderURL)
             // Verify the context contains the conflicting topic names
             // Article
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Test-Catalog/Test", sourceLanguage: .swift)])
             // Tutorial
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/Test-Catalog/Test", sourceLanguage: .swift)])
             
             let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsing: "doc:Test"))))
-            let expected = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
+            let expected = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Test-Catalog/Test", sourceLanguage: .swift)
 
-            // Resolve from various locations in the bundle
-            for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialsRootReference] {
+            // Resolve from various locations in the catalog
+            for parent in [catalog.rootReference, catalog.documentationRootReference, catalog.tutorialsRootReference] {
                 switch context.resolve(unresolved, in: parent) {
                     case .success(let reference):
                         if reference.path != expected.path {
@@ -2769,10 +2769,10 @@ let expected = """
             }
         }
         
-        // Verify resolves correctly between a bundle with an article, a tutorial, and a symbol
+        // Verify resolves correctly between a catalog with an article, a tutorial, and a symbol
         do {
             let infoPlistURL = try XCTUnwrap(Bundle.module.url(forResource: "Info+Availability", withExtension: "plist", subdirectory: "Test Resources"))
-            let testBundle = Folder(name: "test.docc", content: [
+            let testCatalog = Folder(name: "test.docc", content: [
                 CopyOfFile(original: infoPlistURL, newName: "Info.plist"),
                 TextFile(name: "TestRoot.md", utf8Content: testRootPageSource),
                 TextFile(name: "Test.md", utf8Content: testArticleSource),
@@ -2781,25 +2781,25 @@ let expected = """
                 TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
             let tempFolderURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
-            try testBundle.write(to: tempFolderURL)
+            try testCatalog.write(to: tempFolderURL)
             
-            // Load the bundle
-            let (_, bundle, context) = try loadBundle(from: tempFolderURL)
+            // Load the catalog
+            let (_, catalog, context) = try loadCatalog(from: tempFolderURL)
             // Verify the context contains the conflicting topic names
             // Article
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Test-Catalog/Test", sourceLanguage: .swift)])
             // Tutorial
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/Test-Catalog/Test", sourceLanguage: .swift)])
             // Symbol
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)])
             
             let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsing: "doc:Test"))))
-            let expected = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
+            let expected = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Test-Catalog/Test", sourceLanguage: .swift)
             
             let symbolReference = try XCTUnwrap(context.symbolIndex["s:12Minimal_docs4TestV"]?.reference)
             
-            // Resolve from various locations in the bundle
-            for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialsRootReference, symbolReference] {
+            // Resolve from various locations in the catalog
+            for parent in [catalog.rootReference, catalog.documentationRootReference, catalog.tutorialsRootReference, symbolReference] {
                 switch context.resolve(unresolved, in: parent) {
                     case .success(let reference):
                         if reference.path != expected.path {
@@ -2815,7 +2815,7 @@ let expected = """
         // Verify resolves correctly a double-backtick link.
         do {
             let infoPlistURL = try XCTUnwrap(Bundle.module.url(forResource: "Info+Availability", withExtension: "plist", subdirectory: "Test Resources"))
-            let testBundle = Folder(name: "test.docc", content: [
+            let testCatalog = Folder(name: "test.docc", content: [
                 CopyOfFile(original: infoPlistURL, newName: "Info.plist"),
                 TextFile(name: "Minimal_docs.md", utf8Content:
                             """
@@ -2841,14 +2841,14 @@ let expected = """
                 TextFile(name: "Test.tutorial", utf8Content: testTutorialSource),
             ])
             let tempFolderURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
-            try testBundle.write(to: tempFolderURL)
+            try testCatalog.write(to: tempFolderURL)
             
-            // Load the bundle
-            let (_, bundle, context) = try loadBundle(from: tempFolderURL)
+            // Load the catalog
+            let (_, catalog, context) = try loadCatalog(from: tempFolderURL)
             
-            let symbolReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)
-            let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
-            let articleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)
+            let moduleReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
+            let articleReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Test-Catalog/Test", sourceLanguage: .swift)
 
             // Verify we resolve/not resolve non-symbols when calling directly context.resolve(...)
             // with an explicity preference.
@@ -2874,7 +2874,7 @@ let expected = """
 
             // Verify the context contains the conflicting topic names
             // Tutorial
-            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
+            XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/Test-Catalog/Test", sourceLanguage: .swift)])
             // Symbol
             XCTAssertNotNil(context.documentationCache[symbolReference])
             
@@ -2906,19 +2906,19 @@ let expected = """
                 .replacingOccurrences(of: #"Test"#, with: #"Minimal_docs"#)
         
             let infoPlistURL = try XCTUnwrap(Bundle.module.url(forResource: "Info+Availability", withExtension: "plist", subdirectory: "Test Resources"))
-            let testBundle = Folder(name: "test.docc", content: [
+            let testCatalog = Folder(name: "test.docc", content: [
                 CopyOfFile(original: infoPlistURL, newName: "Info.plist"),
                 TextFile(name: "TestFramework.symbols.json", utf8Content: symbolGraphFixture),
             ])
             let tempFolderURL = try createTemporaryDirectory().appendingPathComponent("test.docc")
-            try testBundle.write(to: tempFolderURL)
+            try testCatalog.write(to: tempFolderURL)
             
-            // Load the bundle
-            let (_, bundle, context) = try loadBundle(from: tempFolderURL)
+            // Load the catalog
+            let (_, catalog, context) = try loadCatalog(from: tempFolderURL)
             
             // Verify the module and symbol node kinds.
-            let symbolReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Minimal_docs/Minimal_docs", sourceLanguage: .swift)
-            let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Minimal_docs/Minimal_docs", sourceLanguage: .swift)
+            let moduleReference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/Minimal_docs", sourceLanguage: .swift)
 
             XCTAssertEqual(context.topicGraph.nodeWithReference(symbolReference)?.kind, .structure)
             XCTAssertEqual(context.topicGraph.nodeWithReference(moduleReference)?.kind, .module)
@@ -2950,16 +2950,16 @@ let expected = """
         // Create temp folder
         let tempURL = try createTemporaryDirectory()
 
-        // Create test bundle
-        let bundleURL = try Folder(name: "InheritedDocs.docc", content: [
+        // Create test catalog
+        let catalogURL = try Folder(name: "InheritedDocs.docc", content: [
             InfoPlist(displayName: "Inheritance", identifier: "com.test.inheritance"),
             CopyOfFile(original: Bundle.module.url(
                         forResource: "InheritedDocs-RelativeLinks.symbols", withExtension: "json",
                         subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
-        // Load the test bundle
-        let (_, _, context) = try loadBundle(from: bundleURL)
+        // Load the test catalog
+        let (_, _, context) = try loadCatalog(from: catalogURL)
         
         // Get the emitted diagnostic and verify it contains a solution and replacement fix-it.
         let problem = try XCTUnwrap(context.problems.first(where: { p in
@@ -2989,8 +2989,8 @@ let expected = """
     }
     
     func testCustomModuleKind() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithExecutableModuleKind")
-        XCTAssertEqual(bundle.info.defaultModuleKind, "Executable")
+        let (catalog, context) = try testCatalogAndContext(named: "CatalogWithExecutableModuleKind")
+        XCTAssertEqual(catalog.info.defaultModuleKind, "Executable")
         
         let moduleSymbol = try XCTUnwrap(context.symbolIndex["ExampleDocumentedExecutable"]?.symbol)
         XCTAssertEqual(moduleSymbol.kind.identifier.identifier, "module")
@@ -3027,15 +3027,15 @@ let expected = """
                     )
                 )
             ]),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestCatalog", identifier: "com.test.example")
         ])
         
         let tempURL = try createTemporaryDirectory()
-        let bundleURL = try exampleDocumentation.write(inside: tempURL)
+        let catalogURL = try exampleDocumentation.write(inside: tempURL)
 
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
         XCTAssertEqual(
@@ -3088,7 +3088,7 @@ let expected = """
             "moduleAvailableLanguages can only contain Swift and Objective-C as languages."
         )
         
-        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, _, context) = try testCatalogAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # MyArticle
             
@@ -3157,30 +3157,30 @@ let expected = """
     }
     
     func testDocumentationExtensionURLForReferenceReturnsURLForSymbolReference() throws {
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle")
+        let (catalogURL, _, context) = try testCatalogAndContext(copying: "TestCatalog")
         
         XCTAssertEqual(
             context.documentationExtensionURL(
                 for: ResolvedTopicReference(
-                    bundleIdentifier: "org.swift.docc.example",
+                    catalogIdentifier: "org.swift.docc.example",
                     path: "/documentation/MyKit/MyClass",
                     fragment: nil,
                     sourceLanguage: .swift
                 )
             ),
-            bundleURL
+            catalogURL
                 .appendingPathComponent("documentation")
                 .appendingPathComponent("myclass.md")
         )
     }
     
     func testDocumentationExtensionURLForReferenceReturnsNilForTutorialReference() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "TestBundle")
+        let (_, _, context) = try testCatalogAndContext(copying: "TestCatalog")
         
         XCTAssertNil(
             context.documentationExtensionURL(
                 for: ResolvedTopicReference(
-                    bundleIdentifier: "org.swift.docc.example",
+                    catalogIdentifier: "org.swift.docc.example",
                     path: "/tutorials/TestOverview",
                     fragment: nil,
                     sourceLanguage: .swift

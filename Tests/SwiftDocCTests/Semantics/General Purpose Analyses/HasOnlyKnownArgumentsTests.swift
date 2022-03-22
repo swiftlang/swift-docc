@@ -20,10 +20,10 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar"]).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar"]).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertTrue(problems.isEmpty)
     }
@@ -34,10 +34,10 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: []).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: []).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.count, 2)
     }
@@ -48,10 +48,10 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar"]).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar"]).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.count, 1)
     }
@@ -61,10 +61,10 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar", "woof", "bark"]).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .error, allowedArguments: ["foo", "bar", "woof", "bark"]).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.count, 1)
         guard let first = problems.first else { return }

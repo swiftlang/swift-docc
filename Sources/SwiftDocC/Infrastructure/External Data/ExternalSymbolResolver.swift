@@ -10,22 +10,22 @@
 
 import Foundation
 
-/// A type that resolves references to symbols outside of the documentation bundle and creates documentation nodes with basic information about the resolved symbol.
+/// A type that resolves references to symbols outside of the documentation catalog and creates documentation nodes with basic information about the resolved symbol.
 ///
 /// Use this protocol to integrate symbol documentation content from other sources. Your implementation needs to be able to:
 ///  * Create documentation nodes for precise identifiers encountered in a symbol graph file.
 ///  * Resolve authored symbol references and return the precise identifier for the resolved symbol.
 ///  * Return an external URL for the references that it was able to resolve.
 ///
-/// If a symbol in a symbol graph file references a type that's not in the local bundle — for a example, the symbol conforms to a protocol that's not defined in the local bundle, the
-/// symbol inherits from a class that's not defined in the local bundle, or the symbol has arguments or return values that are types which are not defined in the local bundle —
-/// then this external resolver can resolve those symbol references. This allows references in symbol declarations to be turned into links for external references, just like in-bundle
+/// If a symbol in a symbol graph file references a type that's not in the local catalog — for a example, the symbol conforms to a protocol that's not defined in the local catalog, the
+/// symbol inherits from a class that's not defined in the local catalog, or the symbol has arguments or return values that are types which are not defined in the local catalog —
+/// then this external resolver can resolve those symbol references. This allows references in symbol declarations to be turned into links for external references, just like in-catalog
 /// symbol references can be.
 ///
-/// It's also possible to author a reference to an external symbol. When a documentation context encounters a symbol reference that's not found in the local bundle, it asks the external
+/// It's also possible to author a reference to an external symbol. When a documentation context encounters a symbol reference that's not found in the local catalog, it asks the external
 /// resolver to resolve the precise identifier for the reference.
 ///
-/// Because symbol reference don't have a bundle identifier, a documentation context can only have one registered, external symbol resolver.
+/// Because symbol reference don't have a catalog identifier, a documentation context can only have one registered, external symbol resolver.
 ///
 /// ## See Also
 /// - ``DocumentationContext/externalSymbolResolver``
@@ -38,7 +38,7 @@ public protocol ExternalSymbolResolver {
     /// The precise identifier is assumed to be valid and to exist because it either comes from a trusted source, like a symbol graph file, or was
     /// returned by the external symbol resolver or an authored symbol reference.
     ///
-    /// This node is not part of the local bundle and won't be part of the rendered output. Because of this, your implementation only needs to return a node with the subset of content
+    /// This node is not part of the local catalog and won't be part of the rendered output. Because of this, your implementation only needs to return a node with the subset of content
     /// that correspond to the non-optional properties of a ``LinkDestinationSummary``; the node's kind, title, abstract, relative path, reference URL, the language of the node,
     /// and the set of languages where the nodes is available.
     ///

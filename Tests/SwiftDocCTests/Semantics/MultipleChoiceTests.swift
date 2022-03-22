@@ -19,12 +19,12 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNil(multipleChoice)
             XCTAssertEqual(3, problems.count)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
@@ -53,12 +53,12 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         try directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(multipleChoice)
             XCTAssertEqual(1, problems.count)
             let problem = try XCTUnwrap(
@@ -101,12 +101,12 @@ class MultipleChoiceTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(multipleChoice)
             XCTAssertFalse(problems.isEmpty)
             problems.first.map {
@@ -117,7 +117,7 @@ class MultipleChoiceTests: XCTestCase {
                 let expectedDump = """
 MultipleChoice @1:1-24:2 title: 'SwiftDocC.MarkupContainer'
 ├─ MarkupContainer (2 elements)
-├─ ImageMedia @10:3-10:10 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "blah.png")' altText: 'blah'
+├─ ImageMedia @10:3-10:10 source: 'ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "blah.png")' altText: 'blah'
 ├─ Choice @12:3-17:5 isCorrect: true
 │  ├─ MarkupContainer (1 element)
 │  └─ Justification @14:6-16:7
@@ -158,12 +158,12 @@ MultipleChoice @1:1-24:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(multipleChoice)
             XCTAssertTrue(problems.isEmpty)
             
@@ -214,12 +214,12 @@ MultipleChoice @1:1-18:2 title: 'SwiftDocC.MarkupContainer'
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(MultipleChoice.directiveName, directive.name)
-            let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let multipleChoice = MultipleChoice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(multipleChoice)
             XCTAssertTrue(problems.isEmpty)
             
@@ -274,12 +274,12 @@ MultipleChoice @1:1-22:2 title: 'SwiftDocC.MarkupContainer'
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems = [Problem]()
         XCTAssertEqual(MultipleChoice.directiveName, directive.name)
         
-        let multipleChoice = MultipleChoice(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let multipleChoice = MultipleChoice(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertNotNil(multipleChoice)
         XCTAssertEqual(1, problems.count)

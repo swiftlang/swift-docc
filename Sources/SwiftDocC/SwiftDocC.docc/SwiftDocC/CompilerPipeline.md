@@ -6,7 +6,7 @@ Get to know the steps involved in documentation compilation.
 
 This article describes the discrete and sequential steps of compiling documentation with DocC.
 
-DocC starts with content discovery by parsing the documentation sources in your documentation bundle. Next, it validates and semantically analyzes them and then builds an in-memory model of the compiled documentation. Once the in-memory model is finalized, DocC converts each topic into a persistable representation it can store on disk.
+DocC starts with content discovery by parsing the documentation sources in your documentation catalog. Next, it validates and semantically analyzes them and then builds an in-memory model of the compiled documentation. Once the in-memory model is finalized, DocC converts each topic into a persistable representation it can store on disk.
 
 To use the compiled documentation, either query the in-memory model directly or convert its nodes to their render-friendly representation. For example, the `SwiftDocCUtilities` framework enumerates all the nodes in DocC's in-memory model, converts each node for rendering, and finally writes the complete documentation to the disk.
 
@@ -14,15 +14,15 @@ To use the compiled documentation, either query the in-memory model directly or 
 
 DocC starts discovery by creating a ``DocumentationWorkspace`` to interact with the file system and a ``DocumentationContext`` that manages the in-memory model for the built documentation.
 
-When a documentation bundle is found in the workspace by a ``DocumentationWorkspaceDataProvider``, the following files are recognized and processed (others are ignored):
+When a documentation catalog is found in the workspace by a ``DocumentationWorkspaceDataProvider``, the following files are recognized and processed (others are ignored):
 
-- An `Info.plist` file containing meta information like the bundle display name.
+- An `Info.plist` file containing meta information like the catalog display name.
 - Symbol-graph files with the `.symbols.json` extension.
 - Authored markup files with an `.md` extension
 - Authored tutorial files with a `.tutorial` extension
 - Additional documentation assets with known extensions like `.png`, `.jpg`, `.mov`, and `.zip`.
 
-You can organize the files in any way, as long as `Info.plist` is in the root of the directory tree. Here is an example of a bundle, that groups topic files in logical groups with an additional directory for shared asset files:
+You can organize the files in any way, as long as `Info.plist` is in the root of the directory tree. Here is an example of a catalog, that groups topic files in logical groups with an additional directory for shared asset files:
 
 ```none
 SwiftDocC.docc

@@ -20,7 +20,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     /// A resolver returning mock symbols.
     class TestSymbolResolver: ExternalSymbolResolver {
         func symbolEntity(withPreciseIdentifier preciseIdentifier: String) throws -> DocumentationNode {
-            return DocumentationNode(reference: .init(bundleIdentifier: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift), kind: .class, sourceLanguage: .swift, name: DocumentationNode.Name.conceptual(title: preciseIdentifier), markup: Paragraph([Text("Docs")]), semantic: nil)
+            return DocumentationNode(reference: .init(catalogIdentifier: "com.test.symbols", path: "/\(preciseIdentifier)", sourceLanguage: SourceLanguage.swift), kind: .class, sourceLanguage: .swift, name: DocumentationNode.Name.conceptual(title: preciseIdentifier), markup: Paragraph([Text("Docs")]), semantic: nil)
         }
         
         func urlForResolvedSymbol(reference: ResolvedTopicReference) -> URL? {
@@ -33,8 +33,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     }
     
     func testNoMetricAddedIfNoExternalTopicsAreResolved() throws {
-        // Load bundle without using external resolvers
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        // Load catalog without using external resolvers
+        let (_, context) = try testCatalogAndContext(named: "TestCatalog")
         XCTAssertTrue(context.externallyResolvedSymbols.isEmpty)
         XCTAssertTrue(context.externallyResolvedLinks.isEmpty)
         
@@ -51,7 +51,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (url, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+            let (url, _, context) = try testCatalogAndContext(copying: "TestCatalog", externalResolvers: [externalResolver.catalogIdentifier: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -60,8 +60,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             ## Topics
                 
             ### External references
-            - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol1>
-            - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol2>
+            - <doc://\(externalResolver.catalogIdentifier)/path/to/external/symbol1>
+            - <doc://\(externalResolver.catalogIdentifier)/path/to/external/symbol2>
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
             }
 
@@ -91,7 +91,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (url, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
+            let (url, _, context) = try testCatalogAndContext(copying: "TestCatalog", externalResolvers: [externalResolver.catalogIdentifier: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -100,8 +100,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             ## Topics
                 
             ### External references
-            - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol1>
-            - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol2>
+            - <doc://\(externalResolver.catalogIdentifier)/path/to/external/symbol1>
+            - <doc://\(externalResolver.catalogIdentifier)/path/to/external/symbol2>
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
             }
 
@@ -131,8 +131,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
     func testExternalTopicsDetectsChanges() throws {
         let externalResolver = self.externalResolver
 
-        // Load a bundle with external links
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+        // Load a catalog with external links
+        let (url, _, context) = try testCatalogAndContext(copying: "TestCatalog", externalResolvers: [externalResolver.catalogIdentifier: externalResolver]) { url in
         try """
         # ``SideKit/SideClass``
 
@@ -141,8 +141,8 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         ## Topics
             
         ### External references
-        - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol1>
-        - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol2>
+        - <doc://\(externalResolver.catalogIdentifier)/path/to/external/symbol1>
+        - <doc://\(externalResolver.catalogIdentifier)/path/to/external/symbol2>
         """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
     

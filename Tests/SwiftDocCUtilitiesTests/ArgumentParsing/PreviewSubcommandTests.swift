@@ -13,8 +13,8 @@ import XCTest
 
 class PreviewSubcommandTests: XCTestCase {
     func testOptionsValidation() throws {
-        let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let testCatalogURL = Bundle.module.url(
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
         
         // Create HTML template dir.
         let templateDir = try createTemporaryDirectory()
@@ -33,7 +33,7 @@ class PreviewSubcommandTests: XCTestCase {
         do {
             setenv(TemplateOption.environmentVariableKey, templateDir.path, 1)
             XCTAssertNoThrow(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -41,7 +41,7 @@ class PreviewSubcommandTests: XCTestCase {
         do {
             unsetenv(TemplateOption.environmentVariableKey)
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -66,7 +66,7 @@ class PreviewSubcommandTests: XCTestCase {
             try "".write(to: defaultTemplateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
             
             let preview = try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ])
             XCTAssertEqual(
                 preview.previewOptions.convertCommand.templateOption.templateURL?.standardizedFileURL,
@@ -84,7 +84,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(TemplateOption.environmentVariableKey, templateDir.path, 1)
             XCTAssertNoThrow(try Docc.Preview.parse([
                 "--port", "2048",
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
 
@@ -93,7 +93,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(TemplateOption.environmentVariableKey, templateDir.path, 1)
             XCTAssertThrowsError(try Docc.Preview.parse([
                 "--port", "42",
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -107,7 +107,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertNoThrow(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -122,7 +122,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -137,7 +137,7 @@ class PreviewSubcommandTests: XCTestCase {
                    testTLSKey.appendingPathComponent("invalidPath.pem").path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -150,7 +150,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateChainKey, testTLSCertificate.path, 1)
             unsetenv(PreviewExternalConnectionOptions.certificateKeyKey)
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -164,7 +164,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -178,7 +178,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertNoThrow(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -192,7 +192,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
       
@@ -206,7 +206,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
       }
         
@@ -220,7 +220,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -234,7 +234,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -248,7 +248,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
         
@@ -262,7 +262,7 @@ class PreviewSubcommandTests: XCTestCase {
             setenv(PreviewExternalConnectionOptions.certificateKeyKey, testTLSKey.path, 1)
             
             XCTAssertThrowsError(try Docc.Preview.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ]))
         }
     }

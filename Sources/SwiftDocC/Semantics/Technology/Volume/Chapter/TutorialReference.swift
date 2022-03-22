@@ -32,10 +32,10 @@ public final class TutorialReference: Semantic, DirectiveConvertible {
         }
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialReference>(severityIfFound: .warning, allowedArguments: [Semantics.Tutorial.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<TutorialReference>(severityIfFound: .warning, allowedArguments: [Semantics.Tutorial.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<TutorialReference>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<TutorialReference>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         guard let requiredTutorial = Semantic.Analyses.HasArgument<TutorialReference, Semantics.Tutorial>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems).flatMap({ tutorialURL -> UnresolvedTopicReference? in
             guard let url = ValidatedURL(tutorialURL), !url.components.path.isEmpty else {

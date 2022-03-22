@@ -20,50 +20,50 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
     var renderSectionWithLanguageDefault: ContentRenderSection!
     var renderSectionWithoutLanguageDefault: ContentRenderSection!
 
-    var testBundleWithLanguageDefault: DocumentationBundle!
-    var testBundleWithoutLanguageDefault: DocumentationBundle!
+    var testCatalogWithLanguageDefault: DocumentationCatalog!
+    var testCatalogWithoutLanguageDefault: DocumentationCatalog!
 
-    var bundleBaseURL: URL!
+    var catalogBaseURL: URL!
 
     override func setUp() {
-        func renderSection(for bundle: DocumentationBundle, in context: DocumentationContext) -> ContentRenderSection {
-            let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
+        func renderSection(for catalog: DocumentationCatalog, in context: DocumentationContext) -> ContentRenderSection {
+            let identifier = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/Test-Catalog/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
 
             let source = context.documentURL(for: identifier)
 
             let node = try! context.entity(with: identifier)
-            var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
+            var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: source)
             let renderNode = translator.visit(node.semantic) as! RenderNode
 
             return renderNode.primaryContentSections.first! as! ContentRenderSection
         }
 
-        let (url, bundleWithLanguageDefault, context) = try! testBundleAndContext(copying: "TestBundle")
-        bundleBaseURL = url
+        let (url, catalogWithLanguageDefault, context) = try! testCatalogAndContext(copying: "TestCatalog")
+        catalogBaseURL = url
 
-        testBundleWithLanguageDefault = bundleWithLanguageDefault
+        testCatalogWithLanguageDefault = catalogWithLanguageDefault
 
-        // Copy the bundle but explicitly set `defaultCodeListingLanguage` to `nil` to mimic having no default language set.
-        testBundleWithoutLanguageDefault = DocumentationBundle(
-            info: DocumentationBundle.Info(
-                displayName: testBundleWithLanguageDefault.displayName,
-                identifier: testBundleWithLanguageDefault.identifier,
-                version: testBundleWithLanguageDefault.version,
+        // Copy the catalog but explicitly set `defaultCodeListingLanguage` to `nil` to mimic having no default language set.
+        testCatalogWithoutLanguageDefault = DocumentationCatalog(
+            info: DocumentationCatalog.Info(
+                displayName: testCatalogWithLanguageDefault.displayName,
+                identifier: testCatalogWithLanguageDefault.identifier,
+                version: testCatalogWithLanguageDefault.version,
                 defaultCodeListingLanguage: nil
             ),
-            baseURL: testBundleWithLanguageDefault.baseURL,
-            attributedCodeListings: testBundleWithLanguageDefault.attributedCodeListings,
-            symbolGraphURLs: testBundleWithLanguageDefault.symbolGraphURLs,
-            markupURLs: testBundleWithLanguageDefault.markupURLs,
-            miscResourceURLs: testBundleWithLanguageDefault.miscResourceURLs
+            baseURL: testCatalogWithLanguageDefault.baseURL,
+            attributedCodeListings: testCatalogWithLanguageDefault.attributedCodeListings,
+            symbolGraphURLs: testCatalogWithLanguageDefault.symbolGraphURLs,
+            markupURLs: testCatalogWithLanguageDefault.markupURLs,
+            miscResourceURLs: testCatalogWithLanguageDefault.miscResourceURLs
         )
 
-        renderSectionWithLanguageDefault = renderSection(for: testBundleWithLanguageDefault, in: context)
-        renderSectionWithoutLanguageDefault = renderSection(for: testBundleWithoutLanguageDefault, in: context)
+        renderSectionWithLanguageDefault = renderSection(for: testCatalogWithLanguageDefault, in: context)
+        renderSectionWithoutLanguageDefault = renderSection(for: testCatalogWithoutLanguageDefault, in: context)
     }
 
     override func tearDown() {
-        try? FileManager.default.removeItem(at: bundleBaseURL)
+        try? FileManager.default.removeItem(at: catalogBaseURL)
     }
 
     struct CodeListing {
@@ -101,13 +101,13 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
         ])
     }
 
-    func testExplicitlySetLanguageOverridesBundleDefault() throws {
+    func testExplicitlySetLanguageOverridesCatalogDefault() throws {
         let explicitlySetLanguageCodeListing = try codeListing(at: 3, in: renderSectionWithLanguageDefault)
 
-        XCTAssertEqual("objective-c", explicitlySetLanguageCodeListing.language, "The explicit language of the code listing should override the bundle's default language")
+        XCTAssertEqual("objective-c", explicitlySetLanguageCodeListing.language, "The explicit language of the code listing should override the catalog's default language")
 
         XCTAssertEqual(explicitlySetLanguageCodeListing.lines, [
-            "/// This is a fenced code block with an explicit language set, and it should override the default language for the bundle.",
+            "/// This is a fenced code block with an explicit language set, and it should override the default language for the catalog.",
             "- (void)foo;",
         ])
     }

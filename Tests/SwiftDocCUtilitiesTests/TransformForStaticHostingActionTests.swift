@@ -19,20 +19,20 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
     /// Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
     func testTransformForStaticHostingTestExternalOutput() throws {
         
-        // Convert a test bundle as input for the TransformForStaticHostingAction
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        // Convert a test catalog as input for the TransformForStaticHostingAction
+        let catalogURL = Bundle.module.url(forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
         let targetURL = try createTemporaryDirectory()
         
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
         
-        let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
+        let targetCatalogURL = targetURL.appendingPathComponent("Result.doccarchive")
         
         var action = try ConvertAction(
-            documentationBundleURL: bundleURL,
+            documentationCatalogURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetBundleURL,
+            targetDirectory: targetCatalogURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
@@ -51,7 +51,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
 
         let indexHTML = Folder.testHTMLTemplate(basePath: basePath)
 
-        var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: outputURL, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
+        var transformAction = try TransformForStaticHostingAction(documentationCatalogURL: targetCatalogURL, outputURL: outputURL, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
         _ = try transformAction.perform(logHandle: .standardOutput)
         
@@ -68,7 +68,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         XCTAssert(isDirectory.boolValue)
         
         // Test the content of the output folder.
-        var expectedContent = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
+        var expectedContent = try fileManager.contentsOfDirectory(atPath: targetCatalogURL.path)
         expectedContent += templateFolder.content.filter { $0 is Folder }.map{ $0.name }
         expectedContent += ["documentation", "tutorials"]
         
@@ -82,12 +82,12 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             case "documentation":
                 compareJSONFolder(fileManager: fileManager,
                                   output: outputURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
-                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                                  input:  targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
                                indexHTML: indexHTML)
             case "tutorials":
                 compareJSONFolder(fileManager: fileManager,
                                   output: outputURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
-                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                                  input:  targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
                                indexHTML: indexHTML)
             default:
                 continue
@@ -100,8 +100,8 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
     // Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
     func testTransformForStaticHostingActionTestInPlaceOutput() throws {
         
-        // Convert a test bundle as input for the TransformForStaticHostingAction
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        // Convert a test catalog as input for the TransformForStaticHostingAction
+        let catalogURL = Bundle.module.url(forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
         let targetURL = try createTemporaryDirectory()
             
         let fileManager = FileManager.default
@@ -111,13 +111,13 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
         
-        let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
+        let targetCatalogURL = targetURL.appendingPathComponent("Result.doccarchive")
         
         var action = try ConvertAction(
-            documentationBundleURL: bundleURL,
+            documentationCatalogURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetBundleURL,
+            targetDirectory: targetCatalogURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
@@ -133,16 +133,16 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         try templateFolder.write(to: testTemplateURL)
 
         let indexHTML = Folder.testHTMLTemplate(basePath: basePath)
-        var expectedContent = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
+        var expectedContent = try fileManager.contentsOfDirectory(atPath: targetCatalogURL.path)
 
-        var transformAction = try TransformForStaticHostingAction(documentationBundleURL: targetBundleURL, outputURL: nil, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
+        var transformAction = try TransformForStaticHostingAction(documentationCatalogURL: targetCatalogURL, outputURL: nil, hostingBasePath: basePath, htmlTemplateDirectory: testTemplateURL)
         
         _ = try transformAction.perform(logHandle: .standardOutput)
         
         var isDirectory: ObjCBool = false
         
         // Test an output folder exists
-        guard fileManager.fileExists(atPath: targetBundleURL.path, isDirectory: &isDirectory) else {
+        guard fileManager.fileExists(atPath: targetCatalogURL.path, isDirectory: &isDirectory) else {
             XCTFail("TransformForStaticHostingAction - Output Folder not Found")
             return
         }
@@ -154,7 +154,7 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
         expectedContent += templateFolder.content.filter { $0 is Folder }.map{ $0.name }
         expectedContent += ["documentation", "tutorials"]
         
-        let output = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
+        let output = try fileManager.contentsOfDirectory(atPath: targetCatalogURL.path)
         XCTAssertEqual(Set(output), Set(expectedContent), "Unexpect output")
     
         for item in output {
@@ -163,13 +163,13 @@ class TransformForStaticHostingActionTests: StaticHostingBaseTests {
             switch item {
             case "documentation":
                 compareJSONFolder(fileManager: fileManager,
-                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
-                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                                  output: targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                                  input:  targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
                                indexHTML: indexHTML)
             case "tutorials":
                 compareJSONFolder(fileManager: fileManager,
-                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
-                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                                  output: targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                                  input:  targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
                                indexHTML: indexHTML)
             default:
                 continue

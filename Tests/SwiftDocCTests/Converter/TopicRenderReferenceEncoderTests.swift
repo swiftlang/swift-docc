@@ -14,7 +14,7 @@ import XCTest
 class TopicRenderReferenceEncoderTests: XCTestCase {
 
     func testRenderNodeSkipsReferences() throws {
-        var node = RenderNode(identifier: .init(bundleIdentifier: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
+        var node = RenderNode(identifier: .init(catalogIdentifier: "catalog", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
         ]
@@ -51,7 +51,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     
     func testTopicReferenceEncoder() throws {
         // Create a render node
-        var node = RenderNode(identifier: .init(bundleIdentifier: "bundle", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
+        var node = RenderNode(identifier: .init(catalogIdentifier: "catalog", path: "/documentation/MyClass", sourceLanguage: .swift), kind: .article)
         node.references = [
             "reference1": TopicRenderReference(identifier: .init("reference1"), title: "myFunction", abstract: [], url: "/documentation/MyClass/myFunction", kind: .symbol, estimatedTime: nil),
         ]
@@ -124,7 +124,7 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
         // Create many render nodes.
         let nodes = (0..<1000)
             .map({ i -> RenderNode in
-                var node = RenderNode(identifier: .init(bundleIdentifier: "bundle", path: "/documentation/MyClass\(i)", sourceLanguage: .swift), kind: .article)
+                var node = RenderNode(identifier: .init(catalogIdentifier: "catalog", path: "/documentation/MyClass\(i)", sourceLanguage: .swift), kind: .article)
                 node.references = references
                 return node
             })
@@ -158,8 +158,8 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     /// Verifies that when JSON encoder should sort keys, the custom render reference cache
     /// respects that setting and prints the referencs in alphabetical order.
     func testSortedReferences() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
 
         // Create a JSON encoder
         let encoder = RenderJSONEncoder.makeEncoder()
@@ -218,8 +218,8 @@ class TopicRenderReferenceEncoderTests: XCTestCase {
     
     // Verifies that there is no extra comma at the end of the references list.
     func testRemovesLastReferencesListDelimiter() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
 
         // Create a JSON encoder
         let encoder = RenderJSONEncoder.makeEncoder()

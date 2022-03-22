@@ -34,8 +34,8 @@ struct ReferenceResolver: SemanticVisitor {
     /// The context to use to resolve references.
     var context: DocumentationContext
     
-    /// The bundle in which visited documents reside.
-    var bundle: DocumentationBundle
+    /// The catalog in which visited documents reside.
+    var catalog: DocumentationCatalog
     
     /// The source document being analyzed.
     var source: URL?
@@ -48,11 +48,11 @@ struct ReferenceResolver: SemanticVisitor {
     /// If the documentation is inherited, the reference of the parent symbol.
     var inheritanceParentReference: ResolvedTopicReference?
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, source: URL?, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
+    init(context: DocumentationContext, catalog: DocumentationCatalog, source: URL?, rootReference: ResolvedTopicReference? = nil, inheritanceParentReference: ResolvedTopicReference? = nil) {
         self.context = context
-        self.bundle = bundle
+        self.catalog = catalog
         self.source = source
-        self.rootReference = rootReference ?? bundle.rootReference
+        self.rootReference = rootReference ?? catalog.rootReference
         self.inheritanceParentReference = inheritanceParentReference
     }
     
@@ -63,7 +63,7 @@ struct ReferenceResolver: SemanticVisitor {
             
         case let .failure(unresolved, errorMessage):
             // FIXME: Provide near-miss suggestion here. The user is likely to make mistakes with capitalization because of character input.
-            let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
+            let uncuratedArticleMatch = context.uncuratedArticles[catalog.documentationRootReference.appendingPathOfReference(unresolved)]?.source
             problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
             return .failure(unresolved, errorMessage: errorMessage)
         }
@@ -116,9 +116,9 @@ struct ReferenceResolver: SemanticVisitor {
         
         // Change the context of the project file to `download`
         if let projectFiles = tutorial.projectFiles,
-            var resolvedDownload = context.resolveAsset(named: projectFiles.path, in: bundle.rootReference) {
+            var resolvedDownload = context.resolveAsset(named: projectFiles.path, in: catalog.rootReference) {
             resolvedDownload.context = .download
-            context.updateAsset(named: projectFiles.path, asset: resolvedDownload, in: bundle.rootReference)
+            context.updateAsset(named: projectFiles.path, asset: resolvedDownload, in: catalog.rootReference)
         }
         
         return Tutorial(originalMarkup: tutorial.originalMarkup, durationMinutes: tutorial.durationMinutes, projectFiles: tutorial.projectFiles, requirements: newRequirements, intro: newIntro, sections: newSections, assessments: newAssessments, callToActionImage: newCallToActionImage, redirects: tutorial.redirects)
@@ -159,7 +159,7 @@ struct ReferenceResolver: SemanticVisitor {
     }
     
     mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> Semantic {
-        var markupResolver = MarkupReferenceResolver(context: context, bundle: bundle, source: source, rootReference: rootReference)
+        var markupResolver = MarkupReferenceResolver(context: context, catalog: catalog, source: source, rootReference: rootReference)
         let parent = inheritanceParentReference
         let context = self.context
         
@@ -265,12 +265,12 @@ struct ReferenceResolver: SemanticVisitor {
     }
     
     mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> Semantic {
-        // This should always be an absolute topic URL rooted at the bundle, as there isn't necessarily one parent of a tutorial.
+        // This should always be an absolute topic URL rooted at the catalog, as there isn't necessarily one parent of a tutorial.
         // i.e. doc:/${SOME_TECHNOLOGY}/${PROJECT} or doc://${BUNDLE_ID}/${SOME_TECHNOLOGY}/${PROJECT}
         switch tutorialReference.topic {
         case .unresolved:
             let arguments = tutorialReference.originalMarkup.arguments()
-            let maybeResolved = resolve(tutorialReference.topic, in: bundle.technologyTutorialsRootReference,
+            let maybeResolved = resolve(tutorialReference.topic, in: catalog.technologyTutorialsRootReference,
                                         range: arguments[TutorialReference.Semantics.Tutorial.argumentName]?.valueRange,
                                         severity: .warning)
             return TutorialReference(originalMarkup: tutorialReference.originalMarkup, tutorial: .resolved(maybeResolved))
@@ -445,15 +445,15 @@ fileprivate extension URL {
 }
 
 extension Image {
-    func reference(in bundle: DocumentationBundle) -> ResourceReference? {
+    func reference(in catalog: DocumentationCatalog) -> ResourceReference? {
         guard let source = source else {
-            return ResourceReference(bundleIdentifier: bundle.identifier, path: "")
+            return ResourceReference(catalogIdentifier: catalog.identifier, path: "")
         }
         
         if let url = URL(string: source), url.isLikelyWebURL {
             return nil
         } else {
-            return ResourceReference(bundleIdentifier: bundle.identifier, path: source)
+            return ResourceReference(catalogIdentifier: catalog.identifier, path: source)
         }
     }
 }

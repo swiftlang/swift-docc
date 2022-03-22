@@ -141,8 +141,8 @@ private extension DocumentationContentRendererTests {
     var documentationContentRenderer: DocumentationContentRenderer {
         DocumentationContentRenderer(
             documentationContext: try! DocumentationContext(dataProvider: DocumentationWorkspace()),
-            bundle: DocumentationBundle(
-                info: DocumentationBundle.Info(
+            catalog: DocumentationCatalog(
+                info: DocumentationCatalog.Info(
                     displayName: "Test",
                     identifier: "org.swift.test",
                     version: "1.2.3"
@@ -158,7 +158,7 @@ private extension DocumentationContentRendererTests {
     var nodeWithSubheadingAndNavigatorVariants: DocumentationNode {
         var node = DocumentationNode(
             reference: ResolvedTopicReference(
-                bundleIdentifier: "org.swift.example",
+                catalogIdentifier: "org.swift.example",
                 path: "/documentation/class",
                 fragment: nil,
                 sourceLanguage: .swift
@@ -210,7 +210,7 @@ private extension DocumentationContentRendererTests {
             ]),
             roleHeadingVariants: .init(swiftVariant: ""),
             platformNameVariants: .init(swiftVariant: nil),
-            moduleReference: ResolvedTopicReference(bundleIdentifier: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
+            moduleReference: ResolvedTopicReference(catalogIdentifier: "", path: "", sourceLanguage: .swift), // This information isn't used anywhere.
             externalIDVariants: .init(swiftVariant: nil),
             accessLevelVariants: .init(swiftVariant: nil),
             availabilityVariants: .init(swiftVariant: Availability(availability: [])),

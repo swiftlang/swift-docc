@@ -23,10 +23,10 @@ public final class Snippet: Semantic, DirectiveConvertible {
     public let originalMarkup: BlockDirective
     public let path: String
 
-    public init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         let arguments = Semantic.Analyses
             .HasOnlyKnownArguments<Snippet>(severityIfFound: .warning, allowedArguments: [Semantics.Path.argumentName])
-            .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
 
         let requiredPath = Semantic.Analyses.HasArgument<Snippet, Semantics.Path>(severityIfNotFound: .warning)
             .analyze(directive, arguments: arguments, problems: &problems)

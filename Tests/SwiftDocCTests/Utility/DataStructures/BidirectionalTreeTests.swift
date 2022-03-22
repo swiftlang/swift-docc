@@ -76,14 +76,14 @@ class BidirectionalTreeTests: XCTestCase {
     /// Tests the expected nodes and hierarchy in a tree of custom nodes (topic references)
     func testReferenceTree() throws {
         let referenceFor: (String) -> ResolvedTopicReference = { path in
-            return ResolvedTopicReference(bundleIdentifier: "com.bundle", path: path, sourceLanguage: .swift)
+            return ResolvedTopicReference(catalogIdentifier: "com.catalog", path: path, sourceLanguage: .swift)
         }
         
         var tree = BidirectionalTree<ResolvedTopicReference>(root: referenceFor("/root"))
         try tree.add(referenceFor("/child1"), parent: referenceFor("/root"))
         try tree.add(referenceFor("/child2"), parent: referenceFor("/root"))
         try tree.add(referenceFor("/child3"), parent: referenceFor("/child2"))
-        XCTAssertEqual(try tree.dump(), "doc://com.bundle/root,doc://com.bundle/child1,doc://com.bundle/child2,doc://com.bundle/child3")
+        XCTAssertEqual(try tree.dump(), "doc://com.catalog/root,doc://com.catalog/child1,doc://com.catalog/child2,doc://com.catalog/child3")
     }
     
     /// Tests children and parents

@@ -15,13 +15,13 @@ extension ResolvedTopicReference {
     /// - Parameters:
     ///   - symbolReference: A reference to a symbol.
     ///   - moduleName: The module, to which the symbol belongs.
-    ///   - bundle: A documentation bundle, to which the symbol belongs.
-    init(symbolReference: SymbolReference, moduleName: String, bundle: DocumentationBundle) {
+    ///   - catalog: A documentation catalog, to which the symbol belongs.
+    init(symbolReference: SymbolReference, moduleName: String, catalog: DocumentationCatalog) {
         let path = symbolReference.path.isEmpty ? "" : "/" + symbolReference.path
         
         self.init(
-            bundleIdentifier: bundle.documentationRootReference.bundleIdentifier,
-            path: bundle.documentationRootReference.appendingPath(moduleName + path).path,
+            catalogIdentifier: catalog.documentationRootReference.catalogIdentifier,
+            path: catalog.documentationRootReference.appendingPath(moduleName + path).path,
             fragment: nil,
             sourceLanguages: symbolReference.interfaceLanguages
         )

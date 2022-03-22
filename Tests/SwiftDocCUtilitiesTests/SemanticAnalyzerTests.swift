@@ -15,7 +15,7 @@ import Markdown
 import SwiftDocCTestUtilities
 
 class SemanticAnalyzerTests: XCTestCase {
-    let bundleFolderHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
+    let catalogFolderHierarchy = Folder(name: "SemanticAnalyzerTests.docc", content: [
         Folder(name: "Symbols", content: []),
         Folder(name: "Resources", content: [
             TextFile(name: "Oops.md", utf8Content: """
@@ -51,18 +51,18 @@ class SemanticAnalyzerTests: XCTestCase {
                 ![alt](test.png)
                 """),
             ]),
-        InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+        InfoPlist(displayName: "TestCatalog", identifier: "com.test.example"),
     ])
     
     func testDontCrashOnInvalidContent() throws {
         let workspace = DocumentationWorkspace()
         let context = try! DocumentationContext(dataProvider: workspace)
-        let bundleURL = try bundleFolderHierarchy.write(inside: createTemporaryDirectory())
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let catalogURL = try catalogFolderHierarchy.write(inside: createTemporaryDirectory())
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
-        let bundle = context.bundle(identifier: "com.test.example")!
+        let catalog = context.catalog(identifier: "com.test.example")!
         
-        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/Oops", sourceLanguage: .swift)))
+        XCTAssertThrowsError(try context.entity(with: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/Oops", sourceLanguage: .swift)))
     }
     
     func testWarningsAboutDirectiveSupport() throws {
@@ -79,10 +79,10 @@ class SemanticAnalyzerTests: XCTestCase {
 
                 A paragraph of text
                 """),
-                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                InfoPlist(displayName: "TestCatalog", identifier: "com.test.example"),
             ])
-            let bundleURL = try folderHierarchy.write(inside: createTemporaryDirectory())
-            let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+            let catalogURL = try folderHierarchy.write(inside: createTemporaryDirectory())
+            let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
             try workspace.registerProvider(dataProvider)
             
             return (
@@ -122,13 +122,13 @@ class SemanticAnalyzerTests: XCTestCase {
     func testDoesNotWarnOnEmptyTutorials() throws {
         let workspace = DocumentationWorkspace()
         let context = try! DocumentationContext(dataProvider: workspace)
-        let bundleURL = try bundleFolderHierarchy.write(inside: createTemporaryDirectory())
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let catalogURL = try catalogFolderHierarchy.write(inside: createTemporaryDirectory())
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
-        let bundle = context.bundle(identifier: "com.test.example")!
+        let catalog = context.catalog(identifier: "com.test.example")!
         
         let document = Document(parsing: "", options: .parseBlockDirectives)
-        var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), context: context, bundle: bundle)
+        var analyzer = SemanticAnalyzer(source: URL(string: "/empty.tutorial"), context: context, catalog: catalog)
         let semantic = analyzer.visitDocument(document)
         XCTAssertNil(semantic)
         XCTAssert(analyzer.problems.isEmpty)

@@ -44,17 +44,22 @@ extension RenderReferenceDependencies: Codable {
 public class DocumentationContentRenderer {
 
     let documentationContext: DocumentationContext
-    let bundle: DocumentationBundle
+    let catalog: DocumentationCatalog
     let urlGenerator: PresentationURLGenerator
     
-    /// Creates a new content renderer for the given documentation context and bundle.
+    /// Creates a new content renderer for the given documentation context and catalog.
     /// - Parameters:
     ///   - documentationContext: A documentation context.
-    ///   - bundle: A documentation bundle.
-    public init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
+    ///   - catalog: A documentation catalog.
+    public init(documentationContext: DocumentationContext, catalog: DocumentationCatalog) {
         self.documentationContext = documentationContext
-        self.bundle = bundle
-        self.urlGenerator = PresentationURLGenerator(context: documentationContext, baseURL: bundle.baseURL)
+        self.catalog = catalog
+        self.urlGenerator = PresentationURLGenerator(context: documentationContext, baseURL: catalog.baseURL)
+    }
+    
+    @available(*, deprecated, renamed: "init(documentationContext:catalog:)")
+    public convenience init(documentationContext: DocumentationContext, bundle: DocumentationCatalog) {
+        self.init(documentationContext: documentationContext, catalog: bundle)
     }
     
     /// For symbol nodes, returns the fragments mixin if any.
@@ -307,14 +312,14 @@ public class DocumentationContentRenderer {
         // Topic render references require the URLs to be relative, even if they're external.
         let presentationURL = urlGenerator.presentationURLForReference(reference, requireRelativeURL: true)
         
-        var contentCompiler = RenderContentCompiler(context: documentationContext, bundle: bundle, identifier: reference)
+        var contentCompiler = RenderContentCompiler(context: documentationContext, catalog: catalog, identifier: reference)
         let abstractContent: VariantCollection<[RenderInlineContent]>
         
         var abstractedNode = node
         if kind == .section {
             // Sections don't have their own abstract so take the one of the container symbol.
             let containerReference = ResolvedTopicReference(
-                bundleIdentifier: reference.bundleIdentifier,
+                catalogIdentifier: reference.catalogIdentifier,
                 path: reference.path,
                 sourceLanguages: reference.sourceLanguages
             )
@@ -449,9 +454,9 @@ public class DocumentationContentRenderer {
                 }
                 
                 // For external links, verify they've resolved successfully and return `nil` otherwise.
-                if linkHost != reference.bundleIdentifier {
+                if linkHost != reference.catalogIdentifier {
                     let externalReference = ResolvedTopicReference(
-                        bundleIdentifier: linkHost,
+                        catalogIdentifier: linkHost,
                         path: destination.path,
                         sourceLanguages: node.availableSourceLanguages
                     )
@@ -461,7 +466,7 @@ public class DocumentationContentRenderer {
                     return nil
                 }
                 return ResolvedTopicReference(
-                    bundleIdentifier: reference.bundleIdentifier,
+                    catalogIdentifier: reference.catalogIdentifier,
                     path: destination.path,
                     sourceLanguages: node.availableSourceLanguages
                 )

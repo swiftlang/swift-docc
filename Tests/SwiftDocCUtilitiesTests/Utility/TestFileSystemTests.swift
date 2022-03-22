@@ -19,7 +19,7 @@ class TestFileSystemTests: XCTestCase {
         let fs = try TestFileSystem(folders: [])
         XCTAssertEqual(fs.currentDirectoryPath, "/")
         XCTAssertFalse(fs.identifier.isEmpty)
-        XCTAssertTrue(try fs.bundles().isEmpty)
+        XCTAssertTrue(try fs.catalogs().isEmpty)
         var isDirectory = ObjCBool(false)
         XCTAssertTrue(fs.fileExists(atPath: "/", isDirectory: &isDirectory))
         XCTAssertEqual(fs.files.keys.sorted(), ["/"], "The root (/) should be the only existing path.")

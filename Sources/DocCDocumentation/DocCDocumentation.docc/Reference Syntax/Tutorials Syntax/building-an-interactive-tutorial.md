@@ -168,7 +168,7 @@ Add any images and videos that you reference throughout your tutorial to the Res
 To view your tutorial, invoke the following command to compile it:
 
 ```
-docc preview MyPackage.docc --fallback-display-name MyPackage --fallback-bundle-identifier com.example.MyPackage --fallback-bundle-version 1
+docc preview MyPackage.docc --fallback-display-name MyPackage --fallback-catalog-identifier com.example.MyPackage --fallback-catalog-version 1
 ```
 
 DocC compiles your documentation catalog and generates the tutorial. Copy the URL from the terminal and paste it into your browser to view the tutorial.

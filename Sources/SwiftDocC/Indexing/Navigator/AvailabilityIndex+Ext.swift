@@ -63,7 +63,7 @@ extension AvailabilityIndex {
 // MARK: - InterfaceLanguage
 
 /**
- Interface Language identifies a programming language used to index a content of a documentation bundle.
+ Interface Language identifies a programming language used to index a content of a documentation catalog.
  
  - Note: The name reflects what a render node JSON provides to identify a programming language.
  The name has been decided to avoid confusion with locale languages.

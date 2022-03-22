@@ -37,11 +37,11 @@ public final class Redirect: Semantic, DirectiveConvertible {
         self.oldPath = oldPath
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Redirect.directiveName)
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Redirect>(severityIfFound: .warning, allowedArguments: [Semantics.From.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Redirect>(severityIfFound: .warning, allowedArguments: [Semantics.From.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
 
-        Semantic.Analyses.HasOnlyKnownDirectives<Redirect>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Redirect>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let requiredFromURL = Semantic.Analyses.HasArgument<Redirect, Semantics.From>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
 

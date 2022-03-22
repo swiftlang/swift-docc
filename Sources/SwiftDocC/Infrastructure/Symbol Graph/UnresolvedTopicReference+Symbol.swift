@@ -14,11 +14,11 @@ extension UnresolvedTopicReference {
     /// Creates an unresolved reference out of a symbol reference.
     /// - Parameters:
     ///   - symbolReference: A reference to a symbol.
-    ///   - bundle: A documentation bundle.
-    init?(symbolReference: SymbolReference, bundle: DocumentationBundle) {
+    ///   - catalog: A documentation catalog.
+    init?(symbolReference: SymbolReference, catalog: DocumentationCatalog) {
         guard var components = URLComponents(string: symbolReference.path) else { return nil }
         components.scheme = ResolvedTopicReference.urlScheme
-        components.host = bundle.identifier
+        components.host = catalog.identifier
         if !components.path.hasPrefix("/") {
             components.path.insert("/", at: components.path.startIndex)
         }

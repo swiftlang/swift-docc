@@ -28,14 +28,14 @@ public final class Assessments: Semantic, DirectiveConvertible {
         self.questions = questions
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Assessments.directiveName)
         
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Assessments>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Assessments>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Assessments>(severityIfFound: .warning, allowedDirectives: [MultipleChoice.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Assessments>(severityIfFound: .warning, allowedDirectives: [MultipleChoice.directiveName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        let (questions, _) = Semantic.Analyses.HasAtLeastOne<Assessments, MultipleChoice>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let (questions, _) = Semantic.Analyses.HasAtLeastOne<Assessments, MultipleChoice>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         self.init(originalMarkup: directive, questions: questions)
     }
     

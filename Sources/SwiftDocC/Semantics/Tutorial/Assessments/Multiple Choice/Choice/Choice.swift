@@ -54,21 +54,21 @@ public final class Choice: Semantic, DirectiveConvertible {
         }
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Choice.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Choice>(severityIfFound: .warning, allowedArguments: [Semantics.IsCorrect.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Choice>(severityIfFound: .warning, allowedArguments: [Semantics.IsCorrect.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Choice>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, Justification.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Choice>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, Justification.directiveName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         var remainder: MarkupContainer
         let codeBlocks = directive.children.compactMap { $0 as? CodeBlock }
         
         let images: [ImageMedia]
-        (images, remainder) = Semantic.Analyses.ExtractAll<ImageMedia>().analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (images, remainder) = Semantic.Analyses.ExtractAll<ImageMedia>().analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let requiredJustification: Justification?
-        (requiredJustification, remainder) = Semantic.Analyses.HasExactlyOne<Choice, Justification>(severityIfNotFound: .warning).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (requiredJustification, remainder) = Semantic.Analyses.HasExactlyOne<Choice, Justification>(severityIfNotFound: .warning).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
                 
         if remainder.isEmpty && codeBlocks.isEmpty && images.isEmpty {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(Choice.self).Empty", summary: "\(Choice.directiveName.singleQuoted) answer content must consist of a paragraph, code block, or \(ImageMedia.directiveName.singleQuoted) directive")

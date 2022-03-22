@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// A converter from a documentation bundle to an output that can be consumed by a renderer.
+/// A converter from a documentation catalog to an output that can be consumed by a renderer.
 ///
 /// This protocol is primarily used for injecting mock documentation converters during testing.
 ///
@@ -20,8 +20,8 @@ import Foundation
 public protocol DocumentationConverterProtocol {
     /// Converts documentation, outputting products using the given output consumer.
     /// - Parameter outputConsumer: The output consumer for content produced during conversion.
-    /// - Returns: The problems emitted during analysis of the documentation bundle and during conversion.
-    /// - Throws: Throws an error if the conversion process was not able to start at all, for example if the bundle could not be read.
+    /// - Returns: The problems emitted during analysis of the documentation catalog and during conversion.
+    /// - Throws: Throws an error if the conversion process was not able to start at all, for example if the catalog could not be read.
     /// Partial failures, such as failing to consume a single render node, are returned in the `conversionProblems` component
     /// of the returned tuple.
     mutating func convert<OutputConsumer: ConvertOutputConsumer>(
@@ -29,9 +29,9 @@ public protocol DocumentationConverterProtocol {
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem])
 }
 
-/// A converter from a documentation bundle to an output that can be consumed by a renderer.
+/// A converter from a documentation catalog to an output that can be consumed by a renderer.
 ///
-/// A documentation converter analyzes a documentation bundle and converts it to products that can be used by a documentation
+/// A documentation converter analyzes a documentation catalog and converts it to products that can be used by a documentation
 /// renderer to render documentation. The output format of the conversion is controlled by a ``ConvertOutputConsumer``, which
 /// determines what to do with the conversion products, for example, write them to disk.
 ///
@@ -41,7 +41,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     let rootURL: URL?
     let emitDigest: Bool
     let documentationCoverageOptions: DocumentationCoverageOptions
-    let bundleDiscoveryOptions: BundleDiscoveryOptions
+    let catalogDiscoveryOptions: CatalogDiscoveryOptions
     let diagnosticEngine: DiagnosticEngine
     
     private(set) var context: DocumentationContext
@@ -94,21 +94,21 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
 
     private var durationMetric: Benchmark.Duration?
 
-    /// Creates a documentation converter given a documentation bundle's URL.
+    /// Creates a documentation converter given a documentation catalog's URL.
     ///
     /// - Parameters:
-    ///  - documentationBundleURL: The root URL of the documentation bundle to convert.
+    ///  - documentationCatalogURL: The root URL of the documentation catalog to convert.
     ///  - emitDigest: Whether the conversion should create metadata files, such as linkable entities information.
     ///  - documentationCoverageOptions: What level of documentation coverage output should be emitted.
     ///  - currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.
     ///   that may be encountered while processing symbol graph files.
     ///  - workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`.
     ///  - context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`.
-    ///  - dataProvider: A data provider to use when registering bundles.
+    ///  - dataProvider: A data provider to use when registering catalogs.
     /// - Parameter fileManager: A file persistence manager
     /// - Parameter externalIDsToConvert: The external IDs of the documentation nodes to convert.
     /// - Parameter documentPathsToConvert: The paths of the documentation nodes to convert.
-    /// - Parameter bundleDiscoveryOptions: Options to configure how the converter discovers documentation bundles.
+    /// - Parameter catalogDiscoveryOptions: Options to configure how the converter discovers documentation catalogs.
     /// - Parameter emitSymbolSourceFileURIs: Whether the documentation converter should include
     ///   source file location metadata in any render nodes representing symbols it creates.
     ///
@@ -116,7 +116,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     ///   distribution of any created render nodes as there are filesystem privacy and security
     ///   concerns with distributing this data.
     public init(
-        documentationBundleURL: URL?,
+        documentationCatalogURL: URL?,
         emitDigest: Bool,
         documentationCoverageOptions: DocumentationCoverageOptions,
         currentPlatforms: [String : PlatformVersion]?,
@@ -125,13 +125,13 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         dataProvider: DocumentationWorkspaceDataProvider,
         externalIDsToConvert: [String]? = nil,
         documentPathsToConvert: [String]? = nil,
-        bundleDiscoveryOptions: BundleDiscoveryOptions,
+        catalogDiscoveryOptions: CatalogDiscoveryOptions,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false,
         isCancelled: Synchronized<Bool>? = nil,
         diagnosticEngine: DiagnosticEngine = .init()
     ) {
-        self.rootURL = documentationBundleURL
+        self.rootURL = documentationCatalogURL
         self.emitDigest = emitDigest
         self.documentationCoverageOptions = documentationCoverageOptions
         self.workspace = workspace
@@ -139,7 +139,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.dataProvider = dataProvider
         self.externalIDsToConvert = externalIDsToConvert
         self.documentPathsToConvert = documentPathsToConvert
-        self.bundleDiscoveryOptions = bundleDiscoveryOptions
+        self.catalogDiscoveryOptions = catalogDiscoveryOptions
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
         self.isCancelled = isCancelled
@@ -151,21 +151,46 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         }
     }
     
-    /// Returns the first bundle in the source directory, if any.
-    /// > Note: The result of this function is not cached, it reads the source directory and finds all bundles.
-    public func firstAvailableBundle() -> DocumentationBundle? {
-        return (try? dataProvider.bundles(options: bundleDiscoveryOptions)).map(sorted(bundles:))?.first
+    @available(*, deprecated, renamed: "init(documentationCatalogURL:emitDigest:documentationCoverageOptions:currentPlatforms:workspace:context:dataProvider:externalIDsToConvert:documentPathsToConvert:catalogDiscoveryOptions:emitSymbolSourceFileURIs:emitSymbolAccessLevels:isCancelled:diagnosticEngine:)")
+    public init(
+        documentationBundleURL: URL?,
+        emitDigest: Bool,
+        documentationCoverageOptions: DocumentationCoverageOptions,
+        currentPlatforms: [String : PlatformVersion]?,
+        workspace: DocumentationWorkspace,
+        context: DocumentationContext,
+        dataProvider: DocumentationWorkspaceDataProvider,
+        externalIDsToConvert: [String]? = nil,
+        documentPathsToConvert: [String]? = nil,
+        catalogDiscoveryOptions: CatalogDiscoveryOptions,
+        emitSymbolSourceFileURIs: Bool = false,
+        emitSymbolAccessLevels: Bool = false,
+        isCancelled: Synchronized<Bool>? = nil,
+        diagnosticEngine: DiagnosticEngine = .init()
+    ) {
+        self = .init(documentationCatalogURL: documentationBundleURL, emitDigest: emitDigest, documentationCoverageOptions: documentationCoverageOptions, currentPlatforms: currentPlatforms, workspace: workspace, context: context, dataProvider: dataProvider, externalIDsToConvert: externalIDsToConvert, documentPathsToConvert: documentPathsToConvert, catalogDiscoveryOptions: catalogDiscoveryOptions, emitSymbolSourceFileURIs: emitSymbolSourceFileURIs, emitSymbolAccessLevels: emitSymbolAccessLevels, isCancelled: isCancelled, diagnosticEngine: diagnosticEngine)
     }
     
-    /// Sorts a list of bundles by the bundle identifier.
-    private func sorted(bundles: [DocumentationBundle]) -> [DocumentationBundle] {
-        return bundles.sorted(by: \.identifier)
+    /// Returns the first catalog in the source directory, if any.
+    /// > Note: The result of this function is not cached, it reads the source directory and finds all catalogs.
+    public func firstAvailableCatalog() -> DocumentationCatalog? {
+        return (try? dataProvider.catalogs(options: catalogDiscoveryOptions)).map(sorted(catalogs:))?.first
+    }
+    
+    @available(*, deprecated, renamed: "firstAvailableCatalog")
+    public func firstAvailableBundle() -> DocumentationCatalog? {
+        return firstAvailableCatalog()
+    }
+    
+    /// Sorts a list of catalogs by the catalog identifier.
+    private func sorted(catalogs: [DocumentationCatalog]) -> [DocumentationCatalog] {
+        return catalogs.sorted(by: \.identifier)
     }
     
     mutating public func convert<OutputConsumer: ConvertOutputConsumer>(
         outputConsumer: OutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem]) {
-        // Unregister the current file data provider and all its bundles
+        // Unregister the current file data provider and all its catalogs
         // when running repeated conversions.
         if let dataProvider = self.currentDataProvider {
             try workspace.unregisterProvider(dataProvider)
@@ -205,11 +230,11 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         }
         cancelTimer.resume()
         
-        // Start bundle registration
-        try workspace.registerProvider(dataProvider, options: bundleDiscoveryOptions)
+        // Start catalog registration
+        try workspace.registerProvider(dataProvider, options: catalogDiscoveryOptions)
         self.currentDataProvider = dataProvider
 
-        // Bundle registration is finished - stop the timer and reset the context cancellation state.
+        // Catalog registration is finished - stop the timer and reset the context cancellation state.
         cancelTimer.cancel()
         cancelTimerQueue = nil
         context.setRegistrationEnabled(true)
@@ -217,18 +242,18 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         // If cancelled, return early before we emit diagnostics.
         guard !isConversionCancelled() else { return ([], []) }
         
-        let bundles = try sorted(bundles: dataProvider.bundles(options: bundleDiscoveryOptions))
-        guard !bundles.isEmpty else {
+        let catalogs = try sorted(catalogs: dataProvider.catalogs(options: catalogDiscoveryOptions))
+        guard !catalogs.isEmpty else {
             if let rootURL = rootURL {
-                throw Error.doesNotContainBundle(url: rootURL)
+                throw Error.doesNotContainCatalog(url: rootURL)
             } else {
                 try outputConsumer.consume(problems: context.problems)
-                throw GeneratedDataProvider.Error.notEnoughDataToGenerateBundle(options: bundleDiscoveryOptions, underlyingError: nil)
+                throw GeneratedDataProvider.Error.notEnoughDataToGenerateCatalog(options: catalogDiscoveryOptions, underlyingError: nil)
             }
         }
         
-        // For now, we only support one bundle.
-        let bundle = bundles.first!
+        // For now, we only support one catalog.
+        let catalog = catalogs.first!
         
         guard !context.problems.containsErrors else {
             if emitDigest {
@@ -238,12 +263,12 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         }
         
         // Precompute the render context
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
         
         try outputConsumer.consume(renderReferenceStore: renderContext.store)
         
         let converter = DocumentationContextConverter(
-            bundle: bundle,
+            catalog: catalog,
             context: context,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
@@ -325,7 +350,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         // Copy images, sample files, and other static assets.
         do {
-            try outputConsumer.consume(assetsInBundle: bundle)
+            try outputConsumer.consume(assetsInCatalog: catalog)
         } catch {
             conversionProblems.append(.init(description: error.localizedDescription, source: nil))
             diagnosticEngine.emit(.init(description: error.localizedDescription, source: nil))
@@ -367,8 +392,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         try outputConsumer.consume(
             buildMetadata: BuildMetadata(
-                bundleDisplayName: bundle.displayName,
-                bundleIdentifier: bundle.identifier
+                catalogDisplayName: catalog.displayName,
+                catalogIdentifier: catalog.identifier
             )
         )
         
@@ -413,14 +438,14 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     }
     
     enum Error: DescribedError {
-        case doesNotContainBundle(url: URL)
+        case doesNotContainCatalog(url: URL)
         
         var errorDescription: String {
             switch self {
-            case .doesNotContainBundle(let url):
+            case .doesNotContainCatalog(let url):
                 return """
                     The directory at '\(url)' and its subdirectories do not contain at least one \
-                    valid documentation bundle. A documentation bundle is a directory ending in \
+                    valid documentation catalog. A documentation catalog is a directory ending in \
                     `.docc`.
                     """
             }

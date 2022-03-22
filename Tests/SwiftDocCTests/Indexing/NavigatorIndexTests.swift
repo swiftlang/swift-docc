@@ -14,7 +14,7 @@ import XCTest
 typealias Node = NavigatorTree.Node
 typealias PageType = NavigatorIndex.PageType
 
-let testBundleIdentifier = "org.swift.docc.example"
+let testCatalogIdentifier = "org.swift.docc.example"
 
 class NavigatorIndexingTests: XCTestCase {
     
@@ -31,7 +31,7 @@ class NavigatorIndexingTests: XCTestCase {
     func generateLargeTree() -> Node {
         var index = 1
         let rootItem = NavigatorItem(pageType: 1, languageID: Language.all.rawValue, title: "Root", platformMask: 1, availabilityID: 1)
-        let root = Node(item: rootItem, bundleIdentifier: "org.swift.docc.example")
+        let root = Node(item: rootItem, catalogIdentifier: "org.swift.docc.example")
         
         @discardableResult func addItems(n: Int, items: [Node], language: Language) -> [Node] {
             var leaves = [Node]()
@@ -41,7 +41,7 @@ class NavigatorIndexingTests: XCTestCase {
                 guard Language(rawValue: parent.item.languageID).contains(language) else {
                     fatalError("The parent must include the language of a child. Having children with languages not included by the parent is not allowed.")
                 }
-                let node = Node(item: item, bundleIdentifier: "org.swift.docc.example")
+                let node = Node(item: item, catalogIdentifier: "org.swift.docc.example")
                 parent.add(child: node)
                 leaves.append(node)
                 index += 1
@@ -68,7 +68,7 @@ class NavigatorIndexingTests: XCTestCase {
     func generateSmallTree() -> Node {
         var index = 1
         let rootItem = NavigatorItem(pageType: 1, languageID: Language.all.rawValue, title: "Root", platformMask: 1, availabilityID: 1)
-        let root = Node(item: rootItem, bundleIdentifier: "org.swift.docc.example")
+        let root = Node(item: rootItem, catalogIdentifier: "org.swift.docc.example")
         
         @discardableResult func addItems(n: Int, items: [Node], language: Language) -> [Node] {
             var leaves = [Node]()
@@ -78,7 +78,7 @@ class NavigatorIndexingTests: XCTestCase {
                 guard Language(rawValue: parent.item.languageID).contains(language) else {
                     fatalError("The parent must include the language of a child. Having children with languages not included by the parent is not allowed.")
                 }
-                let node = Node(item: item, bundleIdentifier: "org.swift.docc.example")
+                let node = Node(item: item, catalogIdentifier: "org.swift.docc.example")
                 parent.add(child: node)
                 leaves.append(node)
                 index += 1
@@ -96,17 +96,17 @@ class NavigatorIndexingTests: XCTestCase {
     
     func testBasicTree() {
         let rootItem = NavigatorItem(pageType: 1, languageID: 1, title: "Root", platformMask: 1, availabilityID: 1)
-        let root = Node(item: rootItem, bundleIdentifier: "org.swift.docc.example")
+        let root = Node(item: rootItem, catalogIdentifier: "org.swift.docc.example")
         
         for i in 0..<2 {
             let item = NavigatorItem(pageType: 1, languageID: 1, title: "Sub Item \(i)", platformMask: 1, availabilityID: 1)
-            root.add(child: Node(item: item, bundleIdentifier: "org.swift.docc.example"))
+            root.add(child: Node(item: item, catalogIdentifier: "org.swift.docc.example"))
         }
         
         for child in root.children {
             for i in 0..<3 {
                 let item = NavigatorItem(pageType: 1, languageID: 1, title: "\(child.item.title) - \(i)", platformMask: 1, availabilityID: 1)
-                child.add(child: Node(item: item, bundleIdentifier: "org.swift.docc.example"))
+                child.add(child: Node(item: item, catalogIdentifier: "org.swift.docc.example"))
             }
         }
         
@@ -173,7 +173,7 @@ Root
         
         let original = NavigatorTree(root: root)
         try original.write(to: indexURL)
-        let readTree = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: true)
+        let readTree = try NavigatorTree.read(from: indexURL, catalogIdentifier: testCatalogIdentifier, interfaceLanguages: [.swift], atomically: true)
         
         XCTAssertEqual(original.root.countItems(), readTree.root.countItems())
         XCTAssertTrue(compare(lhs: original.root, rhs: readTree.root))
@@ -182,8 +182,8 @@ Root
             return node.id != nil
         }
         
-        let bundleIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
-            return !node.bundleIdentifier.isEmpty
+        let catalogIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
+            return !node.catalogIdentifier.isEmpty
         }
         
         let emptyPresentationIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
@@ -191,24 +191,24 @@ Root
         }
         
         XCTAssertTrue(validateTree(node: readTree.root, validator: idValidator), "The tree has IDs missing.")
-        XCTAssertTrue(validateTree(node: readTree.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
+        XCTAssertTrue(validateTree(node: readTree.root, validator: catalogIdentifierValidator), "The tree has catalog identifier missing.")
         XCTAssertTrue(validateTree(node: readTree.root, validator: emptyPresentationIdentifierValidator), "The tree has a presentation identifier set which should not be present.")
         
-        var treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: true, presentationIdentifier: "com.example.test")
+        var treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, catalogIdentifier: testCatalogIdentifier, interfaceLanguages: [.swift], atomically: true, presentationIdentifier: "com.example.test")
         
         let presentationIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
             return node.presentationIdentifier == "com.example.test"
         }
         
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: idValidator), "The tree has IDs missing.")
-        XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
+        XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: catalogIdentifierValidator), "The tree has catalog identifier missing.")
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
         
         // Test non-atomic read.
-        treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: false, presentationIdentifier: "com.example.test")
+        treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, catalogIdentifier: testCatalogIdentifier, interfaceLanguages: [.swift], atomically: false, presentationIdentifier: "com.example.test")
         
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: idValidator), "The tree has IDs missing.")
-        XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
+        XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: catalogIdentifierValidator), "The tree has catalog identifier missing.")
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
     }
     
@@ -274,7 +274,7 @@ Root
     func testNavigatorIndexGenerationEmpty() throws {
         let targetURL = try createTemporaryDirectory()
         
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier)
         builder.setup()
         builder.finalize()
                
@@ -306,7 +306,7 @@ Root
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")
         
-        let original = NavigatorTree(root: NavigatorTree.rootNode(bundleIdentifier: NavigatorIndex.UnknownBundleIdentifier))
+        let original = NavigatorTree(root: NavigatorTree.rootNode(catalogIdentifier: NavigatorIndex.UnknownCatalogIdentifier))
         try original.write(to: indexURL)
         
         // Counts the number of times the broadcast callback is called.
@@ -335,7 +335,7 @@ Root
 
         let targetURL = try createTemporaryDirectory()
 
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier)
         builder.setup()
         try builder.index(renderNode: renderNode)
         builder.finalize(emitJSONRepresentation: false, emitLMDBRepresentation: false)
@@ -344,15 +344,15 @@ Root
     }
     
     func testNavigatorIndexGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
+        let converter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
         var results = Set<String>()
         
         // Create an index 10 times to ensure we have not undeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier, sortRootChildrenByName: true)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -384,7 +384,7 @@ Root
             XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
             XCTAssertEqual(navigatorIndex.navigatorTree.root.countItems(), navigatorIndex.navigatorTree.numericIdentifierToNode.count)
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
-                return node.bundleIdentifier == testBundleIdentifier
+                return node.catalogIdentifier == testCatalogIdentifier
             }))
             
             let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
@@ -406,7 +406,7 @@ Root
         let jsonData = try Data(contentsOf: jsonFile)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         
         let renderNode = try XCTUnwrap(RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: jsonData))
@@ -493,15 +493,15 @@ Root
     }
     
     func testNavigatorIndexUsingPageTitleGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
+        let converter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
         var results = Set<String>()
         
         // Create an index 10 times to ensure we have not undeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, usePageTitle: true)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier, sortRootChildrenByName: true, usePageTitle: true)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -525,7 +525,7 @@ Root
             XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
             XCTAssertEqual(navigatorIndex.navigatorTree.root.countItems(), navigatorIndex.navigatorTree.numericIdentifierToNode.count)
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
-                return node.bundleIdentifier == testBundleIdentifier
+                return node.catalogIdentifier == testCatalogIdentifier
             }))
             
             let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
@@ -543,14 +543,14 @@ Root
     }
     
     func testNavigatorIndexGenerationNoPaths() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
         var results = Set<String>()
         
         // Create an index 10 times to ensure we have not undeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, writePathsOnDisk: false)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier, sortRootChildrenByName: true, writePathsOnDisk: false)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -575,7 +575,7 @@ Root
             XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
             XCTAssertEqual(navigatorIndex.navigatorTree.root.countItems(), navigatorIndex.navigatorTree.numericIdentifierToNode.count)
             XCTAssertTrue(validateTree(node: navigatorIndex.navigatorTree.root, validator: { (node) -> Bool in
-                return node.bundleIdentifier == testBundleIdentifier
+                return node.catalogIdentifier == testCatalogIdentifier
             }))
             
             let allNodes = navigatorIndex.navigatorTree.numericIdentifierToNode.values
@@ -598,12 +598,12 @@ Root
     }
     
     func testNavigatorIndexGenerationWithLanguageGrouping() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
+        let converter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -645,15 +645,15 @@ Root
 
     
     func testNavigatorIndexGenerationWithCuratedFragment() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
+        let converter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
         var results = Set<String>()
         
         // Create an index 10 times to ensure we have no undeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
-            let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
+            let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier, sortRootChildrenByName: true)
             builder.setup()
             
             for identifier in context.knownPages {
@@ -708,12 +708,12 @@ Root
     }
     
     func testNavigatorIndexAvailabilityGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
+        let converter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier, sortRootChildrenByName: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -728,7 +728,7 @@ Root
         let navigatorIndex = try NavigatorIndex(url: targetURL)
         
         XCTAssertEqual(navigatorIndex.pathHasher, .md5)
-        XCTAssertEqual(navigatorIndex.bundleIdentifier, testBundleIdentifier)
+        XCTAssertEqual(navigatorIndex.catalogIdentifier, testCatalogIdentifier)
         XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .iOS, .macCatalyst, .tvOS, .macOS])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .macOS), Set([
             Platform.Version(string: "10.9")!,
@@ -805,12 +805,12 @@ Root
     }
     
     func testNavigatorIndexDifferenHasherGeneration() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
+        let converter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: testCatalogIdentifier, sortRootChildrenByName: true)
         builder.setup()
         
         // Change the path hasher to the FNV-1 implementation and make sure paths and mappings are still working.
@@ -966,28 +966,28 @@ Root
                                                                     title: "Top Page",
                                                                     platformMask: 0,
                                                                     availabilityID: 0),
-                                                bundleIdentifier: "com.test.bundle")
+                                                catalogIdentifier: "com.test.catalog")
         
         let navigatorNode2 = NavigatorTree.Node(item: NavigatorItem(pageType: 0,
                                                                     languageID: 0,
                                                                     title: "Middle Page",
                                                                     platformMask: 0,
                                                                     availabilityID: 0),
-                                                bundleIdentifier: "com.test.bundle")
+                                                catalogIdentifier: "com.test.catalog")
         
         let navigatorNode3 = NavigatorTree.Node(item: NavigatorItem(pageType: 0,
                                                                     languageID: 0,
                                                                     title: "Bottom Page",
                                                                     platformMask: 0,
                                                                     availabilityID: 0),
-                                                bundleIdentifier: "com.test.bundle")
+                                                catalogIdentifier: "com.test.catalog")
         
         let navigatorNode4 = NavigatorTree.Node(item: NavigatorItem(pageType: 0,
                                                                     languageID: 0,
                                                                     title: "Multi Page",
                                                                     platformMask: 0,
                                                                     availabilityID: 0),
-                                                bundleIdentifier: "com.test.bundle")
+                                                catalogIdentifier: "com.test.catalog")
         
         navigatorNode1.add(child: navigatorNode2)
         navigatorNode1.add(child: navigatorNode4.copy())
@@ -1254,11 +1254,11 @@ Root
     }
     
     func testNavigatorIndexAsReadOnlyFile() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
         
         let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: "org.swift.docc.test", sortRootChildrenByName: true)
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, catalogIdentifier: "org.swift.docc.test", sortRootChildrenByName: true)
         builder.setup()
         
         for identifier in context.knownPages {
@@ -1424,7 +1424,7 @@ Root
                 title: "",
                 platformMask: 0,
                 availabilityID: 0),
-            bundleIdentifier: ""
+            catalogIdentifier: ""
         )
         node.presentationIdentifier = "the-disambiguator"
         XCTAssertEqual(node.presentationIdentifier, "the-disambiguator")

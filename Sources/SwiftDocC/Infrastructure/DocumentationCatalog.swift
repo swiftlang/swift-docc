@@ -11,14 +11,14 @@
 import Foundation
 
 /**
- A documentation bundle.
+ A documentation catalog.
 
- A documentation bundle stores all of the authored content and metadata for a collection of topics and/or frameworks.
+ A documentation catalog stores all of the authored content and metadata for a collection of topics and/or frameworks.
 
- No content data is immediately loaded when creating a `DocumentationBundle` except for its `Info.plist`. Its purpose is to provide paths on disk for documentation resources.
+ No content data is immediately loaded when creating a `DocumentationCatalog` except for its `Info.plist`. Its purpose is to provide paths on disk for documentation resources.
 
  ## Topics
- ### Bundle Metadata
+ ### Catalog Metadata
 
  - ``displayName``
  - ``identifier``
@@ -26,7 +26,7 @@ import Foundation
  - ``defaultCodeListingLanguage``
  - ``defaultAvailability``
  */
-public struct DocumentationBundle {
+public struct DocumentationCatalog {
     public enum PropertyListError: DescribedError {
         case invalidVersionString(String)
         case keyNotFound(String)
@@ -41,29 +41,29 @@ public struct DocumentationBundle {
         }
     }
     
-    /// Information about this documentation bundle that's unrelated to its documentation content.
+    /// Information about this documentation catalog that's unrelated to its documentation content.
     public let info: Info
     
     /**
-     The bundle's human-readable display name.
+     The catalog's human-readable display name.
      */
     public var displayName: String {
         info.displayName
     }
     
     /**
-     The documentation bundle identifier.
+     The documentation catalog identifier.
 
-     An identifier string that specifies the app type of the bundle. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
+     An identifier string that specifies the app type of the catalog. The string should be in reverse DNS format using only the Roman alphabet in upper and lower case (A–Z, a–z), the dot (“.”), and the hyphen (“-”).
      */
     public var identifier: String {
         info.identifier
     }
 
     /**
-     The documentation bundle's version.
+     The documentation catalog's version.
 
-     It's not safe to make computations based on assumptions about the format of bundle's version. The version can be in any format.
+     It's not safe to make computations based on assumptions about the format of catalog's version. The version can be in any format.
      */
     public var version: String? {
         info.version
@@ -72,13 +72,13 @@ public struct DocumentationBundle {
     /// Code listings extracted from the documented modules' source, indexed by their identifier.
     public var attributedCodeListings: [String: AttributedCodeListing]
     
-    /// Symbol Graph JSON files for the modules documented by this bundle.
+    /// Symbol Graph JSON files for the modules documented by this catalog.
     public let symbolGraphURLs: [URL]
     
-    /// DocC Markup files of the bundle.
+    /// DocC Markup files of the catalog.
     public let markupURLs: [URL]
     
-    /// Miscellaneous resources of the bundle.
+    /// Miscellaneous resources of the catalog.
     public let miscResourceURLs: [URL]
 
     /// Custom HTML file to use as the header for rendered output.
@@ -87,7 +87,7 @@ public struct DocumentationBundle {
     /// Custom HTML file to use as the footer for rendered output.
     public let customFooter: URL?
 
-    /// Default syntax highlighting to use for code samples in this bundle.
+    /// Default syntax highlighting to use for code samples in this catalog.
     @available(*, deprecated, message: "Use 'info.defaultCodeListingLanguage' instead.")
     public var defaultCodeListingLanguage: String? {
         return info.defaultCodeListingLanguage
@@ -101,23 +101,23 @@ public struct DocumentationBundle {
     /**
     A URL prefix to be appended to the relative presentation URL.
     
-    This is used when a bundle's documentation is hosted in a known location.
+    This is used when a catalog's documentation is hosted in a known location.
     */
     public let baseURL: URL
     
     /**
-     Creates a documentation bundle.
+     Creates a documentation catalog.
      
      - Parameters:
-       - displayName: The display name of the documentation bundle.
-       - identifier: A reverse-DNS style identifier indicating the documentation bundle.
-       - version: The version of the documentation bundle.
+       - displayName: The display name of the documentation catalog.
+       - identifier: A reverse-DNS style identifier indicating the documentation catalog.
+       - version: The version of the documentation catalog.
        - attributedCodeListings: Code listings extracted from the documented modules' source, indexed by their identifier.
-       - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the bundle.
-       - markupURLs: DocC Markup files of the bundle.
-       - miscResourceURLs: Miscellaneous resources of the bundle.
+       - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the catalog.
+       - markupURLs: DocC Markup files of the catalog.
+       - miscResourceURLs: Miscellaneous resources of the catalog.
        - defaultCodeListingLanguage: The default language for code blocks.
-       - defaultAvailability: Default availability information for modules in this bundle.
+       - defaultAvailability: Default availability information for modules in this catalog.
      */
     @available(*, deprecated, message: "Use 'init(info:baseURL:...)' instead.")
     public init(displayName: String, identifier: String, version: Version, baseURL: URL = URL(string: "/")!, attributedCodeListings: [String: AttributedCodeListing] = [:], symbolGraphURLs: [URL], markupURLs: [URL], miscResourceURLs: [URL], customHeader: URL? = nil, customFooter: URL? = nil, defaultCodeListingLanguage: String? = nil, defaultAvailability: DefaultAvailability? = nil) {
@@ -137,15 +137,15 @@ public struct DocumentationBundle {
         )
     }
     
-    /// Creates a documentation bundle.
+    /// Creates a documentation catalog.
     ///
     /// - Parameters:
-    ///   - info: Information about the bundle.
+    ///   - info: Information about the catalog.
     ///   - baseURL: A URL prefix to be appended to the relative presentation URL.
     ///   - attributedCodeListings: Code listings extracted from the documented modules' source, indexed by their identifier.
-    ///   - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the bundle.
-    ///   - markupURLs: DocC Markup files of the bundle.
-    ///   - miscResourceURLs: Miscellaneous resources of the bundle.
+    ///   - symbolGraphURLs: Symbol Graph JSON files for the modules documented by the catalog.
+    ///   - markupURLs: DocC Markup files of the catalog.
+    ///   - miscResourceURLs: Miscellaneous resources of the catalog.
     ///   - customHeader: Custom HTML file to use as the header for rendered output.
     ///   - customFooter: Custom HTML file to use as the footer for rendered output.
     public init(
@@ -166,9 +166,9 @@ public struct DocumentationBundle {
         self.miscResourceURLs = miscResourceURLs
         self.customHeader = customHeader
         self.customFooter = customFooter
-        self.rootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: "/", sourceLanguage: .swift)
-        self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
-        self.tutorialsRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
+        self.rootReference = ResolvedTopicReference(catalogIdentifier: info.identifier, path: "/", sourceLanguage: .swift)
+        self.documentationRootReference = ResolvedTopicReference(catalogIdentifier: info.identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
+        self.tutorialsRootReference = ResolvedTopicReference(catalogIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)
         self.technologyTutorialsRootReference = tutorialsRootReference.appendingPath(urlReadablePath(info.displayName))
         self.articlesDocumentationRootReference = documentationRootReference.appendingPath(urlReadablePath(info.displayName))
     }
@@ -187,3 +187,6 @@ public struct DocumentationBundle {
     /// Default path to resolve articles.
     public var articlesDocumentationRootReference: ResolvedTopicReference
 }
+
+@available(*, deprecated, renamed: "DocumentationCatalog")
+public typealias DocumentationBundle = DocumentationCatalog

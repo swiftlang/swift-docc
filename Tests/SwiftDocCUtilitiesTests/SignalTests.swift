@@ -23,7 +23,7 @@ class SignalTests: XCTestCase {
         }
         return xcTestBundle.bundleURL.deletingLastPathComponent()
         #else
-        return Bundle.main.bundleURL
+        return Bundle.main.catalogURL
         #endif
     }
     

@@ -11,23 +11,23 @@
 import Foundation
 import SymbolKit
 
-/// Loads symbol graph files from a documentation bundle.
+/// Loads symbol graph files from a documentation catalog.
 ///
-/// A type that groups a bundle's symbol graphs by the module they describe,
+/// A type that groups a catalog's symbol graphs by the module they describe,
 /// which makes detecting symbol collisions and overloads easier.
 struct SymbolGraphLoader {
     private(set) var symbolGraphs: [URL: SymbolKit.SymbolGraph] = [:]
     private(set) var unifiedGraphs: [String: SymbolKit.UnifiedSymbolGraph] = [:]
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private var dataProvider: DocumentationContextDataProvider
-    private var bundle: DocumentationBundle
+    private var catalog: DocumentationCatalog
     
-    /// Creates a new loader, initialized with the given bundle.
+    /// Creates a new loader, initialized with the given catalog.
     /// - Parameters:
-    ///   - bundle: The documentation bundle from which to load symbol graphs.
-    ///   - dataProvider: A data provider in the bundle's context.
-    init(bundle: DocumentationBundle, dataProvider: DocumentationContextDataProvider) {
-        self.bundle = bundle
+    ///   - catalog: The documentation catalog from which to load symbol graphs.
+    ///   - dataProvider: A data provider in the catalog's context.
+    init(catalog: DocumentationCatalog, dataProvider: DocumentationContextDataProvider) {
+        self.catalog = catalog
         self.dataProvider = dataProvider
     }
     
@@ -42,7 +42,7 @@ struct SymbolGraphLoader {
     /// The symbol graph decoding strategy to use.
     private(set) var decodingStrategy: DecodingConcurrencyStrategy = .concurrentlyEachFileInBatches
 
-    /// Loads all symbol graphs in the given bundle.
+    /// Loads all symbol graphs in the given catalog.
     ///
     /// - Throws: If loading and decoding any of the symbol graph files throws, this method re-throws one of the encountered errors.
     mutating func loadAll() throws {
@@ -52,7 +52,7 @@ struct SymbolGraphLoader {
         var loadedGraphs = [URL: SymbolKit.SymbolGraph]()
         let graphLoader = GraphCollector()
         var loadError: Error?
-        let bundle = self.bundle
+        let catalog = self.catalog
         let dataProvider = self.dataProvider
         
         let loadGraphAtURL: (URL) -> Void = { symbolGraphURL in
@@ -61,7 +61,7 @@ struct SymbolGraphLoader {
             
             do {
                 // Load and decode a single symbol graph file
-                let data = try dataProvider.contentsOfURL(symbolGraphURL, in: bundle)
+                let data = try dataProvider.contentsOfURL(symbolGraphURL, in: catalog)
                 
                 var symbolGraph: SymbolGraph
                 
@@ -74,7 +74,7 @@ struct SymbolGraphLoader {
 
                 // `moduleNameFor(_:at:)` is static because it's pure function.
                 let (moduleName, _) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
-                // If the bundle provides availability defaults add symbol availability data.
+                // If the catalog provides availability defaults add symbol availability data.
                 self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
 
                 // Store the decoded graph in `loadedGraphs`
@@ -93,7 +93,7 @@ struct SymbolGraphLoader {
         // This strategy benchmarks better when we have multiple
         // "larger" symbol graphs.
         #if os(macOS) || os(iOS)
-        if bundle.symbolGraphURLs.filter({ !$0.path.contains("@") }).count > 1 {
+        if catalog.symbolGraphURLs.filter({ !$0.path.contains("@") }).count > 1 {
             // There are multiple main symbol graphs, better parallelize all files decoding.
             decodingStrategy = .concurrentlyAllFiles
         }
@@ -102,11 +102,11 @@ struct SymbolGraphLoader {
         switch decodingStrategy {
         case .concurrentlyAllFiles:
             // Concurrently load and decode all symbol graphs
-            bundle.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
+            catalog.symbolGraphURLs.concurrentPerform(block: loadGraphAtURL)
             
         case .concurrentlyEachFileInBatches:
             // Serially load and decode all symbol graphs, each one in concurrent batches.
-            bundle.symbolGraphURLs.forEach(loadGraphAtURL)
+            catalog.symbolGraphURLs.forEach(loadGraphAtURL)
         }
         
         // In case any of the symbol graphs errors, re-throw the error.
@@ -148,11 +148,11 @@ struct SymbolGraphLoader {
         return (symbolGraph, isMainSymbolGraph)
     }
     
-    /// If the bundle defines default availability for the symbols in the given symbol graph
+    /// If the catalog defines default availability for the symbols in the given symbol graph
     /// this method adds them to each of the symbols in the graph.
     private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
         // Check if there are defined default availabilities for the current module
-        if let defaultAvailabilities = bundle.info.defaultAvailability?.modules[moduleName],
+        if let defaultAvailabilities = catalog.info.defaultAvailability?.modules[moduleName],
             let platformName = symbolGraph.module.platform.name.map(PlatformName.init) {
             
             // Prepare a default availability lookup for this module.
@@ -263,9 +263,9 @@ struct SymbolGraphLoader {
         return (moduleName, isMainSymbolGraph)
     }
 
-    /// Returns the next-available symbol graph in the bundle.
+    /// Returns the next-available symbol graph in the catalog.
     /// - Parameter isMainSymbolGraph: An inout Boolean, if `false` the returned symbol graph is an extension to another symbol graph.
-    /// - Returns: The next symbol graph in the bundle and its URL, or `nil` if there are no more symbol graphs.
+    /// - Returns: The next symbol graph in the catalog and its URL, or `nil` if there are no more symbol graphs.
     mutating func next(isMainSymbolGraph: inout Bool) throws -> (url: URL, symbolGraph: SymbolGraph)? {
         isMainSymbolGraph = false
         guard !symbolGraphs.isEmpty else { return nil }
@@ -343,7 +343,7 @@ extension SymbolGraph.Symbol.Availability.AvailabilityItem {
      in from the `defaults`. If the defaults do not have a version for
      this item's domain/platform, also try the `fallbackPlatform`.
 
-     - parameter defaults: Default module availabilities for each platform mentioned in a documentation bundle's `Info.plist`
+     - parameter defaults: Default module availabilities for each platform mentioned in a documentation catalog's `Info.plist`
      - parameter fallbackPlatform: An optional fallback platform name if this item's domain isn't found in the `defaults`.
      For example, `macCatalyst` should fall back to `iOS` because `macCatalyst` symbols are originally `iOS` symbols.
      */

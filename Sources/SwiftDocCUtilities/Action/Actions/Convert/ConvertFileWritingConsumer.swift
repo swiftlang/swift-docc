@@ -13,7 +13,7 @@ import SwiftDocC
 
 struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     var targetFolder: URL
-    var bundleRootFolder: URL?
+    var catalogRootFolder: URL?
     var fileManager: FileManagerProtocol
     var context: DocumentationContext
     var renderNodeWriter: JSONEncodingRenderNodeWriter
@@ -25,9 +25,9 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         case footer = "custom-footer"
     }
     
-    init(targetFolder: URL, bundleRootFolder: URL?, fileManager: FileManagerProtocol, context: DocumentationContext, indexer: ConvertAction.Indexer?, enableCustomTemplates: Bool = false) {
+    init(targetFolder: URL, catalogRootFolder: URL?, fileManager: FileManagerProtocol, context: DocumentationContext, indexer: ConvertAction.Indexer?, enableCustomTemplates: Bool = false) {
         self.targetFolder = targetFolder
-        self.bundleRootFolder = bundleRootFolder
+        self.catalogRootFolder = catalogRootFolder
         self.fileManager = fileManager
         self.context = context
         self.renderNodeWriter = JSONEncodingRenderNodeWriter(
@@ -38,7 +38,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     
     func consume(problems: [Problem]) throws {
         let diagnostics = problems.map { problem in
-            Digest.Diagnostic(diagnostic: problem.diagnostic, rootURL: bundleRootFolder)
+            Digest.Diagnostic(diagnostic: problem.diagnostic, rootURL: catalogRootFolder)
         }
         let problemsURL = targetFolder.appendingPathComponent("diagnostics.json", isDirectory: false)
         let data = try encode(diagnostics)
@@ -53,7 +53,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         indexer?.index(renderNode)
     }
     
-    func consume(assetsInBundle bundle: DocumentationBundle) throws {
+    func consume(assetsInCatalog catalog: DocumentationCatalog) throws {
         func copyAsset(_ asset: DataAsset, to destinationFolder: URL) throws {
             for sourceURL in asset.variants.values {
                 let assetName = sourceURL.lastPathComponent
@@ -64,8 +64,8 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
             }
         }
 
-        // TODO: Supporting a single bundle for the moment.
-        let bundleIdentifier = bundle.identifier
+        // TODO: Supporting a single catalog for the moment.
+        let catalogIdentifier = catalog.identifier
         
         // Create images directory if needed.
         let imagesDirectory = targetFolder.appendingPathComponent("images", isDirectory: true)
@@ -74,7 +74,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         }
         
         // Copy all registered images to the output directory.
-        for imageAsset in context.registeredImageAssets(forBundleID: bundleIdentifier) {
+        for imageAsset in context.registeredImageAssets(forCatalogID: catalogIdentifier) {
             try copyAsset(imageAsset, to: imagesDirectory)
         }
         
@@ -85,7 +85,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         }
         
         // Copy all registered videos to the output directory.
-        for videoAsset in context.registeredVideoAssets(forBundleID: bundleIdentifier) {
+        for videoAsset in context.registeredVideoAssets(forCatalogID: catalogIdentifier) {
             try copyAsset(videoAsset, to: videosDirectory)
         }
         
@@ -96,21 +96,21 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         }
 
         // Copy all downloads into the output directory.
-        for downloadAsset in context.registeredDownloadsAssets(forBundleID: bundleIdentifier) {
+        for downloadAsset in context.registeredDownloadsAssets(forCatalogID: catalogIdentifier) {
             try copyAsset(downloadAsset, to: downloadsDirectory)
         }
 
-        // If the bundle contains a `header.html` file, inject a <template> into
+        // If the catalog contains a `header.html` file, inject a <template> into
         // the `index.html` file using its contents. This will only be done if
         // the --experimental-enable-custom-templates flag is given
-        if let customHeader = bundle.customHeader, enableCustomTemplates {
+        if let customHeader = catalog.customHeader, enableCustomTemplates {
             try injectCustomTemplate(customHeader, identifiedBy: .header)
         }
 
-        // If the bundle contains a `footer.html` file, inject a <template> into
+        // If the catalog contains a `footer.html` file, inject a <template> into
         // the `index.html` file using its contents. This will only be done if
         // the --experimental-enable-custom-templates flag is given
-        if let customFooter = bundle.customFooter, enableCustomTemplates {
+        if let customFooter = catalog.customFooter, enableCustomTemplates {
             try injectCustomTemplate(customFooter, identifiedBy: .footer)
         }
     }

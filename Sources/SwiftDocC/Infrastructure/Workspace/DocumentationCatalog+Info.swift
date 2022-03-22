@@ -10,27 +10,27 @@
 
 import Foundation
 
-extension DocumentationBundle {
-    /// Information about a documentation bundle that's unrelated to its documentation content.
+extension DocumentationCatalog {
+    /// Information about a documentation catalog that's unrelated to its documentation content.
     ///
-    /// This information is meant to be decoded from the bundle's Info.plist file.
+    /// This information is meant to be decoded from the catalog's Info.plist file.
     public struct Info: Codable, Equatable {
-        /// The display name of the bundle.
+        /// The display name of the catalog.
         public var displayName: String
         
-        /// The unique identifier of the bundle.
+        /// The unique identifier of the catalog.
         public var identifier: String
         
-        /// The version of the bundle.
+        /// The version of the catalog.
         public var version: String?
         
-        /// The default language identifier for code listings in the bundle.
+        /// The default language identifier for code listings in the catalog.
         public var defaultCodeListingLanguage: String?
         
-        /// The default availability for the various modules in the bundle.
+        /// The default availability for the various modules in the catalog.
         public var defaultAvailability: DefaultAvailability?
         
-        /// The default kind for the various modules in the bundle.
+        /// The default kind for the various modules in the catalog.
         public var defaultModuleKind: String?
         
         /// The keys that must be present in an Info.plist file in order for doc compilation to proceed.
@@ -49,9 +49,9 @@ extension DocumentationBundle {
                 case .displayName:
                     return "--fallback-display-name"
                 case .identifier:
-                    return "--fallback-bundle-identifier"
+                    return "--fallback-catalog-identifier"
                 case .version:
-                    return "--fallback-bundle-version"
+                    return "--fallback-catalog-version"
                 case .defaultCodeListingLanguage:
                     return "--default-code-listing-language"
                 case .defaultModuleKind:
@@ -73,45 +73,45 @@ extension DocumentationBundle {
             }
         }
         
-        /// Creates documentation bundle information from the given Info.plist data, falling back to the values
-        /// in the given bundle discovery options if necessary.
+        /// Creates documentation catalog information from the given Info.plist data, falling back to the values
+        /// in the given catalog discovery options if necessary.
         init(
             from infoPlist: Data? = nil,
-            bundleDiscoveryOptions options: BundleDiscoveryOptions? = nil
+            catalogDiscoveryOptions options: CatalogDiscoveryOptions? = nil
         ) throws {
             if let infoPlist = infoPlist {
                 let propertyListDecoder = PropertyListDecoder()
                 
                 if let options = options {
-                    propertyListDecoder.userInfo[.bundleDiscoveryOptions] = options
+                    propertyListDecoder.userInfo[.catalogDiscoveryOptions] = options
                 }
                 
                 self = try propertyListDecoder.decode(
-                    DocumentationBundle.Info.self,
+                    DocumentationCatalog.Info.self,
                     from: infoPlist
                 )
             } else {
-                try self.init(with: nil, bundleDiscoveryOptions: options)
+                try self.init(with: nil, catalogDiscoveryOptions: options)
             }
         }
         
         public init(from decoder: Decoder) throws {
-            let bundleDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? BundleDiscoveryOptions
+            let catalogDiscoveryOptions = decoder.userInfo[.catalogDiscoveryOptions] as? CatalogDiscoveryOptions
             
             try self.init(
                 with: decoder.container(keyedBy: CodingKeys.self),
-                bundleDiscoveryOptions: bundleDiscoveryOptions
+                catalogDiscoveryOptions: catalogDiscoveryOptions
             )
         }
         
         private init(
-            with values: KeyedDecodingContainer<DocumentationBundle.Info.CodingKeys>?,
-            bundleDiscoveryOptions: BundleDiscoveryOptions?
+            with values: KeyedDecodingContainer<DocumentationCatalog.Info.CodingKeys>?,
+            catalogDiscoveryOptions: CatalogDiscoveryOptions?
         ) throws {
             // Here we define two helper functions that simplify
             // the decoding logic where we'll need to first check if the value
             // is in the Codable container, and then fall back to the
-            // Info.plist fallbacks in the bundle discovery options if necessary.
+            // Info.plist fallbacks in the catalog discovery options if necessary.
             
             /// Helper function that decodes a value of the given type for the given key,
             /// if present in either the Codable container or Info.plist fallbacks.
@@ -120,7 +120,7 @@ extension DocumentationBundle {
                 with key: CodingKeys
             ) throws -> T? where T : Decodable {
                 try values?.decodeIfPresent(T.self, forKey: key)
-                    ?? bundleDiscoveryOptions?.infoPlistFallbacks.decodeIfPresent(T.self, forKey: key.rawValue)
+                    ?? catalogDiscoveryOptions?.infoPlistFallbacks.decodeIfPresent(T.self, forKey: key.rawValue)
             }
             
             /// Helper function that decodes a value of the given type for the given key
@@ -128,13 +128,13 @@ extension DocumentationBundle {
             func decodeOrFallback<T>(
                 _ expectedType: T.Type, with key: CodingKeys
             ) throws -> T where T : Decodable {
-                if let bundleDiscoveryOptions = bundleDiscoveryOptions {
+                if let catalogDiscoveryOptions = catalogDiscoveryOptions {
                     return try values?.decodeIfPresent(T.self, forKey: key)
-                        ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
+                        ?? catalogDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
                 } else if let values = values {
                     return try values.decode(T.self, forKey: key)
                 } else {
-                    throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)
+                    throw DocumentationCatalog.PropertyListError.keyNotFound(key.rawValue)
                 }
             }
             
@@ -145,7 +145,7 @@ extension DocumentationBundle {
             // **all** missing required keys, instead of just the first one hit.
             
             let givenKeys = Set(values?.allKeys ?? []).union(
-                bundleDiscoveryOptions?.infoPlistFallbacks.keys.compactMap {
+                catalogDiscoveryOptions?.infoPlistFallbacks.keys.compactMap {
                     CodingKeys(stringValue: $0)
                 } ?? []
             )
@@ -189,19 +189,19 @@ extension DocumentationBundle {
     }
 }
 
-extension BundleDiscoveryOptions {
-    /// Creates new bundle discovery options with the given information.
+extension CatalogDiscoveryOptions {
+    /// Creates new catalog discovery options with the given information.
     ///
-    /// The given fallback values will be used if any of the discovered bundles are missing that
+    /// The given fallback values will be used if any of the discovered catalogs are missing that
     /// value in their Info.plist configuration file.
     ///
     /// - Parameters:
-    ///   - fallbackDisplayName: A fallback display name for the bundle.
-    ///   - fallbackIdentifier: A fallback identifier for the bundle.
-    ///   - fallbackVersion: A fallback version for the bundle.
-    ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the bundle.
-    ///   - fallbackDefaultAvailability: A fallback default availability for the bundle.
-    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered bundles.
+    ///   - fallbackDisplayName: A fallback display name for the catalog.
+    ///   - fallbackIdentifier: A fallback identifier for the catalog.
+    ///   - fallbackVersion: A fallback version for the catalog.
+    ///   - fallbackDefaultCodeListingLanguage: A fallback default code listing language for the catalog.
+    ///   - fallbackDefaultAvailability: A fallback default availability for the catalog.
+    ///   - additionalSymbolGraphFiles: Additional symbol graph files to augment any discovered catalogs.
     public init(
         fallbackDisplayName: String? = nil,
         fallbackIdentifier: String? = nil,
@@ -216,7 +216,7 @@ extension BundleDiscoveryOptions {
         // This ensures that when new coding keys are added, the compiler will enforce
         // that we handle them here as well.
         
-        let fallbacks = DocumentationBundle.Info.CodingKeys.allCases.compactMap { key -> (String, Any)? in
+        let fallbacks = DocumentationCatalog.Info.CodingKeys.allCases.compactMap { key -> (String, Any)? in
             let value: Any?
             
             switch key {
@@ -249,6 +249,6 @@ extension BundleDiscoveryOptions {
 }
 
 private extension CodingUserInfoKey {
-    /// A user info key to store bundle discovery options in the decoder.
-    static let bundleDiscoveryOptions = CodingUserInfoKey(rawValue: "bundleDiscoveryOptions")!
+    /// A user info key to store catalog discovery options in the decoder.
+    static let catalogDiscoveryOptions = CodingUserInfoKey(rawValue: "catalogDiscoveryOptions")!
 }

@@ -8,7 +8,7 @@ When you are working on a PR to add a feature or fix a bug you should evaluate t
 
 ## Running a benchmark
 
-To benchmark the `convert` command with a given documentation bundle `MyFramework.docc` run:
+To benchmark the `convert` command with a given documentation catalog `MyFramework.docc` run:
 
 ```
 swift bin/benchmark.swift convert MyFramework.docc
@@ -26,17 +26,17 @@ swift bin/benchmark.swift --base-benchmark baseline-benchmark.json convert MyFra
 
 When you work on a particular feature and you want to track a given custom metric you can temporarily add it to the log.
 
-For example, to add a metric that counts the registered bundles, create a `BundlesCount` class that adopts the ``BenchmarkMetric`` protocol:
+For example, to add a metric that counts the registered catalogs, create a `CatalogsCount` class that adopts the ``BenchmarkMetric`` protocol:
 
 ```swift
-class BundlesCount: BenchmarkMetric {
-  static let identifier = "bundles-count"
-  static let displayName = "Bundles Count"
+class CatalogsCount: BenchmarkMetric {
+  static let identifier = "catalogs-count"
+  static let displayName = "Catalogs Count"
   
   var result: MetricValue?
   
   init(context: DocumentationContext) {
-    result = .number(Double(context.registeredBundles.count))
+    result = .number(Double(context.registeredCatalogs.count))
   }
 }
 ```
@@ -44,7 +44,7 @@ class BundlesCount: BenchmarkMetric {
 Add your custom metric to the default log by using ``benchmark(add:benchmarkLog:)``:
 
 ```swift
-benchmark(add: BundlesCount(context: context))
+benchmark(add: CatalogsCount(context: context))
 ```
 
 ## Topics

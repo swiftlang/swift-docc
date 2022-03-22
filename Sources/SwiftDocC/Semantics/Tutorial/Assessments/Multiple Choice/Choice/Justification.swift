@@ -40,12 +40,12 @@ public final class Justification: Semantic, DirectiveConvertible {
         }
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Justification.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Justification>(severityIfFound: .warning, allowedArguments: [Semantics.Reaction.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Justification>(severityIfFound: .warning, allowedArguments: [Semantics.Reaction.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Justification>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Justification>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let reaction = Semantic.Analyses.HasArgument<Justification, Semantics.Reaction>(severityIfNotFound: .none).analyze(directive, arguments: arguments, problems: &problems)
         

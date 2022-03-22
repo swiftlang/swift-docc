@@ -34,7 +34,7 @@ public final class DeprecationSummary: Semantic, DirectiveConvertible {
         super.init()
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == DeprecationSummary.directiveName)
         self.init(originalMarkup: directive, content: MarkupContainer(directive.children))
     }

@@ -27,17 +27,17 @@ struct LinkTitleResolver {
     /// - Parameter page: The page for which to resolve the title.
     /// - Returns: The variants of the link title for this page, or `nil` if the page doesn't exist in the context.
     func title(for page: DocumentationNode) -> DocumentationDataVariants<String>? {
-        if let bundle = context.bundle(identifier: page.reference.bundleIdentifier),
+        if let catalog = context.catalog(identifier: page.reference.catalogIdentifier),
            let directive = page.markup.child(at: 0) as? BlockDirective {
             
             var problems = [Problem]()
             switch directive.name {
             case Tutorial.directiveName:
-                if let tutorial = Tutorial(from: directive, source: source, for: bundle, in: context, problems: &problems) {
+                if let tutorial = Tutorial(from: directive, source: source, for: catalog, in: context, problems: &problems) {
                     return .init(defaultVariantValue: tutorial.intro.title)
                 }
             case Technology.directiveName:
-                if let overview = Technology(from: directive, source: source, for: bundle, in: context, problems: &problems) {
+                if let overview = Technology(from: directive, source: source, for: catalog, in: context, problems: &problems) {
                     return .init(defaultVariantValue: overview.name)
                 }
             default: break

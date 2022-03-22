@@ -19,9 +19,9 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let step = Step(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertEqual([
             "org.swift.docc.HasContent",
         ], problems.map { $0.diagnostic.identifier })
@@ -46,9 +46,9 @@ class StepTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let step = Step(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
         XCTAssertNotNil(step)
         
@@ -104,9 +104,9 @@ Step @1:1-9:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let step = Step(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let step = Step(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertEqual(2, problems.count)
         
         XCTAssertEqual([

@@ -22,9 +22,9 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
         
@@ -44,9 +44,9 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
         
@@ -73,9 +73,9 @@ class ArticleTests: XCTestCase {
         Here's an overview.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
         
@@ -97,9 +97,9 @@ class ArticleTests: XCTestCase {
         # This is my article
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
         
@@ -115,9 +115,9 @@ class ArticleTests: XCTestCase {
         - This is not an abstract.
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(article)
         XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
         
@@ -133,9 +133,9 @@ class ArticleTests: XCTestCase {
          This is my article
          """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: catalog, in: context, problems: &problems)
 
         XCTAssertNil(article)
         XCTAssertEqual(problems.count, 1)
@@ -153,9 +153,9 @@ class ArticleTests: XCTestCase {
          
         """
         let document = Document(parsing: source, options: [])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        let article = Article(from: document, source: nil, for: catalog, in: context, problems: &problems)
 
         XCTAssertNil(article)
         XCTAssertEqual(problems.count, 1)

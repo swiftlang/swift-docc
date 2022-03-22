@@ -11,7 +11,7 @@
 import Foundation
 import SymbolKit
 
-/// A type that provides documentation bundles that it discovers by traversing the local file system.
+/// A type that provides documentation catalogs that it discovers by traversing the local file system.
 public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     public var identifier: String = UUID().uuidString
     
@@ -19,7 +19,7 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     private let symbolGraphDataLoader: SymbolGraphDataLoader
     private var generatedMarkdownFiles: [String: Data] = [:]
     
-    /// Creates a new provider that generates documentation bundles from the ``BundleDiscoveryOptions`` it is passed in ``bundles(options:)``.
+    /// Creates a new provider that generates documentation catalogs from the ``CatalogDiscoveryOptions`` it is passed in ``catalogs(options:)``.
     ///
     /// - Parameters:
     ///   - symbolGraphDataLoader: A closure that loads the raw data for a symbol graph file at a given URL.
@@ -27,12 +27,12 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
         self.symbolGraphDataLoader = symbolGraphDataLoader
     }
     
-    public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        let info: DocumentationBundle.Info
+    public func catalogs(options: CatalogDiscoveryOptions) throws -> [DocumentationCatalog] {
+        let info: DocumentationCatalog.Info
         do {
-            info = try DocumentationBundle.Info(bundleDiscoveryOptions: options)
+            info = try DocumentationCatalog.Info(catalogDiscoveryOptions: options)
         } catch {
-            throw Error.notEnoughDataToGenerateBundle(options: options, underlyingError: error)
+            throw Error.notEnoughDataToGenerateCatalog(options: options, underlyingError: error)
         }
         
         guard !options.additionalSymbolGraphFiles.isEmpty else {
@@ -66,7 +66,7 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
         let topLevelPages = generatedMarkdownFiles.keys.map { URL(string: $0 + ".md")! }
         
         return [
-            DocumentationBundle(
+            DocumentationCatalog(
                 info: info,
                 attributedCodeListings: [:],
                 symbolGraphURLs: options.additionalSymbolGraphFiles,
@@ -76,22 +76,27 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
         ]
     }
     
+    @available(*, deprecated, renamed: "catalogs(options:)")
+    public func bundles(options: CatalogDiscoveryOptions) throws -> [DocumentationCatalog] {
+        return try catalogs(options: options)
+    }
+    
     enum Error: DescribedError {
         case unableToLoadSymbolGraphData(url: URL)
-        case notEnoughDataToGenerateBundle(options: BundleDiscoveryOptions, underlyingError: Swift.Error?)
+        case notEnoughDataToGenerateCatalog(options: CatalogDiscoveryOptions, underlyingError: Swift.Error?)
         
         var errorDescription: String {
             switch self {
             case .unableToLoadSymbolGraphData(let url):
                 return "Unable to load data for symbol graph file at \(url.path.singleQuoted)"
-            case .notEnoughDataToGenerateBundle(let options, let underlyingError):
+            case .notEnoughDataToGenerateCatalog(let options, let underlyingError):
                 var symbolGraphFileList = options.additionalSymbolGraphFiles.reduce("") { $0 + "\n\t" + $1.path }
                 if !symbolGraphFileList.isEmpty {
                     symbolGraphFileList += "\n"
                 }
                 
                 var errorMessage =  """
-                    The information provided as command line arguments is not enough to generate a documentation bundle:
+                    The information provided as command line arguments is not enough to generate a documentation catalog:
                     """
                 
                 if let underlyingError = underlyingError {
@@ -113,9 +118,9 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     }
     
     public func contentsOfURL(_ url: URL) throws -> Data {
-        if DocumentationBundleFileTypes.isMarkupFile(url), let content = generatedMarkdownFiles[url.deletingPathExtension().lastPathComponent] {
+        if DocumentationCatalogFileTypes.isMarkupFile(url), let content = generatedMarkdownFiles[url.deletingPathExtension().lastPathComponent] {
             return content
-        } else if DocumentationBundleFileTypes.isSymbolGraphFile(url) {
+        } else if DocumentationCatalogFileTypes.isSymbolGraphFile(url) {
             guard let data = symbolGraphDataLoader(url) else {
                 throw Error.unableToLoadSymbolGraphData(url: url)
             }

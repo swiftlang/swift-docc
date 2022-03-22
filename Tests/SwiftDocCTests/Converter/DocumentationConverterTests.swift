@@ -17,7 +17,7 @@ class DocumentationConverterTests: XCTestCase {
     struct EmptyConvertOutputConsumer: ConvertOutputConsumer {
         func consume(renderNode: RenderNode) throws { }
         func consume(problems: [Problem]) throws { }
-        func consume(assetsInBundle bundle: DocumentationBundle) throws {}
+        func consume(assetsInCatalog catalog: DocumentationCatalog) throws {}
         func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {}
         func consume(indexingRecords: [IndexingRecord]) throws {}
         func consume(assets: [RenderReferenceType: [RenderReference]]) throws {}
@@ -25,19 +25,19 @@ class DocumentationConverterTests: XCTestCase {
         func consume(documentationCoverageInfo: [CoverageDataEntry]) throws {}
     }
 
-    func testThrowsErrorOnConvertingNoBundles() throws {
+    func testThrowsErrorOnConvertingNoCatalogs() throws {
         let rootURL = try createTemporaryDirectory()
 
         let dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
         let workspace = DocumentationWorkspace()
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
-        var converter = DocumentationConverter(documentationBundleURL: rootURL, emitDigest: false, documentationCoverageOptions: .noCoverage, currentPlatforms: nil, workspace: workspace, context: context, dataProvider: dataProvider, bundleDiscoveryOptions: BundleDiscoveryOptions())
+        var converter = DocumentationConverter(documentationCatalogURL: rootURL, emitDigest: false, documentationCoverageOptions: .noCoverage, currentPlatforms: nil, workspace: workspace, context: context, dataProvider: dataProvider, catalogDiscoveryOptions: CatalogDiscoveryOptions())
         XCTAssertThrowsError(try converter.convert(outputConsumer: EmptyConvertOutputConsumer())) { error in
             let converterError = try? XCTUnwrap(error as? DocumentationConverter.Error)
             XCTAssertEqual(converterError?.errorDescription, """
             The directory at '\(rootURL)' and its subdirectories do not contain at least one \
-            valid documentation bundle. A documentation bundle is a directory ending in \
+            valid documentation catalog. A documentation catalog is a directory ending in \
             `.docc`.
             """)
         }

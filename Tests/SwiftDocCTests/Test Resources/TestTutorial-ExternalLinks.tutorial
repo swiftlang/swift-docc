@@ -1,5 +1,5 @@
 @Comment {
-   This comment should not interfere with finding the first top-level directive. <doc://com.external.bundle/LinkFromComment>
+   This comment should not interfere with finding the first top-level directive. <doc://com.external.catalog/LinkFromComment>
 }
 
 @Tutorial(time: 20, projectFiles: project.zip) {
@@ -27,7 +27,7 @@
 
    @Intro(title: "Basic Augmented Reality App") {
 
-      This is the tutorial abstract <doc://com.external.bundle/LinkFromAbstract>.
+      This is the tutorial abstract <doc://com.external.catalog/LinkFromAbstract>.
 
       @Comment {
          This is a comment.
@@ -39,13 +39,13 @@
    @Section(title: "Create a New AR Project") {
       @ContentAndMedia {
          This link will never resolve: <doc:ThisWillNeverResolve>.
-         This link needs an external resolver: <doc://com.external.bundle/LinkFromContentAndMedia>.
+         This link needs an external resolver: <doc://com.external.catalog/LinkFromContentAndMedia>.
 
          @Comment {
             This is a comment.
          }
 
-         > Note: This is a note <doc://com.external.bundle/LinkFromNote>.
+         > Note: This is a note <doc://com.external.catalog/LinkFromNote>.
 
          > Important: This is important.
           
@@ -67,7 +67,7 @@
       Let's get started building the Augmented Reality app.
       
       @Step { 
-        Lorem ipsum dolor sit amet, consectetur <doc://com.external.bundle/LinkFromStep>.
+        Lorem ipsum dolor sit amet, consectetur <doc://com.external.catalog/LinkFromStep>.
         @Image(source: step.png, alt: step )
       }
 
@@ -112,7 +112,7 @@
       @MultipleChoice {
          Lorem ipsum dolor sit amet?
 
-         Phasellus faucibus scelerisque eleifend donec pretium <doc://com.external.bundle/LinkFromMulitpleChoice>.
+         Phasellus faucibus scelerisque eleifend donec pretium <doc://com.external.catalog/LinkFromMulitpleChoice>.
 
          ![Diagram](something.png)
          
@@ -138,10 +138,10 @@
          }
          
          @Choice(isCorrect: false) {
-            `anchor.intersects(view)` also a link: <doc://com.external.bundle/LinkFromChoice>
+            `anchor.intersects(view)` also a link: <doc://com.external.catalog/LinkFromChoice>
             
             @Justification {
-               This is incorrect because it is <doc://com.external.bundle/LinkFromJustification>.
+               This is incorrect because it is <doc://com.external.catalog/LinkFromJustification>.
             }
          }
       }

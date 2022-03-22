@@ -6,7 +6,7 @@ Build and query the in-memory documentation model.
 
 The documentation context generally manages the in-memory documentation including:
  
- - Analyzing bundle file contents and converting to semantic models.
+ - Analyzing catalog file contents and converting to semantic models.
  - Managing a graph of documentation nodes (a single node representing one documentation topic).
  - Processing assets like media files or download archives.
  - Resolving links to external documentation via ``ExternalReferenceResolver`` and resolving external symbols via ``ExternalSymbolResolver``.
@@ -19,7 +19,7 @@ let workspace = DocumentationWorkspace()
 let context = try DocumentationContext(dataProvider: workspace)
 ```
 
-During initialization the context will inspect the available bundles in the workspace and load any symbol graph files and markup files.
+During initialization the context will inspect the available catalogs in the workspace and load any symbol graph files and markup files.
 
 ### Accessing Documentation
 
@@ -27,7 +27,7 @@ Use ``DocumentationContext/entity(with:)`` to access a documentation node by its
 
 ```swift
 let reference = ResolvedTopicReference(
-    bundleIdentifier: "com.mybundle",
+    catalogIdentifier: "com.mycatalog",
     path: "/documentation/ValidationKit/EmailValidator",
     fragment: nil,
     sourceLanguage: .swift)

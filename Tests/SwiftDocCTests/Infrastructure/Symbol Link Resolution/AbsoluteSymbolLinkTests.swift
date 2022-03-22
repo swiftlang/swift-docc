@@ -23,7 +23,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
         let expectedLinkDescriptions = [
             """
             {
-                bundleID: 'org.swift.ShapeKit',
+                catalogID: 'org.swift.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'ShapeKit', suffix: (none)),
                 representsModule: true,
@@ -32,7 +32,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             """,
             """
             {
-                bundleID: 'org.swift.ShapeKit',
+                catalogID: 'org.swift.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'ParentType', suffix: (none)),
                 representsModule: false,
@@ -41,7 +41,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             """,
             """
             {
-                bundleID: 'org.swift.ShapeKit',
+                catalogID: 'org.swift.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'ParentType', suffix: (none)),
                 representsModule: false,
@@ -83,7 +83,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
         )
     }
     
-    func testCreationOfInvalidLinkWithNoBundleID() {
+    func testCreationOfInvalidLinkWithNoCatalogID() {
         XCTAssertNil(
             AbsoluteSymbolLink(string: "doc:///documentation/ShapeKit")
         )
@@ -140,7 +140,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyKit', suffix: (none)),
                 representsModule: true,
@@ -152,7 +152,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/MyClass:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyClass', suffix: (none)),
                 representsModule: false,
@@ -162,7 +162,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/MyClass/init(_:)-3743d:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyClass', suffix: (none)),
                 representsModule: false,
@@ -172,7 +172,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/MyClass/init(_:)-98u07:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyClass', suffix: (none)),
                 representsModule: false,
@@ -182,7 +182,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyClass', suffix: (none)),
                 representsModule: false,
@@ -192,7 +192,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/YourClass:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'YourClass', suffix: (none)),
                 representsModule: false,
@@ -223,8 +223,8 @@ class AbsoluteSymbolLinkTests: XCTestCase {
     }
     
     func testCompileSymbolGraphAndValidateLinks() throws {
-        let (url, _, context) = try testBundleAndContext(
-            copying: "TestBundle",
+        let (url, _, context) = try testCatalogAndContext(
+            copying: "TestCatalog",
             excludingPaths: [],
             codeListings: [:]
         )
@@ -233,7 +233,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/FillIntroduced:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'FillIntroduced',
                 topLevelSymbol: (name: 'FillIntroduced', suffix: (none)),
                 representsModule: true,
@@ -243,7 +243,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/FillIntroduced/iOSMacOSOnly():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'FillIntroduced',
                 topLevelSymbol: (name: 'iOSMacOSOnly()', suffix: (none)),
                 representsModule: false,
@@ -253,7 +253,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/FillIntroduced/iOSOnlyDeprecated():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'FillIntroduced',
                 topLevelSymbol: (name: 'iOSOnlyDeprecated()', suffix: (none)),
                 representsModule: false,
@@ -263,7 +263,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/FillIntroduced/iOSOnlyIntroduced():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'FillIntroduced',
                 topLevelSymbol: (name: 'iOSOnlyIntroduced()', suffix: (none)),
                 representsModule: false,
@@ -273,7 +273,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/FillIntroduced/macCatalystOnlyDeprecated():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'FillIntroduced',
                 topLevelSymbol: (name: 'macCatalystOnlyDeprecated()', suffix: (none)),
                 representsModule: false,
@@ -283,7 +283,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/FillIntroduced/macCatalystOnlyIntroduced():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'FillIntroduced',
                 topLevelSymbol: (name: 'macCatalystOnlyIntroduced()', suffix: (none)),
                 representsModule: false,
@@ -293,7 +293,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/FillIntroduced/macOSOnlyDeprecated():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'FillIntroduced',
                 topLevelSymbol: (name: 'macOSOnlyDeprecated()', suffix: (none)),
                 representsModule: false,
@@ -303,7 +303,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/FillIntroduced/macOSOnlyIntroduced():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'FillIntroduced',
                 topLevelSymbol: (name: 'macOSOnlyIntroduced()', suffix: (none)),
                 representsModule: false,
@@ -313,7 +313,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyKit', suffix: (none)),
                 representsModule: true,
@@ -323,7 +323,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/MyClass:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyClass', suffix: (none)),
                 representsModule: false,
@@ -333,7 +333,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-33vaw:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyClass', suffix: (none)),
                 representsModule: false,
@@ -343,7 +343,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/MyClass/init()-3743d:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyClass', suffix: (none)),
                 representsModule: false,
@@ -353,7 +353,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyClass', suffix: (none)),
                 representsModule: false,
@@ -363,7 +363,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/MyProtocol:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'MyProtocol', suffix: (none)),
                 representsModule: false,
@@ -373,7 +373,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:):
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'MyKit',
                 topLevelSymbol: (name: 'globalFunction(_:considering:)', suffix: (none)),
                 representsModule: false,
@@ -383,7 +383,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideKit', suffix: (none)),
                 representsModule: true,
@@ -393,7 +393,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/NonExistent/UncuratedClass:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'NonExistent', suffix: (none)),
                 representsModule: false,
@@ -403,7 +403,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideClass:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideClass', suffix: (none)),
                 representsModule: false,
@@ -413,7 +413,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideClass/Element:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideClass', suffix: (none)),
                 representsModule: false,
@@ -423,7 +423,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/inherited():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideClass', suffix: (none)),
                 representsModule: false,
@@ -433,7 +433,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideClass/Value(_:):
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideClass', suffix: (none)),
                 representsModule: false,
@@ -443,7 +443,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideClass/init():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideClass', suffix: (none)),
                 representsModule: false,
@@ -453,7 +453,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideClass/myFunction():
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideClass', suffix: (none)),
                 representsModule: false,
@@ -463,7 +463,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideClass/path:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideClass', suffix: (none)),
                 representsModule: false,
@@ -473,7 +473,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideClass/url:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideClass', suffix: (none)),
                 representsModule: false,
@@ -483,7 +483,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideProtocol:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideProtocol', suffix: (none)),
                 representsModule: false,
@@ -493,7 +493,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideProtocol', suffix: (none)),
                 representsModule: false,
@@ -503,7 +503,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'SideProtocol', suffix: (none)),
                 representsModule: false,
@@ -513,7 +513,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/SideKit/UncuratedClass/angle:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'SideKit',
                 topLevelSymbol: (name: 'UncuratedClass', suffix: (none)),
                 representsModule: false,
@@ -523,7 +523,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/Test:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'Test',
                 topLevelSymbol: (name: 'Test', suffix: (none)),
                 representsModule: true,
@@ -533,7 +533,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/Test/FirstGroup:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'Test',
                 topLevelSymbol: (name: 'FirstGroup', suffix: (none)),
                 representsModule: false,
@@ -543,7 +543,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://org.swift.docc.example/documentation/Test/FirstGroup/MySnippet:
             """
             {
-                bundleID: 'org.swift.docc.example',
+                catalogID: 'org.swift.docc.example',
                 module: 'Test',
                 topLevelSymbol: (name: 'FirstGroup', suffix: (none)),
                 representsModule: false,
@@ -566,7 +566,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
     }
     
     func testCompileOverloadedSymbolGraphAndValidateLinks() throws {
-        let (url, _, context) = try testBundleAndContext(
+        let (url, _, context) = try testCatalogAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
@@ -577,7 +577,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'ShapeKit', suffix: (none)),
                 representsModule: true,
@@ -587,7 +587,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedByCaseStruct:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedByCaseStruct', suffix: (none)),
                 representsModule: false,
@@ -597,7 +597,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedByCaseStruct/ThirdTestMemberName-5vyx9:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedByCaseStruct', suffix: (none)),
                 representsModule: false,
@@ -607,7 +607,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedByCaseStruct/thirdTestMemberNamE-4irjn:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedByCaseStruct', suffix: (none)),
                 representsModule: false,
@@ -617,7 +617,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedByCaseStruct/thirdTestMemberName-8x5kx:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedByCaseStruct', suffix: (none)),
                 representsModule: false,
@@ -627,7 +627,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedByCaseStruct/thirdtestMemberName-u0gl:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedByCaseStruct', suffix: (none)),
                 representsModule: false,
@@ -637,7 +637,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
                 representsModule: false,
@@ -647,7 +647,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.enum.case:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
                 representsModule: false,
@@ -657,7 +657,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14g8s:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
                 representsModule: false,
@@ -667,7 +667,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14ife:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
                 representsModule: false,
@@ -677,7 +677,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14ob0:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
                 representsModule: false,
@@ -687,7 +687,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-4ja8m:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
                 representsModule: false,
@@ -697,7 +697,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-88rbf:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
                 representsModule: false,
@@ -707,7 +707,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedParentStruct', suffix: (idHash: '1jr3p')),
                 representsModule: false,
@@ -717,7 +717,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedParentStruct', suffix: (idHash: '1jr3p')),
                 representsModule: false,
@@ -727,7 +727,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedProtocol', suffix: (none)),
                 representsModule: false,
@@ -737,7 +737,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-1h173:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedProtocol', suffix: (none)),
                 representsModule: false,
@@ -747,7 +747,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-8iuz7:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedProtocol', suffix: (none)),
                 representsModule: false,
@@ -757,7 +757,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-91hxs:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedProtocol', suffix: (none)),
                 representsModule: false,
@@ -767,7 +767,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/fourthTestMemberName(test:)-961zx:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedProtocol', suffix: (none)),
                 representsModule: false,
@@ -777,7 +777,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedStruct', suffix: (none)),
                 representsModule: false,
@@ -787,7 +787,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName-swift.property:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedStruct', suffix: (none)),
                 representsModule: false,
@@ -797,7 +797,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName-swift.type.property:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedStruct', suffix: (none)),
                 representsModule: false,
@@ -807,7 +807,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'RegularParent', suffix: (none)),
                 representsModule: false,
@@ -817,7 +817,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/FourthMember:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'RegularParent', suffix: (none)),
                 representsModule: false,
@@ -827,7 +827,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/firstMember:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'RegularParent', suffix: (none)),
                 representsModule: false,
@@ -837,7 +837,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/secondMember(first:second:):
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'RegularParent', suffix: (none)),
                 representsModule: false,
@@ -847,7 +847,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/thirdMember:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'RegularParent', suffix: (none)),
                 representsModule: false,
@@ -857,7 +857,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/overloadedparentstruct-6a7lx:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'overloadedparentstruct', suffix: (idHash: '6a7lx')),
                 representsModule: false,
@@ -867,7 +867,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/overloadedparentstruct-6a7lx/fifthTestMember-swift.property:
             """
             {
-                bundleID: 'com.shapes.ShapeKit',
+                catalogID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'overloadedparentstruct', suffix: (idHash: '6a7lx')),
                 representsModule: false,
@@ -890,18 +890,18 @@ class AbsoluteSymbolLinkTests: XCTestCase {
     }
     
     func testLinkComponentStringConversion() throws {
-        let (url, _, context) = try testBundleAndContext(
+        let (url, _, context) = try testCatalogAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
         )
         defer { try? FileManager.default.removeItem(at: url) }
         
-        let bundlePathComponents = context.symbolIndex.values
+        let catalogPathComponents = context.symbolIndex.values
             .flatMap(\.reference.pathComponents)
         
         
-        bundlePathComponents.forEach { component in
+        catalogPathComponents.forEach { component in
             let symbolLinkComponent = AbsoluteSymbolLink.LinkComponent(string: component)
             // Assert that round-trip conversion doesn't change the string representation
             // of the component

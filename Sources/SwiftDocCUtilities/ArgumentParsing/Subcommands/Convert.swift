@@ -13,7 +13,7 @@ import SwiftDocC
 import Foundation
 
 extension Docc {
-    /// Converts a documentation bundle.
+    /// Converts a documentation catalog.
     public struct Convert: ParsableCommand {
 
         public init() {}
@@ -26,13 +26,24 @@ extension Docc {
         // MARK: - Configuration
 
         public static var configuration = CommandConfiguration(
-            abstract: "Converts documentation from a source bundle.")
+            abstract: "Converts documentation from a source catalog.")
 
         // MARK: - Command Line Options & Arguments
 
-        /// The user-provided path to a `.docc` documentation bundle.
+        /// The user-provided path to a `.docc` documentation catalog.
         @OptionGroup()
-        public var documentationBundle: DocumentationBundleOption
+        public var documentationCatalog: DocumentationCatalogOption
+        
+        @available(*, deprecated, renamed: "documentationCatalog")
+        public var documentationBundle: DocumentationCatalogOption {
+            get {
+                return documentationCatalog
+            }
+            
+            set {
+                documentationCatalog = newValue
+            }
+        }
 
         /// User-provided platform name/version pairs.
         ///
@@ -140,46 +151,79 @@ extension Docc {
 
         // MARK: - Info.plist fallbacks
         
-        /// A user-provided fallback display name for the documentation bundle.
+        /// A user-provided fallback display name for the documentation catalog.
         ///
-        /// If the documentation bundle's Info.plist file contains a bundle display name, the documentation bundle ignores this fallback name.
+        /// If the documentation catalog's Info.plist file contains a catalog display name, the documentation catalog ignores this fallback name.
         @Option(
             name: [.customLong("fallback-display-name"), .customLong("display-name")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
-            help: "A fallback display name if no value is provided in the documentation bundle's Info.plist file."
+            help: "A fallback display name if no value is provided in the documentation catalog's Info.plist file."
         )
-        public var fallbackBundleDisplayName: String?
+        public var fallbackCatalogDisplayName: String?
         
-        /// A user-provided fallback display name for the documentation bundle.
-        ///
-        /// If the documentation bundle's Info.plist file contains a bundle identifier, the documentation bundle ignores this fallback identifier.
-        @Option(
-            name: [.customLong("fallback-bundle-identifier"), .customLong("bundle-identifier")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
-            help: "A fallback bundle identifier if no value is provided in the documentation bundle's Info.plist file."
-        )
-        public var fallbackBundleIdentifier: String?
+        @available(*, deprecated, renamed: "fallbackCatalogDisplayName")
+        public var fallbackBundleDisplayName: String? {
+            get {
+                return fallbackCatalogDisplayName
+            }
+            
+            set {
+                fallbackCatalogDisplayName = newValue
+            }
+        }
         
-        /// A user-provided fallback version for the documentation bundle.
+        /// A user-provided fallback display name for the documentation catalog.
         ///
-        /// If the documentation bundle's Info.plist file contains a bundle version, the documentation bundle ignores this fallback version.
+        /// If the documentation catalog's Info.plist file contains a catalog identifier, the documentation catalog ignores this fallback identifier.
         @Option(
-            name: [.customLong("fallback-bundle-version"), .customLong("bundle-version")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
-            help: "A fallback bundle version if no value is provided in the documentation bundle's Info.plist file."
+            name: [.customLong("fallback-catalog-identifier"), .customLong("fallback-bundle-identifier"), .customLong("bundle-identifier")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
+            help: "A fallback catalog identifier if no value is provided in the documentation catalog's Info.plist file."
         )
-        public var fallbackBundleVersion: String?
+        public var fallbackCatalogIdentifier: String?
+        
+        @available(*, deprecated, renamed: "fallbackCatalogIdentifier")
+        public var fallbackBundleIdentifier: String? {
+            get {
+                return fallbackCatalogIdentifier
+            }
+            
+            set {
+                fallbackCatalogIdentifier = newValue
+            }
+        }
+        
+        /// A user-provided fallback version for the documentation catalog.
+        ///
+        /// If the documentation catalog's Info.plist file contains a catalog version, the documentation catalog ignores this fallback version.
+        @Option(
+            name: [.customLong("fallback-catalog-version"), .customLong("fallback-bundle-version"), .customLong("bundle-version")], // Remove spelling without "fallback" prefix when other tools no longer use it. (rdar://72449411)
+            help: "A fallback catalog version if no value is provided in the documentation catalog's Info.plist file."
+        )
+        public var fallbackCatalogVersion: String?
+        
+        @available(*, deprecated, renamed: "fallbackCatalogVersion")
+        public var fallbackBundleVersion: String? {
+            get {
+                return fallbackCatalogVersion
+            }
+            
+            set {
+                fallbackCatalogVersion = newValue
+            }
+        }
         
         /// A user-provided default language for code listings.
         ///
-        /// If the documentation bundle's Info.plist file contains a default code listing language, the documentation bundle ignores this fallback language.
+        /// If the documentation catalog's Info.plist file contains a default code listing language, the documentation catalog ignores this fallback language.
         @Option(
             name: [.customLong("default-code-listing-language")],
-            help: "A fallback default language for code listings if no value is provided in the documentation bundle's Info.plist file."
+            help: "A fallback default language for code listings if no value is provided in the documentation catalog's Info.plist file."
         )
         public var defaultCodeListingLanguage: String?
 
         @Option(
             help: """
                 A fallback default module kind if no value is provided \
-                in the documentation bundle's Info.plist file.
+                in the documentation catalog's Info.plist file.
                 """
         )
         public var fallbackDefaultModuleKind: String?
@@ -228,7 +272,7 @@ extension Docc {
                 return providedOutputURL
             }
             
-            var outputURL = documentationBundle.urlOrFallback
+            var outputURL = documentationCatalog.urlOrFallback
 
             // Check that the output is written in a build directory sub-folder
             if outputURL.lastPathComponent != Convert.buildDirectory {

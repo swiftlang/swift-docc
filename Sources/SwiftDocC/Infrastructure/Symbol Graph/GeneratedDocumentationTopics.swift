@@ -69,7 +69,7 @@ enum GeneratedDocumentationTopics {
     
     private static let defaultImplementationGroupTitle = "Default Implementations"
     
-    private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext, bundle: DocumentationBundle) throws {
+    private static func createCollectionNode(parent: ResolvedTopicReference, title: String, identifiers: [ResolvedTopicReference], context: DocumentationContext, catalog: DocumentationCatalog) throws {
         let automaticCurationSourceLanguage: SourceLanguage
         let automaticCurationSourceLanguages: Set<SourceLanguage>
         automaticCurationSourceLanguage = identifiers.first?.sourceLanguage ?? .swift
@@ -77,7 +77,7 @@ enum GeneratedDocumentationTopics {
         
         // Create the collection topic reference
         let collectionReference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            catalogIdentifier: catalog.identifier,
             path: NodeURLGenerator.Path.documentationCuration(
                 parentPath: parent.path,
                 articleName: title
@@ -198,8 +198,8 @@ enum GeneratedDocumentationTopics {
     ///   - relationships: A set of relationships to inspect.
     ///   - symbolsURLHierarchy: A symbol graph hierarchy as created during symbol registration.
     ///   - context: A documentation context to update.
-    ///   - bundle: The current documentation bundle.
-    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, context: DocumentationContext, bundle: DocumentationBundle) throws {
+    ///   - catalog: The current documentation catalog.
+    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, context: DocumentationContext, catalog: DocumentationCatalog) throws {
         var inheritanceIndex = InheritedSymbols()
         
         // Walk the symbol graph relationships and look for parent <-> child links that stem in a different module.
@@ -224,7 +224,7 @@ enum GeneratedDocumentationTopics {
         for (typeReference, collections) in inheritanceIndex.implementingTypes where !collections.inheritedFromTypeName.isEmpty {
             for (_, collection) in collections.inheritedFromTypeName where !collection.identifiers.isEmpty {
                 // Create a collection for the given provider type's inherited symbols
-                try createCollectionNode(parent: typeReference, title: collection.title, identifiers: collection.identifiers, context: context, bundle: bundle)
+                try createCollectionNode(parent: typeReference, title: collection.title, identifiers: collection.identifiers, context: context, catalog: catalog)
             }
         }
     }

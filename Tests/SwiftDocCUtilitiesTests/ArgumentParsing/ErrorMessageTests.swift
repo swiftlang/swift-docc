@@ -15,7 +15,7 @@ import Foundation
 class ErrorMessageTests: XCTestCase {
     
     func testInvalidParameterMessageError() throws {
-        // create source bundle directory
+        // create source catalog directory
         let sourceURL = try createTemporaryDirectory(named: "documentation")
         try "".write(to: sourceURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         

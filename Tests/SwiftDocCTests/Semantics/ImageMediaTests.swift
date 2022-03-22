@@ -19,9 +19,9 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNil(image)
         XCTAssertEqual(2, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -39,9 +39,9 @@ class ImageMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(image)
         XCTAssertTrue(problems.isEmpty)
         image.map { image in
@@ -58,9 +58,9 @@ class ImageMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+            let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
             var problems = [Problem]()
-            let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let image = ImageMedia(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(image)
             XCTAssertTrue(problems.isEmpty)
             image.map { image in
@@ -76,9 +76,9 @@ class ImageMediaTests: XCTestCase {
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let image = ImageMedia(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNil(image)
         XCTAssertEqual(2, problems.count)
         XCTAssertFalse(problems.containsErrors)

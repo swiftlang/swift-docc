@@ -17,7 +17,7 @@ class IntroRenderSectionTests: XCTestCase {
         let jsonData = Data("""
         {
             "action": {
-                "identifier": "doc://testbundle/tutorials/TechnologyX/Tutorial",
+                "identifier": "doc://testcatalog/tutorials/TechnologyX/Tutorial",
                 "isActive": true,
                 "overridingTitle": "Get started",
                 "overridingTitleInlineContent": [
@@ -53,7 +53,7 @@ class IntroRenderSectionTests: XCTestCase {
         var intro = IntroRenderSection(title: "Introducing TechnologyX")
         intro.backgroundImage = .init("intro.png")
         intro.action = .reference(
-            identifier: .init("doc://testbundle/tutorials/TechnologyX/Tutorial"),
+            identifier: .init("doc://testcatalog/tutorials/TechnologyX/Tutorial"),
             isActive: true,
             overridingTitle: "Get started",
             overridingTitleInlineContent: [.text("Get started")]

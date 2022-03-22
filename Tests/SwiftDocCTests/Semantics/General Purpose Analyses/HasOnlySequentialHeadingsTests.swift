@@ -27,10 +27,10 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertTrue(problems.isEmpty)
     }
@@ -50,10 +50,10 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertTrue(problems.isEmpty)
     }
@@ -65,10 +65,10 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.map { $0.diagnostic.localizedSummary },
                        [
@@ -86,10 +86,10 @@ some more *stuff*
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
 
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.map { $0.diagnostic.localizedSummary },
                        [

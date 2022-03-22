@@ -19,9 +19,9 @@ class CodeTests: XCTestCase {
         let source = "@Code"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let code = Code(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let code = Code(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNil(code)
         XCTAssertEqual(1, problems.count)
         XCTAssertEqual("org.swift.docc.HasArgument.file", problems.first?.diagnostic.identifier)

@@ -145,7 +145,7 @@ enum Benchmark {
         throw "Timed out while waiting machine to cool down"
     }
     
-    static let usage = "\n\nUsage: $swift benchmark.swift [--repetitions 5] [--output output/path] [--base-benchmark path/to/benchmark.json] convert path/to/bundle\n\n"
+    static let usage = "\n\nUsage: $swift benchmark.swift [--repetitions 5] [--output output/path] [--base-benchmark path/to/benchmark.json] convert path/to/catalog\n\n"
         + "  --repetitions how many times to run the conversion\n"
         + "  --output the path to write the output benchmark-median.json file\n"
         + "  --base-benchmark a benchmark json file to compare the current results against\n"
@@ -174,17 +174,17 @@ enum Benchmark {
         
         // Replace original source with temp folder
         guard convertIndex.advanced(by: 1) < arguments.count else {
-            throw "Specify source bundle.\(usage)"
+            throw "Specify source catalog.\(usage)"
         }
-        let sourceBundleURL = URL(fileURLWithPath: arguments[convertIndex.advanced(by: 1)])
+        let sourceCatalogURL = URL(fileURLWithPath: arguments[convertIndex.advanced(by: 1)])
         
-        guard sourceBundleURL.pathExtension == "docc",
-            FileManager.default.fileExists(atPath: sourceBundleURL.path) else {
-            throw "Specify a valid source bundle path with a .docc extension.\(usage)"
+        guard sourceCatalogURL.pathExtension == "docc",
+            FileManager.default.fileExists(atPath: sourceCatalogURL.path) else {
+            throw "Specify a valid source catalog path with a .docc extension.\(usage)"
         }
         
         let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString.appending(".docc"))
-        try FileManager.default.copyItem(at: sourceBundleURL, to: tempURL)
+        try FileManager.default.copyItem(at: sourceCatalogURL, to: tempURL)
         arguments[convertIndex.advanced(by: 1)] = tempURL.path
         
         // Repetitions argument
@@ -230,7 +230,7 @@ enum Benchmark {
         let outputURL = arguments.firstIndex(of: "--output")
             .flatMap { arguments[$0.advanced(by: 1)] }
             .map(URL.init(fileURLWithPath:))
-            ?? sourceBundleURL.appendingPathComponent("benchmark-median.json")
+            ?? sourceCatalogURL.appendingPathComponent("benchmark-median.json")
 
         try writeBenchmarkFile(to: outputURL, base: benchmarkFileURL, metrics: benchmarkResults)
         print("Result: \(outputURL.path)")

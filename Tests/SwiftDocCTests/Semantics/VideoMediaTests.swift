@@ -19,9 +19,9 @@ class VideoMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let video = VideoMedia(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNil(video)
         XCTAssertEqual(1, problems.count)
         XCTAssertFalse(problems.containsErrors)
@@ -38,9 +38,9 @@ class VideoMediaTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let video = VideoMedia(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(video)
         XCTAssertTrue(problems.isEmpty)
         video.map { video in
@@ -57,9 +57,9 @@ class VideoMediaTests: XCTestCase {
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
             let directive = document.child(at: 0)! as! BlockDirective
-            let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+            let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
             var problems = [Problem]()
-            let video = VideoMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let video = VideoMedia(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(video)
             XCTAssertTrue(problems.isEmpty)
             video.map { video in
@@ -76,9 +76,9 @@ class VideoMediaTests: XCTestCase {
         
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let video = VideoMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let video = VideoMedia(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNil(video)
         XCTAssertEqual(1, problems.count)
         XCTAssertFalse(problems.containsErrors)

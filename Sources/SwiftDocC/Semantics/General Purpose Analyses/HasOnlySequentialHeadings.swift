@@ -38,7 +38,7 @@ extension Semantic.Analyses {
         /**
          - returns: All valid headings.
          */
-        @discardableResult public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> [Heading] where Children.Element == Markup {
+        @discardableResult public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) -> [Heading] where Children.Element == Markup {
             var currentHeadingLevel = startingFromLevel
             var headings: [Heading] = []
             for case let child as Heading in children {

@@ -31,7 +31,7 @@ fileprivate func trapSignals() {
     }
 }
 
-/// An action that monitors a documentation bundle for changes and runs a live web-preview.
+/// An action that monitors a documentation catalog for changes and runs a live web-preview.
 public final class PreviewAction: Action, RecreatingContext {
     /// A test configuration allowing running multiple previews for concurrent testing.
     static var allowConcurrentPreviews = false
@@ -90,7 +90,7 @@ public final class PreviewAction: Action, RecreatingContext {
     ///   - serverUsername: The username used by the preview server for HTTP authentication.
     ///   - serverPassword: The password used by the preview server for HTTP authentication.
     ///   - port: The port number used by the preview server.
-    ///   - convertAction: The action used to convert the documentation bundle before preview.
+    ///   - convertAction: The action used to convert the documentation catalog before preview.
     ///   On macOS, this action will be reused to convert documentation each time the source is modified.
     ///   - workspace: The documentation workspace used by the the action's documentation context.
     ///   - context: The documentation context for the action.
@@ -124,9 +124,9 @@ public final class PreviewAction: Action, RecreatingContext {
         self.printHTMLTemplatePath = printTemplatePath
     }
 
-    /// Converts a documentation bundle and starts a preview server to render the result of that conversion.
+    /// Converts a documentation catalog and starts a preview server to render the result of that conversion.
     ///
-    /// > Important: On macOS, the bundle will be converted each time the source is modified.
+    /// > Important: On macOS, the catalog will be converted each time the source is modified.
     ///
     /// - Parameter logHandle: The file handle that the convert and preview actions will print debug messages to.
     public func perform(logHandle: LogHandle) throws -> ActionResult {
@@ -161,7 +161,7 @@ public final class PreviewAction: Action, RecreatingContext {
         }
 
         let previewResult: ActionResult
-        // Preview the output and monitor the source bundle for changes.
+        // Preview the output and monitor the source catalog for changes.
         do {
             print(String(repeating: "=", count: 40), to: &logHandle)
             if runSecure, let serverUsername = serverUsername, let serverPassword = serverPassword {
@@ -247,7 +247,7 @@ extension PreviewAction {
             }
             
             do {
-                print("Source bundle was modified, converting... ", terminator: "", to: &self.logHandle)
+                print("Source catalog was modified, converting... ", terminator: "", to: &self.logHandle)
                 let result = try self.convert()
                 if result.didEncounterError {
                     throw ErrorsEncountered()
@@ -258,7 +258,7 @@ extension PreviewAction {
                 // We can safely ignore the current action and just log to the console.
                 print("\nConversion already in progress...", to: &self.logHandle)
             } catch DocumentationContext.ContextError.registrationDisabled {
-                // The context cancelled loading the bundles and threw to yield execution early.
+                // The context cancelled loading the catalogs and threw to yield execution early.
                 print("\nConversion cancelled...", to: &self.logHandle)
             } catch {
                 print("\n\(error.localizedDescription)\nCompilation failed", to: &self.logHandle)

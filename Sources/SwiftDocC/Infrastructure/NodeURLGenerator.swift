@@ -21,7 +21,7 @@ fileprivate let pathComponentLengthLimit = 240
 fileprivate let pathLengthLimit = 880
 
 public struct NodeURLGenerator {
-    /// The URL to use as base for all URLs in the bundle.
+    /// The URL to use as base for all URLs in the catalog.
     ///
     /// Leaves to the model to determine a base URL for the presentation, e.g.
     /// there might be a path prefix coming from Info.plist or elsewhere.
@@ -29,7 +29,7 @@ public struct NodeURLGenerator {
     ///
     ///  - baseURL("/") ~> /tutorials/SwiftUI/TutorialName
     ///  - baseURL("/prefix") ~> /prefix/tutorials/SwiftUI/TutorialName
-    ///  - baseURL("doc://org.swift.example-bundle") ~> doc://org.swift.example-bundle/Example/TutorialName
+    ///  - baseURL("doc://org.swift.example-catalog") ~> doc://org.swift.example-catalog/Example/TutorialName
     ///  - baseURL("http://domain.com/prefix") ~> http://domain.com/prefix/tutorials/Example/TutorialName
     public var baseURL: URL
     
@@ -52,9 +52,19 @@ public struct NodeURLGenerator {
 
         case documentation(path: String)
         case documentationCuration(parentPath: String, articleName: String)
-        case article(bundleName: String, articleName: String)
+        case article(catalogName: String, articleName: String)
         case technology(technologyName: String)
-        case tutorial(bundleName: String, tutorialName: String)
+        case tutorial(catalogName: String, tutorialName: String)
+        
+        @available(*, deprecated, renamed: "article(catalogName:articleName:)")
+        public static func article(bundleName: String, articleName: String) -> Path {
+            return .article(catalogName: bundleName, articleName: articleName)
+        }
+        
+        @available(*, deprecated, renamed: "tutorial(catalogName:tutorialName:)")
+        public static func tutorial(bundleName: String, tutorialName: String) -> Path {
+            return .tutorial(catalogName: bundleName, tutorialName: tutorialName)
+        }
         
         /// A URL safe path under the given root path.
         public var stringValue: String {
@@ -65,37 +75,42 @@ public struct NodeURLGenerator {
             case .documentationCuration(let parentPath, let name):
                 // Format: "/documentation/MyKit/MyClass/MyCollection"
                 return Self.rootURL.appendingPathComponent(urlReadablePath(parentPath.removingLeadingSlash)).appendingPathComponent(urlReadablePath(name)).path
-            case .article(let bundleName, let articleName):
-                // Format: "/documentation/MyBundle/MyArticle"
-                return Self.documentationFolderURL.appendingPathComponent(urlReadablePath(bundleName)).appendingPathComponent(urlReadablePath(articleName)).path
+            case .article(let catalogName, let articleName):
+                // Format: "/documentation/MyCatalog/MyArticle"
+                return Self.documentationFolderURL.appendingPathComponent(urlReadablePath(catalogName)).appendingPathComponent(urlReadablePath(articleName)).path
             case .technology(let technologyName):
                 // Format: "/tutorials/MyTechnology"
                 return Self.tutorialsFolderURL.appendingPathComponent(urlReadablePath(technologyName)).path
-            case .tutorial(let bundleName, let tutorialName):
-                // Format: "/tutorials/MyBundle/MyTutorial"
-                return Self.tutorialsFolderURL.appendingPathComponent(urlReadablePath(bundleName)).appendingPathComponent(urlReadablePath(tutorialName)).path
+            case .tutorial(let catalogName, let tutorialName):
+                // Format: "/tutorials/MyCatalog/MyTutorial"
+                return Self.tutorialsFolderURL.appendingPathComponent(urlReadablePath(catalogName)).appendingPathComponent(urlReadablePath(tutorialName)).path
             }
         }
     }
     
     /// Returns a string path appropriate for the given semantic node.
-    public static func pathForSemantic(_ semantic: Semantic, source: URL, bundle: DocumentationBundle) -> String {
+    public static func pathForSemantic(_ semantic: Semantic, source: URL, catalog: DocumentationCatalog) -> String {
         let fileName = source.deletingPathExtension().lastPathComponent
         
         switch semantic {
         case is Technology:
             return Path.technology(technologyName: fileName).stringValue
         case is Tutorial, is TutorialArticle:
-            return Path.tutorial(bundleName: bundle.displayName, tutorialName: fileName).stringValue
+            return Path.tutorial(catalogName: catalog.displayName, tutorialName: fileName).stringValue
         case let article as Article:
             if article.metadata?.technologyRoot != nil {
                 return Path.documentation(path: fileName).stringValue
             } else {
-                return Path.article(bundleName: bundle.displayName, articleName: fileName).stringValue
+                return Path.article(catalogName: catalog.displayName, articleName: fileName).stringValue
             }
         default:
             return fileName
         }
+    }
+    
+    @available(*, deprecated, renamed: "pathForSemantic(_:source:catalog:)")
+    public static func pathForSemantic(_ semantic: Semantic, source: URL, bundle: DocumentationCatalog) -> String {
+        return pathForSemantic(semantic, source: source, catalog: bundle)
     }
     
     /// Returns a URL appropriate for the given reference.

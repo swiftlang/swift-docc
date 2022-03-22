@@ -14,29 +14,29 @@ import Foundation
 
 class PresentationURLGeneratorTests: XCTestCase {
     func testInternalURLs() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         let generator = PresentationURLGenerator(context: context, baseURL: URL(string: "https://host:1024/webPrefix")!)
         
         // Test resolved tutorial reference
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
-        XCTAssertEqual(generator.presentationURLForReference(reference).absoluteString, "https://host:1024/webPrefix/tutorials/test-bundle/testtutorial")
+        let reference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/Test-Catalog/TestTutorial", sourceLanguage: .swift)
+        XCTAssertEqual(generator.presentationURLForReference(reference).absoluteString, "https://host:1024/webPrefix/tutorials/test-catalog/testtutorial")
         
         // Test resolved symbol reference
-        let symbol = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+        let symbol = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
         XCTAssertEqual(generator.presentationURLForReference(symbol).absoluteString, "https://host:1024/webPrefix/documentation/mykit/myclass")
         
         // Test root
-        let root = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/", sourceLanguage: .swift)
+        let root = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/", sourceLanguage: .swift)
         XCTAssertEqual(generator.presentationURLForReference(root).absoluteString, "https://host:1024/webPrefix/documentation")
         
         // Fragment
-        let fragment = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: "test URL! FRAGMENT", sourceLanguage: .swift)
+        let fragment = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/path", fragment: "test URL! FRAGMENT", sourceLanguage: .swift)
         XCTAssertEqual(generator.presentationURLForReference(fragment).absoluteString, "https://host:1024/webPrefix/path#test-URL!-FRAGMENT")
     }
     
     func testExternalURLs() throws {
-        let bundle = DocumentationBundle(
-            info: DocumentationBundle.Info(
+        let catalog = DocumentationCatalog(
+            info: DocumentationCatalog.Info(
                 displayName: "Test",
                 identifier: "com.example.test",
                 version: "1.0"
@@ -47,18 +47,18 @@ class PresentationURLGeneratorTests: XCTestCase {
             miscResourceURLs: []
         )
         
-        let provider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        let provider = PrebuiltLocalFileSystemDataProvider(catalogs: [catalog])
         
         let workspace = DocumentationWorkspace()
         try workspace.registerProvider(provider)
         
         let context = try DocumentationContext(dataProvider: workspace)
         context.externalReferenceResolvers = [
-            bundle.identifier: ExternalReferenceResolverTests.TestExternalReferenceResolver(),
+            catalog.identifier: ExternalReferenceResolverTests.TestExternalReferenceResolver(),
         ]
-        let reference = ResolvedTopicReference(bundleIdentifier: "com.example.test", path: "/Test/Path", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: "com.example.test", path: "/Test/Path", sourceLanguage: .swift)
         
-        let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+        let generator = PresentationURLGenerator(context: context, baseURL: catalog.baseURL)
         
         XCTAssertEqual(generator.presentationURLForReference(reference), URL(string: "https://example.com/example/Test/Path"))
     }
@@ -69,7 +69,7 @@ class PresentationURLGeneratorTests: XCTestCase {
             let customResolvedURL = URL(string: "https://resolved.com/resolved/path?query=item")!
             
             func resolve(_ reference: TopicReference, sourceLanguage: SourceLanguage) -> TopicReferenceResolutionResult {
-                return .success(ResolvedTopicReference(bundleIdentifier: "com.example.test", path: "/path", sourceLanguage: .swift))
+                return .success(ResolvedTopicReference(catalogIdentifier: "com.example.test", path: "/path", sourceLanguage: .swift))
             }
             
             func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
@@ -87,8 +87,8 @@ class PresentationURLGeneratorTests: XCTestCase {
             }
         }
         
-        let bundle = DocumentationBundle(
-            info: DocumentationBundle.Info(
+        let catalog = DocumentationCatalog(
+            info: DocumentationCatalog.Info(
                 displayName: "Test",
                 identifier: "com.example.test",
                 version: "1.0"
@@ -98,7 +98,7 @@ class PresentationURLGeneratorTests: XCTestCase {
             markupURLs: [],
             miscResourceURLs: []
         )
-        let provider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        let provider = PrebuiltLocalFileSystemDataProvider(catalogs: [catalog])
         
         let workspace = DocumentationWorkspace()
         try workspace.registerProvider(provider)
@@ -106,11 +106,11 @@ class PresentationURLGeneratorTests: XCTestCase {
         let testResolver = TestLinkResolver()
         let context = try DocumentationContext(dataProvider: workspace)
         context.externalReferenceResolvers = [
-            bundle.identifier: testResolver,
+            catalog.identifier: testResolver,
         ]
         
-        let reference = ResolvedTopicReference(bundleIdentifier: "com.example.test", path: "/Test/Path", sourceLanguage: .swift)
-        let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+        let reference = ResolvedTopicReference(catalogIdentifier: "com.example.test", path: "/Test/Path", sourceLanguage: .swift)
+        let generator = PresentationURLGenerator(context: context, baseURL: catalog.baseURL)
         
         /// Check that the presentation generator got a custom final URL from the resolver.
         XCTAssertEqual(

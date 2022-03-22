@@ -101,7 +101,7 @@ public struct DocumentationNode {
             for child in discussion.content {
                 // For any H2/H3 sections found in the topic's discussion
                 // create an `AnchorSection` and add it to `anchorSections`
-                // so we can index all anchors found in the bundle for link resolution.
+                // so we can index all anchors found in the catalog for link resolution.
                 if let heading = child as? Heading, heading.level > 1, heading.level < 4 {
                     anchorSections.append(
                         AnchorSection(reference: reference.withFragment(urlReadableFragment(heading.plainText)), title: heading.plainText)
@@ -148,7 +148,7 @@ public struct DocumentationNode {
     /// > Warning: Using this initializer will not report any diagnostics raised during the initialization of `DocumentationNode`.
     @available(*, deprecated, message: "Use init(reference:symbol:platformName:moduleName:article:engine:) instead")
     public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, problems: inout [Problem]) {
-        let assumedModuleReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
+        let assumedModuleReference = ResolvedTopicReference(catalogIdentifier: reference.catalogIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
         self.init(reference: reference, symbol: symbol, platformName: platformName, moduleReference: assumedModuleReference, article: article, engine: DiagnosticEngine())
     }
 
@@ -467,7 +467,7 @@ public struct DocumentationNode {
 
     @available(*, deprecated, message: "Use init(reference:symbol:platformName:moduleReference:article:engine:bystanderModules:) instead")
     public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, engine: DiagnosticEngine, bystanderModules: [String]? = nil) {
-        let assumedModuleReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
+        let assumedModuleReference = ResolvedTopicReference(catalogIdentifier: reference.catalogIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
         self.init(reference: reference, symbol: symbol, platformName: platformName, moduleReference: assumedModuleReference, article: article, engine: engine, bystanderModules: bystanderModules)
     }
     

@@ -30,12 +30,12 @@ public final class TechnologyRoot: Semantic, DirectiveConvertible {
         self.originalMarkup = originalMarkup
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == TechnologyRoot.directiveName)
         
-        _ = Semantic.Analyses.HasOnlyKnownArguments<TechnologyRoot>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<TechnologyRoot>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<TechnologyRoot>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<TechnologyRoot>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         if directive.hasChildren {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(TechnologyRoot.directiveName).UnexpectedContent", summary: "\(TechnologyRoot.directiveName.singleQuoted) directive has content but none is expected.")

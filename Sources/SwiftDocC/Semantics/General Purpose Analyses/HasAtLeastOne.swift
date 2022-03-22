@@ -21,7 +21,7 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
+        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
             
             let (matches, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective,
@@ -38,7 +38,7 @@ extension Semantic.Analyses {
             }
             
             let converted = matches.compactMap { childDirective -> Child? in
-                return Child(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+                return Child(from: childDirective, source: source, for: catalog, in: context, problems: &problems)
             }
             return (converted, remainder: MarkupContainer(remainder))
         }

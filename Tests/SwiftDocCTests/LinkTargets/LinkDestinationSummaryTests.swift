@@ -14,8 +14,8 @@ import SwiftDocCTestUtilities
 
 class ExternalLinkableTests: XCTestCase {
     
-    // Write example documentation bundle with a minimal Tutorials page
-    let bundleFolderHierarchy = Folder(name: "unit-test.docc", content: [
+    // Write example documentation catalog with a minimal Tutorials page
+    let catalogFolderHierarchy = Folder(name: "unit-test.docc", content: [
         Folder(name: "Symbols", content: []),
         Folder(name: "Resources", content: [
             TextFile(name: "TechnologyX.tutorial", utf8Content: """
@@ -89,34 +89,34 @@ class ExternalLinkableTests: XCTestCase {
                 }
                 """),
             ]),
-        InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+        InfoPlist(displayName: "TestCatalog", identifier: "com.test.example"),
     ])
     
     func testSummaryOfTutorialPage() throws {
         let workspace = DocumentationWorkspace()
         let context = try! DocumentationContext(dataProvider: workspace)
         
-        let bundleURL = try bundleFolderHierarchy.write(inside: createTemporaryDirectory())
+        let catalogURL = try catalogFolderHierarchy.write(inside: createTemporaryDirectory())
         
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         try workspace.registerProvider(dataProvider)
         
-        let bundle = context.bundle(identifier: "com.test.example")!
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let catalog = context.catalog(identifier: "com.test.example")!
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestBundle/Tutorial", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/TestCatalog/Tutorial", sourceLanguage: .swift))
         let renderNode = try converter.convert(node, at: nil)
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let pageSummary = summaries[0]
         XCTAssertEqual(pageSummary.title, "Basic Augmented Reality App")
-        XCTAssertEqual(pageSummary.path, "/tutorials/testbundle/tutorial")
-        XCTAssertEqual(pageSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial")
+        XCTAssertEqual(pageSummary.path, "/tutorials/testcatalog/tutorial")
+        XCTAssertEqual(pageSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestCatalog/Tutorial")
         XCTAssertEqual(pageSummary.language, .swift)
         XCTAssertEqual(pageSummary.kind, .tutorial)
         XCTAssertEqual(pageSummary.taskGroups, [
             .init(title: nil,
-                  identifiers: ["doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project"]
+                  identifiers: ["doc://com.test.example/tutorials/TestCatalog/Tutorial#Create-a-New-AR-Project"]
             ),
         ])
         XCTAssertEqual(pageSummary.availableLanguages, [.swift])
@@ -128,8 +128,8 @@ class ExternalLinkableTests: XCTestCase {
 
         let sectionSummary = summaries[1]
         XCTAssertEqual(sectionSummary.title, "Create a New AR Project")
-        XCTAssertEqual(sectionSummary.path, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project")
-        XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project")
+        XCTAssertEqual(sectionSummary.path, "/tutorials/testcatalog/tutorial#Create-a-New-AR-Project")
+        XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestCatalog/Tutorial#Create-a-New-AR-Project")
         XCTAssertEqual(sectionSummary.language, .swift)
         XCTAssertEqual(sectionSummary.kind, .onPageLandmark)
         XCTAssertEqual(sectionSummary.taskGroups, [])
@@ -153,10 +153,10 @@ class ExternalLinkableTests: XCTestCase {
     }
 
     func testSymbolSummaries() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
         do {
-            let symbolReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -194,7 +194,7 @@ class ExternalLinkableTests: XCTestCase {
         }
         
         do {
-            let symbolReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -229,7 +229,7 @@ class ExternalLinkableTests: XCTestCase {
         }
         
         do {
-            let symbolReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -248,7 +248,7 @@ class ExternalLinkableTests: XCTestCase {
         }
         
         do {
-            let symbolReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -280,12 +280,12 @@ class ExternalLinkableTests: XCTestCase {
     }
     
     func testVariantSummaries() throws {
-        let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let (catalog, context) = try testCatalogAndContext(named: "MixedLanguageFramework")
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
         
         // Check a symbol that's represented as a class in both Swift and Objective-C
         do {
-            let symbolReference = ResolvedTopicReference(bundleIdentifier: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(catalogIdentifier: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -338,7 +338,7 @@ class ExternalLinkableTests: XCTestCase {
         
         // Check the Swift version of a symbol that's represented differently in different languages
         do {
-            let symbolReference = ResolvedTopicReference(bundleIdentifier: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)", sourceLanguage: .swift)
+            let symbolReference = ResolvedTopicReference(catalogIdentifier: "org.swift.MixedLanguageFramework", path: "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)", sourceLanguage: .swift)
             let node = try context.entity(with: symbolReference)
             let renderNode = try converter.convert(node, at: nil)
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
@@ -459,7 +459,7 @@ class ExternalLinkableTests: XCTestCase {
         
         let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: legacyData)
         
-        XCTAssertEqual(decoded.referenceURL, ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
+        XCTAssertEqual(decoded.referenceURL, ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/ClassName", sourceLanguage: .swift).url)
         XCTAssertEqual(decoded.platforms?.count, 1)
         XCTAssertEqual(decoded.platforms?.first?.name, "PlatformName")
         XCTAssertEqual(decoded.platforms?.first?.introduced, "1.0")

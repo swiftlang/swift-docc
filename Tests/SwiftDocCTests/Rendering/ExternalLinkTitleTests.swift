@@ -15,7 +15,7 @@ import Markdown
 public class ExternalLinkTitleTests: XCTestCase {
     private func getTranslatorAndBlockContentForMarkup(_ markupSource: String) throws -> (translator: RenderNodeTranslator, content: [RenderBlockContent]) {
         let document = Document(parsing: markupSource, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let testReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc", path: "/test", sourceLanguage: .swift)
+        let testReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc", path: "/test", sourceLanguage: .swift)
         let node = DocumentationNode(reference: testReference,
                                      kind: .article,
                                      sourceLanguage: .swift,
@@ -24,8 +24,8 @@ public class ExternalLinkTitleTests: XCTestCase {
                                      semantic: Semantic())
         
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let result = translator.visit(MarkupContainer(document.children)) as! [RenderBlockContent]
         
         return (translator, result)

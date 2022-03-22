@@ -11,34 +11,34 @@
 import XCTest
 @testable import SwiftDocC
 
-class DocumentationBundleFileTypesTests: XCTestCase {
+class DocumentationCatalogFileTypesTests: XCTestCase {
     func testIsCustomHeader() {
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "header.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "/header.html")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "header")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "/header.html/foo")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "footer.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomHeader(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomHeader(
             URL(fileURLWithPath: "DocC.docc/header.html")))
     }
 
     func testIsCustomFooter() {
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "footer.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "/footer.html")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "footer")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "/footer.html/foo")))
-        XCTAssertFalse(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertFalse(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "header.html")))
-        XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
+        XCTAssertTrue(DocumentationCatalogFileTypes.isCustomFooter(
             URL(fileURLWithPath: "DocC.docc/footer.html")))
     }
 }

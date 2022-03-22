@@ -15,8 +15,13 @@ import SymbolKit
 ///
 /// You can use this model to validate a symbol link and access its different parts.
 public struct AbsoluteSymbolLink: CustomStringConvertible {
-    /// The identifier for the documentation bundle this link is from.
-    public let bundleID: String
+    /// The identifier for the documentation catalog this link is from.
+    public let catalogID: String
+    
+    @available(*, deprecated, renamed: "catalogID")
+    public var bundleID: String {
+        return catalogID
+    }
     
     /// The name of the module that contains this symbol link.
     /// - Note: This could be a link to the module itself.
@@ -50,11 +55,11 @@ public struct AbsoluteSymbolLink: CustomStringConvertible {
             return nil
         }
         
-        // All absolute documentation links include the bundle identifier as their host.
-        guard let bundleID = validatedURL.components.host, !bundleID.isEmpty else {
+        // All absolute documentation links include the catalog identifier as their host.
+        guard let catalogID = validatedURL.components.host, !catalogID.isEmpty else {
             return nil
         }
-        self.bundleID = bundleID
+        self.catalogID = catalogID
         
         var pathComponents = validatedURL.url.pathComponents
         
@@ -120,7 +125,7 @@ public struct AbsoluteSymbolLink: CustomStringConvertible {
     public var description: String {
         """
         {
-            bundleID: \(bundleID.singleQuoted),
+            catalogID: \(catalogID.singleQuoted),
             module: \(module.singleQuoted),
             topLevelSymbol: \(topLevelSymbol),
             representsModule: \(representsModule),

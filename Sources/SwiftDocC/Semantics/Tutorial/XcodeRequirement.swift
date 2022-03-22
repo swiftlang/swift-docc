@@ -41,12 +41,12 @@ public final class XcodeRequirement: Semantic, DirectiveConvertible {
         }
     }
 
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == XcodeRequirement.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<XcodeRequirement>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Destination.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<XcodeRequirement>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Destination.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<XcodeRequirement>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<XcodeRequirement>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let requiredTitle = Semantic.Analyses.HasArgument<XcodeRequirement, Semantics.Title>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         

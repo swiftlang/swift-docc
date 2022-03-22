@@ -24,7 +24,7 @@ extension ConvertService {
             renderNodes.sync { $0.append(renderNode) }
         }
         
-        func consume(assetsInBundle bundle: DocumentationBundle) throws {}
+        func consume(assetsInCatalog catalog: DocumentationCatalog) throws {}
         
         func consume(linkableElementSummaries: [LinkDestinationSummary]) throws {}
         

@@ -10,17 +10,17 @@
 
 import Foundation
 
-/// A type that provides documentation bundles that it discovers by traversing the local file system.
+/// A type that provides documentation catalogs that it discovers by traversing the local file system.
 public struct LocalFileSystemDataProvider: DocumentationWorkspaceDataProvider, FileSystemProvider {
     public var identifier: String = UUID().uuidString
     
-    /// The location that this provider searches for documentation bundles in.
+    /// The location that this provider searches for documentation catalogs in.
     public var rootURL: URL
     
     public var fileSystem: FSNode
     
-    /// Creates a new provider that recursively traverses the content of the given root URL to discover documentation bundles.
-    /// - Parameter rootURL: The location that this provider searches for documentation bundles in.
+    /// Creates a new provider that recursively traverses the content of the given root URL to discover documentation catalogs.
+    /// - Parameter rootURL: The location that this provider searches for documentation catalogs in.
     public init(rootURL: URL) throws {
         self.rootURL = rootURL
         fileSystem = try LocalFileSystemDataProvider.buildTree(root: rootURL)

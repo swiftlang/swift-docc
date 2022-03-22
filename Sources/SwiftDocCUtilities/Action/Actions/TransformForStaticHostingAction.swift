@@ -25,7 +25,7 @@ struct TransformForStaticHostingAction: Action {
     var diagnosticEngine: DiagnosticEngine
     
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
-    init(documentationBundleURL: URL,
+    init(documentationCatalogURL: URL,
          outputURL:URL?,
          hostingBasePath: String?,
          htmlTemplateDirectory: URL,
@@ -33,8 +33,8 @@ struct TransformForStaticHostingAction: Action {
          diagnosticEngine: DiagnosticEngine = .init()) throws
     {
         // Initialize the action context.
-        self.rootURL = documentationBundleURL
-        self.outputURL = outputURL ?? documentationBundleURL
+        self.rootURL = documentationCatalogURL
+        self.outputURL = outputURL ?? documentationCatalogURL
         self.outputIsExternal = outputURL != nil
         self.hostingBasePath = hostingBasePath
         self.htmlTemplateDirectory = htmlTemplateDirectory

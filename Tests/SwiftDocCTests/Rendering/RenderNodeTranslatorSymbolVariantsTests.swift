@@ -35,7 +35,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testMultipleModules() throws {
         try assertMultiVariantSymbol(
             configureContext: { context, resolvedTopicReference in
-                let moduleReference = ResolvedTopicReference(bundleIdentifier: resolvedTopicReference.bundleIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+                let moduleReference = ResolvedTopicReference(catalogIdentifier: resolvedTopicReference.catalogIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
                 context.documentationCache[moduleReference]?.name = .conceptual(title: "Custom Module Title")
                 context.preResolveModuleNames()
             },
@@ -51,7 +51,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testMultipleModulesWithBystanderModule() throws {
         try assertMultiVariantSymbol(
             configureContext: { context, resolvedTopicReference in
-                let moduleReference = ResolvedTopicReference(bundleIdentifier: resolvedTopicReference.bundleIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+                let moduleReference = ResolvedTopicReference(catalogIdentifier: resolvedTopicReference.catalogIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
                 context.documentationCache[moduleReference]?.name = .conceptual(title: "Custom Module Title")
                 context.preResolveModuleNames()
             },
@@ -92,7 +92,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testPlatformsVariantsDefaultAvailability() throws {
         try assertMultiVariantSymbol(
             configureContext: { context, resolvedTopicReference in
-                let moduleReference = ResolvedTopicReference(bundleIdentifier: resolvedTopicReference.bundleIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+                let moduleReference = ResolvedTopicReference(catalogIdentifier: resolvedTopicReference.catalogIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
                 context.documentationCache[moduleReference]?.name = .conceptual(title: "Custom Module Title")
                 context.preResolveModuleNames()
             },
@@ -571,7 +571,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 // Set up an Objective-C title for MyProtocol.
                 let myFunctionNode = try context.entity(
                     with: ResolvedTopicReference(
-                        bundleIdentifier: "org.swift.docc.example",
+                        catalogIdentifier: "org.swift.docc.example",
                         path: "/documentation/MyKit/MyProtocol",
                         fragment: nil,
                         sourceLanguage: .swift
@@ -620,7 +620,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             configureContext: { context, reference in
                 try makeSymbolAvailableInSwiftAndObjectiveC(
                     symbolPath: "/documentation/MyKit/MyProtocol",
-                    bundleIdentifier: reference.bundleIdentifier,
+                    catalogIdentifier: reference.catalogIdentifier,
                     context: context
                 )
             },
@@ -700,7 +700,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     func testArticleAutomaticTaskGroupsForArticleOnlyIncludeTopicsAvailableInTheArticleLanguage() throws {
         func referenceWithPath(_ path: String) -> ResolvedTopicReference {
             ResolvedTopicReference(
-                bundleIdentifier: "org.swift.docc.example",
+                catalogIdentifier: "org.swift.docc.example",
                 path: path,
                 fragment: nil,
                 sourceLanguage: .swift
@@ -749,7 +749,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 
                 try makeSymbolAvailableInSwiftAndObjectiveC(
                     symbolPath: "/documentation/MyKit/MyProtocol",
-                    bundleIdentifier: reference.bundleIdentifier,
+                    catalogIdentifier: reference.catalogIdentifier,
                     context: context
                 )
                 
@@ -820,7 +820,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                     Implementation(
                         reference: .successfullyResolved(
                             ResolvedTopicReference(
-                                bundleIdentifier: "org.swift.docc.example",
+                                catalogIdentifier: "org.swift.docc.example",
                                 path: path,
                                 fragment: nil,
                                 sourceLanguage: .swift
@@ -887,7 +887,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             configureContext: { context, reference in
                 try makeSymbolAvailableInSwiftAndObjectiveC(
                     symbolPath: "/documentation/MyKit/MyProtocol",
-                    bundleIdentifier: reference.bundleIdentifier,
+                    catalogIdentifier: reference.catalogIdentifier,
                     context: context
                 )
             },
@@ -964,7 +964,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 
                 let myFunctionNode = try context.entity(
                     with: ResolvedTopicReference(
-                        bundleIdentifier: "org.swift.docc.example",
+                        catalogIdentifier: "org.swift.docc.example",
                         path: "/documentation/MyKit/MyClass/myFunction()",
                         fragment: nil,
                         sourceLanguage: .swift
@@ -1001,10 +1001,10 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         assertOriginalRenderNode: (RenderNode) throws -> (),
         assertAfterApplyingVariant: (RenderNode) throws -> ()
     ) throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
+        let (_, catalog, context) = try testCatalogAndContext(copying: "TestCatalog")
         
         let identifier = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            catalogIdentifier: catalog.identifier,
             path: "/documentation/MyKit/MyClass",
             sourceLanguage: .swift
         )
@@ -1021,7 +1021,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         try assertMultiLanguageSemantic(
             symbol,
             context: context,
-            bundle: bundle,
+            catalog: catalog,
             identifier: identifier,
             configureRenderNodeTranslator: configureRenderNodeTranslator,
             assertOriginalRenderNode: assertOriginalRenderNode,
@@ -1037,11 +1037,11 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         assertAfterApplyingVariant: (RenderNode) throws -> () = { _ in },
         assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
     ) throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
+        let (_, catalog, context) = try testCatalogAndContext(copying: "TestCatalog")
         
         let identifier = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/Test-Bundle/article",
+            catalogIdentifier: catalog.identifier,
+            path: "/documentation/Test-Catalog/article",
             sourceLanguage: .swift
         )
         
@@ -1057,7 +1057,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         try assertMultiLanguageSemantic(
             article,
             context: context,
-            bundle: bundle,
+            catalog: catalog,
             identifier: identifier,
             assertOriginalRenderNode: assertOriginalRenderNode,
             assertAfterApplyingVariant: assertAfterApplyingVariant,
@@ -1068,7 +1068,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     private func assertMultiLanguageSemantic(
         _ semantic: Semantic,
         context: DocumentationContext,
-        bundle: DocumentationBundle,
+        catalog: DocumentationCatalog,
         identifier: ResolvedTopicReference,
         configureRenderNodeTranslator: (inout RenderNodeTranslator) -> () = { _ in },
         assertOriginalRenderNode: (RenderNode) throws -> (),
@@ -1077,7 +1077,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     ) throws {
         var translator = RenderNodeTranslator(
             context: context,
-            bundle: bundle,
+            catalog: catalog,
             identifier: identifier,
             source: nil
         )
@@ -1118,7 +1118,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                     destinations: [
                         TopicReference.successfullyResolved(
                             ResolvedTopicReference(
-                                bundleIdentifier: "org.swift.docc.example",
+                                catalogIdentifier: "org.swift.docc.example",
                                 path: path,
                                 fragment: nil,
                                 sourceLanguage: .swift
@@ -1144,17 +1144,17 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     
     private func makeSymbolAvailableInSwiftAndObjectiveC(
         symbolPath: String,
-        bundleIdentifier: String,
+        catalogIdentifier: String,
         context: DocumentationContext
     ) throws {
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundleIdentifier,
+            catalogIdentifier: catalogIdentifier,
             path: symbolPath,
             sourceLanguage: .swift
         )
         
         let newReference = ResolvedTopicReference(
-            bundleIdentifier: bundleIdentifier,
+            catalogIdentifier: catalogIdentifier,
             path: symbolPath,
             sourceLanguages: [.swift, .objectiveC]
         )

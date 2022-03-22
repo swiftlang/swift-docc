@@ -97,7 +97,7 @@ public struct LineHighlighter {
     
     /// The lines in the `resource` file.
     private func lines(of resource: ResourceReference) throws -> [String] {
-        let data = try context.resource(with: ResourceReference(bundleIdentifier: resource.bundleIdentifier, path: resource.path))
+        let data = try context.resource(with: ResourceReference(catalogIdentifier: resource.catalogIdentifier, path: resource.path))
         return String(data: data, encoding: .utf8)?.splitByNewlines ?? []
     }
     

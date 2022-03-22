@@ -14,7 +14,7 @@ import XCTest
 class RenderNodeCodableTests: XCTestCase {
     
     var bareRenderNode = RenderNode(
-        identifier: .init(bundleIdentifier: "com.bundle", path: "/", sourceLanguage: .swift),
+        identifier: .init(catalogIdentifier: "com.catalog", path: "/", sourceLanguage: .swift),
         kind: .article
     )
     

@@ -45,22 +45,22 @@ public final class Metadata: Semantic, DirectiveConvertible {
         self.displayName = displayName
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Metadata.directiveName)
                 
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Metadata>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        _ = Semantic.Analyses.HasOnlyKnownArguments<Metadata>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Metadata>(severityIfFound: .warning, allowedDirectives: [DocumentationExtension.directiveName, TechnologyRoot.directiveName, DisplayName.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Metadata>(severityIfFound: .warning, allowedDirectives: [DocumentationExtension.directiveName, TechnologyRoot.directiveName, DisplayName.directiveName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         var remainder: MarkupContainer
         let documentationExtension: DocumentationExtension?
-        (documentationExtension, remainder) = Semantic.Analyses.HasAtMostOne<Metadata, DocumentationExtension>().analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (documentationExtension, remainder) = Semantic.Analyses.HasAtMostOne<Metadata, DocumentationExtension>().analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let technologyRoot: TechnologyRoot?
-        (technologyRoot, remainder) = Semantic.Analyses.HasAtMostOne<Metadata, TechnologyRoot>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (technologyRoot, remainder) = Semantic.Analyses.HasAtMostOne<Metadata, TechnologyRoot>().analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         let displayName: DisplayName?
-        (displayName, remainder) = Semantic.Analyses.HasAtMostOne<Metadata, DisplayName>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (displayName, remainder) = Semantic.Analyses.HasAtMostOne<Metadata, DisplayName>().analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         if !remainder.isEmpty {
             let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(Metadata.directiveName).UnexpectedContent", summary: "\(Metadata.directiveName.singleQuoted) directive has content but none is expected")

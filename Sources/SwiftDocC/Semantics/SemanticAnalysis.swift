@@ -39,10 +39,10 @@ public protocol SemanticAnalysis {
      - parameter directive: The `BlockDirective` that allegedly represents a ``Semantic`` object
      - parameter children: The subset of `directive`'s children to analyze
      - parameter source: A `URL` to the source file from which the `directive` came, if there was one. This is used for printing the location of a diagnostic.
-     - parameter bundle: The ``DocumentationBundle`` that owns the incoming `BlockDirective`
-     - parameter context: The ``DocumentationContext`` in which the bundle resides
+     - parameter catalog: The ``DocumentationCatalog`` that owns the incoming `BlockDirective`
+     - parameter context: The ``DocumentationContext`` in which the catalog resides
      - parameter problems: A container to append ``Problem``s encountered during the analysis
      - returns: A result of the analysis if required, such as a validated parameter or subsection.
      */
-    func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Result where Children.Element == Markup
+    func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) -> Result where Children.Element == Markup
 }

@@ -1,36 +1,36 @@
-# Bundle Discovery
+# Catalog Discovery
 
-Learn how to explore a documentation workspace and discover bundles.
+Learn how to explore a documentation workspace and discover catalogs.
 
 ## Discussion
 
-A ``DocumentationWorkspace`` manages a list of data providers that discover, register, and provide data access to documentation bundles. The data provider protocol ``DocumentationWorkspaceDataProvider`` does not make any assumptions regarding the documentation storage medium as long as the provider can identify those resources by their `URL`.
+A ``DocumentationWorkspace`` manages a list of data providers that discover, register, and provide data access to documentation catalogs. The data provider protocol ``DocumentationWorkspaceDataProvider`` does not make any assumptions regarding the documentation storage medium as long as the provider can identify those resources by their `URL`.
 
-A common case is to use the pre-defined ``LocalFileSystemDataProvider`` that loads any documentation bundles found in a given directory on disk:
+A common case is to use the pre-defined ``LocalFileSystemDataProvider`` that loads any documentation catalogs found in a given directory on disk:
 
 ```swift
 let workspace = DocumentationWorkspace()
 let dataProvider = try LocalFileSystemDataProvider(rootURL: sourceDirectoryURL)
 try workspace.registerProvider(dataProvider)
 
-guard let firstBundle = workspace.bundles.values.first else {
-  fatalError("No documentation bundle found")
+guard let firstCatalog = workspace.catalogs.values.first else {
+  fatalError("No documentation catalog found")
 }
 
-print("A bundle with ID: \(firstBundle.identifier)")
+print("A catalog with ID: \(firstCatalog.identifier)")
 
 print("Symbol graph files:")
-print(firstBundle.symbolGraphURLs)
+print(firstCatalog.symbolGraphURLs)
 ```
 
-### Bundle Contents
+### Catalog Contents
 
-A ``DocumentationBundle`` offers the information needed to load its contents into memory for processing. A bundle is uniquely identified by its ``BundleIdentifier`` identifier.
+A ``DocumentationCatalog`` offers the information needed to load its contents into memory for processing. A catalog is uniquely identified by its ``CatalogIdentifier`` identifier.
 
-Use the bundle data to load symbol graphs, markup files, assets like images or videos, and bundle metadata.
+Use the catalog data to load symbol graphs, markup files, assets like images or videos, and catalog metadata.
 
 ```swift
-bundle.miscResourceURLs
+catalog.miscResourceURLs
     .filter { $0.lastPathComponent.hasSuffix(".zip") }
     .forEach {
       print("Download archive: \($0.lastPathComponent)")
@@ -51,19 +51,19 @@ bundle.miscResourceURLs
 - ``PrebuiltLocalFileSystemDataProvider``
 - ``FSNode``
 
-### Documentation Bundles
+### Documentation Catalogs
 
-- ``DocumentationBundle``
-- ``BundleIdentifier``
-- ``DocumentationBundleFileTypes``
+- ``DocumentationCatalog``
+- ``CatalogIdentifier``
+- ``DocumentationCatalogFileTypes``
 
-### Bundle Assets
+### Catalog Assets
 
 - ``DataTraitCollection``
 - ``DataAsset``
-- ``BundleData``
+- ``CatalogData``
 
-### Bundle Metadata
+### Catalog Metadata
 
 - ``ExternalMetadata``
 - ``DefaultAvailability``

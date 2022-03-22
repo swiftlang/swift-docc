@@ -36,7 +36,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         // When the file isn't executable
         try """
         #!/bin/bash
-        echo '{"bundleIdentifier":"com.test.bundle"}'   # Write this resolver's bundle identifier
+        echo '{"catalogIdentifier":"com.test.catalog"}'   # Write this resolver's catalog identifier
         read                                            # Wait for docc to send a topic URL
         """.write(to: executableLocation, atomically: true, encoding: .utf8)
         
@@ -47,7 +47,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { errorMessage in
             XCTFail("No error output is expected for this test executable. Got:\n\(errorMessage)")
         })
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
+        XCTAssertEqual(resolver.catalogIdentifier, "com.test.catalog")
         #endif
     }
     
@@ -57,7 +57,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     ) throws {
         let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
             kind: .init(name: "Kind Name", id: "com.test.kind.id", isSymbol: true),
-            url: URL(string: "doc://com.test.bundle/something")!,
+            url: URL(string: "doc://com.test.catalog/something")!,
             title: "Resolved Title",
             abstract: "Resolved abstract for this topic.",
             language: .swift, // This is Swift to account for what is considered a symbol's "first" variant value (rdar://86580516)
@@ -88,11 +88,11 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         )
         
         let resolver = try makeResolver(testMetadata)
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
+        XCTAssertEqual(resolver.catalogIdentifier, "com.test.catalog")
         
         // Resolve the reference
         let unresolved = TopicReference.unresolved(
-            UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc://com.test.bundle/something")!))
+            UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc://com.test.catalog/something")!))
         guard case .success(let resolvedReference) = resolver.resolve(
                 unresolved, sourceLanguage: .swift)
         else {
@@ -154,7 +154,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             
             try """
             #!/bin/bash
-            echo '{"bundleIdentifier":"com.test.bundle"}'       # Write this resolver's bundle identifier
+            echo '{"catalogIdentifier":"com.test.catalog"}'       # Write this resolver's catalog identifier
             read                                                # Wait for docc to send a topic URL
             echo '{"resolvedInformation":\(encodedMetadata)}'   # Respond with the test metadata (above)
             """.write(to: executableLocation, atomically: true, encoding: .utf8)
@@ -190,7 +190,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                         return nil
                     }
                     
-                    XCTAssertEqual(url, URL(string: "doc://com.test.bundle/something")!)
+                    XCTAssertEqual(url, URL(string: "doc://com.test.catalog/something")!)
                     
                     let response = DocumentationServer.Message(
                         type: "resolve-reference-response",
@@ -206,7 +206,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             })
 
             return try OutOfProcessReferenceResolver(
-                bundleIdentifier: "com.test.bundle",
+                catalogIdentifier: "com.test.catalog",
                 server: server,
                 convertRequestIdentifier: "convert-id"
             )
@@ -251,7 +251,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         
         let resolver = try makeResolver(testMetadata)
         
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
+        XCTAssertEqual(resolver.catalogIdentifier, "com.test.catalog")
         
         // Resolve the symbol
         guard let symbolNode = try? resolver.symbolEntity(withPreciseIdentifier: "abc123") else {
@@ -310,7 +310,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             
             try """
         #!/bin/bash
-        echo '{"bundleIdentifier":"com.test.bundle"}'         # Write this resolver's bundle identifier
+        echo '{"catalogIdentifier":"com.test.catalog"}'         # Write this resolver's catalog identifier
         read                                                  # Wait for docc to send a symbol USR
         echo '{"resolvedInformation":\(encodedMetadata)}'     # Respond with the test metadata (above)
         """.write(to: executableLocation, atomically: true, encoding: .utf8)
@@ -361,7 +361,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             })
 
             return try OutOfProcessReferenceResolver(
-                bundleIdentifier: "com.test.bundle",
+                catalogIdentifier: "com.test.catalog",
                 server: server,
                 convertRequestIdentifier: "convert-id"
             )
@@ -378,7 +378,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
 //        try """
 //        #!/bin/bash
 //        echo "Some error output" 1>&2                   # Write to stderr
-//        echo '{"bundleIdentifier":"com.test.bundle"}'   # Write this resolver's bundle identifier
+//        echo '{"catalogIdentifier":"com.test.catalog"}'   # Write this resolver's catalog identifier
 //        read                                            # Wait for docc to send a topic URL
 //        """.write(to: executableLocation, atomically: true, encoding: .utf8)
 //        
@@ -393,15 +393,15 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
 //                XCTAssertEqual(errorMessage, "Some error output\n")
 //                didReadErrorOutputExpectation.fulfill()
 //            })
-//            XCTAssertEqual(resolver?.bundleIdentifier, "com.test.bundle")
+//            XCTAssertEqual(resolver?.catalogIdentifier, "com.test.catalog")
 //        }
 //        XCTAssertNotEqual(didReadErrorOutputExpectation.wait(timeout: 20.0), .timedOut)
 //        #endif
     }
     
     func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver) throws {
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
-        let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc://com.test.bundle/something")!)), sourceLanguage: .swift)
+        XCTAssertEqual(resolver.catalogIdentifier, "com.test.catalog")
+        let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc://com.test.catalog/something")!)), sourceLanguage: .swift)
         guard case .failure(_, let errorMessage) = resolverResult else {
             XCTFail("Encountered an unexpected type of error.")
             return
@@ -416,7 +416,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         try """
         #!/bin/bash
-        echo '{"bundleIdentifier":"com.test.bundle"}'   # Write this resolver's bundle identifier
+        echo '{"catalogIdentifier":"com.test.catalog"}'   # Write this resolver's catalog identifier
         read                                            # Wait for docc to send a topic URL
         echo '{"errorMessage":"Some error message."}'   # Respond with an error message
         """.write(to: executableLocation, atomically: true, encoding: .utf8)
@@ -465,22 +465,22 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         })
         
         let resolver = try OutOfProcessReferenceResolver(
-            bundleIdentifier: "com.test.bundle", server: server, convertRequestIdentifier: "convert-id")
+            catalogIdentifier: "com.test.catalog", server: server, convertRequestIdentifier: "convert-id")
         
         try assertForwardsResolverErrors(resolver: resolver)
     }
     
     func testMessageEncodingAndDecoding() throws {
         #if os(macOS)
-        // Bundle identifier
+        // Catalog identifier
         do {
-            let message = OutOfProcessReferenceResolver.Response.bundleIdentifier("com.example.test")
+            let message = OutOfProcessReferenceResolver.Response.catalogIdentifier("com.example.test")
             
             let data = try JSONEncoder().encode(message)
             let decodedMessage = try JSONDecoder().decode(OutOfProcessReferenceResolver.Response.self, from: data)
             
             switch decodedMessage {
-            case .bundleIdentifier(let decodedIdentifier):
+            case .catalogIdentifier(let decodedIdentifier):
                 XCTAssertEqual(decodedIdentifier, "com.example.test")
                 
             default:
@@ -623,16 +623,16 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         #endif
     }
     
-    func testErrorWhenReceivingBundleIdentifierTwiceProcess() throws {
+    func testErrorWhenReceivingCatalogIdentifierTwiceProcess() throws {
         #if os(macOS)
         let temporaryFolder = try createTemporaryDirectory()
         
         let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
         try """
             #!/bin/bash
-            echo '{"bundleIdentifier":"com.test.bundle"}'   # Write this resolver's bundle identifier
+            echo '{"catalogIdentifier":"com.test.catalog"}'   # Write this resolver's catalog identifier
             read                                            # Wait for docc to send a topic URL
-            echo '{"bundleIdentifier":"com.test.bundle"}'   # Write the bundle identifier again
+            echo '{"catalogIdentifier":"com.test.catalog"}'   # Write the catalog identifier again
             """.write(to: executableLocation, atomically: true, encoding: .utf8)
         
         // `0o0700` is `-rwx------` (read, write, & execute only for owner)
@@ -640,10 +640,10 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
         
         let resolver = try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
-        XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
+        XCTAssertEqual(resolver.catalogIdentifier, "com.test.catalog")
         
-        XCTAssertThrowsError(try resolver.resolveInformationForTopicURL(URL(string: "doc://com.test.bundle/something")!)) {
-            guard case OutOfProcessReferenceResolver.Error.executableSentBundleIdentifierAgain = $0 else {
+        XCTAssertThrowsError(try resolver.resolveInformationForTopicURL(URL(string: "doc://com.test.catalog/something")!)) {
+            guard case OutOfProcessReferenceResolver.Error.executableSentCatalogIdentifierAgain = $0 else {
                 XCTFail("Encountered an unexpected type of error.")
                 return
             }

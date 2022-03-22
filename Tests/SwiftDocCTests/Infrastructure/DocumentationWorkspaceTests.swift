@@ -17,113 +17,113 @@ class DocumentationWorkspaceTests: XCTestCase {
         let workspaceDelegate = SimpleWorkspaceDelegate()
         workspace.delegate = workspaceDelegate
         
-        XCTAssertEqual(workspace.bundles.count, 0)
+        XCTAssertEqual(workspace.catalogs.count, 0)
         
         XCTAssertEqual(workspaceDelegate.record, [])
         
-        checkTestWorkspaceContents(workspace: workspace, bundles: [SimpleDataProvider.bundle1, SimpleDataProvider.bundle2], filled: false)
+        checkTestWorkspaceContents(workspace: workspace, catalogs: [SimpleDataProvider.catalog1, SimpleDataProvider.catalog2], filled: false)
     }
     
     func testRegisterProvider() throws {
-        let provider = SimpleDataProvider(bundles: [SimpleDataProvider.bundle1, SimpleDataProvider.bundle2])
+        let provider = SimpleDataProvider(catalogs: [SimpleDataProvider.catalog1, SimpleDataProvider.catalog2])
         let workspace = DocumentationWorkspace()
         let workspaceDelegate = SimpleWorkspaceDelegate()
         workspace.delegate = workspaceDelegate
         
         try workspace.registerProvider(provider)
         
-        let events: [SimpleWorkspaceDelegate.Event] = provider._bundles.map { .add($0.identifier) }
+        let events: [SimpleWorkspaceDelegate.Event] = provider._catalogs.map { .add($0.identifier) }
         
-        XCTAssertEqual(workspace.bundles.count, 2)
-        for bundlePair in workspace.bundles {
-            XCTAssertEqual(bundlePair.key, bundlePair.value.identifier)
+        XCTAssertEqual(workspace.catalogs.count, 2)
+        for catalogPair in workspace.catalogs {
+            XCTAssertEqual(catalogPair.key, catalogPair.value.identifier)
         }
         
-        XCTAssertEqual(Set(workspace.bundles.map { $0.value.identifier }), Set(provider._bundles.map { $0.identifier }))
+        XCTAssertEqual(Set(workspace.catalogs.map { $0.value.identifier }), Set(provider._catalogs.map { $0.identifier }))
         XCTAssertEqual(workspaceDelegate.record, events)
         
-        checkTestWorkspaceContents(workspace: workspace, bundles: provider._bundles, filled: true)
+        checkTestWorkspaceContents(workspace: workspace, catalogs: provider._catalogs, filled: true)
     }
     
     func testUnregisterProvider() throws {
-        let provider = SimpleDataProvider(bundles: [SimpleDataProvider.bundle1, SimpleDataProvider.bundle2])
+        let provider = SimpleDataProvider(catalogs: [SimpleDataProvider.catalog1, SimpleDataProvider.catalog2])
         let workspace = DocumentationWorkspace()
         let workspaceDelegate = SimpleWorkspaceDelegate()
         workspace.delegate = workspaceDelegate
         
         try workspace.registerProvider(provider)
         
-        var events: [SimpleWorkspaceDelegate.Event] = provider._bundles.map { .add($0.identifier) }
+        var events: [SimpleWorkspaceDelegate.Event] = provider._catalogs.map { .add($0.identifier) }
         
-        XCTAssertEqual(workspace.bundles.count, 2)
-        for bundlePair in workspace.bundles {
-            XCTAssertEqual(bundlePair.key, bundlePair.value.identifier)
+        XCTAssertEqual(workspace.catalogs.count, 2)
+        for catalogPair in workspace.catalogs {
+            XCTAssertEqual(catalogPair.key, catalogPair.value.identifier)
         }
         
-        XCTAssertEqual(Set(workspace.bundles.map { $0.value.identifier }), Set(provider._bundles.map { $0.identifier }))
+        XCTAssertEqual(Set(workspace.catalogs.map { $0.value.identifier }), Set(provider._catalogs.map { $0.identifier }))
         XCTAssertEqual(workspaceDelegate.record, events)
         
-        checkTestWorkspaceContents(workspace: workspace, bundles: provider._bundles, filled: true)
+        checkTestWorkspaceContents(workspace: workspace, catalogs: provider._catalogs, filled: true)
         
         try workspace.unregisterProvider(provider)
         
-        events.append(contentsOf: provider._bundles.map { .remove($0.identifier) })
+        events.append(contentsOf: provider._catalogs.map { .remove($0.identifier) })
         
-        XCTAssertEqual(workspace.bundles.count, 0)
+        XCTAssertEqual(workspace.catalogs.count, 0)
         XCTAssertEqual(workspaceDelegate.record, events)
         
-        checkTestWorkspaceContents(workspace: workspace, bundles: provider._bundles, filled: false)
+        checkTestWorkspaceContents(workspace: workspace, catalogs: provider._catalogs, filled: false)
     }
     
     func testMultipleProviders() throws {
-        let provider1 = SimpleDataProvider(bundles: [SimpleDataProvider.bundle1, SimpleDataProvider.bundle2])
+        let provider1 = SimpleDataProvider(catalogs: [SimpleDataProvider.catalog1, SimpleDataProvider.catalog2])
         let workspace = DocumentationWorkspace()
         let workspaceDelegate = SimpleWorkspaceDelegate()
         workspace.delegate = workspaceDelegate
         
         try workspace.registerProvider(provider1)
         
-        var events: [SimpleWorkspaceDelegate.Event] = provider1._bundles.map { .add($0.identifier) }
+        var events: [SimpleWorkspaceDelegate.Event] = provider1._catalogs.map { .add($0.identifier) }
         
-        XCTAssertEqual(workspace.bundles.count, 2)
-        for bundlePair in workspace.bundles {
-            XCTAssertEqual(bundlePair.key, bundlePair.value.identifier)
+        XCTAssertEqual(workspace.catalogs.count, 2)
+        for catalogPair in workspace.catalogs {
+            XCTAssertEqual(catalogPair.key, catalogPair.value.identifier)
         }
         
-        XCTAssertEqual(Set(workspace.bundles.map { $0.value.identifier }), Set(provider1._bundles.map { $0.identifier }))
+        XCTAssertEqual(Set(workspace.catalogs.map { $0.value.identifier }), Set(provider1._catalogs.map { $0.identifier }))
         XCTAssertEqual(workspaceDelegate.record, events)
         
-        checkTestWorkspaceContents(workspace: workspace, bundles: provider1._bundles, filled: true)
+        checkTestWorkspaceContents(workspace: workspace, catalogs: provider1._catalogs, filled: true)
         
-        let provider2 = SimpleDataProvider(bundles: [SimpleDataProvider.bundle3, SimpleDataProvider.bundle4])
+        let provider2 = SimpleDataProvider(catalogs: [SimpleDataProvider.catalog3, SimpleDataProvider.catalog4])
         try workspace.registerProvider(provider2)
         
-        events.append(contentsOf: provider2._bundles.map { .add($0.identifier) })
+        events.append(contentsOf: provider2._catalogs.map { .add($0.identifier) })
         
-        XCTAssertEqual(workspace.bundles.count, 4)
-        for bundlePair in workspace.bundles {
-            XCTAssertEqual(bundlePair.key, bundlePair.value.identifier)
+        XCTAssertEqual(workspace.catalogs.count, 4)
+        for catalogPair in workspace.catalogs {
+            XCTAssertEqual(catalogPair.key, catalogPair.value.identifier)
         }
         
-        XCTAssertEqual(Set(workspace.bundles.map { $0.value.identifier }), Set(provider1._bundles.map { $0.identifier } + provider2._bundles.map { $0.identifier }))
+        XCTAssertEqual(Set(workspace.catalogs.map { $0.value.identifier }), Set(provider1._catalogs.map { $0.identifier } + provider2._catalogs.map { $0.identifier }))
         XCTAssertEqual(workspaceDelegate.record, events)
         
-        checkTestWorkspaceContents(workspace: workspace, bundles: provider1._bundles + provider2._bundles, filled: true)
+        checkTestWorkspaceContents(workspace: workspace, catalogs: provider1._catalogs + provider2._catalogs, filled: true)
     }
     
-    func checkTestWorkspaceContents(workspace: DocumentationWorkspace, bundles: [DocumentationBundle], filled: Bool, line: UInt = #line) {
-        func check(file: URL, bundle: DocumentationBundle, line: UInt) {
+    func checkTestWorkspaceContents(workspace: DocumentationWorkspace, catalogs: [DocumentationCatalog], filled: Bool, line: UInt = #line) {
+        func check(file: URL, catalog: DocumentationCatalog, line: UInt) {
             if filled {
-                XCTAssertEqual(try workspace.contentsOfURL(file, in: bundle), SimpleDataProvider.files[file]!, line: line)
+                XCTAssertEqual(try workspace.contentsOfURL(file, in: catalog), SimpleDataProvider.files[file]!, line: line)
             } else {
-                XCTAssertThrowsError(try workspace.contentsOfURL(file, in: bundle), line: line)
+                XCTAssertThrowsError(try workspace.contentsOfURL(file, in: catalog), line: line)
             }
         }
         
-        for bundle in bundles {
-            check(file: SimpleDataProvider.testMarkupFile, bundle: bundle, line: line)
-            check(file: SimpleDataProvider.testResourceFile, bundle: bundle, line: line)
-            check(file: SimpleDataProvider.testSymbolGraphFile, bundle: bundle, line: line)
+        for catalog in catalogs {
+            check(file: SimpleDataProvider.testMarkupFile, catalog: catalog, line: line)
+            check(file: SimpleDataProvider.testResourceFile, catalog: catalog, line: line)
+            check(file: SimpleDataProvider.testSymbolGraphFile, catalog: catalog, line: line)
         }
     }
     
@@ -144,9 +144,9 @@ class DocumentationWorkspaceTests: XCTestCase {
             return string.data(using: .utf8)!
         }
         
-        static func bundle(_ suffix: String) -> DocumentationBundle {
-            return DocumentationBundle(
-                info: DocumentationBundle.Info(
+        static func catalog(_ suffix: String) -> DocumentationCatalog {
+            return DocumentationCatalog(
+                info: DocumentationCatalog.Info(
                     displayName: "Test" + suffix,
                     identifier: "com.example.test" + suffix,
                     version: "0.1.0"
@@ -157,10 +157,10 @@ class DocumentationWorkspaceTests: XCTestCase {
             )
         }
         
-        static let bundle1 = bundle("1")
-        static let bundle2 = bundle("2")
-        static let bundle3 = bundle("3")
-        static let bundle4 = bundle("4")
+        static let catalog1 = catalog("1")
+        static let catalog2 = catalog("2")
+        static let catalog3 = catalog("3")
+        static let catalog4 = catalog("4")
         
         enum ProviderError: Error {
             case missing
@@ -174,15 +174,15 @@ class DocumentationWorkspaceTests: XCTestCase {
             return data
         }
         
-        var _bundles: [DocumentationBundle] = []
+        var _catalogs: [DocumentationCatalog] = []
         
-        func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-            // Ignore the bundle discovery options. These test bundles are already built.
-            return _bundles
+        func catalogs(options: CatalogDiscoveryOptions) throws -> [DocumentationCatalog] {
+            // Ignore the catalog discovery options. These test catalogs are already built.
+            return _catalogs
         }
         
-        init(bundles: [DocumentationBundle]) {
-            self._bundles = bundles
+        init(catalogs: [DocumentationCatalog]) {
+            self._catalogs = catalogs
         }
     }
     
@@ -193,12 +193,12 @@ class DocumentationWorkspaceTests: XCTestCase {
         }
         var record: [Event] = []
         
-        func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
-            record.append(.add(bundle.identifier))
+        func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddCatalog catalog: DocumentationCatalog) throws {
+            record.append(.add(catalog.identifier))
         }
         
-        func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
-            record.append(.remove(bundle.identifier))
+        func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveCatalog catalog: DocumentationCatalog) throws {
+            record.append(.remove(catalog.identifier))
         }
     }
 }

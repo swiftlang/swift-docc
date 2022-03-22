@@ -15,11 +15,11 @@ class IndexingTests: XCTestCase {
     
     // MARK: - Tutorial
     func testTutorial() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let tutorialReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let tutorialReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Catalog/TestTutorial", sourceLanguage: .swift)
         let node = try context.entity(with: tutorialReference)
         let tutorial = node.semantic as! Tutorial
-        var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: tutorialReference, source: context.documentURL(for: tutorialReference))
+        var converter = RenderNodeTranslator(context: context, catalog: catalog, identifier: tutorialReference, source: context.documentURL(for: tutorialReference))
         let renderNode = converter.visit(tutorial) as! RenderNode
         let indexingRecords = try renderNode.indexingRecords(onPage: tutorialReference)
         XCTAssertEqual(4, indexingRecords.count)
@@ -69,7 +69,7 @@ class IndexingTests: XCTestCase {
             .init(title: "Section 1", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(inlineContent: [.text("This is a step.")])], anchor: "section-1"),
             .init(title: "Section 2", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(inlineContent: [.text("This is a step.")])], anchor: "section-2"),
         ])
-        let tutorialReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/TestTutorial", sourceLanguage: .swift)
+        let tutorialReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/TestTutorial", sourceLanguage: .swift)
         let indexingRecords = try tutorialSectionsSection.indexingRecords(onPage: tutorialReference, references: [:])
         XCTAssertEqual(2, indexingRecords.count)
         
@@ -89,11 +89,11 @@ class IndexingTests: XCTestCase {
     // MARK: - Article
     
     func testArticle() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let articleReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Catalog/TestTutorialArticle", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! TutorialArticle
-        var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference, source: context.documentURL(for: articleReference))
+        var converter = RenderNodeTranslator(context: context, catalog: catalog, identifier: articleReference, source: context.documentURL(for: articleReference))
         let renderNode = converter.visit(article) as! RenderNode
         let indexingRecords = try renderNode.indexingRecords(onPage: articleReference)
         
@@ -187,11 +187,11 @@ class IndexingTests: XCTestCase {
     }
     
     func testRootPageIndexingRecord() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let articleReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
-        var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference, source: context.documentURL(for: articleReference))
+        var converter = RenderNodeTranslator(context: context, catalog: catalog, identifier: articleReference, source: context.documentURL(for: articleReference))
         let renderNode = converter.visit(article) as! RenderNode
         let indexingRecords = try renderNode.indexingRecords(onPage: articleReference)
         
@@ -207,11 +207,11 @@ class IndexingTests: XCTestCase {
     }
     
     func testSymbolIndexingRecord() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let articleReference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
-        var converter = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleReference, source: context.documentURL(for: articleReference))
+        var converter = RenderNodeTranslator(context: context, catalog: catalog, identifier: articleReference, source: context.documentURL(for: articleReference))
         let renderNode = converter.visit(article) as! RenderNode
         let indexingRecords = try renderNode.indexingRecords(onPage: articleReference)
         

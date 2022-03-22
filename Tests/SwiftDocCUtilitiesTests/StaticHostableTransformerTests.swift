@@ -19,8 +19,8 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
     /// Creates a DocC archive and then archive then executes and TransformForStaticHostingAction on it to produce static content which is then validated.
     func testStaticHostableTransformerOutput() throws {
         
-        // Convert a test bundle as input for the StaticHostableTransformer
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        // Convert a test catalog as input for the StaticHostableTransformer
+        let catalogURL = Bundle.module.url(forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
         let targetURL = try createTemporaryDirectory()
 
         let fileManager = FileManager.default
@@ -29,14 +29,14 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
         defer { try? fileManager.removeItem(at: templateURL) }
         
-        let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
-        defer { try? fileManager.removeItem(at: targetBundleURL) }
+        let targetCatalogURL = targetURL.appendingPathComponent("Result.doccarchive")
+        defer { try? fileManager.removeItem(at: targetCatalogURL) }
         
         var action = try ConvertAction(
-            documentationBundleURL: bundleURL,
+            documentationCatalogURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetBundleURL,
+            targetDirectory: targetCatalogURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
@@ -55,7 +55,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         
         let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: testTemplateURL, hostingBasePath: basePath)
         
-        let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
+        let dataURL = targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
         let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
         
@@ -123,20 +123,20 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
     }
     
     func testStaticHostableTransformerIndexHTMLOutput() throws {
-        // Convert a test bundle as input for the StaticHostableTransformer
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        // Convert a test catalog as input for the StaticHostableTransformer
+        let catalogURL = Bundle.module.url(forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
 
         let targetURL = try createTemporaryDirectory()
         let templateURL = try createTemporaryDirectory().appendingPathComponent("template")
         try Folder.emptyHTMLTemplateDirectory.write(to: templateURL)
 
-        let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
+        let targetCatalogURL = targetURL.appendingPathComponent("Result.doccarchive")
 
         var action = try ConvertAction(
-            documentationBundleURL: bundleURL,
+            documentationCatalogURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetBundleURL,
+            targetDirectory: targetCatalogURL,
             htmlTemplateDirectory: templateURL,
             emitDigest: false,
             currentPlatforms: nil,
@@ -145,7 +145,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
 
         _ = try action.perform(logHandle: .standardOutput)
 
-        let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
+        let dataURL = targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
 
         let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")

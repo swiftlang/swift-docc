@@ -70,12 +70,12 @@ public final class DocumentationExtension: Semantic, DirectiveConvertible {
         self.behavior = behavior
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == DocumentationExtension.directiveName)
 
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<DocumentationExtension>(severityIfFound: .warning, allowedArguments: [Semantics.Behavior.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<DocumentationExtension>(severityIfFound: .warning, allowedArguments: [Semantics.Behavior.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<DocumentationExtension>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<DocumentationExtension>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
 
         let requiredBehavior = Semantic.Analyses.HasArgument<DocumentationExtension, Semantics.Behavior>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         

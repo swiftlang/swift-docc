@@ -17,19 +17,19 @@ import Markdown
 class AnchorSectionTests: XCTestCase {
         
     func testResolvingArticleSubsections() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (catalog, context) = try testCatalogAndContext(named: "CatalogWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
         [
-            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
             XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
         }
         
         // Load the module page
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/CoolFramework", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
         // Extract the links from the discussion
@@ -66,7 +66,7 @@ class AnchorSectionTests: XCTestCase {
         }
 
         // Verify collecting section render references
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
         let renderNode = try converter.convert(entity, at: nil)
 
         let sectionReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/TechnologyX/Article#Article-Sub-Section"] as? TopicRenderReference)
@@ -75,19 +75,19 @@ class AnchorSectionTests: XCTestCase {
     }
 
     func testResolvingSymbolSubsections() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (catalog, context) = try testCatalogAndContext(named: "CatalogWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
         [
-            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/CoolFramework/CoolClass", fragment: "Symbol-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
             XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
         }
         
         // Load the module page
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/CoolFramework", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
         // Extract the links from the discussion
@@ -124,7 +124,7 @@ class AnchorSectionTests: XCTestCase {
         }
 
         // Verify collecting section render references
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
         let renderNode = try converter.convert(entity, at: nil)
 
         let sectionReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/CoolFramework/CoolClass#Symbol-Sub-Section"] as? TopicRenderReference)
@@ -133,19 +133,19 @@ class AnchorSectionTests: XCTestCase {
     }
 
     func testResolvingRootPageSubsections() throws {
-        let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (catalog, context) = try testCatalogAndContext(named: "CatalogWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
         [
-            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework", fragment: "Module-Sub-Section", sourceLanguage: .swift),
-            ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework", fragment: "Module-Sub-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/CoolFramework", fragment: "Module-Sub-Section", sourceLanguage: .swift),
+            ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/CoolFramework", fragment: "Module-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
             XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
         }
         
         // Load the article page
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TechnologyX/Article", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/TechnologyX/Article", sourceLanguage: .swift)
         let entity = try context.entity(with: reference)
         
         // Extract the links from the discussion
@@ -182,7 +182,7 @@ class AnchorSectionTests: XCTestCase {
         }
 
         // Verify collecting section render references
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
         let renderNode = try converter.convert(entity, at: nil)
 
         let sectionReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.example/documentation/CoolFramework#Module-Sub-Section"] as? TopicRenderReference)
@@ -191,7 +191,7 @@ class AnchorSectionTests: XCTestCase {
     }
     
     func testWarnsWhenCuratingSections() throws {
-        let (_, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
+        let (_, context) = try testCatalogAndContext(named: "CatalogWithLonelyDeprecationDirective")
         
         // The module page has 3 section links in a Topics group,
         // the context should contain the three warnings about those links

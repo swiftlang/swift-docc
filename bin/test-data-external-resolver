@@ -15,7 +15,7 @@
 # To set this up, set the `DOCC_LINK_RESOLVER_EXECUTABLE` environmental variable to the path of this script.
 #
 # Swift-DocC will call this executable for unresolved symbol references in the processed symbol graph files and for
-# absolute documentation links with the "com.test.bundle" identifier. For example: <doc://com.test.bundle/something>
+# absolute documentation links with the "com.test.catalog" identifier. For example: <doc://com.test.catalog/something>
 
 RESPONSE='{
   "resolvedInformation" : {
@@ -53,7 +53,7 @@ RESPONSE='{
       }
     ],
     "title" : "Resolved Title",
-    "url" : "doc:\/\/com.test.bundle\/resolved/path\/",
+    "url" : "doc:\/\/com.test.catalog\/resolved/path\/",
     "variants" : [
       {
         "abstract" : "Resolved variant abstract for this topic.",
@@ -83,8 +83,8 @@ RESPONSE='{
   }
 }'
 
-# Write this resolver's bundle identifier
-echo '{"bundleIdentifier":"com.test.bundle"}'
+# Write this resolver's catalog identifier
+echo '{"catalogIdentifier":"com.test.catalog"}'
 
 # Forever, wait for DocC to send a request and respond the resolved information
 while true

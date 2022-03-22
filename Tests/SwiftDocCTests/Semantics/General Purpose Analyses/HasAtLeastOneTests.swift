@@ -16,7 +16,7 @@ final class TestParent: Semantic, DirectiveConvertible {
     static let directiveName = "Parent"
     let originalMarkup: BlockDirective
     let testChildren: [TestChild]
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(TestParent.canConvertDirective(directive))
         self.originalMarkup = directive
         self.testChildren = directive.children.compactMap { child -> TestChild? in
@@ -24,7 +24,7 @@ final class TestParent: Semantic, DirectiveConvertible {
                 childDirective.name == TestChild.directiveName else {
                     return nil
             }
-            return TestChild(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            return TestChild(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         }
     }
     
@@ -36,7 +36,7 @@ final class TestParent: Semantic, DirectiveConvertible {
 final class TestChild: Semantic, DirectiveConvertible {
     static let directiveName = "Child"
     let originalMarkup: BlockDirective
-    init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(TestChild.canConvertDirective(directive))
         self.originalMarkup = directive
     }
@@ -53,12 +53,12 @@ class HasAtLeastOneTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         do {
             var problems = [Problem]()
             directive.map { directive in
-                let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+                let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
                 XCTAssertTrue(matches.isEmpty)
                 XCTAssertTrue(remainder.elements.isEmpty)
             }
@@ -73,7 +73,7 @@ class HasAtLeastOneTests: XCTestCase {
         do {
             var problems = [Problem]()
             directive.map { directive in
-                let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+                let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
                 XCTAssertTrue(matches.isEmpty)
                 XCTAssertTrue(remainder.elements.isEmpty)
             }
@@ -92,10 +92,10 @@ class HasAtLeastOneTests: XCTestCase {
         var problems = [Problem]()
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
-            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertEqual(1, matches.count)
             XCTAssertTrue(remainder.elements.isEmpty)
         }
@@ -115,10 +115,10 @@ class HasAtLeastOneTests: XCTestCase {
         var problems = [Problem]()
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
-            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertEqual(3, matches.count)
             XCTAssertTrue(remainder.elements.isEmpty)
         }
@@ -136,10 +136,10 @@ class HasAtLeastOneTests: XCTestCase {
         var problems = [Problem]()
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
-            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            let (matches, remainder) = Semantic.Analyses.HasAtLeastOne<TestParent, TestChild>(severityIfNotFound: .error).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertEqual(1, matches.count)
             XCTAssertTrue(remainder.elements.isEmpty)
         }

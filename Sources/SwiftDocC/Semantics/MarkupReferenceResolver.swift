@@ -25,14 +25,14 @@ fileprivate func disabledLinkDestinationProblem(reference: ResolvedTopicReferenc
  */
 struct MarkupReferenceResolver: MarkupRewriter {
     var context: DocumentationContext
-    var bundle: DocumentationBundle
+    var catalog: DocumentationCatalog
     var source: URL?
     var problems = [Problem]()
     var rootReference: ResolvedTopicReference
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, source: URL?, rootReference: ResolvedTopicReference) {
+    init(context: DocumentationContext, catalog: DocumentationCatalog, source: URL?, rootReference: ResolvedTopicReference) {
         self.context = context
-        self.bundle = bundle
+        self.catalog = catalog
         self.source = source
         self.rootReference = rootReference
     }
@@ -65,14 +65,14 @@ struct MarkupReferenceResolver: MarkupRewriter {
             }
             
             // FIXME: Provide near-miss suggestion here. The user is likely to make mistakes with capitalization because of character input (rdar://59660520).
-            let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
+            let uncuratedArticleMatch = context.uncuratedArticles[catalog.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
             problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
             return nil
         }
     }
 
     mutating func visitImage(_ image: Image) -> Markup? {
-        if let reference = image.reference(in: bundle), (try? context.resource(with: reference)) == nil {
+        if let reference = image.reference(in: catalog), (try? context.resource(with: reference)) == nil {
             problems.append(unresolvedResourceProblem(resource: reference, source: source, range: image.range, severity: .warning))
         }
 
@@ -146,7 +146,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
         switch blockDirective.name {
         case Snippet.directiveName:
             var problems = [Problem]()
-            guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, in: context, problems: &problems) else {
+            guard let snippet = Snippet(from: blockDirective, source: source, for: catalog, in: context, problems: &problems) else {
                 return blockDirective
             }
             let resolvedDestination = resolveAbsoluteSymbolLink(unresolvedDestination: snippet.path, elementRange: blockDirective.range)

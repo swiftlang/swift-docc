@@ -89,7 +89,7 @@
             "text" : "``myFunction()`` is the public API to using the most of ``ChildOfMyClass``'s features."
           },
           {
-            "text" : "The ``ViewBuilder``, ``MyClass``, and <doc://com.test.bundle/MyKit/MyClass/myOtherFunction()> type is a custom parameter attribute that constructs views from multi-statement"
+            "text" : "The ``ViewBuilder``, ``MyClass``, and <doc://com.test.catalog/MyKit/MyClass/myOtherFunction()> type is a custom parameter attribute that constructs views from multi-statement"
           },
           {
             "text" : "closures."

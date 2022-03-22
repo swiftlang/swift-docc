@@ -10,18 +10,18 @@
 
 import Foundation
 
-/// A type that resolves references to documentation outside of the documentation bundle, and creates documentation nodes with basic information about the resolved references.
+/// A type that resolves references to documentation outside of the documentation catalog, and creates documentation nodes with basic information about the resolved references.
 ///
 /// Use this protocol to integrate documentation content from other sources. Your implementation needs to be able to:
-///  * Resolve references for the bundle identifier for which it's registered.
+///  * Resolve references for the catalog identifier for which it's registered.
 ///  * Create documentation nodes for the references it was able to resolve.
 ///  * Return an external URL for the references it was able to resolve.
 ///
-/// When the documentation context encounters a reference that can't be resolved in the current bundle, it checks whether an external resolver is registered in
-/// ``DocumentationContext/externalReferenceResolvers`` for the bundle identifier of the unresolved reference. If there is, that external resolver is asked to attempt to resolve the reference.
+/// When the documentation context encounters a reference that can't be resolved in the current catalog, it checks whether an external resolver is registered in
+/// ``DocumentationContext/externalReferenceResolvers`` for the catalog identifier of the unresolved reference. If there is, that external resolver is asked to attempt to resolve the reference.
 ///
 /// If the reference exists in the external source of documentation, the external resolver returns a resolved reference to the context. Later, the context uses this resolved reference to ask the external resolver
-/// for the node with the documentation content for that reference. Because this content isn't part of the compiled bundle, it won't be included in the build output. However, references to this node from the bundle's content
+/// for the node with the documentation content for that reference. Because this content isn't part of the compiled catalog, it won't be included in the build output. However, references to this node from the catalog's content
 /// may incorporate, for example, the external node's title, kind, or abstract in their output.
 ///
 /// If the reference doesn't exist in the external source of documentation or if an error occurs while attempting to resolve the reference, the external resolver returns information about the error.
@@ -50,7 +50,7 @@ public protocol ExternalReferenceResolver {
     
     /// Creates a new documentation node with the documentation content for the external reference.
     ///
-    /// This node is not part of the local bundle and won't be part of the rendered output. Because of this, your implementation only needs to return a node with the subset of content that correspond to the non-optional
+    /// This node is not part of the local catalog and won't be part of the rendered output. Because of this, your implementation only needs to return a node with the subset of content that correspond to the non-optional
     /// properties of a ``LinkDestinationSummary``; the node's kind, title, abstract, relative path, reference URL, the language of the node, and the set of languages where the nodes is available.
     ///
     /// - Parameter reference: The external reference that this resolver previously resolved.

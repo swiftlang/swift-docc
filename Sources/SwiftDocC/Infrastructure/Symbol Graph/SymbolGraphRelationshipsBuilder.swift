@@ -29,11 +29,11 @@ struct SymbolGraphRelationshipsBuilder {
     /// The target is optional, because the protocol might be from a different symbol graph.
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
-    ///   - bundle: A documentation bundle.
+    ///   - catalog: A documentation catalog.
     ///   - context: A documentation context.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addImplementationRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, context: DocumentationContext, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+    static func addImplementationRelationship(edge: SymbolGraph.Relationship, in catalog: DocumentationCatalog, context: DocumentationContext, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
         // Resolve source symbol
         guard let implementorNode = symbolIndex[edge.source],
             let implementorSymbol = implementorNode.semantic as? Symbol else {
@@ -52,7 +52,7 @@ struct SymbolGraphRelationshipsBuilder {
                 ?? implementorNode.reference.sourceLanguage
             
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: symbolIndex[edge.target]?.symbol)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, catalog: catalog) else {
                 // The symbol reference format is invalid.
                 engine.emit(NodeProblem.invalidReference(symbolReference.path))
                 return
@@ -101,10 +101,10 @@ struct SymbolGraphRelationshipsBuilder {
     /// The target is optional, because the protocol might be from a different module.
     /// - Parameters:
     ///   - edge: A symbol-graph relationship with a source and a target.
-    ///   - bundle: A documentation bundle.
+    ///   - catalog: A documentation catalog.
     ///   - symbolIndex: A symbol-lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addConformanceRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+    static func addConformanceRelationship(edge: SymbolGraph.Relationship, in catalog: DocumentationCatalog, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
         // Resolve source symbol
         guard let conformingNode = symbolIndex[edge.source],
             let conformingSymbol = conformingNode.semantic as? Symbol else {
@@ -126,7 +126,7 @@ struct SymbolGraphRelationshipsBuilder {
                 ?? conformingNode.reference.sourceLanguage
 
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: symbolIndex[edge.target]?.symbol)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, catalog: catalog) else {
                 // The symbol reference format is invalid.
                 engine.emit(NodeProblem.invalidReference(symbolReference.path))
                 return
@@ -178,10 +178,10 @@ struct SymbolGraphRelationshipsBuilder {
     /// The target is optional, because the protocol or class might be from a different module.
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
-    ///   - bundle: A documentation bundle.
+    ///   - catalog: A documentation catalog.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addInheritanceRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+    static func addInheritanceRelationship(edge: SymbolGraph.Relationship, in catalog: DocumentationCatalog, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
         // Resolve source symbol
         guard let childNode = symbolIndex[edge.source],
             let childSymbol = childNode.semantic as? Symbol else {
@@ -202,7 +202,7 @@ struct SymbolGraphRelationshipsBuilder {
                 ?? childNode.reference.sourceLanguage
             
             let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: symbolIndex[edge.target]?.symbol)
-            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
+            guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, catalog: catalog) else {
                 // The symbol reference format is invalid.
                 engine.emit(NodeProblem.invalidReference(symbolReference.path))
                 return
@@ -235,10 +235,10 @@ struct SymbolGraphRelationshipsBuilder {
     /// Adds a relationship from a type member to a protocol requirement.
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
-    ///   - bundle: A documentation bundle.
+    ///   - catalog: A documentation catalog.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addRequirementRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+    static func addRequirementRelationship(edge: SymbolGraph.Relationship, in catalog: DocumentationCatalog, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
         // Resolve source symbol
         guard let requiredNode = symbolIndex[edge.source],
             let requiredSymbol = requiredNode.semantic as? Symbol else {
@@ -266,7 +266,7 @@ struct SymbolGraphRelationshipsBuilder {
                 let parentModule = (parent.semantic as? Symbol)?.moduleReference,
                 let nodeModule = (node.semantic as? Symbol)?.moduleReference,
                 parentModule == nodeModule {
-                // If the origin is in the same bundle - always inherit the docs.
+                // If the origin is in the same catalog - always inherit the docs.
                 return
             }
             

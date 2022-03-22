@@ -22,8 +22,8 @@ class FileTests: XCTestCase {
     }
     
     func testCreateFromDisk() throws {
-        let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let testCatalogURL = Bundle.module.url(
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
         
         // Generates a list of all paths recursively inside a folder
         func pathsIn(folder: Folder, url: URL) -> [String] {
@@ -41,14 +41,14 @@ class FileTests: XCTestCase {
         }
 
         // Load the contents of a folder on disk
-        guard let diskContent = FileManager.default.enumerator(at: testBundleURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)?.allObjects as? [URL] else {
-            XCTFail("Could not read \(testBundleURL.path)")
+        guard let diskContent = FileManager.default.enumerator(at: testCatalogURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)?.allObjects as? [URL] else {
+            XCTFail("Could not read \(testCatalogURL.path)")
             return
         }
-        let diskPaths = Set(diskContent.map({ $0.path.replacingOccurrences(of: testBundleURL.path, with: "") })).sorted()
+        let diskPaths = Set(diskContent.map({ $0.path.replacingOccurrences(of: testCatalogURL.path, with: "") })).sorted()
         
         // Load the disk folder in a `Folder` instance
-        let folder = try Folder.createFromDisk(url: testBundleURL)
+        let folder = try Folder.createFromDisk(url: testCatalogURL)
         let folderPaths = pathsIn(folder: folder, url: URL(string: "/")!).sorted()
         
         // Compare the paths from disk and in the `Folder` are identical

@@ -17,9 +17,9 @@ class ResourcesTests: XCTestCase {
         let source = "@\(Resources.directiveName)"
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let resources = Resources(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNil(resources)
         XCTAssertEqual(1, problems.count)
       
@@ -67,9 +67,9 @@ class ResourcesTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let resources = Resources(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(resources)
         XCTAssertTrue(problems.isEmpty, "Unexpected problems: \(problems)")
         
@@ -120,9 +120,9 @@ Resources @1:1-29:2
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let resources = Resources(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let resources = Resources(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(resources)
         XCTAssertFalse(problems.containsErrors)
         

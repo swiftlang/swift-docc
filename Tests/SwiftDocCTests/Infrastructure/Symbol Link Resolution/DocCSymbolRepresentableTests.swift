@@ -126,15 +126,15 @@ class DocCSymbolRepresentableTests: XCTestCase {
         symbolTitle: String,
         expectedNumberOfAmbiguousSymbols: Int
     ) throws {
-        // Build a bundle with an unusual number of overloaded symbols
-        let (url, _, context) = try testBundleAndContext(
+        // Build a catalog with an unusual number of overloaded symbols
+        let (url, _, context) = try testCatalogAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
         )
         defer { try? FileManager.default.removeItem(at: url) }
         
-        // Collect the overloaded symbols nodes from the built bundle
+        // Collect the overloaded symbols nodes from the built catalog
         let ambiguousSymbols = context.symbolIndex.values.compactMap(\.symbol).filter {
             $0.names.title.lowercased() == symbolTitle.lowercased()
         }
@@ -188,7 +188,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testLinkComponentInitialization() throws {
-        let (url, _, context) = try testBundleAndContext(
+        let (url, _, context) = try testCatalogAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
@@ -224,7 +224,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             count += 1
         }
         
-        // We expect this bundle to contain 5 symbols that need both type and usr
+        // We expect this catalog to contain 5 symbols that need both type and usr
         // disambiguation.
         XCTAssertEqual(count, 5)
     }

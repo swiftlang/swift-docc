@@ -74,8 +74,8 @@ case $FRAMEWORK in
     swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/SwiftDocC/SwiftDocC.docc" \
       --experimental-enable-custom-templates \
       --fallback-display-name SwiftDocC \
-      --fallback-bundle-identifier org.swift.SwiftDocC \
-      --fallback-bundle-version 1.0.0 \
+      --fallback-catalog-identifier org.swift.SwiftDocC \
+      --fallback-catalog-version 1.0.0 \
       --diagnostic-level error \
       --additional-symbol-graph-dir "$SGFS_DIR" \
       --output-path "$DOCS_BUILD_DIR"
@@ -101,8 +101,8 @@ case $FRAMEWORK in
     swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/SwiftDocCUtilities/SwiftDocCUtilities.docc" \
       --experimental-enable-custom-templates \
       --fallback-display-name SwiftDocCUtilities \
-      --fallback-bundle-identifier org.swift.SwiftDocCUtilities \
-      --fallback-bundle-version 1.0.0 \
+      --fallback-catalog-identifier org.swift.SwiftDocCUtilities \
+      --fallback-catalog-version 1.0.0 \
       --diagnostic-level error \
       --additional-symbol-graph-dir "$SGFS_DIR" \
       --output-path $DOCS_BUILD_DIR

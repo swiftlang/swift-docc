@@ -16,6 +16,6 @@ protocol CheckerTest: AnyObject {}
 
 extension CheckerTest {
     func createDocumentationNode(for document: Document) -> DocumentationNode {
-        return DocumentationNode(reference: ResolvedTopicReference(bundleIdentifier: "test", path : "/test", sourceLanguage: .swift), kind: .article, sourceLanguage: .swift, name: .conceptual(title: "test"), markup: document, semantic: Semantic())
+        return DocumentationNode(reference: ResolvedTopicReference(catalogIdentifier: "test", path : "/test", sourceLanguage: .swift), kind: .article, sourceLanguage: .swift, name: .conceptual(title: "test"), markup: document, semantic: Semantic())
     }
 }

@@ -225,8 +225,8 @@ as you're working.
 ```sh
 docc preview Sources/SwiftDocC/SwiftDocC.docc \
   --fallback-display-name SwiftDocC \
-  --fallback-bundle-identifier org.swift.SwiftDocC \
-  --fallback-bundle-version 1.0.0 \
+  --fallback-catalog-identifier org.swift.SwiftDocC \
+  --fallback-catalog-version 1.0.0 \
   --additional-symbol-graph-dir .build/swift-docc-symbol-graphs
 ```
 

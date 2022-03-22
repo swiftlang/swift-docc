@@ -553,12 +553,12 @@
             "type" : "groupMarker"
           },
           {
-            "path" : "\/documentation\/test-bundle\/article2",
+            "path" : "\/documentation\/test-catalog\/article2",
             "title" : "Article 2",
             "type" : "symbol"
           },
           {
-            "path" : "\/documentation\/test-bundle\/article3",
+            "path" : "\/documentation\/test-catalog\/article3",
             "title" : "Article 3",
             "type" : "article"
           },
@@ -567,12 +567,12 @@
             "type" : "groupMarker"
           },
           {
-            "path" : "\/documentation\/test-bundle\/article3",
+            "path" : "\/documentation\/test-catalog\/article3",
             "title" : "Article 3",
             "type" : "article"
           },
           {
-            "path" : "\/tutorials\/test-bundle\/testtutorial",
+            "path" : "\/tutorials\/test-catalog\/testtutorial",
             "title" : "Basic Augmented Reality App",
             "type" : "project"
           },
@@ -581,7 +581,7 @@
             "type" : "groupMarker"
           },
           {
-            "path" : "\/documentation\/test-bundle\/article2",
+            "path" : "\/documentation\/test-catalog\/article2",
             "title" : "Article 2",
             "type" : "symbol"
           },
@@ -590,22 +590,22 @@
             "type" : "groupMarker"
           },
           {
-            "path" : "\/documentation\/test-bundle\/article2",
+            "path" : "\/documentation\/test-catalog\/article2",
             "title" : "Article 2",
             "type" : "symbol"
           }
         ],
-        "path" : "\/documentation\/test-bundle\/article",
+        "path" : "\/documentation\/test-catalog\/article",
         "title" : "My Cool Article",
         "type" : "symbol"
       },
       {
-        "path" : "\/documentation\/test-bundle\/article2",
+        "path" : "\/documentation\/test-catalog\/article2",
         "title" : "Article 2",
         "type" : "symbol"
       },
       {
-        "path" : "\/documentation\/test-bundle\/default-code-listing-syntax",
+        "path" : "\/documentation\/test-catalog\/default-code-listing-syntax",
         "title" : "Default Code Listing Syntax",
         "type" : "article"
       },
@@ -744,22 +744,22 @@
         "type" : "groupMarker"
       },
       {
-        "path" : "\/tutorials\/test-bundle\/testtutorial",
+        "path" : "\/tutorials\/test-catalog\/testtutorial",
         "title" : "Basic Augmented Reality App",
         "type" : "project"
       },
       {
-        "path" : "\/tutorials\/test-bundle\/testtutorialarticle",
+        "path" : "\/tutorials\/test-catalog\/testtutorialarticle",
         "title" : "Making an Augmented Reality App",
         "type" : "article"
       },
       {
-        "path" : "\/tutorials\/test-bundle\/testtutorial2",
+        "path" : "\/tutorials\/test-catalog\/testtutorial2",
         "title" : "Advanced Augmented Reality App",
         "type" : "project"
       },
       {
-        "path" : "\/tutorials\/test-bundle\/tutorialmediawithspaces",
+        "path" : "\/tutorials\/test-catalog\/tutorialmediawithspaces",
         "title" : "Basic Augmented Reality App",
         "type" : "project"
       }

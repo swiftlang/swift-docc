@@ -144,14 +144,14 @@ func aBlackListedFunc() {
     """
 
     func testDisabledByDefault() throws {
-        // Create a test bundle with some non-inclusive content.
-        let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        // Create a test catalog with some non-inclusive content.
+        let (catalogURL, _, _) = try testCatalogAndContext(copying: "TestCatalog", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureCatalog: { url in
             try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
         
-        // Load the bundle
-        let (_, _, context) = try loadBundle(from: bundleURL, codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: .error, configureContext: nil)
+        // Load the catalog
+        let (_, _, context) = try loadCatalog(from: catalogURL, codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: .error, configureContext: nil)
         XCTAssertEqual(context.problems.count, 0)
     }
 
@@ -165,17 +165,17 @@ func aBlackListedFunc() {
             (.error, false),
         ]
         
-        // Create a test bundle with some non-inclusive content.
-        let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        // Create a test catalog with some non-inclusive content.
+        let (catalogURL, _, _) = try testCatalogAndContext(copying: "TestCatalog", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureCatalog: { url in
             try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        defer { try? FileManager.default.removeItem(at: catalogURL) }
 
         for expectation in expectations {
             let (severity, enabled) = expectation
             
-            // Load the bundle
-            let (_, _, context) = try loadBundle(from: bundleURL, codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: severity, configureContext: nil)
+            // Load the catalog
+            let (_, _, context) = try loadCatalog(from: catalogURL, codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: severity, configureContext: nil)
             // Verify that checker diagnostics were emitted or not, depending on the diagnostic level set.
             XCTAssertEqual(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.NonInclusiveLanguage" }), enabled)
         }

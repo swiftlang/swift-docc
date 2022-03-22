@@ -24,10 +24,10 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid", "bar"]).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid", "bar"]).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertTrue(problems.isEmpty)
     }
@@ -44,10 +44,10 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: []).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: []).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.count, 2)
     }
@@ -64,10 +64,10 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"]).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"]).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.count, 1)
     }
@@ -86,17 +86,17 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         // Does allow arbitrary markup
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"], allowsMarkup: true).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"], allowsMarkup: true).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.count, 1)
         
         // Doesn't allow arbitrary markup
         problems = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"], allowsMarkup: false).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["valid"], allowsMarkup: false).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.count, 2)
     }
@@ -114,10 +114,10 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         var problems: [Problem] = []
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["foo", "bar", "woof", "bark"]).analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .error, allowedDirectives: ["foo", "bar", "woof", "bark"]).analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
         
         XCTAssertEqual(problems.count, 1)
         guard let first = problems.first else { return }

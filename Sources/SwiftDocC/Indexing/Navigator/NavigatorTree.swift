@@ -93,7 +93,7 @@ public class NavigatorTree {
      */
     public init() {
         // This is a placeholder
-        self.root = NavigatorTree.rootNode(bundleIdentifier: NavigatorIndex.UnknownBundleIdentifier)
+        self.root = NavigatorTree.rootNode(catalogIdentifier: NavigatorIndex.UnknownCatalogIdentifier)
     }
     
     // Internal class for reading content from disk.
@@ -120,7 +120,7 @@ public class NavigatorTree {
      
      - Parameters:
         - url: The file URL from which the tree should be read.
-        - bundleIdentifier: The bundle identifier used to generate the mapping topicID to node on tree.
+        - catalogIdentifier: The catalog identifier used to generate the mapping topicID to node on tree.
         - interfaceLanguages: A set containing the indication about the interface languages a tree contains.
         - timeout: The amount of time we can load a batch of items from data, once the timeout time pass,
                    the reading process will reschedule asynchronously using the given queue.
@@ -129,7 +129,7 @@ public class NavigatorTree {
         - presentationIdentifier: Defines if nodes should have a presentation identifier useful in presentation contexts.
         - broadcast: The callback to update get updates of the current process.
      */
-    public func read(from url: URL, bundleIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, presentationIdentifier: String? = nil, broadcast: BroadcastCallback?) throws {
+    public func read(from url: URL, catalogIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, presentationIdentifier: String? = nil, broadcast: BroadcastCallback?) throws {
         let data = try Data(contentsOf: url)
         let readingCursor = ReadingCursor(data: data)
         self.readingCursor = readingCursor
@@ -157,7 +157,7 @@ public class NavigatorTree {
                     break
                 }
                 
-                let node = Node(item: item, bundleIdentifier: bundleIdentifier ?? "")
+                let node = Node(item: item, catalogIdentifier: catalogIdentifier ?? "")
                 node.id = UInt32(readingCursor.index)
                 node.presentationIdentifier = presentationIdentifier
                 
@@ -194,6 +194,12 @@ public class NavigatorTree {
         }
         
         self.root = root
+    }
+    
+    @available(*, deprecated, renamed: "read(from:catalogIdentifier:interfaceLanguages:timeout:delay:queue:presentationIdentifier:broadcast:)")
+    @_disfavoredOverload
+    public func read(from url: URL, bundleIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, timeout: TimeInterval, delay: TimeInterval = 0.01, queue: DispatchQueue, presentationIdentifier: String? = nil, broadcast: BroadcastCallback?) throws {
+        try read(from: url, catalogIdentifier: bundleIdentifier, interfaceLanguages: interfaceLanguages, timeout: timeout, delay: delay, queue: queue, presentationIdentifier: presentationIdentifier, broadcast: broadcast)
     }
         
     /**
@@ -271,22 +277,22 @@ public class NavigatorTree {
      Non-atomically uses `FileHandle` to read the necessary chunks at time.
      
      - Parameter url: The file URL from which the tree should be read.
-     - Parameter bundleIdentifier: The bundle identifier used to generate the mapping topicID to node on tree.
+     - Parameter catalogIdentifier: The catalog identifier used to generate the mapping topicID to node on tree.
      - Parameter interfaceLanguages: A set containing the indication about the interface languages a tree contains.
      - Parameter atomically: Defines if the read should be atomic.
      - Parameter presentationIdentifier: Defines if nodes should have a presentation identifier useful in presentation contexts.
      */
-    static func read(from url: URL, bundleIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, atomically: Bool = true, presentationIdentifier: String? = nil) throws -> NavigatorTree {
+    static func read(from url: URL, catalogIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, atomically: Bool = true, presentationIdentifier: String? = nil) throws -> NavigatorTree {
         let interfaceLanguageMap = Dictionary(uniqueKeysWithValues: interfaceLanguages.map{ ($0.mask, $0)})
         let path = url.path
         if atomically {
-            return try __readAtomically(from: path, bundleIdentifier: bundleIdentifier, interfaceLanguageMap: interfaceLanguageMap, presentationIdentifier: presentationIdentifier)
+            return try __readAtomically(from: path, catalogIdentifier: catalogIdentifier, interfaceLanguageMap: interfaceLanguageMap, presentationIdentifier: presentationIdentifier)
         }
-        return try __read(from: path, bundleIdentifier: bundleIdentifier, interfaceLanguageMap: interfaceLanguageMap, presentationIdentifier: presentationIdentifier)
+        return try __read(from: path, catalogIdentifier: catalogIdentifier, interfaceLanguageMap: interfaceLanguageMap, presentationIdentifier: presentationIdentifier)
     }
     
     /// Read a tree by loading the whole data into disk and then process the content.
-    fileprivate static func __readAtomically(from path: String, bundleIdentifier: String? = nil, interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage], presentationIdentifier: String? = nil) throws -> NavigatorTree {
+    fileprivate static func __readAtomically(from path: String, catalogIdentifier: String? = nil, interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage], presentationIdentifier: String? = nil) throws -> NavigatorTree {
         let fileUrl = URL(fileURLWithPath: path)
         let data = try Data(contentsOf: fileUrl)
         
@@ -311,7 +317,7 @@ public class NavigatorTree {
                 throw Error.invalidData
             }
             
-            let node = Node(item: item, bundleIdentifier: bundleIdentifier ?? "")
+            let node = Node(item: item, catalogIdentifier: catalogIdentifier ?? "")
             node.id = index
             node.presentationIdentifier = presentationIdentifier
             if let parent = map[parentID] {
@@ -330,7 +336,7 @@ public class NavigatorTree {
     }
     
     /// Read a tree by using a FileHandle while reading chunks of data from disk.
-    fileprivate static func __read(from path: String, bundleIdentifier: String? = nil, interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage], presentationIdentifier: String? = nil) throws -> NavigatorTree {
+    fileprivate static func __read(from path: String, catalogIdentifier: String? = nil, interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage], presentationIdentifier: String? = nil) throws -> NavigatorTree {
         guard let fileHandler = FileHandle(forReadingAtPath: path) else {
             throw Error.cannotOpenFile(path: path)
         }
@@ -353,7 +359,7 @@ public class NavigatorTree {
                 throw Error.invalidData
             }
             
-            let node = Node(item: item, bundleIdentifier: bundleIdentifier ?? "")
+            let node = Node(item: item, catalogIdentifier: catalogIdentifier ?? "")
             node.id = index
             node.presentationIdentifier = presentationIdentifier
             if let parent = map[parentID] {
@@ -382,8 +388,8 @@ public class NavigatorTree {
         /// An id assigned by a process, for example to dump data into disk.
         public var id: UInt32?
         
-        /// Bundle identifier.
-        public var bundleIdentifier: String
+        /// Catalog identifier.
+        public var catalogIdentifier: String
         
         /// The wrapped `NavigatorItem`.
         public var item: NavigatorItem
@@ -412,11 +418,11 @@ public class NavigatorTree {
          Initialize a node with the given `NavigatorItem`.
          
          - Parameter item: The item to wrap inside the `Node` object.
-         - Parameter bundleIdentifier: The bundle identifier of the item.
+         - Parameter catalogIdentifier: The catalog identifier of the item.
          */
-        public init(item: NavigatorItem, bundleIdentifier: String) {
+        public init(item: NavigatorItem, catalogIdentifier: String) {
             self.item = item
-            self.bundleIdentifier = bundleIdentifier
+            self.catalogIdentifier = catalogIdentifier
         }
         
         /**
@@ -456,7 +462,7 @@ public class NavigatorTree {
          */
         public func filter(_ isIncluded: (NavigatorItem) -> Bool) -> Node? {
             guard isIncluded(self.item) else { return nil }
-            let node = Node(item: item, bundleIdentifier: self.bundleIdentifier)
+            let node = Node(item: item, catalogIdentifier: self.catalogIdentifier)
             children.forEach { (child) in
                 if let child = child.filter(isIncluded) {
                     node.add(child: child)
@@ -473,7 +479,7 @@ public class NavigatorTree {
         /// Private version of the logic to copy the current node and children to new instances preserving the node item.
         /// - Parameter hierarchy: The set containing the parent items to avoid entering in an infinite loop.
         private func _copy(_ hierarchy: Set<NavigatorItem>) -> NavigatorTree.Node {
-            let mirror = NavigatorTree.Node(item: item, bundleIdentifier: bundleIdentifier)
+            let mirror = NavigatorTree.Node(item: item, catalogIdentifier: catalogIdentifier)
             guard !hierarchy.contains(item) else { return mirror } // Avoid to enter in an infity loop.
             var updatedHierarchy = hierarchy
             if let parentItem = parent?.item { updatedHierarchy.insert(parentItem) }
@@ -498,13 +504,13 @@ public class NavigatorTree {
     
     /// Returns an instance of `NavigatorTree.Node` that can be used as root.
     /// - Note: The node has all the masks maxed to potentially include any subtree.
-    public static func rootNode(bundleIdentifier: String) -> NavigatorTree.Node {
+    public static func rootNode(catalogIdentifier: String) -> NavigatorTree.Node {
         let root = NavigatorItem(pageType: UInt8(NavigatorIndex.PageType.root.rawValue),
                                  languageID: InterfaceLanguage.any.mask,
                                  title: "[Root]",
                                  platformMask: Platform.Name.any.mask,
                                  availabilityID: 0)
-        return Node(item: root, bundleIdentifier: bundleIdentifier)
+        return Node(item: root, catalogIdentifier: catalogIdentifier)
     }
     
 }

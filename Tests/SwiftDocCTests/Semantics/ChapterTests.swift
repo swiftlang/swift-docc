@@ -19,9 +19,9 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let chapter = Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let chapter = Chapter(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNil(chapter)
         XCTAssertEqual(3, problems.count)
         XCTAssertEqual("org.swift.docc.HasArgument.name", problems[0].diagnostic.identifier)
@@ -42,9 +42,9 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let chapter = Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let chapter = Chapter(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertEqual(1, problems.count)
         problems.first.map { problem in
             XCTAssertEqual("org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.DuplicateChildren", problem.diagnostic.identifier)
@@ -71,9 +71,9 @@ class ChapterTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let chapter = Chapter(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let chapter = Chapter(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertTrue(problems.isEmpty)
         XCTAssertNotNil(chapter)
         chapter.map { chapter in
@@ -83,10 +83,10 @@ class ChapterTests: XCTestCase {
     }
     
     func testDuplicateTutorialReferences() throws {
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testCatalogAndContext(named: "TestCatalog")
         
         /*
-         The test bundle contains the duplicate tutorial references in TestOverview:
+         The test catalog contains the duplicate tutorial references in TestOverview:
          - @TutorialReference(tutorial: "doc:TestTutorial")
          - @TutorialReference(tutorial: "doc:/TestTutorial")
          

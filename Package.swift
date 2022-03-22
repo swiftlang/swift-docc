@@ -50,7 +50,7 @@ let package = Package(
             ],
             resources: [
                 .copy("Test Resources"),
-                .copy("Test Bundles"),
+                .copy("Test Catalogs"),
                 .copy("Converter/Converter Fixtures"),
                 .copy("Rendering/Rendering Fixtures"),
             ]),
@@ -73,7 +73,7 @@ let package = Package(
             ],
             resources: [
                 .copy("Test Resources"),
-                .copy("Test Bundles"),
+                .copy("Test Catalogs"),
             ]),
         
         // Test utility library

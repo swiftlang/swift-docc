@@ -19,12 +19,12 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNil(tutorial)
             XCTAssertEqual(
                 [
@@ -195,12 +195,12 @@ class TutorialTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(tutorial)
             XCTAssertTrue(problems.isEmpty)
             tutorial.map { tutorial in
@@ -208,32 +208,32 @@ class TutorialTests: XCTestCase {
 Tutorial @1:1-150:2 projectFiles: nil
 ├─ Intro @3:4-6:5 title: 'Basic Augmented Reality App'
 │  ├─ MarkupContainer (empty)
-│  ├─ ImageMedia @5:7-5:14 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "myimage.png")' altText: 'image'
-│  └─ VideoMedia @4:7-4:14 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "test.mp4")' poster: 'Optional(SwiftDocC.ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "poster.png"))'
+│  ├─ ImageMedia @5:7-5:14 source: 'ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "myimage.png")' altText: 'image'
+│  └─ VideoMedia @4:7-4:14 source: 'ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "test.mp4")' poster: 'Optional(SwiftDocC.ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "poster.png"))'
 ├─ XcodeRequirement @2:4-2:22 title: 'Xcode X.Y Beta Z' destination: 'https://www.example.com/download'
 ├─ TutorialSection @8:4-48:5
 │  ├─ ContentAndMedia @9:7-19:8 mediaPosition: 'trailing'
 │  │  ├─ MarkupContainer (3 elements)
-│  │  └─ ImageMedia @14:10-14:17 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "figure1.png")' altText: 'figure1'
+│  │  └─ ImageMedia @14:10-14:17 source: 'ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "figure1.png")' altText: 'figure1'
 │  └─ Steps @21:7-47:8
 │     ├─ MarkupContainer (1 element)
 │     ├─ Step @25:10-31:11
 │     │  ├─ MarkupContainer (1 element)
 │     │  ├─ MarkupContainer (empty)
-│     │  └─ Code @28:13-30:14 fileReference: ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "code1.swift") fileName: 'MyCode.swift' shouldResetDiff: false preview: Optional(SwiftDocC.ImageMedia)
+│     │  └─ Code @28:13-30:14 fileReference: ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "code1.swift") fileName: 'MyCode.swift' shouldResetDiff: false preview: Optional(SwiftDocC.ImageMedia)
 │     ├─ Step @32:10-38:11
 │     │  ├─ MarkupContainer (1 element)
 │     │  ├─ MarkupContainer (empty)
-│     │  └─ Code @35:13-37:14 fileReference: ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "code2.swift") fileName: 'MyCode.swift' shouldResetDiff: true preview: Optional(SwiftDocC.ImageMedia)
+│     │  └─ Code @35:13-37:14 fileReference: ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "code2.swift") fileName: 'MyCode.swift' shouldResetDiff: true preview: Optional(SwiftDocC.ImageMedia)
 │     ├─ MarkupContainer (1 element)
 │     └─ Step @42:10-46:11
 │        ├─ MarkupContainer (1 element)
 │        ├─ MarkupContainer (empty)
-│        └─ Code @45:13-45:19 fileReference: ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "othercode1.swift") fileName: 'OtherCode.swift' shouldResetDiff: false preview: nil
+│        └─ Code @45:13-45:19 fileReference: ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "othercode1.swift") fileName: 'OtherCode.swift' shouldResetDiff: false preview: nil
 ├─ TutorialSection @50:4-77:5
 │  ├─ ContentAndMedia @51:7-58:8 mediaPosition: 'trailing'
 │  │  ├─ MarkupContainer (2 elements)
-│  │  └─ ImageMedia @57:10-57:17 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "xcode.png")' altText: 'xcode'
+│  │  └─ ImageMedia @57:10-57:17 source: 'ResourceReference(catalogIdentifier: "org.swift.docc.example", path: "xcode.png")' altText: 'xcode'
 │  └─ Steps @60:7-76:8
 │     ├─ MarkupContainer (1 element)
 │     ├─ Step @64:10-67:11
@@ -354,12 +354,12 @@ Tutorial @1:1-150:2 projectFiles: nil
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
             XCTAssertEqual(Tutorial.directiveName, directive.name)
-            let tutorial = Tutorial(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let tutorial = Tutorial(from: directive, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertNotNil(tutorial)
             XCTAssertEqual(1, tutorial?.sections.count)
             XCTAssertEqual([
@@ -370,10 +370,10 @@ Tutorial @1:1-150:2 projectFiles: nil
 
     func testAnalyzeNode() throws {
         let title = "unreferenced-tutorial"
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .technology, source: .file(url: URL(fileURLWithPath: "/path/to/\(title)")), title: title)
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testCatalogAndContext(named: "TestCatalog")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -389,10 +389,10 @@ Tutorial @1:1-150:2 projectFiles: nil
 
     func testAnalyzeExternalNode() throws {
         let title = "unreferenced-tutorial"
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let node = TopicGraph.Node(reference: reference, kind: .technology, source: .external, title: title)
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testCatalogAndContext(named: "TestCatalog")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -408,11 +408,11 @@ Tutorial @1:1-150:2 projectFiles: nil
     func testAnalyzeFragmentNode() throws {
         let title = "unreferenced-tutorial"
         let url = URL(fileURLWithPath: "/path/to/\(title)")
-        let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.TopicGraphTests", path: "/\(title)", sourceLanguage: .swift)
         let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
         let node = TopicGraph.Node(reference: reference, kind: .technology, source: .range(range, url: url) , title: title)
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testCatalogAndContext(named: "TestCatalog")
         context.topicGraph.addNode(node)
 
         let engine = DiagnosticEngine()
@@ -429,12 +429,12 @@ Tutorial @1:1-150:2 projectFiles: nil
     func testAnalyzeForValidParent() throws {
         func node(withTitle title: String, ofKind kind: DocumentationNode.Kind) -> TopicGraph.Node {
             let url = URL(fileURLWithPath: "/path/to/\(title)")
-            let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
+            let reference = ResolvedTopicReference(catalogIdentifier: "org.swift.docc.TutorialArticleTests", path:  "/\(title)", sourceLanguage: .swift)
             let range = SourceLocation(line: 1, column: 1, source: url)..<SourceLocation(line: 1, column: 1, source: url)
             return TopicGraph.Node(reference: reference, kind: kind, source: .range(range, url: url) , title: title)
         }
 
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, context) = try testCatalogAndContext(named: "TestCatalog")
 
         let tutorialNode = node(withTitle: "tutorial-article", ofKind: .tutorial)
 

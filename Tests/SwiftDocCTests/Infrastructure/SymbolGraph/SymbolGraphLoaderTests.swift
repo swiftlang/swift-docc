@@ -125,7 +125,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         let tempURL = try createTemporaryDirectory()
 
         let symbolGraphSourceURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
             .appendingPathComponent("mykit-iOS.symbols.json")
         var symbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: try Data(contentsOf: symbolGraphSourceURL))
         
@@ -153,11 +153,11 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     /// Tests if we detect correctly a Mac Catalyst graph
     func testLoadingiOSAndCatalystGraphs() throws {
-        func testBundleCopy(iOSSymbolGraphName: String, catalystSymbolGraphName: String) throws -> (URL, DocumentationBundle, DocumentationContext) {
-            return try testBundleAndContext(copying: "TestBundle", configureBundle: { bundleURL in
+        func testCatalogCopy(iOSSymbolGraphName: String, catalystSymbolGraphName: String) throws -> (URL, DocumentationCatalog, DocumentationContext) {
+            return try testCatalogAndContext(copying: "TestCatalog", configureCatalog: { catalogURL in
                 // Create an iOS symbol graph file
-                let iOSGraphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
-                let renamediOSGraphURL = bundleURL.appendingPathComponent(iOSSymbolGraphName)
+                let iOSGraphURL = catalogURL.appendingPathComponent("mykit-iOS.symbols.json")
+                let renamediOSGraphURL = catalogURL.appendingPathComponent(iOSSymbolGraphName)
                 try FileManager.default.moveItem(at: iOSGraphURL, to: renamediOSGraphURL)
                 
                 // Create a Catalyst symbol graph
@@ -170,12 +170,12 @@ class SymbolGraphLoaderTests: XCTestCase {
                     .init(domain: SymbolGraph.Symbol.Availability.Domain(rawValue: "iOS"), introducedVersion: .init(major: 7, minor: 0, patch: 0), deprecatedVersion: nil, obsoletedVersion: nil, message: nil, renamed: nil, isUnconditionallyDeprecated: false, isUnconditionallyUnavailable: false, willEventuallyBeDeprecated: false),
                 ])
                 
-                let catalystSymbolGraphURL = bundleURL.appendingPathComponent(catalystSymbolGraphName)
+                let catalystSymbolGraphURL = catalogURL.appendingPathComponent(catalystSymbolGraphName)
                 try JSONEncoder().encode(catalystSymbolGraph).write(to: catalystSymbolGraphURL)
             })
         }
         
-        // Below we simulate the two possible loading orders of the symbol graphs in the bundle
+        // Below we simulate the two possible loading orders of the symbol graphs in the catalog
         // because we load them concurrently and we should ensure that no matter the order the results are the same.
         // We verify that the same expectations are fulfilled regardless of the loading order.
         
@@ -183,7 +183,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         do {
             // We rename the iOS graph file to contain a "@" which makes it being loaded after main symbol graphs
             // to simulate the loading order we want to test.
-            let (url, _, context) = try testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
+            let (url, _, context) = try testCatalogCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
             defer { try? FileManager.default.removeItem(at: url) }
 
             guard let availability = (context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
@@ -204,7 +204,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         do {
             // We rename the Mac Catalyst graph file to contain a "@" which makes it being loaded after main symbol graphs
             // to simulate the loading order we want to test.
-            let (url, _, context) = try testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
+            let (url, _, context) = try testCatalogCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
             defer { try? FileManager.default.removeItem(at: url) }
             
             guard let availability = (context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
@@ -222,14 +222,14 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     // Tests if main and bystanders graphs are loaded
     func testLoadingModuleBystanderExtensions() throws {
-        let (url, bundle, _) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+        let (url, catalog, _) = try testCatalogAndContext(copying: "TestCatalog", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
         }
         defer { try? FileManager.default.removeItem(at: url) }
         
-        var loader = try makeSymbolGraphLoader(symbolGraphURLs: bundle.symbolGraphURLs)
+        var loader = try makeSymbolGraphLoader(symbolGraphURLs: catalog.symbolGraphURLs)
         try loader.loadAll()
         
         var isMainSymbolGraph = false
@@ -340,8 +340,8 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     private func makeSymbolGraphLoader(symbolGraphURLs: [URL]) throws -> SymbolGraphLoader {
         let workspace = DocumentationWorkspace()
-        let bundle = DocumentationBundle(
-            info: DocumentationBundle.Info(
+        let catalog = DocumentationCatalog(
+            info: DocumentationCatalog.Info(
                 displayName: "Test",
                 identifier: "com.example.test",
                 version: "1.2.3"
@@ -351,8 +351,8 @@ class SymbolGraphLoaderTests: XCTestCase {
             markupURLs: [],
             miscResourceURLs: []
         )
-        try workspace.registerProvider(PrebuiltLocalFileSystemDataProvider(bundles: [bundle]))
+        try workspace.registerProvider(PrebuiltLocalFileSystemDataProvider(catalogs: [catalog]))
         
-        return SymbolGraphLoader(bundle: bundle, dataProvider: workspace)
+        return SymbolGraphLoader(catalog: catalog, dataProvider: workspace)
     }
 }

@@ -12,18 +12,18 @@ import Foundation
 import Markdown
 
 /**
- Walks a markup tree and collects any links external to a given bundle.
+ Walks a markup tree and collects any links external to a given catalog.
  */
 struct ExternalMarkupReferenceWalker: MarkupVisitor {
-    var bundle: DocumentationBundle
+    var catalog: DocumentationCatalog
     
     /// After walking a markup tree, all encountered external links are collected in this list.
     var collectedExternalLinks = [ValidatedURL]()
     
     /// Creates a new markup walker.
-    /// - Parameter bundle: All links with a bundle ID different than this bundle's are considered external and collected.
-    init(bundle: DocumentationBundle) {
-        self.bundle = bundle
+    /// - Parameter catalog: All links with a catalog ID different than this catalog's are considered external and collected.
+    init(catalog: DocumentationCatalog) {
+        self.catalog = catalog
     }
 
     /// Descends down the given elements' children.
@@ -33,14 +33,14 @@ struct ExternalMarkupReferenceWalker: MarkupVisitor {
         }
     }
 
-    /// Collects the link URL, if the link is not to a topic in the current bundle.
+    /// Collects the link URL, if the link is not to a topic in the current catalog.
     mutating func visitLink(_ link: Link) {
-        // Only process documentation links to external bundles
+        // Only process documentation links to external catalogs
         guard let destination = link.destination,
             let url = ValidatedURL(parsing: destination),
             url.components.scheme == ResolvedTopicReference.urlScheme,
-            let bundleID = url.components.host,
-            bundleID != bundle.identifier else {
+            let catalogID = url.components.host,
+            catalogID != catalog.identifier else {
             return
         }
         

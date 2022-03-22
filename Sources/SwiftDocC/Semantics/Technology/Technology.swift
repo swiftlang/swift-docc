@@ -53,23 +53,23 @@ public final class Technology: Semantic, DirectiveConvertible, Abstracted, Redir
         }
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Technology.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Technology>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Technology>(severityIfFound: .warning, allowedArguments: [Semantics.Name.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Technology>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Volume.directiveName, Chapter.directiveName, Resources.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Technology>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, Volume.directiveName, Chapter.directiveName, Resources.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
     
         let requiredName = Semantic.Analyses.HasArgument<Technology, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
-        let requiredIntro = Semantic.Analyses.HasExactlyOne<Technology, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems).0
+        let requiredIntro = Semantic.Analyses.HasExactlyOne<Technology, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems).0
         
         var volumes: [Volume]
         var remainder: MarkupContainer
-        (volumes, remainder) = Semantic.Analyses.HasAtLeastOne<Technology, Volume>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (volumes, remainder) = Semantic.Analyses.HasAtLeastOne<Technology, Volume>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
 
         // Retrieve chapters outside volumes.
         let chapters: [Chapter]
-        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<Technology, Chapter>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<Technology, Chapter>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
 
         if !chapters.isEmpty {
             if !volumes.isEmpty {
@@ -88,10 +88,10 @@ public final class Technology: Semantic, DirectiveConvertible, Abstracted, Redir
         }
         
         let resources: Resources?
-        (resources, remainder) = Semantic.Analyses.HasExactlyOne<Technology, Resources>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (resources, remainder) = Semantic.Analyses.HasExactlyOne<Technology, Resources>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
 
         let redirects: [Redirect]
-            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         guard let name = requiredName,
             let intro = requiredIntro else {

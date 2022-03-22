@@ -15,14 +15,14 @@ import XCTest
 
 class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     
-    private func createSymbols(in symbolIndex: inout [String: DocumentationNode], bundle: DocumentationBundle, sourceType: SymbolGraph.Symbol.Kind, targetType: SymbolGraph.Symbol.Kind) -> SymbolGraph.Relationship {
+    private func createSymbols(in symbolIndex: inout [String: DocumentationNode], catalog: DocumentationCatalog, sourceType: SymbolGraph.Symbol.Kind, targetType: SymbolGraph.Symbol.Kind) -> SymbolGraph.Relationship {
         let sourceIdentifier = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
         let targetIdentifier = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
         
-        let sourceRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/A", sourceLanguage: .swift)
-        let targetRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/B", sourceLanguage: .swift)
+        let sourceRef = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit/A", sourceLanguage: .swift)
+        let targetRef = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit/B", sourceLanguage: .swift)
         
-        let moduleRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
         let targetSymbol = SymbolGraph.Symbol(identifier: targetIdentifier, names: SymbolGraph.Symbol.Names(title: "B", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "B"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Protocol"), mixins: [:])
@@ -36,28 +36,28 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testImplementsRelationship() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
-        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
+        let edge = createSymbols(in: &symbolIndex, catalog: catalog, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, in: bundle, context: context, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, in: catalog, context: context, symbolIndex: &symbolIndex, engine: engine)
         
         // Test default implementation was added
         XCTAssertFalse((symbolIndex["B"]!.semantic as! Symbol).defaultImplementations.implementations.isEmpty)
     }
 
     func testConformsRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let catalog = try testCatalog(named: "TestCatalog")
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
-        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
+        let edge = createSymbols(in: &symbolIndex, catalog: catalog, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, in: catalog, symbolIndex: &symbolIndex, engine: engine)
         
         // Test default conforms to was added
         guard let conformsTo = (symbolIndex["A"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
@@ -79,14 +79,14 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
 
     func testInheritanceRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let catalog = try testCatalog(named: "TestCatalog")
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
-        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
+        let edge = createSymbols(in: &symbolIndex, catalog: catalog, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: catalog, symbolIndex: &symbolIndex, engine: engine)
         
         // Test inherits was added
         guard let inherits = (symbolIndex["A"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
@@ -108,15 +108,15 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testInheritanceRelationshipFromOtherFramework() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let catalog = try testCatalog(named: "TestCatalog")
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
         let sourceIdentifier = SymbolGraph.Symbol.Identifier(precise: "A", interfaceLanguage: SourceLanguage.swift.id)
         let targetIdentifier = SymbolGraph.Symbol.Identifier(precise: "B", interfaceLanguage: SourceLanguage.swift.id)
         
-        let sourceRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/A", sourceLanguage: .swift)
-        let moduleRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let sourceRef = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit/A", sourceLanguage: .swift)
+        let moduleRef = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
         
         let sourceSymbol = SymbolGraph.Symbol(identifier: sourceIdentifier, names: SymbolGraph.Symbol.Names(title: "A", navigator: nil, subHeading: nil, prose: nil), pathComponents: ["MyKit", "A"], docComment: nil, accessLevel: .init(rawValue: "public"), kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Class"), mixins: [:])
         
@@ -125,7 +125,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         
         let edge = SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .inheritsFrom, targetFallback: "MyOtherKit.B")
         
-        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: catalog, symbolIndex: &symbolIndex, engine: engine)
         
         let relationships = (symbolIndex["A"]!.semantic as! Symbol).relationships
         guard let inheritsShouldHaveFallback = relationships.groups.first(where: { group -> Bool in
@@ -141,14 +141,14 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
     }
     
     func testRequirementRelationship() throws {
-        let bundle = try testBundle(named: "TestBundle")
+        let catalog = try testCatalog(named: "TestCatalog")
         var symbolIndex = [String: DocumentationNode]()
         let engine = DiagnosticEngine()
         
-        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
+        let edge = createSymbols(in: &symbolIndex, catalog: catalog, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: catalog, symbolIndex: &symbolIndex, engine: engine)
         
         // Test default implementation was added
         XCTAssertTrue((symbolIndex["A"]!.semantic as! Symbol).isRequired)

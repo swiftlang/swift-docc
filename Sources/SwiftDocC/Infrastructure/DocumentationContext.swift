@@ -12,59 +12,62 @@ import Foundation
 import Markdown
 import SymbolKit
 
-/// A type that provides information about documentation bundles and their content.
+/// A type that provides information about documentation catalogs and their content.
 public protocol DocumentationContextDataProvider {
-    /// An object to notify when bundles are added or removed.
+    /// An object to notify when catalogs are added or removed.
     var delegate: DocumentationContextDataProviderDelegate? { get set }
     
-    /// The documentation bundles that this data provider provides.
-    var bundles: [BundleIdentifier: DocumentationBundle] { get }
+    /// The documentation catalogs that this data provider provides.
+    var catalogs: [CatalogIdentifier: DocumentationCatalog] { get }
     
-    /// Returns the data for the specified `url` in the provided `bundle`.
+    /// Returns the data for the specified `url` in the provided `catalog`.
     ///
     /// - Parameters:
     ///   - url: The URL of the file to read.
-    ///   - bundle: The bundle that the file is a part of.
+    ///   - catalog: The catalog that the file is a part of.
     ///
     /// - Throws: When the file cannot be found in the workspace.
-    func contentsOfURL(_ url: URL, in bundle: DocumentationBundle) throws -> Data
+    func contentsOfURL(_ url: URL, in catalog: DocumentationCatalog) throws -> Data
 }
 
-/// An object that responds to changes in available documentation bundles for a specific provider.
+/// An object that responds to changes in available documentation catalogs for a specific provider.
 public protocol DocumentationContextDataProviderDelegate: AnyObject {
     
-    /// Called when the `dataProvider` has added a new documentation bundle to its list of `bundles`.
+    /// Called when the `dataProvider` has added a new documentation catalog to its list of `catalogs`.
     ///
     /// - Parameters:
-    ///   - dataProvider: The provider that added this bundle.
-    ///   - bundle: The bundle that was added.
+    ///   - dataProvider: The provider that added this catalog.
+    ///   - catalog: The catalog that was added.
     ///
-    /// - Note: This method is called after the `dataProvider` has been added the bundle to its `bundles` property.
-    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle:  DocumentationBundle) throws
+    /// - Note: This method is called after the `dataProvider` has been added the catalog to its `catalogs` property.
+    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddCatalog catalog:  DocumentationCatalog) throws
     
-    /// Called when the `dataProvider` has removed a documentation bundle from its list of `bundles`.
+    /// Called when the `dataProvider` has removed a documentation catalog from its list of `catalogs`.
     ///
     /// - Parameters:
-    ///   - dataProvider: The provider that removed this bundle.
-    ///   - bundle: The bundle that was removed.
+    ///   - dataProvider: The provider that removed this catalog.
+    ///   - catalog: The catalog that was removed.
     ///
-    /// - Note: This method is called after the `dataProvider` has been removed the bundle from its `bundles` property.
-    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle:  DocumentationBundle) throws
+    /// - Note: This method is called after the `dataProvider` has been removed the catalog from its `catalogs` property.
+    func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveCatalog catalog:  DocumentationCatalog) throws
 }
 
-/// Documentation bundles use a string value as a unique identifier.
+/// Documentation catalogs use a string value as a unique identifier.
 ///
 /// This value is typically a reverse host name, for example: `com.<organization-name>.<product-name>`.
 ///
-/// Documentation links may include the bundle identifier—as a host component of the URL—to reference content in a specific documentation bundle.
-public typealias BundleIdentifier = String
+/// Documentation links may include the catalog identifier—as a host component of the URL—to reference content in a specific documentation catalog.
+public typealias CatalogIdentifier = String
+
+@available(*, deprecated, renamed: "CatalogIdentifier")
+public typealias BundleIdentifier = CatalogIdentifier
 
 /// The documentation context manages the in-memory model for the built documentation.
 ///
-/// A ``DocumentationWorkspace`` discovers serialized documentation bundles from a variety of sources (files on disk, databases, or web services), provides them to the `DocumentationContext`,
-/// and notifies the context when bundles are added or removed using the ``DocumentationContextDataProviderDelegate`` protocol.
+/// A ``DocumentationWorkspace`` discovers serialized documentation catalogs from a variety of sources (files on disk, databases, or web services), provides them to the `DocumentationContext`,
+/// and notifies the context when catalogs are added or removed using the ``DocumentationContextDataProviderDelegate`` protocol.
 ///
-/// When a documentation bundle is registered with the context, all of its content is loaded into memory and relationships between documentation entities are built. When this is done, the context can be queried
+/// When a documentation catalog is registered with the context, all of its content is loaded into memory and relationships between documentation entities are built. When this is done, the context can be queried
 /// about documentation entities, resources, and relationships between entities.
 ///
 /// ## Topics
@@ -93,7 +96,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         /// but if such a declaration is found the symbol can have only one declaration.
         case unexpectedEmptyPlatformName(String)
         
-        /// The bundle registration operation is cancelled externally.
+        /// The catalog registration operation is cancelled externally.
         case registrationDisabled
         
         public var errorDescription: String {
@@ -105,18 +108,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 case .unexpectedEmptyPlatformName(let symbolIdentifier):
                     return "Declaration without operating system name for symbol \(symbolIdentifier) cannot be merged with more declarations with operating system name for the same symbol"
                 case .registrationDisabled:
-                    return "The bundle registration operation is cancelled externally."
+                    return "The catalog registration operation is cancelled externally."
             }
         }
     }
     
-    /// The provider of documentation bundles for this context.
+    /// The provider of documentation catalogs for this context.
     var dataProvider: DocumentationContextDataProvider
     
     /// The graph of all the documentation content and their relationships to each other.
     var topicGraph = TopicGraph()
 
-    /// A value to control whether the set of manually curated references found during bundle registration should be stored. Defaults to `false`. Setting this property to `false` clears any stored references from `manuallyCuratedReferences`.
+    /// A value to control whether the set of manually curated references found during catalog registration should be stored. Defaults to `false`. Setting this property to `false` clears any stored references from `manuallyCuratedReferences`.
     public var shouldStoreManuallyCuratedReferences: Bool = false {
         didSet {
             if shouldStoreManuallyCuratedReferences == false {
@@ -139,7 +142,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// The root module nodes of the Topic Graph.
     ///
-    /// This property is initialized during the registration of a documentation bundle.
+    /// This property is initialized during the registration of a documentation catalog.
     public private(set) var rootModules: [ResolvedTopicReference]!
     
     /// The topic reference of the root module, if it's the only registered module.
@@ -151,8 +154,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     var documentLocationMap = BidirectionalMap<URL, ResolvedTopicReference>()
     /// A cache of already created documentation nodes for an already resolved reference.
     var documentationCache = [ResolvedTopicReference: DocumentationNode]()
-    /// The asset managers for each documentation bundle, keyed by the bundle's identifier.
-    var assetManagers = [BundleIdentifier: DataAssetManager]()
+    /// The asset managers for each documentation catalog, keyed by the catalog's identifier.
+    var assetManagers = [CatalogIdentifier: DataAssetManager]()
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
     /// A list of reference aliases.
@@ -162,49 +165,49 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// The key to lookup the main reference is the alias reference. A main reference can have many aliases but an alias can only have one main reference.
     var referenceAliases = [ResolvedTopicReference: ResolvedTopicReference]()
     
-    /// A list of all the problems that was encountered while registering and processing the documentation bundles in this context.
+    /// A list of all the problems that was encountered while registering and processing the documentation catalogs in this context.
     public var problems: [Problem] {
         return diagnosticEngine.problems
     }
 
-    /// The engine that collects problems encountered while registering and processing the documentation bundles in this context.
+    /// The engine that collects problems encountered while registering and processing the documentation catalogs in this context.
     public var diagnosticEngine: DiagnosticEngine
     
-    /// The dictionary mapping external documentation bundle identifiers to external reference resolvers.
+    /// The dictionary mapping external documentation catalog identifiers to external reference resolvers.
     ///
-    /// The context uses external reference resolvers to resolve links to documentation outside the context's registered bundles.
+    /// The context uses external reference resolvers to resolve links to documentation outside the context's registered catalogs.
     ///
-    /// - Note: Registering an external reference resolver for a bundle that is registered in the context is not allowed.
+    /// - Note: Registering an external reference resolver for a catalog that is registered in the context is not allowed.
     /// Instead, see ``fallbackReferenceResolvers``.
     ///
     /// ## See Also
     /// - ``ExternalReferenceResolver``
-    public var externalReferenceResolvers = [BundleIdentifier: ExternalReferenceResolver]()
+    public var externalReferenceResolvers = [CatalogIdentifier: ExternalReferenceResolver]()
     
-    /// The dictionary mapping known documentation bundle identifiers to fallback reference resolvers.
+    /// The dictionary mapping known documentation catalog identifiers to fallback reference resolvers.
     ///
-    /// In situations where the local documentation context doesn't contain all the symbols or articles of a registered bundle—for example,
+    /// In situations where the local documentation context doesn't contain all the symbols or articles of a registered catalog—for example,
     /// when using a ``ConvertService`` that contains partial symbol graph information—the documentation context will look up locally
-    /// unresolvable references using a fallback resolver (if one is set for the reference's bundle identifier).
+    /// unresolvable references using a fallback resolver (if one is set for the reference's catalog identifier).
     ///
     /// - Warning: Setting fallback reference resolver makes accesses to the context non-thread-safe. This is because performing
-    /// external link resolution _after_ bundle registration mutates the context.
+    /// external link resolution _after_ catalog registration mutates the context.
     ///
     /// ## See Also
     /// - ``ExternalReferenceResolver``
-    public var fallbackReferenceResolvers = [BundleIdentifier: FallbackReferenceResolver]()
+    public var fallbackReferenceResolvers = [CatalogIdentifier: FallbackReferenceResolver]()
     
     /// A type that resolves symbols that are references from a symbol graph file but isn't included in any of the processed symbol graph files.
     ///
-    /// - Note: Since it's not known what bundle these symbols belong to, there is only one resolver for all "external" symbols.
+    /// - Note: Since it's not known what catalog these symbols belong to, there is only one resolver for all "external" symbols.
     public var externalSymbolResolver: ExternalSymbolResolver?
     
-    /// The dictionary mapping known documentation bundle identifiers to fallback reference resolvers.
+    /// The dictionary mapping known documentation catalog identifiers to fallback reference resolvers.
     ///
-    /// In situations where the local documentation context doesn't contain all the assets of a registered bundle—for example, when
-    /// using a ``ConvertService`` that contains partial contents of a bundle—the documentation context will look up locally
-    /// unresolvable asset references using a fallback resolver (if one is set for the reference's bundle identifier.)
-    public var fallbackAssetResolvers = [BundleIdentifier: FallbackAssetResolver]()
+    /// In situations where the local documentation context doesn't contain all the assets of a registered catalog—for example, when
+    /// using a ``ConvertService`` that contains partial contents of a catalog—the documentation context will look up locally
+    /// unresolvable asset references using a fallback resolver (if one is set for the reference's catalog identifier.)
+    public var fallbackAssetResolvers = [CatalogIdentifier: FallbackAssetResolver]()
     
     /// All the symbol references that have been resolved from external sources.
     ///
@@ -225,7 +228,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// A temporary structure to hold a semantic value that hasn't yet had its links resolved.
     ///
-    /// These temporary values are only expected to exist while the documentation is being built. Once the documentation bundles have been fully registered and the topic graph
+    /// These temporary values are only expected to exist while the documentation is being built. Once the documentation catalogs have been fully registered and the topic graph
     /// has been built, the documentation context shouldn't hold any semantic result values anymore.
     struct SemanticResult<S: Semantic> {
         /// The ``Semantic`` value with unresolved links.
@@ -240,7 +243,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// Temporary storage for articles before they are curated and moved to the documentation cache.
     ///
-    /// This storage is only used while the documentation context is being built. Once the documentation bundles have been fully registered and the topic graph
+    /// This storage is only used while the documentation context is being built. Once the documentation catalogs have been fully registered and the topic graph
     /// has been built, this list of uncurated articles will be empty.
     ///
     /// The key to lookup an article is the reference to the article itself.
@@ -248,7 +251,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// Temporary storage for documentation extension files before they are curated and moved to the documentation cache.
     ///
-    /// This storage is only used while the documentation context is being built. Once the documentation bundles have been fully registered and the topic graph
+    /// This storage is only used while the documentation context is being built. Once the documentation catalogs have been fully registered and the topic graph
     /// has been built, this list of uncurated documentation extensions will be empty.
     ///
     /// The key to lookup a documentation extension file is the symbol reference from its title (level 1 heading).
@@ -262,29 +265,29 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// A synchronized reference cache to store resolved references.
     let referenceCache = Synchronized([String: ResolvedTopicReference]())
     
-    /// Initializes a documentation context with a given `dataProvider` and registers all the documentation bundles that it provides.
+    /// Initializes a documentation context with a given `dataProvider` and registers all the documentation catalogs that it provides.
     ///
-    /// - Parameter dataProvider: The data provider to register bundles from.
+    /// - Parameter dataProvider: The data provider to register catalogs from.
     /// - Parameter diagnosticEngine: The pre-configured engine that will collect problems encountered during compilation.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
+    /// - Throws: If an error is encountered while registering a documentation catalog.
     public init(dataProvider: DocumentationContextDataProvider, diagnosticEngine: DiagnosticEngine = .init()) throws {
         self.dataProvider = dataProvider
         self.diagnosticEngine = diagnosticEngine
         self.dataProvider.delegate = self
         
-        for bundle in dataProvider.bundles.values {
-            try register(bundle)
+        for catalog in dataProvider.catalogs.values {
+            try register(catalog)
         }
     }
 
     /// Initializes a documentation context with a given `dataProvider` and `diagnosticConsumers`
-    /// and registers all the documentation bundles that `dataProvider` provides.
+    /// and registers all the documentation catalogs that `dataProvider` provides.
     ///
     /// - Parameters:
-    ///     - dataProvider: The data provider to register bundles from.
+    ///     - dataProvider: The data provider to register catalogs from.
     ///     - diagnosticEngine: The engine that will collect problems encountered during compilation.
     ///     - diagnosticConsumers: A collection of types that can consume diagnostics. These will be registered with `diagnosticEngine`.
-    /// - Throws: If an error is encountered while registering a documentation bundle.
+    /// - Throws: If an error is encountered while registering a documentation catalog.
     @available(*, deprecated, message: "Use init(dataProvider:diagnosticEngine:) instead")
     public init(dataProvider: DocumentationContextDataProvider, diagnosticEngine: DiagnosticEngine = .init(), diagnosticConsumers: [DiagnosticConsumer]) throws {
         self.dataProvider = dataProvider
@@ -295,41 +298,61 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             self.diagnosticEngine.add(consumer)
         }
 
-        for bundle in dataProvider.bundles.values {
-            try register(bundle)
+        for catalog in dataProvider.catalogs.values {
+            try register(catalog)
         }
     }
     
-    /// Respond to a new `bundle` being added to the `dataProvider` by registering it.
+    /// Respond to a new `catalog` being added to the `dataProvider` by registering it.
     ///
     /// - Parameters:
-    ///   - dataProvider: The provider that added this bundle.
-    ///   - bundle: The bundle that was added.
-    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
-        try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
-            try self.register(bundle)
+    ///   - dataProvider: The provider that added this catalog.
+    ///   - catalog: The catalog that was added.
+    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddCatalog catalog: DocumentationCatalog) throws {
+        try benchmark(wrap: Benchmark.Duration(id: "catalog-registration")) {
+            try self.register(catalog)
         }
     }
     
-    /// Respond to a new `bundle` being removed from the `dataProvider` by unregistering it.
+    @available(*, deprecated, renamed: "dataProvider(_:didAddCatalog:)")
+    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationCatalog) throws {
+        try self.dataProvider(dataProvider, didAddCatalog: bundle)
+    }
+    
+    /// Respond to a new `catalog` being removed from the `dataProvider` by unregistering it.
     ///
     /// - Parameters:
-    ///   - dataProvider: The provider that removed this bundle.
-    ///   - bundle: The bundle that was removed.
-    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
+    ///   - dataProvider: The provider that removed this catalog.
+    ///   - catalog: The catalog that was removed.
+    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveCatalog catalog: DocumentationCatalog) throws {
         referenceCache.sync { $0.removeAll() }
-        ResolvedTopicReference.purgePool(for: bundle.identifier)
-        unregister(bundle)
+        ResolvedTopicReference.purgePool(for: catalog.identifier)
+        unregister(catalog)
     }
     
-    /// The documentation bundles that are currently registered with the context.
-    public var registeredBundles: Dictionary<String, DocumentationBundle>.Values {
-        return dataProvider.bundles.values
+    @available(*, deprecated, renamed: "dataProvider(_:didRemoveCatalog:)")
+    public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationCatalog) throws {
+        try self.dataProvider(dataProvider, didRemoveCatalog: bundle)
     }
     
-    /// Returns the `DocumentationBundle` with the given `identifier` if it's registered with the context, otherwise `nil`.
-    public func bundle(identifier: String) -> DocumentationBundle? {
-        return dataProvider.bundles[identifier]
+    /// The documentation catalogs that are currently registered with the context.
+    public var registeredCatalogs: Dictionary<String, DocumentationCatalog>.Values {
+        return dataProvider.catalogs.values
+    }
+    
+    @available(*, deprecated, renamed: "registeredCatalogs")
+    public var registeredBundles: Dictionary<String, DocumentationCatalog>.Values {
+        return dataProvider.catalogs.values
+    }
+    
+    /// Returns the `DocumentationCatalog` with the given `identifier` if it's registered with the context, otherwise `nil`.
+    public func catalog(identifier: String) -> DocumentationCatalog? {
+        return dataProvider.catalogs[identifier]
+    }
+    
+    @available(*, deprecated, renamed: "catalog(identifier:)")
+    public func bundle(identifier: String) -> DocumentationCatalog? {
+        return catalog(identifier: identifier)
     }
         
     /// Perform semantic analysis on a given `document` at a given `source` location and append any problems found to `problems`.
@@ -337,11 +360,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - document: The document to analyze.
     ///   - source: The location of the document.
-    ///   - bundle: The bundle that the document belongs to.
+    ///   - catalog: The catalog that the document belongs to.
     ///   - problems: A mutable collection of problems to update with any problem encountered during the semantic analysis.
     /// - Returns: The result of the semantic analysis.
-    private func analyze(_ document: Document, at source: URL, in bundle: DocumentationBundle, engine: DiagnosticEngine) -> Semantic? {
-        var analyzer = SemanticAnalyzer(source: source, context: self, bundle: bundle)
+    private func analyze(_ document: Document, at source: URL, in catalog: DocumentationCatalog, engine: DiagnosticEngine) -> Semantic? {
+        var analyzer = SemanticAnalyzer(source: source, context: self, catalog: catalog)
         let result = analyzer.visit(document)
         engine.emit(analyzer.problems)
         return result
@@ -383,7 +406,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// Find the known plain string module name for a given module reference.
     ///
-    /// - Note: Looking up module names requires that the module names have been pre-resolved. This happens automatically at the end of bundle registration.
+    /// - Note: Looking up module names requires that the module names have been pre-resolved. This happens automatically at the end of catalog registration.
     ///
     /// - Parameter moduleReference: The module reference to find the module name for.
     /// - Returns: The plain string name for the referenced module.
@@ -394,7 +417,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // If no name is found it's considered a programmer error; either that the names haven't been resolved yet
         // or that the passed argument isn't a reference to a known module.
         if moduleNameCache.isEmpty {
-            fatalError("Incorrect use of API: '\(#function)' requires that bundles have finished registering.")
+            fatalError("Incorrect use of API: '\(#function)' requires that catalogs have finished registering.")
         }
         fatalError("Incorrect use of API: '\(#function)' can only be used with known module references")
     }
@@ -424,20 +447,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let targetLanguage: SourceLanguage
     }
     
-    /// Attempts to resolve links external to the given bundle.
+    /// Attempts to resolve links external to the given catalog.
     ///
     /// The resolved references are collected in `externallyResolvedLinks`.
     ///
     /// - Parameters:
     ///   - references: The references of the nodes to walk.
-    ///   - bundle: The documentation bundle to resolve links against.
+    ///   - catalog: The documentation catalog to resolve links against.
     /// - Throws: Rethrows any errors that a registered external resolver might throw.
     /// > Note: References that don't have matching node in `documentationCache` are ignored.
-    private func preResolveExternalLinks(references: [ResolvedTopicReference], bundle: DocumentationBundle) throws {
+    private func preResolveExternalLinks(references: [ResolvedTopicReference], catalog: DocumentationCatalog) throws {
         try preResolveExternalLinks(semanticObjects: references.compactMap({ reference -> ReferencedSemanticObject? in
             guard let node = try? entity(with: reference), let semantic = node.semantic else { return nil }
             return (reference: reference, semantic: semantic)
-        }), bundle: bundle)
+        }), catalog: catalog)
     }
     
     /// A tuple of a semantic object and its reference in the topic graph.
@@ -448,21 +471,21 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return (reference: from.topicGraphNode.reference, semantic: from.value)
     }
     
-    /// Attempts to resolve links external to the given bundle by visiting the given list of semantic objects.
+    /// Attempts to resolve links external to the given catalog by visiting the given list of semantic objects.
     ///
     /// The resolved references are collected in `externallyResolvedLinks`.
     ///
     /// - Parameters:
     ///   - semanticObjects: A list of semantic objects to visit to collect links.
-    ///   - bundle: The documentation bundle to resolve links against.
-    private func preResolveExternalLinks(semanticObjects: [ReferencedSemanticObject], bundle: DocumentationBundle) throws {
+    ///   - catalog: The documentation catalog to resolve links against.
+    private func preResolveExternalLinks(semanticObjects: [ReferencedSemanticObject], catalog: DocumentationCatalog) throws {
         // If there are no external resolvers added we will not resolve any links.
         guard !externalReferenceResolvers.isEmpty else { return }
         
         let collectedExternalLinks: [ExternalLinkResult] = semanticObjects.concurrentPerform { object, results in
             autoreleasepool {
                 // Walk the node and extract external link references.
-                var externalLinksCollector = ExternalReferenceWalker(bundle: bundle)
+                var externalLinksCollector = ExternalReferenceWalker(catalog: catalog)
                 externalLinksCollector.visit(object.semantic)
                 
                 // Add the link pairs to `collectedExternalLinks`.
@@ -475,12 +498,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         try Set(collectedExternalLinks).compactMap { externalLink -> (url: ValidatedURL, resolved: TopicReferenceResolutionResult)? in
-            guard let referenceBundleIdentifier = externalLink.unresolved.topicURL.components.host else {
-                assertionFailure("Should not hit this code path, url is verified to have an external bundle id.")
+            guard let referenceCatalogIdentifier = externalLink.unresolved.topicURL.components.host else {
+                assertionFailure("Should not hit this code path, url is verified to have an external catalog id.")
                 return nil
             }
             
-            if let externalResolver = externalReferenceResolvers[referenceBundleIdentifier] {
+            if let externalResolver = externalReferenceResolvers[referenceCatalogIdentifier] {
                 let reference = externalResolver.resolve(.unresolved(externalLink.unresolved), sourceLanguage: externalLink.targetLanguage)
                 if case .success(let resolvedReference) = reference {
                     // Add the resolved entity to the documentation cache.
@@ -511,7 +534,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /**
      Attempt to resolve links in curation-only documentation, converting any ``TopicReferences`` from `.unresolved` to `.resolved` where possible.
      */
-    private func resolveLinks(curatedReferences: Set<ResolvedTopicReference>, bundle: DocumentationBundle) {
+    private func resolveLinks(curatedReferences: Set<ResolvedTopicReference>, catalog: DocumentationCatalog) {
         let references = Array(curatedReferences)
         let results = Synchronized<[LinkResolveResult]>([])
         results.sync({ $0.reserveCapacity(references.count) })
@@ -532,7 +555,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                            semantic.origin != nil, !externalMetadata.inheritDocs {
                             
                             // If the two symbols are coming from different modules,
-                            // regardless if they are in the same bundle
+                            // regardless if they are in the same catalog
                             // (for example Foundation and SwiftUI), skip link resolving.
                             if let originSymbol = symbolIndex[semantic.origin!.identifier]?.semantic as? Symbol,
                                originSymbol.moduleReference != semantic.moduleReference {
@@ -553,7 +576,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         inheritanceParentReference = nil
                     }
 
-                    var resolver = ReferenceResolver(context: self, bundle: bundle, source: source, rootReference: reference, inheritanceParentReference: inheritanceParentReference)
+                    var resolver = ReferenceResolver(context: self, catalog: catalog, source: source, rootReference: reference, inheritanceParentReference: inheritanceParentReference)
                     
                     // Update the cache with the resolved node.
                     // We aggressively release used memory, since we're copying all semantic objects
@@ -603,11 +626,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - technologies: The list of temporary 'technology' pages.
     ///   - tutorials: The list of temporary 'tutorial' pages.
     ///   - tutorialArticles: The list of temporary 'tutorialArticle' pages.
-    ///   - bundle: The bundle to resolve links against.
+    ///   - catalog: The catalog to resolve links against.
     private func resolveLinks(technologies: [SemanticResult<Technology>],
                               tutorials: [SemanticResult<Tutorial>],
                               tutorialArticles: [SemanticResult<TutorialArticle>],
-                              bundle: DocumentationBundle) {
+                              catalog: DocumentationCatalog) {
         
         let sourceLanguages = soleRootModuleReference?.sourceLanguages ?? [.swift]
 
@@ -617,7 +640,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             autoreleasepool {
                 let url = technologyResult.source
                 let unresolvedTechnology = technologyResult.value
-                var resolver = ReferenceResolver(context: self, bundle: bundle, source: url)
+                var resolver = ReferenceResolver(context: self, catalog: catalog, source: url)
                 let technology = resolver.visit(unresolvedTechnology) as! Technology
                 diagnosticEngine.emit(resolver.problems)
                 
@@ -689,7 +712,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             autoreleasepool {
                 let url = tutorialResult.source
                 let unresolvedTutorial = tutorialResult.value
-                var resolver = ReferenceResolver(context: self, bundle: bundle, source: url)
+                var resolver = ReferenceResolver(context: self, catalog: catalog, source: url)
                 let tutorial = resolver.visit(unresolvedTutorial) as! Tutorial
                 diagnosticEngine.emit(resolver.problems)
                 
@@ -723,7 +746,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             autoreleasepool {
                 let url = articleResult.source
                 let unresolvedTutorialArticle = articleResult.value
-                var resolver = ReferenceResolver(context: self, bundle: bundle, source: url)
+                var resolver = ReferenceResolver(context: self, catalog: catalog, source: url)
                 let article = resolver.visit(unresolvedTutorialArticle) as! TutorialArticle
                 diagnosticEngine.emit(resolver.problems)
                             
@@ -754,7 +777,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Articles are resolved in a separate pass
     }
     
-    private func registerDocuments(from bundle: DocumentationBundle) throws -> (
+    private func registerDocuments(from catalog: DocumentationCatalog) throws -> (
         technologies: [SemanticResult<Technology>],
         tutorials: [SemanticResult<Tutorial>],
         tutorialArticles: [SemanticResult<TutorialArticle>],
@@ -772,11 +795,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let decodeError = Synchronized<Error?>(nil)
         
         // Load and analyze documents concurrently
-        let analyzedDocuments: [(URL, Semantic)] = bundle.markupURLs.concurrentPerform { url, results in
+        let analyzedDocuments: [(URL, Semantic)] = catalog.markupURLs.concurrentPerform { url, results in
             guard decodeError.sync({ $0 == nil }) else { return }
             
             do {
-                let data = try dataProvider.contentsOfURL(url, in: bundle)
+                let data = try dataProvider.contentsOfURL(url, in: catalog)
                 let source = String(decoding: data, as: UTF8.self)
                 let document = Document(parsing: source, source: url, options: [.parseBlockDirectives, .parseSymbolLinks])
                 
@@ -787,7 +810,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     diagnosticEngine.emit(langChecker.problems)
                 }
 
-                guard let analyzed = analyze(document, at: url, in: bundle, engine: diagnosticEngine) else {
+                guard let analyzed = analyze(document, at: url, in: catalog, engine: diagnosticEngine) else {
                     return
                 }
                 
@@ -811,8 +834,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             // Store the references we encounter to ensure they're unique. The file name is currently the only part of the URL considered for the topic reference, so collisions may occur.
             let (url, analyzed) = analyzedDocument
 
-            let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, bundle: bundle)
-            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+            let path = NodeURLGenerator.pathForSemantic(analyzed, source: url, catalog: catalog)
+            let reference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: path, sourceLanguage: .swift)
             
             if let firstFoundAtURL = references[reference] {
                 let problem = Problem(
@@ -868,14 +891,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 
                 // Separate articles that look like documentation extension files from other articles, so that the documentation extension files can be matched up with a symbol.
                 // At this point we consider all articles with an H1 containing link "documentation extension" - some links might not resolve in the final documentation hierarchy
-                // and we will emit warnings for those later on when we finalize the bundle discovery phase.
+                // and we will emit warnings for those later on when we finalize the catalog discovery phase.
                 if let link = result.value.title?.child(at: 0) as? AnyLink,
                    let url = link.destination.flatMap(ValidatedURL.init) {
                     let reference = result.topicGraphNode.reference
                     
                     let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
                     let symbolReference = ResolvedTopicReference(
-                        bundleIdentifier: reference.bundleIdentifier,
+                        catalogIdentifier: reference.catalogIdentifier,
                         path: symbolPath,
                         fragment: nil,
                         sourceLanguages: reference.sourceLanguages
@@ -977,7 +1000,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// Creates a topic graph node and a documentation node for the given symbol.
-    private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, referenceAliases: [ResolvedTopicReference], module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, bundle: DocumentationBundle, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
+    private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, referenceAliases: [ResolvedTopicReference], module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, catalog: DocumentationCatalog, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
         let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, platformName: module.platform.name, moduleReference: moduleReference, bystanderModules: module.bystanders)
         let source: TopicGraph.Node.ContentLocation // TODO: use a list of URLs for the files in a unified graph
         if let symbolGraphURL = symbolGraphURL {
@@ -994,8 +1017,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameters:
     ///   - symbolGraph: The complete symbol graph to walk through.
-    ///   - bundle: The bundle to use when creating symbol references.
-    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], bundle: DocumentationBundle) -> [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]] {
+    ///   - catalog: The catalog to use when creating symbol references.
+    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], catalog: DocumentationCatalog) -> [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]] {
         /// Temporary data structure to form symbol/module pairs.
         struct SymbolInModule {
             let symbol: UnifiedSymbolGraph.Symbol
@@ -1015,7 +1038,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Group symbols by path from all of the available symbol graphs
         for (moduleName, symbolGraph) in unifiedGraphs {
             let symbols = Array(symbolGraph.symbols.values)
-            let paths: [[String]] = symbols.concurrentMap { referencesFor($0, moduleName: moduleName, bundle: bundle).map { $0.path.lowercased() } }
+            let paths: [[String]] = symbols.concurrentMap { referencesFor($0, moduleName: moduleName, catalog: catalog).map { $0.path.lowercased() } }
 
             for (index, symbol) in symbols.enumerated() {
                 for path in paths[index] {
@@ -1042,7 +1065,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             for (collision, disambiguationSuffix) in zip(collisions, disambiguationSuffixes) {
                 result[collision.symbol.defaultIdentifier, default: []].append(
-                    contentsOf: referencesFor(collision.symbol, moduleName: collision.moduleName, bundle: bundle, shouldAddHash: disambiguationSuffix.shouldAddIdHash, shouldAddKind: disambiguationSuffix.shouldAddKind)
+                    contentsOf: referencesFor(collision.symbol, moduleName: collision.moduleName, catalog: catalog, shouldAddHash: disambiguationSuffix.shouldAddIdHash, shouldAddKind: disambiguationSuffix.shouldAddKind)
                 )
             }
         }
@@ -1050,13 +1073,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return result
     }
     
-    private func referencesFor(_ symbol: UnifiedSymbolGraph.Symbol, moduleName: String, bundle: DocumentationBundle, shouldAddHash: Bool = false, shouldAddKind: Bool = false) -> [ResolvedTopicReference] {
+    private func referencesFor(_ symbol: UnifiedSymbolGraph.Symbol, moduleName: String, catalog: DocumentationCatalog, shouldAddHash: Bool = false, shouldAddKind: Bool = false) -> [ResolvedTopicReference] {
         if let pathComponents = knownDisambiguatedSymbolPathComponents?[symbol.uniqueIdentifier],
            let componentsCount = symbol.defaultSymbol?.pathComponents.count,
            pathComponents.count == componentsCount
         {
             let symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguages: symbol.sourceLanguages)
-            return [ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)]
+            return [ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, catalog: catalog)]
         }
         
         // A unified symbol that exist in multiple languages may have multiple references.
@@ -1077,7 +1100,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 shouldAddHash: shouldAddHash,
                 shouldAddKind: shouldAddKind
             )
-            return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
+            return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, catalog: catalog)
         }
     }
 
@@ -1125,7 +1148,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///  └──────────────────┘             `───────────'
     ///                                       Symbol
     /// ```
-    private func addSymbolsToTopicGraph(symbolGraph: UnifiedSymbolGraph, url: URL?, symbolReferences: [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]], moduleReference: ResolvedTopicReference, bundle: DocumentationBundle) {
+    private func addSymbolsToTopicGraph(symbolGraph: UnifiedSymbolGraph, url: URL?, symbolReferences: [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]], moduleReference: ResolvedTopicReference, catalog: DocumentationCatalog) {
         let symbols = Array(symbolGraph.symbols.values)
         let results: [AddSymbolResultWithProblems] = symbols.concurrentPerform { symbol, results in
             if let selector = symbol.defaultSelector, let module = symbol.modules[selector] {
@@ -1139,7 +1162,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     referenceAliases: Array(references.dropFirst()),
                     module: module,
                     moduleReference: moduleReference,
-                    bundle: bundle,
+                    catalog: catalog,
                     fileURL: url
                 )
                 results.append(result)
@@ -1169,15 +1192,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// Reference lookup index.
     private(set) var referencesIndex = [String: ResolvedTopicReference]()
 
-    /// Loads all graph files from a given `bundle` and merges them together while building the symbol relationships and loading any available markdown documentation for those symbols.
+    /// Loads all graph files from a given `catalog` and merges them together while building the symbol relationships and loading any available markdown documentation for those symbols.
     ///
-    /// - Parameter bundle: The bundle to load symbol graph files from.
+    /// - Parameter catalog: The catalog to load symbol graph files from.
     /// - Returns: A pair of the references to all loaded modules and the hierarchy of all the loaded symbol's references.
-    private func registerSymbols(from bundle: DocumentationBundle, symbolGraphLoader: SymbolGraphLoader) throws -> (moduleReferences: Set<ResolvedTopicReference>, urlHierarchy: BidirectionalTree<ResolvedTopicReference>) {
+    private func registerSymbols(from catalog: DocumentationCatalog, symbolGraphLoader: SymbolGraphLoader) throws -> (moduleReferences: Set<ResolvedTopicReference>, urlHierarchy: BidirectionalTree<ResolvedTopicReference>) {
         // Making sure that we correctly let decoding memory get released, do not remove the autorelease pool.
         return try autoreleasepool { () -> (Set<ResolvedTopicReference>, BidirectionalTree<ResolvedTopicReference>) in
             /// A tree of the symbol hierarchy as defined by the combined symbol graph.
-            var symbolsURLHierarchy = BidirectionalTree<ResolvedTopicReference>(root: bundle.documentationRootReference)
+            var symbolsURLHierarchy = BidirectionalTree<ResolvedTopicReference>(root: catalog.documentationRootReference)
             /// We need only unique relationships so we'll collect them in a set.
             var combinedRelationships = Set<SymbolGraph.Relationship>()
             /// Collect symbols from all symbol graphs.
@@ -1186,7 +1209,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             var moduleReferences = [String: ResolvedTopicReference]()
             
             // Build references for all symbols in all of this module's symbol graphs.
-            let symbolReferences = referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle)
+            let symbolReferences = referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, catalog: catalog)
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
             symbolIndex.reserveCapacity(symbolReferences.count)
@@ -1229,7 +1252,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     // This node is known to exist
                     moduleReference = existingModuleReference
                     
-                    try mergeSymbolDeclarations(from: unifiedSymbolGraph, references: symbolReferences, moduleReference: moduleReference, bundle: bundle, fileURL: fileURL)
+                    try mergeSymbolDeclarations(from: unifiedSymbolGraph, references: symbolReferences, moduleReference: moduleReference, catalog: catalog, fileURL: fileURL)
                 } else {
                     guard symbolGraphLoader.hasPrimaryURL(moduleName: moduleName) else { continue }
                     
@@ -1239,9 +1262,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         interfaceLanguage: moduleInterfaceLanguages.first!.id
                     )
                     
-                    // Use the default module kind for this bundle if one was provided,
+                    // Use the default module kind for this catalog if one was provided,
                     // otherwise fall back to 'Framework'
-                    let moduleKindDisplayName = bundle.info.defaultModuleKind ?? "Framework"
+                    let moduleKindDisplayName = catalog.info.defaultModuleKind ?? "Framework"
                     let moduleSymbol = SymbolGraph.Symbol(
                             identifier: moduleIdentifier,
                             names: SymbolGraph.Symbol.Names(title: moduleName, navigator: nil, subHeading: nil, prose: nil),
@@ -1251,9 +1274,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: moduleKindDisplayName),
                             mixins: [:])
                     let moduleSymbolReference = SymbolReference(moduleName, interfaceLanguages: moduleInterfaceLanguages, defaultSymbol: moduleSymbol)
-                    moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, bundle: bundle)
+                    moduleReference = ResolvedTopicReference(symbolReference: moduleSymbolReference, moduleName: moduleName, catalog: catalog)
                     
-                    addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference, bundle: bundle)
+                    addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference, catalog: catalog)
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
                     for relationship in unifiedSymbolGraph.relationships {
@@ -1268,7 +1291,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
                         addPreparedSymbolToContext(
-                            preparedSymbolData(.init(fromSingleSymbol: moduleSymbol, module: rootModule, isMainGraph: true), reference: moduleReference, referenceAliases: [], module: rootModule, moduleReference: moduleReference, bundle: bundle, fileURL: fileURL)
+                            preparedSymbolData(.init(fromSingleSymbol: moduleSymbol, module: rootModule, isMainGraph: true), reference: moduleReference, referenceAliases: [], module: rootModule, moduleReference: moduleReference, catalog: catalog, fileURL: fileURL)
                         )
                     }
 
@@ -1329,7 +1352,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             
             // Create inherited API collections
-            try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(relationships: combinedRelationships, symbolsURLHierarchy: &symbolsURLHierarchy, context: self, bundle: bundle)
+            try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(relationships: combinedRelationships, symbolsURLHierarchy: &symbolsURLHierarchy, context: self, catalog: catalog)
 
             // Parse and prepare the nodes' content concurrently.
             let updatedNodes: [(node: DocumentationNode, matchedArticleURL: URL?)] = Array(symbolIndex.values)
@@ -1366,13 +1389,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
 
             // Resolve any external references first
-            try preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ symbolIndex[$0]?.reference }), bundle: bundle)
+            try preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ symbolIndex[$0]?.reference }), catalog: catalog)
             
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationships)
             
             // Build relationships in the completed graph
-            buildRelationships(combinedRelationships, bundle: bundle, engine: diagnosticEngine)
+            buildRelationships(combinedRelationships, catalog: catalog, engine: diagnosticEngine)
             
             // Index references
             referencesIndex.removeAll()
@@ -1444,34 +1467,34 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameters:
     ///   - symbolGraph: The symbol graph whose symbols to add in-memory relationships to.
-    ///   - bundle: The bundle that the symbols belong to.
+    ///   - catalog: The catalog that the symbols belong to.
     ///   - problems: A mutable collection of problems to update with any problem encountered while building symbol relationships.
     ///
     /// ## See Also
     /// - ``SymbolGraphRelationshipsBuilder``
-    func buildRelationships(_ relationships: Set<SymbolGraph.Relationship>, bundle: DocumentationBundle, engine: DiagnosticEngine) {
+    func buildRelationships(_ relationships: Set<SymbolGraph.Relationship>, catalog: DocumentationCatalog, engine: DiagnosticEngine) {
         for edge in relationships {
             // Build conformant type <-> protocol relationships
             if case .conformsTo = edge.kind {
-                SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, in: catalog, symbolIndex: &symbolIndex, engine: diagnosticEngine)
                 continue
             }
             
             // Build implementation <-> protocol requirement relationships.
             if case .defaultImplementationOf = edge.kind {
-                SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, in: bundle, context: self, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, in: catalog, context: self, symbolIndex: &symbolIndex, engine: diagnosticEngine)
                 continue
             }
             
             // Build ancestor <-> offspring relationships.
             if case .inheritsFrom = edge.kind {
-                SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: catalog, symbolIndex: &symbolIndex, engine: diagnosticEngine)
                 continue
             }
             
             // Build required member -> protocol relationships.
             if case .requirementOf = edge.kind {
-                SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: catalog, symbolIndex: &symbolIndex, engine: diagnosticEngine)
                 continue
             }
         }
@@ -1526,7 +1549,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
-    func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]], moduleReference: ResolvedTopicReference, bundle: DocumentationBundle, fileURL otherSymbolGraphURL: URL?) throws {
+    func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]], moduleReference: ResolvedTopicReference, catalog: DocumentationCatalog, fileURL otherSymbolGraphURL: URL?) throws {
         let mergeError = Synchronized<Error?>(nil)
         
         let results: [AddSymbolResultWithProblems] = Array(otherSymbolGraph.symbols.values).concurrentPerform { symbol, result in
@@ -1549,7 +1572,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
                 
                 result.append(
-                    preparedSymbolData(symbol, reference: reference, referenceAliases: Array(references.dropFirst()), module: module, moduleReference: moduleReference, bundle: bundle, fileURL: otherSymbolGraphURL)
+                    preparedSymbolData(symbol, reference: reference, referenceAliases: Array(references.dropFirst()), module: module, moduleReference: moduleReference, catalog: catalog, fileURL: otherSymbolGraphURL)
                 )
                 return
             }
@@ -1580,7 +1603,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private static let supportedImageExtensions: Set<String> = ["png", "jpg", "jpeg", "svg", "gif"]
     private static let supportedVideoExtensions: Set<String> = ["mov", "mp4"]
 
-    // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
+    // TODO: Move this functionality to ``DocumentationCatalogFileTypes`` (rdar://68156425).
     
     /// A type of asset.
     public enum AssetType {
@@ -1604,14 +1627,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    private func registerMiscResources(from bundle: DocumentationBundle) throws {
-        let miscResources = Set(bundle.miscResourceURLs)
-        try assetManagers[bundle.identifier, default: DataAssetManager()]
-            .register(data: miscResources, dataProvider: dataProvider, bundle: bundle)
+    private func registerMiscResources(from catalog: DocumentationCatalog) throws {
+        let miscResources = Set(catalog.miscResourceURLs)
+        try assetManagers[catalog.identifier, default: DataAssetManager()]
+            .register(data: miscResources, dataProvider: dataProvider, catalog: catalog)
     }
     
-    private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        guard let resources = assetManagers[bundleIdentifier]?.storage.values else {
+    private func registeredAssets(withExtensions extensions: Set<String>? = nil, inContexts contexts: [DataAsset.Context] = DataAsset.Context.allCases, forCatalogID catalogIdentifier: CatalogIdentifier) -> [DataAsset] {
+        guard let resources = assetManagers[catalogIdentifier]?.storage.values else {
             return []
         }
         return resources.filter { dataAsset in
@@ -1627,28 +1650,43 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
 
-    /// Returns a list of all the image assets that registered for a given `bundleIdentifier`.
+    /// Returns a list of all the image assets that registered for a given `catalogIdentifier`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return image assets for.
-    /// - Returns: A list of all the image assets for the given bundle.
-    public func registeredImageAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forBundleID: bundleIdentifier)
+    /// - Parameter catalogIdentifier: The identifier of the catalog to return image assets for.
+    /// - Returns: A list of all the image assets for the given catalog.
+    public func registeredImageAssets(forCatalogID catalogIdentifier: CatalogIdentifier) -> [DataAsset] {
+        return registeredAssets(withExtensions: DocumentationContext.supportedImageExtensions, forCatalogID: catalogIdentifier)
     }
     
-    /// Returns a list of all the video assets that registered for a given `bundleIdentifier`.
+    @available(*, deprecated, renamed: "registeredImageAssets(forCatalogID:)")
+    public func registeredImageAssets(forBundleID bundleIdentifier: CatalogIdentifier) -> [DataAsset] {
+        return registeredImageAssets(forCatalogID: bundleIdentifier)
+    }
+    
+    /// Returns a list of all the video assets that registered for a given `catalogIdentifier`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return video assets for.
-    /// - Returns: A list of all the video assets for the given bundle.
-    public func registeredVideoAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forBundleID: bundleIdentifier)
+    /// - Parameter catalogIdentifier: The identifier of the catalog to return video assets for.
+    /// - Returns: A list of all the video assets for the given catalog.
+    public func registeredVideoAssets(forCatalogID catalogIdentifier: CatalogIdentifier) -> [DataAsset] {
+        return registeredAssets(withExtensions: DocumentationContext.supportedVideoExtensions, forCatalogID: catalogIdentifier)
+    }
+    
+    @available(*, deprecated, renamed: "registeredVideoAssets(forCatalogID:)")
+    public func registeredVideoAssets(forBundleID bundleIdentifier: CatalogIdentifier) -> [DataAsset] {
+        return registeredVideoAssets(forCatalogID: bundleIdentifier)
     }
 
-    /// Returns a list of all the download assets that registered for a given `bundleIdentifier`.
+    /// Returns a list of all the download assets that registered for a given `catalogIdentifier`.
     ///
-    /// - Parameter bundleIdentifier: The identifier of the bundle to return download assets for.
-    /// - Returns: A list of all the download assets for the given bundle.
-    public func registeredDownloadsAssets(forBundleID bundleIdentifier: BundleIdentifier) -> [DataAsset] {
-        return registeredAssets(inContexts: [DataAsset.Context.download], forBundleID: bundleIdentifier)
+    /// - Parameter catalogIdentifier: The identifier of the catalog to return download assets for.
+    /// - Returns: A list of all the download assets for the given catalog.
+    public func registeredDownloadsAssets(forCatalogID catalogIdentifier: CatalogIdentifier) -> [DataAsset] {
+        return registeredAssets(inContexts: [DataAsset.Context.download], forCatalogID: catalogIdentifier)
+    }
+
+    @available(*, deprecated, renamed: "registeredDownloadsAssets(forCatalogID:)")
+    public func registeredDownloadsAssets(forBundleID bundleIdentifier: CatalogIdentifier) -> [DataAsset] {
+        return registeredDownloadsAssets(forCatalogID: bundleIdentifier)
     }
 
     typealias Articles = [DocumentationContext.SemanticResult<Article>]
@@ -1664,11 +1702,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    private func registerRootPages(from articles: Articles, in bundle: DocumentationBundle) -> Articles {
+    private func registerRootPages(from articles: Articles, in catalog: DocumentationCatalog) -> Articles {
         // Create a root leaf node for all root page articles
         for article in articles {
             // Create the documentation data
-            guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(for: article, kind: .collection, in: bundle) else { continue }
+            guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(for: article, kind: .collection, in: catalog) else { continue }
             let reference = documentation.reference
             
             // Create the documentation node
@@ -1688,13 +1726,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return articles
     }
     
-    /// When `true` bundle registration will be cancelled asap.
+    /// When `true` catalog registration will be cancelled asap.
     private var isRegistrationEnabled = Synchronized<Bool>(true)
     
-    /// Enables or disables bundle registration.
+    /// Enables or disables catalog registration.
     ///
     /// When given `false` the context will try to cancel as quick as possible
-    /// any ongoing bundle registrations.
+    /// any ongoing catalog registrations.
     public func setRegistrationEnabled(_ value: Bool) {
         isRegistrationEnabled.sync({ $0 = value })
     }
@@ -1708,11 +1746,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameters:
     ///   - articles: Articles to register with the documentation cache.
-    ///   - bundle: The bundle containing the articles.
+    ///   - catalog: The catalog containing the articles.
     /// - Returns: The articles that were registered, with their topic graph node updated to what's been added to the topic graph.
     private func registerArticles(
         _ articles: DocumentationContext.Articles,
-        in bundle: DocumentationBundle
+        in catalog: DocumentationCatalog
     ) -> DocumentationContext.Articles {
         articles.map { article in
             guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(
@@ -1722,7 +1760,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // than one module, we cannot determine what languages it's available in and default to Swift.
                 availableSourceLanguages: soleRootModuleReference?.sourceLanguages,
                 kind: .article,
-                in: bundle
+                in: catalog
             ) else {
                 return article
             }
@@ -1750,26 +1788,26 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - article: The article that will be used to create the returned documentation node.
     ///   - kind: The kind that should be used to create the returned documentation node.
-    ///   - bundle: The documentation bundle this article belongs to.
+    ///   - catalog: The documentation catalog this article belongs to.
     /// - Returns: A documentation node and title for the given article semantic result.
     static func documentationNodeAndTitle(
         for article: DocumentationContext.SemanticResult<Article>,
         availableSourceLanguages: Set<SourceLanguage>? = nil,
         kind: DocumentationNode.Kind,
-        in bundle: DocumentationBundle
+        in catalog: DocumentationCatalog
     ) -> (node: DocumentationNode, title: String)? {
         guard let articleMarkup = article.value.markup else {
             return nil
         }
         
-        let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, bundle: bundle)
+        let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, catalog: catalog)
         
         // If available source languages are provided and it contains Swift, use Swift as the default language of
         // the article.
         let defaultSourceLanguage = defaultLanguage(in: availableSourceLanguages)
         
         let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
+            catalogIdentifier: catalog.identifier,
             path: path,
             sourceLanguages: availableSourceLanguages ?? [.swift]
         )
@@ -1792,15 +1830,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// Curates articles under the root module.
     ///
     /// This method creates a new task group under the root page containing references to all of the articles
-    /// in the bundle that haven't been manually curated.
+    /// in the catalog that haven't been manually curated.
     ///
     /// - Parameters:
     ///   - otherArticles: Non-root articles to curate.
-    ///   - bundle: The bundle that contains the articles.
+    ///   - catalog: The catalog that contains the articles.
     ///   - rootNode: The node that will serve as the source of any topic graph edges created by this method.
     /// - Throws: If looking up a `DocumentationNode` for the root module reference fails.
     /// - Returns: An array of resolved references to the articles that were automatically curated.
-    private func autoCurateArticles(_ otherArticles: DocumentationContext.Articles, in bundle: DocumentationBundle, startingFrom rootNode: TopicGraph.Node) throws -> [ResolvedTopicReference] {
+    private func autoCurateArticles(_ otherArticles: DocumentationContext.Articles, in catalog: DocumentationCatalog, startingFrom rootNode: TopicGraph.Node) throws -> [ResolvedTopicReference] {
         
         let autoCuratedArticles: DocumentationContext.Articles = otherArticles.compactMap { article in
             let edges = topicGraph.edges[article.topicGraphNode.reference] ?? []
@@ -1849,25 +1887,25 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /**
-     Register a documentation bundle with this context.
+     Register a documentation catalog with this context.
      */
-    private func register(_ bundle: DocumentationBundle) throws {
+    private func register(_ catalog: DocumentationCatalog) throws {
         try shouldContinueRegistration()
         
-        // Note: Each bundle is registered and processed separately.
-        // Documents and symbols may both reference each other so the bundle is registered in 4 steps
+        // Note: Each catalog is registered and processed separately.
+        // Documents and symbols may both reference each other so the catalog is registered in 4 steps
         
-        // In the bundle discovery phase all tasks run in parallel as they don't depend on each other.
+        // In the catalog discovery phase all tasks run in parallel as they don't depend on each other.
         let discoveryGroup = DispatchGroup()
         let discoveryQueue = DispatchQueue(label: "org.swift.docc.Discovery", qos: .unspecified, attributes: .concurrent, autoreleaseFrequency: .workItem)
         
         let discoveryError = Synchronized<Error?>(nil)
 
-        // Load all bundle symbol graphs into the loader.
+        // Load all catalog symbol graphs into the loader.
         var symbolGraphLoader: SymbolGraphLoader!
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            symbolGraphLoader = SymbolGraphLoader(bundle: bundle, dataProvider: self.dataProvider)
+            symbolGraphLoader = SymbolGraphLoader(catalog: catalog, dataProvider: self.dataProvider)
             do {
                 try symbolGraphLoader.loadAll()
             } catch {
@@ -1881,7 +1919,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // First, all the resources are added since they don't reference anything else.
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             do {
-                try self.registerMiscResources(from: bundle)
+                try self.registerMiscResources(from: catalog)
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -1904,7 +1942,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             do {
-                result = try self.registerDocuments(from: bundle)
+                result = try self.registerDocuments(from: catalog)
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -1926,8 +1964,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let (technologies, tutorials, tutorialArticles, allArticles) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
 
-        let rootPages = registerRootPages(from: rootPageArticles, in: bundle)
-        let (moduleReferences, symbolsURLHierarchy) = try registerSymbols(from: bundle, symbolGraphLoader: symbolGraphLoader)
+        let rootPages = registerRootPages(from: rootPageArticles, in: catalog)
+        let (moduleReferences, symbolsURLHierarchy) = try registerSymbols(from: catalog, symbolGraphLoader: symbolGraphLoader)
         // We don't need to keep the loader in memory after we've registered all symbols.
         symbolGraphLoader = nil
         
@@ -1946,7 +1984,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
         let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
         if rootNodeForAutomaticCuration != nil {
-            otherArticles = registerArticles(otherArticles, in: bundle)
+            otherArticles = registerArticles(otherArticles, in: catalog)
             try shouldContinueRegistration()
         }
         
@@ -1955,17 +1993,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             technologies.map(referencedSemanticObject) +
             tutorials.map(referencedSemanticObject) +
             tutorialArticles.map(referencedSemanticObject),
-            bundle: bundle)
+            catalog: catalog)
         
         resolveLinks(
             technologies: technologies,
             tutorials: tutorials,
             tutorialArticles: tutorialArticles,
-            bundle: bundle
+            catalog: catalog
         )
         
         try shouldContinueRegistration()
-        var allCuratedReferences = try crawlSymbolCuration(rootModules: moduleReferences, rootPages: rootPages, symbolsURLHierarchy: symbolsURLHierarchy, bundle: bundle)
+        var allCuratedReferences = try crawlSymbolCuration(rootModules: moduleReferences, rootPages: rootPages, symbolsURLHierarchy: symbolsURLHierarchy, catalog: catalog)
         
         // Store the list of manually curated references if doc coverage is on.
         if shouldStoreManuallyCuratedReferences {
@@ -1978,7 +2016,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let automaticallyCurated = autoCurateSymbolsInTopicGraph(symbolsURLHierarchy: symbolsURLHierarchy, engine: diagnosticEngine)
         
         // Crawl the rest of the symbols that haven't been crawled so far in hierarchy pre-order.
-        allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.child), bundle: bundle, initial: allCuratedReferences)
+        allCuratedReferences = try crawlSymbolCuration(in: automaticallyCurated.map(\.child), catalog: catalog, initial: allCuratedReferences)
 
         // Remove curation paths that have been created automatically above
         // but we've found manual curation for in the second crawl pass.
@@ -1987,17 +2025,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Automatically curate articles that haven't been manually curated
         // Article curation is only done automatically if there is only one root module
         if let rootNode = rootNodeForAutomaticCuration {
-            let articleReferences = try autoCurateArticles(otherArticles, in: bundle, startingFrom: rootNode)
-            try preResolveExternalLinks(references: articleReferences, bundle: bundle)
-            resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
+            let articleReferences = try autoCurateArticles(otherArticles, in: catalog, startingFrom: rootNode)
+            try preResolveExternalLinks(references: articleReferences, catalog: catalog)
+            resolveLinks(curatedReferences: Set(articleReferences), catalog: catalog)
         }
 
         // Emit warnings for any remaining uncurated files.
         emitWarningsForUncuratedTopics()
         
         // Fifth, resolve links in nodes that are added solely via curation
-        try preResolveExternalLinks(references: Array(allCuratedReferences), bundle: bundle)
-        resolveLinks(curatedReferences: allCuratedReferences, bundle: bundle)
+        try preResolveExternalLinks(references: Array(allCuratedReferences), catalog: catalog)
+        resolveLinks(curatedReferences: allCuratedReferences, catalog: catalog)
 
         // TODO: Calling `mergeExternalEntities` below ensures we have resolved all external entities during before we finish building the context.
         // We should use a read-only context during render time (rdar://65130130).
@@ -2043,8 +2081,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// with external resolvers might not be full-duplex.
     func mergeExternalEntities(withReferences references: [ResolvedTopicReference]) {
         for reference in references {
-            // Try to resolve the reference if an external resolver exist for the reference's bundle identifier
-            if let externalResolver = externalReferenceResolvers[reference.bundleIdentifier] {
+            // Try to resolve the reference if an external resolver exist for the reference's catalog identifier
+            if let externalResolver = externalReferenceResolvers[reference.catalogIdentifier] {
                 do {
                     documentationCache[reference] = try externalResolver.entity(with: reference)
                 } catch {
@@ -2098,7 +2136,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
     private var checks: [ReferenceCheck] = []
     
-    /// Adds new checks to be run during the global topic analysis; after a bundle has been fully registered and its topic graph has been fully built.
+    /// Adds new checks to be run during the global topic analysis; after a catalog has been fully registered and its topic graph has been fully built.
     ///
     /// - Parameter newChecks: The new checks to add.
     public func addGlobalChecks(_ newChecks: [ReferenceCheck]) {
@@ -2110,12 +2148,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - rootModules: The modules to crawl.
     ///   - rootPages: The other root level pages to crawl.
-    ///   - bundle: The bundle to resolve symbol and article references against.
+    ///   - catalog: The catalog to resolve symbol and article references against.
     /// - Returns: The references of all the symbols that were curated.
     ///
     /// ## See Also
     /// - ``DocumentationCurator``
-    func crawlSymbolCuration<Modules: Sequence>(rootModules: Modules, rootPages: Articles, symbolsURLHierarchy: BidirectionalTree<ResolvedTopicReference>, bundle: DocumentationBundle) throws -> Set<ResolvedTopicReference> where Modules.Element == ResolvedTopicReference {
+    func crawlSymbolCuration<Modules: Sequence>(rootModules: Modules, rootPages: Articles, symbolsURLHierarchy: BidirectionalTree<ResolvedTopicReference>, catalog: DocumentationCatalog) throws -> Set<ResolvedTopicReference> where Modules.Element == ResolvedTopicReference {
         // Start crawling at top-level symbols and decent the hierarchy following custom curations,
         // finally curate the top-level symbols under the module. We do this to account for the fact
         // top-level types aren't initially children of the module.
@@ -2124,18 +2162,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Crawl hierarchy under a root page for custom curations
         let rootPageReferences = rootPages.map(\.topicGraphNode.reference)
         
-        return try crawlSymbolCuration(in: topLevelModuleReferences + rootPageReferences, bundle: bundle)
+        return try crawlSymbolCuration(in: topLevelModuleReferences + rootPageReferences, catalog: catalog)
     }
     
     /// Crawls the hierarchy of the given list of nodes, adding relationships in the topic graph for all resolvable task group references.
     /// - Parameters:
     ///   - references: A list of references to crawl.
-    ///   - bundle: A documentation bundle.
+    ///   - catalog: A documentation catalog.
     ///   - initial: A list of references to skip when crawling.
     /// - Returns: The references of all the symbols that were curated.
     @discardableResult
-    func crawlSymbolCuration(in references: [ResolvedTopicReference], bundle: DocumentationBundle, initial: Set<ResolvedTopicReference> = []) throws -> Set<ResolvedTopicReference> {
-        var crawler = DocumentationCurator(in: self, bundle: bundle, initial: initial)
+    func crawlSymbolCuration(in references: [ResolvedTopicReference], catalog: DocumentationCatalog, initial: Set<ResolvedTopicReference> = []) throws -> Set<ResolvedTopicReference> {
+        var crawler = DocumentationCurator(in: self, catalog: catalog, initial: initial)
 
         for reference in references {
             try crawler.crawlChildren(
@@ -2206,16 +2244,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
 
     /**
-     Unregister a documentation bundle with this context and clear any cached resources associated with it.
+     Unregister a documentation catalog with this context and clear any cached resources associated with it.
      */
-    private func unregister(_ bundle: DocumentationBundle) {
+    private func unregister(_ catalog: DocumentationCatalog) {
         let referencesToRemove = topicGraph.nodes.keys.filter { reference in
-            return reference.bundleIdentifier == bundle.identifier
+            return reference.catalogIdentifier == catalog.identifier
         }
         
         for reference in referencesToRemove {
-            topicGraph.edges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.identifier })
-            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.identifier })
+            topicGraph.edges[reference]?.removeAll(where: { $0.catalogIdentifier == catalog.identifier })
+            topicGraph.reverseEdges[reference]?.removeAll(where: { $0.catalogIdentifier == catalog.identifier })
             topicGraph.nodes[reference] = nil
         }
     }
@@ -2223,7 +2261,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     // MARK: - Getting documentation relationships
 
     /**
-     Look for a secondary resource among the registered bundles.
+     Look for a secondary resource among the registered catalogs.
 
      The context tracks resources by file name. If the documentation author specified a resource reference using a
      qualified path, instead of a file name, the context will fail to find that resource.
@@ -2232,15 +2270,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      - Throws: ``ContextError/notFound(_:)` if a resource with the given was not found.
      */
     public func resource(with identifier: ResourceReference, trait: DataTraitCollection = .init()) throws -> Data {
-        guard let bundle = bundle(identifier: identifier.bundleIdentifier),
-              let assetManager = assetManagers[identifier.bundleIdentifier],
+        guard let catalog = catalog(identifier: identifier.catalogIdentifier),
+              let assetManager = assetManagers[identifier.catalogIdentifier],
               let asset = assetManager.allData(named: identifier.path) else {
             throw ContextError.notFound(identifier.url)
         }
         
         let resource = asset.data(bestMatching: trait)
         
-        return try dataProvider.contentsOfURL(resource.url, in: bundle)
+        return try dataProvider.contentsOfURL(resource.url, in: catalog)
     }
     
     
@@ -2251,12 +2289,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      - Throws: Re-throws any errors that a registered external resolver might throw for this lookup.
      */
     func externalEntity(with reference: ResolvedTopicReference) throws -> DocumentationNode? {
-        return try externalReferenceResolvers[reference.bundleIdentifier].map({ try $0.entity(with: reference) }) ??
-            fallbackReferenceResolvers[reference.bundleIdentifier].flatMap({ try $0.entityIfPreviouslyResolved(with: reference) })
+        return try externalReferenceResolvers[reference.catalogIdentifier].map({ try $0.entity(with: reference) }) ??
+            fallbackReferenceResolvers[reference.catalogIdentifier].flatMap({ try $0.entityIfPreviouslyResolved(with: reference) })
     }
     
     /**
-     Look for a documentation node among the registered bundles and via any external resolvers.
+     Look for a documentation node among the registered catalogs and via any external resolvers.
 
      - Returns: A ``DocumentationNode`` with the given identifier.
      - Throws: ``ContextError/notFound(_:)`` if a documentation node with the given identifier was not found.
@@ -2269,7 +2307,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // TODO: We should not mutate the context during rendering and this method is called from `RenderNodeTranslator`
         // We should use a read-only context during render time (rdar://65130130).
-        // Try to resolve the reference if an external resolver exists for the reference's bundle identifier
+        // Try to resolve the reference if an external resolver exists for the reference's catalog identifier
         if let externallyResolved = try externalEntity(with: reference) {
             documentationCache[reference] = externallyResolved
             return externallyResolved
@@ -2384,7 +2422,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         if let match = referencesIndex[path] { return match }
         
         // Check if `destination` is a known absolute symbol path.
-        let referenceURLString = "doc://\(parent.bundleIdentifier)/documentation/\(path.hasPrefix("/") ? String(path.dropFirst()) : path)"
+        let referenceURLString = "doc://\(parent.catalogIdentifier)/documentation/\(path.hasPrefix("/") ? String(path.dropFirst()) : path)"
         return referencesIndex[referenceURLString]
     }
 
@@ -2406,7 +2444,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      
      - Parameters:
        - reference: An unresolved (or resolved) identifer.
-       - parentIdentifier: The *resolved* identifier that serves as an enclosing search context, especially the parent identifier's bundle identifier.
+       - parentIdentifier: The *resolved* identifier that serves as an enclosing search context, especially the parent identifier's catalog identifier.
        - fromSymbolLink: If `true` will try to resolve relative links *only* in documentation symbol locations in the hierarchy. If `false` it will try to resolve relative links as tutorials, articles, symbols, etc.
      - Returns: The resolved identifier for the topic if the parent provided the correct context and the topic exists.
      
@@ -2416,7 +2454,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      2. we check if the link is resolvable in the local context (e.g. the parent), i.e. "MyClass" ~> "MyClass/myFunction()"
      3. we check if the link is resolvable as a sibling to the parent, i.e. "MyClass/myFunction()" ~> "MyClass/path"
      4. we check if the link is resolvable in the root context (e.g. the module) of its parent, i.e. we will try resolving 'MyClass' as 'MyKit/MyClass'
-     5. we check if there is a registered external resolver for the link's bundle id and if so, use that resolver
+     5. we check if there is a registered external resolver for the link's catalog id and if so, use that resolver
      
      If none of these succeeds we will return the original unresolved reference.
      */
@@ -2444,8 +2482,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 return .failure(unresolvedReference, errorMessage: "Reference URL \(reference.description.singleQuoted) doesn't have \"doc:\" scheme.")
             }
             
-            // Fall back on the parent's bundle identifier for relative paths
-            let referenceBundleIdentifier = unresolvedReference.topicURL.components.host ?? parent.bundleIdentifier
+            // Fall back on the parent's catalog identifier for relative paths
+            let referenceCatalogIdentifier = unresolvedReference.topicURL.components.host ?? parent.catalogIdentifier
             
             // Keep track of all the resolution candidates so that we can resolve them externally
             // if they weren't resolvable internally.
@@ -2473,13 +2511,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
             }
             
-            // If a known bundle is referenced via the "doc:" scheme try to resolve in topic graph
-            if let knownBundleIdentifier = registeredBundles.first(where: { bundle -> Bool in
-                return bundle.identifier == referenceBundleIdentifier || urlReadablePath(bundle.displayName) == referenceBundleIdentifier
+            // If a known catalog is referenced via the "doc:" scheme try to resolve in topic graph
+            if let knownCatalogIdentifier = registeredCatalogs.first(where: { catalog -> Bool in
+                return catalog.identifier == referenceCatalogIdentifier || urlReadablePath(catalog.displayName) == referenceCatalogIdentifier
             })?.identifier {
                 // 1. Check if reference is already resolved but not found in the cache
                 let alreadyResolved = ResolvedTopicReference(
-                    bundleIdentifier: knownBundleIdentifier,
+                    catalogIdentifier: knownCatalogIdentifier,
                     path: absolutePath,
                     fragment: unresolvedReference.topicURL.components.fragment,
                     sourceLanguages: parent.sourceLanguages
@@ -2489,22 +2527,22 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
 
                 // 2. Check if resolvable in any of the root non-symbol contexts
-                let currentBundle = bundle(identifier: knownBundleIdentifier)!
+                let currentCatalog = catalog(identifier: knownCatalogIdentifier)!
                 if !isCurrentlyResolvingSymbolLink {
                     // First look up articles path
-                    let articleReference = currentBundle.articlesDocumentationRootReference.appendingPathOfReference(unresolvedReference)
+                    let articleReference = currentCatalog.articlesDocumentationRootReference.appendingPathOfReference(unresolvedReference)
                     if let resolved = attemptToResolve(articleReference) {
                         return resolved
                     }
                     
                     // Then technology tutorials root path (for individual tutorial pages)
-                    let tutorialReference = currentBundle.technologyTutorialsRootReference.appendingPathOfReference(unresolvedReference)
+                    let tutorialReference = currentCatalog.technologyTutorialsRootReference.appendingPathOfReference(unresolvedReference)
                     if let resolved = attemptToResolve(tutorialReference) {
                         return resolved
                     }
                     
                     // Then tutorials root path (for tutorial table of contents pages)
-                    let tutorialRootReference = currentBundle.tutorialsRootReference.appendingPathOfReference(unresolvedReference)
+                    let tutorialRootReference = currentCatalog.tutorialsRootReference.appendingPathOfReference(unresolvedReference)
                     if let resolved = attemptToResolve(tutorialRootReference) {
                         return resolved
                     }
@@ -2523,7 +2561,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let siblingSymbolReference: ResolvedTopicReference?
                 if parentPath.count >= 2 {
                     siblingSymbolReference = ResolvedTopicReference(
-                        bundleIdentifier: knownBundleIdentifier,
+                        catalogIdentifier: knownCatalogIdentifier,
                         path: parentPath.joined(separator: "/"),
                         fragment: unresolvedReference.topicURL.components.fragment,
                         sourceLanguages: parent.sourceLanguages
@@ -2540,8 +2578,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                 // Check that the parent is not an article (ignoring if absolute or relative link)
                 // because we cannot resolve in the parent context if it's not a symbol.
-                if parent.path.hasPrefix(currentBundle.documentationRootReference.path) && parentPath.count > 2 {
-                    let rootPath = currentBundle.documentationRootReference.appendingPath(parentPath[2])
+                if parent.path.hasPrefix(currentCatalog.documentationRootReference.path) && parentPath.count > 2 {
+                    let rootPath = currentCatalog.documentationRootReference.appendingPath(parentPath[2])
                     let resolvedInRoot = rootPath.appendingPathOfReference(unresolvedReference)
                     
                     // Confirm here that we we're not already considering this link. We only need to specifically
@@ -2556,28 +2594,28 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     }
                 }
                 
-                let moduleSymbolReference = currentBundle.documentationRootReference.appendingPathOfReference(unresolvedReference)
+                let moduleSymbolReference = currentCatalog.documentationRootReference.appendingPathOfReference(unresolvedReference)
                 if let resolved = attemptToResolve(moduleSymbolReference) {
                     return resolved
                 }
             }
 
             // 5. Check if a pre-resolved external link.
-            if let bundleID = unresolvedReference.topicURL.components.host {
-                if externalReferenceResolvers[bundleID] != nil,
+            if let catalogID = unresolvedReference.topicURL.components.host {
+                if externalReferenceResolvers[catalogID] != nil,
                    let resolvedExternalReference = externallyResolvedLinks[unresolvedReference.topicURL] {
                     // Return the successful or failed externally resolved reference.
                     return resolvedExternalReference
-                } else if !registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                    return .failure(unresolvedReference, errorMessage: "No external resolver registered for \(bundleID.singleQuoted).")
+                } else if !registeredCatalogs.contains(where: { $0.identifier == catalogID }) {
+                    return .failure(unresolvedReference, errorMessage: "No external resolver registered for \(catalogID.singleQuoted).")
                 }
             }
             
             // External symbols are already pre-resolved while loading the symbol graph
             // so they will be fetched from the context.
             
-            // If a fallback resolver exists for this bundle, try to resolve the link externally.
-            if let fallbackResolver = fallbackReferenceResolvers[referenceBundleIdentifier] {
+            // If a fallback resolver exists for this catalog, try to resolve the link externally.
+            if let fallbackResolver = fallbackReferenceResolvers[referenceCatalogIdentifier] {
                 for candidateURL in allCandidateURLs {
                     let unresolvedReference = UnresolvedTopicReference(topicURL: ValidatedURL(candidateURL)!)
                     let reference = fallbackResolver.resolve(.unresolved(unresolvedReference), sourceLanguage: parent.sourceLanguage)
@@ -2606,8 +2644,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - asset: The new asset for this name.
     ///   - parent: The topic where the asset is referenced.
     public func updateAsset(named name: String, asset: DataAsset, in parent: ResolvedTopicReference) {
-        let bundleIdentifier = parent.bundleIdentifier
-        assetManagers[bundleIdentifier]?.update(name: name, asset: asset)
+        let catalogIdentifier = parent.catalogIdentifier
+        assetManagers[catalogIdentifier]?.update(name: name, asset: asset)
     }
     
     /// Attempt to resolve an asset given its name and the topic it's referenced in.
@@ -2617,15 +2655,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - parent: The topic where the asset is referenced.
     /// - Returns: The data that's associated with a image asset if it was found, otherwise `nil`.
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference) -> DataAsset? {
-        let bundleIdentifier = parent.bundleIdentifier
-        if let localAsset = assetManagers[bundleIdentifier]?.allData(named: name) {
+        let catalogIdentifier = parent.catalogIdentifier
+        if let localAsset = assetManagers[catalogIdentifier]?.allData(named: name) {
             return localAsset
         }
         
-        if let externallyResolvedAsset = fallbackAssetResolvers[bundleIdentifier].flatMap({
-            $0.resolve(assetNamed: name, bundleIdentifier: bundleIdentifier)
+        if let externallyResolvedAsset = fallbackAssetResolvers[catalogIdentifier].flatMap({
+            $0.resolve(assetNamed: name, catalogIdentifier: catalogIdentifier)
         }) {
-            assetManagers[bundleIdentifier, default: DataAssetManager()].register(
+            assetManagers[catalogIdentifier, default: DataAssetManager()].register(
                 dataAsset: externallyResolvedAsset, forName: name)
             return externallyResolvedAsset
         }
@@ -2645,8 +2683,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Returns: The best matching storage key if it was found, otherwise `nil`.
     public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
-        let bundleIdentifier = parent.bundleIdentifier
-        return assetManagers[bundleIdentifier]?.bestKey(forAssetName: name)
+        let catalogIdentifier = parent.catalogIdentifier
+        return assetManagers[catalogIdentifier]?.bestKey(forAssetName: name)
     }
 
     /// Attempt to resolve an unresolved code listing.
@@ -2655,7 +2693,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - unresolvedCodeListingReference: The code listing reference to resolve.
     ///   - parent: The topic the code listing reference appears in.
     public func resolveCodeListing(_ unresolvedCodeListingReference: UnresolvedCodeListingReference, in parent: ResolvedTopicReference) -> AttributedCodeListing? {
-        return dataProvider.bundles[parent.bundleIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
+        return dataProvider.catalogs[parent.catalogIdentifier]?.attributedCodeListings[unresolvedCodeListingReference.identifier]
     }
     
     /// The references of all nodes in the topic graph.

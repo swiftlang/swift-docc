@@ -78,12 +78,12 @@ class DiagnosticTests: XCTestCase {
     
     /// Test offsetting diagnostic ranges
     func testOffsetDiagnostics() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
 
         let source = "Test a ``Reference`` in a sentence."
         let markup = Document(parsing: source, options: .parseSymbolLinks)
         
-        var resolver = ReferenceResolver(context: context, bundle: bundle, source: URL(string: "/tmp/foo.symbols.json"), rootReference: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
+        var resolver = ReferenceResolver(context: context, catalog: catalog, source: URL(string: "/tmp/foo.symbols.json"), rootReference: ResolvedTopicReference(catalogIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
         
         // Resolve references
         _ = resolver.visitMarkup(markup)

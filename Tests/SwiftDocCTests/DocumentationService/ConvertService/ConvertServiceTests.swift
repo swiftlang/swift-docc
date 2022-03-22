@@ -14,8 +14,8 @@ import Foundation
 import SymbolKit
 
 class ConvertServiceTests: XCTestCase {
-    private let testBundleInfo = DocumentationBundle.Info(
-        displayName: "TestBundle",
+    private let testCatalogInfo = DocumentationCatalog.Info(
+        displayName: "TestCatalog",
         identifier: "identifier",
         version: "1.0.0"
     )
@@ -30,7 +30,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -113,7 +113,7 @@ class ConvertServiceTests: XCTestCase {
         let myFunctionExtensionData = try Data(contentsOf: myFunctionExtension)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -177,7 +177,7 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -253,7 +253,7 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -305,7 +305,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         var request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -411,7 +411,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -472,7 +472,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
             documentPathsToConvert: [],
             symbolGraphs: [symbolGraph],
@@ -550,7 +550,7 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
             symbolGraphs: [symbolGraph],
@@ -567,14 +567,14 @@ class ConvertServiceTests: XCTestCase {
     }
     
     func testConvertAllPagesForOnDiskContent() throws {
-        let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let testCatalogURL = Bundle.module.url(
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                 
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
-            bundleLocation: testBundleURL,
+            catalogLocation: testCatalogURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -583,11 +583,11 @@ class ConvertServiceTests: XCTestCase {
         try processAndAssertResponseContents(
             expectedRenderNodePaths: [
                 "/documentation/SideKit/UncuratedClass/angle",
-                "/documentation/Test-Bundle/article",
-                "/tutorials/Test-Bundle/TestTutorial2",
+                "/documentation/Test-Catalog/article",
+                "/tutorials/Test-Catalog/TestTutorial2",
                 "/documentation/MyKit/MyClass/init()-33vaw",
-                "/tutorials/Test-Bundle/TestTutorial",
-                "/documentation/Test-Bundle/Default-Code-Listing-Syntax",
+                "/tutorials/Test-Catalog/TestTutorial",
+                "/documentation/Test-Catalog/Default-Code-Listing-Syntax",
                 "/documentation/MyKit/MyClass/init()-3743d",
                 "/tutorials/TestOverview",
                 "/documentation/MyKit/MyClass",
@@ -595,21 +595,21 @@ class ConvertServiceTests: XCTestCase {
                 "/documentation/SideKit/SideClass/init()",
                 "/documentation/SideKit/SideClass/Element/inherited()",
                 "/documentation/SideKit/NonExistent/UncuratedClass",
-                "/documentation/Test-Bundle/article2",
+                "/documentation/Test-Catalog/article2",
                 "/documentation/SideKit/SideClass/Element/Protocol-Implementations",
                 "/documentation/FillIntroduced/iOSMacOSOnly()",
-                "/documentation/Test-Bundle/article3",
+                "/documentation/Test-Catalog/article3",
                 "/documentation/SideKit/SideClass/Element",
                 "/documentation/FillIntroduced",
                 "/documentation/FillIntroduced/macOSOnlyIntroduced()",
-                "/tutorials/Test-Bundle/TutorialMediaWithSpaces",
+                "/tutorials/Test-Catalog/TutorialMediaWithSpaces",
                 "/documentation/SideKit/SideClass/url",
                 "/documentation/SideKit/SideClass/path",
                 "/documentation/FillIntroduced/macOSOnlyDeprecated()",
                 "/documentation/SideKit/SideProtocol/func()-2dxqn",
                 "/documentation/SideKit/SideClass",
                 "/documentation/MyKit/globalFunction(_:considering:)",
-                "/tutorials/Test-Bundle/TestTutorialArticle",
+                "/tutorials/Test-Catalog/TestTutorialArticle",
                 "/documentation/FillIntroduced/iOSOnlyIntroduced()",
                 "/documentation/FillIntroduced/iOSOnlyDeprecated()",
                 "/documentation/MyKit",
@@ -628,14 +628,14 @@ class ConvertServiceTests: XCTestCase {
     }
     
     func testConvertSomeSymbolsAndSomeArticlesForOnDiskContent() throws {
-        let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let testCatalogURL = Bundle.module.url(
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                 
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
-            documentPathsToConvert: ["/documentation/Test-Bundle/article"],
-            bundleLocation: testBundleURL,
+            documentPathsToConvert: ["/documentation/Test-Catalog/article"],
+            catalogLocation: testCatalogURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -643,7 +643,7 @@ class ConvertServiceTests: XCTestCase {
         
         try processAndAssertResponseContents(
             expectedRenderNodePaths: [
-                "/documentation/Test-Bundle/article",
+                "/documentation/Test-Catalog/article",
                 "/documentation/MyKit/MyClass/myFunction()",
             ],
             includesRenderReferenceStore: false,
@@ -652,14 +652,14 @@ class ConvertServiceTests: XCTestCase {
     }
     
     func testConvertNoSymbolsAndNoArticlesForOnDiskContent() throws {
-        let testBundleURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let testCatalogURL = Bundle.module.url(
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
                 
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
-            bundleLocation: testBundleURL,
+            catalogLocation: testCatalogURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -672,15 +672,15 @@ class ConvertServiceTests: XCTestCase {
         )
     }
     
-    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithUncuratedArticles() throws {
+    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskCatalogWithUncuratedArticles() throws {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (SR-15036)
         """)
         #else
-        let (testBundleURL, _, _) = try testBundleAndContext(
-            copying: "TestBundle",
+        let (testCatalogURL, _, _) = try testCatalogAndContext(
+            copying: "TestCatalog",
             excludingPaths: [
                 "sidekit.symbols.json",
                 "mykit-iOS.symbols.json",
@@ -691,11 +691,11 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             includeRenderReferenceStore: true,
-            bundleLocation: testBundleURL,
+            catalogLocation: testCatalogURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -722,29 +722,29 @@ class ConvertServiceTests: XCTestCase {
                         "/tutorials/TestOverview",
                         "/tutorials/TestOverview/$volume",
                         "/tutorials/TestOverview/Chapter-1",
-                        "/documentation/Test-Bundle/article",
-                        "/documentation/Test-Bundle/article2",
-                        "/documentation/Test-Bundle/article3",
-                        "/tutorials/Test-Bundle/TestTutorial",
-                        "/tutorials/Test-Bundle/TestTutorial2",
-                        "/tutorials/Test-Bundle/TestTutorialArticle",
-                        "/tutorials/Test-Bundle/TutorialMediaWithSpaces",
-                        "/documentation/Test-Bundle/Default-Code-Listing-Syntax",
+                        "/documentation/Test-Catalog/article",
+                        "/documentation/Test-Catalog/article2",
+                        "/documentation/Test-Catalog/article3",
+                        "/tutorials/Test-Catalog/TestTutorial",
+                        "/tutorials/Test-Catalog/TestTutorial2",
+                        "/tutorials/Test-Catalog/TestTutorialArticle",
+                        "/tutorials/Test-Catalog/TutorialMediaWithSpaces",
+                        "/documentation/Test-Catalog/Default-Code-Listing-Syntax",
                     ]
                 )
             
                 try self.assertReferenceStoreContains(
                     referenceStore: referenceStore,
                     topicPath: "/documentation/MyKit/MyClass",
-                    source: testBundleURL.appendingPathComponent("documentation/myclass.md"),
+                    source: testCatalogURL.appendingPathComponent("documentation/myclass.md"),
                     title: "doc:MyKit/MyClass",
                     isDocumentationExtensionContent: true
                 )
                 
                 try self.assertReferenceStoreContains(
                     referenceStore: referenceStore,
-                    topicPath: "/documentation/Test-Bundle/article",
-                    source: testBundleURL.appendingPathComponent("article.md"),
+                    topicPath: "/documentation/Test-Catalog/article",
+                    source: testCatalogURL.appendingPathComponent("article.md"),
                     title: "My Cool Article",
                     isDocumentationExtensionContent: false
                 )
@@ -760,7 +760,7 @@ class ConvertServiceTests: XCTestCase {
                 }).sorted(by: { $0.0 < $1.0 })
                 
                 func testImages(_ paths: String...) -> [URL] {
-                    paths.map(testBundleURL.resolvingSymlinksInPath().appendingPathComponent)
+                    paths.map(testCatalogURL.resolvingSymlinksInPath().appendingPathComponent)
                 }
                 
                 let expectedAssets = [
@@ -807,8 +807,8 @@ class ConvertServiceTests: XCTestCase {
         arrays. (SR-15036)
         """)
         #else
-        let (testBundleURL, _, _) = try testBundleAndContext(
-            copying: "TestBundle",
+        let (testCatalogURL, _, _) = try testCatalogAndContext(
+            copying: "TestCatalog",
             excludingPaths: [
                 "mykit-iOS.symbols.json",
                 "MyKit@SideKit.symbols.json",
@@ -818,11 +818,11 @@ class ConvertServiceTests: XCTestCase {
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             includeRenderReferenceStore: true,
-            bundleLocation: testBundleURL,
+            catalogLocation: testCatalogURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -848,25 +848,25 @@ class ConvertServiceTests: XCTestCase {
         #endif
     }
     
-    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskBundleWithCuratedArticles() throws {
+    func testReturnsRenderReferenceStoreWhenRequestedForOnDiskCatalogWithCuratedArticles() throws {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
         arrays. (SR-15036)
         """)
         #else
-        let (testBundleURL, _, _) = try testBundleAndContext(
-            // Use a bundle that contains only articles, one of which is declared as the TechnologyRoot and curates the
+        let (testCatalogURL, _, _) = try testCatalogAndContext(
+            // Use a catalog that contains only articles, one of which is declared as the TechnologyRoot and curates the
             // other articles.
-            copying: "BundleWithTechnologyRoot"
+            copying: "CatalogWithTechnologyRoot"
         )
         
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: [],
             documentPathsToConvert: [],
             includeRenderReferenceStore: true,
-            bundleLocation: testBundleURL,
+            catalogLocation: testCatalogURL,
             symbolGraphs: [],
             markupFiles: [],
             miscResourceURLs: []
@@ -891,7 +891,7 @@ class ConvertServiceTests: XCTestCase {
                 try self.assertReferenceStoreContains(
                     referenceStore: referenceStore,
                     topicPath: "/documentation/TechnologyX",
-                    source: testBundleURL.appendingPathComponent("TechnologyX.md"),
+                    source: testCatalogURL.appendingPathComponent("TechnologyX.md"),
                     title: "TechnologyX",
                     isDocumentationExtensionContent: false
                 )
@@ -899,7 +899,7 @@ class ConvertServiceTests: XCTestCase {
                 try self.assertReferenceStoreContains(
                     referenceStore: referenceStore,
                     topicPath: "/documentation/TechnologyX/article",
-                    source: testBundleURL.appendingPathComponent("article.md"),
+                    source: testCatalogURL.appendingPathComponent("article.md"),
                     title: "My Article",
                     isDocumentationExtensionContent: false
                 )
@@ -918,9 +918,9 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
-                displayName: "TestBundle",
-                identifier: "com.test.bundle",
+            catalogInfo: DocumentationCatalog.Info(
+                displayName: "TestCatalog",
+                identifier: "com.test.catalog",
                 version: "1.0.0"
             ),
             externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
@@ -948,33 +948,33 @@ class ConvertServiceTests: XCTestCase {
                 switch request.payload {
                 case .topic(let url):
                     let unresolvableURLs = [
-                        "doc://com.test.bundle/MyClass",
-                        "doc://com.test.bundle/documentation/MyKit/MyClass/myFunction()/MyClass",
-                        "doc://com.test.bundle/documentation/MyKit/MyClass/MyClass",
-                        "doc://com.test.bundle/documentation/MyKit/MyClass",
+                        "doc://com.test.catalog/MyClass",
+                        "doc://com.test.catalog/documentation/MyKit/MyClass/myFunction()/MyClass",
+                        "doc://com.test.catalog/documentation/MyKit/MyClass/MyClass",
+                        "doc://com.test.catalog/documentation/MyKit/MyClass",
                         
-                        "doc://com.test.bundle/ChildOfMyClass",
-                        "doc://com.test.bundle/MyClass/ChildOfMyClass",
-                        "doc://com.test.bundle/tutorials/ChildOfMyClass",
-                        "doc://com.test.bundle/documentation/ChildOfMyClass",
-                        "doc://com.test.bundle/documentation/MyKit/ChildOfMyClass",
-                        "doc://com.test.bundle/tutorials/TestBundle/ChildOfMyClass",
-                        "doc://com.test.bundle/documentation/TestBundle/ChildOfMyClass",
-                        "doc://com.test.bundle/documentation/MyKit/MyClass/ChildOfMyClass",
-                        "doc://com.test.bundle/documentation/MyKit/MyClass/myFunction()/ChildOfMyClass",
+                        "doc://com.test.catalog/ChildOfMyClass",
+                        "doc://com.test.catalog/MyClass/ChildOfMyClass",
+                        "doc://com.test.catalog/tutorials/ChildOfMyClass",
+                        "doc://com.test.catalog/documentation/ChildOfMyClass",
+                        "doc://com.test.catalog/documentation/MyKit/ChildOfMyClass",
+                        "doc://com.test.catalog/tutorials/TestCatalog/ChildOfMyClass",
+                        "doc://com.test.catalog/documentation/TestCatalog/ChildOfMyClass",
+                        "doc://com.test.catalog/documentation/MyKit/MyClass/ChildOfMyClass",
+                        "doc://com.test.catalog/documentation/MyKit/MyClass/myFunction()/ChildOfMyClass",
                         
-                        "doc://com.test.bundle/ViewBuilder",
-                        "doc://com.test.bundle/documentation/MyKit/MyClass/myFunction()/ViewBuilder",
-                        "doc://com.test.bundle/documentation/MyKit/MyClass/ViewBuilder",
-                        "doc://com.test.bundle/documentation/MyKit/ViewBuilder",
-                        "doc://com.test.bundle/documentation/ViewBuilder",
+                        "doc://com.test.catalog/ViewBuilder",
+                        "doc://com.test.catalog/documentation/MyKit/MyClass/myFunction()/ViewBuilder",
+                        "doc://com.test.catalog/documentation/MyKit/MyClass/ViewBuilder",
+                        "doc://com.test.catalog/documentation/MyKit/ViewBuilder",
+                        "doc://com.test.catalog/documentation/ViewBuilder",
                     ].map { URL(string: $0)! }
                     
                     let resolvableMyClassURL = URL(
-                        string: "doc://com.test.bundle/documentation/MyKit/MyClass")!
+                        string: "doc://com.test.catalog/documentation/MyKit/MyClass")!
                     
                     let resolvableOtherFunctionURL = URL(
-                        string: "doc://com.test.bundle/MyKit/MyClass/myOtherFunction()")!
+                        string: "doc://com.test.catalog/MyKit/MyClass/myOtherFunction()")!
                     
                     if url == resolvableMyClassURL {
                         let testSymbolInformationResponse = OutOfProcessReferenceResolver
@@ -1045,7 +1045,7 @@ class ConvertServiceTests: XCTestCase {
                                     id: "org.swift.docc.kind.class",
                                     isSymbol: true
                                 ),
-                                url: URL(string: "doc://com.test.bundle/MyKit/TestSymbol")!,
+                                url: URL(string: "doc://com.test.catalog/MyKit/TestSymbol")!,
                                 title: "MyClass Title From Precise Identifier",
                                 abstract: "",
                                 language: .init(name: "Swift", id: "swift"),
@@ -1066,8 +1066,8 @@ class ConvertServiceTests: XCTestCase {
                     }
                     
                 case .asset(let assetReference):
-                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
-                    case ("image.png", "com.test.bundle"):
+                    switch (assetReference.assetName, assetReference.catalogIdentifier) {
+                    case ("image.png", "com.test.catalog"):
                         var asset = DataAsset()
                         asset.register(
                             URL(string: "docs-media:///path/to/image.png")!,
@@ -1084,7 +1084,7 @@ class ConvertServiceTests: XCTestCase {
                                     .asset(asset)
                             )
                         )
-                    case ("another-image.png", "com.test.bundle"):
+                    case ("another-image.png", "com.test.catalog"):
                         let payloadData = OutOfProcessReferenceResolver.Response
                                 .errorMessage("Unable to resolve asset.")
                         
@@ -1125,7 +1125,7 @@ class ConvertServiceTests: XCTestCase {
                 renderNode.abstract?[...10],
                 [
                     .reference(
-                        identifier: .init("doc://com.test.bundle/documentation/MyKit/MyClass/myFunction()"),
+                        identifier: .init("doc://com.test.catalog/documentation/MyKit/MyClass/myFunction()"),
                         isActive: true,
                         overridingTitle: nil,
                         overridingTitleInlineContent: nil
@@ -1138,14 +1138,14 @@ class ConvertServiceTests: XCTestCase {
                     .codeVoice(code: "ViewBuilder"),
                     .text(", "),
                     .reference(
-                        identifier: .init("doc://com.test.bundle/documentation/MyKit/MyClass"),
+                        identifier: .init("doc://com.test.catalog/documentation/MyKit/MyClass"),
                         isActive: true,
                         overridingTitle: nil,
                         overridingTitleInlineContent: nil
                     ),
                     .text(", and "),
                     .reference(
-                        identifier: .init("doc://com.test.bundle/MyKit/MyClass/myOtherFunction()"),
+                        identifier: .init("doc://com.test.catalog/MyKit/MyClass/myOtherFunction()"),
                         isActive: true,
                         overridingTitle: nil,
                         overridingTitleInlineContent: nil
@@ -1161,13 +1161,13 @@ class ConvertServiceTests: XCTestCase {
             }
             
             let myClassReference = try reference(
-                withIdentifier: "doc://com.test.bundle/documentation/MyKit/MyClass",
+                withIdentifier: "doc://com.test.catalog/documentation/MyKit/MyClass",
                 ofType: TopicRenderReference.self
             )
             XCTAssertEqual(myClassReference.title, "MyClass Title")
             
             let myOtherFunctionReference = try reference(
-                withIdentifier: "doc://com.test.bundle/MyKit/MyClass/myOtherFunction()",
+                withIdentifier: "doc://com.test.catalog/MyKit/MyClass/myOtherFunction()",
                 ofType: TopicRenderReference.self
             )
             XCTAssertEqual(myOtherFunctionReference.title, "myOtherFunction Title")
@@ -1204,9 +1204,9 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
-                displayName: "TestBundleDisplayName",
-                identifier: "com.test.bundle",
+            catalogInfo: DocumentationCatalog.Info(
+                displayName: "TestCatalogDisplayName",
+                identifier: "com.test.catalog",
                 version: "1.0.0"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework40EnumerationWithSingleUnresolvableDocLinkO"],
@@ -1219,21 +1219,21 @@ class ConvertServiceTests: XCTestCase {
         let receivedLinkResolutionRequests = try linkResolutionRequestsForConvertRequest(request)
         
         let expectedLinkResolutionRequests = [
-            "doc://com.test.bundle/LinkToNowhere",
-            "doc://com.test.bundle/documentation/TestBundleDisplayName/LinkToNowhere",
-            "doc://com.test.bundle/tutorials/TestBundleDisplayName/LinkToNowhere",
-            "doc://com.test.bundle/tutorials/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/EnumerationWithSingleUnresolvableDocLink/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/LinkToNowhere",
-            "doc://com.test.bundle/documentation/LinkToNowhere",
+            "doc://com.test.catalog/LinkToNowhere",
+            "doc://com.test.catalog/documentation/TestCatalogDisplayName/LinkToNowhere",
+            "doc://com.test.catalog/tutorials/TestCatalogDisplayName/LinkToNowhere",
+            "doc://com.test.catalog/tutorials/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/EnumerationWithSingleUnresolvableDocLink/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/LinkToNowhere",
+            "doc://com.test.catalog/documentation/LinkToNowhere",
             
-            "doc://com.test.bundle/LinkToNowhere",
-            "doc://com.test.bundle/documentation/TestBundleDisplayName/LinkToNowhere",
-            "doc://com.test.bundle/tutorials/TestBundleDisplayName/LinkToNowhere",
-            "doc://com.test.bundle/tutorials/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/EnumerationWithSingleUnresolvableDocLink/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/LinkToNowhere",
-            "doc://com.test.bundle/documentation/LinkToNowhere",
+            "doc://com.test.catalog/LinkToNowhere",
+            "doc://com.test.catalog/documentation/TestCatalogDisplayName/LinkToNowhere",
+            "doc://com.test.catalog/tutorials/TestCatalogDisplayName/LinkToNowhere",
+            "doc://com.test.catalog/tutorials/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/EnumerationWithSingleUnresolvableDocLink/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/LinkToNowhere",
+            "doc://com.test.catalog/documentation/LinkToNowhere",
         ]
         
         XCTAssertEqual(expectedLinkResolutionRequests, receivedLinkResolutionRequests)
@@ -1251,9 +1251,9 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
-                displayName: "TestBundleDisplayName",
-                identifier: "com.test.bundle",
+            catalogInfo: DocumentationCatalog.Info(
+                displayName: "TestCatalogDisplayName",
+                identifier: "com.test.catalog",
                 version: "1.0.0"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework15TestEnumerationO06NesteddE0O0D6StructV06deeplyfD31FunctionWithUnresolvableDocLinkyyF"],
@@ -1266,14 +1266,14 @@ class ConvertServiceTests: XCTestCase {
         let receivedLinkResolutionRequests = try linkResolutionRequestsForConvertRequest(request)
         
         let expectedLinkResolutionRequests = [
-            "doc://com.test.bundle/LinkToNowhere",
-            "doc://com.test.bundle/documentation/TestBundleDisplayName/LinkToNowhere",
-            "doc://com.test.bundle/tutorials/TestBundleDisplayName/LinkToNowhere",
-            "doc://com.test.bundle/tutorials/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/TestEnumeration/NestedTestEnumeration/TestStruct/deeplyNestedTestFunctionWithUnresolvableDocLink()/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/TestEnumeration/NestedTestEnumeration/TestStruct/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/LinkToNowhere",
-            "doc://com.test.bundle/documentation/LinkToNowhere",
+            "doc://com.test.catalog/LinkToNowhere",
+            "doc://com.test.catalog/documentation/TestCatalogDisplayName/LinkToNowhere",
+            "doc://com.test.catalog/tutorials/TestCatalogDisplayName/LinkToNowhere",
+            "doc://com.test.catalog/tutorials/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/TestEnumeration/NestedTestEnumeration/TestStruct/deeplyNestedTestFunctionWithUnresolvableDocLink()/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/TestEnumeration/NestedTestEnumeration/TestStruct/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/LinkToNowhere",
+            "doc://com.test.catalog/documentation/LinkToNowhere",
         ]
         
         XCTAssertEqual(expectedLinkResolutionRequests, receivedLinkResolutionRequests)
@@ -1291,9 +1291,9 @@ class ConvertServiceTests: XCTestCase {
         let symbolGraph = try Data(contentsOf: symbolGraphFile)
         
         let request = ConvertRequest(
-            bundleInfo: DocumentationBundle.Info(
-                displayName: "TestBundleDisplayName",
-                identifier: "com.test.bundle",
+            catalogInfo: DocumentationCatalog.Info(
+                displayName: "TestCatalogDisplayName",
+                identifier: "com.test.catalog",
                 version: "1.0.0"
             ),
             externalIDsToConvert: ["s:21SmallTestingFramework43EnumerationWithSingleUnresolvableSymbolLinkO"],
@@ -1306,15 +1306,15 @@ class ConvertServiceTests: XCTestCase {
         let receivedLinkResolutionRequests = try linkResolutionRequestsForConvertRequest(request)
         
         let expectedLinkResolutionRequests = [
-            "doc://com.test.bundle/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/EnumerationWithSingleUnresolvableSymbolLink/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/LinkToNowhere",
-            "doc://com.test.bundle/documentation/LinkToNowhere",
+            "doc://com.test.catalog/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/EnumerationWithSingleUnresolvableSymbolLink/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/LinkToNowhere",
+            "doc://com.test.catalog/documentation/LinkToNowhere",
             
-            "doc://com.test.bundle/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/EnumerationWithSingleUnresolvableSymbolLink/LinkToNowhere",
-            "doc://com.test.bundle/documentation/SmallTestingFramework/LinkToNowhere",
-            "doc://com.test.bundle/documentation/LinkToNowhere",
+            "doc://com.test.catalog/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/EnumerationWithSingleUnresolvableSymbolLink/LinkToNowhere",
+            "doc://com.test.catalog/documentation/SmallTestingFramework/LinkToNowhere",
+            "doc://com.test.catalog/documentation/LinkToNowhere",
         ]
         
         XCTAssertEqual(expectedLinkResolutionRequests, receivedLinkResolutionRequests)
@@ -1391,7 +1391,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testReturnsErrorWhenConversionThrows() throws {
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: nil,
             symbolGraphs: [],
             markupFiles: [],
@@ -1413,7 +1413,7 @@ class ConvertServiceTests: XCTestCase {
     
     func testReturnsErrorWhenConversionHasProblems() throws {
         let request = ConvertRequest(
-            bundleInfo: testBundleInfo,
+            catalogInfo: testCatalogInfo,
             externalIDsToConvert: nil,
             symbolGraphs: [],
             markupFiles: [],

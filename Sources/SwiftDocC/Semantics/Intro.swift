@@ -53,16 +53,16 @@ public final class Intro: Semantic, DirectiveConvertible {
         self.content = content
     }
 
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Intro.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Time.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Intro>(severityIfFound: .warning, allowedArguments: [Semantics.Title.argumentName, Semantics.Time.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .warning, allowedDirectives: [VideoMedia.directiveName, ImageMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Intro>(severityIfFound: .warning, allowedDirectives: [VideoMedia.directiveName, ImageMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
 
-        let (optionalVideo, remainder) = Semantic.Analyses.HasExactlyOne<Intro, VideoMedia>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let (optionalVideo, remainder) = Semantic.Analyses.HasExactlyOne<Intro, VideoMedia>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        let (optionalImage, remainder2) = Semantic.Analyses.HasExactlyOne<Intro, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        let (optionalImage, remainder2) = Semantic.Analyses.HasExactlyOne<Intro, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         let requiredTitle = Semantic.Analyses.HasArgument<Intro, Semantics.Title>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
         

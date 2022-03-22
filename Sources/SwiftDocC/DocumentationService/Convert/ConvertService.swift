@@ -124,16 +124,16 @@ public struct ConvertService: DocumentationService {
             let workspace = DocumentationWorkspace()
             
             let provider: DocumentationWorkspaceDataProvider
-            if let bundleLocation = request.bundleLocation {
-                // If an on-disk bundle is provided, convert it.
+            if let catalogLocation = request.catalogLocation {
+                // If an on-disk catalog is provided, convert it.
                 // Additional symbol graphs and markup are ignored for now.
-                provider = try LocalFileSystemDataProvider(rootURL: bundleLocation)
+                provider = try LocalFileSystemDataProvider(rootURL: catalogLocation)
             } else {
                 // Otherwise, convert the in-memory content.
                 var inMemoryProvider = InMemoryContentDataProvider()
                 
-                inMemoryProvider.registerBundle(
-                    info: request.bundleInfo,
+                inMemoryProvider.registerCatalog(
+                    info: request.catalogInfo,
                     symbolGraphs: request.symbolGraphs,
                     markupFiles: request.markupFiles,
                     miscResourceURLs: request.miscResourceURLs
@@ -147,18 +147,18 @@ public struct ConvertService: DocumentationService {
             
             if let linkResolvingServer = linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
-                    bundleIdentifier: request.bundleInfo.identifier,
+                    catalogIdentifier: request.catalogInfo.identifier,
                     server: linkResolvingServer,
                     convertRequestIdentifier: messageIdentifier
                 )
                 
-                context.fallbackReferenceResolvers[request.bundleInfo.identifier] = resolver
-                context.fallbackAssetResolvers[request.bundleInfo.identifier] = resolver
+                context.fallbackReferenceResolvers[request.catalogInfo.identifier] = resolver
+                context.fallbackAssetResolvers[request.catalogInfo.identifier] = resolver
                 context.externalSymbolResolver = resolver
             }
 
             var converter = try self.converter ?? DocumentationConverter(
-                documentationBundleURL: request.bundleLocation ?? URL(fileURLWithPath: "/"),
+                documentationCatalogURL: request.catalogLocation ?? URL(fileURLWithPath: "/"),
                 emitDigest: false,
                 documentationCoverageOptions: .noCoverage,
                 currentPlatforms: nil,
@@ -167,8 +167,8 @@ public struct ConvertService: DocumentationService {
                 dataProvider: provider,
                 externalIDsToConvert: request.externalIDsToConvert,
                 documentPathsToConvert: request.documentPathsToConvert,
-                bundleDiscoveryOptions: BundleDiscoveryOptions(
-                    fallbackInfo: request.bundleInfo,
+                catalogDiscoveryOptions: CatalogDiscoveryOptions(
+                    fallbackInfo: request.catalogInfo,
                     additionalSymbolGraphFiles: []
                 ),
                 // We're enabling the inclusion of symbol declaration file paths
@@ -251,11 +251,11 @@ public struct ConvertService: DocumentationService {
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
                 
-                guard let bundle = context.bundle(identifier: topicReference.bundleIdentifier) else { return nil }
-                let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+                guard let catalog = context.catalog(identifier: topicReference.catalogIdentifier) else { return nil }
+                let renderer = DocumentationContentRenderer(documentationContext: context, catalog: catalog)
                 
                 let documentationNodeKind: DocumentationNode.Kind = isDocumentationExtensionContent ? .unknownSymbol : .article
-                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: bundle)?.node
+                let overridingDocumentationNode = DocumentationContext.documentationNodeAndTitle(for: article, kind: documentationNodeKind, in: catalog)?.node
                 var dependencies = RenderReferenceDependencies()
                 let renderReference = renderer.renderReference(for: topicReference, with: overridingDocumentationNode, dependencies: &dependencies)
                 

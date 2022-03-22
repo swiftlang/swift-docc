@@ -19,9 +19,9 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let volume = Volume(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let volume = Volume(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNil(volume)
         XCTAssertEqual(4, problems.count)
         XCTAssertEqual([
@@ -50,9 +50,9 @@ class VolumeTests: XCTestCase {
 """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0)! as! BlockDirective
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         var problems = [Problem]()
-        let volume = Volume(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        let volume = Volume(from: directive, source: nil, for: catalog, in: context, problems: &problems)
         XCTAssertNotNil(volume)
         XCTAssertTrue(problems.isEmpty)
         volume.map { volume in
@@ -66,7 +66,7 @@ class VolumeTests: XCTestCase {
         let name = "Always Be Voluming"
 
 
-        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, catalog, context) = try testCatalogAndContext(copying: "TestCatalog") { root in
             let overviewURL = root.appendingPathComponent("TestOverview.tutorial")
             let text = """
             @Tutorials(name: "Technology X") {
@@ -102,7 +102,7 @@ class VolumeTests: XCTestCase {
 
         let node = try context.entity(
             with: ResolvedTopicReference(
-                bundleIdentifier: bundle.identifier,
+                catalogIdentifier: catalog.identifier,
                 path: "/tutorials/TestOverview",
                 sourceLanguage: .swift))
 

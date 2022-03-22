@@ -13,13 +13,13 @@ import Markdown
 
 /// A type that can be initialized from markup.
 public protocol MarkupConvertible {
-    /// Initializes a new element with a given markup and source for a given documentation bundle and documentation context.
+    /// Initializes a new element with a given markup and source for a given documentation catalog and documentation context.
     ///
     /// - Parameters:
     ///   - markup: The markup that makes up this element's content.
     ///   - source: The location of the file that this element's content comes from.
-    ///   - bundle: The documentation bundle that the element belongs to.
+    ///   - catalog: The documentation catalog that the element belongs to.
     ///   - context: The documentation context that the element belongs to.
     ///   - problems: A mutable collection of problems to update with any problem encountered while initializing the element.
-    init?(from markup: Markup, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem])
+    init?(from markup: Markup, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem])
 }

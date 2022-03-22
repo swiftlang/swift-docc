@@ -313,11 +313,11 @@ struct TopicGraph {
     /// ```
     /// This will produce output along the lines of:
     /// ```
-    /// doc://com.testbundle/documentation/MyFramework
-    /// ├ doc://com.testbundle/documentation/MyFramework/MyProtocol
-    /// │ ╰ doc://com.testbundle/documentation/MyFramework/MyClass
-    /// │   ├ doc://com.testbundle/documentation/MyFramework/MyClass/myfunction()
-    /// │   ╰ doc://com.testbundle/documentation/MyFramework/MyClass/init()
+    /// doc://com.testcatalog/documentation/MyFramework
+    /// ├ doc://com.testcatalog/documentation/MyFramework/MyProtocol
+    /// │ ╰ doc://com.testcatalog/documentation/MyFramework/MyClass
+    /// │   ├ doc://com.testcatalog/documentation/MyFramework/MyClass/myfunction()
+    /// │   ╰ doc://com.testcatalog/documentation/MyFramework/MyClass/init()
     /// ...
     /// ```
     func dump(startingAt node: Node, keyPath: KeyPath<TopicGraph.Node, String> = \.title, decorator: String = "") -> String {

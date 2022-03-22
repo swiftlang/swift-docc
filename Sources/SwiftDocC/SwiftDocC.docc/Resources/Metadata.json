@@ -11,15 +11,15 @@
             "Metadata": {
                 "type": "object",
                 "required": [
-                    "bundleDisplayName",
-                    "bundleIdentifier",
+                    "catalogDisplayName",
+                    "catalogIdentifier",
                     "schemaVersion"
                 ],
                 "properties": {
-                    "bundleDisplayName": {
+                    "catalogDisplayName": {
                         "type": "string"
                     },
-                    "bundleIdentifier": {
+                    "catalogIdentifier": {
                         "type": "string"
                     },
                     "schemaVersion": {

@@ -72,18 +72,18 @@ class RenderMetadataTests: XCTestCase {
     func testAllPagesHaveTitleMetadata() throws {
         var typesOfPages = [Tutorial.self, Technology.self, Article.self, TutorialArticle.self, Symbol.self]
         
-        for bundleName in ["TestBundle"] {
-            let (bundle, context) = try testBundleAndContext(named: bundleName)
+        for catalogName in ["TestCatalog"] {
+            let (catalog, context) = try testCatalogAndContext(named: catalogName)
             
-            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-            let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+            let renderContext = RenderContext(documentationContext: context, catalog: catalog)
+            let converter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
             for identifier in context.knownPages {
                 let source = context.documentURL(for: identifier)
                 
                 let entity = try context.entity(with: identifier)
                 let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
                 
-                XCTAssertNotNil(renderNode.metadata.title, "Missing `title` in metadata for \(identifier.absoluteString) of kind \(entity.kind.id) in the \(bundleName) bundle")
+                XCTAssertNotNil(renderNode.metadata.title, "Missing `title` in metadata for \(identifier.absoluteString) of kind \(entity.kind.id) in the \(catalogName) catalog")
                 
                 typesOfPages.removeAll(where: { type(of: entity.semantic!) == $0 })
             }
@@ -95,7 +95,7 @@ class RenderMetadataTests: XCTestCase {
     /// Test that a bystanders symbol graph is loaded, symbols are merged into the main module
     /// and the bystanders are included in the render node metadata.
     func testRendersBystandersFromSymbolGraph() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+        let (url, catalog, context) = try testCatalogAndContext(copying: "TestCatalog", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
@@ -103,7 +103,7 @@ class RenderMetadataTests: XCTestCase {
         defer { try? FileManager.default.removeItem(at: url) }
 
         // Verify the symbol from bystanders graph is present in the documentation context.
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
+        let reference = ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)
         let entity = try XCTUnwrap(try? context.entity(with: reference))
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         
@@ -111,7 +111,7 @@ class RenderMetadataTests: XCTestCase {
         XCTAssertEqual(symbol.bystanderModuleNames, ["Foundation"])
         
         // Verify the rendered metadata contains the bystanders
-        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let converter = DocumentationNodeConverter(catalog: catalog, context: context)
         let renderNode = try converter.convert(entity, at: nil)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "MyKit")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Foundation"])

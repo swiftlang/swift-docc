@@ -9,9 +9,9 @@ Once the in-memory documentation model is finalized each of its graph nodes can 
 The ``Converter`` type converts documentation nodes to rendering nodes:
 
 ```swift
-let converter = DocumentationNodeConverter(bundle: myBundle, context: myContext)
+let converter = DocumentationNodeConverter(catalog: myCatalog, context: myContext)
 let renderNode = converter.convert(documentationNode, 
-    at: sourceURL, from: bundle)
+    at: sourceURL, from: catalog)
 ```
 
 The render nodes can be persisted on disk as JSON files via `JSONEncodingRenderNodeWriter`:

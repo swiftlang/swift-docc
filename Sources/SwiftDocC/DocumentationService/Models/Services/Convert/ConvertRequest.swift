@@ -13,11 +13,21 @@ import Foundation
 
 /// A request to convert in-memory documentation.
 public struct ConvertRequest: Codable {
-    /// Information about the documentation bundle to convert.
+    /// Information about the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/Info-swift.struct``
-    public var bundleInfo: DocumentationBundle.Info
+    /// - ``DocumentationCatalog/Info-swift.struct``
+    public var catalogInfo: DocumentationCatalog.Info
+    
+    @available(*, deprecated, renamed: "catalogInfo")
+    public var bundleInfo: DocumentationCatalog.Info {
+        get {
+            return catalogInfo
+        }
+        set {
+            catalogInfo = newValue
+        }
+    }
     
     /// Feature flags to enable when performing this convert request.
     public var featureFlags: FeatureFlags
@@ -51,87 +61,98 @@ public struct ConvertRequest: Codable {
     /// Whether the conversion's render reference store should be included in the response.
     ///
     /// The ``RenderReferenceStore`` contains compiled information for documentation nodes registered in a context. This
-    /// information can be used as a lightweight index of the available documentation content in the bundle that's been converted.
+    /// information can be used as a lightweight index of the available documentation content in the catalog that's been converted.
     public var includeRenderReferenceStore: Bool?
     
-    /// The file location of the bundle to convert, if any.
-    public var bundleLocation: URL?
+    /// The file location of the catalog to convert, if any.
+    public var catalogLocation: URL?
     
-    /// The display name of the documentation bundle to convert.
+    @available(*, deprecated, renamed: "catalogLocation")
+    public var bundleLocation: URL? {
+        get {
+            return catalogLocation
+        }
+        
+        set {
+            catalogLocation = newValue
+        }
+    }
+    
+    /// The display name of the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/displayName``
-    @available(*, deprecated, message: "Use 'bundleInfo.displayName' instead.")
+    /// - ``DocumentationCatalog/displayName``
+    @available(*, deprecated, message: "Use 'catalogInfo.displayName' instead.")
     public var displayName: String {
         get {
-            return bundleInfo.displayName
+            return catalogInfo.displayName
         }
         set {
-            bundleInfo.displayName = newValue
+            catalogInfo.displayName = newValue
         }
     }
     
-    /// The identifier of the documentation bundle to convert.
+    /// The identifier of the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/identifier``
-    @available(*, deprecated, message: "Use 'bundleInfo.identifier' instead.")
+    /// - ``DocumentationCatalog/identifier``
+    @available(*, deprecated, message: "Use 'catalogInfo.identifier' instead.")
     public var identifier: String {
         get {
-            return bundleInfo.identifier
+            return catalogInfo.identifier
         }
         set {
-            bundleInfo.identifier = newValue
+            catalogInfo.identifier = newValue
         }
     }
     
-    /// The version of the documentation bundle to convert.
+    /// The version of the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/version``
-    @available(*, deprecated, message: "Use 'bundleInfo.version' instead.")
+    /// - ``DocumentationCatalog/version``
+    @available(*, deprecated, message: "Use 'catalogInfo.version' instead.")
     public var version: String {
         get {
-            return bundleInfo.version ?? "0.0.1"
+            return catalogInfo.version ?? "0.0.1"
         }
         set {
-            bundleInfo.version = newValue
+            catalogInfo.version = newValue
         }
     }
     
-    /// The symbols graph data included in the documentation bundle to convert.
+    /// The symbols graph data included in the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/symbolGraphURLs``
+    /// - ``DocumentationCatalog/symbolGraphURLs``
     public var symbolGraphs: [Data]
     
-    /// The markup file data included in the documentation bundle to convert.
+    /// The markup file data included in the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/markupURLs``
+    /// - ``DocumentationCatalog/markupURLs``
     public var markupFiles: [Data]
     
-    /// The on-disk resources in the documentation bundle to convert.
+    /// The on-disk resources in the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/miscResourceURLs``
+    /// - ``DocumentationCatalog/miscResourceURLs``
     public var miscResourceURLs: [URL]
     
-    /// The default code listing language for the documentation bundle to convert.
+    /// The default code listing language for the documentation catalog to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/defaultCodeListingLanguage``
-    @available(*, deprecated, message: "Use 'bundleInfo.defaultCodeListingLanguage' instead.")
+    /// - ``DocumentationCatalog/defaultCodeListingLanguage``
+    @available(*, deprecated, message: "Use 'catalogInfo.defaultCodeListingLanguage' instead.")
     public var defaultCodeListingLanguage: String? {
         get {
-            return bundleInfo.defaultCodeListingLanguage
+            return catalogInfo.defaultCodeListingLanguage
         }
         set {
-            bundleInfo.defaultCodeListingLanguage = newValue
+            catalogInfo.defaultCodeListingLanguage = newValue
         }
     }
     
-    @available(*, deprecated, message: "Use 'init(bundleInfo:externalIDsToConvert:...)' instead.")
+    @available(*, deprecated, message: "Use 'init(catalogInfo:externalIDsToConvert:...)' instead.")
     public init(
         externalIDsToConvert: [String]?,
         documentPathsToConvert: [String]? = nil,
@@ -149,14 +170,14 @@ public struct ConvertRequest: Codable {
         self.externalIDsToConvert = externalIDsToConvert
         self.documentPathsToConvert = documentPathsToConvert
         self.includeRenderReferenceStore = includeRenderReferenceStore
-        self.bundleLocation = bundleLocation
+        self.catalogLocation = bundleLocation
         self.symbolGraphs = symbolGraphs
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
         self.markupFiles = markupFiles
         self.miscResourceURLs = miscResourceURLs
         self.featureFlags = FeatureFlags()
         
-        self.bundleInfo = DocumentationBundle.Info(
+        self.catalogInfo = DocumentationCatalog.Info(
             displayName: displayName,
             identifier: identifier,
             version: version,
@@ -166,18 +187,43 @@ public struct ConvertRequest: Codable {
     
     /// Creates a request to convert in-memory documentation.
     /// - Parameters:
-    ///   - bundleInfo: Information about the bundle to convert.
+    ///   - catalogInfo: Information about the catalog to convert.
     ///   - documentPathsToConvert: The paths of the documentation nodes to convert.
     ///   - includeRenderReferenceStore: Whether the conversion's render reference store should be included in the
     ///   response.
-    ///   - bundleLocation: The file location of the documentation bundle to convert, if any.
-    ///   - symbolGraphs: The symbols graph data included in the documentation bundle to convert.
+    ///   - catalogLocation: The file location of the documentation catalog to convert, if any.
+    ///   - symbolGraphs: The symbols graph data included in the documentation catalog to convert.
     ///   - knownDisambiguatedSymbolPathComponents: The mapping of external symbol identifiers to
     ///   known disambiguated symbol path components.
-    ///   - markupFiles: The markup file data included in the documentation bundle to convert.
-    ///   - miscResourceURLs: The on-disk resources in the documentation bundle to convert.
+    ///   - markupFiles: The markup file data included in the documentation catalog to convert.
+    ///   - miscResourceURLs: The on-disk resources in the documentation catalog to convert.
     public init(
-        bundleInfo: DocumentationBundle.Info,
+        catalogInfo: DocumentationCatalog.Info,
+        featureFlags: FeatureFlags = FeatureFlags(),
+        externalIDsToConvert: [String]?,
+        documentPathsToConvert: [String]? = nil,
+        includeRenderReferenceStore: Bool? = nil,
+        catalogLocation: URL? = nil,
+        symbolGraphs: [Data],
+        knownDisambiguatedSymbolPathComponents: [String: [String]]? = nil,
+        markupFiles: [Data],
+        miscResourceURLs: [URL]
+    ) {
+        self.externalIDsToConvert = externalIDsToConvert
+        self.documentPathsToConvert = documentPathsToConvert
+        self.includeRenderReferenceStore = includeRenderReferenceStore
+        self.catalogLocation = catalogLocation
+        self.symbolGraphs = symbolGraphs
+        self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
+        self.markupFiles = markupFiles
+        self.miscResourceURLs = miscResourceURLs
+        self.catalogInfo = catalogInfo
+        self.featureFlags = featureFlags
+    }
+    
+    @available(*, deprecated, renamed: "init(catalogInfo:featureFlags:externalIDsToConvert:documentPathsToConvert:includeRenderReferenceStore:catalogLocation:symbolGraphs:knownDisambiguatedSymbolPathComponents:markupFiles:miscResourceURLs:)")
+    public init(
+        bundleInfo: DocumentationCatalog.Info,
         featureFlags: FeatureFlags = FeatureFlags(),
         externalIDsToConvert: [String]?,
         documentPathsToConvert: [String]? = nil,
@@ -188,15 +234,6 @@ public struct ConvertRequest: Codable {
         markupFiles: [Data],
         miscResourceURLs: [URL]
     ) {
-        self.externalIDsToConvert = externalIDsToConvert
-        self.documentPathsToConvert = documentPathsToConvert
-        self.includeRenderReferenceStore = includeRenderReferenceStore
-        self.bundleLocation = bundleLocation
-        self.symbolGraphs = symbolGraphs
-        self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
-        self.markupFiles = markupFiles
-        self.miscResourceURLs = miscResourceURLs
-        self.bundleInfo = bundleInfo
-        self.featureFlags = featureFlags
+        self = .init(catalogInfo: bundleInfo, featureFlags: featureFlags, externalIDsToConvert: externalIDsToConvert, includeRenderReferenceStore: includeRenderReferenceStore, catalogLocation: bundleLocation, symbolGraphs: symbolGraphs, knownDisambiguatedSymbolPathComponents: knownDisambiguatedSymbolPathComponents, markupFiles: markupFiles, miscResourceURLs: miscResourceURLs)
     }
 }

@@ -16,32 +16,32 @@ import XCTest
 class ResolvedTopicReferenceTests: XCTestCase {
     func testReferenceURL() {
         let firstTopicReference = ResolvedTopicReference(
-            bundleIdentifier: "bundleID",
+            catalogIdentifier: "catalogID",
             path: "/path/sub-path",
             fragment: "fragment",
             sourceLanguage: .swift
         )
-        XCTAssertEqual(firstTopicReference.absoluteString, "doc://bundleID/path/sub-path#fragment")
+        XCTAssertEqual(firstTopicReference.absoluteString, "doc://catalogID/path/sub-path#fragment")
         
         let secondTopicReference = ResolvedTopicReference(
-            bundleIdentifier: "new-bundleID",
+            catalogIdentifier: "new-catalogID",
             path: "/new-path/sub-path",
             fragment: firstTopicReference.fragment,
             sourceLanguage: firstTopicReference.sourceLanguage
         )
-        XCTAssertEqual(secondTopicReference.absoluteString, "doc://new-bundleID/new-path/sub-path#fragment")
+        XCTAssertEqual(secondTopicReference.absoluteString, "doc://new-catalogID/new-path/sub-path#fragment")
         
         let thirdTopicReference = secondTopicReference.withFragment(nil)
-        XCTAssertEqual(thirdTopicReference.absoluteString, "doc://new-bundleID/new-path/sub-path")
+        XCTAssertEqual(thirdTopicReference.absoluteString, "doc://new-catalogID/new-path/sub-path")
         
         // Changing the language does not change the url
-        XCTAssertEqual(thirdTopicReference.addingSourceLanguages([.metal]).absoluteString, "doc://new-bundleID/new-path/sub-path")
+        XCTAssertEqual(thirdTopicReference.addingSourceLanguages([.metal]).absoluteString, "doc://new-catalogID/new-path/sub-path")
     }
     
     func testAppendingReferenceWithEmptyPath() {
         // An empty path
         do {
-            let resolvedOriginal = ResolvedTopicReference(bundleIdentifier: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
+            let resolvedOriginal = ResolvedTopicReference(catalogIdentifier: "catalogID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
             
             let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc://host-name")!)
             XCTAssert(unresolved.path.isEmpty)
@@ -52,7 +52,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
         
         // A path with no url path allowed characters
         do {
-            let resolvedOriginal = ResolvedTopicReference(bundleIdentifier: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
+            let resolvedOriginal = ResolvedTopicReference(catalogIdentifier: "catalogID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
             
             let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc://host.name/;;;")!)
             XCTAssertFalse(unresolved.path.isEmpty)
@@ -64,7 +64,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
     
     func testStorageIsConcurrentlyAccessible() throws {
         let topicReference = ResolvedTopicReference(
-            bundleIdentifier: "com.apple.example",
+            catalogIdentifier: "com.apple.example",
             path: "/documentation/path/sub-path",
             fragment: nil,
             sourceLanguage: .swift

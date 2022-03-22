@@ -20,7 +20,7 @@ public final class Code: Semantic, DirectiveConvertible {
     /// The original `BlockDirective` node that was parsed into this semantic code.
     public let originalMarkup: BlockDirective
     
-    /// A reference to the file containing the code that should be loaded from the bundle.
+    /// A reference to the file containing the code that should be loaded from the catalog.
     public let fileReference: ResourceReference
     /// The name of the file, for display and identification purposes.
     /// If the ``fileName`` does not change between two consecutive steps (possibly across ``TutorialSection``s),
@@ -58,15 +58,15 @@ public final class Code: Semantic, DirectiveConvertible {
         self.preview = preview
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Code.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Code>(severityIfFound: .warning, allowedArguments: [Semantics.File.argumentName, Semantics.PreviousFile.argumentName, Semantics.Name.argumentName, Semantics.ResetDiff.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Code>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Code>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, VideoMedia.directiveName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         guard let requiredFileReference = Semantic.Analyses.HasArgument<Code, Semantics.File>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else { return nil }
-        let fileReference = ResourceReference(bundleIdentifier: bundle.identifier, path: requiredFileReference)
+        let fileReference = ResourceReference(catalogIdentifier: catalog.identifier, path: requiredFileReference)
         
         guard let requiredFileName = Semantic.Analyses.HasArgument<Code, Semantics.Name>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else { return nil }
         
@@ -79,10 +79,10 @@ public final class Code: Semantic, DirectiveConvertible {
             shouldResetDiff = false
         }
        
-        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let (optionalPreview, _) = Semantic.Analyses.HasExactlyOneImageOrVideoMedia<Code>(severityIfNotFound: nil).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let optionalPreviousFileReference = Semantic.Analyses.HasArgument<Code, Semantics.PreviousFile>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems).map { argument in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argument)
+            ResourceReference(catalogIdentifier: catalog.identifier, path: argument)
         }
         
         self.init(originalMarkup: directive, fileReference: fileReference, fileName: requiredFileName, previousFileReference: optionalPreviousFileReference, shouldResetDiff: shouldResetDiff, preview: optionalPreview)

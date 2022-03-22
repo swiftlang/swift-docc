@@ -14,17 +14,17 @@ import XCTest
 @testable import SwiftDocC
 import SwiftDocCTestUtilities
 
-/// A Data provider and file manager that accepts pre-built documentation bundles with files on the local filesystem.
+/// A Data provider and file manager that accepts pre-built documentation catalogs with files on the local filesystem.
 ///
 /// `TestFileSystem` is a file manager that keeps a directory structure in memory including the file data
 /// for fast access without hitting the disk. When you create an instance pass all folders to the initializer like so:
 /// ```swift
-/// let bundle = Folder(name: "unit-test.docc", content: [
+/// let catalog = Folder(name: "unit-test.docc", content: [
 ///   ... files ...
 /// ])
 ///
 /// let testDataProvider = try TestFileSystem(
-///   folders: [bundle, Folder.emptyHTMLTemplateDirectory]
+///   folders: [catalog, Folder.emptyHTMLTemplateDirectory]
 /// )
 /// ```
 /// This will create or copy from disk the `folders` list and you can use the data provider
@@ -47,10 +47,10 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
     
     var identifier: String = UUID().uuidString
     
-    private var _bundles = [DocumentationBundle]()
-    public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        // Ignore the bundle discovery options, these test bundles are already built.
-        return _bundles
+    private var _catalogs = [DocumentationCatalog]()
+    public func catalogs(options: CatalogDiscoveryOptions) throws -> [DocumentationCatalog] {
+        // Ignore the catalog discovery options, these test catalogs are already built.
+        return _catalogs
     }
     
     /// Thread safe access to the file system.
@@ -73,25 +73,25 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         files["/"] = Self.folderFixtureData
  
         // Import given folders
-        try updateDocumentationBundles(withFolders: folders)
+        try updateDocumentationCatalogs(withFolders: folders)
     }
     
-    public func updateDocumentationBundles(withFolders folders: [Folder]) throws {
-        _bundles.removeAll()
+    public func updateDocumentationCatalogs(withFolders folders: [Folder]) throws {
+        _catalogs.removeAll()
         
         for folder in folders {
             let files = try addFolder(folder)
             if let info = folder.recursiveContent.mapFirst(where: { $0 as? InfoPlist }) {
                 let files = files.filter({ $0.hasPrefix(folder.absoluteURL.path) }).compactMap({ URL(string: $0) })
 
-                let markupFiles = files.filter({ DocumentationBundleFileTypes.isMarkupFile($0) })
-                let miscFiles = files.filter({ !DocumentationBundleFileTypes.isMarkupFile($0) })
-                let graphs = files.filter({ DocumentationBundleFileTypes.isSymbolGraphFile($0) })
-                let customHeader = files.first(where: { DocumentationBundleFileTypes.isCustomHeader($0) })
-                let customFooter = files.first(where: { DocumentationBundleFileTypes.isCustomFooter($0) })
+                let markupFiles = files.filter({ DocumentationCatalogFileTypes.isMarkupFile($0) })
+                let miscFiles = files.filter({ !DocumentationCatalogFileTypes.isMarkupFile($0) })
+                let graphs = files.filter({ DocumentationCatalogFileTypes.isSymbolGraphFile($0) })
+                let customHeader = files.first(where: { DocumentationCatalogFileTypes.isCustomHeader($0) })
+                let customFooter = files.first(where: { DocumentationCatalogFileTypes.isCustomFooter($0) })
                 
-                let bundle = DocumentationBundle(
-                    info: DocumentationBundle.Info(
+                let catalog = DocumentationCatalog(
+                    info: DocumentationCatalog.Info(
                         displayName: info.content.displayName,
                         identifier: info.content.identifier,
                         version: info.content.versionString
@@ -102,7 +102,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
                     customHeader: customHeader,
                     customFooter: customFooter
                 )
-                _bundles.append(bundle)
+                _catalogs.append(catalog)
             }
         }
     }

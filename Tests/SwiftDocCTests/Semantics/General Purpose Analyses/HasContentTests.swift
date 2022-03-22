@@ -19,11 +19,11 @@ class HasContentTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
-            let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertTrue(hasContent.isEmpty)
             XCTAssertEqual(1, problems.count)
             problems.first.map { problem in
@@ -42,11 +42,11 @@ class HasContentTests: XCTestCase {
         let directive = document.child(at: 0) as? BlockDirective
         XCTAssertNotNil(directive)
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         directive.map { directive in
             var problems = [Problem]()
-            let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, for: bundle, in: context, problems: &problems)
+            let hasContent = Semantic.Analyses.HasContent<Intro>().analyze(directive, children: directive.children, source: nil, for: catalog, in: context, problems: &problems)
             XCTAssertFalse(hasContent.isEmpty)
             XCTAssertTrue(problems.isEmpty)
         }

@@ -18,7 +18,7 @@ extension Semantic.Analyses {
     public struct ExtractAll<Child: Semantic & DirectiveConvertible>: SemanticAnalysis {
         public init() {}
         
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
+        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
             let (candidates, remainder) = children.categorize { child -> BlockDirective? in
                 guard let childDirective = child as? BlockDirective,
                     Child.canConvertDirective(childDirective) else {
@@ -27,7 +27,7 @@ extension Semantic.Analyses {
                 return childDirective
             }
             let converted = candidates.compactMap {
-                Child(from: $0, source: source, for: bundle, in: context, problems: &problems)
+                Child(from: $0, source: source, for: catalog, in: context, problems: &problems)
             }
             return (converted, remainder: MarkupContainer(remainder))
         }
@@ -39,7 +39,7 @@ extension Semantic.Analyses {
     public struct ExtractAllMarkup<Child: Markup>: SemanticAnalysis {
         public init() {}
         
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
+        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
             let (matches, remainder) = children.categorize {
                 $0 as? Child
             }

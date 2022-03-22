@@ -14,14 +14,14 @@ import XCTest
 
 class DocumentationContextConverterTests: XCTestCase {
     func testRenderNodesAreIdentical() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
         
         // We'll use this to convert nodes ad-hoc
-        let perNodeConverter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let perNodeConverter = DocumentationNodeConverter(catalog: catalog, context: context)
         
         // We'll use these to convert nodes in bulk
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let bulkNodeConverter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
+        let bulkNodeConverter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
         let encoder = JSONEncoder()
         
         for identifier in context.knownPages {
@@ -47,8 +47,8 @@ class DocumentationContextConverterTests: XCTestCase {
     }
     
     func testSymbolLocationsAreOnlyIncludedWhenRequested() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
             context.symbolIndex["s:14FillIntroduced19macOSOnlyDeprecatedyyF"]
@@ -56,7 +56,7 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
+                catalog: catalog,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolSourceFileURIs: true)
@@ -68,7 +68,7 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
+                catalog: catalog,
                 context: context,
                 renderContext: renderContext)
             
@@ -79,8 +79,8 @@ class DocumentationContextConverterTests: XCTestCase {
     }
     
     func testSymbolAccessLevelsAreOnlyIncludedWhenRequested() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
         
         let fillIntroducedSymbolNode = try XCTUnwrap(
             context.symbolIndex["s:14FillIntroduced19macOSOnlyDeprecatedyyF"]
@@ -88,7 +88,7 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
+                catalog: catalog,
                 context: context,
                 renderContext: renderContext,
                 emitSymbolAccessLevels: true
@@ -101,7 +101,7 @@ class DocumentationContextConverterTests: XCTestCase {
         
         do {
             let documentationContextConverter = DocumentationContextConverter(
-                bundle: bundle,
+                catalog: catalog,
                 context: context,
                 renderContext: renderContext)
             

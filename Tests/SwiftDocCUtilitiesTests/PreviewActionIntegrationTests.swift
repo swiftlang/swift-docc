@@ -23,7 +23,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         return result
     }
     
-    private func createMinimalDocsBundle() -> Folder {
+    private func createMinimalDocsCatalog() -> Folder {
         let overviewURL = Bundle.module.url(
             forResource: "Overview", withExtension: "tutorial", subdirectory: "Test Resources")!
         let uncuratedArticleURL = Bundle.module.url(
@@ -32,10 +32,10 @@ class PreviewActionIntegrationTests: XCTestCase {
             forResource: "image", withExtension: "png", subdirectory: "Test Resources")!
         
         let symbolURL = Bundle.module.url(
-            forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
             .appendingPathComponent("mykit-iOS.symbols.json")
          
-        // Write source documentation bundle.
+        // Write source documentation catalog.
         let source = Folder(name: "unit-test.docc", content: [
             Folder(name: "Symbols", content: [
                 CopyOfFile(original: symbolURL),
@@ -45,7 +45,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 CopyOfFile(original: overviewURL),
                 CopyOfFile(original: uncuratedArticleURL),
             ]),
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example")
+            InfoPlist(displayName: "TestCatalog", identifier: "com.test.example")
         ])
         
         return source
@@ -75,7 +75,7 @@ class PreviewActionIntegrationTests: XCTestCase {
     func testWatchRecoversAfterConversionErrors() throws {
         #if os(macOS)
         // Source files.
-        let source = createMinimalDocsBundle()
+        let source = createMinimalDocsCatalog()
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: source)
         
         let logStorage = LogHandle.LogStorage()
@@ -84,7 +84,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
-                documentationBundleURL: sourceURL,
+                documentationCatalogURL: sourceURL,
                 outOfProcessResolver: nil,
                 analyze: false,
                 targetDirectory: outputURL,
@@ -271,7 +271,7 @@ class PreviewActionIntegrationTests: XCTestCase {
     func assert(bindPort: Int, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line) throws {
         #if os(macOS)
         // Source files.
-        let source = createMinimalDocsBundle()
+        let source = createMinimalDocsCatalog()
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: source)
         
         // A FileHandle to read action's output.
@@ -288,7 +288,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
-                documentationBundleURL: sourceURL,
+                documentationCatalogURL: sourceURL,
                 outOfProcessResolver: nil,
                 analyze: false,
                 targetDirectory: outputURL,
@@ -325,7 +325,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             // Start the preview and keep it running for the asserts that follow inside this test.
             DispatchQueue.global().async {
                 guard let result = try? preview.perform(logHandle: .file(fileHandle)) else {
-                    XCTFail("Couldn't convert test bundle", file: file, line: line)
+                    XCTFail("Couldn't convert test catalog", file: file, line: line)
                     return
                 }
                 
@@ -351,7 +351,7 @@ class PreviewActionIntegrationTests: XCTestCase {
     func testHumanErrorMessageForUnavailablePort() throws {
         #if os(macOS)
         // Source files.
-        let source = createMinimalDocsBundle()
+        let source = createMinimalDocsCatalog()
         let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: source)
         
         let logStorage = LogHandle.LogStorage()
@@ -360,7 +360,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
-                documentationBundleURL: sourceURL,
+                documentationCatalogURL: sourceURL,
                 outOfProcessResolver: nil,
                 analyze: false,
                 targetDirectory: outputURL,
@@ -390,7 +390,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             // Start the preview and keep it running for the asserts that follow inside this test.
             DispatchQueue.global().async {
                 guard let _ = try? preview.perform(logHandle: logHandle) else {
-                    XCTFail("Couldn't convert test bundle")
+                    XCTFail("Couldn't convert test catalog")
                     return
                 }
             }
@@ -422,7 +422,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         #if os(macOS)
 
         // Source files.
-        let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsBundle())
+        let (sourceURL, outputURL, templateURL) = try createPreviewSetup(source: createMinimalDocsCatalog())
         
         let logStorage = LogHandle.LogStorage()
         var logHandle = LogHandle.memory(logStorage)
@@ -433,7 +433,7 @@ class PreviewActionIntegrationTests: XCTestCase {
         /// Create the convert action and store it
         let createConvertAction = { () -> ConvertAction in
             var convertAction = try ConvertAction(
-                documentationBundleURL: sourceURL,
+                documentationCatalogURL: sourceURL,
                 outOfProcessResolver: nil,
                 analyze: false,
                 targetDirectory: outputURL,
@@ -487,7 +487,7 @@ class PreviewActionIntegrationTests: XCTestCase {
 
             wait(for: [logOutputExpectation], timeout: 20.0)
 
-            // Bundle is now converted once.
+            // Catalog is now converted once.
             
             // Now trigger another conversion and cancel it.
             
@@ -495,7 +495,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             convertFuture = { sleep(10) }
             
             // Expect that the first conversion has started
-            let firstConversion = asyncLogExpectation(log: logStorage, description: "Trigger new conversion") { $0.contains("Source bundle was modified") }
+            let firstConversion = asyncLogExpectation(log: logStorage, description: "Trigger new conversion") { $0.contains("Source catalog was modified") }
 
             // Write one file to trigger a new conversion.
             try? "".write(to: sourceURL.appendingPathComponent("file1.txt"), atomically: true, encoding: .utf8)
@@ -503,7 +503,7 @@ class PreviewActionIntegrationTests: XCTestCase {
             wait(for: [firstConversion], timeout: 20.0)
 
             // Expect that there will be a log about cancelling a running conversion.
-            let reConvertOutputExpectation = asyncLogExpectation(log: logStorage, description: "Did re-convert bundle") { $0.contains("Conversion cancelled...") }
+            let reConvertOutputExpectation = asyncLogExpectation(log: logStorage, description: "Did re-convert catalog") { $0.contains("Conversion cancelled...") }
 
             // Write a second file to cancel the first conversion and trigger a new one.
             try? "".write(to: sourceURL.appendingPathComponent("file2.txt"), atomically: true, encoding: .utf8)

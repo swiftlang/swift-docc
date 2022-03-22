@@ -1,7 +1,7 @@
 @Tutorials(name: "Technology X") {
    @Intro(title: "Technology X") {
 
-      You'll learn all about Technology X <doc://com.external.bundle/LinkFromTechnologyIntro>.
+      You'll learn all about Technology X <doc://com.external.catalog/LinkFromTechnologyIntro>.
 
       @Video(source: introvideo.mp4, poster: introposter.png )
       @Image(source: intro.png, alt: intro )
@@ -9,7 +9,7 @@
 
    @Chapter(name: "Chapter 1") {
 
-      This is a `Chapter` <doc://com.external.bundle/LinkFromChapter>.
+      This is a `Chapter` <doc://com.external.catalog/LinkFromChapter>.
 
       @Image(source: figure1.png, alt: "Figure 1" )
 
@@ -26,14 +26,14 @@
       @Documentation(destination: "https://www.example.com/documentation/technology") {
          Browse and search detailed API documentation.
 
-         - <doc://com.external.bundle/LinkFromResourceDocumentation>
+         - <doc://com.external.catalog/LinkFromResourceDocumentation>
          - <doc://org.swift.docc.example/TestTutorial2>
       }
 
       @SampleCode(destination: "https://www.example.com/documentation/technology") {
          Browse and search detailed sample code.
 
-         - <doc://com.external.bundle/LinkFromResourceSampleCode>
+         - <doc://com.external.catalog/LinkFromResourceSampleCode>
          - <doc://org.swift.docc.example/TestTutorial2>
       }
 
@@ -44,13 +44,13 @@
       @Videos(destination: "https://www.example.com/videos") {
          See AR presentation from WWDC and other events.
          
-         - <doc://com.external.bundle/LinkFromResourceVideos>
+         - <doc://com.external.catalog/LinkFromResourceVideos>
       }
 
       @Forums(destination: "https://www.example.com/forums") {
          Discuss AR with Apple engineers and other developers.
          
-         - <doc://com.external.bundle/LinkFromResourceForums>
+         - <doc://com.external.catalog/LinkFromResourceForums>
       }
    }
 }

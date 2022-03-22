@@ -34,19 +34,19 @@ public final class Steps: Semantic, DirectiveConvertible {
         self.content = content
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Steps.directiveName)
         
         _ = Semantic.Analyses.HasOnlyKnownArguments<Steps>(severityIfFound: .warning, allowedArguments: [])
-            .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         Semantic.Analyses.HasOnlyKnownDirectives<TutorialSection>(severityIfFound: .warning, allowedDirectives: [Step.directiveName])
-            .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+            .analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
             
         let stepsContent: [Semantic] = directive.children.compactMap { child -> Semantic? in
             if let directive = child as? BlockDirective,
                 directive.name == Step.directiveName {
-                return Step(from: directive, source: source, for: bundle, in: context, problems: &problems)
+                return Step(from: directive, source: source, for: catalog, in: context, problems: &problems)
             } else {
                 return MarkupContainer(child)
             }

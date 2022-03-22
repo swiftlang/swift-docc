@@ -16,12 +16,12 @@ extension ConvertService {
     /// This data provider accepts in-memory documentation and assigns unique URLs for each document.
     struct InMemoryContentDataProvider: DocumentationWorkspaceDataProvider {
         var identifier: String = UUID().uuidString
-        var bundles: [DocumentationBundle] = []
+        var catalogs: [DocumentationCatalog] = []
         
         var files: [URL: Data] = [:]
         
-        mutating func registerBundle(
-            info: DocumentationBundle.Info,
+        mutating func registerCatalog(
+            info: DocumentationCatalog.Info,
             symbolGraphs: [Data],
             markupFiles: [Data],
             miscResourceURLs: [URL]
@@ -29,8 +29,8 @@ extension ConvertService {
             let symbolGraphURLs = symbolGraphs.map { registerFile(contents: $0, isMarkupFile: false) }
             let markupFileURLs = markupFiles.map { registerFile(contents: $0, isMarkupFile: true) }
             
-            bundles.append(
-                DocumentationBundle(
+            catalogs.append(
+                DocumentationCatalog(
                     info: info,
                     symbolGraphURLs: symbolGraphURLs,
                     markupURLs: markupFileURLs,
@@ -54,7 +54,7 @@ extension ConvertService {
             var url = URL(string: "docc-service:/\(UUID().uuidString)")!
             
             if isMarkupFile {
-                url.appendPathExtension(DocumentationBundleFileTypes.referenceFileExtension)
+                url.appendPathExtension(DocumentationCatalogFileTypes.referenceFileExtension)
             }
             
             return url
@@ -67,8 +67,8 @@ extension ConvertService {
             return contents
         }
         
-        func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-            return bundles
+        func catalogs(options: CatalogDiscoveryOptions) throws -> [DocumentationCatalog] {
+            return catalogs
         }
         
         enum Error: DescribedError {

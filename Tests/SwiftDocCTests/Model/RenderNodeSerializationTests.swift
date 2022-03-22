@@ -14,7 +14,7 @@ import Markdown
 
 class RenderNodeSerializationTests: XCTestCase {
     func testRoundTrip() throws {
-        let inputIdentifier = ResolvedTopicReference(bundleIdentifier: "com.example.docc", path: "/example", sourceLanguage: .swift)
+        let inputIdentifier = ResolvedTopicReference(catalogIdentifier: "com.example.docc", path: "/example", sourceLanguage: .swift)
         var inputNode = RenderNode(identifier: inputIdentifier, kind: .tutorial)
         
         let introSection = IntroRenderSection(title: "Basic Augmented Reality App")
@@ -91,9 +91,9 @@ class RenderNodeSerializationTests: XCTestCase {
         checkRoundTrip(inputNode)
     }
     
-    func testBundleRoundTrip() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+    func testCatalogRoundTrip() throws {
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/Test-Catalog/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -101,22 +101,22 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: catalog, in: context, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
         
         XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { $0.diagnostic.localizedDescription }) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         checkRoundTrip(renderNode)
     }
     
     func testTutorialArticleRoundTrip() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/Test-Catalog/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")
@@ -124,14 +124,14 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: catalog, in: context, problems: &problems) else {
             XCTFail("Couldn't create article from markup: \(problems)")
             return
         }
         
         XCTAssertEqual(problems.count, 0, "Found problems \(problems.map { $0.diagnostic.localizedDescription }) analyzing article markup")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         
         let renderNode = translator.visit(article) as! RenderNode
         checkRoundTrip(renderNode)
@@ -140,8 +140,8 @@ class RenderNodeSerializationTests: XCTestCase {
     func testAssetReferenceDictionary() throws {
         typealias JSONDictionary = [String: Any]
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/Test-Catalog/TestTutorial", sourceLanguage: .swift))
         
         guard let tutorialDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")
@@ -149,14 +149,14 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let tutorial = Tutorial(from: tutorialDirective, source: nil, for: catalog, in: context, problems: &problems) else {
             XCTFail("Couldn't create tutorial from markup: \(problems)")
             return
         }
         
         XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { $0.diagnostic.localizedDescription }) analyzing tutorial markup")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         
         let renderNode = translator.visit(tutorial) as! RenderNode
         let data = try encode(renderNode: renderNode)
@@ -192,8 +192,8 @@ class RenderNodeSerializationTests: XCTestCase {
     }
 
     func testDiffAvailability() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/TestTutorialArticle", sourceLanguage: .swift))
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/tutorials/Test-Catalog/TestTutorialArticle", sourceLanguage: .swift))
         
         guard let articleDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, article not found as first child.")
@@ -201,12 +201,12 @@ class RenderNodeSerializationTests: XCTestCase {
         }
         
         var problems = [Problem]()
-        guard let article = TutorialArticle(from: articleDirective, source: nil, for: bundle, in: context, problems: &problems) else {
+        guard let article = TutorialArticle(from: articleDirective, source: nil, for: catalog, in: context, problems: &problems) else {
             XCTFail("Couldn't create article from markup: \(problems)")
             return
         }
 
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
 
         var renderNode = translator.visit(article) as! RenderNode
 

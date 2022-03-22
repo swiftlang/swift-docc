@@ -15,8 +15,8 @@ extension IndexAction {
     init(fromIndexCommand index: Docc.Index) throws {
         // Initialize the `IndexAction` from the options provided by the `Index` command
         try self.init(
-            documentationBundleURL: index.documentationBundle.urlOrFallback,
+            documentationCatalogURL: index.documentationCatalog.urlOrFallback,
             outputURL: index.outputURL,
-            bundleIdentifier: index.bundleIdentifier)
+            catalogIdentifier: index.catalogIdentifier)
     }
 }

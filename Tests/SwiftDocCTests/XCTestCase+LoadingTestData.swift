@@ -14,66 +14,66 @@ import XCTest
 
 extension XCTestCase {
     
-    /// Loads a documentation bundle from the given source URL and creates a documentation context.
-    func loadBundle(from bundleURL: URL, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil, diagnosticFilterLevel: DiagnosticSeverity = .hint, configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    /// Loads a documentation catalog from the given source URL and creates a documentation context.
+    func loadCatalog(from catalogURL: URL, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil, diagnosticFilterLevel: DiagnosticSeverity = .hint, configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> (URL, DocumentationCatalog, DocumentationContext) {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel))
         context.externalReferenceResolvers = externalResolvers
         context.externalSymbolResolver = externalSymbolResolver
         context.externalMetadata.diagnosticLevel = diagnosticFilterLevel
         try configureContext?(context)
-        // Load the bundle using automatic discovery
-        let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
-        // Mutate the bundle to include the code listings, then apply to the workspace using a manual provider.
-        var bundle = try XCTUnwrap(automaticDataProvider.bundles().first)
-        bundle.attributedCodeListings = codeListings
-        let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        // Load the catalog using automatic discovery
+        let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
+        // Mutate the catalog to include the code listings, then apply to the workspace using a manual provider.
+        var catalog = try XCTUnwrap(automaticDataProvider.catalogs().first)
+        catalog.attributedCodeListings = codeListings
+        let dataProvider = PrebuiltLocalFileSystemDataProvider(catalogs: [catalog])
         try workspace.registerProvider(dataProvider)
-        return (bundleURL, bundle, context)
+        return (catalogURL, catalog, context)
     }
     
-    func testBundleAndContext(copying name: String, excludingPaths excludedPaths: [String] = [], codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [BundleIdentifier : ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil,  configureBundle: ((URL) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    func testCatalogAndContext(copying name: String, excludingPaths excludedPaths: [String] = [], codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [CatalogIdentifier : ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil,  configureCatalog: ((URL) throws -> Void)? = nil) throws -> (URL, DocumentationCatalog, DocumentationContext) {
         let sourceURL = try XCTUnwrap(Bundle.module.url(
-            forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
+            forResource: name, withExtension: "docc", subdirectory: "Test Catalogs"))
         
         let sourceExists = FileManager.default.fileExists(atPath: sourceURL.path)
-        let bundleURL = sourceExists
+        let catalogURL = sourceExists
             ? try createTemporaryDirectory().appendingPathComponent("\(name).docc")
             : try createTemporaryDirectory(named: "\(name).docc")
         
         if sourceExists {
-            try FileManager.default.copyItem(at: sourceURL, to: bundleURL)
+            try FileManager.default.copyItem(at: sourceURL, to: catalogURL)
         }
         
         for path in excludedPaths {
-            try FileManager.default.removeItem(at: bundleURL.appendingPathComponent(path))
+            try FileManager.default.removeItem(at: catalogURL.appendingPathComponent(path))
         }
         
-        // Do any additional setup to the custom bundle - adding, modifying files, etc
-        try configureBundle?(bundleURL)
+        // Do any additional setup to the custom catalog - adding, modifying files, etc
+        try configureCatalog?(catalogURL)
         
-        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers, externalSymbolResolver: externalSymbolResolver)
+        return try loadCatalog(from: catalogURL, codeListings: codeListings, externalResolvers: externalResolvers, externalSymbolResolver: externalSymbolResolver)
     }
     
-    func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
-        let bundleURL = try XCTUnwrap(Bundle.module.url(
-            forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
-        let (_, bundle, context) = try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers)
-        return (bundle, context)
+    func testCatalogAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:]) throws -> (DocumentationCatalog, DocumentationContext) {
+        let catalogURL = try XCTUnwrap(Bundle.module.url(
+            forResource: name, withExtension: "docc", subdirectory: "Test Catalogs"))
+        let (_, catalog, context) = try loadCatalog(from: catalogURL, codeListings: codeListings, externalResolvers: externalResolvers)
+        return (catalog, context)
     }
     
-    func testBundle(named name: String) throws -> DocumentationBundle {
-        let (bundle, _) = try testBundleAndContext(named: name)
-        return bundle
+    func testCatalog(named name: String) throws -> DocumentationCatalog {
+        let (catalog, _) = try testCatalogAndContext(named: name)
+        return catalog
     }
     
-    func testBundleFromRootURL(named name: String) throws -> DocumentationBundle {
-        let bundleURL = try XCTUnwrap(Bundle.module.url(
-            forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
-        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+    func testCatalogFromRootURL(named name: String) throws -> DocumentationCatalog {
+        let catalogURL = try XCTUnwrap(Bundle.module.url(
+            forResource: name, withExtension: "docc", subdirectory: "Test Catalogs"))
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
         
-        let bundles = try dataProvider.bundles()
-        return bundles[0]
+        let catalogs = try dataProvider.catalogs()
+        return catalogs[0]
     }
     
 }

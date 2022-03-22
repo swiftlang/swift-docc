@@ -85,24 +85,24 @@ public final class Tutorial: Semantic, DirectiveConvertible, Abstracted, Titled,
         self.redirects = redirects
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
+    public convenience init?(from directive: BlockDirective, source: URL?, for catalog: DocumentationCatalog, in context: DocumentationContext, problems: inout [Problem]) {
         precondition(directive.name == Tutorial.directiveName)
         
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Tutorial>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName, Semantics.ProjectFiles.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Tutorial>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName, Semantics.ProjectFiles.argumentName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
-        Semantic.Analyses.HasOnlyKnownDirectives<Tutorial>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, TutorialSection.directiveName, Assessments.directiveName, XcodeRequirement.directiveName, ImageMedia.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        Semantic.Analyses.HasOnlyKnownDirectives<Tutorial>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, TutorialSection.directiveName, Assessments.directiveName, XcodeRequirement.directiveName, ImageMedia.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let optionalTime = Semantic.Analyses.HasArgument<Tutorial, Semantics.Time>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems)
         let optionalProjectFiles = arguments[Semantics.ProjectFiles.argumentName].map { argument in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argument.value)
+            ResourceReference(catalogIdentifier: catalog.identifier, path: argument.value)
         }
         
         var remainder: MarkupContainer
         let requiredIntro: Intro?
-        (requiredIntro, remainder) = Semantic.Analyses.HasExactlyOne<Tutorial, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (requiredIntro, remainder) = Semantic.Analyses.HasExactlyOne<Tutorial, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: catalog, in: context, problems: &problems)
         
         let sections: [TutorialSection]
-        (sections, remainder) = Semantic.Analyses.HasAtLeastOne<Tutorial, TutorialSection>(severityIfNotFound: .warning).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (sections, remainder) = Semantic.Analyses.HasAtLeastOne<Tutorial, TutorialSection>(severityIfNotFound: .warning).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         var seenSectionTitles = [String: SourceRange]()
         let sectionsWithoutDuplicates = sections.filter { section -> Bool in
@@ -121,16 +121,16 @@ public final class Tutorial: Semantic, DirectiveConvertible, Abstracted, Titled,
         }
         
         let optionalAssessments: Assessments?
-        (optionalAssessments, remainder) = Semantic.Analyses.HasExactlyOne<Tutorial, Assessments>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (optionalAssessments, remainder) = Semantic.Analyses.HasExactlyOne<Tutorial, Assessments>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         let requirement: XcodeRequirement?
-        (requirement, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, XcodeRequirement>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (requirement, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, XcodeRequirement>().analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         let optionalCallToActionImage: ImageMedia?
-        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<Technology, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<Technology, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
 
         let redirects: [Redirect]
-            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
+            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: catalog, in: context, problems: &problems)
         
         guard let intro = requiredIntro else {
             return nil
@@ -156,7 +156,7 @@ extension Tutorial {
                     diagnostic: Diagnostic(source: url, severity: .warning, range: nil, identifier: "org.swift.docc.Project.ProjectFilesNotFound", 
                         summary: "\(projectFiles.path) file reference not found in \(Tutorial.directiveName.singleQuoted) directive"), 
                     possibleSolutions: [
-                        Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
+                        Solution(summary: "Copy the referenced file into the documentation catalog directory", replacements: [])
                     ]
                 ))
             }

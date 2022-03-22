@@ -53,8 +53,8 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        var renderContentCompiler = RenderContentCompiler(context: context, catalog: catalog, identifier: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - term First term : A paragraph that
@@ -96,8 +96,8 @@ class TermListTests: XCTestCase {
             return
         }
         
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        var renderContentCompiler = RenderContentCompiler(context: context, catalog: catalog, identifier: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         - Not a term list, and

@@ -14,14 +14,14 @@ import XCTest
 import SwiftDocCTestUtilities
 
 class ConvertSubcommandTests: XCTestCase {
-    private let testBundleURL = Bundle.module.url(
-        forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+    private let testCatalogURL = Bundle.module.url(
+        forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
     
     private let testTemplateURL = Bundle.module.url(
         forResource: "Test Template", withExtension: nil, subdirectory: "Test Resources")!
     
     func testOptionsValidation() throws {
-        // create source bundle directory
+        // create source catalog directory
         let sourceURL = try createTemporaryDirectory(named: "documentation")
         try "".write(to: sourceURL.appendingPathComponent("Info.plist"), atomically: true, encoding: .utf8)
         
@@ -98,7 +98,7 @@ class ConvertSubcommandTests: XCTestCase {
             try "".write(to: defaultTemplateDir.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
             
             let convert = try Docc.Convert.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ])
             XCTAssertEqual(
                 convert.templateOption.templateURL?.standardizedFileURL,
@@ -134,7 +134,7 @@ class ConvertSubcommandTests: XCTestCase {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
 
         XCTAssertTrue(
-            FileManager.default.changeCurrentDirectoryPath(testBundleURL.path),
+            FileManager.default.changeCurrentDirectoryPath(testCatalogURL.path),
             "The test env is invalid if the current working directory is not set to the current working directory"
         )
 
@@ -142,7 +142,7 @@ class ConvertSubcommandTests: XCTestCase {
             // Passing no argument should default to the current working directory.
             let convert = try Docc.Convert.parse([])
             let convertAction = try ConvertAction(fromConvertCommand: convert)
-            XCTAssertEqual(convertAction.rootURL?.absoluteURL, testBundleURL.absoluteURL)
+            XCTAssertEqual(convertAction.rootURL?.absoluteURL, testCatalogURL.absoluteURL)
         } catch {
             XCTFail("Failed to run docc convert without arguments.")
         }
@@ -155,7 +155,7 @@ class ConvertSubcommandTests: XCTestCase {
             setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
             XCTAssertThrowsError(try Docc.Convert.parse([
                 "--output-path", fakeRootPath + path,
-                testBundleURL.path,
+                testCatalogURL.path,
             ]), "Did not refuse target folder path '\(path)'")
         }
     }
@@ -163,7 +163,7 @@ class ConvertSubcommandTests: XCTestCase {
     func testAnalyzerIsTurnedOffByDefault() throws {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
         let convertOptions = try Docc.Convert.parse([
-            testBundleURL.path,
+            testCatalogURL.path,
         ])
         
         XCTAssertFalse(convertOptions.analyze)
@@ -175,45 +175,59 @@ class ConvertSubcommandTests: XCTestCase {
         // Default to nil when not passed
         do {
             let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ])
             
-            XCTAssertNil(convertOptions.fallbackBundleDisplayName)
-            XCTAssertNil(convertOptions.fallbackBundleIdentifier)
-            XCTAssertNil(convertOptions.fallbackBundleVersion)
+            XCTAssertNil(convertOptions.fallbackCatalogDisplayName)
+            XCTAssertNil(convertOptions.fallbackCatalogIdentifier)
+            XCTAssertNil(convertOptions.fallbackCatalogVersion)
             XCTAssertNil(convertOptions.defaultCodeListingLanguage)
+        }
+        
+        func checkFallbacks(_ convertOptions: Docc.Convert, line: UInt = #line) {
+            XCTAssertEqual(convertOptions.fallbackCatalogDisplayName, "DisplayName", line: line)
+            XCTAssertEqual(convertOptions.fallbackCatalogIdentifier, "com.example.test", line: line)
+            XCTAssertEqual(convertOptions.fallbackCatalogVersion, "1.2.3", line: line)
+            XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift", line: line)
         }
         
         // Are set when passed (old name, to be removed rdar://72449411)
         do {
             let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
                 "--display-name", "DisplayName",
                 "--bundle-identifier", "com.example.test",
                 "--bundle-version", "1.2.3",
                 "--default-code-listing-language", "swift",
             ])
             
-            XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
-            XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
-            XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
+            checkFallbacks(convertOptions)
         }
         
-        // Are set when passed 
+        // Are set when passed (deprecated names)
         do {
             let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
                 "--fallback-display-name", "DisplayName",
                 "--fallback-bundle-identifier", "com.example.test",
                 "--fallback-bundle-version", "1.2.3",
                 "--default-code-listing-language", "swift",
             ])
             
-            XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
-            XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-            XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
-            XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
+            checkFallbacks(convertOptions)
+        }
+        
+        // Are set when passed 
+        do {
+            let convertOptions = try Docc.Convert.parse([
+                testCatalogURL.path,
+                "--fallback-display-name", "DisplayName",
+                "--fallback-catalog-identifier", "com.example.test",
+                "--fallback-catalog-version", "1.2.3",
+                "--default-code-listing-language", "swift",
+            ])
+            
+            checkFallbacks(convertOptions)
         }
     }
     
@@ -223,7 +237,7 @@ class ConvertSubcommandTests: XCTestCase {
         // Default to [] when not passed
         do {
             let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
             ])
             
             XCTAssertEqual(convertOptions.additionalSymbolGraphDirectory, nil)
@@ -232,7 +246,7 @@ class ConvertSubcommandTests: XCTestCase {
         // Is set when passed
         do {
             let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
                 "--additional-symbol-graph-dir",
                 "/path/to/folder-of-symbol-graph-files",
             ])
@@ -246,13 +260,13 @@ class ConvertSubcommandTests: XCTestCase {
         // Is recursively scanned to find symbol graph files set when passed
         do {
             let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
                 "--additional-symbol-graph-dir",
-                testBundleURL.path,
+                testCatalogURL.path,
             ])
             
             let action = try ConvertAction(fromConvertCommand: convertOptions)
-            XCTAssertEqual(action.converter.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+            XCTAssertEqual(action.converter.catalogDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
                 "FillIntroduced.symbols.json",
                 "MyKit@SideKit.symbols.json",
                 "mykit-iOS.symbols.json",
@@ -263,7 +277,7 @@ class ConvertSubcommandTests: XCTestCase {
         // Deprecated option is still supported
         do {
             let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
+                testCatalogURL.path,
                 "--additional-symbol-graph-files",
                 "/path/to/first.symbols.json",
                 "/path/to/second.symbols.json",
@@ -275,7 +289,7 @@ class ConvertSubcommandTests: XCTestCase {
             ])
             
             let action = try ConvertAction(fromConvertCommand: convertOptions)
-            XCTAssertEqual(action.converter.bundleDiscoveryOptions.additionalSymbolGraphFiles, [
+            XCTAssertEqual(action.converter.catalogDiscoveryOptions.additionalSymbolGraphFiles, [
                 URL(fileURLWithPath: "/path/to/first.symbols.json"),
                 URL(fileURLWithPath: "/path/to/second.symbols.json"),
             ])
@@ -286,7 +300,7 @@ class ConvertSubcommandTests: XCTestCase {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
         
         let convertOptions = try Docc.Convert.parse([
-            testBundleURL.path,
+            testCatalogURL.path,
             "--index",
         ])
         
@@ -299,7 +313,7 @@ class ConvertSubcommandTests: XCTestCase {
     
     func testEmitLMDBIndex() throws {
         let convertOptions = try Docc.Convert.parse([
-            testBundleURL.path,
+            testCatalogURL.path,
             "--emit-lmdb-index",
         ])
         
@@ -310,29 +324,29 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(action.buildLMDBIndex)
     }
     
-    func testWithoutBundle() throws {
+    func testWithoutCatalog() throws {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
         
         let convertOptions = try Docc.Convert.parse([
             "--fallback-display-name", "DisplayName",
-            "--fallback-bundle-identifier", "com.example.test",
-            "--fallback-bundle-version", "1.2.3",
+            "--fallback-catalog-identifier", "com.example.test",
+            "--fallback-catalog-version", "1.2.3",
             
             "--additional-symbol-graph-dir",
-            testBundleURL.path,
+            testCatalogURL.path,
         ])
         
         // Verify the options
         
-        XCTAssertNil(convertOptions.documentationBundle.url)
+        XCTAssertNil(convertOptions.documentationCatalog.url)
         
-        XCTAssertEqual(convertOptions.fallbackBundleDisplayName, "DisplayName")
-        XCTAssertEqual(convertOptions.fallbackBundleIdentifier, "com.example.test")
-        XCTAssertEqual(convertOptions.fallbackBundleVersion, "1.2.3")
+        XCTAssertEqual(convertOptions.fallbackCatalogDisplayName, "DisplayName")
+        XCTAssertEqual(convertOptions.fallbackCatalogIdentifier, "com.example.test")
+        XCTAssertEqual(convertOptions.fallbackCatalogVersion, "1.2.3")
         
         XCTAssertEqual(
             convertOptions.additionalSymbolGraphDirectory,
-            testBundleURL
+            testCatalogURL
         )
         
         // Verify the action
@@ -341,7 +355,7 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertNil(action.rootURL)
         XCTAssertNil(action.converter.rootURL)
         
-        XCTAssertEqual(action.converter.bundleDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
+        XCTAssertEqual(action.converter.catalogDiscoveryOptions.additionalSymbolGraphFiles.map { $0.lastPathComponent }.sorted(), [
             "FillIntroduced.symbols.json",
             "MyKit@SideKit.symbols.json",
             "mykit-iOS.symbols.json",
@@ -350,14 +364,14 @@ class ConvertSubcommandTests: XCTestCase {
     }
 
     func testExperimentalEnableCustomTemplatesFlag() throws {
-        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
+        let commandWithoutFlag = try Docc.Convert.parse([testCatalogURL.path])
         let actionWithoutFlag = try ConvertAction(fromConvertCommand: commandWithoutFlag)
         XCTAssertFalse(commandWithoutFlag.experimentalEnableCustomTemplates)
         XCTAssertFalse(actionWithoutFlag.experimentalEnableCustomTemplates)
 
         let commandWithFlag = try Docc.Convert.parse([
             "--experimental-enable-custom-templates",
-            testBundleURL.path,
+            testCatalogURL.path,
         ])
         let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.experimentalEnableCustomTemplates)

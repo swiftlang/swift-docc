@@ -67,8 +67,8 @@ class RenderContentMetadataTests: XCTestCase {
     }
     
     func testRenderingTables() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        var renderContentCompiler = RenderContentCompiler(context: context, catalog: catalog, identifier: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         | Column 1  | Column 2 |
@@ -107,8 +107,8 @@ class RenderContentMetadataTests: XCTestCase {
     }
     
     func testStrikethrough() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+        let (catalog, context) = try testCatalogAndContext(named: "TestCatalog")
+        var renderContentCompiler = RenderContentCompiler(context: context, catalog: catalog, identifier: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
         
         let source = """
         ~~Striken~~ text.

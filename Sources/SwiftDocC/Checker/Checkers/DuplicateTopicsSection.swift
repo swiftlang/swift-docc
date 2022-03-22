@@ -12,7 +12,7 @@ import Foundation
 import Markdown
 
 /**
- A `Document` may only have one level-2 "Topics" heading at the top level, since it serves as structured data for a documentation bundle's hierarchy.
+ A `Document` may only have one level-2 "Topics" heading at the top level, since it serves as structured data for a documentation catalog's hierarchy.
  */
 public struct DuplicateTopicsSections: Checker {
     /// The list of level-2 headings with the text "Topics" found in the document.

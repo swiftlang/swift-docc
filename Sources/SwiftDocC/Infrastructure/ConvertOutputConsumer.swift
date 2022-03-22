@@ -22,8 +22,8 @@ public protocol ConvertOutputConsumer {
     /// > Warning: This method might be called concurrently.
     func consume(renderNode: RenderNode) throws
     
-    /// Consumes a documentation bundle with the purpose of extracting its on-disk assets.
-    func consume(assetsInBundle bundle: DocumentationBundle) throws
+    /// Consumes a documentation catalog with the purpose of extracting its on-disk assets.
+    func consume(assetsInCatalog catalog: DocumentationCatalog) throws
     
     /// Consumes the linkable element summaries produced during a conversion.
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws

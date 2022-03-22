@@ -10,20 +10,30 @@
 
 import Foundation
 
-/// A data provider that provides existing in-memory documentation bundles with files on the local filesystem.
+/// A data provider that provides existing in-memory documentation catalogs with files on the local filesystem.
 public struct PrebuiltLocalFileSystemDataProvider: DocumentationWorkspaceDataProvider {
     public var identifier: String = UUID().uuidString
     
-    private var _bundles: [DocumentationBundle]
-    public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        // Ignore the bundle discovery options, these bundles are already built.
-        return _bundles
+    private var _catalogs: [DocumentationCatalog]
+    public func catalogs(options: CatalogDiscoveryOptions) throws -> [DocumentationCatalog] {
+        // Ignore the catalog discovery options, these catalogs are already built.
+        return _catalogs
     }
     
-    /// Creates a new provider to provide the given documentation bundles.
-    /// - Parameter bundles: The existing documentation bundles for this provider to provide.
-    public init(bundles: [DocumentationBundle]) {
-        _bundles = bundles
+    @available(*, deprecated, renamed: "bundles(options:)")
+    public func bundles(options: CatalogDiscoveryOptions) throws -> [DocumentationCatalog] {
+        return try catalogs(options: options)
+    }
+    
+    /// Creates a new provider to provide the given documentation catalogs.
+    /// - Parameter catalogs: The existing documentation catalogs for this provider to provide.
+    public init(catalogs: [DocumentationCatalog]) {
+        _catalogs = catalogs
+    }
+    
+    @available(*, deprecated, renamed: "init(catalogs:)")
+    public init(bundles: [DocumentationCatalog]) {
+        self = .init(catalogs: bundles)
     }
 
     public func contentsOfURL(_ url: URL) throws -> Data {

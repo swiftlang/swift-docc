@@ -14,24 +14,24 @@ import SwiftDocCTestUtilities
 @testable import SwiftDocC
 
 final class RenderIndexTests: XCTestCase {
-    func testTestBundleRenderIndexGeneration() throws {
+    func testTestCatalogRenderIndexGeneration() throws {
         let expectedIndexURL = try XCTUnwrap(
             Bundle.module.url(
-                forResource: "TestBundle-RenderIndex",
+                forResource: "TestCatalog-RenderIndex",
                 withExtension: "json",
                 subdirectory: "Test Resources"
             )
         )
         
         try XCTAssertEqual(
-            generatedRenderIndex(for: "TestBundle", with: "org.swift.docc.example"),
+            generatedRenderIndex(for: "TestCatalog", with: "org.swift.docc.example"),
             RenderIndex.fromURL(expectedIndexURL)
         )
     }
     
-    func testRenderIndexGenerationForBundleWithTechnologyRoot() throws {
+    func testRenderIndexGenerationForCatalogWithTechnologyRoot() throws {
         try XCTAssertEqual(
-            generatedRenderIndex(for: "BundleWithTechnologyRoot", with: "org.swift.docc.example"),
+            generatedRenderIndex(for: "CatalogWithTechnologyRoot", with: "org.swift.docc.example"),
             RenderIndex.fromString(#"""
                 {
                   "interfaceLanguages": {
@@ -574,24 +574,24 @@ final class RenderIndexTests: XCTestCase {
                 subdirectory: "Test Resources"
             )!
 
-        let bundle = Folder(name: "unit-test-swift.docc", content: [
-            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+        let catalog = Folder(name: "unit-test-swift.docc", content: [
+            InfoPlist(displayName: "TestCatalog", identifier: "com.test.example"),
             CopyOfFile(original: swiftWithDeprecatedSymbolGraphFile)
         ])
 
         // The navigator index needs to test with the real File Manager
         let testTemporaryDirectory = try createTemporaryDirectory()
 
-        let bundleDirectory = testTemporaryDirectory.appendingPathComponent(
-           bundle.name,
+        let catalogDirectory = testTemporaryDirectory.appendingPathComponent(
+           catalog.name,
            isDirectory: true
         )
-        try bundle.write(to: bundleDirectory)
+        try catalog.write(to: catalogDirectory)
 
-        let (_, loadedBundle, context) = try loadBundle(from: bundleDirectory)
+        let (_, loadedCatalog, context) = try loadCatalog(from: catalogDirectory)
 
         XCTAssertEqual(
-            try generatedRenderIndex(for: loadedBundle, withIdentifier: "com.test.example", withContext: context),
+            try generatedRenderIndex(for: loadedCatalog, withIdentifier: "com.test.example", withContext: context),
             try RenderIndex.fromString(#"""
             {
                 "interfaceLanguages": {
@@ -617,18 +617,18 @@ final class RenderIndexTests: XCTestCase {
             """#))
     }
     
-    func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) throws -> RenderIndex {
-        let (bundle, context) = try testBundleAndContext(named: testBundleName)
-        return try generatedRenderIndex(for: bundle, withIdentifier: bundleIdentifier, withContext: context)
+    func generatedRenderIndex(for testCatalogName: String, with catalogIdentifier: String) throws -> RenderIndex {
+        let (catalog, context) = try testCatalogAndContext(named: testCatalogName)
+        return try generatedRenderIndex(for: catalog, withIdentifier: catalogIdentifier, withContext: context)
     }
     
-    func generatedRenderIndex(for bundle: DocumentationBundle, withIdentifier bundleIdentifier: String, withContext context: DocumentationContext) throws -> RenderIndex {
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+    func generatedRenderIndex(for catalog: DocumentationCatalog, withIdentifier catalogIdentifier: String, withContext context: DocumentationContext) throws -> RenderIndex {
+        let renderContext = RenderContext(documentationContext: context, catalog: catalog)
+        let converter = DocumentationContextConverter(catalog: catalog, context: context, renderContext: renderContext)
         let indexDirectory = try createTemporaryDirectory()
         let builder = NavigatorIndex.Builder(
             outputURL: indexDirectory,
-            bundleIdentifier: bundleIdentifier,
+            catalogIdentifier: catalogIdentifier,
             sortRootChildrenByName: true
         )
 

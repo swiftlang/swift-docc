@@ -22,7 +22,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Resolved topic references that were seen by the visitor. These should be used to populate the references dictionary.
     var collectedTopicReferences: [ResolvedTopicReference] = []
     
-    /// Unresolvable topic references outside the current bundle.
+    /// Unresolvable topic references outside the current catalog.
     var collectedUnresolvedTopicReferences: [UnresolvedTopicReference] = []
     
     /// Any collected constraints to symbol relationships.
@@ -112,7 +112,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     public mutating func visitTutorial(_ tutorial: Tutorial) -> RenderTree? {
         var node = RenderNode(identifier: identifier, kind: .tutorial)
         
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context, catalog: catalog)
         guard let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) else {
             // This tutorial is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
@@ -297,7 +297,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
     // Visits a container and expects the elements to be block level elements
     public mutating func visitMarkupContainer(_ markupContainer: MarkupContainer) -> RenderTree? {
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, catalog: catalog, identifier: identifier)
         let content = markupContainer.elements.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderBlockContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references found in the markup container.
@@ -308,7 +308,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     // Visits a collection of inline markup elements.
     public mutating func visitMarkup(_ markup: [Markup]) -> RenderTree? {
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, catalog: catalog, identifier: identifier)
         let content = markup.reduce(into: [], { result, item in result.append(contentsOf: contentCompiler.visit(item))}) as! [RenderInlineContent]
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references.
@@ -377,7 +377,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.sections.append(visitResources(resources) as! ResourcesRenderSection)
         }
         
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context, catalog: catalog)
         node.hierarchy = hierarchyTranslator
             .visitTechnologyNode(identifier, omittingChapters: true)!
             .hierarchy
@@ -396,7 +396,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     private mutating func createTopicRenderReferences() -> [String: RenderReference] {
         var renderReferences: [String: RenderReference] = [:]
-        let renderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        let renderer = DocumentationContentRenderer(documentationContext: context, catalog: catalog)
         
         for reference in collectedTopicReferences {
             var renderReference: TopicRenderReference
@@ -498,7 +498,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
         
     public mutating func visitTutorialReference(_ tutorialReference: TutorialReference) -> RenderTree? {
-        switch context.resolve(tutorialReference.topic, in: bundle.rootReference) {
+        switch context.resolve(tutorialReference.topic, in: catalog.rootReference) {
         case let .failure(reference, _):
             return RenderReferenceIdentifier(reference.topicURL.absoluteString)
         case let .success(resolved):
@@ -523,7 +523,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let action: RenderInlineContent
         // We expect, at this point of the rendering, this API to be called with valid URLs, otherwise crash.
         let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(link)!)
-        if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: bundle.rootReference) {
+        if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: catalog.rootReference) {
             action = RenderInlineContent.reference(identifier: RenderReferenceIdentifier(resolved.absoluteString),
                                                    isActive: true,
                                                    overridingTitle: overridingTitle,
@@ -568,7 +568,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     public mutating func visitArticle(_ article: Article) -> RenderTree? {
         var node = RenderNode(identifier: identifier, kind: .article)
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, catalog: catalog, identifier: identifier)
         
         node.metadata.title = article.title!.plainText
         
@@ -596,7 +596,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let documentationNode = try! context.entity(with: identifier)
         
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context, catalog: catalog)
         let hierarchy = hierarchyTranslator.visitArticle(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchy = hierarchy
@@ -724,7 +724,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 for: documentationNode,
                 withTrait: trait,
                 context: context,
-                bundle: bundle,
+                catalog: catalog,
                 renderContext: renderContext,
                 renderer: contentRenderer
             ) {
@@ -757,7 +757,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     public mutating func visitTutorialArticle(_ article: TutorialArticle) -> RenderTree? {
         var node = RenderNode(identifier: identifier, kind: .article)
         
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context, catalog: catalog)
         guard let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) else {
             // This tutorial article is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
@@ -992,7 +992,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let identifier = identifier.addingSourceLanguages(documentationNode.availableSourceLanguages)
         
         var node = RenderNode(identifier: identifier, kind: .symbol)
-        var contentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: identifier)
+        var contentCompiler = RenderContentCompiler(context: context, catalog: catalog, identifier: identifier)
 
         currentSymbol = identifier
         
@@ -1033,7 +1033,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
         } ?? .init(defaultValue:
-            defaultAvailability(for: bundle, moduleName: moduleName, currentPlatforms: context.externalMetadata.currentPlatforms)?
+            defaultAvailability(for: catalog, moduleName: moduleName, currentPlatforms: context.externalMetadata.currentPlatforms)?
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
         )
@@ -1056,17 +1056,17 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         collectedTopicReferences.append(identifier)
         
-        let contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        let contentRenderer = DocumentationContentRenderer(documentationContext: context, catalog: catalog)
         node.metadata.tags = contentRenderer.tags(for: identifier)
 
-        var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
+        var hierarchyTranslator = RenderHierarchyTranslator(context: context, catalog: catalog)
         let hierarchy = hierarchyTranslator.visitSymbol(identifier)
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchy = hierarchy
         
         func createDefaultAbstract() -> [RenderInlineContent] {
-            // Introduce a special behavior for generated bundles.
-            if context.externalMetadata.isGeneratedBundle {
+            // Introduce a special behavior for generated catalogs.
+            if context.externalMetadata.isGeneratedCatalog {
                 if documentationNode.kind != .module {
                     // Undocumented symbols get a default abstract.
                     return [.text("No overview available.")]
@@ -1075,7 +1075,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return [.text("")]
                 }
             } else {
-                // For non-generated bundles always add the default abstract.
+                // For non-generated catalogs always add the default abstract.
                 return [.text("No overview available.")]
             }
         }
@@ -1315,7 +1315,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 for: documentationNode,
                 withTrait: trait,
                 context: context,
-                bundle: bundle,
+                catalog: catalog,
                 renderContext: renderContext,
                 renderer: contentRenderer
             ) {
@@ -1362,12 +1362,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         guard let oldMedia = media,
               let path = context.identifier(forAssetName: oldMedia.path, in: identifier) else { return mediaReference }
         
-        let media = ResourceReference(bundleIdentifier: oldMedia.bundleIdentifier, path: path)
+        let media = ResourceReference(catalogIdentifier: oldMedia.catalogIdentifier, path: path)
         let fileExtension = NSString(string: media.path).pathExtension
         
         func resolveAsset() -> DataAsset? {
             renderContext?.store.content(
-                forAssetNamed: media.path, bundleIdentifier: identifier.bundleIdentifier)
+                forAssetNamed: media.path, catalogIdentifier: identifier.catalogIdentifier)
             ?? context.resolveAsset(named: media.path, in: identifier)
         }
         
@@ -1399,7 +1399,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             do {            
                 mediaReference = RenderReferenceIdentifier(media.path)
                 let downloadURL = resolvedDownload.variants.first!.value
-                let downloadData = try context.dataProvider.contentsOfURL(downloadURL, in: bundle)
+                let downloadData = try context.dataProvider.contentsOfURL(downloadURL, in: catalog)
                 downloadReference = DownloadReference(identifier: mediaReference,
                     renderURL: downloadURL,
                     sha512Checksum: Checksum.sha512(of: downloadData))
@@ -1417,7 +1417,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     var context: DocumentationContext
-    var bundle: DocumentationBundle
+    var catalog: DocumentationCatalog
     var identifier: ResolvedTopicReference
     var source: URL?
     var imageReferences: [String: ImageReference] = [:]
@@ -1427,7 +1427,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var requirementReferences: [String: XcodeRequirementReference] = [:]
     var downloadReferences: [String: DownloadReference] = [:]
     
-    private var bundleAvailability: [BundleModuleIdentifier: [AvailabilityRenderItem]] = [:]
+    private var catalogAvailability: [CatalogModuleIdentifier: [AvailabilityRenderItem]] = [:]
     
     /// Given module availability and the current platforms we're building against return if the module is a beta framework.
     private func isModuleBeta(moduleAvailability: DefaultAvailability.ModuleAvailability, currentPlatforms: [String: PlatformVersion]) -> Bool {
@@ -1449,18 +1449,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return moduleVersionTriplet == targetPlatformVersion.version
     }
     
-    /// The default availability for modules in a given bundle and module.
-    mutating func defaultAvailability(for bundle: DocumentationBundle, moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [AvailabilityRenderItem]? {
-        let identifier = BundleModuleIdentifier(bundle: bundle, moduleName: moduleName)
+    /// The default availability for modules in a given catalog and module.
+    mutating func defaultAvailability(for catalog: DocumentationCatalog, moduleName: String, currentPlatforms: [String: PlatformVersion]?) -> [AvailabilityRenderItem]? {
+        let identifier = CatalogModuleIdentifier(catalog: catalog, moduleName: moduleName)
         
         // Cached availability
-        if let availability = bundleAvailability[identifier] {
+        if let availability = catalogAvailability[identifier] {
             return availability
         }
         
         // Find default module availability if existing
-        guard let bundleDefaultAvailability = bundle.info.defaultAvailability,
-            let moduleAvailability = bundleDefaultAvailability.modules[moduleName] else {
+        guard let catalogDefaultAvailability = catalog.info.defaultAvailability,
+            let moduleAvailability = catalogDefaultAvailability.modules[moduleName] else {
             return nil
         }
         
@@ -1475,7 +1475,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             })
         
         // Cache the availability to use for further symbols
-        bundleAvailability[identifier] = renderedAvailability
+        catalogAvailability[identifier] = renderedAvailability
         
         // Return the availability
         return renderedAvailability
@@ -1492,7 +1492,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     private func variants(for documentationNode: DocumentationNode) -> [RenderNode.Variant] {
-        let generator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
+        let generator = PresentationURLGenerator(context: context, baseURL: catalog.baseURL)
         
         return documentationNode.availableSourceLanguages
             .sorted(by: { language1, language2 in
@@ -1515,7 +1515,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     init(
         context: DocumentationContext,
-        bundle: DocumentationBundle,
+        catalog: DocumentationCatalog,
         identifier: ResolvedTopicReference,
         source: URL?,
         renderContext: RenderContext? = nil,
@@ -1523,21 +1523,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
         emitSymbolAccessLevels: Bool = false
     ) {
         self.context = context
-        self.bundle = bundle
+        self.catalog = catalog
         self.identifier = identifier
         self.source = source
         self.renderContext = renderContext
-        self.contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
+        self.contentRenderer = DocumentationContentRenderer(documentationContext: context, catalog: catalog)
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
     }
 }
 
-fileprivate typealias BundleModuleIdentifier = String
+fileprivate typealias CatalogModuleIdentifier = String
 
-extension BundleModuleIdentifier {
-    fileprivate init(bundle: DocumentationBundle, moduleName: String) {
-        self = "\(bundle.identifier):\(moduleName)"
+extension CatalogModuleIdentifier {
+    fileprivate init(catalog: DocumentationCatalog, moduleName: String) {
+        self = "\(catalog.identifier):\(moduleName)"
     }
 }
 

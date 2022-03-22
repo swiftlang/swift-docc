@@ -18,12 +18,12 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
     /// Creates a DocC archive and then archives it with options  to produce static content which is then validated.
     func testConvertActionStaticHostableTestOutput() throws {
         
-        let bundleURL = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let catalogURL = Bundle.module.url(forResource: "TestCatalog", withExtension: "docc", subdirectory: "Test Catalogs")!
         let targetURL = try createTemporaryDirectory()
             
         let fileManager = FileManager.default
         
-        let targetBundleURL = targetURL.appendingPathComponent("Result.doccarchive")
+        let targetCatalogURL = targetURL.appendingPathComponent("Result.doccarchive")
         
         let testTemplateURL = try createTemporaryDirectory().appendingPathComponent("testTemplate")
         let templateFolder = Folder.testHTMLTemplateDirectory
@@ -33,10 +33,10 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
         let indexHTML = Folder.testHTMLTemplate(basePath: "test/folder")
 
         var action = try ConvertAction(
-            documentationBundleURL: bundleURL,
+            documentationCatalogURL: catalogURL,
             outOfProcessResolver: nil,
             analyze: false,
-            targetDirectory: targetBundleURL,
+            targetDirectory: targetCatalogURL,
             htmlTemplateDirectory: testTemplateURL,
             emitDigest: false,
             currentPlatforms: nil,
@@ -51,7 +51,7 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
         var expectedContent = ["data", "documentation", "tutorials", "downloads", "images", "metadata.json" ,"videos", "index.html", "index"]
         expectedContent += templateFolder.content.filter { $0 is Folder }.map{ $0.name }
         
-        let output = try fileManager.contentsOfDirectory(atPath: targetBundleURL.path)
+        let output = try fileManager.contentsOfDirectory(atPath: targetCatalogURL.path)
         XCTAssertEqual(Set(output), Set(expectedContent), "Unexpect output")
     
         for item in output {
@@ -60,13 +60,13 @@ class ConvertActionStaticHostableTests: StaticHostingBaseTests {
             switch item {
             case "documentation":
                 compareJSONFolder(fileManager: fileManager,
-                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
-                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                                  output: targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
+                                  input:  targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.documentationFolderName),
                                indexHTML: indexHTML)
             case "tutorials":
                 compareJSONFolder(fileManager: fileManager,
-                                  output: targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
-                                  input:  targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                                  output: targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
+                                  input:  targetCatalogURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName).appendingPathComponent(NodeURLGenerator.Path.tutorialsFolderName),
                                indexHTML: indexHTML)
             default:
                 continue

@@ -18,7 +18,7 @@ public struct PreviewOptions: ParsableArguments {
     
     public init() { }
 
-    /// Converts a documentation bundle.
+    /// Converts a documentation catalog.
     ///
     /// ``PreviewAction`` makes use of ``ConvertAction`` so we import all the options
     /// that ``Docc/Convert`` provides.

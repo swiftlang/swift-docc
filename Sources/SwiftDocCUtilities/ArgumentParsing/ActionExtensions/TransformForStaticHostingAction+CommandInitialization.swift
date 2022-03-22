@@ -26,7 +26,7 @@ extension TransformForStaticHostingAction {
         }
         
         try self.init(
-            documentationBundleURL: cmd.documentationArchive.urlOrFallback,
+            documentationCatalogURL: cmd.documentationArchive.urlOrFallback,
             outputURL: cmd.outputURL,
             hostingBasePath: cmd.hostingBasePath,
             htmlTemplateDirectory: htmlTemplateFolder )

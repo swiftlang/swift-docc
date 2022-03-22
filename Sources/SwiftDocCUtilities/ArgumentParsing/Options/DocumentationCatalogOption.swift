@@ -11,22 +11,25 @@
 import ArgumentParser
 import Foundation
 
-/// Resolves and validates a URL value that provides the path to a documentation bundle.
+/// Resolves and validates a URL value that provides the path to a documentation catalog.
 ///
 /// This option is used by the ``Docc/Convert`` subcommand.
-public struct DocumentationBundleOption: DirectoryPathOption {
+public struct DocumentationCatalogOption: DirectoryPathOption {
 
     public init() {}
 
-    /// The name of the command line argument used to specify a source bundle path.
-    static let argumentValueName = "source-bundle-path"
+    /// The name of the command line argument used to specify a source catalog path.
+    static let argumentValueName = "source-catalog-path"
 
-    /// The path to a bundle to be compiled by DocC.
+    /// The path to a catalog to be compiled by DocC.
     @Argument(
         help: ArgumentHelp(
-            "Path to a documentation bundle directory.",
-            discussion: "The '.docc' bundle docc will build.",
+            "Path to a documentation catalog directory.",
+            discussion: "The '.docc' catalog docc will build.",
             valueName: argumentValueName),
         transform: URL.init(fileURLWithPath:))
     public var url: URL?
 }
+
+@available(*, deprecated, renamed: "DocumentationCatalogOption")
+public typealias DocumentationBundleOption = DocumentationCatalogOption

@@ -17,19 +17,24 @@ import SymbolKit
 /// converting nodes in bulk, i.e. when converting a complete documentation model for example.
 public struct RenderContext {
     let documentationContext: DocumentationContext
-    let bundle: DocumentationBundle
+    let catalog: DocumentationCatalog
     let renderer: DocumentationContentRenderer
     
     /// Creates a new render context.
     /// - Warning: Creating a render context pre-renders all content that the context provides.
     /// - Parameters:
     ///   - documentationContext: A documentation context.
-    ///   - bundle: A documentation bundle.
-    public init(documentationContext: DocumentationContext, bundle: DocumentationBundle) {
+    ///   - catalog: A documentation catalog.
+    public init(documentationContext: DocumentationContext, catalog: DocumentationCatalog) {
         self.documentationContext = documentationContext
-        self.bundle = bundle
-        self.renderer = DocumentationContentRenderer(documentationContext: documentationContext, bundle: bundle)
+        self.catalog = catalog
+        self.renderer = DocumentationContentRenderer(documentationContext: documentationContext, catalog: catalog)
         createRenderedContent()
+    }
+    
+    @available(*, deprecated, renamed: "init(documentationContext:bundle:)")
+    public init(documentationContext: DocumentationContext, bundle: DocumentationCatalog) {
+        self = .init(documentationContext: documentationContext, catalog: bundle)
     }
     
     /// The pre-rendered content per node reference.
@@ -81,11 +86,11 @@ public struct RenderContext {
         
         let assets = documentationContext.assetManagers
             .reduce(into: [AssetReference: DataAsset]()) { (storage, element) in
-                let (bundleIdentifer, assetManager) = element
+                let (catalogIdentifer, assetManager) = element
             
                 for (name, asset) in assetManager.storage {
                     storage[
-                        AssetReference(assetName: name, bundleIdentifier: bundleIdentifer)
+                        AssetReference(assetName: name, catalogIdentifier: catalogIdentifer)
                     ] = asset
                 }
             }

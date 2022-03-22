@@ -20,16 +20,16 @@ extension RenderInlineContent: RenderContent {}
 
 struct RenderContentCompiler: MarkupVisitor {
     var context: DocumentationContext
-    var bundle: DocumentationBundle
+    var catalog: DocumentationCatalog
     var identifier: ResolvedTopicReference
     var imageReferences: [String: ImageReference] = [:]
     /// Resolved topic references that were seen by the visitor. These should be used to populate the references dictionary.
     var collectedTopicReferences = GroupedSequence<String, ResolvedTopicReference> { $0.absoluteString }
     var linkReferences: [String: LinkReference] = [:]
     
-    init(context: DocumentationContext, bundle: DocumentationBundle, identifier: ResolvedTopicReference) {
+    init(context: DocumentationContext, catalog: DocumentationCatalog, identifier: ResolvedTopicReference) {
         self.context = context
-        self.bundle = bundle
+        self.catalog = catalog
         self.identifier = identifier
     }
     
@@ -40,8 +40,8 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [RenderContent] {
-        // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
-        return [RenderBlockContent.codeListing(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil)]
+        // Default to the catalog's code listing syntax if one is not explicitly declared in the code block.
+        return [RenderBlockContent.codeListing(syntax: codeBlock.language ?? catalog.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil)]
     }
     
     mutating func visitHeading(_ heading: Heading) -> [RenderContent] {

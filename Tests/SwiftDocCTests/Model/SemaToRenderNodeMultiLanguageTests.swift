@@ -15,7 +15,7 @@ import XCTest
 
 class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     func testBaseRenderNodeFromMixedLanguageFramework() throws {
-        let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+        let (_, context) = try testCatalogAndContext(named: "MixedLanguageFramework")
         
         for documentationNode in context.documentationCache.values where documentationNode.kind.isSymbol {
             let symbolUSR = try XCTUnwrap((documentationNode.semantic as? Symbol)?.externalID)
@@ -364,7 +364,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testSymbolLinkWorkInMultipleLanguages() throws {
-        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+        let (_, catalog, context) = try testCatalogAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # ``MixedLanguageFramework/Bar``
             
@@ -381,12 +381,12 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             """.write(to: url.appendingPathComponent("bar.md"), atomically: true, encoding: .utf8)
         }
         
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(catalogIdentifier: catalog.identifier, path: "/documentation/MixedLanguageFramework/Bar", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
         
-        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        var translator = RenderNodeTranslator(context: context, catalog: catalog, identifier: node.reference, source: nil)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
         
         XCTAssert(context.problems.isEmpty, "Encountered unexpected problems: \(context.problems)")
@@ -569,11 +569,11 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testGeneratedImplementationsCollectionDoesNotCurateInAllUnavailableLanguages() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer { bundleURL in
+        let outputConsumer = try mixedLanguageFrameworkConsumer { catalogURL in
             // Update the clang symbol graph to remove the protocol method requirement, so that it's effectively
             // available in Swift only.
             
-            let clangSymbolGraphLocation = bundleURL
+            let clangSymbolGraphLocation = catalogURL
                 .appendingPathComponent("symbol-graphs")
                 .appendingPathComponent("clang")
                 .appendingPathComponent("MixedLanguageFramework.symbols.json")
@@ -816,7 +816,7 @@ private class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
     }
     
     func consume(problems: [Problem]) throws { }
-    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
+    func consume(assetsInCatalog catalog: DocumentationCatalog) throws { }
     func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
     func consume(indexingRecords: [IndexingRecord]) throws { }
     func consume(assets: [RenderReferenceType: [RenderReference]]) throws { }
@@ -874,22 +874,22 @@ extension TestRenderNodeOutputConsumer {
 
 fileprivate extension SemaToRenderNodeMixedLanguageTests {
     func mixedLanguageFrameworkConsumer(
-        configureBundle: ((URL) throws -> Void)? = nil
+        configureCatalog: ((URL) throws -> Void)? = nil
     ) throws -> TestRenderNodeOutputConsumer {
-        let (bundleURL, _, context) = try testBundleAndContext(
+        let (catalogURL, _, context) = try testCatalogAndContext(
             copying: "MixedLanguageFramework",
-            configureBundle: configureBundle
+            configureCatalog: configureCatalog
         )
         
         var converter = DocumentationConverter(
-            documentationBundleURL: bundleURL,
+            documentationCatalogURL: catalogURL,
             emitDigest: false,
             documentationCoverageOptions: .noCoverage,
             currentPlatforms: nil,
             workspace: context.dataProvider as! DocumentationWorkspace,
             context: context,
-            dataProvider: try LocalFileSystemDataProvider(rootURL: bundleURL),
-            bundleDiscoveryOptions: BundleDiscoveryOptions()
+            dataProvider: try LocalFileSystemDataProvider(rootURL: catalogURL),
+            catalogDiscoveryOptions: CatalogDiscoveryOptions()
         )
         
         let outputConsumer = TestRenderNodeOutputConsumer()

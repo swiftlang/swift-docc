@@ -14,7 +14,7 @@ import SymbolKit
 
 class GeneratedDataProviderTests: XCTestCase {
 
-    func testGeneratingBundles() throws {
+    func testGeneratingCatalogs() throws {
         let firstSymbolGraph = SymbolGraph(
             metadata: .init(
                 formatVersion: .init(major: 0, minor: 0, patch: 1),
@@ -47,7 +47,7 @@ class GeneratedDataProviderTests: XCTestCase {
             }
         )
         
-        let options = BundleDiscoveryOptions(
+        let options = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Custom Display Name",
                 "CFBundleIdentifier": "com.test.example",
@@ -58,18 +58,18 @@ class GeneratedDataProviderTests: XCTestCase {
                 URL(fileURLWithPath: "third.symbols.json"),
             ]
         )
-        let bundles = try dataProvider.bundles(options: options)
-        XCTAssertEqual(bundles.count, 1)
-        let bundle = try XCTUnwrap(bundles.first)
+        let catalogs = try dataProvider.catalogs(options: options)
+        XCTAssertEqual(catalogs.count, 1)
+        let catalog = try XCTUnwrap(catalogs.first)
         
-        XCTAssertEqual(bundle.displayName, "Custom Display Name")
-        XCTAssertEqual(bundle.symbolGraphURLs.map { $0.lastPathComponent }.sorted(), [
+        XCTAssertEqual(catalog.displayName, "Custom Display Name")
+        XCTAssertEqual(catalog.symbolGraphURLs.map { $0.lastPathComponent }.sorted(), [
             "first.symbols.json",
             "second.symbols.json",
             "third.symbols.json",
             
         ])
-        XCTAssertEqual(bundle.markupURLs.map { $0.path }.sorted(), [
+        XCTAssertEqual(catalog.markupURLs.map { $0.path }.sorted(), [
             "FirstModuleName.md",
             "SecondModuleName.md",
             // No third file since that symbol graph has the same module name as the first
@@ -85,7 +85,7 @@ class GeneratedDataProviderTests: XCTestCase {
         )
     }
     
-    func testGeneratingSingleModuleBundle() throws {
+    func testGeneratingSingleModuleCatalog() throws {
         let firstSymbolGraph = SymbolGraph(
             metadata: .init(
                 formatVersion: .init(major: 0, minor: 0, patch: 1),
@@ -114,7 +114,7 @@ class GeneratedDataProviderTests: XCTestCase {
             }
         )
         
-        let options = BundleDiscoveryOptions(
+        let options = CatalogDiscoveryOptions(
             infoPlistFallbacks: [
                 "CFBundleDisplayName": "Custom Display Name",
                 "CFBundleIdentifier": "com.test.example",
@@ -124,16 +124,16 @@ class GeneratedDataProviderTests: XCTestCase {
                 URL(fileURLWithPath: "second.symbols.json"),
             ]
         )
-        let bundles = try dataProvider.bundles(options: options)
-        XCTAssertEqual(bundles.count, 1)
-        let bundle = try XCTUnwrap(bundles.first)
+        let catalogs = try dataProvider.catalogs(options: options)
+        XCTAssertEqual(catalogs.count, 1)
+        let catalog = try XCTUnwrap(catalogs.first)
         
-        XCTAssertEqual(bundle.displayName, "Custom Display Name")
-        XCTAssertEqual(bundle.symbolGraphURLs.map { $0.lastPathComponent }.sorted(), [
+        XCTAssertEqual(catalog.displayName, "Custom Display Name")
+        XCTAssertEqual(catalog.symbolGraphURLs.map { $0.lastPathComponent }.sorted(), [
             "first.symbols.json",
             "second.symbols.json",
         ])
-        XCTAssertEqual(bundle.markupURLs.map { $0.path }.sorted(), [
+        XCTAssertEqual(catalog.markupURLs.map { $0.path }.sorted(), [
             "FirstModuleName.md",
             // No second file since that symbol graph has the same module name as the first
         ])
