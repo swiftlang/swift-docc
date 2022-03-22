@@ -54,7 +54,7 @@ public class NavigatorIndex {
     public static let UnknownBundleIdentifier = UnknownCatalogIdentifier
     
     /// The key used to store the name of the catalog inside the database.
-    public static let catalogKey = "catalogIdentifier"
+    public static let catalogKey = "bundleIdentifier"
     
     @available(*, deprecated, renamed: "catalogKey")
     public static let bundleKey = catalogKey

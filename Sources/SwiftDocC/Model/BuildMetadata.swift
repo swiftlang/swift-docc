@@ -13,6 +13,12 @@ import Foundation
 /// A value that encapsulates metadata for a documentation catalog that DocC built.
 public struct BuildMetadata: Codable {
     
+    public enum CodingKeys: String, CodingKey {
+        case schemaVersion
+        case catalogDisplayName = "bundleDisplayName"
+        case catalogIdentifier = "bundleIdentifier"
+    }
+    
     /// The current version of the build metadata schema.
     public var schemaVersion = SemanticVersion(
         major: 0,
