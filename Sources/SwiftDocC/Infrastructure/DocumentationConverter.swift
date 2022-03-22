@@ -162,13 +162,13 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         dataProvider: DocumentationWorkspaceDataProvider,
         externalIDsToConvert: [String]? = nil,
         documentPathsToConvert: [String]? = nil,
-        catalogDiscoveryOptions: CatalogDiscoveryOptions,
+        bundleDiscoveryOptions: CatalogDiscoveryOptions,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false,
         isCancelled: Synchronized<Bool>? = nil,
         diagnosticEngine: DiagnosticEngine = .init()
     ) {
-        self = .init(documentationCatalogURL: documentationBundleURL, emitDigest: emitDigest, documentationCoverageOptions: documentationCoverageOptions, currentPlatforms: currentPlatforms, workspace: workspace, context: context, dataProvider: dataProvider, externalIDsToConvert: externalIDsToConvert, documentPathsToConvert: documentPathsToConvert, catalogDiscoveryOptions: catalogDiscoveryOptions, emitSymbolSourceFileURIs: emitSymbolSourceFileURIs, emitSymbolAccessLevels: emitSymbolAccessLevels, isCancelled: isCancelled, diagnosticEngine: diagnosticEngine)
+        self = .init(documentationCatalogURL: documentationBundleURL, emitDigest: emitDigest, documentationCoverageOptions: documentationCoverageOptions, currentPlatforms: currentPlatforms, workspace: workspace, context: context, dataProvider: dataProvider, externalIDsToConvert: externalIDsToConvert, documentPathsToConvert: documentPathsToConvert, catalogDiscoveryOptions: bundleDiscoveryOptions, emitSymbolSourceFileURIs: emitSymbolSourceFileURIs, emitSymbolAccessLevels: emitSymbolAccessLevels, isCancelled: isCancelled, diagnosticEngine: diagnosticEngine)
     }
     
     /// Returns the first catalog in the source directory, if any.

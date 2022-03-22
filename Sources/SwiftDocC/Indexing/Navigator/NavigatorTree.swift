@@ -425,6 +425,12 @@ public class NavigatorTree {
             self.catalogIdentifier = catalogIdentifier
         }
         
+        @available(*, deprecated, renamed: "init(item:catalogIdentifier:)")
+        public init(item: NavigatorItem, bundleIdentifier: String) {
+            self.item = item
+            self.catalogIdentifier = bundleIdentifier
+        }
+        
         /**
          Add a child to the current node.
          
@@ -511,6 +517,11 @@ public class NavigatorTree {
                                  platformMask: Platform.Name.any.mask,
                                  availabilityID: 0)
         return Node(item: root, catalogIdentifier: catalogIdentifier)
+    }
+    
+    @available(*, deprecated, renamed: "rootNode(catalogIdentifier:)")
+    public static func rootNode(bundleIdentifier: String) -> NavigatorTree.Node {
+        return rootNode(catalogIdentifier: bundleIdentifier)
     }
     
 }
