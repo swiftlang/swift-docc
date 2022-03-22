@@ -73,7 +73,7 @@ To host a documentation archive on your website, do the following:
    `MyNewPackage.doccarchive`.
 2. Add a rule on the server to rewrite incoming URLs that begin with
    `/documentation` or `/tutorial` to `MyNewPackage.doccarchive/index.html`.
-3. Add another rule for incoming requests to support catalogd resources in the
+3. Add another rule for incoming requests to support catalog resources in the
    documentation archive, such as CSS files and image assets.
 
 The following example `.htaccess` file defines rules suitable for use with Apache:
