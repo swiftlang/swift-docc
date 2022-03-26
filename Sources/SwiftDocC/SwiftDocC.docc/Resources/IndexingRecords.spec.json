@@ -53,6 +53,12 @@
                     },
                     "rawIndexableTextContent": {
                         "type": "string"
+                    },
+                    "platforms": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PlatformAvailability"
+                        }
                     }
                 }
             },
@@ -105,6 +111,44 @@
                     },
                     "interfaceLanguage": {
                         "type": "string"
+                    }
+                }
+            },
+            "PlatformAvailability": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "deprecated": {
+                        "type": "boolean",
+                        "format": "true"
+                    },
+                    "unavailable": {
+                        "type": "boolean",
+                        "format": "true"
+                    },
+                    "introducedAt": {
+                        "type": "string",
+                        "format": "version"
+                    },
+                    "deprecatedAt": {
+                        "type": "string",
+                        "format": "version"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "renamed": {
+                        "type": "string"
+                    },
+                    "current": {
+                        "type": "string",
+                        "format": "version"
+                    },
+                    "beta": {
+                        "type": "boolean",
+                        "format": "true"
                     }
                 }
             }

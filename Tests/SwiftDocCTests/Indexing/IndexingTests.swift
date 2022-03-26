@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -207,7 +207,20 @@ class IndexingTests: XCTestCase {
     }
     
     func testSymbolIndexingRecord() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            // Modify the documentaion to have default availability for MyKit so that there is platform availability
+            // information for MyProtocol (both in the render node and in the indexing record.
+            let plistURL = url.appendingPathComponent("Info.plist")
+            let plistData = try Data(contentsOf: plistURL)
+            var plist = try DocumentationBundle.Info(from: plistData)
+            let existingAvailability = plist.defaultAvailability?.modules["FillIntroduced"]
+            plist.defaultAvailability?.modules["MyKit"] = existingAvailability
+            XCTAssertNotNil(plist.defaultAvailability?.modules["MyKit"])
+            
+            let updatedPlistData = try PropertyListEncoder().encode(plist)
+            try updatedPlistData.write(to: plistURL)
+        }
+        
         let articleReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift)
         let node = try context.entity(with: articleReference)
         let article = node.semantic as! Symbol
@@ -216,13 +229,16 @@ class IndexingTests: XCTestCase {
         let indexingRecords = try renderNode.indexingRecords(onPage: articleReference)
         
         XCTAssertEqual(1, indexingRecords.count)
+        let expectedPlatformInformation = renderNode.metadata.platforms
+        XCTAssertNotNil(expectedPlatformInformation)
         
         XCTAssertEqual(IndexingRecord(kind: .symbol,
                                       location: .topLevelPage(articleReference),
                                       title: "MyProtocol",
                                       summary: "An abstract of a protocol using a String id value.",
                                       headings: ["Return Value", "Discussion"],
-                                      rawIndexableTextContent: "An abstract of a protocol using a String id value.  Return Value A String id value. A name of the item to find. Discussion Further discussion. Exercise links to symbols: relative MyClass and absolute MyClass. Exercise unresolved symbols: unresolved MyUnresolvedSymbol. Exercise known unresolvable symbols: know unresolvable NSCodable. Exercise external references: doc://com.test.external/ExternalPage One ordered Two ordered Three ordered One unordered Two unordered Three unordered"),
+                                      rawIndexableTextContent: "An abstract of a protocol using a String id value.  Return Value A String id value. A name of the item to find. Discussion Further discussion. Exercise links to symbols: relative MyClass and absolute MyClass. Exercise unresolved symbols: unresolved MyUnresolvedSymbol. Exercise known unresolvable symbols: know unresolvable NSCodable. Exercise external references: doc://com.test.external/ExternalPage One ordered Two ordered Three ordered One unordered Two unordered Three unordered",
+                                     platforms: expectedPlatformInformation),
                        indexingRecords[0])
     }
 }
