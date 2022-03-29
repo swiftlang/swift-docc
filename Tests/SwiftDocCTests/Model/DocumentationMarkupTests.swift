@@ -155,7 +155,6 @@ class DocumentationMarkupTests: XCTestCase {
             Text " Abstract."
             """
             let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
-            print(model.abstractSection!.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n"))
             XCTAssertEqual(expected, model.abstractSection?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n"))
         }
 
