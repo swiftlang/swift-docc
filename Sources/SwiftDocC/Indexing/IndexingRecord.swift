@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -90,13 +90,19 @@ public struct IndexingRecord: Equatable {
      */
     public let rawIndexableTextContent: String
     
-    init(kind: Kind, location: Location, title: String, summary: String, headings: [String], rawIndexableTextContent: String) {
+    /// The availability information for a platform.
+    public typealias PlatformAvailability = AvailabilityRenderItem
+    /// Information about the platforms for which the summarized element is available.
+    public let platforms: [PlatformAvailability]?
+
+    init(kind: Kind, location: Location, title: String, summary: String, headings: [String], rawIndexableTextContent: String, platforms: [PlatformAvailability]? = nil) {
         self.kind = kind
         self.location = location
         self.title = title
         self.summary = summary
         self.headings = headings
         self.rawIndexableTextContent = rawIndexableTextContent
+        self.platforms = platforms
     }
 }
 
