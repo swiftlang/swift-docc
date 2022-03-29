@@ -252,11 +252,7 @@ public struct DocumentationNode {
             relationshipsVariants: DocumentationDataVariants(
                 defaultVariantValue: RelationshipsSection()
             ),
-            abstractSectionVariants: DocumentationDataVariants(
-                defaultVariantValue: AbstractSection(
-                    paragraph: .init([Text("Placeholder Abstract")])
-                )
-            ),
+            abstractSectionVariants: .empty,
             discussionVariants: .empty,
             topicsVariants: .empty,
             seeAlsoVariants: .empty,
