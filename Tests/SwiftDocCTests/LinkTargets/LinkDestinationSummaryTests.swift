@@ -363,7 +363,7 @@ class ExternalLinkableTests: XCTestCase {
                 [],
                 """
                 Expected no task groups for the Swift documentation because the symbol \
-                it curates (``Foo-occ.typealias``) is available in Objective-C only.
+                it curates (``Foo-c.typealias``) is available in Objective-C only.
                 """
             )
             
@@ -417,7 +417,7 @@ class ExternalLinkableTests: XCTestCase {
                             summary.referenceURL
                                 .deletingLastPathComponent() // myStringFunction:error:
                                 .deletingLastPathComponent() // Bar
-                                .appendingPathComponent("Foo-occ.typealias").absoluteString,
+                                .appendingPathComponent("Foo-c.typealias").absoluteString,
                         ]
                     )
                 ]
