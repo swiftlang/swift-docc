@@ -81,9 +81,7 @@ public struct VideoReference: MediaReference, URLReference {
         // convert the data asset to a serializable object
         var result = [VariantProxy]()
         asset.variants.sorted(by: \.value.path).forEach { (key, value) in
-            // If a scheme is present it means it's an absolute URL
-            let isAbsoluteWebURL = !value.isFileURL && value.scheme?.isEmpty == false
-            let url = isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent)
+            let url = value.isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent)
             result.append(VariantProxy(url: url, traits: key))
         }
         try container.encode(result, forKey: .variants)

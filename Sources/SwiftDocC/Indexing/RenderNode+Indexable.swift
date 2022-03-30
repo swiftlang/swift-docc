@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -65,7 +65,7 @@ extension RenderNode: Indexable {
 
         let summary = summaryParagraph?.rawIndexableTextContent(references: references) ?? ""
         
-        return IndexingRecord(kind: kind, location: .topLevelPage(identifier), title: title, summary: summary, headings: self.headings, rawIndexableTextContent: self.rawIndexableTextContent)
+        return IndexingRecord(kind: kind, location: .topLevelPage(identifier), title: title, summary: summary, headings: self.headings, rawIndexableTextContent: self.rawIndexableTextContent, platforms: metadata.platforms)
     }
     
     public func indexingRecords(onPage page: ResolvedTopicReference) throws -> [IndexingRecord] {

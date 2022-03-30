@@ -510,6 +510,26 @@ class DocumentationContextTests: XCTestCase {
         )
     }
     
+    func testExternalAssets() throws {
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        let bundle = try testBundle(named: "TestBundle")
+        
+        let image = context.resolveAsset(named: "https://example.com/figure.png", in: bundle.rootReference)
+        XCTAssertNotNil(image)
+        guard let image = image else {
+            return
+        }
+        XCTAssertEqual(image.context, .display)
+        XCTAssertEqual(image.variants, [DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): URL(string: "https://example.com/figure.png")!])
+        
+        let video = context.resolveAsset(named: "https://example.com/introvideo.mp4", in: bundle.rootReference)
+        XCTAssertNotNil(video)
+        guard let video = video else { return }
+        XCTAssertEqual(video.context, .display)
+        XCTAssertEqual(video.variants, [DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): URL(string: "https://example.com/introvideo.mp4")!])
+    }
+    
     func testDownloadAssets() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)

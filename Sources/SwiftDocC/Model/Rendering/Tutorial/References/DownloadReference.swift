@@ -62,7 +62,6 @@ public struct DownloadReference: RenderReference, URLReference {
 
 extension DownloadReference {
     private func renderURL(for url: URL) -> URL {
-        let isAbsoluteWebURL = !url.isFileURL && url.scheme?.isEmpty == false && url.scheme != ResolvedTopicReference.urlScheme // if scheme is present it means it's an absolute URL
-        return isAbsoluteWebURL ? url : destinationURL(for: url.lastPathComponent)
+        url.isAbsoluteWebURL ? url : destinationURL(for: url.lastPathComponent)
     }
 }

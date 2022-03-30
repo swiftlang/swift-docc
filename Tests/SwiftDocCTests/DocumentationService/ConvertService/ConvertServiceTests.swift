@@ -835,11 +835,6 @@ class ConvertServiceTests: XCTestCase {
             assert: { renderNodes, referenceStore in
                 let referenceStore = try XCTUnwrap(referenceStore)
                 let paths = Set(referenceStore.topics.keys.map(\.path))
-                
-                Set(referenceStore.topics.keys.map(\.path)).forEach { s in
-                    print("path: \(s)")
-                }
-                
                 XCTAssertTrue(paths.contains("/documentation/SideKit/SideClass/Element"))
                 XCTAssertFalse(paths.contains("/documentation/SideKit/SideClass/Element/Protocol-Implementations"))
             }
