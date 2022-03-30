@@ -1936,8 +1936,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Keep track of the root modules registered from symbol graph files, we'll need them to automatically
         // curate articles.
         rootModules = topicGraph.nodes.values.compactMap { node in
-            guard node.kind == .module,
-                  !onlyHasSnippetRelatedChildren(for: node.reference) else {
+            guard node.kind == .module else {
                 return nil
             }
             return node.reference
@@ -2009,6 +2008,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         topicGraphGlobalAnalysis()
         
         preResolveModuleNames()
+
+        // Symbol Graph modules whose children are all snippets should not
+        // be presented as a top-level preview page.
+        // First, a package might have a similar but different name to its
+        // primary library. Second, snippets are not automatically curated as
+        // other symbols might be.
+        rootModules.removeAll {
+              onlyHasSnippetRelatedChildren(for: $0)
+        }
     }
     
     /// Given a list of topics that have been automatically curated, checks if a topic has been additionally manually curated
