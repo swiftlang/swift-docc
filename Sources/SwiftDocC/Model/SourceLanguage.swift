@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,14 +14,18 @@ public struct SourceLanguage: Hashable, Codable {
     public var name: String
     /// A globally unique identifier for the language.
     public var id: String
+    /// Aliases for the language's identifier.
+    public var idAliases: [String] = []
     
     /// Creates a new language with a given name and identifier.
     /// - Parameters:
     ///   - name: The display name of the programming language.
     ///   - id: A globally unique identifier for the language.
-    public init(name: String, id: String) {
+    ///   - idAliases: Aliases for the language's identifier.
+    public init(name: String, id: String, idAliases: [String] = []) {
         self.name = name
         self.id = id
+        self.idAliases = idAliases
     }
     
     /// Finds the programming language that matches a given query identifier.
@@ -34,7 +38,7 @@ public struct SourceLanguage: Hashable, Codable {
         switch queryID {
         case "swift":
             self = .swift
-        case "occ":
+        case "occ", "objective-c", "c":
             self = .objectiveC
         case "javascript":
             self = .javaScript
@@ -52,7 +56,7 @@ public struct SourceLanguage: Hashable, Codable {
     public init(id: String) {
         switch id {
         case "swift": self = .swift
-        case "occ": self = .objectiveC
+        case "occ", "objective-c", "c": self = .objectiveC
         case "javascript": self = .javaScript
         case "data": self = .data
         case "metal": self = .metal
@@ -101,17 +105,30 @@ public struct SourceLanguage: Hashable, Codable {
     }
 
     private static func firstKnownLanguage(withName name: String) -> SourceLanguage? {
-        return SourceLanguage.knownLanguages.first { $0.name.lowercased() == name.lowercased() }
+        SourceLanguage.knownLanguages.first { $0.name.lowercased() == name.lowercased() }
     }
     
     private static func firstKnownLanguage(withIdentifier id: String) -> SourceLanguage? {
-        return SourceLanguage.knownLanguages.first { $0.id.lowercased() == id.lowercased() }
+        SourceLanguage.knownLanguages.first { knownLanguage in
+            ([knownLanguage.id] + knownLanguage.idAliases)
+                .map { $0.lowercased() }
+                .contains(id)
+        }
     }
     
     /// The Swift programming language.
     public static let swift = SourceLanguage(name: "Swift", id: "swift")
+
     /// The Objective-C programming language.
-    public static let objectiveC = SourceLanguage(name: "Objective-C", id: "occ")
+    public static let objectiveC = SourceLanguage(
+        name: "Objective-C",
+        id: "occ",
+        idAliases: [
+            "objective-c",
+            "c", // FIXME: DocC should display C as its own language (SR-16050).
+        ]
+    )
+
     /// The JavaScript programming language or another language that conforms to the ECMAScript specification.
     public static let javaScript = SourceLanguage(name: "JavaScript", id: "javascript")
     /// Miscellaneous data, that's not a programming language.

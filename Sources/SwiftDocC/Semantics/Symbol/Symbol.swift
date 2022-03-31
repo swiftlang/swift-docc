@@ -303,7 +303,7 @@ extension Symbol {
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
     func mergeDeclaration(mergingDeclaration: SymbolGraph.Symbol.DeclarationFragments, identifier: String, symbolAvailability: SymbolGraph.Symbol.Availability?, selector: UnifiedSymbolGraph.Selector) throws {
-        let trait = DocumentationDataVariantsTrait(interfaceLanguage: selector.interfaceLanguage)
+        let trait = DocumentationDataVariantsTrait(for: selector)
         let platformName = selector.platform
 
         if let platformName = platformName,

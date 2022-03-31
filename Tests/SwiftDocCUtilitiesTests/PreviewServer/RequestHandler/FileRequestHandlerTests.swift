@@ -63,7 +63,10 @@ class FileRequestHandlerTests: XCTestCase {
             ]),
             Folder(name: "downloads", content: [
                 TextFile(name: "project.zip", utf8Content: "zip"),
-            ])
+            ]),
+            Folder(name: "index", content: [
+                TextFile(name: "index.json", utf8Content: "data"),
+            ]),
         ])
 
         try verifyAsset(root: tempFolderURL, path: "/data/test.json", body: "data", type: "application/json")
@@ -84,6 +87,9 @@ class FileRequestHandlerTests: XCTestCase {
         try verifyAsset(root: tempFolderURL, path: "/videos/video.mov", body: "mov", type: "video/quicktime")
         try verifyAsset(root: tempFolderURL, path: "/videos/video.avi", body: "avi", type: "video/x-msvideo")
         try verifyAsset(root: tempFolderURL, path: "/downloads/project.zip", body: "zip", type: "application/zip")
+        
+        // RenderIndex navigator index json
+        try verifyAsset(root: tempFolderURL, path: "/index/index.json", body: "data", type: "application/json")
     }
     
     func testFileHandlerAssetsMissing() throws {
