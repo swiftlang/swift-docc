@@ -326,14 +326,14 @@ class ConvertActionTests: XCTestCase {
         let myKitNode = try JSONDecoder().decode(RenderNode.self, from: myKitNodeData)
         
         // Verify that framework page doesn't get automatic abstract
-        XCTAssertEqual(myKitNode.abstract, [.text("")])
+        XCTAssertNil(myKitNode.abstract)
         XCTAssertTrue(myKitNode.primaryContentSections.isEmpty)
         XCTAssertEqual(myKitNode.topicSections.count, 3) // Automatic curation of the symbols in the symbol graph file
         
-        // Verify that non-framework symbols do get automatic abstract.
+        // Verify that non-framework symbols also do not get automatic abstracts.
         let myProtocolNodeData = try XCTUnwrap(outputData["/output/data/documentation/mykit/myprotocol.json"])
         let myProtocolNode = try JSONDecoder().decode(RenderNode.self, from: myProtocolNodeData)
-        XCTAssertEqual(myProtocolNode.abstract, [.text("No overview available.")])
+        XCTAssertNil(myProtocolNode.abstract)
     }
     
     func testConvertWithoutBundleErrorMessage() throws {
