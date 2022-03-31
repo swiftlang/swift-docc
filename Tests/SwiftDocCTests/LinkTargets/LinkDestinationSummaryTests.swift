@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -44,11 +44,11 @@ class ExternalLinkableTests: XCTestCase {
             TextFile(name: "Tutorial.tutorial", utf8Content: """
                 @Tutorial(time: 20, projectFiles: project.zip) {
                    @XcodeRequirement(title: "Xcode 10.2 Beta 3", destination: "https://www.example.com/download")
-                   @Intro(title: "Basic Augmented Reality App", background: image.jpg) {
+                   @Intro(title: "Basic Augmented Reality App 💻", background: image.jpg) {
                       @Video(source: video.mov)
                    }
                    
-                   @Section(title: "Create a New AR Project") {
+                   @Section(title: "Create a New AR Project 💻") {
                       @ContentAndMedia(layout: vertical) {
                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
                          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
@@ -109,14 +109,14 @@ class ExternalLinkableTests: XCTestCase {
         
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let pageSummary = summaries[0]
-        XCTAssertEqual(pageSummary.title, "Basic Augmented Reality App")
+        XCTAssertEqual(pageSummary.title, "Basic Augmented Reality App 💻")
         XCTAssertEqual(pageSummary.path, "/tutorials/testbundle/tutorial")
         XCTAssertEqual(pageSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial")
         XCTAssertEqual(pageSummary.language, .swift)
         XCTAssertEqual(pageSummary.kind, .tutorial)
         XCTAssertEqual(pageSummary.taskGroups, [
             .init(title: nil,
-                  identifiers: ["doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project"]
+                  identifiers: ["doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project-%F0%9F%92%BB"]
             ),
         ])
         XCTAssertEqual(pageSummary.availableLanguages, [.swift])
@@ -127,9 +127,9 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertNil(pageSummary.abstract, "There is no text to use as an abstract for the tutorial page")
 
         let sectionSummary = summaries[1]
-        XCTAssertEqual(sectionSummary.title, "Create a New AR Project")
-        XCTAssertEqual(sectionSummary.path, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project")
-        XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project")
+        XCTAssertEqual(sectionSummary.title, "Create a New AR Project 💻")
+        XCTAssertEqual(sectionSummary.path, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
+        XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
         XCTAssertEqual(sectionSummary.language, .swift)
         XCTAssertEqual(sectionSummary.kind, .onPageLandmark)
         XCTAssertEqual(sectionSummary.taskGroups, [])

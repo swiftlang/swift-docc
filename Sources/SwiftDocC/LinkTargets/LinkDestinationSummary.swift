@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -215,7 +215,7 @@ public extension DocumentationNode {
 
         let platforms = renderNode.metadata.platforms
         
-        let landmarkSummaries = ((semantic as? Tutorial)?.landmarks ?? (semantic as? TutorialArticle)?.landmarks ?? []).map {
+        let landmarkSummaries = ((semantic as? Tutorial)?.landmarks ?? (semantic as? TutorialArticle)?.landmarks ?? []).compactMap {
             LinkDestinationSummary(landmark: $0, basePath: presentationURL.path, page: self, platforms: platforms, compiler: &compiler)
         }
         
@@ -359,8 +359,17 @@ extension LinkDestinationSummary {
     ///   - basePath: The bundle-relative path of the page that contain this section.
     ///   - page: The topic reference of the page that contain this section.
     ///   - compiler: The content compiler that's used to render the section's abstract.
-    init(landmark: Landmark, basePath: String, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
+    init?(landmark: Landmark, basePath: String, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
         let anchor = urlReadableFragment(landmark.title)
+        
+        guard let path: String = {
+            var components = URLComponents()
+            components.path = basePath
+            components.fragment = anchor // use an in-page anchor for the landmark's path
+            return components.url?.absoluteString
+        }() else {
+            return nil
+        }
         
         let abstract: Abstract?
         if let abstracted = landmark as? Abstracted {
@@ -374,7 +383,7 @@ extension LinkDestinationSummary {
         self.init(
             kind: .onPageLandmark,
             language: page.sourceLanguage,
-            path: basePath + "#\(anchor)", // use an in-page anchor for the landmark's path
+            path: path,
             referenceURL: page.reference.withFragment(anchor).url,
             title: landmark.title,
             abstract: abstract,
