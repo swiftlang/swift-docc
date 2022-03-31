@@ -67,6 +67,7 @@ struct FileRequestHandler: RequestHandlerFactory {
     /// a list of file and content types allowed in those locations.
     static let assets: [AssetFileMetadata] = [
         AssetFileMetadata(folderPath: "/data/", mimetype: { _ in "application/json" }),
+        AssetFileMetadata(folderPath: "/index/", mimetype: { _ in "application/json" }),
         AssetFileMetadata(folderPath: "/css/", mimetype: { _ in "text/css" }),
         AssetFileMetadata(folderPath: "/js/", mimetype: { _ in "text/javascript" }),
         AssetFileMetadata(folderPath: "/fonts/", mimetype: { name in
