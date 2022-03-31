@@ -2398,11 +2398,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
     /// Returns whether a documentation node only has snippet or snippet group children.
     func onlyHasSnippetRelatedChildren(for reference: ResolvedTopicReference) -> Bool {
-        let children = children(of: reference)
-        guard !children.isEmpty else {
+        guard topicGraph.nodeWithReference(reference)?.kind == .module else {
             return false
         }
-        return children
+        return children(of: reference)
             .compactMap { $0.kind }
             .allSatisfy({ $0 == .snippet || $0 == .snippetGroup })
     }
