@@ -10,6 +10,7 @@
 
 import Foundation
 import XCTest
+import SymbolKit
 @testable import SwiftDocC
 
 class DocumentationDataVariantsTests: XCTestCase {
@@ -83,5 +84,17 @@ class DocumentationDataVariantsTests: XCTestCase {
         XCTAssertEqual(variants.firstValue, "Swift")
         variants[objectiveCTrait] = "Objective-C"
         XCTAssertEqual(variants.firstValue, "Swift") // Swift is still treated as the default value.
+    }
+
+    func testInitializesUsingSelectorLanguage() {
+        XCTAssertEqual(
+            DocumentationDataVariantsTrait(
+                for: UnifiedSymbolGraph.Selector(
+                    interfaceLanguage: "MyLanguage",
+                    platform: nil
+                )
+            ).interfaceLanguage,
+            "MyLanguage"
+        )
     }
 }

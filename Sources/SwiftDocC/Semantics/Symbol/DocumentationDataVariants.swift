@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import SymbolKit
 
 /// A model type that encapsulates variants of documentation node data.
 ///
@@ -140,5 +141,15 @@ public struct DocumentationDataVariantsTrait: Hashable {
     /// - Parameter interfaceLanguage: The language in which a documentation node is relevant.
     public init(interfaceLanguage: String? = nil) {
         self.interfaceLanguage = interfaceLanguage
+    }
+
+    /// Creates a new trait given a symbol graph selector.
+    ///
+    /// - Parameter selector: The symbol graph selector to use when creating the trait.
+    public init(for selector: UnifiedSymbolGraph.Selector) {
+        self.init(
+            interfaceLanguage: SourceLanguage(knownLanguageIdentifier: selector.interfaceLanguage)?.id
+                ?? selector.interfaceLanguage
+        )
     }
 }

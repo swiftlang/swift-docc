@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -76,9 +76,26 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             )
         }
     }
-    
-    func testOutputsMultiLanguageRenderNodes() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer()
+
+    func assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: String) throws {
+        let outputConsumer = try mixedLanguageFrameworkConsumer { bundleURL in
+            // Update the clang symbol graph with the Objective-C identifier given in variantInterfaceLanguage.
+            
+            let clangSymbolGraphLocation = bundleURL
+                .appendingPathComponent("symbol-graphs")
+                .appendingPathComponent("clang")
+                .appendingPathComponent("MixedLanguageFramework.symbols.json")
+            
+            var clangSymbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: clangSymbolGraphLocation))
+            
+            clangSymbolGraph.symbols = clangSymbolGraph.symbols.mapValues { symbol in
+                var symbol = symbol
+                symbol.identifier.interfaceLanguage = variantInterfaceLanguage
+                return symbol
+            }
+            
+            try JSONEncoder().encode(clangSymbolGraph).write(to: clangSymbolGraphLocation)
+        }
         
         XCTAssertEqual(
             Set(
@@ -136,7 +153,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
                 "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
                 "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod",
-             
+                
                 "MixedLanguageProtocol Implementations",
                 "Article",
                 "APICollection",
@@ -146,7 +163,19 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             ]
         )
     }
-    
+
+    func testOutputsMultiLanguageRenderNodesWithOccIdentifier() throws {
+        try assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: "occ")
+    }
+
+    func testOutputsMultiLanguageRenderNodesWithObjectiveCIdentifier() throws {
+        try assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: "objective-c")
+    }
+
+    func testOutputsMultiLanguageRenderNodesWithCIdentifier() throws {
+        try assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: "c")
+    }
+
     func testFrameworkRenderNodeHasExpectedContentAcrossLanguages() throws {
         let outputConsumer = try mixedLanguageFrameworkConsumer()
         let mixedLanguageFrameworkRenderNode = try outputConsumer.renderNode(
