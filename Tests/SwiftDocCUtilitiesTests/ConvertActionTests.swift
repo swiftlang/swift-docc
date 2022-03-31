@@ -1095,7 +1095,6 @@ class ConvertActionTests: XCTestCase {
                 return [
                     LinkDestinationSummary(
                         kind: .module,
-                        path: "/documentation/testbed",
                         referenceURL: reference.url,
                         title: "TestBed",
                         language: .swift,
@@ -1114,7 +1113,6 @@ class ConvertActionTests: XCTestCase {
                 return [
                     LinkDestinationSummary(
                         kind: .structure,
-                        path: "/documentation/testbed/a",
                         referenceURL: reference.url,
                         title: "A",
                         language: .swift,
@@ -1130,7 +1128,6 @@ class ConvertActionTests: XCTestCase {
                 return [
                     LinkDestinationSummary(
                         kind: .article,
-                        path: "/documentation/testbundle/article",
                         referenceURL: reference.url,
                         title: "This is an article",
                         language: .swift,
@@ -1296,7 +1293,6 @@ class ConvertActionTests: XCTestCase {
                 return [
                     LinkDestinationSummary(
                         kind: .tutorialArticle,
-                        path: "/tutorials/testbundle/article",
                         referenceURL: reference.url,
                         title: "Making an Augmented Reality App",
                         language: .swift,
@@ -1308,7 +1304,6 @@ class ConvertActionTests: XCTestCase {
                     ),
                     LinkDestinationSummary(
                         kind: .onPageLandmark,
-                        path: "/tutorials/testbundle/article#Section-Name",
                         referenceURL: reference.withFragment("Section-Name").url,
                         title: "Section Name",
                         language: .swift,
@@ -1323,7 +1318,6 @@ class ConvertActionTests: XCTestCase {
                 return [
                     LinkDestinationSummary(
                         kind: .technology,
-                        path: "/tutorials/technologyx",
                         referenceURL: reference.url,
                         title: "Technology X",
                         language: .swift,
@@ -2385,7 +2379,6 @@ private extension LinkDestinationSummary {
     // A convenience initializer for test data.
     init(
         kind: DocumentationNode.Kind,
-        path: String,
         referenceURL: URL,
         title: String,
         language: SourceLanguage,
@@ -2399,7 +2392,6 @@ private extension LinkDestinationSummary {
         self.init(
             kind: kind,
             language: language,
-            path: path,
             referenceURL: referenceURL,
             title: title,
             abstract: abstract.map { [.text($0)] },
