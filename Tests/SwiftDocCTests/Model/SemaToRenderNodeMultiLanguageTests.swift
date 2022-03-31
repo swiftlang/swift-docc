@@ -156,6 +156,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 
                 "MixedLanguageProtocol Implementations",
                 "Article",
+                "Article curated in a single-language page",
                 "APICollection",
                 "MixedLanguageFramework Tutorials",
                 "Tutorial Article",
