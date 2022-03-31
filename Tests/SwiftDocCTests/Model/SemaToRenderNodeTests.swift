@@ -2750,8 +2750,8 @@ Document @1:1-11:19
         }
     }
     
-    // Verifies that undocumented symbol gets a default abstract.
-    func testNonDocumentedSymbolDefaultAbstract() throws {
+    // Verifies that undocumented symbol gets a nil abstract.
+    func testNonDocumentedSymbolNilAbstract() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
 
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/globalFunction(_:considering:)", sourceLanguage: .swift)
@@ -2761,8 +2761,8 @@ Document @1:1-11:19
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         let renderNode = try XCTUnwrap(translator.visit(symbol) as? RenderNode)
 
-        // Verify that an undocumented symbol gets a default abstract.
-        XCTAssertEqual(renderNode.abstract, [.text("No overview available.")])
+        // Verify that an undocumented symbol gets a nil abstract.
+        XCTAssertNil(renderNode.abstract)
     }
 
     func testAsidesDecoding() throws {

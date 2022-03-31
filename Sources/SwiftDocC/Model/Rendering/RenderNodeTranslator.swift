@@ -606,8 +606,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         if let abstract = article.abstractSection,
             let abstractContent = visitMarkup(abstract.content) as? [RenderInlineContent] {
             node.abstract = abstractContent
-        } else {
-            node.abstract = [.text("No overview available.")]
         }
         
         if let discussion = article.discussion,
@@ -1064,22 +1062,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchy = hierarchy
         
-        func createDefaultAbstract() -> [RenderInlineContent] {
-            // Introduce a special behavior for generated bundles.
-            if context.externalMetadata.isGeneratedBundle {
-                if documentationNode.kind != .module {
-                    // Undocumented symbols get a default abstract.
-                    return [.text("No overview available.")]
-                } else {
-                    // Undocumented module pages get an empty abstract.
-                    return [.text("")]
-                }
-            } else {
-                // For non-generated bundles always add the default abstract.
-                return [.text("No overview available.")]
-            }
-        }
-
         // In case `inheritDocs` is disabled and there is actually origin data for the symbol, then include origin information as abstract.
         // Generate the placeholder abstract only in case there isn't an authored abstract coming from a doc extension.
         if !context.externalMetadata.inheritDocs, let origin = (documentationNode.semantic as! Symbol).origin, symbol.abstractSection == nil {
@@ -1095,9 +1077,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 if let abstractContent = visitMarkup(abstract) as? [RenderInlineContent] {
                     return abstractContent
                 } else {
-                    return createDefaultAbstract()
+                    return nil
                 }
-            } ?? .init(defaultValue: createDefaultAbstract())
+            } ?? .init(defaultValue: nil)
         }
         
         node.primaryContentSectionsVariants.append(
