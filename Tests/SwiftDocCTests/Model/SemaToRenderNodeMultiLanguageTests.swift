@@ -184,6 +184,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "/documentation/MixedLanguageFramework/Foo-swift.struct/third",
                 "/documentation/MixedLanguageFramework/Foo-swift.struct/fourth",
                 "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)",
+                "/documentation/MixedLanguageFramework/ArticleCuratedInASingleLanguagePage",
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
                 "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()",
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
