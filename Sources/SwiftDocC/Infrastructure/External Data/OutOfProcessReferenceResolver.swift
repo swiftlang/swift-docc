@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -175,8 +175,8 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         return DocumentationNode(
             reference: reference,
             kind: resolvedInformation.kind,
-            sourceLanguage: .init(name: resolvedInformation.language.name, id: resolvedInformation.language.id),
-            availableSourceLanguages: Set(resolvedInformation.availableLanguages.map { .init(name: $0.name, id: $0.id) }),
+            sourceLanguage: resolvedInformation.language,
+            availableSourceLanguages: sourceLanguages(for: resolvedInformation),
             name: name,
             markup: Document(parsing: resolvedInformation.abstract, options: []),
             semantic: maybeSymbol,
