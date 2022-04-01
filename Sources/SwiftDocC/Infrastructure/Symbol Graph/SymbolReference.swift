@@ -66,7 +66,13 @@ public struct SymbolReference {
         var name = symbol.pathComponents.joinedSymbolPathComponents
 
         if shouldAddKind {
-            name = name.appending("-\(symbol.identifier.interfaceLanguage).\(symbol.kind.identifier.identifier)")
+            let interfaceLanguage = symbol.identifier.interfaceLanguage
+            
+            let languageIdentifier = SourceLanguage(
+                knownLanguageIdentifier: interfaceLanguage
+            )?.linkDisambiguationID ?? interfaceLanguage
+            
+            name = name.appending("-\(languageIdentifier).\(symbol.kind.identifier.identifier)")
         }
         if shouldAddHash {
             name = name.appendingHashedIdentifier(identifier)
