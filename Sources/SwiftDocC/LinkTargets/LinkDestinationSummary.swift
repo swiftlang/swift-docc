@@ -81,11 +81,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     public let language: SourceLanguage
     
     /// The relative path to this element.
-    ///
-    /// > Note: For elements representing on-page elements, this value will include a fragment component.
-    public var path: String {
-        return referenceURL.withoutHostAndPortAndScheme().absoluteString
-    }
+    public let path: String
     
     /// The resolved topic reference URL to this element.
     public var referenceURL: URL
@@ -219,7 +215,7 @@ public extension DocumentationNode {
 
         let platforms = renderNode.metadata.platforms
         
-        let landmarkSummaries = ((semantic as? Tutorial)?.landmarks ?? (semantic as? TutorialArticle)?.landmarks ?? []).map {
+        let landmarkSummaries = ((semantic as? Tutorial)?.landmarks ?? (semantic as? TutorialArticle)?.landmarks ?? []).compactMap {
             LinkDestinationSummary(landmark: $0, basePath: presentationURL.path, page: self, platforms: platforms, compiler: &compiler)
         }
         
@@ -271,6 +267,7 @@ extension LinkDestinationSummary {
             self.init(
                 kind: documentationNode.kind,
                 language: documentationNode.sourceLanguage,
+                path: path,
                 referenceURL: referenceURL,
                 title: ReferenceResolver.title(forNode: documentationNode),
                 abstract: (documentationNode.semantic as? Abstracted)?.renderedAbstract(using: &compiler),
@@ -338,6 +335,7 @@ extension LinkDestinationSummary {
         self.init(
             kind: kind,
             language: language,
+            path: path,
             referenceURL: referenceURL,
             title: title,
             abstract: abstract,
@@ -361,8 +359,17 @@ extension LinkDestinationSummary {
     ///   - basePath: The bundle-relative path of the page that contain this section.
     ///   - page: The topic reference of the page that contain this section.
     ///   - compiler: The content compiler that's used to render the section's abstract.
-    init(landmark: Landmark, basePath: String, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
+    init?(landmark: Landmark, basePath: String, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
         let anchor = urlReadableFragment(landmark.title)
+        
+        guard let path: String = {
+            var components = URLComponents()
+            components.path = basePath
+            components.fragment = anchor // use an in-page anchor for the landmark's path
+            return components.url?.absoluteString
+        }() else {
+            return nil
+        }
         
         let abstract: Abstract?
         if let abstracted = landmark as? Abstracted {
@@ -376,6 +383,7 @@ extension LinkDestinationSummary {
         self.init(
             kind: .onPageLandmark,
             language: page.sourceLanguage,
+            path: path,
             referenceURL: page.reference.withFragment(anchor).url,
             title: landmark.title,
             abstract: abstract,
@@ -425,6 +433,7 @@ extension LinkDestinationSummary {
             throw DecodingError.dataCorruptedError(forKey: .kind, in: container, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
         }
         kind = foundKind
+        path = try container.decode(String.self, forKey: .path)
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
