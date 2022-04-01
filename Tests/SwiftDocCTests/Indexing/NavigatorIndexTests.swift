@@ -491,6 +491,39 @@ Root
         
         try FileManager.default.removeItem(at: targetURL)
     }
+
+    func testDoesNotCurateUncuratedPagesInLanguageThatAreCuratedInAnotherLanguage() throws {
+        let navigatorIndex = try generatedNavigatorIndex(for: "MixedLanguageFramework", bundleIdentifier: "org.swift.mixedlanguageframework")
+
+        XCTAssertEqual(
+            navigatorIndex.navigatorTree.root.children
+                .first { $0.item.title == "Objective-C" }?
+                .children
+                .allSatisfy { $0.item.pageType == NavigatorIndex.PageType.framework.rawValue },
+            true,
+            """
+            Expected the top-level items of the Objective-C tree to only include framework nodes. Specifically, the \
+            node for the page "Article curated in a single-language page" should not appear as a top-level item \
+            because it is curated in a Swift-only node, so it should be curated in the Swift navigator only.
+            """
+        )
+
+        XCTAssertEqual(
+            navigatorIndex.navigatorTree.root.children
+                .first { $0.item.title == "Swift" }?
+                .children
+                .first { $0.item.title == "MixedLanguageFramework" }?
+                .children
+                .first { $0.item.title == "SwiftOnlyStruct" }?
+                .children
+                .contains { $0.item.title == "Article curated in a single-language page" },
+            true,
+            """
+            Expected the node with title "Article curated in a single-language page" to be curated in the Swift \
+            navigator tree.
+            """
+        )
+    }
     
     func testNavigatorIndexUsingPageTitleGeneration() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
@@ -598,34 +631,7 @@ Root
     }
     
     func testNavigatorIndexGenerationWithLanguageGrouping() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
-        
-        let targetURL = try createTemporaryDirectory()
-        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
-        builder.setup()
-        
-        for identifier in context.knownPages {
-            let source = context.documentURL(for: identifier)
-            let entity = try context.entity(with: identifier)
-            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
-            try builder.index(renderNode: renderNode)
-        }
-        
-        builder.finalize()
-        
-        let navigatorIndex = try NavigatorIndex(url: targetURL, readNavigatorTree: false)
-        
-        let expectation = XCTestExpectation(description: "Load the tree asynchronously.")
-        
-        try navigatorIndex.readNavigatorTree(timeout: 1.0, queue: DispatchQueue(label: "org.swift.docc.example.queue")) { (_, isCompleted, error) in
-            XCTAssertNil(error)
-            if isCompleted {
-                expectation.fulfill()
-            }
-        }
-        wait(for: [expectation], timeout: 10.0)
+        let navigatorIndex = try generatedNavigatorIndex(for: "TestBundle", bundleIdentifier: testBundleIdentifier)
         
         XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
         XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
@@ -1439,6 +1445,39 @@ Root
             XCTAssertEqual("1161063e700c", pathHasher.hash("/documentation/swiftui/texteditor/disableautocorrection(_:)"))
             XCTAssertEqual("e47cfd13c4af", pathHasher.hash("/mykit/myclass/myfunc"))
         }
+    }
+
+    func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) throws -> NavigatorIndex {
+        let (bundle, context) = try testBundleAndContext(named: testBundleName)
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+
+        let targetURL = try createTemporaryDirectory()
+        let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: bundleIdentifier, sortRootChildrenByName: true, groupByLanguage: true)
+        builder.setup()
+
+        for identifier in context.knownPages {
+            let source = context.documentURL(for: identifier)
+            let entity = try context.entity(with: identifier)
+            let renderNode = try XCTUnwrap(converter.renderNode(for: entity, at: source))
+            try builder.index(renderNode: renderNode)
+        }
+
+        builder.finalize()
+
+        let navigatorIndex = try NavigatorIndex(url: targetURL)
+
+        let expectation = XCTestExpectation(description: "Load the tree asynchronously.")
+
+        try navigatorIndex.readNavigatorTree(timeout: 1.0, queue: DispatchQueue(label: "org.swift.docc.example.queue")) { (_, isCompleted, error) in
+            XCTAssertNil(error)
+            if isCompleted {
+                expectation.fulfill()
+            }
+        }
+        wait(for: [expectation], timeout: 10.0)
+
+        return navigatorIndex
     }
 }
 

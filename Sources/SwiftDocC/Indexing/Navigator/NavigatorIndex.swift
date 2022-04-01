@@ -819,6 +819,8 @@ extension NavigatorIndex {
             
             let root = navigatorIndex.navigatorTree.root
             root.bundleIdentifier = bundleIdentifier
+
+            let allReferences = pendingUncuratedReferences
             
             // Assign the children to the parents, starting with multi curated nodes
             var nodesMultiCurated = multiCurated.map { ($0, $1) }
@@ -866,10 +868,23 @@ extension NavigatorIndex {
                     root.add(child: languageNode)
                 }
             }
+
+            let curatedReferences = allReferences.subtracting(pendingUncuratedReferences)
             
             // The rest have no parent, so they need to be under the root.
             for nodeID in pendingUncuratedReferences {
                 if let node = identifierToNode[nodeID] {
+
+                    // If an uncurated page has been curated in another language, don't add it to the top-level.
+                    if curatedReferences.contains(where: { curatedNodeID in
+                        // Compare all the identifier's properties for equality, except for its language.
+                        curatedNodeID.bundleIdentifier == nodeID.bundleIdentifier
+                            && curatedNodeID.path == nodeID.path
+                            && curatedNodeID.fragment == nodeID.fragment
+                    }) {
+                        continue
+                    }
+
                     if groupByLanguage {
                         // Force unwrap is safe as we mapped this before
                         let languageNode = languageMaskToNode[node.item.languageID]!
