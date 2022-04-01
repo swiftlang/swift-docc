@@ -23,11 +23,18 @@ RESPONSE='{
     "availableLanguages" : [
       {
         "id" : "swift",
-        "name" : "Language Name"
+        "name" : "Language Name",
+        "idAliases" : [],
+        "linkDisambiguationID": "swift"
       },
       {
         "id" : "occ",
-        "name" : "Variant Language Name"
+        "name" : "Variant Language Name",
+        "idAliases" : [
+          "objective-c",
+          "c"
+        ],
+        "linkDisambiguationID" : "c"
       }
     ],
     "declarationFragments" : [
@@ -43,7 +50,10 @@ RESPONSE='{
     },
     "language" : {
       "id" : "swift",
-      "name" : "Language Name"
+      "name" : "Language Name",
+      "idAliases" : [],
+      "linkDisambiguationID": "swift"
+      
     },
     "platforms" : [
       {
@@ -70,7 +80,12 @@ RESPONSE='{
         },
         "language" : {
           "id" : "occ",
-          "name" : "Variant Language Name"
+          "name" : "Variant Language Name",
+          "idAliases" : [
+            "objective-c",
+            "c"
+          ],
+          "linkDisambiguationID" : "c"
         },
         "title" : "Resolved Variant Title",
         "traits" : [
