@@ -106,7 +106,7 @@ final class RenderIndexTests: XCTestCase {
                               },
                               {
                                 "title": "Foo",
-                                "path": "/documentation/mixedlanguageframework/foo-occ.typealias",
+                                "path": "/documentation/mixedlanguageframework/foo-c.typealias",
                                 "type": "typealias"
                               }
                             ]

@@ -16,16 +16,20 @@ public struct SourceLanguage: Hashable, Codable {
     public var id: String
     /// Aliases for the language's identifier.
     public var idAliases: [String] = []
-    
+    /// The identifier to use for link disambiguation purposes.
+    public var linkDisambiguationID: String
+
     /// Creates a new language with a given name and identifier.
     /// - Parameters:
     ///   - name: The display name of the programming language.
     ///   - id: A globally unique identifier for the language.
     ///   - idAliases: Aliases for the language's identifier.
-    public init(name: String, id: String, idAliases: [String] = []) {
+    ///   - linkDisambiguationID: The identifier to use for link disambiguation purposes.
+    public init(name: String, id: String, idAliases: [String] = [], linkDisambiguationID: String? = nil) {
         self.name = name
         self.id = id
         self.idAliases = idAliases
+        self.linkDisambiguationID = linkDisambiguationID ?? id
     }
     
     /// Finds the programming language that matches a given query identifier.
@@ -63,6 +67,7 @@ public struct SourceLanguage: Hashable, Codable {
         default:
             self.name = id
             self.id = id
+            self.linkDisambiguationID = id
         }
     }
 
@@ -74,7 +79,10 @@ public struct SourceLanguage: Hashable, Codable {
             self = knownLanguage
         } else {
             self.name = name
-            self.id = name.lowercased()
+            
+            let id = name.lowercased()
+            self.id = id
+            self.linkDisambiguationID = id
         }
     }
     
@@ -126,7 +134,8 @@ public struct SourceLanguage: Hashable, Codable {
         idAliases: [
             "objective-c",
             "c", // FIXME: DocC should display C as its own language (SR-16050).
-        ]
+        ],
+        linkDisambiguationID: "c"
     )
 
     /// The JavaScript programming language or another language that conforms to the ECMAScript specification.

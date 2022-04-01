@@ -41,7 +41,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 // Objective-C only variable - ``_MixedLanguageFrameworkVersionString``:
                 "c:@MixedLanguageFrameworkVersionString",
                 
-                // Objective-C only typealias - ``Foo-occ.typealias``
+                // Objective-C only typealias - ``Foo-c.typealias``
                 "c:MixedLanguageFramework.h@T@Foo",
             ]
             
@@ -129,7 +129,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 // Objective-C only variable - ``_MixedLanguageFrameworkVersionString``:
                 "c:@MixedLanguageFrameworkVersionString",
                 
-                // Objective-C only typealias - ``Foo-occ.typealias``
+                // Objective-C only typealias - ``Foo-c.typealias``
                 "c:MixedLanguageFramework.h@T@Foo",
             ]
         )
@@ -161,6 +161,35 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "MixedLanguageFramework Tutorials",
                 "Tutorial Article",
                 "Tutorial",
+            ]
+        )
+
+        XCTAssertEqual(
+            Set(
+                outputConsumer.renderNodes(withInterfaceLanguages: ["swift", "occ"])
+                    .map { $0.identifier.path }
+            ),
+            [
+                "/tutorials/TutorialOverview",
+                "/documentation/MixedLanguageFramework",
+                "/documentation/MixedLanguageFramework/Bar",
+                "/tutorials/MixedLanguageFramework/Tutorial",
+                "/documentation/MixedLanguageFramework/Article",
+                "/tutorials/MixedLanguageFramework/TutorialArticle",
+                "/documentation/MixedLanguageFramework/APICollection",
+                "/documentation/MixedLanguageFramework/Foo-swift.struct",
+                "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
+                "/documentation/MixedLanguageFramework/Foo-swift.struct/first",
+                "/documentation/MixedLanguageFramework/Foo-swift.struct/second",
+                "/documentation/MixedLanguageFramework/Foo-swift.struct/third",
+                "/documentation/MixedLanguageFramework/Foo-swift.struct/fourth",
+                "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)",
+                "/documentation/MixedLanguageFramework/ArticleCuratedInASingleLanguagePage",
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
+                "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()",
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/MixedLanguageProtocol-Implementations",
             ]
         )
     }
