@@ -396,7 +396,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         }
         
         // Fall back to the `language` property if `availableLanguages` is empty.
-        return [SourceLanguage(name: resolvedInformation.language.name, id: resolvedInformation.language.id)]
+        return [resolvedInformation.language]
     }
 }
 
