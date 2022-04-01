@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -81,7 +81,15 @@ public struct LinkDestinationSummary: Codable, Equatable {
     public let language: SourceLanguage
     
     /// The relative path to this element.
-    public let path: String
+    ///
+    /// > Note: For elements representing on-page elements, this value will include a fragment component.
+    @available(*, deprecated, message: "Use 'relativePresentationURL' instead.")
+    public var path: String {
+        return relativePresentationURL.absoluteString
+    }
+    
+    /// The relative presentation URL for this element.
+    public let relativePresentationURL: URL
     
     /// The resolved topic reference URL to this element.
     public var referenceURL: URL
@@ -164,7 +172,13 @@ public struct LinkDestinationSummary: Codable, Equatable {
         public let language: VariantValue<SourceLanguage>
         
         /// The relative path of the variant or `nil` if the relative is the same as the summarized element.
-        public let path: VariantValue<String>
+        @available(*, deprecated, message: "Use 'relativePresentationURL' instead.")
+        public var path: VariantValue<String> {
+            return relativePresentationURL?.absoluteString
+        }
+        
+        /// The relative presentation URL of the variant or `nil` if the relative is the same as the summarized element.
+        public let relativePresentationURL: VariantValue<URL>
         
         /// The title of the variant or `nil` if the title is the same as the summarized element.
         public let title: VariantValue<String?>
@@ -209,14 +223,14 @@ public extension DocumentationNode {
             return []
         }
         let urlGenerator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
-        let presentationURL = urlGenerator.presentationURLForReference(reference)
+        let relativePresentationURL = urlGenerator.presentationURLForReference(reference).withoutHostAndPortAndScheme()
         
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: reference)
 
         let platforms = renderNode.metadata.platforms
         
-        let landmarkSummaries = ((semantic as? Tutorial)?.landmarks ?? (semantic as? TutorialArticle)?.landmarks ?? []).map {
-            LinkDestinationSummary(landmark: $0, basePath: presentationURL.path, page: self, platforms: platforms, compiler: &compiler)
+        let landmarkSummaries = ((semantic as? Tutorial)?.landmarks ?? (semantic as? TutorialArticle)?.landmarks ?? []).compactMap {
+            LinkDestinationSummary(landmark: $0, relativeParentPresentationURL: relativePresentationURL, page: self, platforms: platforms, compiler: &compiler)
         }
         
         var taskGroupVariants: [[RenderNode.Variant.Trait]: [LinkDestinationSummary.TaskGroup]] = [:]
@@ -230,7 +244,7 @@ public extension DocumentationNode {
                 taskGroupVariants[variant.traits] = variant.applyingPatchTo(renderNode.topicSections).map { group in .init(title: group.title, identifiers: group.identifiers) }
             }
         }
-        return [LinkDestinationSummary(documentationNode: self, path: presentationURL.path, taskGroups: taskGroups, taskGroupVariants: taskGroupVariants, platforms: platforms, compiler: &compiler)] + landmarkSummaries
+        return [LinkDestinationSummary(documentationNode: self, relativePresentationURL: relativePresentationURL, taskGroups: taskGroups, taskGroupVariants: taskGroupVariants, platforms: platforms, compiler: &compiler)] + landmarkSummaries
     }
 }
 
@@ -255,10 +269,10 @@ extension LinkDestinationSummary {
     ///
     /// - Parameters:
     ///   - documentationNode: The render node to summarize.
-    ///   - path: The bundle-relative path to this page.
+    ///   - relativePresentationURL: The relative presentation URL for this page.
     ///   - taskGroups: The task groups that lists the children of this page.
     ///   - compiler: The content compiler that's used to render the node's abstract.
-    init(documentationNode: DocumentationNode, path: String, taskGroups: [TaskGroup], taskGroupVariants: [[RenderNode.Variant.Trait]: [TaskGroup]], platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
+    init(documentationNode: DocumentationNode, relativePresentationURL: URL, taskGroups: [TaskGroup], taskGroupVariants: [[RenderNode.Variant.Trait]: [TaskGroup]], platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
         let redirects = (documentationNode.semantic as? Redirected)?.redirects?.map { $0.oldPath }
         let referenceURL = documentationNode.reference.url
         
@@ -267,7 +281,7 @@ extension LinkDestinationSummary {
             self.init(
                 kind: documentationNode.kind,
                 language: documentationNode.sourceLanguage,
-                path: path,
+                relativePresentationURL: relativePresentationURL,
                 referenceURL: referenceURL,
                 title: ReferenceResolver.title(forNode: documentationNode),
                 abstract: (documentationNode.semantic as? Abstracted)?.renderedAbstract(using: &compiler),
@@ -323,7 +337,7 @@ extension LinkDestinationSummary {
                 traits: variantTraits,
                 kind: nilIfEqual(main: kind, variant: symbol.kindVariants[trait].map { DocumentationNode.kind(forKind: $0.identifier) }),
                 language: nilIfEqual(main: language, variant: SourceLanguage(knownLanguageIdentifier: interfaceLanguage)),
-                path: nil, // The symbol variant uses the same relative path
+                relativePresentationURL: nil, // The symbol variant uses the same relative path
                 title: nilIfEqual(main: title, variant: symbol.titleVariants[trait]),
                 abstract: nilIfEqual(main: abstract, variant: abstractVariant),
                 taskGroups: nilIfEqual(main: taskGroups, variant: taskGroupVariants[variantTraits]),
@@ -335,7 +349,7 @@ extension LinkDestinationSummary {
         self.init(
             kind: kind,
             language: language,
-            path: path,
+            relativePresentationURL: relativePresentationURL,
             referenceURL: referenceURL,
             title: title,
             abstract: abstract,
@@ -356,11 +370,19 @@ extension LinkDestinationSummary {
     ///
     /// - Parameters:
     ///   - landmark: The landmark to summarize.
-    ///   - basePath: The bundle-relative path of the page that contain this section.
+    ///   - relativeParentPresentationURL: The bundle-relative path of the page that contain this section.
     ///   - page: The topic reference of the page that contain this section.
     ///   - compiler: The content compiler that's used to render the section's abstract.
-    init(landmark: Landmark, basePath: String, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
+    init?(landmark: Landmark, relativeParentPresentationURL: URL, page: DocumentationNode, platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
         let anchor = urlReadableFragment(landmark.title)
+        
+        guard let relativePresentationURL: URL = {
+            var components = URLComponents(url: relativeParentPresentationURL, resolvingAgainstBaseURL: false)
+            components?.fragment = anchor // use an in-page anchor for the landmark's path
+            return components?.url
+        }() else {
+            return nil
+        }
         
         let abstract: Abstract?
         if let abstracted = landmark as? Abstracted {
@@ -374,7 +396,7 @@ extension LinkDestinationSummary {
         self.init(
             kind: .onPageLandmark,
             language: page.sourceLanguage,
-            path: basePath + "#\(anchor)", // use an in-page anchor for the landmark's path
+            relativePresentationURL: relativePresentationURL,
             referenceURL: page.reference.withFragment(anchor).url,
             title: landmark.title,
             abstract: abstract,
@@ -394,14 +416,15 @@ extension LinkDestinationSummary {
 // Add Codable methods—which include an initializer—in an extension so that it doesn't override the member-wise initializer.
 extension LinkDestinationSummary {
     enum CodingKeys: String, CodingKey {
-        case kind, path, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects, variants
+        case kind, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects, variants
+        case relativePresentationURL = "path"
         case declarationFragments = "fragments"
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(kind.id, forKey: .kind)
-        try container.encode(path, forKey: .path)
+        try container.encode(relativePresentationURL, forKey: .relativePresentationURL)
         try container.encode(referenceURL, forKey: .referenceURL)
         try container.encode(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
@@ -424,7 +447,7 @@ extension LinkDestinationSummary {
             throw DecodingError.dataCorruptedError(forKey: .kind, in: container, debugDescription: "Unknown DocumentationNode.Kind identifier: '\(kindID)'.")
         }
         kind = foundKind
-        path = try container.decode(String.self, forKey: .path)
+        relativePresentationURL = try container.decode(URL.self, forKey: .relativePresentationURL)
         referenceURL = try container.decode(URL.self, forKey: .referenceURL)
         title = try container.decode(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(Abstract.self, forKey: .abstract)
@@ -453,14 +476,16 @@ extension LinkDestinationSummary {
 
 extension LinkDestinationSummary.Variant {
     enum CodingKeys: String, CodingKey {
-        case traits, kind, path, title, abstract, language, usr, declarationFragments = "fragments", taskGroups
+        case traits, kind, title, abstract, language, usr, taskGroups
+        case relativePresentationURL = "path"
+        case declarationFragments = "fragments"
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(traits, forKey: .traits)
         try container.encodeIfPresent(kind?.id, forKey: .kind)
-        try container.encodeIfPresent(path, forKey: .path)
+        try container.encodeIfPresent(relativePresentationURL, forKey: .relativePresentationURL)
         try container.encodeIfPresent(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
         try container.encodeIfPresent(language, forKey: .language)
@@ -499,7 +524,7 @@ extension LinkDestinationSummary.Variant {
         } else {
             language = nil
         }
-        path = try container.decodeIfPresent(String.self, forKey: .path)
+        relativePresentationURL = try container.decodeIfPresent(URL.self, forKey: .relativePresentationURL)
         title = try container.decodeIfPresent(String?.self, forKey: .title)
         abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
         usr = try container.decodeIfPresent(String?.self, forKey: .title)
