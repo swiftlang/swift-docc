@@ -60,8 +60,10 @@ final class RenderIndexTests: XCTestCase {
     }
     
     func testRenderIndexGenerationForMixedLanguageFramework() throws {
+        let renderIndex = try generatedRenderIndex(for: "MixedLanguageFramework", with: "org.swift.MixedLanguageFramework")
+
         XCTAssertEqual(
-            try generatedRenderIndex(for: "MixedLanguageFramework", with: "org.swift.MixedLanguageFramework"),
+            renderIndex,
             try RenderIndex.fromString(#"""
                 {
                   "interfaceLanguages": {
@@ -280,6 +282,15 @@ final class RenderIndexTests: XCTestCase {
                       {
                         "children": [
                           {
+                            "title": "Multi-language pages",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "path": "\/documentation\/mixedlanguageframework\/articlecuratedinasinglelanguagepage",
+                            "title": "Article curated in a single-language page",
+                            "type": "article"
+                          },
+                          {
                             "title": "Instance Methods",
                             "type": "groupMarker"
                           },
@@ -381,6 +392,15 @@ final class RenderIndexTests: XCTestCase {
                             "title": "SwiftOnlyStruct",
                             "type": "struct",
                             "children": [
+                              {
+                                "title": "Multi-language pages",
+                                "type": "groupMarker"
+                              },
+                              {
+                                "path": "\/documentation\/mixedlanguageframework\/articlecuratedinasinglelanguagepage",
+                                "title": "Article curated in a single-language page",
+                                "type": "article"
+                              },
                               {
                                 "title": "Instance Methods",
                                 "type": "groupMarker"
@@ -507,7 +527,11 @@ final class RenderIndexTests: XCTestCase {
                   }
                 }
                 """#
-            )
+            ),
+            """
+            Generated render index does not match expected index. Actual index was: \
+            \(String(data: (try? JSONEncoder().encode(renderIndex)) ?? Data(), encoding: .utf8) ?? "")
+            """
         )
     }
     
