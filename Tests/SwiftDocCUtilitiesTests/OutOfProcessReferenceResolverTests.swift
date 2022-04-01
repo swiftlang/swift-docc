@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -64,6 +64,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             availableLanguages: [
                 .swift,
                 .init(name: "Language Name 2", id: "com.test.another-language.id"),
+                .objectiveC,
             ],
             platforms: [
                 .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
@@ -113,24 +114,20 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         
         XCTAssertEqual(node.name, .symbol(declaration: .init([.plain(testMetadata.title)])))
         
-        XCTAssertEqual(node.sourceLanguage.name, testMetadata.language.name)
-        XCTAssertEqual(node.sourceLanguage.id, testMetadata.language.id)
+        XCTAssertEqual(node.sourceLanguage, testMetadata.language)
 
-        XCTAssertEqual(node.availableSourceLanguages.count, 2)
+        XCTAssertEqual(node.availableSourceLanguages.count, 3)
 
         let availableSourceLanguages = node.availableSourceLanguages
             .sorted(by: { lhs, rhs in lhs.id < rhs.id })
         let expectedLanguages = testMetadata.availableLanguages
             .sorted(by: { lhs, rhs in lhs.id < rhs.id })
         
-        XCTAssertEqual(availableSourceLanguages[0].name, expectedLanguages[0].name)
-        XCTAssertEqual(availableSourceLanguages[0].id, expectedLanguages[0].id)
-
-        XCTAssertEqual(availableSourceLanguages[1].name, expectedLanguages[1].name)
-        XCTAssertEqual(availableSourceLanguages[1].id, expectedLanguages[1].id)
-
-        XCTAssertEqual(node.platformNames?.sorted(), ["barOS", "fooOS"])
+        XCTAssertEqual(availableSourceLanguages[0], expectedLanguages[0])
+        XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
+        XCTAssertEqual(availableSourceLanguages[2], expectedLanguages[2])
         
+        XCTAssertEqual(node.platformNames?.sorted(), ["barOS", "fooOS"])
         
         XCTAssertEqual(symbol.subHeading, [.init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)])
         
@@ -226,6 +223,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             availableLanguages: [
                 .swift,
                 .init(name: "Language Name 2", id: "com.test.another-language.id"),
+                .objectiveC,
             ],
             platforms: [
                 .init(name: "fooOS", introduced: "1.2.3", isBeta: false),
@@ -272,20 +270,17 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         
         XCTAssertEqual(symbolNode.name, .symbol(declaration: .init([.plain(testMetadata.title)])))
         
-        XCTAssertEqual(symbolNode.sourceLanguage.name, testMetadata.language.name)
-        XCTAssertEqual(symbolNode.sourceLanguage.id, testMetadata.language.id)
+        XCTAssertEqual(symbolNode.sourceLanguage, testMetadata.language)
 
-        XCTAssertEqual(symbolNode.availableSourceLanguages.count, 2)
+        XCTAssertEqual(symbolNode.availableSourceLanguages.count, 3)
 
         let availableSourceLanguages = symbolNode.availableSourceLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
         let expectedLanguages = testMetadata.availableLanguages.sorted(by: { lhs, rhs in lhs.id < rhs.id })
         
-        XCTAssertEqual(availableSourceLanguages[0].name, expectedLanguages[0].name)
-        XCTAssertEqual(availableSourceLanguages[0].id, expectedLanguages[0].id)
-
-        XCTAssertEqual(availableSourceLanguages[1].name, expectedLanguages[1].name)
-        XCTAssertEqual(availableSourceLanguages[1].id, expectedLanguages[1].id)
-
+        XCTAssertEqual(availableSourceLanguages[0], expectedLanguages[0])
+        XCTAssertEqual(availableSourceLanguages[1], expectedLanguages[1])
+        XCTAssertEqual(availableSourceLanguages[2], expectedLanguages[2])
+        
         XCTAssertEqual(symbolNode.platformNames?.sorted(), ["barOS", "fooOS"])
         
         XCTAssertEqual(symbol.subHeading, [.init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)])
