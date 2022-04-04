@@ -11,6 +11,8 @@
 
 import PackageDescription
 import class Foundation.ProcessInfo
+import class Foundation.FileManager
+import struct Foundation.URL
 
 let package = Package(
     name: "SwiftDocC",
@@ -41,7 +43,9 @@ let package = Package(
                 "SymbolKit",
                 "CLMDB",
                 .product(name: "Crypto", package: "swift-crypto"),
-            ]),
+            ],
+            swiftSettings: swiftSettingsForEnablingLibraryEvolution()
+        ),
         .testTarget(
             name: "SwiftDocCTests",
             dependencies: [
@@ -112,6 +116,26 @@ let package = Package(
         
     ]
 )
+
+func swiftSettingsForEnablingLibraryEvolution() -> [SwiftSetting]? {
+    let manifestLocation = URL(fileURLWithPath: #filePath)
+
+    let enableLibraryEvolutionFileLocation = manifestLocation
+        .deletingLastPathComponent()
+        .appendingPathComponent(".enable-library-evolution")
+
+    // If there is a `.enable-library-evolution` file as a sibling of this package manifest
+    // build libraries with library evolution enabled. Note that for SwiftDocC's dependencies
+    // to be built with library evolution as well, they need to be local checkouts, as a
+    // workaround to SR-11207.
+    if FileManager.default.fileExists(atPath: enableLibraryEvolutionFileLocation.path) {
+        return [
+            .unsafeFlags(["-enable-library-evolution"])
+        ]
+    } else {
+        return []
+    }
+}
 
 // If the `SWIFTCI_USE_LOCAL_DEPS` environment variable is set,
 // we're building in the Swift.org CI system alongside other projects in the Swift toolchain and
