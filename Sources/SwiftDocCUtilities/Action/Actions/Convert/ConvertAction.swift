@@ -395,7 +395,7 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         // Log the output size.
-        benchmark(add: Benchmark.OutputSize(dataURL: targetDirectory.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)))
+        benchmark(add: Benchmark.OutputSize(dataURL: targetDirectory))
         
         if Benchmark.main.isEnabled {
             // Write the benchmark files directly in the target directory.
