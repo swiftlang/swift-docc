@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -395,7 +395,23 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         // Log the output size.
-        benchmark(add: Benchmark.OutputSize(dataURL: targetDirectory))
+        benchmark(add: Benchmark.ArchiveOutputSize(archiveDirectory: targetDirectory))
+        benchmark(
+            add: Benchmark.DataDirectoryOutputSize(
+                dataDirectory: targetDirectory.appendingPathComponent(
+                    NodeURLGenerator.Path.dataFolderName,
+                    isDirectory: true
+                )
+            )
+        )
+        benchmark(
+            add: Benchmark.IndexDirectoryOutputSize(
+                indexDirectory: targetDirectory.appendingPathComponent(
+                    NodeURLGenerator.Path.indexFolderName,
+                    isDirectory: true
+                )
+            )
+        )
         
         if Benchmark.main.isEnabled {
             // Write the benchmark files directly in the target directory.
