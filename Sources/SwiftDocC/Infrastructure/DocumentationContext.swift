@@ -155,12 +155,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     var assetManagers = [BundleIdentifier: DataAssetManager]()
     /// A list of non-topic links that can be resolved.
     var nodeAnchorSections = [ResolvedTopicReference: AnchorSection]()
-    /// A list of reference aliases.
+    
+    /// The canonical references for each with alias reference.
     ///
-    /// When multiple references resolve to the same documentation, use this to find the main reference that is associated with the node in the topic graph.
+    /// When multiple references resolve to the same documentation, use this to find the canonical reference that is associated with the node in the topic graph.
     ///
-    /// The key to lookup the main reference is the alias reference. A main reference can have many aliases but an alias can only have one main reference.
-    var referenceAliases = [ResolvedTopicReference: ResolvedTopicReference]()
+    /// The key is the alias reference and the value is the canonical reference..
+    /// A main reference can have many aliases but an alias can only have one main reference.
+    private var canonicalReferences = [ResolvedTopicReference: ResolvedTopicReference]()
+    
+    /// The alias references for each canonical reference.
+    private var referenceAliases = [ResolvedTopicReference: Set<ResolvedTopicReference>]()
     
     /// A list of all the problems that was encountered while registering and processing the documentation bundles in this context.
     public var problems: [Problem] {
@@ -1156,7 +1161,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         symbolIndex[symbolData.preciseIdentifier] = symbolData.node
 
         for alias in symbolData.referenceAliases where alias != symbolData.reference {
-            referenceAliases[alias] = symbolData.reference
+            registerAliasReference(alias, for: symbolData.reference)
         }
         
         for anchor in result.0.node.anchorSections {
@@ -2270,7 +2275,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      - Throws: ``ContextError/notFound(_:)`` if a documentation node with the given identifier was not found.
      */
     public func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
-        let reference = referenceAliases[reference] ?? reference
+        let reference = canonicalReference(for: reference)
         if let cached = documentationCache[reference] {
             return cached
         }
@@ -2473,9 +2478,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     return .success(resolved)
                 } else if reference.fragment != nil, nodeAnchorSections.keys.contains(reference) {
                     return .success(reference)
-                } else if let alias = referenceAliases[reference] {
+                } else if let alias = canonicalReferences[reference] {
                     return .success(alias)
                 } else {
+                    // Grab the aliases of the reference's parent (rather than the contextual parent) and check if the
+                    // reference can be resolved as any of their child.
+                    let referenceParent = reference.removingLastPathComponent()
+                    for parentAlias in aliasReferences(for: referenceParent) {
+                        let aliasReference = parentAlias.appendingPath(reference.lastPathComponent)
+                        if let alias = canonicalReferences[aliasReference] {
+                            return .success(alias)
+                        }
+                    }
+                    
                     allCandidateURLs.append(reference.url)
                     return nil
                 }
@@ -2605,6 +2620,27 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             // This reference is already resolved (either as a success or a failure), so don't change anything.
             return resolved
         }
+    }
+    
+    /// Registers the given alias for the given canonical reference.
+    private func registerAliasReference(
+        _ aliasReference: ResolvedTopicReference,
+        for canonicalReference: ResolvedTopicReference
+    ) {
+        canonicalReferences[aliasReference] = canonicalReference
+        referenceAliases[canonicalReference, default: Set()].insert(aliasReference)
+    }
+    
+    /// Returns the canonical reference for the given reference.
+    ///
+    /// If no canonical reference is registered for the given reference, then it's considered to be the canonical reference and it's returned.
+    private func canonicalReference(for reference: ResolvedTopicReference) -> ResolvedTopicReference {
+        canonicalReferences[reference] ?? reference
+    }
+    
+    /// Returns the aliases registered for the given canonical reference, if any.
+    private func aliasReferences(for canonicalReference: ResolvedTopicReference) -> Set<ResolvedTopicReference> {
+        referenceAliases[canonicalReference] ?? []
     }
     
     /// Update the asset with a new value given the assets name and the topic it's referenced in.
