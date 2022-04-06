@@ -39,10 +39,10 @@
       },
       {
         "package": "SymbolKit",
-        "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
+        "repositoryURL": "https://github.com/QuietMisdreavus/swift-docc-symbolkit",
         "state": {
-          "branch": "main",
-          "revision": "ed8ce5502e563090ab1400b4dd7d703b01eceabb",
+          "branch": "5.7/objc-kinds",
+          "revision": "579f0af2f11de450b600c398bf120fde52d562fd",
           "version": null
         }
       },
