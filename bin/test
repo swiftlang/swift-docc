@@ -20,7 +20,7 @@ filepath() {
 DOCC_ROOT="$(dirname $(dirname $(filepath $0)))"
 
 # Build SwiftDocC.
-swift test --parallel --package-path "$DOCC_ROOT"
+swift test --parallel --package-path "$DOCC_ROOT" $@
 
 # Run source code checks for the codebase.
 LC_ALL=C "$DOCC_ROOT"/bin/check-source
