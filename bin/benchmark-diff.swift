@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -88,7 +88,18 @@ enum BenchmarkDiff {
         formatter.numberStyle = .decimal
         formatter.locale = Locale.current
         
-        after.sorted(by: { $0.name < $1.name }).enumerated().forEach { (index, metric) in
+        after.sorted { (lhs, rhs) in
+            // Sort by kind of data and then by name
+            if lhs.name.contains("(bytes)") && !rhs.name.contains("(bytes)") {
+                return true
+            } else if lhs.name.contains("(msec)") && !rhs.name.contains("(msec)") {
+                return true
+            } else {
+                return lhs.name < rhs.name
+            }
+        }
+        .enumerated()
+        .forEach { (index, metric) in
             guard var beforeValue = before.first(where: { $0.id == metric.id })?.value
                 else { return }
             
