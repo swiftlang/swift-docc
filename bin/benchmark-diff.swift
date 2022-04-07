@@ -90,9 +90,13 @@ enum BenchmarkDiff {
         
         after.sorted { (lhs, rhs) in
             // Sort by kind of data and then by name
-            if lhs.name.contains("(bytes)") && !rhs.name.contains("(bytes)") {
+            if lhs.name.contains("(msec)") && !rhs.name.contains("(msec)") {
                 return true
-            } else if lhs.name.contains("(msec)") && !rhs.name.contains("(msec)") {
+            } else if lhs.name.contains("memory footprint") && !rhs.name.contains("memory footprint") {
+                // Special-case the "Peak memory footprint" metric so that it appears above
+                // the data size metrics.
+                return true
+            } else if lhs.name.contains("(bytes)") && !rhs.name.contains("(bytes)") {
                 return true
             } else {
                 return lhs.name < rhs.name
