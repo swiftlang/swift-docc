@@ -1759,8 +1759,7 @@
                     "schemaVersion",
                     "hierarchy",
                     "metadata",
-                    "sections",
-                    "variants"
+                    "sections"
                 ],
                 "type": "object",
                 "properties": {
