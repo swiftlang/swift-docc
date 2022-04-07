@@ -67,7 +67,6 @@ extension MetricValue {
             bytes += Int64((try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0)
         }
         
-        
         self = .integer(bytes)
     }
 }
