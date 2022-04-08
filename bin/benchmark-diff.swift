@@ -89,18 +89,17 @@ enum BenchmarkDiff {
         formatter.locale = Locale.current
         
         after.sorted { (lhs, rhs) in
-            // Sort by kind of data and then by name
-            if lhs.name.contains("(msec)") && !rhs.name.contains("(msec)") {
-                return true
-            } else if lhs.name.contains("memory footprint") && !rhs.name.contains("memory footprint") {
-                // Special-case the "Peak memory footprint" metric so that it appears above
-                // the data size metrics.
-                return true
-            } else if lhs.name.contains("(bytes)") && !rhs.name.contains("(bytes)") {
-                return true
-            } else {
-                return lhs.name < rhs.name
+            // Sort by metric type and then by name
+            let metricTypeIndicators = ["(msec)", "memory footprint", "(bytes)"]
+            for indicator in metricTypeIndicators {
+                if lhs.name.contains(indicator) && !rhs.name.contains(indicator) {
+                    return true
+                } else if !lhs.name.contains(indicator) && rhs.name.contains(indicator) { 
+                    return false
+                }
             }
+            
+            return lhs.name < rhs.name
         }
         .enumerated()
         .forEach { (index, metric) in
