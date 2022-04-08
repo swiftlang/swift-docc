@@ -7,7 +7,7 @@ Displays an introduction section at the top of a table of contents or tutorial p
 
 ## Overview
 
-You can display an introduction at the top of every table of contents by using the ``Tutorials`` directive and at the top of every tutorial page by using the``Tutorial`` directive. It's the first thing a reader sees on these pages, so it needs to draw them into the content that follows.
+You can display an introduction at the top of every table of contents by using the ``Tutorials`` directive and at the top of every tutorial page by using the ``Tutorial`` directive. It's the first thing a reader sees on these pages, so it needs to draw them into the content that follows.
 
 Example of an introduction section on a table of contents page:
 
