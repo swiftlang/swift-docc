@@ -69,6 +69,8 @@ public struct RenderProperty: Codable, TextIndexing, Equatable {
     public var required: Bool? = false
     /// If true, the property is deprecated.
     public var deprecated: Bool? = false
+    /// If true, the property can only be accessed and not modified.
+    public var readOnly: Bool? = false
     /// A version of the platform that first introduced the property, if known.
     public var introducedVersion: String?
 }
