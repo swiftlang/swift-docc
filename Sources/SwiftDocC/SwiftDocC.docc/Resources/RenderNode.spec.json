@@ -2814,11 +2814,13 @@
                 "type": "object",
                 "properties": {
                     "baseType": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                     },
                     "arrayMode": {
                         "type": "boolean",
-                        "format": "true"
+                        "format": "true",
+                        "nullable": true
                     }
                 }
             },
