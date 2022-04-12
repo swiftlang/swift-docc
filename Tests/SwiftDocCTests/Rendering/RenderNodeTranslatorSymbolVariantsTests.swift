@@ -1153,23 +1153,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             sourceLanguage: .swift
         )
         
-        let newReference = ResolvedTopicReference(
-            bundleIdentifier: bundleIdentifier,
-            path: symbolPath,
-            sourceLanguages: [.swift, .objectiveC]
-        )
-        
-        let node = try XCTUnwrap(context.topicGraph.nodes[newReference])
-        
-        let newNode = TopicGraph.Node(
-            reference: newReference,
-            kind: node.kind,
-            source: node.source,
-            title: node.title
-        )
-        
-        context.topicGraph.nodes[reference] = nil
-        context.topicGraph.nodes[newReference] = newNode
+        context.documentationCache[reference]?.availableSourceLanguages = [.swift, .objectiveC]
     }
 }
 

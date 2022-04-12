@@ -1503,7 +1503,7 @@ let expected = """
         }
         
         XCTAssertEqual(
-            context.soleRootModuleReference?.sourceLanguages,
+            context.soleRootModuleReference.map { context.sourceLanguages(for: $0) },
             [.swift],
             "Expected the module to have language 'Swift' since it has 0 symbols."
         )
