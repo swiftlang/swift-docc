@@ -614,7 +614,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                               tutorialArticles: [SemanticResult<TutorialArticle>],
                               bundle: DocumentationBundle) {
         
-        let sourceLanguages = soleRootModuleReference?.sourceLanguages ?? [.swift]
+        let sourceLanguages = soleRootModuleReference.map { self.sourceLanguages(for: $0) } ?? [.swift]
 
         // Technologies
         
@@ -1729,7 +1729,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 
                 // Articles are available in the same languages the only root module is available in. If there is more
                 // than one module, we cannot determine what languages it's available in and default to Swift.
-                availableSourceLanguages: soleRootModuleReference?.sourceLanguages,
+                availableSourceLanguages: soleRootModuleReference.map { sourceLanguages(for: $0) },
                 kind: .article,
                 in: bundle
             ) else {
@@ -2293,6 +2293,23 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         throw ContextError.notFound(reference.url)
+    }
+    
+    /// Returns the set of languages the entity corresponding to the given reference is available in.
+    ///
+    /// - Precondition: The entity associated with the given reference must be registered in the context.
+    public func sourceLanguages(for reference: ResolvedTopicReference) -> Set<SourceLanguage> {
+        do {
+            // Look up the entity without its fragment. The documentation context does not keep track of page sections
+            // as nodes, and page sections are considered to be available in the same languages as the page they're
+            // defined in.
+            let referenceWithoutFragment = reference.withFragment(nil)
+            return try entity(with: referenceWithoutFragment).availableSourceLanguages
+        } catch ContextError.notFound {
+            preconditionFailure("Reference does not have an associated documentation node.")
+        } catch {
+            fatalError("Unexpected error when retrieving source languages: \(error)")
+        }
     }
 
     // MARK: - Relationship queries
