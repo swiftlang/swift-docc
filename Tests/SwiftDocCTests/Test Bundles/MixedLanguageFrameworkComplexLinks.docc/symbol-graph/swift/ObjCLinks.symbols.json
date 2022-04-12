@@ -1,0 +1,92 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.104.28 clang-1400.0.12.6.3)"
+  },
+  "module": {
+    "name": "MixedLanguageFramework",
+    "platform": {
+      "architecture": "x86_64",
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 11,
+          "minor": 0,
+          "patch": 0
+        },
+        "name": "macosx"
+      },
+      "vendor": "apple"
+    }
+  },
+  "relationships": [
+    {
+      "kind": "memberof",
+      "source": "c:objc(cs)fooobjc(cm)first:one:",
+      "target": "c:objc(cs)fooobjc"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:objc(cs)FooObjC(cm)second:two:",
+      "target": "c:objc(cs)FooObjC"
+    }
+  ],
+  "symbols": [
+    {
+      "accessLevel": "open",
+      "identifier": {
+        "interfaceLanguage": "swift",
+        "precise": "c:objc(cs)FooObjC"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "swift.class"
+      },
+      "names": {
+        "title": "FooSwift"
+      },
+      "pathComponents": [
+        "FooSwift"
+      ]
+    },
+    {
+      "accessLevel": "open",
+      "identifier": {
+        "interfaceLanguage": "swift",
+        "precise": "c:objc(cs)FooObjC(cm)first:one:"
+      },
+      "kind": {
+        "displayName": "Type Method",
+        "identifier": "swift.type.method"
+      },
+      "names": {
+        "title": "first(_:one:)"
+      },
+      "pathComponents": [
+        "FooSwift",
+        "first(_:one:)"
+      ]
+    },
+    {
+      "accessLevel": "open",
+      "identifier": {
+        "interfaceLanguage": "swift",
+        "precise": "c:objc(cs)FooObjC(cm)second:two:"
+      },
+      "kind": {
+        "displayName": "Type Method",
+        "identifier": "swift.type.method"
+      },
+      "names": {
+        "title": "second(_:two:)"
+      },
+      "pathComponents": [
+        "FooSwift",
+        "second(_:two:)"
+      ]
+    }
+  ]
+}

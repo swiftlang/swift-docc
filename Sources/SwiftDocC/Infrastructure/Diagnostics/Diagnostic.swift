@@ -66,7 +66,15 @@ public struct Diagnostic: DescribedError {
     /// the second *X* while adding a note on the first *X* to note that it was the first occurrence.
     public var notes = [DiagnosticNote]()
     
-    public init(source: URL?, severity: DiagnosticSeverity, range: SourceRange?, identifier: String, summary: String, explanation: String? = nil, notes: [DiagnosticNote] = []) {
+    public init(
+        source: URL? = nil,
+        severity: DiagnosticSeverity,
+        range: SourceRange? = nil,
+        identifier: String,
+        summary: String,
+        explanation: String? = nil,
+        notes: [DiagnosticNote] = []
+    ) {
         self.source = source
         self.severity = severity
         self.range = range
