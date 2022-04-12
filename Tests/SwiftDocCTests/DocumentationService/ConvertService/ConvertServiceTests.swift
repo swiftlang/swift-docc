@@ -1187,6 +1187,112 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    func testConvertTopLevelSymbolWithLinkResolving() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "one-symbol-top-level",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: DocumentationBundle.Info(
+                displayName: "TestBundle",
+                identifier: "org.swift.example",
+                version: "1.0.0"
+            ),
+            externalIDsToConvert: ["s:32MyKit3FooV"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: []
+        )
+        
+        let server = DocumentationServer()
+        
+        let mockLinkResolvingService = LinkResolvingService { message in
+            do {
+                let payload = try XCTUnwrap(message.payload)
+                let request = try JSONDecoder()
+                    .decode(
+                        ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
+                        from: payload
+                    )
+                
+                let errorResponse = DocumentationServer.Message(
+                    type: "resolve-reference-response",
+                    payload: try JSONEncoder().encode(
+                        OutOfProcessReferenceResolver.Response
+                            .errorMessage("Unable to resolve reference.")
+                    )
+                )
+                
+                switch request.payload {
+                case .topic(let url):
+                    let resolvableBarURL = URL(
+                        string: "doc://org.swift.example/documentation/MyKit/Foo/bar()"
+                    )!
+                    
+                    if url == resolvableBarURL {
+                        let testSymbolInformationResponse = OutOfProcessReferenceResolver
+                            .ResolvedInformation(
+                                kind: .init(
+                                    name: "bar()",
+                                    id: "org.swift.docc.kind.method",
+                                    isSymbol: true
+                                ),
+                                url: resolvableBarURL,
+                                title: "bar()",
+                                abstract: "",
+                                language: .init(name: "Swift", id: "swift"),
+                                availableLanguages: [],
+                                platforms: [],
+                                declarationFragments: nil
+                            )
+                        
+                        let payloadData = OutOfProcessReferenceResolver.Response
+                            .resolvedInformation(testSymbolInformationResponse)
+                        
+                        return DocumentationServer.Message(
+                            type: "resolve-reference-response",
+                            payload: try JSONEncoder().encode(payloadData)
+                        )
+                    } else {
+                        return errorResponse
+                    }
+                default:
+                    return errorResponse
+                }
+            } catch {
+                XCTFail(error.localizedDescription)
+                return nil
+            }
+        }
+        
+        server.register(service: mockLinkResolvingService)
+        
+        try processAndAssert(request: request, linkResolvingServer: server) { message in
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self,
+                from: XCTUnwrap(message.payload)
+            ).renderNodes
+            
+            XCTAssertEqual(renderNodes.count, 1)
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            XCTAssertEqual(
+                Set(renderNode.references.keys),
+                [
+                    "doc://org.swift.example/documentation/MyKit",
+                    "doc://org.swift.example/documentation/MyKit/Foo",
+                    "doc://org.swift.example/documentation/MyKit/Foo/bar()",
+                ]
+            )
+        }
+    }
+    
     func testOrderOfLinkResolutionRequestsForDocLink() throws {
         let symbolGraphFile = try XCTUnwrap(
             Bundle.module.url(

@@ -1383,11 +1383,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             referencesIndex.removeAll()
             referencesIndex.reserveCapacity(knownIdentifiers.count)
             for reference in knownIdentifiers {
-                referencesIndex[reference.absoluteString] = reference
+                registerReference(reference)
             }
 
             return (moduleReferences: Set(moduleReferences.values), urlHierarchy: symbolsURLHierarchy)
         }
+    }
+    
+    private func registerReference(_ resolvedReference: ResolvedTopicReference) {
+        referencesIndex[resolvedReference.absoluteString] = resolvedReference
     }
 
     private func shouldContinueRegistration() throws {
@@ -2607,6 +2611,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                     if case .success(let resolvedReference) = reference {
                         cacheReference(resolvedReference, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
+                        
+                        // Register the resolved reference in the context so that it can be looked up via its absolute
+                        // path. We only do this for in-bundle content, and since we've just resolved an in-bundle link,
+                        // we register the reference.
+                        registerReference(resolvedReference)
                         return .success(resolvedReference)
                     }
                 }
