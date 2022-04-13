@@ -145,25 +145,25 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         #if os(macOS)
         throw XCTSkip("This test is flaky (rdar://91678333)")
         
-        try assertResolvesTopicLink(makeResolver: { testMetadata in
-            let temporaryFolder = try createTemporaryDirectory()
-            let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
-            
-            let encodedMetadata = try String(data: JSONEncoder().encode(testMetadata), encoding: .utf8)!
-            
-            try """
-            #!/bin/bash
-            echo '{"bundleIdentifier":"com.test.bundle"}'       # Write this resolver's bundle identifier
-            read                                                # Wait for docc to send a topic URL
-            echo '{"resolvedInformation":\(encodedMetadata)}'   # Respond with the test metadata (above)
-            """.write(to: executableLocation, atomically: true, encoding: .utf8)
-            
-            // `0o0700` is `-rwx------` (read, write, & execute only for owner)
-            try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
-            XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-             
-            return try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
-        })
+//        try assertResolvesTopicLink(makeResolver: { testMetadata in
+//            let temporaryFolder = try createTemporaryDirectory()
+//            let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
+//            
+//            let encodedMetadata = try String(data: JSONEncoder().encode(testMetadata), encoding: .utf8)!
+//            
+//            try """
+//            #!/bin/bash
+//            echo '{"bundleIdentifier":"com.test.bundle"}'       # Write this resolver's bundle identifier
+//            read                                                # Wait for docc to send a topic URL
+//            echo '{"resolvedInformation":\(encodedMetadata)}'   # Respond with the test metadata (above)
+//            """.write(to: executableLocation, atomically: true, encoding: .utf8)
+//            
+//            // `0o0700` is `-rwx------` (read, write, & execute only for owner)
+//            try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
+//            XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
+//             
+//            return try OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: { _ in })
+//        })
         
         #endif
     }
