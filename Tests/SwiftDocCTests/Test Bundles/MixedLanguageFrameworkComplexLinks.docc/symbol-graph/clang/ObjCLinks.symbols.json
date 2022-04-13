@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "clang"
+  },
+  "module": {
+    "name": "MixedLanguageFramework",
+    "platform": {
+      "architecture": "x86_64",
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 11,
+          "minor": 0,
+          "patch": 0
+        },
+        "name": "macos"
+      },
+      "vendor": "apple"
+    }
+  },
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "c:objc(cs)FooObjC(cm)first:one:",
+      "target": "c:objc(cs)FooObjC",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:objc(cs)FooObjC(cm)second:two:",
+      "target": "c:objc(cs)FooObjC",
+      "targetFallback": null
+    }
+  ],
+  "symbols": [
+    {
+      "accessLevel": "public",
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:objc(cs)FooObjC"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "class"
+      },
+      "names": {
+        "title": "FooObjC"
+      },
+      "pathComponents": [
+        "FooObjC"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:objc(cs)FooObjC(cm)first:one:"
+      },
+      "kind": {
+        "displayName": "Type Method",
+        "identifier": "type.method"
+      },
+      "names": {
+        "title": "first:one:"
+      },
+      "pathComponents": [
+        "FooObjC",
+        "first:one:"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:objc(cs)FooObjC(cm)second:two:"
+      },
+      "kind": {
+        "displayName": "Type Method",
+        "identifier": "type.method"
+      },
+      "names": {
+        "title": "second:two:"
+      },
+      "pathComponents": [
+        "FooObjC",
+        "second:two:"
+      ]
+    }
+  ]
+}
