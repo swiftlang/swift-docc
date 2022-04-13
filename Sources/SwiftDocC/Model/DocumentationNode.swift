@@ -457,7 +457,7 @@ public struct DocumentationNode {
         case .`var`: return .globalVariable
 
         case .module: return .module
-        case .unknown: return .unknown
+        default: return .unknown
         }
     }
 
