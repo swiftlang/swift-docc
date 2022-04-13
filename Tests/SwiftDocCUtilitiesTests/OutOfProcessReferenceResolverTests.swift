@@ -143,6 +143,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     
     func testResolvingTopicLinkProcess() throws {
         #if os(macOS)
+        throw XCTSkip("This test is flaky (rdar://91678333)")
+        
         try assertResolvesTopicLink(makeResolver: { testMetadata in
             let temporaryFolder = try createTemporaryDirectory()
             let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
