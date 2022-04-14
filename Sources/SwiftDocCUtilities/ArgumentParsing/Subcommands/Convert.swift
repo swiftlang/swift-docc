@@ -238,17 +238,9 @@ extension Docc {
             return outputURL
         }
         
-        /// A Boolean value that is true if the DocC archive produced by this conversion
-        /// will support static hosting environments.
-        ///
-        /// This value defaults to true but can be explicitly disabled with the
-        /// `--no-transform-for-static-hosting` flag.
-        @Flag(
-            inversion: .prefixedNo,
-            exclusivity: .exclusive,
-            help: "Produce a DocC archive that supports static hosting environments."
-        )
-        public var transformForStaticHosting = true
+        /// Defaults to false
+        @Flag(help: "Produce a Swift-DocC Archive that supports a static hosting environment.")
+        public var transformForStaticHosting = false
 
         /// A user-provided relative path to be used in the archived output
         @Option(
@@ -259,10 +251,6 @@ extension Docc {
         )
         var hostingBasePath: String?
         
-        /// The file handle that should be used for emitting warnings during argument validation.
-        ///
-        /// Provided as a static variable to allow for redirecting output in unit tests.
-        static var _errorLogHandle: LogHandle = .standardError
 
         // MARK: - Property Validation
 
@@ -300,29 +288,9 @@ extension Docc {
                     }
 
                 } else {
-                    let invalidOrMissingTemplateDiagnostic = Diagnostic(
-                        severity: .warning,
-                        identifier: "org.swift.docc.MissingHTMLTemplate",
-                        summary: "Invalid or missing HTML template directory",
-                        explanation: """
-                            Invalid or missing HTML template directory, relative to the docc \
-                            executable, at: '\(templateOption.defaultTemplateURL.path)'.
-                            Set the '\(TemplateOption.environmentVariableKey)' environment variable \
-                            to use a custom HTML template.
-                            
-                            Conversion will continue, but the produced DocC archive will not be \
-                            compatible with static hosting environments.
-                            
-                            Pass the '--no-transform-for-static-hosting' flag to silence this warning.
-                            """
+                    throw TemplateOption.missingHTMLTemplateError(
+                        path: templateOption.defaultTemplateURL.path
                     )
-                    
-                    print(
-                        invalidOrMissingTemplateDiagnostic.localizedDescription,
-                        to: &Self._errorLogHandle
-                    )
-                    
-                    transformForStaticHosting = false
                 }
             }
 
