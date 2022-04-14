@@ -136,6 +136,7 @@
         {
             "name" : "status",
             "deprecated" : true,
+            "readOnly" : true,
             "type" : [
                 {
                     "kind" : "identifier",

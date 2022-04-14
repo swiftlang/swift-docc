@@ -244,11 +244,13 @@ class RESTSymbolsTests: XCTestCase {
         XCTAssertEqual(properties.items.count, 2)
         guard properties.items.count == 2 else { return }
         
-        // The first property is not deprecated but required
+        // The first property is not deprecated/readonly but required
         XCTAssertNil(properties.items[0].deprecated)
+        XCTAssertNil(properties.items[0].readOnly)
         XCTAssertEqual(properties.items[0].required, true)
-        // The second property is deprecated but not required
+        // The second property is deprecated/readonly but not required
         XCTAssertEqual(properties.items[1].deprecated, true)
+        XCTAssertEqual(properties.items[1].readOnly, true)
         XCTAssertNil(properties.items[1].required)
         
         guard let attributes = properties.items[0].attributes else {
