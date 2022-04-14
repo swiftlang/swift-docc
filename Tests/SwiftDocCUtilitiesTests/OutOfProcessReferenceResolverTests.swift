@@ -109,6 +109,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(node.kind.id, testMetadata.kind.id)
         XCTAssertEqual(node.kind.isSymbol, testMetadata.kind.isSymbol)
         
+        XCTAssertEqual(ReferenceResolver.title(forNode: node), "Resolved Title")
+        
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
         XCTAssertEqual(symbol.title, "Resolved Title")
         
@@ -264,6 +266,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(symbolNode.kind.name, testMetadata.kind.name)
         XCTAssertEqual(symbolNode.kind.id, testMetadata.kind.id)
         XCTAssertEqual(symbolNode.kind.isSymbol, testMetadata.kind.isSymbol)
+        
+        XCTAssertEqual(ReferenceResolver.title(forNode: symbolNode), "Resolved Title")
         
         let symbol = try XCTUnwrap(symbolNode.semantic as? Symbol)
         XCTAssertEqual(symbol.kind.identifier, .class,
