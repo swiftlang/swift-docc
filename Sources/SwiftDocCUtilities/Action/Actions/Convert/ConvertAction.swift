@@ -380,7 +380,7 @@ public struct ConvertAction: Action, RecreatingContext {
         if transformForStaticHosting,
            let templateDirectory = htmlTemplateDirectory,
            // If this conversion didn't actually produce documentation, then we expect
-           // the creation of this data provider to file because there will be no 'data' subdirectory
+           // the creation of this data provider to fail because there will be no 'data' subdirectory
            // in the documentation output. (r91790147)
            let dataProvider = try? LocalFileSystemDataProvider(
                rootURL: temporaryFolder.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
