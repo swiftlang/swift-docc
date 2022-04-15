@@ -377,12 +377,19 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         // Process Static Hosting as needed.
-        if transformForStaticHosting, let templateDirectory = htmlTemplateDirectory {
+        if transformForStaticHosting,
+           let templateDirectory = htmlTemplateDirectory,
+           // If this conversion didn't actually produce documentation, then we expect
+           // the creation of this data provider to fail because there will be no 'data' subdirectory
+           // in the documentation output. (r91790147)
+           let dataProvider = try? LocalFileSystemDataProvider(
+               rootURL: temporaryFolder.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
+           )
+        {
             if indexHTMLData == nil {
                 indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: templateDirectory, hostingBasePath: hostingBasePath)
             }
             
-            let dataProvider = try LocalFileSystemDataProvider(rootURL: temporaryFolder.appendingPathComponent(NodeURLGenerator.Path.dataFolderName))
             let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: temporaryFolder, indexHTMLData: indexHTMLData!)
             try transformer.transform()
         }
