@@ -2300,6 +2300,35 @@ class ConvertActionTests: XCTestCase {
         
         expectedOutput.assertExist(at: result.outputs[0], fileManager: testDataProvider)
     }
+    
+    // Tests that the default behavior of `docc convert` on the command-line does not throw an error
+    // when processing a DocC catalog that does not actually produce documentation. (r91790147)
+    func testConvertDocCCatalogThatProducesNoDocumentationDoesNotThrowError() throws {
+        let emptyCatalog = Folder(
+            name: "unit-test.docc",
+            content: [InfoPlist(displayName: "TestBundle", identifier: "com.test.example")]
+        )
+        
+        let temporaryDirectory = try createTemporaryDirectory()
+        let outputDirectory = temporaryDirectory.appendingPathComponent("output", isDirectory: true)
+        let doccCatalogDirectory = try emptyCatalog.write(inside: temporaryDirectory)
+        let htmlTemplateDirectory = try Folder.emptyHTMLTemplateDirectory.write(inside: temporaryDirectory)
+        
+        setenv(TemplateOption.environmentVariableKey, htmlTemplateDirectory.path, 1)
+        defer {
+            unsetenv(TemplateOption.environmentVariableKey)
+        }
+        
+        let convertCommand = try Docc.Convert.parse(
+            [
+                doccCatalogDirectory.path,
+                "--output-path", outputDirectory.path,
+            ]
+        )
+        
+        var action = try ConvertAction(fromConvertCommand: convertCommand)
+        _ = try action.perform(logHandle: .none)
+    }
 
     func testConvertWithCustomTemplates() throws {
         let info = InfoPlist(displayName: "TestConvertWithCustomTemplates", identifier: "com.test.example")
