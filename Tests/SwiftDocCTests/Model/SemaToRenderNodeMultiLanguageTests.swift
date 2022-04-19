@@ -737,6 +737,35 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
+    func testMultiLanguageChildOfSingleParentSymbolIsCuratedInMultiLanguage() throws {
+        throw XCTSkip("Skipped due to flakiness in generating disambiguation prefixes due to rdar://91505520")
+        
+//        let outputConsumer = try mixedLanguageFrameworkConsumer(
+//            bundleName: "MixedLanguageFrameworkSingleLanguageParent"
+//        )
+//        
+//        let topLevelFrameworkPage = try outputConsumer.renderNode(withTitle: "MixedLanguageFramework")
+//        
+//        XCTAssertEqual(
+//            topLevelFrameworkPage.topicSections.flatMap(\.identifiers),
+//            [
+//                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyError-swift.struct/Code-swift.enum",
+//                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyError-swift.struct",
+//                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyErrorDomain",
+//            ]
+//        )
+//        
+//        let objectiveCTopLevelFrameworkPage = try renderNodeApplyingObjectiveCVariantOverrides(to: topLevelFrameworkPage)
+//        
+//        XCTAssertEqual(
+//            objectiveCTopLevelFrameworkPage.topicSections.flatMap(\.identifiers),
+//            [
+//                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyError-swift.struct/Code-swift.enum",
+//                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyErrorDomain",
+//            ]
+//        )
+    }
+    
     func assertExpectedContent(
         _ renderNode: RenderNode,
         sourceLanguage expectedSourceLanguage: String,
@@ -933,10 +962,11 @@ extension TestRenderNodeOutputConsumer {
 
 fileprivate extension SemaToRenderNodeMixedLanguageTests {
     func mixedLanguageFrameworkConsumer(
+        bundleName: String = "MixedLanguageFramework",
         configureBundle: ((URL) throws -> Void)? = nil
     ) throws -> TestRenderNodeOutputConsumer {
         let (bundleURL, _, context) = try testBundleAndContext(
-            copying: "MixedLanguageFramework",
+            copying: bundleName,
             configureBundle: configureBundle
         )
         
