@@ -41,8 +41,8 @@
         "package": "SymbolKit",
         "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
         "state": {
-          "branch": "main",
-          "revision": "ed8ce5502e563090ab1400b4dd7d703b01eceabb",
+          "branch": "release/5.7",
+          "revision": "3866a31493efce07a57e8344b8b1318c6ae1b3c8",
           "version": null
         }
       },
