@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -76,6 +76,35 @@ class ResolvedTopicReferenceTests: XCTestCase {
             _ = topicReference.url
             _ = topicReference.pathComponents
             _ = topicReference.absoluteString
+        }
+    }
+    
+    func testResolvedTopicReferenceDoesNotLeakMemory() throws {
+        #if os(Linux) || os(Android)
+            throw XCTSkip("'autoreleasepool' is not supported on this platform so this test can not be run reliably.")
+        #endif
+        
+        autoreleasepool {
+            var topicReference: ResolvedTopicReference? = ResolvedTopicReference(
+                bundleIdentifier: "com.apple.example",
+                path: "/documentation/path/sub-path",
+                fragment: nil,
+                sourceLanguage: .swift
+            )
+            XCTAssertNotNil(topicReference)
+            
+            ResolvedTopicReference.sharedPool.sync { pool in
+                XCTAssertNotNil(pool.first?.value.values.first?.value)
+                XCTAssertFalse(pool.isEmpty)
+            }
+            
+            topicReference = nil
+            XCTAssertNil(topicReference)
+        }
+        
+        ResolvedTopicReference.sharedPool.sync { pool in
+            XCTAssertNil(pool.first?.value.values.first?.value)
+            XCTAssertTrue(pool.isEmpty)
         }
     }
 }

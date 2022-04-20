@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -2159,11 +2159,35 @@ let expected = """
         XCTAssertNotNil(try context.entity(with: referenceForPath("/Collisions/SharedStruct/iOSVar")))
     }
     
+    func testContextDoesNotLeakReferences() throws {
+        #if os(Linux) || os(Android)
+            throw XCTSkip("'autoreleasepool' is not supported on this platform so this test can not be run reliably.")
+        #endif
+        
+        // Verify there is no pool bucket for the bundle we're about to test
+        XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
+        
+        try autoreleasepool {
+            let (url, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
+                let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
+                try! String(contentsOf: infoPlistURL)
+                    .replacingOccurrences(of: "org.swift.docc.example", with: #function)
+                    .write(to: infoPlistURL, atomically: true, encoding: .utf8)
+            })
+            
+            try FileManager.default.removeItem(at: url)
+        }
+            
+        
+        // Verify there is no pool bucket for the bundle after we've released all references to it
+        XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
+    }
+    
     func testContextCachesReferences() throws {
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
         
-        let (url, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
+        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { rootURL in
             let infoPlistURL = rootURL.appendingPathComponent("Info.plist", isDirectory: false)
             try! String(contentsOf: infoPlistURL)
                 .replacingOccurrences(of: "org.swift.docc.example", with: #function)
@@ -2194,6 +2218,11 @@ let expected = """
         
         // Verify creating a new reference added to the ones loaded with the context
         XCTAssertNotEqual(beforeCount, ResolvedTopicReference.sharedPool.sync({ $0[#function]!.count }))
+        
+        // Access the bundle and the context so that they're kept in memory and the resolved topic
+        // references are not released from the cache
+        XCTAssertEqual(bundle.identifier, #function)
+        XCTAssertEqual(context.knownPages.count, 39)
         
         // Purge the pool
         ResolvedTopicReference.purgePool(for: #function)
