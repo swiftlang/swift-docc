@@ -84,27 +84,43 @@ class ResolvedTopicReferenceTests: XCTestCase {
             throw XCTSkip("'autoreleasepool' is not supported on this platform so this test can not be run reliably.")
         #endif
         
+        // Use the name of the test as a unique bundle identifier for this test. Otherwise, when
+        // these tests are run sequentially, this test could fail because of stale topic references
+        // that still exist in other pools of the cache.
+        //
+        // This isn't a concern when running the tests in parallel because each test is run in its
+        // own process.
+        let bundleIdentifier = #function
+        
         autoreleasepool {
             var topicReference: ResolvedTopicReference? = ResolvedTopicReference(
-                bundleIdentifier: "com.apple.example",
+                bundleIdentifier: bundleIdentifier,
                 path: "/documentation/path/sub-path",
                 fragment: nil,
                 sourceLanguage: .swift
             )
-            XCTAssertNotNil(topicReference)
             
-            ResolvedTopicReference.sharedPool.sync { pool in
-                XCTAssertNotNil(pool.first?.value.values.first?.value)
-                XCTAssertFalse(pool.isEmpty)
+            ResolvedTopicReference.sharedPool.sync { sharedPool in
+                XCTAssertNotNil(sharedPool[bundleIdentifier])
+                XCTAssertEqual(
+                    sharedPool[bundleIdentifier]?.values.first?.value?.path,
+                    "/documentation/path/sub-path"
+                )
             }
             
             topicReference = nil
+            
+            // The below assertion just adds a use of the 'topicReference' variable. Otherwise
+            // we end up with a warning:
+            //
+            //    Variable 'topicReference' was written to, but never read
+            
             XCTAssertNil(topicReference)
         }
         
-        ResolvedTopicReference.sharedPool.sync { pool in
-            XCTAssertNil(pool.first?.value.values.first?.value)
-            XCTAssertTrue(pool.isEmpty)
+        ResolvedTopicReference.sharedPool.sync { sharedPool in
+            XCTAssertNil(sharedPool[bundleIdentifier]?.values.first?.value)
+            XCTAssertNil(sharedPool[bundleIdentifier])
         }
     }
 }
