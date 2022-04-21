@@ -219,11 +219,13 @@ extension AutomaticCuration {
         .`var`,
         .`func`,
         .`operator`,
+        .`macro`,
 
         .`associatedtype`,
         .`case`,
         .`init`,
         .`deinit`,
+        .`ivar`,
         .`property`,
         .`method`,
         .`subscript`,
