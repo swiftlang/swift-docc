@@ -17,4 +17,22 @@ extension BlockDirective {
         Tutorial.directiveName,
         TutorialArticle.directiveName,
     ]
+
+    /// Names of known directives
+    static let allKnownDirectiveNames: [String] = [
+        ImageMedia.directiveName,
+        VideoMedia.directiveName,
+        Metadata.directiveName,
+        TechnologyRoot.directiveName,
+        Snippet.directiveName,
+        DeprecationSummary.directiveName,
+        TechnologyRoot.directiveName,
+        Resources.directiveName,
+        Chapter.directiveName,
+        Tutorial.directiveName,
+        TutorialReference.directiveName,
+        Choice.directiveName,
+        Code.directiveName,
+        Technology.directiveName
+    ]
 }

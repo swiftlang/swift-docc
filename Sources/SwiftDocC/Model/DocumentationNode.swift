@@ -381,9 +381,15 @@ public struct DocumentationNode {
                     for: SymbolGraph.Symbol.Location.self
                 )?.url()
                 
+                let allKnownDirectiveName = BlockDirective.allKnownDirectiveNames
+
                 for comment in docCommentDirectives {
                     let range = docCommentMarkup.child(at: comment.indexInParent)?.range
                     
+                    if !allKnownDirectiveName.contains(comment.name) {
+                        continue
+                    }
+
                     var diagnostic = Diagnostic(
                         source: location,
                         severity: .warning,
