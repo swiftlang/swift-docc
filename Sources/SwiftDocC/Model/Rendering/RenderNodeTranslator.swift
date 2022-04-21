@@ -896,7 +896,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                return reference.sourceLanguages
+                return context.sourceLanguages(for: reference)
                     .contains { sourceLanguage in
                         allowedTraits.contains { trait in
                             trait.interfaceLanguage == sourceLanguage.id

@@ -1,0 +1,94 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 0
+    },
+    "generator": "SymbolKit"
+  },
+  "module": {
+    "name": "MixedLanguageFramework",
+    "platform": {
+      "architecture": "x86_64",
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 12,
+          "minor": 4,
+          "patch": 0
+        },
+        "name": "macos"
+      },
+      "vendor": "apple"
+    }
+  },
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "c:@E@MyError@MyErrorUnknown",
+      "target": "c:@E@MyError",
+      "targetFallback": null
+    }
+  ],
+  "symbols": [
+    {
+      "accessLevel": "public",
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:@E@MyError"
+      },
+      "kind": {
+        "displayName": "Enumeration",
+        "identifier": "enum"
+      },
+      "location": {
+        "position": {
+          "character": 8,
+          "line": 14
+        },
+        "uri": "MixedLanguageFramework.h"
+      },
+      "names": {
+        "title": "MyError"
+      },
+      "pathComponents": [
+        "MyError"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:@E@MyError@MyErrorUnknown"
+      },
+      "kind": {
+        "displayName": "Enumeration Case",
+        "identifier": "enum.case"
+      },
+      "names": {
+        "title": "MyErrorUnknown"
+      },
+      "pathComponents": [
+        "MyError",
+        "MyErrorUnknown"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "identifier": {
+        "interfaceLanguage": "occ",
+        "precise": "c:@MyErrorDomain"
+      },
+      "kind": {
+        "displayName": "Global Variable",
+        "identifier": "var"
+      },
+      "names": {
+        "title": "MyErrorDomain"
+      },
+      "pathComponents": [
+        "MyErrorDomain"
+      ]
+    }
+  ]
+}
