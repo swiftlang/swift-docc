@@ -1509,7 +1509,7 @@ let expected = """
         )
     }
 
-    func testOverloadPlustNonOverloadCollisionPaths() throws {
+    func testOverloadPlusNonOverloadCollisionPaths() throws {
         // Add some symbol collisions to graph
         let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
