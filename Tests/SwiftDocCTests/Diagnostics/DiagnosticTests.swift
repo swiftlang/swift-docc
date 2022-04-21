@@ -12,6 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 @testable import SymbolKit
+import SwiftDocCTestUtilities
 
 class DiagnosticTests: XCTestCase {
 
@@ -139,6 +140,27 @@ class DiagnosticTests: XCTestCase {
         \(explanation)
         \(expectedNoteLocation): note: The message of the note.
         """)
+    }
+
+    func testDoxygenDiagnostic() throws {
+        let tempURL = try createTemporaryDirectory()
+
+        let bundleURL = try Folder(name: "InheritedDocs.docc", content: [
+            InfoPlist(displayName: "Inheritance", identifier: "com.test.inheritance"),
+            CopyOfFile(original: Bundle.module.url(
+                        forResource: "TestDoxygenDiagnostics.symbols", withExtension: "json",
+                        subdirectory: "Test Resources")!),
+        ]).write(inside: tempURL)
+        let (_, bundle, _) = try loadBundle(from: bundleURL)
+
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test/Test/HTMLStringWithMarkdown", sourceLanguage: .objectiveC)
+
+        let node = DocumentationNode(reference: reference, kind: .typeMethod, sourceLanguage: .objectiveC, name: .conceptual(title: name), markup: Document(parsing: "# \(name)"), semantic: nil)
+
+        let engine = DiagnosticEngine()
+        _ = DocumentationNode.contentFrom(documentedSymbol: node.symbol, documentationExtension: nil, engine: engine)
+
+        XCTAssertEqual(engine.problems.count, 0)
     }
 }
 
