@@ -89,12 +89,12 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     typealias ReferenceKey = String
     
     /// A synchronized reference cache to store resolved references.
-    static var sharedPool = Synchronized([ReferenceBundleIdentifier: [ReferenceKey: Weak<ResolvedTopicReference.Storage>]]())
+//    static var sharedPool = Synchronized([ReferenceBundleIdentifier: [ReferenceKey: Weak<ResolvedTopicReference.Storage>]]())
     
     /// Clears cached references belonging to the bundle with the given identifier.
     /// - Parameter bundleIdentifier: The identifier of the bundle to which the method should clear belonging references.
     static func purgePool(for bundleIdentifier: String) {
-        sharedPool.sync { $0.removeValue(forKey: bundleIdentifier) }
+//        sharedPool.sync { $0.removeValue(forKey: bundleIdentifier) }
     }
 
     /// The URL scheme for `doc://` links.
@@ -160,11 +160,11 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             urlReadableFragment: urlReadableFragment,
             sourceLanguages: sourceLanguages
         )
-        let cached = Self.sharedPool.sync { $0[bundleIdentifier]?[key] }
-        if let resolved = cached?.value {
-            self = .init(storage: resolved)
-            return
-        }
+//        let cached = Self.sharedPool.sync { $0[bundleIdentifier]?[key] }
+//        if let resolved = cached?.value {
+//            self = .init(storage: resolved)
+//            return
+//        }
         
         _storage = Storage(
             bundleIdentifier: bundleIdentifier,
@@ -173,10 +173,10 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             sourceLanguages: sourceLanguages
         )
 
-        // Cache the reference
-        Self.sharedPool.sync { sharedPool in
-            sharedPool[bundleIdentifier, default: [:]][key] = Weak(value: self._storage)
-        }
+//        // Cache the reference
+//        Self.sharedPool.sync { sharedPool in
+//            sharedPool[bundleIdentifier, default: [:]][key] = Weak(value: self._storage)
+//        }
     }
     
     fileprivate init(storage: Storage) {
@@ -434,20 +434,20 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
             self.absoluteString = self.url.absoluteString
         }
         
-        deinit {
-            ResolvedTopicReference.sharedPool.sync { sharedPool in
-                let key = ResolvedTopicReference.cacheKey(
-                    urlReadablePath: self.path,
-                    urlReadableFragment: self.fragment,
-                    sourceLanguages: self.sourceLanguages
-                )
-                sharedPool[bundleIdentifier]?.removeValue(forKey: key)
-                
-                if sharedPool[bundleIdentifier]?.isEmpty ?? false {
-                    sharedPool.removeValue(forKey: bundleIdentifier)
-                }
-            }
-        }
+//        deinit {
+//            ResolvedTopicReference.sharedPool.sync { sharedPool in
+//                let key = ResolvedTopicReference.cacheKey(
+//                    urlReadablePath: self.path,
+//                    urlReadableFragment: self.fragment,
+//                    sourceLanguages: self.sourceLanguages
+//                )
+//                sharedPool[bundleIdentifier]?.removeValue(forKey: key)
+//
+//                if sharedPool[bundleIdentifier]?.isEmpty ?? false {
+//                    sharedPool.removeValue(forKey: bundleIdentifier)
+//                }
+//            }
+//        }
     }
 }
 
