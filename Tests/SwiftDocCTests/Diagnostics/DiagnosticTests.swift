@@ -143,24 +143,62 @@ class DiagnosticTests: XCTestCase {
     }
 
     func testDoxygenDiagnostic() throws {
-        let tempURL = try createTemporaryDirectory()
+        let identifer = SymbolGraph.Symbol.Identifier(precise: "s:5MyKit0A5ClassC10myFunctionyyF", interfaceLanguage: "occ")
+        let names = SymbolGraph.Symbol.Names(title: "", navigator: nil, subHeading: nil, prose: nil)
+        let pathComponents = ["path", "to", "my file.h"]
+        let range = SymbolGraph.LineList.SourceRange(
+            start: .init(line: 0, character: 0),
+            end: .init(line: 0, character: 0)
+        )
+        let commentText = """
+          /// Brief description of this method
+          @param something Description of this parameter
+          @returns Description of return value
+          """
+        let lines = commentText.components(separatedBy: .newlines).map { SymbolGraph.LineList.Line(text: $0, range: range) }
+        let docComment = SymbolGraph.LineList(lines)
 
-        let bundleURL = try Folder(name: "InheritedDocs.docc", content: [
-            InfoPlist(displayName: "Inheritance", identifier: "com.test.inheritance"),
-            CopyOfFile(original: Bundle.module.url(
-                        forResource: "TestDoxygenDiagnostics.symbols", withExtension: "json",
-                        subdirectory: "Test Resources")!),
-        ]).write(inside: tempURL)
-        let (_, bundle, _) = try loadBundle(from: bundleURL)
-
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test/Test/HTMLStringWithMarkdown", sourceLanguage: .objectiveC)
-
-        let node = DocumentationNode(reference: reference, kind: .typeMethod, sourceLanguage: .objectiveC, name: .conceptual(title: name), markup: Document(parsing: "# \(name)"), semantic: nil)
+        let symbol = SymbolGraph.Symbol(
+            identifier: identifer,
+            names: names,
+            pathComponents: pathComponents,
+            docComment: docComment,
+            accessLevel: .init(rawValue: "public"),
+            kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "myFunction"),
+            mixins: [
+                SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: "file:///path/to/my file.h", position: range.start),
+            ]
+        )
 
         let engine = DiagnosticEngine()
-        _ = DocumentationNode.contentFrom(documentedSymbol: node.symbol, documentationExtension: nil, engine: engine)
-
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
         XCTAssertEqual(engine.problems.count, 0)
+
+        // testing scenario with known directive
+        let commentWithKnownDirective = """
+          /// Brief description of this method
+          @Image something Description of this parameter
+          @returns Description of return value
+          """
+        let linesWithKnownDirective = commentWithKnownDirective.components(separatedBy: .newlines).map { SymbolGraph.LineList.Line(text: $0, range: range) }
+
+        let symbolWithKnownDirective = SymbolGraph.Symbol(
+            identifier: identifer,
+            names: names,
+            pathComponents: pathComponents,
+            docComment: SymbolGraph.LineList(linesWithKnownDirective),
+            accessLevel: .init(rawValue: "public"),
+            kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "myFunction"),
+            mixins: [
+                SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: "file:///path/to/my file.h", position: range.start),
+            ]
+        )
+        let engine1 = DiagnosticEngine()
+
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbolWithKnownDirective, documentationExtension: nil, engine: engine1)
+        // count should 1 for the known directive '@Image'
+        XCTAssertEqual(engine1.problems.count, 1)
+
     }
 }
 
