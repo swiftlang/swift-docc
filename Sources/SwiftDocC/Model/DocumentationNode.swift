@@ -380,13 +380,11 @@ public struct DocumentationNode {
                 let location = symbol.mixins.getValueIfPresent(
                     for: SymbolGraph.Symbol.Location.self
                 )?.url()
-                
-                let allKnownDirectiveName = BlockDirective.allKnownDirectiveNames
 
                 for comment in docCommentDirectives {
                     let range = docCommentMarkup.child(at: comment.indexInParent)?.range
                     
-                    if !allKnownDirectiveName.contains(comment.name) {
+                    guard BlockDirective.allKnownDirectiveNames.contains(comment.name) else {
                         continue
                     }
 
