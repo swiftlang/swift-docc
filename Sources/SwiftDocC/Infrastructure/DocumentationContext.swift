@@ -1017,38 +1017,45 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         pathCount.reserveCapacity(totalSymbolCount)
         result.reserveCapacity(totalSymbolCount)
         
-        // Group symbols by path from all of the available symbol graphs
-        for (moduleName, symbolGraph) in unifiedGraphs {
-            let symbols = Array(symbolGraph.symbols.values)
-            let paths: [[String]] = symbols.concurrentMap { referencesFor($0, moduleName: moduleName, bundle: bundle).map { $0.path.lowercased() } }
-
-            for (index, symbol) in symbols.enumerated() {
-                for path in paths[index] {
-                    if let existingReferences = pathCount[path] {
-                        // It's only a collision if it's a different precise identifier,
-                        // otherwise it's just the same symbol.
-                        if existingReferences.allSatisfy({ pair -> Bool in
-                            return pair.symbol.uniqueIdentifier != symbol.uniqueIdentifier
-                        }) {
-                            // A collision - different symbol but same paths
-                            pathCount[path]!.append(SymbolInModule(symbol: symbol, moduleName: moduleName))
+        var allReferences = [[[ResolvedTopicReference]]]()
+        
+        withExtendedLifetime(allReferences) {
+            // Group symbols by path from all of the available symbol graphs
+            for (moduleName, symbolGraph) in unifiedGraphs {
+                let symbols = Array(symbolGraph.symbols.values)
+                let references: [[ResolvedTopicReference]] = symbols.concurrentMap { referencesFor($0, moduleName: moduleName, bundle: bundle) }
+                allReferences.append(references)
+                
+                for (index, symbol) in symbols.enumerated() {
+                    for reference in references[index] {
+                        let path = reference.path.lowercased()
+                        
+                        if let existingReferences = pathCount[path] {
+                            // It's only a collision if it's a different precise identifier,
+                            // otherwise it's just the same symbol.
+                            if existingReferences.allSatisfy({ pair -> Bool in
+                                return pair.symbol.uniqueIdentifier != symbol.uniqueIdentifier
+                            }) {
+                                // A collision - different symbol but same paths
+                                pathCount[path]!.append(SymbolInModule(symbol: symbol, moduleName: moduleName))
+                            }
+                        } else {
+                            // First occurrence of this path
+                            pathCount[path] = [SymbolInModule(symbol: symbol, moduleName: moduleName)]
                         }
-                    } else {
-                        // First occurrence of this path
-                        pathCount[path] = [SymbolInModule(symbol: symbol, moduleName: moduleName)]
                     }
                 }
             }
-        }
-        
-        // Translate symbols to topic references, adjust paths where necessary.
-        for collisions in pathCount.values {
-            let disambiguationSuffixes = collisions.map(\.symbol).requiredDisambiguationSuffixes
             
-            for (collision, disambiguationSuffix) in zip(collisions, disambiguationSuffixes) {
-                result[collision.symbol.defaultIdentifier, default: []].append(
-                    contentsOf: referencesFor(collision.symbol, moduleName: collision.moduleName, bundle: bundle, shouldAddHash: disambiguationSuffix.shouldAddIdHash, shouldAddKind: disambiguationSuffix.shouldAddKind)
-                )
+            // Translate symbols to topic references, adjust paths where necessary.
+            for collisions in pathCount.values {
+                let disambiguationSuffixes = collisions.map(\.symbol).requiredDisambiguationSuffixes
+                
+                for (collision, disambiguationSuffix) in zip(collisions, disambiguationSuffixes) {
+                    result[collision.symbol.defaultIdentifier, default: []].append(
+                        contentsOf: referencesFor(collision.symbol, moduleName: collision.moduleName, bundle: bundle, shouldAddHash: disambiguationSuffix.shouldAddIdHash, shouldAddKind: disambiguationSuffix.shouldAddKind)
+                    )
+                }
             }
         }
         
