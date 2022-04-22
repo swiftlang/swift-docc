@@ -21,7 +21,7 @@ extension ResolvedTopicReference {
         
         self.init(
             bundleIdentifier: bundle.documentationRootReference.bundleIdentifier,
-            path: bundle.documentationRootReference.url.appendingPathComponent(urlReadablePath(moduleName + path), isDirectory: false).path,
+            path: bundle.documentationRootReference.appendingPath(moduleName + path).path,
             fragment: nil,
             sourceLanguages: symbolReference.interfaceLanguages
         )
