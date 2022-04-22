@@ -142,35 +142,32 @@ class DiagnosticTests: XCTestCase {
         """)
     }
 
-    func testDoxygenDiagnostic() throws {
-        let identifer = SymbolGraph.Symbol.Identifier(precise: "s:5MyKit0A5ClassC10myFunctionyyF", interfaceLanguage: "occ")
-        let names = SymbolGraph.Symbol.Names(title: "", navigator: nil, subHeading: nil, prose: nil)
-        let pathComponents = ["path", "to", "my file.h"]
-        let range = SymbolGraph.LineList.SourceRange(
-            start: .init(line: 0, character: 0),
-            end: .init(line: 0, character: 0)
+    func createTestSymbol(commentText: String) -> SymbolGraph.Symbol {
+         let emptyRange = SymbolGraph.LineList.SourceRange(
+             start: .init(line: 0, character: 0),
+             end: .init(line: 0, character: 0)
+         )
+        let docCommentLines = commentText.components(separatedBy: .newlines).map { SymbolGraph.LineList.Line(text: $0, range: emptyRange) }
+        return SymbolGraph.Symbol(
+            identifier: .init(precise: "s:5MyKit0A5ClassC10myFunctionyyF", interfaceLanguage: "occ"),
+            names: .init(title: "", navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: ["path", "to", "my file.h"],
+            docComment: SymbolGraph.LineList(docCommentLines),
+            accessLevel: .init(rawValue: "public"),
+            kind: .init(parsedIdentifier: .func, displayName: "myFunction"),
+            mixins: [:]
         )
+    }
+
+    func testDoxygenDiagnostic() throws {
         let commentText = """
           /// Brief description of this method
           @param something Description of this parameter
           @returns Description of return value
           """
-        let lines = commentText.components(separatedBy: .newlines).map { SymbolGraph.LineList.Line(text: $0, range: range) }
-        let docComment = SymbolGraph.LineList(lines)
-
-        let symbol = SymbolGraph.Symbol(
-            identifier: identifer,
-            names: names,
-            pathComponents: pathComponents,
-            docComment: docComment,
-            accessLevel: .init(rawValue: "public"),
-            kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "myFunction"),
-            mixins: [
-                SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: "file:///path/to/my file.h", position: range.start),
-            ]
-        )
-
+        let symbol = createTestSymbol(commentText: commentText)
         let engine = DiagnosticEngine()
+
         let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
         XCTAssertEqual(engine.problems.count, 0)
 
@@ -180,22 +177,11 @@ class DiagnosticTests: XCTestCase {
           @Image something Description of this parameter
           @returns Description of return value
           """
-        let linesWithKnownDirective = commentWithKnownDirective.components(separatedBy: .newlines).map { SymbolGraph.LineList.Line(text: $0, range: range) }
-
-        let symbolWithKnownDirective = SymbolGraph.Symbol(
-            identifier: identifer,
-            names: names,
-            pathComponents: pathComponents,
-            docComment: SymbolGraph.LineList(linesWithKnownDirective),
-            accessLevel: .init(rawValue: "public"),
-            kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .func, displayName: "myFunction"),
-            mixins: [
-                SymbolGraph.Symbol.Location.mixinKey: SymbolGraph.Symbol.Location(uri: "file:///path/to/my file.h", position: range.start),
-            ]
-        )
+        let symbolWithKnownDirective = createTestSymbol(commentText: commentWithKnownDirective)
         let engine1 = DiagnosticEngine()
 
         let _ = DocumentationNode.contentFrom(documentedSymbol: symbolWithKnownDirective, documentationExtension: nil, engine: engine1)
+
         // count should 1 for the known directive '@Image'
         XCTAssertEqual(engine1.problems.count, 1)
         XCTAssertEqual(engine1.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnsupportedDocCommentDirective"])
