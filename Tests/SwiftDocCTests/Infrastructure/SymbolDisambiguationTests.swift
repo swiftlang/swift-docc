@@ -183,47 +183,11 @@ class SymbolDisambiguationTests: XCTestCase {
         ])
     }
     
-    func AssertEqual<Key: Hashable>(_ actual: [Key: [String]], _ expected: [Key: [String]], file: StaticString = #file, line: UInt = #line) {
-        if expected == actual { return }
-        
-        let missingKeys = Set(expected.keys).subtracting(Set(actual.keys))
-        for key in missingKeys {
-            XCTFail("Missing value for \(key)", file: file, line: line)
-        }
-        
-        let extraKeys = Set(actual.keys).subtracting(Set(expected.keys))
-        for key in extraKeys {
-            XCTFail("Unexpected extra values for \(key)", file: file, line: line)
-        }
-        
-        let commonKeys = Set(expected.keys).intersection(Set(actual.keys))
-        for key in commonKeys {
-            let expectedValue = expected[key]!
-            let actualValue = actual[key]!
-            if expectedValue == actualValue { continue }
-            
-            if expectedValue.sorted() == actualValue.sorted() {
-                XCTFail("Value for \(key) is in a different order.\nExpected:\n  \(expectedValue)\nGot:\n  \(actualValue)", file: file, line: line)
-                continue
-            }
-            
-            let missingValues = Set(expectedValue).subtracting(Set(actualValue))
-            for value in missingValues {
-                XCTFail("Value for \(key) is missing \(value)", file: file, line: line)
-            }
-            
-            let extraValues = Set(actualValue).subtracting(Set(expectedValue))
-            for value in extraValues {
-                XCTFail("Value for \(key) unexpectedly contains \(value)", file: file, line: line)
-            }
-        }
-    }
-    
     func testMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
         let aliases = [String: [String]](uniqueKeysWithValues: context.referenceAliases.map({ ($0.key.path, $0.value.map(\.path).sorted()) }))
-        AssertEqual(aliases, [
+        XCTAssertEqual(aliases, [
             "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)": [
                 "/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
             ],
@@ -245,7 +209,7 @@ class SymbolDisambiguationTests: XCTestCase {
         try loader.loadAll()
         
         let references = context.referencesForSymbols(in: loader.unifiedGraphs, bundle: bundle).mapValues({ $0.map(\.path) })
-        AssertEqual(references, [
+        XCTAssertEqual(references, [
             .init(precise: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift"): [
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod",
