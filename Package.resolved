@@ -41,8 +41,8 @@
         "package": "SymbolKit",
         "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
         "state": {
-          "branch": "main",
-          "revision": "ed8ce5502e563090ab1400b4dd7d703b01eceabb",
+          "branch": "release/5.7",
+          "revision": "3866a31493efce07a57e8344b8b1318c6ae1b3c8",
           "version": null
         }
       },
@@ -50,7 +50,7 @@
         "package": "CLMDB",
         "repositoryURL": "https://github.com/apple/swift-lmdb.git",
         "state": {
-          "branch": "main",
+          "branch": "release/5.7",
           "revision": "6ea45a7ebf6d8f72bd299dfcc3299e284bbb92ee",
           "version": null
         }
@@ -59,7 +59,7 @@
         "package": "swift-markdown",
         "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
-          "branch": "main",
+          "branch": "release/5.7",
           "revision": "caafc56d3794a08c2203fe417b3aff81e2ab2fc1",
           "version": null
         }
