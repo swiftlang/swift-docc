@@ -104,21 +104,25 @@ public enum RenderJSONEncoder {
     /// process which should not be shared in other encoding units. Instead, call this API to create a new encoder for each render node you want to encode.
     ///
     /// - Parameters:
-    ///     - prettyPrint: If `true`, the encoder formats its output to make it easy to read; if `false`, the output is compact.
+    ///     - prettyPrint: Whether or not the the encoder should pretty print the RenderJSON output.
+    ///
+    ///       If `true`, the encoder formats its output to make it easy to read. If `false`, the output is compact. If no value is provided, the ``shouldPrettyPrintOutputJSON`` default is used.
     ///     - emitVariantOverrides: Whether the encoder should emit the top-level ``RenderNode/variantOverrides`` property that holds language-
     ///     specific documentation data.
     /// - Returns: The new JSON encoder.
     public static func makeEncoder(
-        prettyPrint: Bool = shouldPrettyPrintOutputJSON,
+        prettyPrint: Bool? = nil,
         emitVariantOverrides: Bool = true
     ) -> JSONEncoder {
-        let encoder = JSONEncoder()
+        let encoder = JSONEncoder.default
         
-        if prettyPrint {
-            if #available(macOS 10.13, iOS 11.0, watchOS 4.0, tvOS 11.0, *) {
-                encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        // Only modify the default encoder's pretty print formatting setting
+        // if a value was provided.
+        if let prettyPrint = prettyPrint {
+            if prettyPrint {
+                encoder.outputFormatting.insert(.prettyPrinted)
             } else {
-                encoder.outputFormatting = [.prettyPrinted]
+                encoder.outputFormatting.subtract(.prettyPrinted)
             }
         }
         

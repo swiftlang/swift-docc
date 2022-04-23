@@ -462,7 +462,7 @@ private class LongRunningProcess: ExternalLinkResolving {
         
     func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
         if let request = request {
-            guard let requestString = String(data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
+            guard let requestString = String(data: try JSONEncoder.default.encode(request), encoding: .utf8)?.appending("\n"),
                   let requestData = requestString.data(using: .utf8)
             else {
                 throw OutOfProcessReferenceResolver.Error.unableToEncodeRequestToClient(requestDescription: request.description)

@@ -38,7 +38,7 @@ public struct JSONPatchApplier {
             return newValue
         }
         
-        return try JSONEncoder().encode(appliedJSON)
+        return try JSONEncoder.default.encode(appliedJSON)
     }
     
     private func apply(_ operation: JSONPatchOperation, to json: JSON, originalPointer: JSONPointer) throws -> JSON? {

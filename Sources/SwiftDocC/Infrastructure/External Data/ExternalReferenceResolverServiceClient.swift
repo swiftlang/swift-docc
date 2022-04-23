@@ -28,8 +28,6 @@ class ExternalReferenceResolverServiceClient {
         qos: .unspecified
     )
     
-    private var encoder = JSONEncoder()
-    
     init(server: DocumentationServer, convertRequestIdentifier: String?) {
         self.server = server
         self.convertRequestIdentifier = convertRequestIdentifier
@@ -46,7 +44,7 @@ class ExternalReferenceResolverServiceClient {
             guard let self = self else { return }
             
             do {
-                let encodedRequest = try self.encoder.encode(
+                let encodedRequest = try JSONEncoder.default.encode(
                     ConvertRequestContextWrapper(
                         convertRequestIdentifier: self.convertRequestIdentifier,
                         payload: request
@@ -59,7 +57,7 @@ class ExternalReferenceResolverServiceClient {
                     payload: encodedRequest
                 )
                 
-                let messageData = try self.encoder.encode(message)
+                let messageData = try JSONEncoder.default.encode(message)
                 
                 self.server.process(messageData) { responseData in
                     defer { resultGroup.leave() }

@@ -1047,16 +1047,9 @@ extension NavigatorIndex {
             if emitJSONRepresentation {
                 let renderIndex = RenderIndex.fromNavigatorIndex(navigatorIndex, with: self)
                 
-                let jsonEncoder = JSONEncoder()
-                if shouldPrettyPrintOutputJSON {
-                    jsonEncoder.outputFormatting = [.sortedKeys, .prettyPrinted]
-                } else {
-                    jsonEncoder.outputFormatting = [.sortedKeys]
-                }
-                
                 let jsonNavigatorIndexURL = outputURL.appendingPathComponent("index.json")
                 do {
-                    let renderIndexData = try jsonEncoder.encode(renderIndex)
+                    let renderIndexData = try JSONEncoder.default.encode(renderIndex)
                     try renderIndexData.write(to: jsonNavigatorIndexURL)
                 } catch {
                     self.problems.append(
