@@ -8,7 +8,6 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-
 import Foundation
 
 struct DiffResultsTable {
@@ -97,7 +96,9 @@ private let percentageFormatter: NumberFormatter = {
     fmt.numberStyle = .percent
     fmt.alwaysShowsDecimalSeparator = true
     fmt.positivePrefix = fmt.plusSign
-    fmt.maximumFractionDigits = 2
-    fmt.minimumFractionDigits = 2
+    fmt.minimumSignificantDigits = 3
+    fmt.maximumSignificantDigits = 4
+    fmt.maximumFractionDigits = 8
+    fmt.minimumFractionDigits = 1
     return fmt
 }()

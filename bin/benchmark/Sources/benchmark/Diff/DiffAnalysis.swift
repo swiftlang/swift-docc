@@ -46,11 +46,11 @@ extension DiffResults {
                 beforeNumbers = beforeValues.map { Double($0) }
                 afterNumbers = afterValues.map { Double($0) }
                 
-                if Set(beforeValues).count == 1, beforeValues == afterValues {
+                if Set(beforeValues).count == 1, Set(afterValues).count == 1 {
                     return MetricAnalysis(
                         metricName: afterMetric.displayName,
                         metricID: afterMetric.id,
-                        change: .same,
+                        change: beforeValues == afterValues ? .same : .differentChecksum,
                         before: beforeMetric.values.formatted(),
                         after: afterMetric.values.formatted()
                     )
@@ -68,15 +68,20 @@ extension DiffResults {
             default:
                 throw Error.typeMismatchComparingBenchmarkValues(id: afterMetric.id)
         }
-        
+       
         var warnings: [String] = []
-        if !beforeNumbers.looksReasonablyNonBiased() {
-            warnings.append(Self.inputBiasDescription(metricID: beforeMetric.id, sampleName: "before", numbers: beforeNumbers))
+        switch beforeMetric.values {
+            case .duration, .bytesInMemory:
+                if !beforeNumbers.looksReasonablyNonBiased() {
+                    warnings.append(Self.inputBiasDescription(metricID: beforeMetric.id, sampleName: "before", numbers: beforeNumbers))
+                }
+                if !afterNumbers.looksReasonablyNonBiased() {
+                    warnings.append(Self.inputBiasDescription(metricID: afterMetric.id, sampleName: "after", numbers: afterNumbers))
+                }
+                    
+            default:break
         }
-        if !afterNumbers.looksReasonablyNonBiased() {
-            warnings.append(Self.inputBiasDescription(metricID: afterMetric.id, sampleName: "after", numbers: afterNumbers))
-        }
-                
+        
         let change: MetricAnalysis.Change
         let footnotes: [MetricAnalysis.Footnote]
         
@@ -162,8 +167,8 @@ private let footnoteNumberFormatter: NumberFormatter = {
 private let warningNumberFormatter: NumberFormatter = {
     let fmt = NumberFormatter()
     fmt.numberStyle = .decimal
-    fmt.alwaysShowsDecimalSeparator = true
     fmt.maximumFractionDigits = 9
-    fmt.minimumFractionDigits = 9
+    fmt.minimumSignificantDigits = 6
+    fmt.thousandSeparator = ""
     return fmt
 }()

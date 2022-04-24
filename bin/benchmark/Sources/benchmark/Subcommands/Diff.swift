@@ -27,8 +27,6 @@ struct Diff: ParsableCommand {
     )
     var afterFile: URL
     
-    
-    
     mutating func run() throws {
         try DiffAction(beforeFile: beforeFile, afterFile: afterFile).run()
     }

@@ -12,25 +12,11 @@ import Foundation
 import ArgumentParser
 import SwiftDocC
 
-struct Measure: ParsableCommand {
-    
+struct MeasureOptions: ParsableCommand {
     @Option(
         name: .customLong("repetitions"),
         help: "How many times to run the 'docc convert' command. Defaults to 5 times.")
     var repeatCount: Int = 5
-    
-    @Option(
-        name: .customLong("output"),
-        help: "The path to write the output benchmark measurements file.",
-        transform: { URL(fileURLWithPath: $0) }
-    )
-    var outputLocation: URL
-    
-    @Option(
-        help: "An optional base benchmark to `diff` gathered measurements against.",
-        transform: { URL(fileURLWithPath: $0) }
-    )
-    var baseBenchmark: URL?
     
     @Argument(
         parsing: .unconditionalRemaining,
@@ -61,6 +47,24 @@ struct Measure: ParsableCommand {
                 """)
         }
     }
+}
+
+struct Measure: ParsableCommand {
+    @Option(
+        name: .customLong("output"),
+        help: "The path to write the output benchmark measurements file.",
+        transform: { URL(fileURLWithPath: $0) }
+    )
+    var outputLocation: URL
+    
+    @Option(
+        help: "An optional base benchmark to `diff` gathered measurements against.",
+        transform: { URL(fileURLWithPath: $0) }
+    )
+    var baseBenchmark: URL?
+    
+    @OptionGroup
+    var measureOptions: MeasureOptions
     
     enum Error: Swift.Error, CustomStringConvertible {
         case doccBuildFailed(URL)
@@ -83,15 +87,48 @@ struct Measure: ParsableCommand {
     }
     
     mutating func run() throws {
-        // Compile the project for release
+        try MeasureAction(
+            repeatCount: measureOptions.repeatCount,
+            outputLocation: outputLocation,
+            baseBenchmark: baseBenchmark,
+            doccConvertCommand: measureOptions.doccConvertCommand
+        ).run()
+    }
+}
+
+struct MeasureAction {
+    var repeatCount: Int
+    var outputLocation: URL
+    var baseBenchmark: URL?
+    var doccConvertCommand: [String]
+    
+    func run() throws {
         print("Building docc in release configuration")
+        let doccURL = try Self.buildDocC(at: doccProjectRootURL)
         
-        try runTask(envURL, directory: doccProjectRootURL, arguments: ["swift", "build", "-c", "release", "--product", "docc"])
-        let doccURL = doccProjectRootURL.appendingPathComponent(".build").appendingPathComponent("release").appendingPathComponent("docc")
-        guard FileManager.default.fileExists(atPath: doccURL.path) else {
-            throw Error.doccBuildFailed(doccURL)
+        let benchmarkSeries = try Self.gatherMeasurements(doccExecutable: doccURL, repeatCount: repeatCount, doccConvertCommand: doccConvertCommand)
+        
+        try Self.writeResults(benchmarkSeries, to: outputLocation)
+        print("Result: \(outputLocation.path)")
+        
+        // Run a diff command if a base benchmark was provided.
+        guard let baseBenchmark = baseBenchmark else {
+            return
         }
         
+        try DiffAction(beforeFile: baseBenchmark, afterFile: outputLocation).run()
+    }
+    
+    static func buildDocC(at doccRootURL: URL) throws -> URL {
+        try runTask(envURL, directory: doccRootURL, arguments: ["swift", "build", "-c", "release", "--product", "docc"])
+        let doccExecutableURL = doccProjectRootURL.appendingPathComponent(".build").appendingPathComponent("release").appendingPathComponent("docc")
+        guard FileManager.default.fileExists(atPath: doccExecutableURL.path) else {
+            throw Measure.Error.doccBuildFailed(doccExecutableURL)
+        }
+        return doccExecutableURL
+    }
+    
+    static func gatherMeasurements(doccExecutable: URL, repeatCount: Int, doccConvertCommand: [String]) throws -> BenchmarkResultSeries {
         let temporaryOutputLocation = FileManager.default.temporaryDirectory.appendingPathComponent("docc-benchmark-\(ProcessInfo.processInfo.globallyUniqueString)")
         defer {
             try? FileManager.default.removeItem(at: temporaryOutputLocation)
@@ -124,29 +161,24 @@ struct Measure: ParsableCommand {
             try waitUntilFairThermalState(minimumWait: 10)
             
             print("Measuring data for sample [\(conversionIndex) / \(repeatCount)]")
-            try runTask(doccURL, arguments: doccArguments, environment: ["DOCC_BENCHMARK": "YES"])
+            try runTask(doccExecutable, arguments: doccArguments, environment: ["DOCC_BENCHMARK": "YES"])
             
             guard FileManager.default.fileExists(atPath: benchmarkFileLocation.path) else {
-                throw Error.benchmarkFileNotFound(benchmarkFileLocation)
+                throw Measure.Error.benchmarkFileNotFound(benchmarkFileLocation)
             }
             
             let benchmarkResult = try JSONDecoder().decode(BenchmarkResults.self, from: Data(contentsOf: benchmarkFileLocation))
             try benchmarkSeries.add(benchmarkResult)
         }
         
+        return benchmarkSeries
+    }
+    
+    static func writeResults(_ benchmarkSeries: BenchmarkResultSeries, to outputLocation: URL) throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         let outputData = try encoder.encode(benchmarkSeries)
         try outputData.write(to: outputLocation)
-        
-        print("Result: \(outputLocation.path)")
-        
-        // Run a diff command if a base benchmark was provided.
-        guard let baseBenchmark = baseBenchmark else {
-            return
-        }
-        
-        try DiffAction(beforeFile: baseBenchmark, afterFile: outputLocation).run()
     }
 }
 
@@ -199,4 +231,24 @@ private func waitUntilFairThermalState(minimumWait: Int) throws {
     }
     
     throw Measure.Error.cooldownTimeout
+}
+
+// Helper for commit based measure commands
+
+func runWithDocCCommit<T>(_ commitHash: String, operation: (URL) throws -> T) throws -> T {
+    let worktreeLocation = FileManager.default.temporaryDirectory
+        .appendingPathComponent("docc-benchmark-\(ProcessInfo.processInfo.globallyUniqueString)")
+        .appendingPathComponent("swift-docc-worktree-\(commitHash)")
+    
+    try FileManager.default.createDirectory(at: worktreeLocation, withIntermediateDirectories: true)
+    defer {
+        try? FileManager.default.removeItem(at: worktreeLocation)
+    }
+    
+    try runTask(envURL, arguments: ["git", "worktree", "add", worktreeLocation.path, commitHash, "--detach"])
+    defer {
+        try! runTask(envURL, arguments: ["git", "worktree", "remove", worktreeLocation.path, "--force"])
+    }
+    
+    return try operation(worktreeLocation)
 }
