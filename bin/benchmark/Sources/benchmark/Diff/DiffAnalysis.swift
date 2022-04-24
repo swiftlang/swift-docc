@@ -33,56 +33,92 @@ extension DiffResults {
             )
         }
         
-        let delta: MetricAnalysis.Change
+        let beforeNumbers: [Double]
+        let afterNumbers: [Double]
         
         switch (beforeMetric.values, afterMetric.values) {
             case (.duration(let beforeValues), .duration(let afterValues)):
-                let beforeNumber = beforeValues.map { Double($0) }.mean()
-                let afterNumber = afterValues.map { Double($0) }.mean()
+                beforeNumbers = beforeValues
+                afterNumbers = afterValues
                 
-                let change = (1 - Double(afterNumber) / Double(beforeNumber)) * 100.0
-                if abs(change) < 0.009 {
-                    delta = .same
-                } else {
-                    delta = .differentNumeric(percentage: change)
-                }
+            case (.bytesInMemory(let beforeValues), .bytesInMemory(let afterValues)),
+                 (.bytesOnDisk(let beforeValues), .bytesOnDisk(let afterValues)):
+                beforeNumbers = beforeValues.map { Double($0) }
+                afterNumbers = afterValues.map { Double($0) }
                 
-            case (.bytesInMemory(let beforeValues), .bytesInMemory(let afterValues)):
-                let beforeNumber = beforeValues.map { Double($0) }.mean()
-                let afterNumber = afterValues.map { Double($0) }.mean()
-                
-                let change = (1 - Double(afterNumber) / Double(beforeNumber)) * 100.0
-                if abs(change) < 0.009 {
-                    delta = .same
-                } else {
-                    delta = .differentNumeric(percentage: change)
-                }
-                
-            case (.bytesOnDisk(let beforeValues), .bytesOnDisk(let afterValues)):
-                let beforeNumber = beforeValues.map { Double($0) }.mean()
-                let afterNumber = afterValues.map { Double($0) }.mean()
-                
-                let change = (1 - Double(afterNumber) / Double(beforeNumber)) * 100.0
-                if abs(change) < 0.009 {
-                    delta = .same
-                } else {
-                    delta = .differentNumeric(percentage: change)
+                if Set(beforeValues).count == 1, beforeValues == afterValues {
+                    return MetricAnalysis(
+                        metricName: afterMetric.displayName,
+                        metricID: afterMetric.id,
+                        change: .same,
+                        before: beforeMetric.values.formatted(),
+                        after: afterMetric.values.formatted()
+                    )
                 }
                 
             case (.checksum(let beforeValues), .checksum(let afterValues)):
-                delta = beforeValues[0] == afterValues[0] ? .same : .differentChecksum
+                return MetricAnalysis(
+                    metricName: afterMetric.displayName,
+                    metricID: afterMetric.id,
+                    change: beforeValues[0] == afterValues[0] ? .same : .differentChecksum,
+                    before: beforeMetric.values.formatted(),
+                    after: afterMetric.values.formatted()
+                )
                 
             default:
-                throw DiffResults.Error.typeMismatchComparingBenchmarkValues(id: afterMetric.id)
+                throw Error.typeMismatchComparingBenchmarkValues(id: afterMetric.id)
         }
         
-        return DiffResults.MetricAnalysis(
+        var warnings: [String] = []
+        if !beforeNumbers.looksReasonablyNonBiased() {
+            warnings.append(Self.inputBiasDescription(metricID: beforeMetric.id, sampleName: "before", numbers: beforeNumbers))
+        }
+        if !afterNumbers.looksReasonablyNonBiased() {
+            warnings.append(Self.inputBiasDescription(metricID: afterMetric.id, sampleName: "after", numbers: afterNumbers))
+        }
+                
+        let change: MetricAnalysis.Change
+        let footnotes: [MetricAnalysis.Footnote]
+        
+        let tTestResult = independentTTest(beforeNumbers, afterNumbers)
+        let footnoteValues: [(String, String)] = [
+            ("t-statistic", footnoteNumberFormatter.string(from: NSNumber(value: tTestResult.tStatistic))!),
+            ("degrees of freedom", tTestResult.degreesOfFreedom.description),
+            ("critical value", footnoteNumberFormatter.string(from: NSNumber(value: tTestResult.criticalValue))!),
+        ]
+        
+        if tTestResult.seriesAreProbablyTheSame {
+            change = .same
+            footnotes = [
+                .init(text: "The before and after values are similar enough that the most probable explanation is that they're random samples from the same data set.", values: footnoteValues)
+            ]
+        } else {
+            let approximateChange = beforeNumbers.mean() - afterNumbers.mean()
+            change = .differentNumeric(percentage: approximateChange)
+            
+            footnotes = [
+                .init(text: "The before and after values are different enough that the most probable explanation is that random samples from two different data sets.", values: footnoteValues)
+            ]
+        }
+        
+        return MetricAnalysis(
             metricName: afterMetric.displayName,
             metricID: afterMetric.id,
-            change: delta,
+            change: change,
             before: beforeMetric.values.formatted(),
-            after: afterMetric.values.formatted()
+            after: afterMetric.values.formatted(),
+            footnotes: footnotes,
+            warnings: warnings.isEmpty ? nil : warnings
         )
+    }
+    
+    private static func inputBiasDescription(metricID: String, sampleName: String, numbers: [Double]) -> String {
+        return """
+        Warning:
+        The '\(metricID)' samples from the '\(sampleName)' measurements show possible signs of a linear trend.
+        The benchmark diff analysis assumes that the values for each metric represents a random selection from the normal distribution of samples for that metric. If there is bias in the samples it could mean that the conclusion from the diff analysis is invalid.
+        [\(numbers.map { warningNumberFormatter.string(from: NSNumber(value: $0))! }.joined(separator: ", "))]
+        """
     }
 }
 
@@ -113,9 +149,21 @@ private let durationFormatter: MeasurementFormatter = {
     return fmt
 }()
 
-private extension Collection where Element == Double {
-    func mean() -> Double {
-        precondition(!isEmpty, "Can't calculate the mean/average of an empty collection. Benchmark values should never be empty.")
-        return reduce(0.0, +) / Double(count)
-    }
-}
+private let footnoteNumberFormatter: NumberFormatter = {
+    let fmt = NumberFormatter()
+    fmt.numberStyle = .decimal
+    fmt.positivePrefix = fmt.plusSign
+    fmt.alwaysShowsDecimalSeparator = true
+    fmt.maximumFractionDigits = 3
+    fmt.minimumFractionDigits = 3
+    return fmt
+}()
+
+private let warningNumberFormatter: NumberFormatter = {
+    let fmt = NumberFormatter()
+    fmt.numberStyle = .decimal
+    fmt.alwaysShowsDecimalSeparator = true
+    fmt.maximumFractionDigits = 9
+    fmt.minimumFractionDigits = 9
+    return fmt
+}()
