@@ -21,7 +21,7 @@ class TopicGraphHashTests: XCTestCase {
         }
         .compactMap { value -> String? in
             guard let value = value,
-                case MetricValue.string(let hash) = value else { return nil }
+                case MetricValue.checksum(let hash) = value else { return nil }
             return hash
         }
         
@@ -38,7 +38,7 @@ class TopicGraphHashTests: XCTestCase {
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicGraphHash(context: context), benchmarkLog: testBenchmark)
             guard let value = testBenchmark.metrics.first?.result,
-                case MetricValue.string(let hash) = value else {
+                case MetricValue.checksum(let hash) = value else {
                 XCTFail("Unexpected metric value")
                 return
             }
@@ -65,7 +65,7 @@ class TopicGraphHashTests: XCTestCase {
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicGraphHash(context: context), benchmarkLog: testBenchmark)
             guard let value = testBenchmark.metrics.first?.result,
-                case MetricValue.string(let hash) = value else {
+                case MetricValue.checksum(let hash) = value else {
                 XCTFail("Unexpected metric value")
                 return
             }
@@ -147,7 +147,7 @@ class TopicGraphHashTests: XCTestCase {
         let testBenchmark = Benchmark()
         benchmark(add: Benchmark.TopicGraphHash(context: context), benchmarkLog: testBenchmark)
         guard let value = testBenchmark.metrics.first?.result,
-            case MetricValue.string = value else {
+            case MetricValue.checksum = value else {
             XCTFail("Unexpected metric value")
             return
         }

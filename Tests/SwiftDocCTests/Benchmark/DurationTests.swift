@@ -20,10 +20,13 @@ class DurationTests: XCTestCase {
         
         XCTAssertNotNil(metric)
         XCTAssertEqual(metric?.identifier, "duration-test")
-        guard let metricResult = metric?.result, case MetricValue.integer(let result) = metricResult else {
+        guard let metricResult = metric?.result, case MetricValue.duration(let result) = metricResult else {
             XCTFail("Metric result wasn't the expected type")
             return
         }
-        XCTAssertEqual(result / 1000, 2)
+        
+        // We're very forgiving with the accuracy (±10%) of this comparison to avoid flaky tests.
+        // Thread.sleep can vary small amounts and we only need to know that time measuring functionality worked.
+        XCTAssertEqual(result, 2, accuracy: 0.2) 
     }
 }

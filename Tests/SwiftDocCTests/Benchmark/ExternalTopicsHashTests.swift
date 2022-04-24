@@ -78,7 +78,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         }
         .compactMap { value -> String? in
             guard let value = value,
-                case MetricValue.string(let hash) = value else { return nil }
+                case MetricValue.checksum(let hash) = value else { return nil }
             return hash
         }
         
@@ -120,7 +120,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         }
         .compactMap { value -> String? in
             guard let value = value,
-                case MetricValue.string(let hash) = value else { return nil }
+                case MetricValue.checksum(let hash) = value else { return nil }
             return hash
         }
         
@@ -155,7 +155,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         benchmark(add: Benchmark.ExternalTopicsHash(context: context), benchmarkLog: testBenchmark)
 
         let result1 = try XCTUnwrap(testBenchmark.metrics.last?.result)
-        guard case MetricValue.string(let checksum1) = result1 else {
+        guard case MetricValue.checksum(let checksum1) = result1 else {
             XCTFail("Didn't produce string checksum #1")
             return
         }
@@ -169,7 +169,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         benchmark(add: Benchmark.ExternalTopicsHash(context: context), benchmarkLog: testBenchmark)
 
         let result2 = try XCTUnwrap(testBenchmark.metrics.last?.result)
-        guard case MetricValue.string(let checksum2) = result2 else {
+        guard case MetricValue.checksum(let checksum2) = result2 else {
             XCTFail("Didn't produce string checksum #2")
             return
         }
@@ -183,7 +183,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         benchmark(add: Benchmark.ExternalTopicsHash(context: context), benchmarkLog: testBenchmark)
 
         let result3 = try XCTUnwrap(testBenchmark.metrics.last?.result)
-        guard case MetricValue.string(let checksum3) = result3 else {
+        guard case MetricValue.checksum(let checksum3) = result3 else {
             XCTFail("Didn't produce string checksum #3")
             return
         }

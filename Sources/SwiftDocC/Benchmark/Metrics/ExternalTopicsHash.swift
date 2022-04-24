@@ -39,7 +39,7 @@ extension Benchmark {
             }).sorted().joined()
                 + context.externallyResolvedSymbols.map({ $0.absoluteString }).sorted().joined()
 
-            result = .string(Checksum.md5(of: Data(sourceString.utf8)))
+            result = .checksum(Checksum.md5(of: Data(sourceString.utf8)))
         }
         
         public var result: MetricValue?

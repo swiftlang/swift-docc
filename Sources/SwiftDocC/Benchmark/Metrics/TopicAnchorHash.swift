@@ -31,7 +31,7 @@ extension Benchmark {
                 .joined()
                 .data(using: .utf8).map(Checksum.md5) else { return }
             
-            result = .string(checksum)
+            result = .checksum(checksum)
         }
         
         public var result: MetricValue?

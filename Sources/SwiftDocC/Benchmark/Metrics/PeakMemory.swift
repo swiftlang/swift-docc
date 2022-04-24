@@ -14,9 +14,9 @@ extension Benchmark {
     /// A peak memory footprint metric for the current process.
     public class PeakMemory: BenchmarkMetric {
         public static let identifier = "peak-memory"
-        public static let displayName = "Peak memory footprint (bytes)"
+        public static let displayName = "Peak memory footprint"
         
-        private var memoryPeak: Double?
+        private var memoryPeak: Int64?
         
         /// Creates a new instance and fetches the peak memory usage.
         public init() {
@@ -24,7 +24,7 @@ extension Benchmark {
         }
         
         #if os(macOS) || os(iOS)
-        private static func peakMemory() -> Double? {
+        private static func peakMemory() -> Int64? {
             // On macOS we use the Kernel framework to read a pretty accurate
             // memory footprint for the current task. The value reported here
             // is comparable to what Xcode displays in the debug memory gauge.
@@ -36,11 +36,11 @@ extension Benchmark {
                 }
             }
             guard vmResult == KERN_SUCCESS else { return nil }
-            return Double(vmInfo.ledger_phys_footprint_peak)
+            return vmInfo.ledger_phys_footprint_peak
         }
         
         #elseif os(Linux) || os(Android)
-        private static func peakMemory() -> Double? {
+        private static func peakMemory() -> Int64? {
             // On Linux we cannot use the Kernel framework, so we tap into the
             // kernel proc file system to read the vm peak reported in the process status.
             let statusFileURL = URL(fileURLWithPath: "/proc/self/status")
@@ -53,12 +53,12 @@ extension Benchmark {
                     .first,
                 let peakMemory = Double(peakMemoryString) else { return nil }
 
-            return peakMemory * 1024 // convert from KBytes to bytes
+            return Int64(peakMemory * 1024) // convert from KBytes to bytes
         }
         #endif
         
         public var result: MetricValue? {
-            return memoryPeak.map(MetricValue.number)
+            return memoryPeak.map(MetricValue.bytesInMemory)
         }
     }
 }

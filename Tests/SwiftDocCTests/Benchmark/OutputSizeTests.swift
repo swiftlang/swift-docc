@@ -28,7 +28,7 @@ class OutputSizeTests: XCTestCase {
         guard testBenchmark.metrics.count == 1 else { return }
         
         // Verify the logged size
-        guard let metricValue = testBenchmark.metrics[0].result, case MetricValue.integer(let result) = metricValue else {
+        guard let metricValue = testBenchmark.metrics[0].result, case MetricValue.bytesOnDisk(let result) = metricValue else {
             XCTFail("Unexpected metric result type")
             return
         }

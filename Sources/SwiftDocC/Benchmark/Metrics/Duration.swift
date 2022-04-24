@@ -19,7 +19,7 @@ extension Benchmark {
         public static let displayName = "Duration for an operation"
 
         public var identifier: String { "duration-\(self.id)" }
-        public var displayName: String { "Duration for '\(self.id)' (msec)" }
+        public var displayName: String { "Duration for '\(self.id)'" }
 
         public var result: MetricValue?
 
@@ -46,15 +46,15 @@ extension Benchmark {
             // We need to multiply the resulting duration by 1000 to store
             // a value in milliseconds as an integer to avoid floating point
             // encoding artifacts.
-            result = .integer(Int64((ProcessInfo.processInfo.systemUptime - startTime) * 1000.0))
+            result = .duration((ProcessInfo.processInfo.systemUptime - startTime))
         }
         
         /// Convenience init to use when the duration is tracked elsewhere.
         /// - Parameter id: The id for the metric.
-        /// - Parameter duration: The duration value in milliseconds to be logged.
+        /// - Parameter duration: The duration value in seconds to be logged.
         public init(id: String, duration: TimeInterval) {
             self.id = id
-            result = .integer(Int64(duration))
+            result = .duration(duration)
         }
     }
 }
