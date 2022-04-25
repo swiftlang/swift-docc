@@ -98,7 +98,7 @@ extension DiffResults {
                 .init(text: "The before and after values are similar enough that the most probable explanation is that they're random samples from the same data set.", values: footnoteValues)
             ]
         } else {
-            let approximateChange = beforeNumbers.mean() - afterNumbers.mean()
+            let approximateChange = (afterNumbers.mean() - beforeNumbers.mean()) / beforeNumbers.mean()
             change = .differentNumeric(percentage: approximateChange)
             
             footnotes = [
