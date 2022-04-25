@@ -36,7 +36,8 @@ struct CompareAgainstCommit: ParsableCommand {
         let currentBenchmarkResult = try MeasureAction.gatherMeasurements(
             doccExecutable: currentDocCExecutable,
             repeatCount: measureOptions.repeatCount,
-            doccConvertCommand: measureOptions.doccConvertCommand
+            doccConvertCommand: measureOptions.doccConvertCommand,
+            computeMissingOutputSizeMetrics: measureOptions.computeMissingOutputSizeMetrics
         )
         
         let currentOutputFile = outputDirectoryOrFallback.appendingPathComponent("benchmark-current.json")
@@ -45,7 +46,8 @@ struct CompareAgainstCommit: ParsableCommand {
         let commitBenchmarkResult = try gatherMeasurementsForDocCCommit(
             commitHash,
             repeatCount: measureOptions.repeatCount,
-            doccConvertCommand: measureOptions.doccConvertCommand
+            doccConvertCommand: measureOptions.doccConvertCommand,
+            computeMissingOutputSizeMetrics: measureOptions.computeMissingOutputSizeMetrics
         )
         let commitOutputFile = outputDirectoryOrFallback.appendingPathComponent("benchmark-\(commitHash).json")
         try MeasureAction.writeResults(commitBenchmarkResult, to: commitOutputFile)
@@ -81,7 +83,8 @@ struct MeasureCommits: ParsableCommand {
             let commitBenchmarkResult = try gatherMeasurementsForDocCCommit(
                 commitHash,
                 repeatCount: measureOptions.repeatCount,
-                doccConvertCommand: measureOptions.doccConvertCommand
+                doccConvertCommand: measureOptions.doccConvertCommand,
+                computeMissingOutputSizeMetrics: measureOptions.computeMissingOutputSizeMetrics
             )
             let commitOutputFile = outputDirectoryOrFallback.appendingPathComponent("benchmark-\(commitHash).json")
             try MeasureAction.writeResults(commitBenchmarkResult, to: commitOutputFile)
@@ -89,11 +92,21 @@ struct MeasureCommits: ParsableCommand {
     }
 }
 
-func gatherMeasurementsForDocCCommit(_ commitHash: String, repeatCount: Int, doccConvertCommand: [String]) throws -> BenchmarkResultSeries {
+func gatherMeasurementsForDocCCommit(
+    _ commitHash: String,
+    repeatCount: Int,
+    doccConvertCommand: [String],
+    computeMissingOutputSizeMetrics: Bool
+) throws -> BenchmarkResultSeries {
     print("===== Gathering benchmark results for swift-docc \(commitHash) ========")
     return try runWithDocCCommit(commitHash) { doccRootURL in
         let doccURL = try MeasureAction.buildDocC(at: doccRootURL)
         
-        return try MeasureAction.gatherMeasurements(doccExecutable: doccURL, repeatCount: repeatCount, doccConvertCommand: doccConvertCommand)
+        return try MeasureAction.gatherMeasurements(
+            doccExecutable: doccURL,
+            repeatCount: repeatCount,
+            doccConvertCommand: doccConvertCommand,
+            computeMissingOutputSizeMetrics: computeMissingOutputSizeMetrics
+        )
     }
 }

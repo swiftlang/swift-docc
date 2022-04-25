@@ -18,6 +18,11 @@ struct MeasureOptions: ParsableCommand {
         help: "How many times to run the 'docc convert' command. Defaults to 5 times.")
     var repeatCount: Int = 5
     
+    @Flag(
+        help: "Dynamically recompute compatible output size metrics that are missing in the benchmark results."
+    )
+    var computeMissingOutputSizeMetrics: Bool = false
+    
     @Argument(
         parsing: .unconditionalRemaining,
         help: "docc convert command to gather measurements for")
@@ -91,7 +96,8 @@ struct Measure: ParsableCommand {
             repeatCount: measureOptions.repeatCount,
             outputLocation: outputLocation,
             baseBenchmark: baseBenchmark,
-            doccConvertCommand: measureOptions.doccConvertCommand
+            doccConvertCommand: measureOptions.doccConvertCommand,
+            computeMissingOutputSizeMetrics: measureOptions.computeMissingOutputSizeMetrics
         ).run()
     }
 }
@@ -101,12 +107,18 @@ struct MeasureAction {
     var outputLocation: URL
     var baseBenchmark: URL?
     var doccConvertCommand: [String]
+    var computeMissingOutputSizeMetrics: Bool
     
     func run() throws {
         print("Building docc in release configuration")
         let doccURL = try Self.buildDocC(at: doccProjectRootURL)
         
-        let benchmarkSeries = try Self.gatherMeasurements(doccExecutable: doccURL, repeatCount: repeatCount, doccConvertCommand: doccConvertCommand)
+        let benchmarkSeries = try Self.gatherMeasurements(
+            doccExecutable: doccURL,
+            repeatCount: repeatCount,
+            doccConvertCommand: doccConvertCommand,
+            computeMissingOutputSizeMetrics: computeMissingOutputSizeMetrics
+        )
         
         try Self.writeResults(benchmarkSeries, to: outputLocation)
         print("Result: \(outputLocation.path)")
@@ -128,7 +140,12 @@ struct MeasureAction {
         return doccExecutableURL
     }
     
-    static func gatherMeasurements(doccExecutable: URL, repeatCount: Int, doccConvertCommand: [String]) throws -> BenchmarkResultSeries {
+    static func gatherMeasurements(
+        doccExecutable: URL,
+        repeatCount: Int,
+        doccConvertCommand: [String],
+        computeMissingOutputSizeMetrics: Bool
+    ) throws -> BenchmarkResultSeries {
         let temporaryOutputLocation = FileManager.default.temporaryDirectory.appendingPathComponent("docc-benchmark-\(ProcessInfo.processInfo.globallyUniqueString)")
         defer {
             try? FileManager.default.removeItem(at: temporaryOutputLocation)
@@ -167,7 +184,62 @@ struct MeasureAction {
                 throw Measure.Error.benchmarkFileNotFound(benchmarkFileLocation)
             }
             
-            let benchmarkResult = try JSONDecoder().decode(BenchmarkResults.self, from: Data(contentsOf: benchmarkFileLocation))
+            var benchmarkResult = try JSONDecoder().decode(BenchmarkResults.self, from: Data(contentsOf: benchmarkFileLocation))
+            
+            if computeMissingOutputSizeMetrics {
+                // Remove the benchmark file. During docc benchmarking, the output size is computed without the benchmark.json file.
+                try? FileManager.default.removeItem(at: benchmarkFileLocation)
+                
+                var recomputedMissingMetrics = [BenchmarkResults.Metric]()
+                
+                if !benchmarkResult.metrics.contains(where: { $0.id == Benchmark.ArchiveOutputSize.identifier }),
+                   let newResult = Benchmark.ArchiveOutputSize(archiveDirectory: doccOutputLocation).result
+                {
+                    recomputedMissingMetrics.append(
+                        .init(
+                            id: Benchmark.DataDirectoryOutputSize.identifier,
+                            displayName: Benchmark.DataDirectoryOutputSize.displayName,
+                            value: newResult
+                        )
+                    )
+                }
+                if !benchmarkResult.metrics.contains(where: { $0.id == Benchmark.DataDirectoryOutputSize.identifier }) {
+                    let dataDirectory = doccOutputLocation.appendingPathComponent(NodeURLGenerator.Path.dataFolderName, isDirectory: true)
+                    if FileManager.default.fileExists(atPath: dataDirectory.path),
+                       let newResult = Benchmark.DataDirectoryOutputSize(dataDirectory: dataDirectory).result
+                    {
+                        recomputedMissingMetrics.append(
+                            .init(
+                                id: Benchmark.DataDirectoryOutputSize.identifier,
+                                displayName: Benchmark.DataDirectoryOutputSize.displayName,
+                                value: newResult
+                            )
+                        )
+                    }
+                }
+                if !benchmarkResult.metrics.contains(where: { $0.id == Benchmark.IndexDirectoryOutputSize.identifier }) {
+                    let indexDirectory = doccOutputLocation.appendingPathComponent(NodeURLGenerator.Path.indexFolderName, isDirectory: true)
+                    if FileManager.default.fileExists(atPath: indexDirectory.path),
+                       let newResult = Benchmark.IndexDirectoryOutputSize(indexDirectory: indexDirectory).result
+                    {
+                        recomputedMissingMetrics.append(
+                            .init(
+                                id: Benchmark.IndexDirectoryOutputSize.identifier,
+                                displayName: Benchmark.IndexDirectoryOutputSize.displayName,
+                                value: newResult
+                            )
+                        )
+                    }
+                }
+                
+                benchmarkResult = BenchmarkResults(
+                    platformName: benchmarkResult.platformName,
+                    timestamp: benchmarkResult.timestamp,
+                    doccArguments: benchmarkResult.doccArguments,
+                    unorderedMetrics: benchmarkResult.metrics + recomputedMissingMetrics
+                )
+            }
+            
             try benchmarkSeries.add(benchmarkResult)
         }
         
