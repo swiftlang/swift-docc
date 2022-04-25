@@ -47,7 +47,6 @@ func independentTTest(_ lhs: [Double], _ rhs: [Double]) -> TTestResult {
     }
     let criticalValue = twoSidedTDistributionFor95PercentConfidence[degreesOfFreedom + 1]
     
-    // I don't think this is correct
     let nullHypothesisIsAccepted = tStatistic.magnitude <= criticalValue
     
     return TTestResult(
