@@ -27,7 +27,7 @@ struct DiffResultsTable {
         
         let allWarnings = results.analysis.flatMap { $0.warnings ?? [] }
         for warning in allWarnings {
-            output += "\(warning)\n\n"
+            output += "\(warning)\n"
         }
         
         output += "┌\(String(repeating: "─", count: Self.totalWidth))┐\n"

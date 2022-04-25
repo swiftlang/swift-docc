@@ -72,31 +72,36 @@ struct RenderTrendAction {
             }
             
             print(metrics[0].displayName)
-            
-            let baseline = metrics[0].doubleValues().mean()
-  
-            for metric in metrics {
-                let percentageOfBaseLine = (metric.doubleValues().mean() / baseline)
-                
-                let fullBlocks = Int(percentageOfBaseLine * 80.0)
-                let fraction = (percentageOfBaseLine * 80.0).truncatingRemainder(dividingBy: 1.0)
-                let partialBlockIndex: Int? = {
-                    let i = Int(fraction * 8.0) /* because there are 8 possible characters */
-                    return i == 0 ? nil : i
-                }()
-                
-                // Print the bar
-                print(String(repeating: Self.partialBarCharacters[7], count: fullBlocks), terminator: "")
-                if let partialBlockIndex = partialBlockIndex {
-                    print(Self.partialBarCharacters[partialBlockIndex], terminator: "")
-                }
-                print("   \(metric.values.formatted())")
-            }
-            
-            print("\n")
+            print(Self.renderTrendBars(metrics: metrics))
         }
     }
 
+    static func renderTrendBars(metrics: [BenchmarkResultSeries.MetricSeries]) -> String {
+        var output = ""
+        
+        let baseline = metrics[0].doubleValues().mean()
+
+        for metric in metrics {
+            let percentageOfBaseLine = (metric.doubleValues().mean() / baseline)
+            
+            let fullBlocks = Int(percentageOfBaseLine * 80.0)
+            let fraction = (percentageOfBaseLine * 80.0).truncatingRemainder(dividingBy: 1.0)
+            let partialBlockIndex: Int? = {
+                let i = Int(fraction * 8.0) /* because there are 8 possible characters */
+                return i == 0 ? nil : i
+            }()
+            
+            // Print the bar
+            output += String(repeating: Self.partialBarCharacters[7], count: fullBlocks)
+            if let partialBlockIndex = partialBlockIndex {
+                output += Self.partialBarCharacters[partialBlockIndex]
+            }
+            output += "   \(metric.values.formatted())\n"
+        }
+        
+        return output
+    }
+    
     // There are 8 blocks that increasingly fill form left to right.
     static let partialBarCharacters: [String] = [
     "▏", "▎", "▍", "▌", "▋", "▊", "▉", "█"

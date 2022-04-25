@@ -73,10 +73,10 @@ extension DiffResults {
         switch beforeMetric.values {
             case .duration, .bytesInMemory:
                 if !beforeNumbers.looksReasonablyNonBiased() {
-                    warnings.append(Self.inputBiasDescription(metricID: beforeMetric.id, sampleName: "before", numbers: beforeNumbers))
+                    warnings.append(Self.inputBiasDescription(metric: beforeMetric, sampleName: "before", numbers: beforeNumbers))
                 }
                 if !afterNumbers.looksReasonablyNonBiased() {
-                    warnings.append(Self.inputBiasDescription(metricID: afterMetric.id, sampleName: "after", numbers: afterNumbers))
+                    warnings.append(Self.inputBiasDescription(metric: afterMetric, sampleName: "after", numbers: afterNumbers))
                 }
                     
             default:break
@@ -117,12 +117,36 @@ extension DiffResults {
         )
     }
     
-    private static func inputBiasDescription(metricID: String, sampleName: String, numbers: [Double]) -> String {
+    private static func inputBiasDescription(metric: BenchmarkResultSeries.MetricSeries, sampleName: String, numbers: [Double]) -> String {
+        // Turn the single metric series into an array of single values metric series to render the trend bars.
+        
+        let metricSeries: [BenchmarkResultSeries.MetricSeries]
+        switch metric.values {
+            case .duration(let values):
+                metricSeries = values.map {
+                    .init(id: metric.id, displayName: metric.displayName, values: .duration([$0]))
+                }
+                
+            case .bytesInMemory(let values):
+                metricSeries = values.map {
+                    .init(id: metric.id, displayName: metric.displayName, values: .bytesInMemory([$0]))
+                }
+            case .bytesOnDisk(let values):
+                metricSeries = values.map {
+                    .init(id: metric.id, displayName: metric.displayName, values: .bytesOnDisk([$0]))
+                }
+                
+            case .checksum:
+                // Only numeric metrics support trend bars
+                fatalError("Can't compute input bias for checksum metrics.")
+        }
+        
         return """
         Warning:
-        The '\(metricID)' samples from the '\(sampleName)' measurements show possible signs of a linear trend.
+        The '\(metric.id)' samples from the '\(sampleName)' measurements show possible signs of a linear trend.
         The benchmark diff analysis assumes that the values for each metric represents a random selection from the normal distribution of samples for that metric. If there is bias in the samples it could mean that the conclusion from the diff analysis is invalid.
         [\(numbers.map { warningNumberFormatter.string(from: NSNumber(value: $0))! }.joined(separator: ", "))]
+        \(RenderTrendAction.renderTrendBars(metrics: metricSeries))
         """
     }
 }
