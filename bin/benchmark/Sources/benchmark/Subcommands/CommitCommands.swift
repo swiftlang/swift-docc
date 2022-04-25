@@ -14,7 +14,7 @@ import SwiftDocC
 
 struct CompareAgainstCommit: ParsableCommand {
     @Argument(
-        help: "The commit hash to compare the current checkout against."
+        help: "The baseline commit hash to compare the current checkout against."
     )
     var commitHash: String
     
@@ -52,7 +52,7 @@ struct CompareAgainstCommit: ParsableCommand {
         let commitOutputFile = outputDirectoryOrFallback.appendingPathComponent("benchmark-\(commitHash).json")
         try MeasureAction.writeResults(commitBenchmarkResult, to: commitOutputFile)
         
-        try DiffAction(beforeFile: currentOutputFile, afterFile: commitOutputFile).run()
+        try DiffAction(beforeFile: commitOutputFile, afterFile: currentOutputFile).run()
     }
 }
 
