@@ -161,7 +161,7 @@ class DiagnosticTests: XCTestCase {
 
     func testDoxygenDiagnostic() throws {
         let commentText = """
-          /// Brief description of this method
+          Brief description of this method
           @param something Description of this parameter
           @returns Description of return value
           """
