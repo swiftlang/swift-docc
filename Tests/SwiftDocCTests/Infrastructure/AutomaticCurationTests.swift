@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -417,6 +417,67 @@ class AutomaticCurationTests: XCTestCase {
                 
                 "Enumerations",
                 "/documentation/MixedLanguageFramework/Foo-swift.struct",
+            ]
+        )
+    }
+
+    func testIvarsAndMacrosAreCuratedProperly() throws {
+        let whatsitSymbols = Bundle.module.url(
+            forResource: "Whatsit-Objective-C.symbols", withExtension: "json", subdirectory: "Test Resources")!
+
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            try? FileManager.default.copyItem(at: whatsitSymbols, to: url.appendingPathComponent("Whatsit-Objective-C.symbols.json"))
+        }
+        defer {
+            try? FileManager.default.removeItem(at: bundleURL)
+        }
+
+        let frameworkDocumentationNode = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/Whatsit",
+                sourceLanguages: [.objectiveC]
+            )
+        )
+        let objectiveCTopics = try AutomaticCuration.topics(
+            for: frameworkDocumentationNode,
+            withTrait: DocumentationDataVariantsTrait(interfaceLanguage: "occ"),
+            context: context
+        )
+
+        XCTAssertEqual(
+            objectiveCTopics.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.references.map(\.path)
+            },
+            [
+                "Classes",
+                "/documentation/Whatsit/Whatsit",
+
+                "Macros",
+                "/documentation/Whatsit/IS_COOL",
+            ]
+        )
+
+        let classDocumentationNode = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/Whatsit/Whatsit",
+                sourceLanguages: [.objectiveC]
+            )
+        )
+        let classTopics = try AutomaticCuration.topics(
+            for: classDocumentationNode,
+            withTrait: DocumentationDataVariantsTrait(interfaceLanguage: "occ"),
+            context: context
+        )
+
+        XCTAssertEqual(
+            classTopics.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.references.map(\.path)
+            },
+            [
+                "Instance Variables",
+                "/documentation/Whatsit/Whatsit/Ivar",
             ]
         )
     }
