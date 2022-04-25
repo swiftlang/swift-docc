@@ -44,7 +44,7 @@ struct DiffResultsTable {
                 case .differentChecksum:
                     change = "change"
                 case .differentNumeric(let percentage):
-                    change = percentageFormatter.string(from: NSNumber(value: percentage / 100.0))!
+                    change = percentageFormatter.string(from: NSNumber(value: percentage))!
                 case .notApplicable:
                     change = "n/a"
             }
