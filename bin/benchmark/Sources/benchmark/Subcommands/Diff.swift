@@ -27,8 +27,19 @@ struct Diff: ParsableCommand {
     )
     var afterFile: URL
     
+    @Option(
+        name: .customLong("json-output-path"),
+        help: "The path to an optional JSON file to write the the diff results to.",
+        transform: { URL(fileURLWithPath: $0) }
+    )
+    var jsonOutputFile: URL?
+    
     mutating func run() throws {
-        try DiffAction(beforeFile: beforeFile, afterFile: afterFile).run()
+        try DiffAction(
+            beforeFile: beforeFile,
+            afterFile: afterFile,
+            jsonOutputFile: jsonOutputFile
+        ).run()
     }
 }
 
@@ -37,6 +48,7 @@ struct Diff: ParsableCommand {
 struct DiffAction {
     var beforeFile: URL
     var afterFile: URL
+    var jsonOutputFile: URL?
     
     func run() throws {
         let beforeMetrics = try JSONDecoder().decode(BenchmarkResultSeries.self, from: Data(contentsOf: beforeFile)).metrics
@@ -52,5 +64,11 @@ struct DiffAction {
         
         let table = DiffResultsTable(results: result)
         print(table.output)
+        
+        if let jsonOutputFile = jsonOutputFile {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            try encoder.encode(result).write(to: jsonOutputFile)
+        }
     }
 }
