@@ -42,8 +42,6 @@ struct DiffAction {
         let beforeMetrics = try JSONDecoder().decode(BenchmarkResultSeries.self, from: Data(contentsOf: beforeFile)).metrics
         let afterMetrics = try JSONDecoder().decode(BenchmarkResultSeries.self, from: Data(contentsOf: afterFile)).metrics
         
-        // TODO: Check before and after series
-        
         var result = DiffResults.empty
         
         // The metrics are sorted for presentation but it's possible that the order has changed over time so we match the before
