@@ -58,6 +58,11 @@ extension Collection where Element == Double {
             (x: Double(self.count), y: self.max()!)
         ])
         
+        if (max()! - min()!) < mean().ulp {
+            // The range of the samples is smaller than the precision of the mean value. A series of values like that looks reasonably non-biased.
+            return true
+        }
+        
         return slope.magnitude < (minMaxSlope.magnitude * 0.5)
     }
     
