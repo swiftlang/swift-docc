@@ -14,8 +14,8 @@
         "package": "cmark-gfm",
         "repositoryURL": "https://github.com/apple/swift-cmark.git",
         "state": {
-          "branch": "gfm",
-          "revision": "5bd1108552a4f54d421d3d39f696952495a4b0cf",
+          "branch": "release/5.7-gfm",
+          "revision": "792c1c3326327515ce9bf64c44196b7f4daab9a6",
           "version": null
         }
       },
@@ -60,7 +60,7 @@
         "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
           "branch": "release/5.7",
-          "revision": "caafc56d3794a08c2203fe417b3aff81e2ab2fc1",
+          "revision": "fae172a60b3ed107bd4dc1e732abfec537661150",
           "version": null
         }
       },
