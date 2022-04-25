@@ -133,7 +133,7 @@ struct MeasureAction {
     
     static func buildDocC(at doccRootURL: URL) throws -> URL {
         try runTask(envURL, directory: doccRootURL, arguments: ["swift", "build", "-c", "release", "--product", "docc"])
-        let doccExecutableURL = doccProjectRootURL.appendingPathComponent(".build").appendingPathComponent("release").appendingPathComponent("docc")
+        let doccExecutableURL = doccRootURL.appendingPathComponent(".build").appendingPathComponent("release").appendingPathComponent("docc")
         guard FileManager.default.fileExists(atPath: doccExecutableURL.path) else {
             throw Measure.Error.doccBuildFailed(doccExecutableURL)
         }
