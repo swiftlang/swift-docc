@@ -62,6 +62,9 @@ struct DiffAction {
             try result.analysis.append(DiffResults.analyze(before: beforeMetric, after: afterMetric))
         }
         
+        DiffResultsTable.columns[2] = tableColumnInfo(file: beforeFile)
+        DiffResultsTable.columns[3] = tableColumnInfo(file: afterFile)
+        
         let table = DiffResultsTable(results: result)
         print(table.output)
         
@@ -71,4 +74,14 @@ struct DiffAction {
             try encoder.encode(result).write(to: jsonOutputFile)
         }
     }
+}
+
+private func tableColumnInfo(file: URL) -> (String, Int) {
+    var name = file.deletingPathExtension().lastPathComponent
+    if name.hasPrefix("benchmark-") {
+        name = String(name.dropFirst("benchmark-".count))
+    }
+    
+    let width = min(40, max(20, name.count))
+    return (name, width)
 }
