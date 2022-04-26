@@ -12,9 +12,9 @@ import Foundation
 import ArgumentParser
 import SwiftDocC
 
-struct CompareAgainstCommit: ParsableCommand {
+struct CompareTo: ParsableCommand {
     @Argument(
-        help: "The baseline commit hash to compare the current checkout against."
+        help: "The baseline 'commit-ish' to compare the current checkout against."
     )
     var commitHash: String
     

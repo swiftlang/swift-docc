@@ -19,7 +19,7 @@ The tool will enable metrics logging, do five sequential runs of the `convert` c
 For pull requests where you want to compare the local changes against another version of the—the HEAD commits of the branch that the pull request is targeting—you can use the `compare-against-commit` tool:
 
 ```
-swift run --package-path bin/benchmark benchmark compare-against-commit <commit-hash> convert MyFramework.docc
+swift run --package-path bin/benchmark benchmark compare-to <commit-ish> convert MyFramework.docc
 ```
 
 This tool will gather metrics for both the local changes (same as the default `measure` tool) and for the other commit of docc, write both results to JSON files on disk, and perform a statistical analysis comparing the two benchmark results. 

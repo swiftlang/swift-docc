@@ -15,7 +15,7 @@ import Foundation
 struct BenchmarkCommand: ParsableCommand {
     static var configuration = CommandConfiguration(
             abstract: "A utility for performing benchmarks for Swift-DocC.",
-            subcommands: [Measure.self, Diff.self, CompareAgainstCommit.self, MeasureCommits.self, RenderTrend.self],
+            subcommands: [Measure.self, Diff.self, CompareTo.self, MeasureCommits.self, RenderTrend.self],
             defaultSubcommand: Measure.self)
 }
 
