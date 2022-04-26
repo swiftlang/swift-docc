@@ -83,7 +83,7 @@ extension DiffResults {
         }
         
         let change: MetricAnalysis.Change
-        let footnotes: [MetricAnalysis.Footnote]
+        var footnotes: [MetricAnalysis.Footnote]
         
         let tTestResult = independentTTest(beforeNumbers, afterNumbers)
         let footnoteValues: [(String, String)] = [
@@ -104,6 +104,12 @@ extension DiffResults {
             footnotes = [
                 .init(text: "The before and after values are different enough that the most probable explanation is that random samples from two different data sets.", values: footnoteValues)
             ]
+        }
+        
+        if !warnings.isEmpty {
+            footnotes.append(
+                .init(text: "A human should check that the measurements for this metric look like random samples around a certain value to ensure the validity of this result.", values: [])
+            )
         }
         
         return MetricAnalysis(
@@ -142,9 +148,9 @@ extension DiffResults {
         }
         
         return """
-        Warning:
-        The '\(metric.id)' samples from the '\(sampleName)' measurements show possible signs of a linear trend.
-        The benchmark diff analysis assumes that the values for each metric represents a random selection from the normal distribution of samples for that metric. If there is bias in the samples it could mean that the conclusion from the diff analysis is invalid.
+        The '\(metric.id)' samples from the '\(sampleName)' measurements show _possible_ signs of bias.
+        The benchmark diff analysis assumes that these values follow a normal distribution around the value that they're meant to represent. If they don't then the conclusion from the diff analysis could be invalid.
+        A human should inspect these values. If the samples look biased or look too noisy you can try gathering new metrics with more 'repetitions' or with a larger .docc catalog.
         [\(numbers.map { warningNumberFormatter.string(from: NSNumber(value: $0))! }.joined(separator: ", "))]
         \(RenderTrendAction.renderTrendBars(metrics: metricSeries))
         """
