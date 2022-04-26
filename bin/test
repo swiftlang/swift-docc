@@ -28,8 +28,7 @@ LC_ALL=C "$DOCC_ROOT"/bin/check-source
 # Test utility scripts validity.
 printf "=> Validating scripts in bin subdirectory… "
 
-swift "$DOCC_ROOT/bin/benchmark.swift" > /dev/null
-swift "$DOCC_ROOT/bin/benchmark-diff.swift" > /dev/null
+swift run --package-path "$DOCC_ROOT/bin/benchmark" benchmark --help > /dev/null
 swift "$DOCC_ROOT/bin/output-diff.swift" > /dev/null
 
 printf "\033[0;32mokay.\033[0m\n"
