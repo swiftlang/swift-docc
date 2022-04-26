@@ -18,6 +18,7 @@ class BenchmarkResultsTests: XCTestCase {
         
         XCTAssertEqual(results.platformName, "macOS")
         XCTAssertEqual(results.doccArguments, ["convert", "TestBundle.docc"])
+        XCTAssertEqual(results.timestamp.timeIntervalSince1970, testDate.timeIntervalSince1970, accuracy: 1.0) // The encoded format doesn't include sub-second information.
         
         // Unordered metrics should be ordered by kind (in the order duration, bytesInMemory, bytesOnDisk, checksum), and then by name.
         XCTAssertEqual(results.metrics, [
@@ -33,6 +34,22 @@ class BenchmarkResultsTests: XCTestCase {
         ])
     }
 }
+
+
+// The legacy format encoded the date using the current locale.
+//
+// The expectation is that benchmark files are not compared across machines.
+//
+// Instead of using a hardcoded date string in a specific locale, this test encodes a new value using the current locale
+// behaves the same as the real use case, regardless of the current locale.
+
+private let testDate = Date()
+private let legacyEncodedDate: String = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateStyle = .medium
+    dateFormatter.timeStyle = .medium
+    return dateFormatter.string(from: testDate)
+}()
 
 private let legacyBenchmark = """
 {
@@ -88,6 +105,6 @@ private let legacyBenchmark = """
       "identifier": "index-subdirectory-output-size"
     }
   ],
-  "date": "Apr 23, 2022 at 3:35:27 PM"
+  "date": "\(legacyEncodedDate)"
 }
 """
