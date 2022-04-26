@@ -162,7 +162,12 @@ extension BenchmarkResultSeries.MetricSeries.ValueSeries {
         switch self {
             case .duration(let value):
                 let average = value.mean()
+            
+                #if os(macOS) || os(iOS)
                 return durationFormatter.string(from: Measurement(value: average, unit: UnitDuration.seconds))
+                #else
+                return durationFormatter.string(from: NSNumber(value: average))! + " sec"
+                #endif
                 
             case .bytesInMemory(let value):
                 let average = value.map { Double($0) }.mean().rounded()
@@ -178,11 +183,21 @@ extension BenchmarkResultSeries.MetricSeries.ValueSeries {
     }
 }
 
+#if os(macOS) || os(iOS)
 private let durationFormatter: MeasurementFormatter = {
     let fmt = MeasurementFormatter()
     fmt.unitStyle = .medium
     return fmt
 }()
+#else
+private let durationFormatter: NumberFormatter = {
+    let fmt = NumberFormatter()
+    fmt.numberStyle = .decimal
+    fmt.maximumFractionDigits = 3
+    fmt.minimumFractionDigits = 1
+    return fmt
+}()
+#endif
 
 private let footnoteNumberFormatter: NumberFormatter = {
     let fmt = NumberFormatter()
