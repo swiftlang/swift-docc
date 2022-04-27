@@ -485,7 +485,7 @@ class SymbolTests: XCTestCase {
             docComment: """
                 A cool API to call.
 
-                @Redirected(from: "some/previous/path/to/this/symbol")
+                @Image returns known directive
                 """,
             articleContent: """
                 # This is my article
@@ -513,10 +513,10 @@ class SymbolTests: XCTestCase {
         let problems = context.diagnosticEngine.problems
         XCTAssertEqual(problems.count, 3)
         XCTAssertFalse(problems.containsErrors)
-        let initProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 7 }
+        let initProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 6 }
         XCTAssertEqual(initProblems.count, 1, "There should only be one error from the doc comments for 'ParentClass/init()'")
         // Problems in the `index` doc comments
-        let indexProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 12 }
+        let indexProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 10 }
         XCTAssertEqual(indexProblems.count, 2, "There should be two errors from the doc comments for 'index()'. One from 'ParentClass' and one synthesized from 'ChildClass'.")
     }
 
@@ -656,7 +656,7 @@ class SymbolTests: XCTestCase {
             start: .init(line: 0, character: 0),
             end: .init(line: 0, character: 0)
         )
-        let line = SymbolGraph.LineList.Line(text: "@this is a directive", range: range)
+        let line = SymbolGraph.LineList.Line(text: "@Image this is a known directive", range: range)
         let docComment = SymbolGraph.LineList([line])
         let symbol = SymbolGraph.Symbol(
             identifier: identifer,
