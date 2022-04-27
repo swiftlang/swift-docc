@@ -237,7 +237,7 @@
                 "character" : 35
               }
             },
-            "text" : "The index of this instance."
+            "text" : "@Image a known directive"
           },
           {
             "range" : {
@@ -361,7 +361,7 @@
                 "character" : 37
               }
             },
-            "text" : "Creates a new class instance."
+            "text" : "@Image a known directive"
           },
           {
             "range" : {
@@ -459,7 +459,7 @@
                 "character" : 35
               }
             },
-            "text" : "The index of this instance."
+            "text" : "@Image a know directive."
           },
           {
             "range" : {
