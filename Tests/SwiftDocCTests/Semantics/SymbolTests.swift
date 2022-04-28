@@ -513,10 +513,10 @@ class SymbolTests: XCTestCase {
         let problems = context.diagnosticEngine.problems
         XCTAssertEqual(problems.count, 3)
         XCTAssertFalse(problems.containsErrors)
-        let initProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 6 }
+        let initProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 7 }
         XCTAssertEqual(initProblems.count, 1, "There should only be one error from the doc comments for 'ParentClass/init()'")
         // Problems in the `index` doc comments
-        let indexProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 10 }
+        let indexProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 12 }
         XCTAssertEqual(indexProblems.count, 2, "There should be two errors from the doc comments for 'index()'. One from 'ParentClass' and one synthesized from 'ChildClass'.")
     }
 
