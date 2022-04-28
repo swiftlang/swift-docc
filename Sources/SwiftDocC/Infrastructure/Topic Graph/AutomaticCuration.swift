@@ -190,6 +190,8 @@ extension AutomaticCuration {
             case .`func`: return "Functions"
             case .`operator`: return "Operators"
             case .`init`: return "Initializers"
+            case .ivar: return "Instance Variables"
+            case .macro: return "Macros"
             case .`method`: return "Instance Methods"
             case .`property`: return "Instance Properties"
             case .`protocol`: return "Protocols"
@@ -217,11 +219,13 @@ extension AutomaticCuration {
         .`var`,
         .`func`,
         .`operator`,
+        .`macro`,
 
         .`associatedtype`,
         .`case`,
         .`init`,
         .`deinit`,
+        .`ivar`,
         .`property`,
         .`method`,
         .`subscript`,

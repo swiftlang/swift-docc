@@ -447,6 +447,8 @@ public struct DocumentationNode {
         case .`func`: return .function
         case .`operator`: return .operator
         case .`init`: return .initializer
+        case .ivar: return .instanceVariable
+        case .macro: return .macro
         case .`method`: return .instanceMethod
         case .`property`: return .instanceProperty
         case .`protocol`: return .protocol
