@@ -237,7 +237,7 @@
                 "character" : 35
               }
             },
-            "text" : "@Image a known directive"
+            "text" : "The index of this instance."
           },
           {
             "range" : {
@@ -263,7 +263,7 @@
                 "character" : 26
               }
             },
-            "text" : "@returns The index"
+            "text" : "@Comment returns a comment"
           }
         ]
       },
@@ -361,7 +361,7 @@
                 "character" : 37
               }
             },
-            "text" : "@Image a known directive"
+            "text" : "Creates a new class instance."
           },
           {
             "range" : {
@@ -374,7 +374,7 @@
                 "character" : 31
               }
             },
-            "text" : "@returns A new instance"
+            "text" : "@Resources returns a resource"
           }
         ]
       },
@@ -459,7 +459,7 @@
                 "character" : 35
               }
             },
-            "text" : "@Image a know directive."
+            "text" : "The index of this instance."
           },
           {
             "range" : {
@@ -485,7 +485,7 @@
                 "character" : 26
               }
             },
-            "text" : "@returns The index"
+            "text" : "@Image returns a image"
           }
         ]
       },
