@@ -485,7 +485,7 @@ class SymbolTests: XCTestCase {
             docComment: """
                 A cool API to call.
 
-                @Image returns known directive
+                @Redirected(from: "some/previous/path/to/this/symbol")
                 """,
             articleContent: """
                 # This is my article
