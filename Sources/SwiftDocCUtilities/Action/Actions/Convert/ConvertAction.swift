@@ -283,6 +283,7 @@ public struct ConvertAction: Action, RecreatingContext {
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+        let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
         // While running this method keep the `isPerforming` flag up.
         isPerforming.sync({ $0 = true })
@@ -370,6 +371,11 @@ public struct ConvertAction: Action, RecreatingContext {
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
         if let indexer = indexer {
+            let finalizeNavigationIndexMetric = benchmark(begin: Benchmark.Duration(id: "finalize-navigation-index"))
+            defer {
+                benchmark(end: finalizeNavigationIndexMetric)
+            }
+            
             // Always emit a JSON representation of the index but only emit the LMDB
             // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
             let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
@@ -386,6 +392,11 @@ public struct ConvertAction: Action, RecreatingContext {
                rootURL: temporaryFolder.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
            )
         {
+            let staticHostingTransformMetric = benchmark(begin: Benchmark.Duration(id: "static-hosting-transform"))
+            defer {
+                benchmark(end: staticHostingTransformMetric)
+            }
+            
             if indexHTMLData == nil {
                 indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: templateDirectory, hostingBasePath: hostingBasePath)
             }
@@ -393,6 +404,10 @@ public struct ConvertAction: Action, RecreatingContext {
             let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: temporaryFolder, indexHTMLData: indexHTMLData!)
             try transformer.transform()
         }
+        
+        // Stop the "total time" metric here. The moveOutput time isn't very interesting to include in the benchmark.
+        // New tasks and computations should be added above this line so that they're included in the benchmark.
+        benchmark(end: totalTimeMetric)
         
         // We should generally only replace the current build output if we didn't encounter errors
         // during conversion. However, if the `emitDigest` flag is true,
