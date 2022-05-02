@@ -392,11 +392,6 @@ public struct ConvertAction: Action, RecreatingContext {
                rootURL: temporaryFolder.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
            )
         {
-            let staticHostingTransformMetric = benchmark(begin: Benchmark.Duration(id: "static-hosting-transform"))
-            defer {
-                benchmark(end: staticHostingTransformMetric)
-            }
-            
             if indexHTMLData == nil {
                 indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: templateDirectory, hostingBasePath: hostingBasePath)
             }
