@@ -23,8 +23,9 @@ struct MeasureOptions: ParsableCommand {
     )
     var computeMissingOutputSizeMetrics: Bool = false
     
-    @Argument(
-        parsing: .unconditionalRemaining,
+    @Option(
+        name: .customLong("docc-arguments"),
+        parsing: .remaining,
         help: "docc convert command to gather measurements for")
     var doccConvertCommand: [String]
     
@@ -45,10 +46,11 @@ struct MeasureOptions: ParsableCommand {
                 """)
         }
         
-        guard doccConvertCommand.count >= 2, doccConvertCommand.first == "convert" else {
+        guard !doccConvertCommand.isEmpty else {
             throw ArgumentParser.ValidationError("""
-                Missing `convert` action and arguments to run `docc` with.
-                Pass `convert /path/to/bundle.docc [other-docc-flags]` after the main benchmark flags.
+                Missing action and arguments to run `docc` with.
+                Pass a `docc` command and its flags after the main benchmark flags.
+                For example: `--docc-arguments convert /path/to/bundle.docc [other-docc-flags]`
                 """)
         }
     }

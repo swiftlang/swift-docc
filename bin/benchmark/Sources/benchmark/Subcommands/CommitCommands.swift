@@ -59,8 +59,7 @@ struct CompareTo: ParsableCommand {
 struct MeasureCommits: ParsableCommand {
     // This has to be an Option to avoid conflicting with the `MeasureOptions.doccConvertCommand` Argument
     // which unconditionally consumes the remaining values.
-    @Option(
-        parsing: .upToNextOption,
+    @Argument(
         help: "The commit hashes to gather measurements for."
     )
     var commitHashes: [String]

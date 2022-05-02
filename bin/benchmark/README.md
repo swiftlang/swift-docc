@@ -19,7 +19,7 @@ The `measure-commits` can be used to gather benchmark metrics across multiple co
 All measuring commands has a few common options and arguments:
 - `--repetitions` The number of repetitions to run (defaults to 5)
 - `--compute-missing-output-size-metrics` If the benchmark should compute compatible .doccarchive output size metrics for commits before these metrics were introduced in docc. This can be useful for some analysis of historical commits. 
-- The `convert` command and all its arguments to call each version of docc with when gathering benchmark metrics.
+- `--docc-arguments` The docc command (e.g. `convert`) and all its arguments to call each version of docc with when gathering benchmark metrics.
 
 ## Analyzing results
 
