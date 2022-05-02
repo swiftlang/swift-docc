@@ -25,9 +25,12 @@ class BenchmarkResultsTests: XCTestCase {
             .init(id: "duration-bundle-registration", displayName: "Duration for \'bundle-registration\'", value: .duration(0.108)),
             .init(id: "duration-convert-action", displayName: "Duration for \'convert-action\'", value: .duration(0.139)),
             .init(id: "duration-navigation-index", displayName: "Duration for \'navigation-index\'", value: .duration(0.0)),
+            .init(id: "test-extra-duration", displayName: "Duration for \'test-extra\'", value: .duration(1.234)),
             .init(id: "peak-memory", displayName: "Peak memory footprint", value: .bytesInMemory(8273920)),
+            .init(id: "test-extra-memory", displayName: "Test extra memory footprint", value: .bytesInMemory(1234567)),
             .init(id: "data-subdirectory-output-size", displayName: "Data subdirectory size", value: .bytesOnDisk(181337)),
             .init(id: "index-subdirectory-output-size", displayName: "Index subdirectory size", value: .bytesOnDisk(13768)),
+            .init(id: "test-extra-output-size", displayName: "Test extra output size", value: .bytesOnDisk(12345678)),
             .init(id: "total-archive-output-size", displayName: "Total DocC archive size", value: .bytesOnDisk(1231030)),
             .init(id: "topic-anchor-hash", displayName: "Topic Anchor Checksum", value: .checksum("5afbde3ec6d3ee7b84e8aa1342f6839a")),
             .init(id: "topic-graph-hash", displayName: "Topic Graph Checksum", value: .checksum("9dd02a80ae466010c8925aebe9a1ca02"))
@@ -70,6 +73,11 @@ private let legacyBenchmark = """
       "identifier": "duration-convert-action"
     },
     {
+      "displayName": "Test extra memory footprint (bytes)",
+      "result": 1234567,
+      "identifier": "test-extra-memory"
+    },
+    {
       "displayName": "Topic Graph Checksum",
       "result": "9dd02a80ae466010c8925aebe9a1ca02",
       "identifier": "topic-graph-hash"
@@ -90,6 +98,11 @@ private let legacyBenchmark = """
       "identifier": "duration-navigation-index"
     },
     {
+      "displayName": "Duration for 'test-extra' (msec)",
+      "result": 1234,
+      "identifier": "test-extra-duration"
+    },
+    {
       "displayName": "Total DocC archive size (bytes)",
       "result": 1231030,
       "identifier": "total-archive-output-size"
@@ -98,6 +111,11 @@ private let legacyBenchmark = """
       "displayName": "Data subdirectory size (bytes)",
       "result": 181337,
       "identifier": "data-subdirectory-output-size"
+    },
+    {
+      "displayName": "Test extra output size (bytes)",
+      "result": 12345678,
+      "identifier": "test-extra-output-size"
     },
     {
       "displayName": "Index subdirectory size (bytes)",
