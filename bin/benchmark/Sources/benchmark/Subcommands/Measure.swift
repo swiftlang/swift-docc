@@ -247,6 +247,11 @@ struct MeasureAction {
     }
     
     static func writeResults(_ benchmarkSeries: BenchmarkResultSeries, to outputLocation: URL) throws {
+        let parentDirectory = outputLocation.deletingLastPathComponent()
+        if !FileManager.default.fileExists(atPath: parentDirectory.path) {
+            try FileManager.default.createDirectory(at: parentDirectory, withIntermediateDirectories: true)
+        }
+        
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         let outputData = try encoder.encode(benchmarkSeries)
