@@ -54,7 +54,7 @@ extension Benchmark {
         /// - Parameter duration: The duration value in milliseconds to be logged.
         public init(id: String, duration: TimeInterval) {
             self.id = id
-            result = .integer(Int64(duration))
+            result = .integer(Int64(duration * 1000.0))
         }
     }
 }
