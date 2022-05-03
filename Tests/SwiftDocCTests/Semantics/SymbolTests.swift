@@ -511,13 +511,13 @@ class SymbolTests: XCTestCase {
         
         let (_, _, context) = try loadBundle(from: bundleURL)
         let problems = context.diagnosticEngine.problems
-        XCTAssertEqual(problems.count, 3)
+        XCTAssertEqual(problems.count, 2)
         XCTAssertFalse(problems.containsErrors)
         let initProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 7 }
         XCTAssertEqual(initProblems.count, 1, "There should only be one error from the doc comments for 'ParentClass/init()'")
         // Problems in the `index` doc comments
         let indexProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 12 }
-        XCTAssertEqual(indexProblems.count, 2, "There should be two errors from the doc comments for 'index()'. One from 'ParentClass' and one synthesized from 'ChildClass'.")
+        XCTAssertEqual(indexProblems.count, 1, "There should be only one error from the doc comments for 'index()'. One from 'ParentClass' and none for the ChildClass")
     }
 
     func testUnresolvedReferenceWarnignsInDocumentationExtension() throws {
