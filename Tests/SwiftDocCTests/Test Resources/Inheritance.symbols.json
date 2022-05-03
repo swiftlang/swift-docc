@@ -374,7 +374,7 @@
                 "character" : 31
               }
             },
-            "text" : "@Resources returns a resource"
+            "text" : "@returns A new instance"
           }
         ]
       },
@@ -485,7 +485,7 @@
                 "character" : 26
               }
             },
-            "text" : "@Image returns a image"
+            "text" : "@returns The index"
           }
         ]
       },
