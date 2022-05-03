@@ -499,7 +499,7 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.column, 1)
     }
     
-    func testWarningWhenDocCommentContainsDirectiveInSubclass() throws {
+    func testNoWarningWhenDocCommentContainsDoxygen() throws {
         let tempURL = try createTemporaryDirectory()
         
         let bundleURL = try Folder(name: "Inheritance.docc", content: [
@@ -511,13 +511,7 @@ class SymbolTests: XCTestCase {
         
         let (_, _, context) = try loadBundle(from: bundleURL)
         let problems = context.diagnosticEngine.problems
-        XCTAssertEqual(problems.count, 2)
-        XCTAssertFalse(problems.containsErrors)
-        let initProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 7 }
-        XCTAssertEqual(initProblems.count, 1, "There should only be one error from the doc comments for 'ParentClass/init()'")
-        // Problems in the `index` doc comments
-        let indexProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 12 }
-        XCTAssertEqual(indexProblems.count, 1, "There should be only one error from the doc comments for 'index()'. One from 'ParentClass' and none for the ChildClass")
+        XCTAssertEqual(problems.count, 0)
     }
 
     func testUnresolvedReferenceWarnignsInDocumentationExtension() throws {
