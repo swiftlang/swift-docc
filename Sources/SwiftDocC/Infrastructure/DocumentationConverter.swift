@@ -92,7 +92,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     /// `true` if the conversion is cancelled.
     private var isCancelled: Synchronized<Bool>? = nil
 
-    private var durationMetric: Benchmark.Duration?
+    private var processingDurationMetric: Benchmark.Duration?
 
     /// Creates a documentation converter given a documentation bundle's URL.
     ///
@@ -174,8 +174,6 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         // Do additional context setup.
         setupContext?(&context)
 
-        durationMetric = benchmark(begin: Benchmark.Duration(id: "convert-action"))
-
         /*
            Asynchronously cancel registration if necessary.
            We spawn a timer that periodically checks `isCancelled` and if necessary
@@ -216,6 +214,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         // If cancelled, return early before we emit diagnostics.
         guard !isConversionCancelled() else { return ([], []) }
+        
+        processingDurationMetric = benchmark(begin: Benchmark.Duration(id: "convert-processing"))
         
         let bundles = try sorted(bundles: dataProvider.bundles(options: bundleDiscoveryOptions))
         guard !bundles.isEmpty else {
@@ -372,8 +372,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             )
         )
         
-        // Log the duration of the convert action.
-        benchmark(end: durationMetric)
+        // Log the duration of the processing (after the bundle content finished registering).
+        benchmark(end: processingDurationMetric)
         // Log the finalized topic graph checksum.
         benchmark(add: Benchmark.TopicGraphHash(context: context))
         // Log the finalized list of topic anchor sections.
