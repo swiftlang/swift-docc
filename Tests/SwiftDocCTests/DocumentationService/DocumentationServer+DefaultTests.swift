@@ -87,7 +87,7 @@ class DocumentationServer_DefaultTests: XCTestCase {
         
         // Instead of using an `XCTestExpectation`, use a Boolean due to a bug in
         // swift-corelibs-xctest on Linux for expectations that get over-fulfilled
-        // https://bugs.swift.org/browse/SR-12575.
+        // https://github.com/apple/swift/issues/55020.
         var hasLinkResolverBeenCalled = false
         
         let peerServer = DocumentationServer()
