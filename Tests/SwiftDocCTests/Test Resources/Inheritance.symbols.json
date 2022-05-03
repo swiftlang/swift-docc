@@ -263,7 +263,7 @@
                 "character" : 26
               }
             },
-            "text" : "@Comment returns a comment"
+            "text" : "@returns The index"
           }
         ]
       },
