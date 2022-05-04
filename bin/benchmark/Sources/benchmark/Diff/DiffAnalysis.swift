@@ -89,20 +89,26 @@ extension DiffResults {
         let footnoteValues: [(String, String)] = [
             ("t-statistic", footnoteNumberFormatter.string(from: NSNumber(value: tTestResult.tStatistic))!),
             ("degrees of freedom", tTestResult.degreesOfFreedom.description),
-            ("critical value", footnoteNumberFormatter.string(from: NSNumber(value: tTestResult.criticalValue))!),
+            ("95% confidence critical value", footnoteNumberFormatter.string(from: NSNumber(value: tTestResult.criticalValue))!),
         ]
         
         if tTestResult.seriesAreProbablyTheSame {
             change = .same
             footnotes = [
-                .init(text: "The before and after values are similar enough that the most probable explanation is that they're random samples from the same data set.", values: footnoteValues)
+                .init(text: """
+                    No statistically significant difference.
+                    The values are similar enough that the most probable explanation is that they're random samples from the same data set.
+                    """, values: footnoteValues)
             ]
         } else {
             let approximateChange = (afterNumbers.mean() - beforeNumbers.mean()) / beforeNumbers.mean()
             change = .differentNumeric(percentage: approximateChange)
             
             footnotes = [
-                .init(text: "The before and after values are different enough that the most probable explanation is that random samples from two different data sets.", values: footnoteValues)
+                .init(text: """
+                    There's a statistically significant difference between the two benchmark measurements.
+                    The values are different enough that the most probable explanation is that they're random samples from two different data sets.
+                    """, values: footnoteValues)
             ]
         }
         
@@ -148,10 +154,10 @@ extension DiffResults {
         }
         
         return """
-        The '\(metric.id)' samples from the '\(sampleName)' measurements show _possible_ signs of bias.
-        The benchmark diff analysis assumes that these values follow a normal distribution around the value that they're meant to represent. If they don't then the conclusion from the diff analysis could be invalid.
-        A human should inspect these values. If the samples look biased or look too noisy you can try gathering new metrics with more 'repetitions' or with a larger .docc catalog.
-        [\(numbers.map { warningNumberFormatter.string(from: NSNumber(value: $0))! }.joined(separator: ", "))]
+        The '\(metric.id)' samples from the '\(sampleName)' measurements show \("possible".styled(.bold)) signs of bias.
+        The benchmark diff analysis assumes that these values follow a normal distribution around the value that they're meant to represent. If they don't the conclusion from the diff analysis could be invalid.
+        \("A human should inspect these values".styled(.bold)). If the samples look biased or look too noisy you can try gathering new metrics with more 'repetitions' or with a larger .docc catalog.
+        \("Full precision values: [\(numbers.map { warningNumberFormatter.string(from: NSNumber(value: $0))! }.joined(separator: ", "))]".styled(.dim))
         \(RenderTrendAction.renderTrendBars(metrics: metricSeries))
         """
     }

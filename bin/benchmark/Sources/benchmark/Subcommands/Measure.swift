@@ -112,7 +112,7 @@ struct MeasureAction {
     var computeMissingOutputSizeMetrics: Bool
     
     func run() throws {
-        print("Building docc in release configuration")
+        print("Building docc in release configuration".styled(.bold))
         let doccURL = try Self.buildDocC(at: doccProjectRootURL)
         
         let benchmarkSeries = try Self.gatherMeasurements(
@@ -123,7 +123,7 @@ struct MeasureAction {
         )
         
         try Self.writeResults(benchmarkSeries, to: outputLocation)
-        print("Result: \(outputLocation.path)")
+        print("Result: \(outputLocation.path)".styled(.bold))
         
         // Run a diff command if a base benchmark was provided.
         guard let baseBenchmark = baseBenchmark else {
@@ -179,7 +179,7 @@ struct MeasureAction {
         for conversionIndex in 1...repeatCount {
             try waitUntilFairThermalState(minimumWait: 10)
             
-            print("Measuring data for sample [\(conversionIndex) / \(repeatCount)]")
+            print("Measuring data for sample [\(conversionIndex) / \(repeatCount)]".styled(.bold))
             try runTask(doccExecutable, arguments: doccArguments, environment: ["DOCC_BENCHMARK": "YES"])
             
             guard FileManager.default.fileExists(atPath: benchmarkFileLocation.path) else {
@@ -288,7 +288,7 @@ private func runTask(_ url: URL, directory: URL? = nil, arguments: [String] = []
 }
 
 private func waitUntilFairThermalState(minimumWait: Int) throws {
-    print("Preparing for next stage", terminator: " ")
+    print("Preparing for next stage ".styled(.bold), terminator: "")
     
     let timeout = 120
     var current = 0

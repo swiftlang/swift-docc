@@ -97,7 +97,7 @@ func gatherMeasurementsForDocCCommit(
     doccConvertCommand: [String],
     computeMissingOutputSizeMetrics: Bool
 ) throws -> BenchmarkResultSeries {
-    print("===== Gathering benchmark results for swift-docc \(commitHash) ========")
+    print("===== Gathering benchmark results for swift-docc \(commitHash) ========".styled(.bold))
     return try runWithDocCCommit(commitHash) { doccRootURL in
         let doccURL = try MeasureAction.buildDocC(at: doccRootURL)
         
