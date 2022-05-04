@@ -173,8 +173,9 @@ class DiagnosticTests: XCTestCase {
 
         // testing scenario with known directive
         let commentWithKnownDirective = """
-          /// Brief description of this method
-          @Image something Description of this parameter
+          Brief description of this method
+          
+          @Image(source: "my-sloth-image.png", alt: "An illustration of a sleeping sloth.")
           @returns Description of return value
           """
         let symbolWithKnownDirective = createTestSymbol(commentText: commentWithKnownDirective)
