@@ -80,7 +80,7 @@ extension RenderNode {
     func navigatorTitle() -> String? {
         let fragments: [DeclarationRenderSection.Token]?
         
-        // FIXME: Use `metadata.navigatorTitle` for all Swift symbols (SR-15947).
+        // FIXME: Use `metadata.navigatorTitle` for all Swift symbols (github.com/apple/swift-docc/issues/176).
         if identifier.sourceLanguage == .swift || (metadata.navigatorTitle ?? []).isEmpty {
             let pageType = navigatorPageType()
             guard ![.framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType].contains(pageType) else { return metadata.title }

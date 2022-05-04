@@ -676,7 +676,7 @@ class ConvertServiceTests: XCTestCase {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
-        arrays. (SR-15036)
+        arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
         let (testBundleURL, _, _) = try testBundleAndContext(
@@ -804,7 +804,7 @@ class ConvertServiceTests: XCTestCase {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
-        arrays. (SR-15036)
+        arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
         let (testBundleURL, _, _) = try testBundleAndContext(
@@ -847,7 +847,7 @@ class ConvertServiceTests: XCTestCase {
         #if os(Linux)
         throw XCTSkip("""
         Skipped on Linux due to an issue in Foundation.Codable where dictionaries are sometimes getting encoded as \
-        arrays. (SR-15036)
+        arrays. (github.com/apple/swift/issues/57363)
         """)
         #else
         let (testBundleURL, _, _) = try testBundleAndContext(

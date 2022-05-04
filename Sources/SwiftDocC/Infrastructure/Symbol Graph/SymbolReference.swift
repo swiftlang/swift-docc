@@ -180,7 +180,7 @@ extension UnifiedSymbolGraph.Symbol {
     var sourceLanguages: Set<SourceLanguage> {
         // FIXME: Replace with new SymbolKit API once available.
         // Adding a dedicated SymbolKit API for this purpose is tracked
-        // with SR-15551 and rdar://85982095.
+        // with github.com/apple/swift-docc-symbolkit/issues/32 and rdar://85982095.
         return Set(
             pathComponents.keys.compactMap { selector in
                 return SourceLanguage(knownLanguageIdentifier: selector.interfaceLanguage)

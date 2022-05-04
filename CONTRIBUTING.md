@@ -35,7 +35,9 @@ from the community.
 ### Contributing Code and Documentation
 
 Before contributing code or documentation to Swift-DocC,
-we encourage you to first create an issue on [Swift JIRA](https://bugs.swift.org/).
+we encourage you to first open a 
+[GitHub issue](https://github.com/apple/swift-docc/issues/new/choose) 
+for a bug report or feature request.
 This will allow us to provide feedback on the proposed change.
 However, this is not a requirement. If your contribution is small in scope,
 feel free to open a PR without first creating an issue.
@@ -141,8 +143,7 @@ requirements:
 When opening a pull request, please make sure to fill out the pull request template
 and complete all tasks mentioned there.
 
-Your PR should mention the number of the [Swift JIRA](https://bugs.swift.org/)
-issue your work is addressing (SR-NNNNN).
+Your PR should mention the number of the GitHub issue your work is addressing.
   
 Most PRs should be against the `main` branch. If your change is intended 
 for a specific release, you should also create a separate branch 
@@ -340,10 +341,10 @@ If you do not have commit access, please ask one of the code owners to trigger t
 ## Your First Contribution
 
 Unsure of where to begin contributing to Swift-DocC? You can start by looking at
-the bugs in the `Swift-DocC` component with the `StarterBug` label on
-[Swift JIRA](https://bugs.swift.org/issues/?jql=project%20%3D%20SR%20AND%20status%20in%20(Open%2C%20Reopened)%20AND%20component%20%3D%20Swift-DocC%20AND%20labels%20%3D%20StarterBug).
+the issues on the [good first issue](https://github.com/apple/swift-docc/contribute)
+page.
 
 Once you've found an issue to work on,
 follow the above instructions for [Building Swift-DocC](#building-swift-docc).
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
