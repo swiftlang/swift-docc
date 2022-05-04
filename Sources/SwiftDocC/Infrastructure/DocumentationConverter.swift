@@ -215,7 +215,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         // If cancelled, return early before we emit diagnostics.
         guard !isConversionCancelled() else { return ([], []) }
         
-        processingDurationMetric = benchmark(begin: Benchmark.Duration(id: "convert-processing"))
+        processingDurationMetric = benchmark(begin: Benchmark.Duration(id: "documentation-processing"))
         
         let bundles = try sorted(bundles: dataProvider.bundles(options: bundleDiscoveryOptions))
         guard !bundles.isEmpty else {
