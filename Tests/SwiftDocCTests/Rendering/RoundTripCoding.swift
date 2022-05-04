@@ -51,7 +51,7 @@ func assertJSONRepresentation<Value: Decodable & Equatable>(
     
     let encoding: String.Encoding
     #if os(Linux) || os(Android)
-    // Work around a JSON decoding issue on Linux (SR-15035).
+    // Work around a JSON decoding issue on Linux (github.com/apple/swift/issues/57362).
     encoding = .utf8
     #else
     encoding = json.fastestEncoding

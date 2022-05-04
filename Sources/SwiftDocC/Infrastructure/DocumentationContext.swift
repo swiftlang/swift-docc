@@ -1311,7 +1311,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // FIXME: Update with new SymbolKit API once available.
                 // This is a very inefficient way to gather the source languages
                 // represented in a symbol graph. Adding a dedicated SymbolKit API is tracked
-                // with SR-15551 and rdar://85982095.
+                // with github.com/apple/swift-docc-symbolkit/issues/32 and rdar://85982095.
                 let symbolGraphLanguages = Set(
                     unifiedSymbolGraph.symbols.flatMap(\.value.sourceLanguages)
                 )
