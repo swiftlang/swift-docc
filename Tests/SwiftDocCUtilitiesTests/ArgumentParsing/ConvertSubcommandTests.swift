@@ -20,12 +20,6 @@ class ConvertSubcommandTests: XCTestCase {
     private let testTemplateURL = Bundle.module.url(
         forResource: "Test Template", withExtension: nil, subdirectory: "Test Resources")!
     
-    override func setUp() {
-        // By default, send all warnings to `.none` instead of filling the
-        // test console output with unrelated messages.
-        Docc.Convert._errorLogHandle = .none
-    }
-    
     func testOptionsValidation() throws {
         // create source bundle directory
         let sourceURL = try createTemporaryDirectory(named: "documentation")
@@ -368,73 +362,5 @@ class ConvertSubcommandTests: XCTestCase {
         let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.experimentalEnableCustomTemplates)
         XCTAssertTrue(actionWithFlag.experimentalEnableCustomTemplates)
-    }
-    
-    func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
-        unsetenv(TemplateOption.environmentVariableKey)
-        
-        // Since there's no custom template set (and relative HTML template lookup isn't
-        // supported in the test harness), we expect `transformForStaticHosting` to
-        // be false in every possible scenario of the flag, even when explicitly requested.
-        
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-            ])
-            
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
-        }
-        
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--transform-for-static-hosting",
-            ])
-            
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
-        }
-        
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--no-transform-for-static-hosting",
-            ])
-            
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
-        }
-    }
-    
-    func testTransformForStaticHostingFlagWithHTMLTemplate() throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
-        
-        // Since we've provided an HTML template, we expect `transformForStaticHosting`
-        // to be true by default, and when explicitly requested. It should only be false
-        // when `--no-transform-for-static-hosting` is passed.
-        
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-            ])
-            
-            XCTAssertTrue(convertOptions.transformForStaticHosting)
-        }
-        
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--transform-for-static-hosting",
-            ])
-            
-            XCTAssertTrue(convertOptions.transformForStaticHosting)
-        }
-        
-        do {
-            let convertOptions = try Docc.Convert.parse([
-                testBundleURL.path,
-                "--no-transform-for-static-hosting",
-            ])
-            
-            XCTAssertFalse(convertOptions.transformForStaticHosting)
-        }
     }
 }
