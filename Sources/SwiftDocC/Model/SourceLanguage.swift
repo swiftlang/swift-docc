@@ -133,7 +133,7 @@ public struct SourceLanguage: Hashable, Codable {
         id: "occ",
         idAliases: [
             "objective-c",
-            "c", // FIXME: DocC should display C as its own language (SR-16050).
+            "c", // FIXME: DocC should display C as its own language (github.com/apple/swift-docc/issues/169).
         ],
         linkDisambiguationID: "c"
     )

@@ -247,9 +247,10 @@ active development and source stability is not guaranteed.
 
 ### Submitting a Bug Report
 
-Swift-DocC tracks all bug reports with [Swift JIRA](https://bugs.swift.org/).
+Swift-DocC tracks all bug reports with 
+[GitHub Issues](https://github.com/apple/swift-docc/issues).
 When you submit a bug report we ask that you follow the
-Swift [Bug Reporting](https://swift.org/contributing/#reporting-bugs) guidelines
+[provided template](https://github.com/apple/swift-docc/issues/new?template=BUG_REPORT.md)
 and provide as many details as possible.
 
 > **Note:** You can use the [`environment`](bin/environment) script
@@ -266,8 +267,8 @@ that will help us track down the bug faster.
 
 ### Submitting a Feature Request
 
-For feature requests, please feel free to create an issue
-on [Swift JIRA](https://bugs.swift.org/) with the `New Feature` type
+For feature requests, please feel free to file a
+[GitHub issue](https://github.com/apple/swift-docc/issues/new?template=FEATURE_REQUEST.md)
 or start a discussion on the [Swift Forums](https://forums.swift.org/c/development/swift-docc).
 
 Don't hesitate to submit a feature request if you see a way
@@ -281,4 +282,4 @@ before being enabled by default.
 
 Please see the [contributing guide](/CONTRIBUTING.md) for more information.
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
