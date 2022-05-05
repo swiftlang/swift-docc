@@ -26,9 +26,6 @@ extension ConvertAction {
         /// The count of nodes indexed.
         private var nodeCount = 0
         
-        /// Tracks the duration spent creating the index.
-        private var duration: TimeInterval = 0.0
-        
         /// An index builder that creates the navigation index on disk.
         private var indexBuilder: Synchronized<NavigatorIndex.Builder>!
         
@@ -52,14 +49,11 @@ extension ConvertAction {
         /// Indexes the given render node and collects any encountered problems.
         /// - Parameter renderNode: A ``RenderNode`` value.
         func index(_ renderNode: RenderNode) {
-            let startTime = ProcessInfo.processInfo.systemUptime
-            
             // Synchronously index the render node.
             indexBuilder.sync({
                 do {
                     try $0.index(renderNode: renderNode)
                     nodeCount += 1
-                    duration += ProcessInfo.processInfo.systemUptime - startTime
                 } catch {
                     self.problems.append(error.problem(source: renderNode.identifier.url,
                                                   severity: .warning,
@@ -71,7 +65,6 @@ extension ConvertAction {
         /// Finalizes the index and writes it on disk.
         /// - Returns: Returns a list of problems if any were encountered during indexing.
         func finalize(emitJSON: Bool, emitLMDB: Bool) -> [Problem] {
-            let startTime = ProcessInfo.processInfo.systemUptime
             indexBuilder.sync { indexBuilder in
                 indexBuilder.finalize(
                     estimatedCount: nodeCount,
@@ -79,10 +72,6 @@ extension ConvertAction {
                     emitLMDBRepresentation: emitLMDB
                 )
             }
-            
-            duration += ProcessInfo.processInfo.systemUptime - startTime
-            
-            benchmark(add: Benchmark.Duration(id: "navigation-index", duration: duration))
             return problems
         }
         
