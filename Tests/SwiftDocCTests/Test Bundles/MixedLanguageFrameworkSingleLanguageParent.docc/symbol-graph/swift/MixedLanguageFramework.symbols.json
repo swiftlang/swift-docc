@@ -1,0 +1,419 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.108.2 clang-1400.0.14.5.1)"
+  },
+  "module": {
+    "name": "MixedLanguageFramework",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 12,
+          "minor": 4,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.enum.case",
+        "displayName": "Case"
+      },
+      "identifier": {
+        "precise": "c:@E@MyError@MyErrorUnknown",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "Code",
+        "unknown"
+      ],
+      "names": {
+        "title": "MyError.Code.unknown"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.func.op",
+        "displayName": "Operator"
+      },
+      "identifier": {
+        "precise": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::c:@E@MyError",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "Code",
+        "!=(_:_:)"
+      ],
+      "names": {
+        "title": "!=(_:_:)"
+      },
+      "swiftExtension": {
+        "extendedModule": "Swift"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.enum",
+        "displayName": "Enumeration"
+      },
+      "identifier": {
+        "precise": "c:@E@MyError",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "Code"
+      ],
+      "names": {
+        "title": "MyError.Code"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Instance Property"
+      },
+      "identifier": {
+        "precise": "s:s5ErrorP10FoundationE20localizedDescriptionSSvp::SYNTHESIZED::s:SC7MyErrorLeV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "localizedDescription"
+      ],
+      "names": {
+        "title": "localizedDescription"
+      },
+      "swiftExtension": {
+        "extendedModule": "Swift"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Instance Property"
+      },
+      "identifier": {
+        "precise": "s:10Foundation13CustomNSErrorPAAE9errorCodeSivp::SYNTHESIZED::s:SC7MyErrorLeV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "errorCode"
+      ],
+      "names": {
+        "title": "errorCode"
+      },
+      "swiftExtension": {
+        "extendedModule": "Foundation"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Instance Property"
+      },
+      "identifier": {
+        "precise": "s:SYsSHRzSH8RawValueSYRpzrlE04hashB0Sivp::SYNTHESIZED::c:@E@MyError",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "Code",
+        "hashValue"
+      ],
+      "names": {
+        "title": "hashValue"
+      },
+      "swiftExtension": {
+        "extendedModule": "Swift"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.var",
+        "displayName": "Global Variable"
+      },
+      "identifier": {
+        "precise": "c:@MyErrorDomain",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyErrorDomain"
+      ],
+      "names": {
+        "title": "MyErrorDomain"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.type.property",
+        "displayName": "Type Property"
+      },
+      "identifier": {
+        "precise": "s:SC7MyErrorLeV11errorDomainSSvpZ",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "errorDomain"
+      ],
+      "names": {
+        "title": "errorDomain"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.type.property",
+        "displayName": "Type Property"
+      },
+      "identifier": {
+        "precise": "s:SC7MyErrorLeV7unknownSoAAVvpZ",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "unknown"
+      ],
+      "names": {
+        "title": "unknown"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Instance Property"
+      },
+      "identifier": {
+        "precise": "s:10Foundation13CustomNSErrorPAAE13errorUserInfoSDySSypGvp::SYNTHESIZED::s:SC7MyErrorLeV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "errorUserInfo"
+      ],
+      "names": {
+        "title": "errorUserInfo"
+      },
+      "docComment": {
+        "lines": [
+          {
+            "text": "The default user-info dictionary."
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "Foundation"
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:SC7MyErrorLeV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError"
+      ],
+      "names": {
+        "title": "MyError",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "MyError"
+          }
+        ]
+      },
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.init",
+        "displayName": "Initializer"
+      },
+      "identifier": {
+        "precise": "s:So7MyErrorV8rawValueABSgSi_tcfc",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyError",
+        "Code",
+        "init(rawValue:)"
+      ],
+      "names": {
+        "title": "init(rawValue:)"
+      },
+      "accessLevel": "public"
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "conformsTo",
+      "source": "s:SC7MyErrorLeV",
+      "target": "s:s8SendableP",
+      "targetFallback": "Swift.Sendable"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@E@MyError",
+      "target": "s:SY",
+      "targetFallback": "Swift.RawRepresentable",
+      "sourceOrigin": {
+        "identifier": "s:10Foundation21_BridgedStoredNSErrorP4CodeQa",
+        "displayName": "_BridgedStoredNSError.Code"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:s5ErrorP10FoundationE20localizedDescriptionSSvp::SYNTHESIZED::s:SC7MyErrorLeV",
+      "target": "s:SC7MyErrorLeV",
+      "sourceOrigin": {
+        "identifier": "s:s5ErrorP10FoundationE20localizedDescriptionSSvp",
+        "displayName": "Error.localizedDescription"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:10Foundation13CustomNSErrorPAAE9errorCodeSivp::SYNTHESIZED::s:SC7MyErrorLeV",
+      "target": "s:SC7MyErrorLeV",
+      "sourceOrigin": {
+        "identifier": "s:10Foundation13CustomNSErrorPAAE9errorCodeSivp",
+        "displayName": "CustomNSError.errorCode"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:SYsSHRzSH8RawValueSYRpzrlE04hashB0Sivp::SYNTHESIZED::c:@E@MyError",
+      "target": "c:@E@MyError",
+      "sourceOrigin": {
+        "identifier": "s:SYsSHRzSH8RawValueSYRpzrlE04hashB0Sivp",
+        "displayName": "RawRepresentable.hashValue"
+      }
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:SC7MyErrorLeV",
+      "target": "s:SQ",
+      "targetFallback": "Swift.Equatable"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:So7MyErrorV8rawValueABSgSi_tcfc",
+      "target": "c:@E@MyError"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:SC7MyErrorLeV",
+      "target": "s:SH",
+      "targetFallback": "Swift.Hashable"
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@E@MyError",
+      "target": "s:SC7MyErrorLeV",
+      "sourceOrigin": {
+        "identifier": "s:10Foundation21_BridgedStoredNSErrorP4CodeQa",
+        "displayName": "_BridgedStoredNSError.Code"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "c:@E@MyError@MyErrorUnknown",
+      "target": "c:@E@MyError"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@E@MyError",
+      "target": "s:SQ",
+      "targetFallback": "Swift.Equatable",
+      "sourceOrigin": {
+        "identifier": "s:10Foundation21_BridgedStoredNSErrorP4CodeQa",
+        "displayName": "_BridgedStoredNSError.Code"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:10Foundation13CustomNSErrorPAAE13errorUserInfoSDySSypGvp::SYNTHESIZED::s:SC7MyErrorLeV",
+      "target": "s:SC7MyErrorLeV",
+      "sourceOrigin": {
+        "identifier": "s:10Foundation13CustomNSErrorPAAE13errorUserInfoSDySSypGvp",
+        "displayName": "CustomNSError.errorUserInfo"
+      }
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:SC7MyErrorLeV",
+      "target": "s:10Foundation13CustomNSErrorP",
+      "targetFallback": "Foundation.CustomNSError"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:SC7MyErrorLeV",
+      "target": "s:s5ErrorP",
+      "targetFallback": "Swift.Error"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@E@MyError",
+      "target": "s:SH",
+      "targetFallback": "Swift.Hashable",
+      "sourceOrigin": {
+        "identifier": "s:10Foundation21_BridgedStoredNSErrorP4CodeQa",
+        "displayName": "_BridgedStoredNSError.Code"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::c:@E@MyError",
+      "target": "c:@E@MyError",
+      "sourceOrigin": {
+        "identifier": "s:SQsE2neoiySbx_xtFZ",
+        "displayName": "Equatable.!=(_:_:)"
+      }
+    },
+    {
+      "kind": "conformsTo",
+      "source": "c:@E@MyError",
+      "target": "s:s8SendableP",
+      "targetFallback": "Swift.Sendable",
+      "sourceOrigin": {
+        "identifier": "s:10Foundation21_BridgedStoredNSErrorP4CodeQa",
+        "displayName": "_BridgedStoredNSError.Code"
+      }
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:SC7MyErrorLeV11errorDomainSSvpZ",
+      "target": "s:SC7MyErrorLeV"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:SC7MyErrorLeV7unknownSoAAVvpZ",
+      "target": "s:SC7MyErrorLeV"
+    }
+  ]
+}

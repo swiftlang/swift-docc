@@ -1503,13 +1503,13 @@ let expected = """
         }
         
         XCTAssertEqual(
-            context.soleRootModuleReference?.sourceLanguages,
+            context.soleRootModuleReference.map { context.sourceLanguages(for: $0) },
             [.swift],
             "Expected the module to have language 'Swift' since it has 0 symbols."
         )
     }
 
-    func testOverloadPlustNonOverloadCollisionPaths() throws {
+    func testOverloadPlusNonOverloadCollisionPaths() throws {
         // Add some symbol collisions to graph
         let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")

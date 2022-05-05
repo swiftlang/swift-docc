@@ -130,6 +130,10 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     }
     
     /// The source languages for which this topic is relevant.
+    ///
+    /// > Important: The source languages associated with the reference may not be the same as the available source languages of its
+    /// corresponding ``DocumentationNode``. If you need to query the source languages associated with a documentation node, use
+    /// ``DocumentationContext/sourceLanguages(for:)`` instead.
     public var sourceLanguages: Set<SourceLanguage> {
         return _storage.sourceLanguages
     }
