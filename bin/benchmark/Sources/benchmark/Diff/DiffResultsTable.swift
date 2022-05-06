@@ -55,7 +55,7 @@ struct DiffResultsTable {
                 colorInfo = [ColumnColorInfo(index: 1, color: .yellow, upTo: change.endIndex)]
             }
             if let footnotes = analysis.footnotes, !footnotes.isEmpty {
-                let footNoteSuffix = (footnoteCounter ..< footnoteCounter+footnotes.count).map { Self.superscriptCharacters[$0] }.joined(separator: ",")
+                let footNoteSuffix = (footnoteCounter ..< footnoteCounter+footnotes.count).map { Self.superscript($0 + 1) }.joined(separator: ",")
 
                 change += footNoteSuffix
                 footnoteCounter += footnotes.count
@@ -94,9 +94,22 @@ struct DiffResultsTable {
     }
     
     private static let superscriptCharacters = [
-        "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹",
-        "¹⁰", "¹¹", "¹²", "¹³", "¹⁴", "¹⁵", "¹⁶", "¹⁷", "¹⁸", "¹⁹",
+        "⁰", "¹", "²", "³", "⁴", "⁵", "⁶", "⁷", "⁸", "⁹",
     ]
+    
+    static func superscript(_ number: Int) -> String {
+        guard number > 0 else { return "" }
+        
+        var result = ""
+        var number = number
+        var digit = 0
+        while number > 10 {
+            (number, digit) = number.quotientAndRemainder(dividingBy: 10)
+            result = superscriptCharacters[digit] + result
+        }
+        result = superscriptCharacters[number] + result
+        return result
+    }
     
     private struct ColumnColorInfo {
         let index: Int
