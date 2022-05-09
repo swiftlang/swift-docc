@@ -476,7 +476,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testObjectiveCOnlySymbolCuratedInSwiftOnlySymbolIsNotFilteredOut() throws {
-         let outputConsumer = try mixedLanguageFrameworkConsumer(bundleName: "MixedLanguageFrameworkSingleLanguageCuration")
+         let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFrameworkSingleLanguageCuration")
          let fooRenderNode = try outputConsumer.renderNode(
              withIdentifier: "s:22MixedLanguageFramework15SwiftOnlyStruct1V"
          )
