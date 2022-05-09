@@ -78,7 +78,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: String) throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer { bundleURL in
+        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework") { bundleURL in
             // Update the clang symbol graph with the Objective-C identifier given in variantInterfaceLanguage.
             
             let clangSymbolGraphLocation = bundleURL
@@ -207,7 +207,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func testFrameworkRenderNodeHasExpectedContentAcrossLanguages() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer()
+        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
         let mixedLanguageFrameworkRenderNode = try outputConsumer.renderNode(
             withIdentifier: "MixedLanguageFramework"
         )
@@ -322,7 +322,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testObjectiveCAuthoredRenderNodeHasExpectedContentAcrossLanguages() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer()
+        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
         let fooRenderNode = try outputConsumer.renderNode(withIdentifier: "c:@E@Foo")
         
         assertExpectedContent(
@@ -508,7 +508,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
      }
     
     func testArticleInMixedLanguageFramework() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer() { url in
+        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework") { url in
             try """
             # MyArticle
             
@@ -571,7 +571,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testAPICollectionInMixedLanguageFramework() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer()
+        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
         
         let articleRenderNode = try outputConsumer.renderNode(withTitle: "APICollection")
         
@@ -636,7 +636,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testGeneratedImplementationsCollectionIsCuratedInAllAvailableLanguages() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer()
+        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
         
         let protocolRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageClassConformingToProtocol")
         
@@ -660,7 +660,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testGeneratedImplementationsCollectionDoesNotCurateInAllUnavailableLanguages() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer { bundleURL in
+        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework") { bundleURL in
             // Update the clang symbol graph to remove the protocol method requirement, so that it's effectively
             // available in Swift only.
             
@@ -700,7 +700,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func testAutomaticSeeAlsoOnlyShowsAPIsAvailableInParentsLanguageForSymbol() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer()
+        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework")
         
         // Swift-only symbol.
         XCTAssertEqual(
@@ -770,8 +770,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testMultiLanguageChildOfSingleParentSymbolIsCuratedInMultiLanguage() throws {
-        let outputConsumer = try mixedLanguageFrameworkConsumer(
-            bundleName: "MixedLanguageFrameworkSingleLanguageParent"
+        let outputConsumer = try renderNodeConsumer(
+            for: "MixedLanguageFrameworkSingleLanguageParent"
         )
         
         let topLevelFrameworkPage = try outputConsumer.renderNode(withTitle: "MixedLanguageFramework")
@@ -921,99 +921,5 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             RenderNode.self,
             from: objectiveCVariantData
         )
-    }
-}
-
-private class TestRenderNodeOutputConsumer: ConvertOutputConsumer {
-    var renderNodes = Synchronized<[RenderNode]>([])
-    
-    func consume(renderNode: RenderNode) throws {
-        renderNodes.sync { renderNodes in
-            renderNodes.append(renderNode)
-        }
-    }
-    
-    func consume(problems: [Problem]) throws { }
-    func consume(assetsInBundle bundle: DocumentationBundle) throws { }
-    func consume(linkableElementSummaries: [LinkDestinationSummary]) throws { }
-    func consume(indexingRecords: [IndexingRecord]) throws { }
-    func consume(assets: [RenderReferenceType: [RenderReference]]) throws { }
-    func consume(benchmarks: Benchmark) throws { }
-    func consume(documentationCoverageInfo: [CoverageDataEntry]) throws { }
-    func consume(renderReferenceStore: RenderReferenceStore) throws { }
-    func consume(buildMetadata: BuildMetadata) throws { }
-}
-
-extension TestRenderNodeOutputConsumer {
-    func renderNodes(withInterfaceLanguages interfaceLanguages: Set<String>?) -> [RenderNode] {
-        renderNodes.sync { renderNodes in
-            renderNodes.filter { renderNode in
-                guard let interfaceLanguages = interfaceLanguages else {
-                    // If there are no interface languages set, return the nodes with no variants.
-                    return renderNode.variants == nil
-                }
-                
-                guard let variants = renderNode.variants else {
-                    return false
-                }
-                
-                let actualInterfaceLanguages: [String] = variants.flatMap { variant in
-                    variant.traits.compactMap { trait in
-                        guard case .interfaceLanguage(let interfaceLanguage) = trait else {
-                            return nil
-                        }
-                        return interfaceLanguage
-                    }
-                }
-                
-                return Set(actualInterfaceLanguages) == interfaceLanguages
-            }
-        }
-    }
-    
-    func renderNode(withIdentifier identifier: String) throws -> RenderNode {
-        try renderNode(where: { renderNode in renderNode.metadata.externalID == identifier })
-    }
-    
-    func renderNode(withTitle title: String) throws -> RenderNode {
-        try renderNode(where: { renderNode in renderNode.metadata.title == title })
-    }
-    
-    private func renderNode(where predicate: (RenderNode) -> Bool) throws -> RenderNode {
-        let renderNode = renderNodes.sync { renderNodes in
-            renderNodes.first { renderNode in
-                predicate(renderNode)
-            }
-        }
-        
-        return try XCTUnwrap(renderNode)
-    }
-}
-
-fileprivate extension SemaToRenderNodeMixedLanguageTests {
-    func mixedLanguageFrameworkConsumer(
-        bundleName: String = "MixedLanguageFramework",
-        configureBundle: ((URL) throws -> Void)? = nil
-    ) throws -> TestRenderNodeOutputConsumer {
-        let (bundleURL, _, context) = try testBundleAndContext(
-            copying: bundleName,
-            configureBundle: configureBundle
-        )
-        
-        var converter = DocumentationConverter(
-            documentationBundleURL: bundleURL,
-            emitDigest: false,
-            documentationCoverageOptions: .noCoverage,
-            currentPlatforms: nil,
-            workspace: context.dataProvider as! DocumentationWorkspace,
-            context: context,
-            dataProvider: try LocalFileSystemDataProvider(rootURL: bundleURL),
-            bundleDiscoveryOptions: BundleDiscoveryOptions()
-        )
-        
-        let outputConsumer = TestRenderNodeOutputConsumer()
-        let (_, _) = try converter.convert(outputConsumer: outputConsumer)
-        
-        return outputConsumer
     }
 }
