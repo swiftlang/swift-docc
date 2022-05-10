@@ -380,10 +380,14 @@ public struct DocumentationNode {
                 let location = symbol.mixins.getValueIfPresent(
                     for: SymbolGraph.Symbol.Location.self
                 )?.url()
-                
+
                 for comment in docCommentDirectives {
                     let range = docCommentMarkup.child(at: comment.indexInParent)?.range
                     
+                    guard BlockDirective.allKnownDirectiveNames.contains(comment.name) else {
+                        continue
+                    }
+
                     var diagnostic = Diagnostic(
                         source: location,
                         severity: .warning,
