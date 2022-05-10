@@ -40,6 +40,8 @@ class DefaultAvailabilityTests: XCTestCase {
             let myKitDocExtensionFile = url.appendingPathComponent("documentation", isDirectory: true).appendingPathComponent("mykit.md")
             var myKitDocExtension = try String(contentsOf: myKitDocExtensionFile)
             
+            // Customize the display name of the MyKit module to verify that the default availability uses the Info.plist
+            // information that's specified using the module's symbol name.
             let firstNewLineIndex = try XCTUnwrap(myKitDocExtension.firstIndex(of: "\n"))
             myKitDocExtension.insert(contentsOf: """
                 

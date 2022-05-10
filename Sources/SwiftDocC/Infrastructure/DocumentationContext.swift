@@ -417,6 +417,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 case .symbol(let declaration):
                     displayName = declaration.tokens.map { $0.description }.joined()
                 }
+                // A module node should always have a symbol.
+                // Remove the fallback value and force unwrap `node.symbol` on the main branch: https://github.com/apple/swift-docc/issues/249
                 moduleNameCache[reference] = (displayName, node.symbol?.names.title ?? reference.lastPathComponent)
             }
         }
