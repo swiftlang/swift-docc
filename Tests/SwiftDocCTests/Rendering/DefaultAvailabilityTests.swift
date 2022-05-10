@@ -33,11 +33,26 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether the default availability is loaded from Info.plist and applied during render time
     func testBundleWithDefaultAvailability() throws {
         // Copy an Info.plist with default availability
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
+            
+            let myKitDocExtensionFile = url.appendingPathComponent("documentation", isDirectory: true).appendingPathComponent("mykit.md")
+            var myKitDocExtension = try String(contentsOf: myKitDocExtensionFile)
+            
+            // Customize the display name of the MyKit module to verify that the default availability uses the Info.plist
+            // information that's specified using the module's symbol name.
+            let firstNewLineIndex = try XCTUnwrap(myKitDocExtension.firstIndex(of: "\n"))
+            myKitDocExtension.insert(contentsOf: """
+                
+                @Metadata {
+                  @DisplayName("MyKit custom display name")
+                }
+                
+                """, at: myKitDocExtension.index(after: firstNewLineIndex))
+            
+            try myKitDocExtension.write(to: myKitDocExtensionFile, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // Verify the bundle has loaded the default availability
         XCTAssertEqual(bundle.info.defaultAvailability?.modules["MyKit"]?.map({ "\($0.platformName.displayName) \($0.platformVersion)" }).sorted(), expectedDefaultAvailability)
