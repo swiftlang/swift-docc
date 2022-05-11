@@ -270,24 +270,49 @@ public class NavigatorTree {
      Atomically reads all the content of the file from the disk and process the tree from loaded data.
      Non-atomically uses `FileHandle` to read the necessary chunks at time.
      
-     - Parameter url: The file URL from which the tree should be read.
-     - Parameter bundleIdentifier: The bundle identifier used to generate the mapping topicID to node on tree.
-     - Parameter interfaceLanguages: A set containing the indication about the interface languages a tree contains.
-     - Parameter atomically: Defines if the read should be atomic.
-     - Parameter presentationIdentifier: Defines if nodes should have a presentation identifier useful in presentation contexts.
+     - Parameters:
+        - url: The file URL from which the tree should be read.
+        - bundleIdentifier: The bundle identifier used to generate the mapping topicID to node on tree.
+        - interfaceLanguages: A set containing the indication about the interface languages a tree contains.
+        - atomically: Defines if the read should be atomic.
+        - presentationIdentifier: Defines if nodes should have a presentation identifier useful in presentation contexts.
+        - onNodeRead: An action to perform after reading a node. This allows clients to perform arbitrary actions on the node while it is being read from disk. This is useful for clients wanting to attach data to ``NavigatorTree/Node/attributes``.
      */
-    static func read(from url: URL, bundleIdentifier: String? = nil, interfaceLanguages: Set<InterfaceLanguage>, atomically: Bool = true, presentationIdentifier: String? = nil) throws -> NavigatorTree {
+    static func read(
+        from url: URL,
+        bundleIdentifier: String? = nil,
+        interfaceLanguages: Set<InterfaceLanguage>,
+        atomically: Bool = true,
+        presentationIdentifier: String? = nil,
+        onNodeRead: ((NavigatorTree.Node) -> Void)? = nil
+    ) throws -> NavigatorTree {
         let interfaceLanguageMap = Dictionary(uniqueKeysWithValues: interfaceLanguages.map{ ($0.mask, $0)})
         let path = url.path
         if atomically {
-            return try __readAtomically(from: path, bundleIdentifier: bundleIdentifier, interfaceLanguageMap: interfaceLanguageMap, presentationIdentifier: presentationIdentifier)
+            return try readAtomically(
+                from: path,
+                bundleIdentifier: bundleIdentifier,
+                interfaceLanguageMap: interfaceLanguageMap,
+                presentationIdentifier: presentationIdentifier,
+                onNodeRead: onNodeRead)
         }
-        return try __read(from: path, bundleIdentifier: bundleIdentifier, interfaceLanguageMap: interfaceLanguageMap, presentationIdentifier: presentationIdentifier)
+        return try read(
+            from: path,
+            bundleIdentifier: bundleIdentifier,
+            interfaceLanguageMap: interfaceLanguageMap,
+            presentationIdentifier: presentationIdentifier,
+            onNodeRead: onNodeRead)
     }
     
     /// Read a tree by loading the whole data into disk and then process the content.
-    fileprivate static func __readAtomically(from path: String, bundleIdentifier: String? = nil, interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage], presentationIdentifier: String? = nil) throws -> NavigatorTree {
-        let fileUrl = URL(fileURLWithPath: path, isDirectory: false)
+    fileprivate static func readAtomically(
+        from path: String,
+        bundleIdentifier: String? = nil,
+        interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage],
+        presentationIdentifier: String? = nil,
+        onNodeRead: ((NavigatorTree.Node) -> Void)? = nil
+    ) throws -> NavigatorTree {
+        let fileUrl = URL(fileURLWithPath: path)
         let data = try Data(contentsOf: fileUrl)
         
         var map = [UInt32: Node]()
@@ -314,6 +339,7 @@ public class NavigatorTree {
             let node = Node(item: item, bundleIdentifier: bundleIdentifier ?? "")
             node.id = index
             node.presentationIdentifier = presentationIdentifier
+            onNodeRead?(node)
             if let parent = map[parentID] {
                 parent.add(child: node)
             }
@@ -330,7 +356,13 @@ public class NavigatorTree {
     }
     
     /// Read a tree by using a FileHandle while reading chunks of data from disk.
-    fileprivate static func __read(from path: String, bundleIdentifier: String? = nil, interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage], presentationIdentifier: String? = nil) throws -> NavigatorTree {
+    fileprivate static func read(
+        from path: String,
+        bundleIdentifier: String? = nil,
+        interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage],
+        presentationIdentifier: String? = nil,
+        onNodeRead: ((NavigatorTree.Node) -> Void)? = nil
+    ) throws -> NavigatorTree {
         guard let fileHandler = FileHandle(forReadingAtPath: path) else {
             throw Error.cannotOpenFile(path: path)
         }
@@ -356,6 +388,7 @@ public class NavigatorTree {
             let node = Node(item: item, bundleIdentifier: bundleIdentifier ?? "")
             node.id = index
             node.presentationIdentifier = presentationIdentifier
+            onNodeRead?(node)
             if let parent = map[parentID] {
                 parent.add(child: node)
             }
@@ -396,6 +429,9 @@ public class NavigatorTree {
         
         /// A value that can be used for identification purposes in presentation contexts.
         public var presentationIdentifier: String?
+        
+        /// Storage for additional information in the nodes.
+        public var attributes: [String: Any] = [:]
         
         /// A value that can be used for disambiguation purposes in presentation contexts.
         @available(*, deprecated, message: "Use presentationIdentifier instead.")
