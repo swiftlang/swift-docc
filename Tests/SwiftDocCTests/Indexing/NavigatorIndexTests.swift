@@ -194,7 +194,7 @@ Root
         XCTAssertTrue(validateTree(node: readTree.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
         XCTAssertTrue(validateTree(node: readTree.root, validator: emptyPresentationIdentifierValidator), "The tree has a presentation identifier set which should not be present.")
         
-        var treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: true, presentationIdentifier: "com.example.test")
+        let treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: true, presentationIdentifier: "com.example.test")
         
         let presentationIdentifierValidator: (NavigatorTree.Node) -> Bool = { node in
             return node.presentationIdentifier == "com.example.test"
@@ -204,12 +204,43 @@ Root
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
         XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
         
-        // Test non-atomic read.
-        treeWithPresentationIdentifier = try NavigatorTree.read(from: indexURL, bundleIdentifier: testBundleIdentifier, interfaceLanguages: [.swift], atomically: false, presentationIdentifier: "com.example.test")
         
-        XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: idValidator), "The tree has IDs missing.")
-        XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
-        XCTAssertTrue(validateTree(node: treeWithPresentationIdentifier.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
+        func addAttributes(node: NavigatorTree.Node) -> Void {
+            node.attributes["Attribute"] = true
+        }
+        
+        let treeWithAttributes = try NavigatorTree.read(
+            from: indexURL,
+            bundleIdentifier: testBundleIdentifier,
+            interfaceLanguages: [.swift],
+            atomically: true,
+            presentationIdentifier: "com.example.test",
+            onNodeRead: addAttributes
+        )
+        
+        let attributesValidator: (NavigatorTree.Node) -> Bool = { node in
+            return (node.attributes["Attribute"] as? Bool) == true
+        }
+        
+        XCTAssertTrue(validateTree(node: treeWithAttributes.root, validator: idValidator), "The tree has IDs missing.")
+        XCTAssertTrue(validateTree(node: treeWithAttributes.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
+        XCTAssertTrue(validateTree(node: treeWithAttributes.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
+        XCTAssertTrue(validateTree(node: treeWithAttributes.root, validator: attributesValidator), "The tree lacks the correct attributes.")
+        
+        // Test non-atomic read.
+        let treeWithAttributesNonAtomic = try NavigatorTree.read(
+            from: indexURL,
+            bundleIdentifier: testBundleIdentifier,
+            interfaceLanguages: [.swift],
+            atomically: false,
+            presentationIdentifier: "com.example.test",
+            onNodeRead: addAttributes
+        )
+        
+        XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: idValidator), "The tree has IDs missing.")
+        XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
+        XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
+        XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: attributesValidator), "The tree lacks the correct attributes.")
     }
     
   
@@ -596,7 +627,7 @@ Root
             builder.finalize()
             
             // Read the index back from disk
-            let navigatorIndex = try NavigatorIndex(url: targetURL)
+            let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
             
             XCTAssertEqual(navigatorIndex.availabilityIndex.platforms, [.watchOS, .macCatalyst, .iOS, .tvOS, .macOS])
             XCTAssertEqual(navigatorIndex.availabilityIndex.versions(for: .iOS), Set([
@@ -731,7 +762,7 @@ Root
         
         builder.finalize()
         
-        let navigatorIndex = try NavigatorIndex(url: targetURL)
+        let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
         
         XCTAssertEqual(navigatorIndex.pathHasher, .md5)
         XCTAssertEqual(navigatorIndex.bundleIdentifier, testBundleIdentifier)
@@ -831,7 +862,7 @@ Root
         
         builder.finalize()
         
-        let navigatorIndex = try NavigatorIndex(url: targetURL)
+        let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
         
         XCTAssertEqual(navigatorIndex.pathHasher, .fnv1)
         
@@ -1246,7 +1277,7 @@ Root
         
         // Verify we can open the index without errors.
         let path = URL(fileURLWithPath: "/Volumes/ReadOnlyIndex/index")
-        XCTAssertNoThrow(try NavigatorIndex(url: path))
+        XCTAssertNoThrow(try NavigatorIndex.readNavigatorIndex(url: path))
         
         // Detatch the Volume.
         let detatchProcess = Process()
@@ -1283,13 +1314,13 @@ Root
         try FileManager.default.setAttributes([FileAttributeKey.posixPermissions: NSNumber(value: 0o400)], ofItemAtPath: dataFileURL.path)
         
         // Ensure we can read the navigator index even if the data file is read-only.
-        _ = try NavigatorIndex(url: targetURL, readNavigatorTree: false)
+        _ = try NavigatorIndex.readNavigatorIndex(url: targetURL, readNavigatorTree: false)
         
         // Remove all permissions to the file.
         try FileManager.default.setAttributes([FileAttributeKey.posixPermissions: NSNumber(value: 0o000)], ofItemAtPath: dataFileURL.path)
         
         // Make sure we throw if an index can't be opened even after the fallback, avoiding entering an infinite loop.
-        XCTAssertThrowsError(try NavigatorIndex(url: targetURL, readNavigatorTree: false))
+        XCTAssertThrowsError(try NavigatorIndex.readNavigatorIndex(url: targetURL, readNavigatorTree: false))
     }
     
     func testNavigatorTitle() throws {
@@ -1518,7 +1549,7 @@ Root
 
         builder.finalize()
 
-        let navigatorIndex = try NavigatorIndex(url: targetURL)
+        let navigatorIndex = try NavigatorIndex.readNavigatorIndex(url: targetURL)
 
         let expectation = XCTestExpectation(description: "Load the tree asynchronously.")
 
