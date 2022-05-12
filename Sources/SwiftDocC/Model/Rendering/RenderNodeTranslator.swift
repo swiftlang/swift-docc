@@ -601,7 +601,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchy = hierarchy
         
-        node.variants = variants(for: documentationNode)
+        // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
+        // advertising the page as "Swift", which is the language DocC assigns to pages in article only pages.
+        // (github.com/apple/swift-docc/issues/240).
+        if let topLevelModule = context.soleRootModuleReference,
+           try! context.entity(with: topLevelModule).kind.isSymbol
+        {
+            node.variants = variants(for: documentationNode)
+        }
         
         if let abstract = article.abstractSection,
             let abstractContent = visitMarkup(abstract.content) as? [RenderInlineContent] {
