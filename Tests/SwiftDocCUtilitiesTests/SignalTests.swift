@@ -32,32 +32,34 @@ class SignalTests: XCTestCase {
     /// `signal-test-app` sends a kill signal to itself and uses ``Signal`` to intercept that signal
     /// and set the exit code to 99.
     func testTrappingSignal() throws {
-        let signalTestAppPath = productDirectory.appendingPathComponent("signal-test-app").path
+        throw XCTSkip("This test hangs under tsan rdar://90715477")
         
-        // This is a workaround (r69892261) to address situations where the `signal-test-app`
-        // executable this test relies on has not been built.
-        //
-        // It will be built by default when building the entire DocC package but
-        // if you have another scheme selected in Xcode (like the `docc` executable) it's possible
-        // the `signal-test-app` executable won't exist when the tests are run and this test will
-        // be skipped.
-        try XCTSkipUnless(
-            FileManager.default.fileExists(atPath: signalTestAppPath),
-            """
-            The executable ('signal-test-app') required for this test was not found.
-            It is built as a part of the overall 'SwiftDocC-Package' scheme in Xcode."
-            """)
-        
-        // Run signal test app.
-        let runSignalTestApp = Process()
-        runSignalTestApp.executableURL = URL(fileURLWithPath: "/bin/bash")
-        runSignalTestApp.arguments = ["-c", signalTestAppPath]
-        try runSignalTestApp.run()
-        runSignalTestApp.waitUntilExit()
-        guard runSignalTestApp.terminationStatus == 99 else {
-            XCTFail("Unexpected termination status: \(runSignalTestApp.terminationStatus) \(runSignalTestApp.terminationReason)\n")
-            return
-        }
+//        let signalTestAppPath = productDirectory.appendingPathComponent("signal-test-app").path
+//
+//        // This is a workaround (r69892261) to address situations where the `signal-test-app`
+//        // executable this test relies on has not been built.
+//        //
+//        // It will be built by default when building the entire DocC package but
+//        // if you have another scheme selected in Xcode (like the `docc` executable) it's possible
+//        // the `signal-test-app` executable won't exist when the tests are run and this test will
+//        // be skipped.
+//        try XCTSkipUnless(
+//            FileManager.default.fileExists(atPath: signalTestAppPath),
+//            """
+//            The executable ('signal-test-app') required for this test was not found.
+//            It is built as a part of the overall 'SwiftDocC-Package' scheme in Xcode."
+//            """)
+//
+//        // Run signal test app.
+//        let runSignalTestApp = Process()
+//        runSignalTestApp.executableURL = URL(fileURLWithPath: "/bin/bash")
+//        runSignalTestApp.arguments = ["-c", signalTestAppPath]
+//        try runSignalTestApp.run()
+//        runSignalTestApp.waitUntilExit()
+//        guard runSignalTestApp.terminationStatus == 99 else {
+//            XCTFail("Unexpected termination status: \(runSignalTestApp.terminationStatus) \(runSignalTestApp.terminationReason)\n")
+//            return
+//        }
     }
     
     #endif
