@@ -30,7 +30,7 @@ Adding a `DisplayName` directive to a non-symbol page will result in a warning.
 
 ### Containing Elements
 
-The following items can include a technology root element:
+The following items can include a display name element:
 
 - ``Metadata``
 
