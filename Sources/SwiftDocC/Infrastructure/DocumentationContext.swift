@@ -384,7 +384,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// A cache of plain string module names, keyed by the module node reference.
-    private var moduleNameCache: [ResolvedTopicReference: String] = [:]
+    private var moduleNameCache: [ResolvedTopicReference: (displayName: String, symbolName: String)] = [:]
     
     /// Find the known plain string module name for a given module reference.
     ///
@@ -392,7 +392,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameter moduleReference: The module reference to find the module name for.
     /// - Returns: The plain string name for the referenced module.
-    func moduleName(forModuleReference moduleReference: ResolvedTopicReference) -> String {
+    func moduleName(forModuleReference moduleReference: ResolvedTopicReference) -> (displayName: String, symbolName: String) {
         if let name = moduleNameCache[moduleReference]  {
             return name
         }
@@ -410,12 +410,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     func preResolveModuleNames() {
         for reference in rootModules {
             if let node = try? entity(with: reference) {
+                let displayName: String
                 switch node.name {
                 case .conceptual(let title):
-                    moduleNameCache[reference] = title
+                    displayName = title
                 case .symbol(let declaration):
-                    moduleNameCache[reference] = declaration.tokens.map { $0.description }.joined()
+                    displayName = declaration.tokens.map { $0.description }.joined()
                 }
+                // A module node should always have a symbol.
+                // Remove the fallback value and force unwrap `node.symbol` on the main branch: https://github.com/apple/swift-docc/issues/249
+                moduleNameCache[reference] = (displayName, node.symbol?.names.title ?? reference.lastPathComponent)
             }
         }
     }
@@ -1311,7 +1315,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // FIXME: Update with new SymbolKit API once available.
                 // This is a very inefficient way to gather the source languages
                 // represented in a symbol graph. Adding a dedicated SymbolKit API is tracked
-                // with SR-15551 and rdar://85982095.
+                // with github.com/apple/swift-docc-symbolkit/issues/32 and rdar://85982095.
                 let symbolGraphLanguages = Set(
                     unifiedSymbolGraph.symbols.flatMap(\.value.sourceLanguages)
                 )

@@ -12,6 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 @testable import SymbolKit
+import SwiftDocCTestUtilities
 
 class DiagnosticTests: XCTestCase {
 
@@ -139,6 +140,53 @@ class DiagnosticTests: XCTestCase {
         \(explanation)
         \(expectedNoteLocation): note: The message of the note.
         """)
+    }
+
+    func createTestSymbol(commentText: String) -> SymbolGraph.Symbol {
+         let emptyRange = SymbolGraph.LineList.SourceRange(
+             start: .init(line: 0, character: 0),
+             end: .init(line: 0, character: 0)
+         )
+        let docCommentLines = commentText.components(separatedBy: .newlines).map { SymbolGraph.LineList.Line(text: $0, range: emptyRange) }
+        return SymbolGraph.Symbol(
+            identifier: .init(precise: "s:5MyKit0A5ClassC10myFunctionyyF", interfaceLanguage: "occ"),
+            names: .init(title: "", navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: ["path", "to", "my file.h"],
+            docComment: SymbolGraph.LineList(docCommentLines),
+            accessLevel: .init(rawValue: "public"),
+            kind: .init(parsedIdentifier: .func, displayName: "myFunction"),
+            mixins: [:]
+        )
+    }
+
+    func testDoxygenDiagnostic() throws {
+        let commentText = """
+          Brief description of this method
+          @param something Description of this parameter
+          @returns Description of return value
+          """
+        let symbol = createTestSymbol(commentText: commentText)
+        let engine = DiagnosticEngine()
+
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
+        XCTAssertEqual(engine.problems.count, 0)
+
+        // testing scenario with known directive
+        let commentWithKnownDirective = """
+          Brief description of this method
+          
+          @Image(source: "my-sloth-image.png", alt: "An illustration of a sleeping sloth.")
+          @returns Description of return value
+          """
+        let symbolWithKnownDirective = createTestSymbol(commentText: commentWithKnownDirective)
+        let engine1 = DiagnosticEngine()
+
+        let _ = DocumentationNode.contentFrom(documentedSymbol: symbolWithKnownDirective, documentationExtension: nil, engine: engine1)
+
+        // count should 1 for the known directive '@Image'
+        // TODO: Consider adding a diagnostic for Doxygen tags (rdar://92184094)
+        XCTAssertEqual(engine1.problems.count, 1)
+        XCTAssertEqual(engine1.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnsupportedDocCommentDirective"])
     }
 }
 
