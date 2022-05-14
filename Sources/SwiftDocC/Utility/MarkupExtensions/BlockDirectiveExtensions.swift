@@ -17,4 +17,39 @@ extension BlockDirective {
         Tutorial.directiveName,
         TutorialArticle.directiveName,
     ]
+
+    /// Names of known directives
+    static let allKnownDirectiveNames: [String] = [
+        Assessments.directiveName,
+        Chapter.directiveName,
+        Choice.directiveName,
+        Code.directiveName,
+        Comment.directiveName,
+        ContentAndMedia.directiveName,
+        DeprecationSummary.directiveName,
+        DisplayName.directiveName,
+        DocumentationExtension.directiveName,
+        ImageMedia.directiveName,
+        Intro.directiveName,
+        Justification.directiveName,
+        Metadata.directiveName,
+        MultipleChoice.directiveName,
+        Redirect.directiveName,
+        Resources.directiveName,
+        Snippet.directiveName,
+        Stack.directiveName,
+        Step.directiveName,
+        Steps.directiveName,
+        Technology.directiveName,
+        TechnologyRoot.directiveName,
+        TechnologyRoot.directiveName,
+        Tile.directiveName,
+        Tutorial.directiveName,
+        TutorialArticle.directiveName,
+        TutorialReference.directiveName,
+        TutorialSection.directiveName,
+        VideoMedia.directiveName,
+        Volume.directiveName,
+        XcodeRequirement.directiveName
+    ]
 }

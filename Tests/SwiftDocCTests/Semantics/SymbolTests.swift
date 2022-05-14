@@ -499,7 +499,7 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.column, 1)
     }
     
-    func testWarningWhenDocCommentContainsDirectiveInSubclass() throws {
+    func testNoWarningWhenDocCommentContainsDoxygen() throws {
         let tempURL = try createTemporaryDirectory()
         
         let bundleURL = try Folder(name: "Inheritance.docc", content: [
@@ -511,13 +511,7 @@ class SymbolTests: XCTestCase {
         
         let (_, _, context) = try loadBundle(from: bundleURL)
         let problems = context.diagnosticEngine.problems
-        XCTAssertEqual(problems.count, 3)
-        XCTAssertFalse(problems.containsErrors)
-        let initProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 7 }
-        XCTAssertEqual(initProblems.count, 1, "There should only be one error from the doc comments for 'ParentClass/init()'")
-        // Problems in the `index` doc comments
-        let indexProblems = problems.filter { $0.diagnostic.range?.lowerBound.line == 12 }
-        XCTAssertEqual(indexProblems.count, 2, "There should be two errors from the doc comments for 'index()'. One from 'ParentClass' and one synthesized from 'ChildClass'.")
+        XCTAssertEqual(problems.count, 0)
     }
 
     func testUnresolvedReferenceWarnignsInDocumentationExtension() throws {
@@ -656,7 +650,7 @@ class SymbolTests: XCTestCase {
             start: .init(line: 0, character: 0),
             end: .init(line: 0, character: 0)
         )
-        let line = SymbolGraph.LineList.Line(text: "@this is a directive", range: range)
+        let line = SymbolGraph.LineList.Line(text: "@Image this is a known directive", range: range)
         let docComment = SymbolGraph.LineList([line])
         let symbol = SymbolGraph.Symbol(
             identifier: identifer,
