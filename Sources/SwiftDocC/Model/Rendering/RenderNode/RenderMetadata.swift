@@ -144,6 +144,15 @@ public struct RenderMetadata: VariantContainer {
     /// The variants for the source file URI of a page.
     public var sourceFileURIVariants: VariantCollection<String?> = .init(defaultValue: nil)
     
+    /// The remote location where the source declaration of the topic can be viewed.
+    public var remoteSource: RemoteSource? {
+        get { getVariantDefaultValue(keyPath: \.remoteSourceVariants) }
+        set { setVariantDefaultValue(newValue, keyPath: \.remoteSourceVariants) }
+    }
+    
+    /// The variants for the topic's remote source.
+    public var remoteSourceVariants: VariantCollection<RemoteSource?> = .init(defaultValue: nil)
+    
     /// Any tags assigned to the node.
     public var tags: [RenderNode.Tag]?
 }
@@ -162,6 +171,21 @@ extension RenderMetadata: Codable {
         /// Possible dependencies to the module, we allow for those in the render JSON model
         /// but have no authoring support at the moment.
         public let relatedModules: [String]?
+    }
+    
+    /// Describes the location of the topic's source code, hosted remotely by a source service.
+    public struct RemoteSource: Codable, Equatable {
+        /// The name of the file where the topic is declared.
+        public var fileName: String
+        
+        /// The location of the topic's source code, hosted by a source service.
+        public var url: URL
+        
+        /// Creates a topic's source given its source code's file name and URL.
+        public init(fileName: String, url: URL) {
+            self.fileName = fileName
+            self.url = url
+        }
     }
 
     public struct CodingKeys: CodingKey, Hashable {
@@ -196,6 +220,7 @@ extension RenderMetadata: Codable {
         public static let fragments = CodingKeys(stringValue: "fragments")
         public static let navigatorTitle = CodingKeys(stringValue: "navigatorTitle")
         public static let sourceFileURI = CodingKeys(stringValue: "sourceFileURI")
+        public static let remoteSource = CodingKeys(stringValue: "remoteSource")
         public static let tags = CodingKeys(stringValue: "tags")
     }
     
@@ -221,6 +246,7 @@ extension RenderMetadata: Codable {
         fragmentsVariants = try container.decodeVariantCollectionIfPresent(ofValueType: [DeclarationRenderSection.Token]?.self, forKey: .fragments)
         navigatorTitleVariants = try container.decodeVariantCollectionIfPresent(ofValueType: [DeclarationRenderSection.Token]?.self, forKey: .navigatorTitle)
         sourceFileURIVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .sourceFileURI)
+        remoteSourceVariants = try container.decodeVariantCollectionIfPresent(ofValueType: RemoteSource?.self, forKey: .remoteSource)
         tags = try container.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
         
         let extraKeys = Set(container.allKeys).subtracting(
@@ -242,6 +268,7 @@ extension RenderMetadata: Codable {
                 .fragments,
                 .navigatorTitle,
                 .sourceFileURI,
+                .remoteSource,
                 .tags
             ]
         )
@@ -272,6 +299,7 @@ extension RenderMetadata: Codable {
         try container.encodeVariantCollection(fragmentsVariants, forKey: .fragments, encoder: encoder)
         try container.encodeVariantCollection(navigatorTitleVariants, forKey: .navigatorTitle, encoder: encoder)
         try container.encodeVariantCollection(sourceFileURIVariants, forKey: .sourceFileURI, encoder: encoder)
+        try container.encodeVariantCollection(remoteSourceVariants, forKey: .remoteSource, encoder: encoder)
         if let tags = self.tags, !tags.isEmpty {
             try container.encodeIfPresent(tags, forKey: .tags)
         }

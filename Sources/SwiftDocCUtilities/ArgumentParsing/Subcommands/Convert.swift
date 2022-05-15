@@ -137,6 +137,10 @@ extension Docc {
         /// Defaults to false.
         @Flag(help: "Inherit documentation for inherited symbols")
         public var enableInheritedDocs = false
+        
+        /// Arguments for specifying information about the source code repository that hosts the documented project's code.
+        @OptionGroup()
+        public var sourceRepositoryArguments: SourceRepositoryArguments
 
         // MARK: - Info.plist fallbacks
         

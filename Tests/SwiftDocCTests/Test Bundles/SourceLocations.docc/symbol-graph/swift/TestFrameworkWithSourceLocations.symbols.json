@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 3
+    },
+    "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.116.4 clang-1400.0.25)"
+  },
+  "module": {
+    "name": "SourceLocations",
+    "platform": {
+      "architecture": "x86_64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 13,
+          "minor": 0,
+          "patch": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:32SourceLocations8MyStructV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "MyStruct"
+      ],
+      "names": {
+        "title": "MyStruct"
+      },
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///path/to/checkout/SourceLocations/MyStruct.swift",
+        "position": {
+          "line": 9,
+          "character": 14
+        }
+      }
+    }
+  ],
+  "relationships": []
+}

@@ -78,24 +78,27 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
 
     func assertOutputsMultiLanguageRenderNodes(variantInterfaceLanguage: String) throws {
-        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework") { bundleURL in
-            // Update the clang symbol graph with the Objective-C identifier given in variantInterfaceLanguage.
-            
-            let clangSymbolGraphLocation = bundleURL
-                .appendingPathComponent("symbol-graphs")
-                .appendingPathComponent("clang")
-                .appendingPathComponent("MixedLanguageFramework.symbols.json")
-            
-            var clangSymbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: clangSymbolGraphLocation))
-            
-            clangSymbolGraph.symbols = clangSymbolGraph.symbols.mapValues { symbol in
-                var symbol = symbol
-                symbol.identifier.interfaceLanguage = variantInterfaceLanguage
-                return symbol
+        let outputConsumer = try renderNodeConsumer(
+            for: "MixedLanguageFramework",
+            configureBundle: { bundleURL in
+                // Update the clang symbol graph with the Objective-C identifier given in variantInterfaceLanguage.
+                
+                let clangSymbolGraphLocation = bundleURL
+                    .appendingPathComponent("symbol-graphs")
+                    .appendingPathComponent("clang")
+                    .appendingPathComponent("MixedLanguageFramework.symbols.json")
+                
+                var clangSymbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: clangSymbolGraphLocation))
+                
+                clangSymbolGraph.symbols = clangSymbolGraph.symbols.mapValues { symbol in
+                    var symbol = symbol
+                    symbol.identifier.interfaceLanguage = variantInterfaceLanguage
+                    return symbol
+                }
+                
+                try JSONEncoder().encode(clangSymbolGraph).write(to: clangSymbolGraphLocation)
             }
-            
-            try JSONEncoder().encode(clangSymbolGraph).write(to: clangSymbolGraphLocation)
-        }
+        )
         
         XCTAssertEqual(
             Set(
@@ -660,23 +663,26 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
     }
     
     func testGeneratedImplementationsCollectionDoesNotCurateInAllUnavailableLanguages() throws {
-        let outputConsumer = try renderNodeConsumer(for: "MixedLanguageFramework") { bundleURL in
-            // Update the clang symbol graph to remove the protocol method requirement, so that it's effectively
-            // available in Swift only.
-            
-            let clangSymbolGraphLocation = bundleURL
-                .appendingPathComponent("symbol-graphs")
-                .appendingPathComponent("clang")
-                .appendingPathComponent("MixedLanguageFramework.symbols.json")
-            
-            var clangSymbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: clangSymbolGraphLocation))
-            
-            clangSymbolGraph.symbols = clangSymbolGraph.symbols.filter { preciseIdentifier, _ in
-                !preciseIdentifier.contains("mixedLanguageMethod")
+        let outputConsumer = try renderNodeConsumer(
+            for: "MixedLanguageFramework",
+            configureBundle: { bundleURL in
+                // Update the clang symbol graph to remove the protocol method requirement, so that it's effectively
+                // available in Swift only.
+                
+                let clangSymbolGraphLocation = bundleURL
+                    .appendingPathComponent("symbol-graphs")
+                    .appendingPathComponent("clang")
+                    .appendingPathComponent("MixedLanguageFramework.symbols.json")
+                
+                var clangSymbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: clangSymbolGraphLocation))
+                
+                clangSymbolGraph.symbols = clangSymbolGraph.symbols.filter { preciseIdentifier, _ in
+                    !preciseIdentifier.contains("mixedLanguageMethod")
+                }
+                
+                try JSONEncoder().encode(clangSymbolGraph).write(to: clangSymbolGraphLocation)
             }
-            
-            try JSONEncoder().encode(clangSymbolGraph).write(to: clangSymbolGraphLocation)
-        }
+        )
         
         let protocolRenderNode = try outputConsumer.renderNode(withTitle: "MixedLanguageClassConformingToProtocol")
         

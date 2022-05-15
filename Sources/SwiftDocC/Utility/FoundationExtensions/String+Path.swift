@@ -10,16 +10,21 @@
 
 import Foundation
 
-extension String {
+extension StringProtocol {
     /// A copy of the string prefixed with a slash ("/") if the string doesn't already start with a leading slash.
     var prependingLeadingSlash: String {
-        guard !hasPrefix("/") else { return self }
+        guard !hasPrefix("/") else { return String(self) }
         return "/".appending(self)
     }
     
     /// A copy of the string without a leading slash ("/") or the original string if it doesn't start with a leading slash.
     var removingLeadingSlash: String {
-        guard hasPrefix("/") else { return self }
+        guard hasPrefix("/") else { return String(self) }
         return String(dropFirst())
+    }
+    
+    var removingTrailingSlash: String {
+        guard hasSuffix("/") else { return String(self) }
+        return String(dropLast())
     }
 }

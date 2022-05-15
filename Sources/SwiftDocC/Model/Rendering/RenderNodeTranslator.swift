@@ -45,6 +45,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Whether the documentation converter should include access level information for symbols.
     var shouldEmitSymbolAccessLevels: Bool
     
+    /// The source repository where the documentation's sources are hosted.
+    var sourceRepository: SourceRepository?
+    
     public mutating func visitCode(_ code: Code) -> RenderTree? {
         let fileType = NSString(string: code.fileName).pathExtension
         let fileReference = code.fileReference
@@ -1157,6 +1160,26 @@ public struct RenderNodeTranslator: SemanticVisitor {
             } ?? .init(defaultValue: nil)
         }
         
+        if let sourceRepository = sourceRepository {
+            node.metadata.remoteSourceVariants = VariantCollection<RenderMetadata.RemoteSource?>(
+                from: symbol.locationVariants
+            ) { _, location in
+                guard let locationURL = location.url(),
+                      let url = sourceRepository.format(
+                        sourceFileURL: locationURL,
+                        lineNumber: location.position.line + 1
+                      )
+                else {
+                    return nil
+                }
+                
+                return RenderMetadata.RemoteSource(
+                    fileName: locationURL.lastPathComponent,
+                    url: url
+                )
+            } ?? .init(defaultValue: nil)
+        }
+        
         if shouldEmitSymbolAccessLevels {
             node.metadata.symbolAccessLevelVariants = VariantCollection<String?>(from: symbol.accessLevelVariants)
         }
@@ -1553,7 +1576,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         source: URL?,
         renderContext: RenderContext? = nil,
         emitSymbolSourceFileURIs: Bool = false,
-        emitSymbolAccessLevels: Bool = false
+        emitSymbolAccessLevels: Bool = false,
+        sourceRepository: SourceRepository? = nil
     ) {
         self.context = context
         self.bundle = bundle
@@ -1563,6 +1587,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         self.contentRenderer = DocumentationContentRenderer(documentationContext: context, bundle: bundle)
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
+        self.sourceRepository = sourceRepository
     }
 }
 
