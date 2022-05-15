@@ -89,6 +89,9 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     /// Whether the documentation converter should include access level information for symbols.
     var shouldEmitSymbolAccessLevels: Bool
     
+    /// The source repository where the documentation's sources are hosted.
+    var sourceRepository: SourceRepository?
+    
     /// `true` if the conversion is cancelled.
     private var isCancelled: Synchronized<Bool>? = nil
 
@@ -128,6 +131,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         bundleDiscoveryOptions: BundleDiscoveryOptions,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false,
+        sourceRepository: SourceRepository? = nil,
         isCancelled: Synchronized<Bool>? = nil,
         diagnosticEngine: DiagnosticEngine = .init()
     ) {
@@ -142,6 +146,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.bundleDiscoveryOptions = bundleDiscoveryOptions
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
+        self.sourceRepository = sourceRepository
         self.isCancelled = isCancelled
         self.diagnosticEngine = diagnosticEngine
         
@@ -247,7 +252,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             context: context,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
-            emitSymbolAccessLevels: shouldEmitSymbolAccessLevels
+            emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,
+            sourceRepository: sourceRepository
         )
         
         var indexingRecords = [IndexingRecord]()

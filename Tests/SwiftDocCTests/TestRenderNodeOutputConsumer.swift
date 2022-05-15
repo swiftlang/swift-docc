@@ -85,7 +85,8 @@ extension TestRenderNodeOutputConsumer {
 extension XCTestCase {
     func renderNodeConsumer(
         for bundleName: String,
-        configureBundle: ((URL) throws -> Void)? = nil
+        configureBundle: ((URL) throws -> Void)? = nil,
+        configureConverter: ((inout DocumentationConverter) throws -> Void)? = nil
     ) throws -> TestRenderNodeOutputConsumer {
         let (bundleURL, _, context) = try testBundleAndContext(
             copying: bundleName,
@@ -102,6 +103,8 @@ extension XCTestCase {
             dataProvider: try LocalFileSystemDataProvider(rootURL: bundleURL),
             bundleDiscoveryOptions: BundleDiscoveryOptions()
         )
+        
+        try configureConverter?(&converter)
         
         let outputConsumer = TestRenderNodeOutputConsumer()
         let (_, _) = try converter.convert(outputConsumer: outputConsumer)

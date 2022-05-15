@@ -37,6 +37,9 @@ public class DocumentationContextConverter {
     /// Whether the documentation converter should include access level information for symbols.
     let shouldEmitSymbolAccessLevels: Bool
     
+    /// The remote source control repository where the documented module's source is hosted.
+    let sourceRepository: SourceRepository?
+    
     /// Creates a new node converter for the given bundle and context.
     ///
     /// The converter uses bundle and context to resolve references to other documentation and describe the documentation hierarchy.
@@ -51,18 +54,21 @@ public class DocumentationContextConverter {
     ///     Before passing `true` please confirm that your use case doesn't include public
     ///     distribution of any created render nodes as there are filesystem privacy and security
     ///     concerns with distributing this data.
+    ///   - sourceRepository: The source repository where the documentation's sources are hosted.
     public init(
         bundle: DocumentationBundle,
         context: DocumentationContext,
         renderContext: RenderContext,
         emitSymbolSourceFileURIs: Bool = false,
-        emitSymbolAccessLevels: Bool = false
+        emitSymbolAccessLevels: Bool = false,
+        sourceRepository: SourceRepository? = nil
     ) {
         self.bundle = bundle
         self.context = context
         self.renderContext = renderContext
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
+        self.sourceRepository = sourceRepository
     }
     
     /// Converts a documentation node to a render node.
@@ -84,7 +90,8 @@ public class DocumentationContextConverter {
             source: source,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
-            emitSymbolAccessLevels: shouldEmitSymbolAccessLevels
+            emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,
+            sourceRepository: sourceRepository
         )
         return translator.visit(node.semantic) as? RenderNode
     }

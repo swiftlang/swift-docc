@@ -2048,6 +2048,21 @@
                     "sourceFileURI": {
                         "type": "string"
                     },
+                    "remoteSource": {
+                        "type": "object",
+                        "required": [
+                            "fileName",
+                            "url"
+                        ],
+                        "properties": {
+                            "fileName": {
+                                "type": "string"
+                            },
+                            "url": {
+                                "type": "string"
+                            }
+                        }
+                    },
                     "tags": {
                         "type": "array",
                         "items": {

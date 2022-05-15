@@ -42,6 +42,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let transformForStaticHosting: Bool
     let hostingBasePath: String?
     
+    let sourceRepository: SourceRepository?
     
     private(set) var context: DocumentationContext {
         didSet {
@@ -100,7 +101,8 @@ public struct ConvertAction: Action, RecreatingContext {
         inheritDocs: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool = false,
-        hostingBasePath: String? = nil
+        hostingBasePath: String? = nil,
+        sourceRepository: SourceRepository? = nil
     ) throws
     {
         self.rootURL = documentationBundleURL
@@ -117,6 +119,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.documentationCoverageOptions = documentationCoverageOptions
         self.transformForStaticHosting = transformForStaticHosting
         self.hostingBasePath = hostingBasePath
+        self.sourceRepository = sourceRepository
         
         let filterLevel: DiagnosticSeverity
         if analyze {
@@ -180,6 +183,7 @@ public struct ConvertAction: Action, RecreatingContext {
             context: self.context,
             dataProvider: dataProvider,
             bundleDiscoveryOptions: bundleDiscoveryOptions,
+            sourceRepository: sourceRepository,
             isCancelled: isCancelled,
             diagnosticEngine: self.diagnosticEngine
         )
@@ -208,6 +212,7 @@ public struct ConvertAction: Action, RecreatingContext {
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool,
         hostingBasePath: String?,
+        sourceRepository: SourceRepository? = nil,
         temporaryDirectory: URL
     ) throws {
         // Note: This public initializer exists separately from the above internal one
@@ -239,7 +244,8 @@ public struct ConvertAction: Action, RecreatingContext {
             inheritDocs: inheritDocs,
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHosting: transformForStaticHosting,
-            hostingBasePath: hostingBasePath
+            hostingBasePath: hostingBasePath,
+            sourceRepository: sourceRepository
         )
     }
 
