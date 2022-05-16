@@ -1,0 +1,3524 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.111.54 clang-1400.0.16.2)"
+    },
+    "module": {
+        "name": "FancyProtocol",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 4,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.protocol",
+                "displayName": "Protocol"
+            },
+            "identifier": {
+                "precise": "s:12FancyProtocol13FancyProtocolP",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "FancyProtocol"
+            ],
+            "names": {
+                "title": "FancyProtocol",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "FancyProtocol"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "protocol"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "FancyProtocol"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 23,
+                                "character": 4
+                            },
+                            "end": {
+                                "line": 23,
+                                "character": 34
+                            }
+                        },
+                        "text": "woah, fancy protocol over here"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "protocol"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "FancyProtocol"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:12FancyProtocol13FancyProtocolPAAE4zzzzoiyxx_xtFZ",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "FancyProtocol",
+                "....(_:_:)"
+            ],
+            "names": {
+                "title": "....(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "...."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 25,
+                                "character": 8
+                            },
+                            "end": {
+                                "line": 25,
+                                "character": 43
+                            }
+                        },
+                        "text": "this right here is a fancy operator"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "left",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "left"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "right",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "right"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "FancyProtocol"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "...."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "left"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "right"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:12FancyProtocol9SomeClassC1loiySbAC_ACtFZ",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "<(_:_:)"
+            ],
+            "names": {
+                "title": "<(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "SomeClass",
+                        "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "SomeClass",
+                        "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a Boolean value indicating whether the value of the first"
+                    },
+                    {
+                        "text": "argument is less than that of the second argument."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "This function is the only requirement of the `Comparable` protocol. The"
+                    },
+                    {
+                        "text": "remainder of the relational operator functions are implemented by the"
+                    },
+                    {
+                        "text": "standard library for any type that conforms to `Comparable`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A value to compare."
+                    },
+                    {
+                        "text": "  - rhs: Another value to compare."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "lhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "SomeClass",
+                                "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "rhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "SomeClass",
+                                "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "SomeClass",
+                    "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "SomeClass",
+                    "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:12FancyProtocol9SomeClassC2eeoiySbAC_ACtFZ",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "==(_:_:)"
+            ],
+            "names": {
+                "title": "==(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "=="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "SomeClass",
+                        "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "SomeClass",
+                        "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a Boolean value indicating whether two values are equal."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Equality is the inverse of inequality. For any values `a` and `b`,"
+                    },
+                    {
+                        "text": "`a == b` implies that `a != b` is `false`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A value to compare."
+                    },
+                    {
+                        "text": "  - rhs: Another value to compare."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "lhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "SomeClass",
+                                "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "rhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "SomeClass",
+                                "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "=="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "SomeClass",
+                    "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "SomeClass",
+                    "preciseIdentifier": "s:12FancyProtocol9SomeClassC"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "!=(_:_:)"
+            ],
+            "names": {
+                "title": "!=(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "!="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "lhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "rhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "!="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:SLsE3zzlopys16PartialRangeUpToVyxGxFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "..<(_:)"
+            ],
+            "names": {
+                "title": "..<(_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..<"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "PartialRangeUpTo",
+                        "preciseIdentifier": "s:s16PartialRangeUpToV"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a partial range up to, but not including, its upper bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the prefix half-open range operator (prefix `..<`) to create a"
+                    },
+                    {
+                        "text": "partial range of any type that conforms to the `Comparable` protocol."
+                    },
+                    {
+                        "text": "This example creates a `PartialRangeUpTo<Double>` instance that includes"
+                    },
+                    {
+                        "text": "any value less than `5.0`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let upToFive = ..<5.0"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    upToFive.contains(3.14)       // true"
+                    },
+                    {
+                        "text": "    upToFive.contains(6.28)       // false"
+                    },
+                    {
+                        "text": "    upToFive.contains(5.0)        // false"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You can use this type of partial range of a collection's indices to"
+                    },
+                    {
+                        "text": "represent the range from the start of the collection up to, but not"
+                    },
+                    {
+                        "text": "including, the partial range's upper bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let numbers = [10, 20, 30, 40, 50, 60, 70]"
+                    },
+                    {
+                        "text": "    print(numbers[..<3])"
+                    },
+                    {
+                        "text": "    // Prints \"[10, 20, 30]\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameter maximum: The upper bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `maximum` must compare equal to itself (i.e. cannot be NaN)."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "maximum",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "maximum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "PartialRangeUpTo",
+                        "preciseIdentifier": "s:s16PartialRangeUpToV"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..<"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "maximum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "PartialRangeUpTo",
+                    "preciseIdentifier": "s:s16PartialRangeUpToV"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:12FancyProtocol13FancyProtocolPAAE4zzzzoiyxx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "....(_:_:)"
+            ],
+            "names": {
+                "title": "....(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "...."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 25,
+                                "character": 8
+                            },
+                            "end": {
+                                "line": 25,
+                                "character": 43
+                            }
+                        },
+                        "text": "this right here is a fancy operator"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "left",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "left"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "right",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "right"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "FancyProtocol"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "...."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "left"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "right"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "<=(_:_:)"
+            ],
+            "names": {
+                "title": "<=(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "<="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a Boolean value indicating whether the value of the first argument"
+                    },
+                    {
+                        "text": "is less than or equal to that of the second argument."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "This is the default implementation of the less-than-or-equal-to"
+                    },
+                    {
+                        "text": "operator (`<=`) for any type that conforms to `Comparable`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A value to compare."
+                    },
+                    {
+                        "text": "  - rhs: Another value to compare."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "lhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "rhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "<="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "...(_:)"
+            ],
+            "names": {
+                "title": "...(_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "PartialRangeFrom",
+                        "preciseIdentifier": "s:s16PartialRangeFromV"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a partial range extending upward from a lower bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the postfix range operator (postfix `...`) to create a partial range"
+                    },
+                    {
+                        "text": "of any type that conforms to the `Comparable` protocol. This example"
+                    },
+                    {
+                        "text": "creates a `PartialRangeFrom<Double>` instance that includes any value"
+                    },
+                    {
+                        "text": "greater than or equal to `5.0`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let atLeastFive = 5.0..."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    atLeastFive.contains(4.0)     // false"
+                    },
+                    {
+                        "text": "    atLeastFive.contains(5.0)     // true"
+                    },
+                    {
+                        "text": "    atLeastFive.contains(6.0)     // true"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You can use this type of partial range of a collection's indices to"
+                    },
+                    {
+                        "text": "represent the range from the partial range's lower bound up to the end"
+                    },
+                    {
+                        "text": "of the collection."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let numbers = [10, 20, 30, 40, 50, 60, 70]"
+                    },
+                    {
+                        "text": "    print(numbers[3...])"
+                    },
+                    {
+                        "text": "    // Prints \"[40, 50, 60, 70]\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameter minimum: The lower bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `minimum` must compare equal to itself (i.e. cannot be NaN)."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "minimum",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "minimum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "PartialRangeFrom",
+                        "preciseIdentifier": "s:s16PartialRangeFromV"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "minimum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "PartialRangeFrom",
+                    "preciseIdentifier": "s:s16PartialRangeFromV"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:12FancyProtocol13FancyProtocolP4zzzzoiyxx_xtFZ",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "FancyProtocol",
+                "....(_:_:)"
+            ],
+            "names": {
+                "title": "....(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "...."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 25,
+                                "character": 8
+                            },
+                            "end": {
+                                "line": 25,
+                                "character": 43
+                            }
+                        },
+                        "text": "this right here is a fancy operator"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "left",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "left"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "right",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "right"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "...."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "left"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "right"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.class",
+                "displayName": "Class"
+            },
+            "identifier": {
+                "precise": "s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass"
+            ],
+            "names": {
+                "title": "SomeClass",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "SomeClass"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "class"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "SomeClass"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "class"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "SomeClass"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:SLsE3zzzoiySNyxGx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "...(_:_:)"
+            ],
+            "names": {
+                "title": "...(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "ClosedRange",
+                        "preciseIdentifier": "s:SN"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a closed range that contains both of its bounds."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the closed range operator (`...`) to create a closed range of any type"
+                    },
+                    {
+                        "text": "that conforms to the `Comparable` protocol. This example creates a"
+                    },
+                    {
+                        "text": "`ClosedRange<Character>` from \"a\" up to, and including, \"z\"."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let lowercase = \"a\"...\"z\""
+                    },
+                    {
+                        "text": "    print(lowercase.contains(\"z\"))"
+                    },
+                    {
+                        "text": "    // Prints \"true\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - minimum: The lower bound for the range."
+                    },
+                    {
+                        "text": "  - maximum: The upper bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `minimum <= maximum`."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "minimum",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "minimum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "maximum",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "maximum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "ClosedRange",
+                        "preciseIdentifier": "s:SN"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "minimum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "maximum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "ClosedRange",
+                    "preciseIdentifier": "s:SN"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:SLsE3zzloiySnyxGx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "..<(_:_:)"
+            ],
+            "names": {
+                "title": "..<(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..<"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Range",
+                        "preciseIdentifier": "s:Sn"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a half-open range that contains its lower bound but not its upper"
+                    },
+                    {
+                        "text": "bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the half-open range operator (`..<`) to create a range of any type"
+                    },
+                    {
+                        "text": "that conforms to the `Comparable` protocol. This example creates a"
+                    },
+                    {
+                        "text": "`Range<Double>` from zero up to, but not including, 5.0."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let lessThanFive = 0.0..<5.0"
+                    },
+                    {
+                        "text": "    print(lessThanFive.contains(3.14))  // Prints \"true\""
+                    },
+                    {
+                        "text": "    print(lessThanFive.contains(5.0))   // Prints \"false\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - minimum: The lower bound for the range."
+                    },
+                    {
+                        "text": "  - maximum: The upper bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `minimum <= maximum`."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "minimum",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "minimum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "maximum",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "maximum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Range",
+                        "preciseIdentifier": "s:Sn"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..<"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "minimum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "maximum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Range",
+                    "preciseIdentifier": "s:Sn"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.property",
+                "displayName": "Instance Property"
+            },
+            "identifier": {
+                "precise": "s:12FancyProtocol9SomeClassC8somePropSSvp",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "someProp"
+            ],
+            "names": {
+                "title": "someProp",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "var"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "someProp"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "String",
+                        "preciseIdentifier": "s:SS"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "var"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "someProp"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "String",
+                    "preciseIdentifier": "s:SS"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                "...(_:)"
+            ],
+            "names": {
+                "title": "...(_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "PartialRangeThrough",
+                        "preciseIdentifier": "s:s19PartialRangeThroughV"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a partial range up to, and including, its upper bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the prefix closed range operator (prefix `...`) to create a partial"
+                    },
+                    {
+                        "text": "range of any type that conforms to the `Comparable` protocol. This"
+                    },
+                    {
+                        "text": "example creates a `PartialRangeThrough<Double>` instance that includes"
+                    },
+                    {
+                        "text": "any value less than or equal to `5.0`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let throughFive = ...5.0"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    throughFive.contains(4.0)     // true"
+                    },
+                    {
+                        "text": "    throughFive.contains(5.0)     // true"
+                    },
+                    {
+                        "text": "    throughFive.contains(6.0)     // false"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You can use this type of partial range of a collection's indices to"
+                    },
+                    {
+                        "text": "represent the range from the start of the collection up to, and"
+                    },
+                    {
+                        "text": "including, the partial range's upper bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let numbers = [10, 20, 30, 40, 50, 60, 70]"
+                    },
+                    {
+                        "text": "    print(numbers[...3])"
+                    },
+                    {
+                        "text": "    // Prints \"[10, 20, 30, 40]\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameter maximum: The upper bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `maximum` must compare equal to itself (i.e. cannot be NaN)."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "maximum",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "maximum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "PartialRangeThrough",
+                        "preciseIdentifier": "s:s19PartialRangeThroughV"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "maximum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "PartialRangeThrough",
+                    "preciseIdentifier": "s:s19PartialRangeThroughV"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                ">(_:_:)"
+            ],
+            "names": {
+                "title": ">(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": ">"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a Boolean value indicating whether the value of the first argument"
+                    },
+                    {
+                        "text": "is greater than that of the second argument."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "This is the default implementation of the greater-than operator (`>`) for"
+                    },
+                    {
+                        "text": "any type that conforms to `Comparable`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A value to compare."
+                    },
+                    {
+                        "text": "  - rhs: Another value to compare."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "lhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "rhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": ">"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                }
+            ],
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeClass",
+                ">=(_:_:)"
+            ],
+            "names": {
+                "title": ">=(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": ">="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a Boolean value indicating whether the value of the first argument"
+                    },
+                    {
+                        "text": "is greater than or equal to that of the second argument."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "This is the default implementation of the greater-than-or-equal-to operator"
+                    },
+                    {
+                        "text": "(`>=`) for any type that conforms to `Comparable`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A value to compare."
+                    },
+                    {
+                        "text": "  - rhs: Another value to compare."
+                    },
+                    {
+                        "text": "- Returns: `true` if `lhs` is greater than or equal to `rhs`; otherwise,"
+                    },
+                    {
+                        "text": "  `false`."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "lhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "rhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Bool",
+                        "preciseIdentifier": "s:Sb"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": ">="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Bool",
+                    "preciseIdentifier": "s:Sb"
+                }
+            ],
+            "accessLevel": "public"
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "memberOf",
+            "source": "s:12FancyProtocol9SomeClassC1loiySbAC_ACtFZ",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SL1loiySbx_xtFZ",
+                "displayName": "Comparable.<(_:_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:12FancyProtocol9SomeClassC2eeoiySbAC_ACtFZ",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SQ2eeoiySbx_xtFZ",
+                "displayName": "Equatable.==(_:_:)"
+            }
+        },
+        {
+            "kind": "defaultImplementationOf",
+            "source": "s:12FancyProtocol13FancyProtocolPAAE4zzzzoiyxx_xtFZ",
+            "target": "s:12FancyProtocol13FancyProtocolP4zzzzoiyxx_xtFZ",
+            "sourceOrigin": {
+                "identifier": "s:12FancyProtocol13FancyProtocolP4zzzzoiyxx_xtFZ",
+                "displayName": "FancyProtocol.....(_:_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SLsE2leoiySbx_xtFZ",
+                "displayName": "Comparable.<=(_:_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:12FancyProtocol13FancyProtocolPAAE4zzzzoiyxx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:12FancyProtocol13FancyProtocolP4zzzzoiyxx_xtFZ",
+                "displayName": "FancyProtocol.....(_:_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzlopys16PartialRangeUpToVyxGxFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SLsE3zzlopys16PartialRangeUpToVyxGxFZ",
+                "displayName": "Comparable...<(_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SQsE2neoiySbx_xtFZ",
+                "displayName": "Equatable.!=(_:_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ",
+                "displayName": "Comparable....(_:)"
+            }
+        },
+        {
+            "kind": "requirementOf",
+            "source": "s:12FancyProtocol13FancyProtocolP4zzzzoiyxx_xtFZ",
+            "target": "s:12FancyProtocol13FancyProtocolP"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:12FancyProtocol9SomeClassC",
+            "target": "s:SQ",
+            "targetFallback": "Swift.Equatable"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzloiySnyxGx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SLsE3zzloiySnyxGx_xtFZ",
+                "displayName": "Comparable...<(_:_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzzoiySNyxGx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SLsE3zzzoiySNyxGx_xtFZ",
+                "displayName": "Comparable....(_:_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:12FancyProtocol9SomeClassC8somePropSSvp",
+            "target": "s:12FancyProtocol9SomeClassC"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:12FancyProtocol9SomeClassC",
+            "target": "s:SL",
+            "targetFallback": "Swift.Comparable"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SLsE2geoiySbx_xtFZ",
+                "displayName": "Comparable.>=(_:_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SLsE1goiySbx_xtFZ",
+                "displayName": "Comparable.>(_:_:)"
+            }
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol13FancyProtocolP"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:12FancyProtocol9SomeClassC",
+            "target": "s:12FancyProtocol9SomeClassC",
+            "sourceOrigin": {
+                "identifier": "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ",
+                "displayName": "Comparable....(_:)"
+            }
+        }
+    ]
+}
