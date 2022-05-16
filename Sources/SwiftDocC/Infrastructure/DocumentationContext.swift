@@ -2480,7 +2480,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
 
             // Check if the unresolved reference is external
-            if let bundleID = unresolvedReference.topicURL.components.host {
+            if let bundleID = unresolvedReference.bundleIdentifier {
                 if externalReferenceResolvers[bundleID] != nil,
                    let resolvedExternalReference = externallyResolvedLinks[unresolvedReference.topicURL] {
                     // Return the successful or failed externally resolved reference.
@@ -2516,7 +2516,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                 // 2. Check if resolvable in any of the root non-symbol contexts
                 guard let currentBundle = bundle(identifier: parent.bundleIdentifier) else {
-                    return .failure(unresolvedReference, errorMessage: "No bundle matches parent symbol.")
+                    return .failure(unresolvedReference, errorMessage: "No bundle matches parent reference.")
                 }
                 
                 // First look up articles path
@@ -2538,37 +2538,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
             }
             
-            if fallbackReferenceResolvers.isEmpty {
-                do {
-                    if let bundleID = unresolvedReference.bundleIdentifier,
-                       !registeredBundles.contains(where: { bundle in
-                           bundle.identifier == bundleID || urlReadablePath(bundle.displayName) == bundleID
-                       }) {
-                
-                        if externalReferenceResolvers[bundleID] != nil,
-                           let resolvedExternalReference = externallyResolvedLinks[unresolvedReference.topicURL] {
-                            // Return the successful or failed externally resolved reference.
-                            return resolvedExternalReference
-                        } else if !registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                            return .failure(unresolvedReference, errorMessage: "No external resolver registered for \(bundleID.singleQuoted).")
-                        }
-                    }
-                    
-                    let parentID = symbolPathTree.fromTopicReference(parent, context: self)
-                    let found = try symbolPathTree.findNode(path: unresolvedReference.path, parent: parentID)
-                    let foundReference = symbolPathTree.toTopicReference(found.identifier, context: self)
-                    
-                    // Check if the unresolved reference is for a heading on the found symbol.
-                    if let fragment = unresolvedReference.fragment {
-                        let subSectionReference = foundReference.withFragment(fragment)
-                        return nodeAnchorSections.keys.contains(subSectionReference)
-                            ? .success(subSectionReference)
-                            : .failure(unresolvedReference, errorMessage: "No subsection matches \(fragment) in \(foundReference.path).")
-                    }
-                    
-                    cacheReference(foundReference, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
-                    return .success(foundReference)
-                } catch SymbolPathTree.Error.partialResult(let partialResultID, let remaining, let available) {
+            func handleSymbolLinkResolutionError(_ error: SymbolPathTree.Error) -> TopicReferenceResolutionResult {
+                switch error {
+                case .partialResult(let partialResultID, let remaining, let available):
                     let partialReference = symbolPathTree.toTopicReference(partialResultID, context: self)
                     // The automatically added protocol implementation sections exist in the topic graph but don't represent symbols so they're not in the symbol path tree.
                     let maybeResolved = ResolvedTopicReference(
@@ -2582,157 +2554,104 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         return .success(maybeResolved)
                     }
                     return .failure(unresolvedReference, errorMessage: "Symbol at \(String(partialReference.path.dropFirst("/documentation".count)).singleQuoted) can't resolve \(remaining.singleQuoted). Available children: \(available.joined(separator: ", ")).")
-                } catch SymbolPathTree.Error.notFound {
+                    
+                case .notFound:
                     return .failure(unresolvedReference, errorMessage: "No local documentation matches this reference.")
-                } catch SymbolPathTree.Error.lookupCollision(let partialResultID, let collisions) {
+                    
+                case .lookupCollision(let partialResultID, let collisions):
                     let partialReference = symbolPathTree.toTopicReference(partialResultID, context: self)
                     let collisionDescription = collisions.map { "Add \($0.disambiguation.singleQuoted) to refer to \($0.value.title.singleQuoted)"}.sorted()
                     return .failure(unresolvedReference, errorMessage: "Reference is ambiguous at \(String(partialReference.path.dropFirst("/documentation".count)).singleQuoted): \(collisionDescription.joined(separator: ". ")).")
-                } catch {
-                    fatalError("All errors raised by SymbolPathTree are handled above.")
                 }
             }
-
-            let absolutePath = unresolvedReference.path.prependingLeadingSlash
-
-            // Ensure we are resolving either relative links or "doc:" scheme links
-            guard reference.url?.scheme == nil || ResolvedTopicReference.urlHasResolvedTopicScheme(reference.url) else {
-                // Not resolvable in the topic graph
-                return .failure(unresolvedReference, errorMessage: "Reference URL \(reference.description.singleQuoted) doesn't have \"doc:\" scheme.")
-            }
             
-            // Fall back on the parent's bundle identifier for relative paths
-            let referenceBundleIdentifier = unresolvedReference.topicURL.components.host ?? parent.bundleIdentifier
-            
-            // Keep track of all the resolution candidates so that we can resolve them externally
-            // if they weren't resolvable internally.
-            var allCandidateURLs = [URL]()
-            
-            /// Returns the given reference if it resolves. Otherwise, returns nil.
-            ///
-            /// Adds any non-resolving reference to the `allCandidateURLs` collection.
-            func attemptToResolve(_ reference: ResolvedTopicReference) -> TopicReferenceResolutionResult? {
-                if let resolved = topicGraph.nodeWithReference(reference)?.reference {
-                    // If resolving a symbol link, only match symbol nodes.
-                    if isCurrentlyResolvingSymbolLink && !(documentationCache[resolved]?.semantic is Symbol) {
-                        allCandidateURLs.append(reference.url)
-                        return nil
+            do {
+                if let bundleID = unresolvedReference.bundleIdentifier,
+                   !registeredBundles.contains(where: { bundle in
+                       bundle.identifier == bundleID || urlReadablePath(bundle.displayName) == bundleID
+                   }) {
+                    
+                    if externalReferenceResolvers[bundleID] != nil,
+                       let resolvedExternalReference = externallyResolvedLinks[unresolvedReference.topicURL] {
+                        // Return the successful or failed externally resolved reference.
+                        return resolvedExternalReference
+                    } else if !registeredBundles.contains(where: { $0.identifier == bundleID }) {
+                        return .failure(unresolvedReference, errorMessage: "No external resolver registered for \(bundleID.singleQuoted).")
                     }
-                    cacheReference(resolved, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
-                    return .success(resolved)
-                } else if reference.fragment != nil, nodeAnchorSections.keys.contains(reference) {
-                    return .success(reference)
-                } else {
-                    allCandidateURLs.append(reference.url)
-                    return nil
                 }
-            }
-            
-            // If a known bundle is referenced via the "doc:" scheme try to resolve in topic graph
-            if let knownBundleIdentifier = registeredBundles.first(where: { bundle -> Bool in
-                return bundle.identifier == referenceBundleIdentifier || urlReadablePath(bundle.displayName) == referenceBundleIdentifier
-            })?.identifier {
-                // 1. Check if reference is already resolved but not found in the cache
+                
+                let parentID = symbolPathTree.fromTopicReference(parent, context: self)
+                let found = try symbolPathTree.findNode(path: unresolvedReference.path, parent: parentID)
+                let foundReference = symbolPathTree.toTopicReference(found.identifier, context: self)
+                
+                // Check if the unresolved reference is for a heading on the found symbol.
+                if let fragment = unresolvedReference.fragment {
+                    let subSectionReference = foundReference.withFragment(fragment)
+                    return nodeAnchorSections.keys.contains(subSectionReference)
+                    ? .success(subSectionReference)
+                    : .failure(unresolvedReference, errorMessage: "No subsection matches \(fragment) in \(foundReference.path).")
+                }
+                
+                cacheReference(foundReference, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
+                return .success(foundReference)
+            } catch let error as SymbolPathTree.Error {
+                // Check if a fallback reference resolver should resolve this
+                let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
+                guard !fallbackReferenceResolvers.isEmpty,
+                      let knownBundleIdentifier = registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
+                      let fallbackResolver = fallbackReferenceResolvers[knownBundleIdentifier]
+                else {
+                    return handleSymbolLinkResolutionError(error)
+                }
+                
+                // Legacy code path for fallback resolvers
+                var allCandidateURLs = [URL]()
+                
                 let alreadyResolved = ResolvedTopicReference(
-                    bundleIdentifier: knownBundleIdentifier,
-                    path: absolutePath,
+                    bundleIdentifier: referenceBundleIdentifier,
+                    path: unresolvedReference.path.prependingLeadingSlash,
                     fragment: unresolvedReference.topicURL.components.fragment,
                     sourceLanguages: parent.sourceLanguages
                 )
-                if let resolved = attemptToResolve(alreadyResolved) {
-                    return resolved
-                }
-
-                // 2. Check if resolvable in any of the root non-symbol contexts
+                allCandidateURLs.append(alreadyResolved.url)
+                
                 let currentBundle = bundle(identifier: knownBundleIdentifier)!
                 if !isCurrentlyResolvingSymbolLink {
                     // First look up articles path
-                    let articleReference = currentBundle.articlesDocumentationRootReference.appendingPathOfReference(unresolvedReference)
-                    if let resolved = attemptToResolve(articleReference) {
-                        return resolved
-                    }
-                    
-                    // Then technology tutorials root path (for individual tutorial pages)
-                    let tutorialReference = currentBundle.technologyTutorialsRootReference.appendingPathOfReference(unresolvedReference)
-                    if let resolved = attemptToResolve(tutorialReference) {
-                        return resolved
-                    }
-                    
-                    // Then tutorials root path (for tutorial table of contents pages)
-                    let tutorialRootReference = currentBundle.tutorialsRootReference.appendingPathOfReference(unresolvedReference)
-                    if let resolved = attemptToResolve(tutorialRootReference) {
-                        return resolved
-                    }
+                    allCandidateURLs.append(contentsOf: [
+                        // First look up articles path
+                        currentBundle.articlesDocumentationRootReference.url.appendingPathComponent(unresolvedReference.path),
+                        // Then technology tutorials root path (for individual tutorial pages)
+                        currentBundle.technologyTutorialsRootReference.url.appendingPathComponent(unresolvedReference.path),
+                        // Then tutorials root path (for tutorial table of contents pages)
+                        currentBundle.tutorialsRootReference.url.appendingPathComponent(unresolvedReference.path),
+                    ])
                 }
+                // Try resolving in the local context (as child)
+                allCandidateURLs.append(parent.appendingPathOfReference(unresolvedReference).url)
                 
-                // 3. Try resolving in the local context (as child)
-                let childSymbolReference = parent.appendingPathOfReference(unresolvedReference)
-                if let resolved = attemptToResolve(childSymbolReference) {
-                    return resolved
-                }
-
-                // 4. Try resolving as a sibling and within `Self`.
                 // To look for siblings we require at least a module (first)
                 // and a symbol (second) path components.
                 let parentPath = parent.path.components(separatedBy: "/").dropLast()
-                let siblingSymbolReference: ResolvedTopicReference?
                 if parentPath.count >= 2 {
-                    siblingSymbolReference = ResolvedTopicReference(
-                        bundleIdentifier: knownBundleIdentifier,
-                        path: parentPath.joined(separator: "/"),
-                        fragment: unresolvedReference.topicURL.components.fragment,
-                        sourceLanguages: parent.sourceLanguages
-                    ).appendingPathOfReference(unresolvedReference)
-                    
-                    if let resolved = attemptToResolve(siblingSymbolReference!) {
-                        return resolved
-                    }
-                } else {
-                    siblingSymbolReference = nil
+                    allCandidateURLs.append(parent.url.deletingLastPathComponent().appendingPathComponent(unresolvedReference.path))
                 }
                 
-                // 5. Try resolving in root symbol context
-
                 // Check that the parent is not an article (ignoring if absolute or relative link)
                 // because we cannot resolve in the parent context if it's not a symbol.
                 if parent.path.hasPrefix(currentBundle.documentationRootReference.path) && parentPath.count > 2 {
                     let rootPath = currentBundle.documentationRootReference.appendingPath(parentPath[2])
-                    let resolvedInRoot = rootPath.appendingPathOfReference(unresolvedReference)
+                    let resolvedInRoot = rootPath.url.appendingPathComponent(unresolvedReference.path)
                     
                     // Confirm here that we we're not already considering this link. We only need to specifically
                     // consider the parent reference when looking for deeper links.
-                    //
-                    // e.g. if the link is `documentation/MyKit` we'll find the parent context when we're resolving under `documentation`
-                    // for a deeper link link like `documentation/MyKit/MyClass/myFunction()` we need to specifically hit the parent reference to try resolving links.
-                    if resolvedInRoot.path != siblingSymbolReference?.path {
-                        if let resolved = attemptToResolve(resolvedInRoot) {
-                            return resolved
-                        }
+                    if resolvedInRoot.path != allCandidateURLs.last?.path {
+                        allCandidateURLs.append(resolvedInRoot)
                     }
                 }
                 
-                let moduleSymbolReference = currentBundle.documentationRootReference.appendingPathOfReference(unresolvedReference)
-                if let resolved = attemptToResolve(moduleSymbolReference) {
-                    return resolved
-                }
-            }
-
-            // 5. Check if a pre-resolved external link.
-            if let bundleID = unresolvedReference.topicURL.components.host {
-                if externalReferenceResolvers[bundleID] != nil,
-                   let resolvedExternalReference = externallyResolvedLinks[unresolvedReference.topicURL] {
-                    // Return the successful or failed externally resolved reference.
-                    return resolvedExternalReference
-                } else if !registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                    return .failure(unresolvedReference, errorMessage: "No external resolver registered for \(bundleID.singleQuoted).")
-                }
-            }
-            
-            // External symbols are already pre-resolved while loading the symbol graph
-            // so they will be fetched from the context.
-            
-            // If a fallback resolver exists for this bundle, try to resolve the link externally.
-            if let fallbackResolver = fallbackReferenceResolvers[referenceBundleIdentifier] {
+                allCandidateURLs.append(currentBundle.documentationRootReference.url.appendingPathComponent(unresolvedReference.path))
+                
                 for candidateURL in allCandidateURLs {
                     let unresolvedReference = UnresolvedTopicReference(topicURL: ValidatedURL(candidateURL)!)
                     let reference = fallbackResolver.resolve(.unresolved(unresolvedReference), sourceLanguage: parent.sourceLanguage)
@@ -2747,12 +2666,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         return .success(resolvedReference)
                     }
                 }
+                // Give up: there is no local or external document for this reference.
+                return handleSymbolLinkResolutionError(error)
+            } catch {
+                fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
             }
             
-            // Give up: there is no local or external document for this reference.
-            
-            // External references which failed to resolve will already have returned a more specific error message.
-            return .failure(unresolvedReference, errorMessage: "No local documentation matches this reference.")
         case .resolved(let resolved):
             // This reference is already resolved (either as a success or a failure), so don't change anything.
             return resolved
@@ -2803,7 +2722,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// Finds the identifier for a given asset name.
-    /// 
+    ///
     /// `name` is one of the following formats:
     /// - "image" - asset name without extension
     /// - "image.png" - asset name including extension
