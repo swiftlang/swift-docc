@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -342,8 +342,10 @@ class ConvertServiceTests: XCTestCase {
             )
         }
         
+        // ???: Is this valid?
+        // myFunction() is an instance method and this tries to configure it to be disambiguated as a type method
         request.knownDisambiguatedSymbolPathComponents = [
-            "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()-swift.type.method"],
+            "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()-swift.method"],
         ]
         
         try processAndAssert(request: request) { message in
@@ -355,12 +357,20 @@ class ConvertServiceTests: XCTestCase {
             
             XCTAssertEqual(
                 renderNode.identifier.path,
-                "/documentation/MyKit/MyClass-swift.class/myFunction()-swift.type.method"
+                "/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method"
             )
             
             XCTAssertEqual(
                 renderNode.abstract?.first,
-                .codeVoice(code: "myFunction()")
+                .reference(
+                    identifier: .init("""
+                        doc://identifier/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method
+                        """
+                    ),
+                    isActive: true,
+                    overridingTitle: nil,
+                    overridingTitleInlineContent: nil
+                )
             )
         }
         
@@ -368,7 +378,7 @@ class ConvertServiceTests: XCTestCase {
             try XCTUnwrap(
                 String(data: symbolGraph, encoding: .utf8)
             )
-            .replacingOccurrences(of: "``myFunction()``", with: "``myFunction()-swift.type.method``")
+            .replacingOccurrences(of: "``myFunction()``", with: "``myFunction()-swift.method``")
             .utf8
         )
         
@@ -383,14 +393,14 @@ class ConvertServiceTests: XCTestCase {
             
             XCTAssertEqual(
                 renderNode.identifier.path,
-                "/documentation/MyKit/MyClass-swift.class/myFunction()-swift.type.method"
+                "/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method"
             )
             
             XCTAssertEqual(
                 renderNode.abstract?.first,
                 .reference(
                     identifier: .init("""
-                        doc://identifier/documentation/MyKit/MyClass-swift.class/myFunction()-swift.type.method
+                        doc://identifier/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method
                         """
                     ),
                     isActive: true,

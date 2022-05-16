@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -514,7 +514,7 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(problems.count, 0)
     }
 
-    func testUnresolvedReferenceWarnignsInDocumentationExtension() throws {
+    func testUnresolvedReferenceWarningsInDocumentationExtension() throws {
         let (url, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             let myKitDocumentationExtensionComment = """
             # ``MyKit/MyClass``
@@ -538,6 +538,11 @@ class SymbolTests: XCTestCase {
             - ``UnresolvableClassInMyClassTopicCuration``
             - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
             - <doc://com.test.external/ExternalPage>
+            
+            ### Ambiguous curation
+            
+            - ``init()``
+            - ``MyClass/init()-swift.init``
             """
             
             let documentationExtensionURL = url.appendingPathComponent("documentation/myclass.md")
@@ -550,11 +555,13 @@ class SymbolTests: XCTestCase {
         
         XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableSymbolLinkInMyClassOverview' couldn't be resolved. No local documentation matches this reference." }))
         XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableClassInMyClassTopicCuration' couldn't be resolved. No local documentation matches this reference." }))
-        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'MyClass/unresolvablePropertyInMyClassTopicCuration' couldn't be resolved. No local documentation matches this reference." }))
+        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'MyClass/unresolvablePropertyInMyClassTopicCuration' couldn't be resolved. Symbol at '/MyKit/MyClass' can't resolve 'unresolvablePropertyInMyClassTopicCuration'. Available children: init(), myFunction()." }))
         XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'doc://com.test.external/ExternalPage' couldn't be resolved. No external resolver registered for 'com.test.external'." }))
+        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'init()' couldn't be resolved. Reference is ambiguous at '/MyKit/MyClass': Add '33vaw' to refer to 'init()'. Add '3743d' to refer to 'init()'." }))
+        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'MyClass/init()-swift.init' couldn't be resolved. Reference is ambiguous at '/MyKit/MyClass': Add '33vaw' to refer to 'init()'. Add '3743d' to refer to 'init()'." }))
     }
     
-    func testUnresolvedReferenceWarnignsInDocComment() throws {
+    func testUnresolvedReferenceWarningsInDocComment() throws {
         let (url, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
@@ -590,7 +597,7 @@ class SymbolTests: XCTestCase {
         
         XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableSymbolLinkInMyClassOverview' couldn't be resolved. No local documentation matches this reference." }))
         XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableClassInMyClassTopicCuration' couldn't be resolved. No local documentation matches this reference." }))
-        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'MyClass/unresolvablePropertyInMyClassTopicCuration' couldn't be resolved. No local documentation matches this reference." }))
+        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'MyClass/unresolvablePropertyInMyClassTopicCuration' couldn't be resolved. Symbol at '/MyKit/MyClass' can't resolve 'unresolvablePropertyInMyClassTopicCuration'. Available children: init(), myFunction()." }))
         XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'doc://com.test.external/ExternalPage' couldn't be resolved. No external resolver registered for 'com.test.external'." }))
     }
     

@@ -186,25 +186,6 @@ class SymbolDisambiguationTests: XCTestCase {
     func testMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
-        let aliases = [String: [String]](uniqueKeysWithValues: context.referenceAliases.map({ ($0.key.path, $0.value.map(\.path).sorted()) }))
-        XCTAssertEqual(aliases, [
-            "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)": [
-                "/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
-            ],
-            "/documentation/MixedLanguageFramework/Foo-swift.struct": [
-                "/documentation/MixedLanguageFramework/Foo-c.enum",
-            ],
-            "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()": [
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init",
-            ],
-            "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()": [
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod",
-            ],
-            "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()": [
-                "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod",
-            ],
-        ])
-        
         var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
         try loader.loadAll()
         
@@ -361,7 +342,6 @@ class SymbolDisambiguationTests: XCTestCase {
         provider.bundles[bundle.identifier] = bundle
         
         let context = try DocumentationContext(dataProvider: provider)
-        
         
         return context.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], bundle: bundle)
     }

@@ -13,8 +13,13 @@ import XCTest
 
 class DocumentationContext_MixedLanguageLinkResolutionTests: XCTestCase {
     
-    func testResolvesLinksUsingParentReferenceAlias() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkComplexLinks")
+    func testResolvingLinksWhenSymbolHasSameNameInBothLanguages() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkComplexLinks") { url in
+            let swiftSymbolGraph = url.appendingPathComponent("symbol-graph/swift/ObjCLinks.symbols.json")
+            try String(contentsOf: swiftSymbolGraph)
+                .replacingOccurrences(of: "FooSwift", with: "FooObjC")
+                .write(to: swiftSymbolGraph, atomically: true, encoding: .utf8)
+        }
         
         func assertCanResolveSymbolLinks(
             symbolPaths: String...,
@@ -53,17 +58,86 @@ class DocumentationContext_MixedLanguageLinkResolutionTests: XCTestCase {
         
         assertCanResolveSymbolLinks(
             symbolPaths: "first(_:one:)", "first:one:", "second:two:", "second(_:two:)",
+            parentPath: "FooObjC"
+        )
+        
+        assertCanResolveSymbolLinks(
+            symbolPaths: "FooObjC", "second:two:", "second(_:two:)",
+            parentPath: "FooObjC/first(_:one:)"
+        )
+        
+        assertCanResolveSymbolLinks(
+            symbolPaths: "FooObjC", "first:one:", "first(_:one:)",
+            parentPath: "FooObjC/second(_:two:)"
+        )
+    }
+    
+    func testResolvingLinksWhenSymbolHasDifferentNames() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkComplexLinks")
+        
+        func assertCanResolveSymbolLinks(
+            symbolPaths: String...,
+            parentPath: String,
+            file: StaticString = #file,
+            line: UInt = #line
+        ) {
+            for symbolPath in symbolPaths {
+                let resolutionResult = context.resolve(
+                    .unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(symbolPath: symbolPath))),
+                    in: ResolvedTopicReference(
+                        bundleIdentifier: "org.swift.MixedLanguageFramework",
+                        path: "/documentation/MixedLanguageFramework/\(parentPath)",
+                        sourceLanguage: .swift
+                    ),
+                    fromSymbolLink: true
+                )
+                
+                switch resolutionResult {
+                case .success:
+                    continue
+                case .failure(_, let errorMessage):
+                    XCTFail(
+                        """
+                        Link resolution for '\(symbolPath)' in parent '\(parentPath)' unexpectedly failed: \
+                        \(errorMessage)
+                        """,
+                        file: file,
+                        line: line
+                    )
+                }
+            }
+        }
+
+        // See MixedLanguageFrameworkComplexLinks.docc/OriginalSource.h for the class in which this test resolves links.
+        
+        assertCanResolveSymbolLinks(
+            symbolPaths: "first(_:one:)", "second(_:two:)",
             parentPath: "FooSwift"
         )
         
         assertCanResolveSymbolLinks(
-            symbolPaths: "FooSwift", "FooObjC", "second:two:", "second(_:two:)",
+            symbolPaths: "FooSwift", "FooObjC", "second(_:two:)",
             parentPath: "FooSwift/first(_:one:)"
         )
         
         assertCanResolveSymbolLinks(
-            symbolPaths: "FooSwift", "FooObjC", "first:one:", "first(_:one:)",
+            symbolPaths: "FooSwift", "FooObjC", "first(_:one:)",
             parentPath: "FooSwift/second(_:two:)"
+        )
+        
+        assertCanResolveSymbolLinks(
+            symbolPaths: "first:one:", "second:two:",
+            parentPath: "FooObjC"
+        )
+        
+        assertCanResolveSymbolLinks(
+            symbolPaths: "FooSwift", "FooObjC", "second:two:",
+            parentPath: "FooObjC/first:one:"
+        )
+        
+        assertCanResolveSymbolLinks(
+            symbolPaths: "FooSwift", "FooObjC", "first:one:",
+            parentPath: "FooObjC/second:two:"
         )
     }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -196,10 +196,9 @@ enum GeneratedDocumentationTopics {
     /// ```
     /// - Parameters:
     ///   - relationships: A set of relationships to inspect.
-    ///   - symbolsURLHierarchy: A symbol graph hierarchy as created during symbol registration.
     ///   - context: A documentation context to update.
     ///   - bundle: The current documentation bundle.
-    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, context: DocumentationContext, bundle: DocumentationBundle) throws {
+    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, context: DocumentationContext, bundle: DocumentationBundle) throws {
         var inheritanceIndex = InheritedSymbols()
         
         // Walk the symbol graph relationships and look for parent <-> child links that stem in a different module.
@@ -220,7 +219,7 @@ enum GeneratedDocumentationTopics {
             }
         }
         
-        // Create the API Collection nodes and the neccessary topic graph curation.
+        // Create the API Collection nodes and the necessary topic graph curation.
         for (typeReference, collections) in inheritanceIndex.implementingTypes where !collections.inheritedFromTypeName.isEmpty {
             for (_, collection) in collections.inheritedFromTypeName where !collection.identifiers.isEmpty {
                 // Create a collection for the given provider type's inherited symbols

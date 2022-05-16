@@ -1390,6 +1390,11 @@
         },
         {
             "kind": "memberOf",
+            "source": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod",
+            "target": "c:@M@TestFramework@objc(pl)MixedLanguageProtocol",
+        },
+        {
+            "kind": "memberOf",
             "source": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init",
             "target": "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol"
         }

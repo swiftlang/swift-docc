@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -104,7 +104,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
     }
     
-    func testAmbigousProtocolMember() throws {
+    func testAmbiguousProtocolMember() throws {
         try performOverloadSymbolDisambiguationTest(
             correctLink: """
             doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/firstMember
@@ -141,13 +141,13 @@ class DocCSymbolRepresentableTests: XCTestCase {
         XCTAssertEqual(ambiguousSymbols.count, expectedNumberOfAmbiguousSymbols)
         
         // Find the documentation node based on what we expect the correct link to be
-        let correctDocumentionNodeToSelect = try XCTUnwrap(
+        let correctDocumentationNodeToSelect = try XCTUnwrap(
             context.symbolIndex.values.first {
                 $0.reference.absoluteString == correctLink
             }
         )
         let correctSymbolToSelect = try XCTUnwrap(
-            correctDocumentionNodeToSelect.symbol
+            correctDocumentationNodeToSelect.symbol
         )
         
         // First confirm the first link does resolve as expected

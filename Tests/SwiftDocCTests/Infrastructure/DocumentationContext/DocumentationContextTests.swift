@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1231,6 +1231,7 @@ let expected = """
  │   ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection
  ╰ doc://org.swift.docc.example/documentation/Test-Bundle/article2
  doc://org.swift.docc.example/documentation/SideKit
+ ├ doc://org.swift.docc.example/documentation/SideKit/NonExistent/UncuratedClass
  ├ doc://org.swift.docc.example/documentation/SideKit/SideClass
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element
  │ │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations
@@ -1243,7 +1244,6 @@ let expected = """
  ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol
    ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi
      ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn
- doc://org.swift.docc.example/documentation/SideKit/NonExistent/UncuratedClass
  doc://org.swift.docc.example/documentation/Test
  ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup
    ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup/MySnippet
@@ -1410,7 +1410,7 @@ let expected = """
 
     func testNonOverloadPaths() throws {
         // Add some symbol collisions to graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
             let text = try String(contentsOf: sideKitURL).replacingOccurrences(of: "\"symbols\" : [", with: """
             "symbols" : [
@@ -1440,11 +1440,21 @@ let expected = """
                 "interfaceLanguage": "swift"
               }
             },
+            """).replacingOccurrences(of: "\"relationships\" : [", with: """
+            "relationships" : [
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10testEC",
+              "target" : "s:7SideKit0A5ClassC"
+            },
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10testV",
+              "target" : "s:7SideKit0A5ClassC"
+            },
             """)
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
-        
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Verify the non-overload collisions were resolved
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.enum.case", sourceLanguage: .swift)))
@@ -1511,7 +1521,7 @@ let expected = """
 
     func testOverloadPlusNonOverloadCollisionPaths() throws {
         // Add some symbol collisions to graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
             let text = try String(contentsOf: sideKitURL).replacingOccurrences(of: "\"symbols\" : [", with: """
             "symbols" : [
@@ -1554,11 +1564,26 @@ let expected = """
                 "interfaceLanguage": "swift"
               }
             },
+            """).replacingOccurrences(of: "\"relationships\" : [", with: """
+            "relationships" : [
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10testE",
+              "target" : "s:7SideKit0A5ClassC"
+            },
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10testSV",
+              "target" : "s:7SideKit0A5ClassC"
+            },
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10tEstV",
+              "target" : "s:7SideKit0A5ClassC"
+            },
             """)
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
-        
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Verify the non-overload collisions were resolved
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
@@ -1582,7 +1607,7 @@ let expected = """
     
     func testNonOverloadCollisionFromExtension() throws {
         // Add some symbol collisions to graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: ["mykit-iOS.symbols.json"]) { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: ["mykit-iOS.symbols.json"]) { root in
             let sideKitURL = root.appendingPathComponent("something@SideKit.symbols.json")
             let text = """
             {
@@ -1633,8 +1658,6 @@ let expected = """
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
         
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
-        
         let symbolGraphProblems = context.problems
             .filter { $0.diagnostic.source?.lastPathComponent.hasSuffix(".symbols.json") ?? false }
             .filter { $0.diagnostic.severity != .information }
@@ -1642,7 +1665,7 @@ let expected = """
         
         // Verify the non-overload collisions form different symbol graph files were resolved
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/path", sourceLanguage: .swift)))
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/sideClass-swift.var", sourceLanguage: .swift)))
     }
 
@@ -1837,19 +1860,19 @@ let expected = """
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
         
         // Test that collision symbol child reference was updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/path", sourceLanguage: .swift)))
 
         // Test that nested collisions were updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/NestedEnum-swift.enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/nestedEnum-swift.property", sourceLanguage: .swift)))
         
         // Test that child of nested collision is updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
         
-        // Verify that the symbol index has been udpated with the rewritten collision-corrected symbol paths
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testEE"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10tEstPP"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path")
+        // Verify that the symbol index has been updated with the rewritten collision-corrected symbol paths
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.reference.path, "/documentation/SideKit/SideClass/Test/nestedEnum-swift.property")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testEE"]?.reference.path, "/documentation/SideKit/SideClass/Test/NestedEnum-swift.enum")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10tEstPP"]?.reference.path, "/documentation/SideKit/SideClass/Test/NestedEnum-swift.enum/path")
         
         XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()"]?.reference.path, "/documentation/SideKit/SideProtocol/func()-6ijsi")
         XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()DefaultImp"]?.reference.path, "/documentation/SideKit/SideProtocol/func()-2dxqn")
@@ -2630,7 +2653,7 @@ let expected = """
     // Verifies if the context fails to resolve non-resolvable nodes.
     func testNonLinkableNodes() throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.
@@ -2642,7 +2665,6 @@ let expected = """
              - <doc:Element/Protocol-Implementations>
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let disabledDestinationProblems = context.problems.filter { p in
             return p.diagnostic.identifier == "org.swift.docc.disabledLinkDestination"
@@ -2823,7 +2845,7 @@ let expected = """
                 switch context.resolve(unresolved, in: parent) {
                     case .success(let reference):
                         if reference.path != expected.path {
-                            XCTFail("Expected to resolve to \(expected.path) but got \(reference.path)")
+                            XCTFail("Expected to resolve to \(expected.path) but got \(reference.path) for \(parent.path)")
                         }
                     case .failure(_, let errorMessage): XCTFail("Didn't resolve to expected reference path \(expected.path). Error: \(errorMessage)")
                 }
@@ -2871,7 +2893,7 @@ let expected = """
             let articleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
 
             // Verify we resolve/not resolve non-symbols when calling directly context.resolve(...)
-            // with an explicity preference.
+            // with an explicit preference.
             let unresolvedSymbolRef1 = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "Test")!)
             switch context.resolve(.unresolved(unresolvedSymbolRef1), in: moduleReference, fromSymbolLink: true) {
                 case .failure(_, let errorMessage): XCTFail("Did not resolve a symbol link to the symbol Test. Error: \(errorMessage)")

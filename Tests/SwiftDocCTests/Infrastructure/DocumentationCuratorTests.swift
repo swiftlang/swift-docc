@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -388,7 +388,7 @@ class DocumentationCuratorTests: XCTestCase {
     
     /// In case a symbol has automatically curated children and is manually curated multiple times,
     /// the hierarchy should be created as it's authored. rdar://75453839
-    func testMulitpleManualCurationIsPreserved() throws {
+    func testMultipleManualCurationIsPreserved() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
         
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TestBed/DoublyManuallyCuratedClass/type()", sourceLanguage: .swift)

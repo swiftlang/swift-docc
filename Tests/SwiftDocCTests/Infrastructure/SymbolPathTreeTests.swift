@@ -19,7 +19,7 @@ class SymbolPathTreeTests: XCTestCase {
         var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
         try loader.loadAll()
         
-        tree = SymbolPathTree(symbolGraphs: loader.symbolGraphs.values)
+        tree = SymbolPathTree(symbolGraphLoader: loader)
     }
     override func tearDown() {
         tree = nil
@@ -395,7 +395,7 @@ class SymbolPathTreeTests: XCTestCase {
         try assertFindsPath("/MixedFramework-module/MyEnum-enum/secondCase-enum.case", in: tree, asSymbolID: "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
         try assertFindsPath("/MixedFramework-module/MyEnum-enum/myEnumFunction()-method", in: tree, asSymbolID: "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
         try assertFindsPath("/MixedFramework-module/MyEnum-enum/MyEnumTypeAlias-typealias", in: tree, asSymbolID: "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        try assertFindsPath("/MixedFramework-module/MyEnum-enum/myEnumProperty-type.property", in: tree, asSymbolID: "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        try assertFindsPath("/MixedFramework-module/MyEnum-enum/myEnumProperty-property", in: tree, asSymbolID: "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
         // public struct MyStruct {
         //     public func myStructFunction() { }
@@ -444,7 +444,7 @@ class SymbolPathTreeTests: XCTestCase {
         try assertFindsPath("/MixedFramework-module-9r7pl/MyEnum-enum-1m96o/secondCase-enum.case-ihyt", in: tree, asSymbolID: "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
         try assertFindsPath("/MixedFramework-module-9r7pl/MyEnum-enum-1m96o/myEnumFunction()-method-2pa9q", in: tree, asSymbolID: "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
         try assertFindsPath("/MixedFramework-module-9r7pl/MyEnum-enum-1m96o/MyEnumTypeAlias-typealias-5ejt4", in: tree, asSymbolID: "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        try assertFindsPath("/MixedFramework-module-9r7pl/MyEnum-enum-1m96o/myEnumProperty-type.property-6cz2q", in: tree, asSymbolID: "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        try assertFindsPath("/MixedFramework-module-9r7pl/MyEnum-enum-1m96o/myEnumProperty-property-6cz2q", in: tree, asSymbolID: "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
         // public struct MyStruct {
         //     public func myStructFunction() { }
@@ -490,34 +490,34 @@ class SymbolPathTreeTests: XCTestCase {
         // }
         XCTAssertEqual(
             paths["c:@M@MixedFramework@E@MyEnum"],
-            "/mixedframework/myenum")
+            "/MixedFramework/MyEnum")
         XCTAssertEqual(
             paths["s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::c:@M@MixedFramework@E@MyEnum"],
-            "/mixedframework/myenum/!=(_:_:)")
+            "/MixedFramework/MyEnum/!=(_:_:)")
         XCTAssertEqual(
             paths["c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase"],
-            "/mixedframework/myenum/firstcase")
+            "/MixedFramework/MyEnum/firstCase")
         XCTAssertEqual(
             paths["s:SYsSHRzSH8RawValueSYRpzrlE4hash4intoys6HasherVz_tF::SYNTHESIZED::c:@M@MixedFramework@E@MyEnum"],
-            "/mixedframework/myenum/hash(into:)")
+            "/MixedFramework/MyEnum/hash(into:)")
         XCTAssertEqual(
             paths["s:SYsSHRzSH8RawValueSYRpzrlE04hashB0Sivp::SYNTHESIZED::c:@M@MixedFramework@E@MyEnum"],
-            "/mixedframework/myenum/hashvalue")
+            "/MixedFramework/MyEnum/hashValue")
         XCTAssertEqual(
             paths["s:14MixedFramework6MyEnumO8rawValueACSgSi_tcfc"],
-            "/mixedframework/myenum/init(rawvalue:)")
+            "/MixedFramework/MyEnum/init(rawValue:)")
         XCTAssertEqual(
             paths["s:14MixedFramework6MyEnumO02myD8FunctionyyF"],
-            "/mixedframework/myenum/myenumfunction()")
+            "/MixedFramework/MyEnum/myEnumFunction()")
         XCTAssertEqual(
             paths["s:14MixedFramework6MyEnumO02myD8PropertySivp"],
-            "/mixedframework/myenum/myenumproperty")
+            "/MixedFramework/MyEnum/myEnumProperty")
         XCTAssertEqual(
             paths["c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase"],
-            "/mixedframework/myenum/myenumsecondcase")
+            "/MixedFramework/MyEnum/secondCase")
         XCTAssertEqual(
             paths["s:14MixedFramework6MyEnumO0cD9TypeAliasa"],
-            "/mixedframework/myenum/myenumtypealias")
+            "/MixedFramework/MyEnum/MyEnumTypeAlias")
         
         // public final class CollisionsWithDifferentCapitalization {
         //     public var something: Int = 0
@@ -525,10 +525,10 @@ class SymbolPathTreeTests: XCTestCase {
         // }
         XCTAssertEqual(
             paths["s:14MixedFramework37CollisionsWithDifferentCapitalizationC9somethingSivp"],
-            "/mixedframework/collisionswithdifferentcapitalization/something-2c4k6")
+            "/MixedFramework/CollisionsWithDifferentCapitalization/something-2c4k6")
         XCTAssertEqual(
             paths["s:14MixedFramework37CollisionsWithDifferentCapitalizationC9someThingSivp"],
-            "/mixedframework/collisionswithdifferentcapitalization/something-90i4h")
+            "/MixedFramework/CollisionsWithDifferentCapitalization/someThing-90i4h")
         
         // public enum CollisionsWithDifferentKinds {
         //     case something
@@ -537,13 +537,13 @@ class SymbolPathTreeTests: XCTestCase {
         // }
         XCTAssertEqual(
             paths["s:14MixedFramework28CollisionsWithDifferentKindsO9somethingyA2CmF"],
-            "/mixedframework/collisionswithdifferentkinds/something-enum.case")
+            "/MixedFramework/CollisionsWithDifferentKinds/something-swift.enum.case")
         XCTAssertEqual(
             paths["s:14MixedFramework28CollisionsWithDifferentKindsO9somethingSSvp"],
-            "/mixedframework/collisionswithdifferentkinds/something-property")
+            "/MixedFramework/CollisionsWithDifferentKinds/something-swift.property")
         XCTAssertEqual(
             paths["s:14MixedFramework28CollisionsWithDifferentKindsO9Somethinga"],
-            "/mixedframework/collisionswithdifferentkinds/something-typealias")
+            "/MixedFramework/CollisionsWithDifferentKinds/Something-swift.typealias")
         
         // public final class CollisionsWithEscapedKeywords {
         //     public subscript() -> Int { 0 }
@@ -556,23 +556,23 @@ class SymbolPathTreeTests: XCTestCase {
         // }
         XCTAssertEqual(
             paths["s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyF"],
-            "/mixedframework/collisionswithescapedkeywords/subscript()-method")
+            "/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.method")
         XCTAssertEqual(
             paths["s:14MixedFramework29CollisionsWithEscapedKeywordsCSiycip"],
-            "/mixedframework/collisionswithescapedkeywords/subscript()-subscript")
+            "/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.subscript")
         XCTAssertEqual(
             paths["s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyFZ"],
-            "/mixedframework/collisionswithescapedkeywords/subscript()-type.method")
+            "/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.type.method")
         
         XCTAssertEqual(
             paths["s:14MixedFramework29CollisionsWithEscapedKeywordsCACycfc"],
-            "/mixedframework/collisionswithescapedkeywords/init()-init")
+            "/MixedFramework/CollisionsWithEscapedKeywords/init()-swift.init")
         XCTAssertEqual(
             paths["s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyF"],
-            "/mixedframework/collisionswithescapedkeywords/init()-method")
+            "/MixedFramework/CollisionsWithEscapedKeywords/init()-swift.method")
         XCTAssertEqual(
             paths["s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyFZ"],
-            "/mixedframework/collisionswithescapedkeywords/init()-type.method")
+            "/MixedFramework/CollisionsWithEscapedKeywords/init()-swift.type.method")
         
         // public enum CollisionsWithDifferentFunctionArguments {
         //     public func something(argument: Int) -> Int { 0 }
@@ -580,10 +580,10 @@ class SymbolPathTreeTests: XCTestCase {
         // }
         XCTAssertEqual(
             paths["s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF"],
-            "/mixedframework/collisionswithdifferentfunctionarguments/something(argument:)-1cyvp")
+            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp")
         XCTAssertEqual(
             paths["s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF"],
-            "/mixedframework/collisionswithdifferentfunctionarguments/something(argument:)-2vke2")
+            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2")
         
         // public enum CollisionsWithDifferentSubscriptArguments {
         //     public subscript(something: Int) -> Int { 0 }
@@ -591,10 +591,10 @@ class SymbolPathTreeTests: XCTestCase {
         // }
         XCTAssertEqual(
             paths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip"],
-            "/mixedframework/collisionswithdifferentsubscriptarguments/subscript(_:)-4fd0l")
+            "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l")
         XCTAssertEqual(
             paths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip"],
-            "/mixedframework/collisionswithdifferentsubscriptarguments/subscript(_:)-757cj")
+            "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj")
     }
     
     func testFindingRelativePaths() throws {
@@ -676,7 +676,7 @@ class SymbolPathTreeTests: XCTestCase {
         XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/secondCase-enum.case", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
         XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/myEnumFunction()-method", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
         XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/MyEnumTypeAlias-typealias", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/myEnumProperty-type.property", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/myEnumProperty-property", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
         XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyStruct-struct/myStructFunction()-method", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
         XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyStruct-struct/MyStructTypeAlias-typealias", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
@@ -688,7 +688,7 @@ class SymbolPathTreeTests: XCTestCase {
         XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/secondCase-enum.case", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
         XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/myEnumFunction()-method", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
         XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/MyEnumTypeAlias-typealias", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/myEnumProperty-type.property", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/myEnumProperty-property", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
         XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyStruct-struct/myStructFunction()-method", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
         XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyStruct-struct/MyStructTypeAlias-typealias", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
@@ -749,6 +749,84 @@ class SymbolPathTreeTests: XCTestCase {
     
     // TODO: It might be nice to support "almost absolute symbol links" that start top-level in some module but doesn't include the module name in the path
     
+    func testPathWithDocumentationPrefix() throws {
+        let moduleNode = try tree.findNode(path: "/MixedFramework")
+        
+        XCTAssertEqual(try tree.find(path: "MyEnum", parent: moduleNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        XCTAssertEqual(try tree.find(path: "MixedFramework/MyEnum", parent: moduleNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        XCTAssertEqual(try tree.find(path: "documentation/MixedFramework/MyEnum", parent: moduleNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        XCTAssertEqual(try tree.find(path: "/documentation/MixedFramework/MyEnum", parent: moduleNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        
+        assertParsedPathComponents("documentation/MixedFramework/MyEnum", [("/", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
+        assertParsedPathComponents("/documentation/MixedFramework/MyEnum", [("/", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
+    }
+    
+    func testTestBundle() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
+        try loader.loadAll()
+        
+        tree = SymbolPathTree(symbolGraphLoader: loader)
+        
+        // Test finding the parent via the `fromTopicReference` integration shim.
+        let parentID = tree.fromTopicReference(ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift), context: context)
+        XCTAssertNotNil(parentID)
+        XCTAssertEqual(try tree.find(path: "globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        XCTAssertEqual(try tree.find(path: "MyKit/globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        XCTAssertEqual(try tree.find(path: "/MyKit/globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+          
+        let myKidModuleNode = try tree.findNode(path: "/MyKit")
+        XCTAssertEqual(try tree.find(path: "globalFunction(_:considering:)", parent: myKidModuleNode.identifier).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        XCTAssertEqual(try tree.find(path: "MyKit/globalFunction(_:considering:)", parent: myKidModuleNode.identifier).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        XCTAssertEqual(try tree.find(path: "/MyKit/globalFunction(_:considering:)", parent: myKidModuleNode.identifier).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        
+        XCTAssertEqual(try tree.find(path: "MyClass/init()-33vaw", parent: myKidModuleNode.identifier).identifier.precise, "s:5MyKit0A5ClassCACycfcDUPLICATE")
+        
+        // Test finding symbol from an extension
+        let sideKidModuleNode = try tree.findNode(path: "/SideKit")
+        XCTAssertEqual(try tree.find(path: "UncuratedClass/angle", parent: sideKidModuleNode.identifier).identifier.precise, "s:So14UncuratedClassCV5MyKitE5angle12CoreGraphics7CGFloatVSgvp")
+        try assertFindsPath("/SideKit/SideClass/Element", in: tree, asSymbolID: "s:7SideKit0A5ClassC7Elementa")
+        try assertFindsPath("/SideKit/SideClass/Element/inherited()", in: tree, asSymbolID: "s:7SideKit0A5::SYNTESIZED::inheritedFF")
+        try assertPathCollision("/SideKit/SideProtocol/func()", in: tree, collisions: [
+            ("s:5MyKit0A5MyProtocol0Afunc()DefaultImp", "2dxqn"),
+            ("s:5MyKit0A5MyProtocol0Afunc()", "6ijsi"),
+        ])
+        
+        try assertFindsPath("/FillIntroduced/iOSOnlyDeprecated()", in: tree, asSymbolID: "s:14FillIntroduced17iOSOnlyDeprecatedyyF")
+        try assertFindsPath("/FillIntroduced/macCatalystOnlyIntroduced()", in: tree, asSymbolID: "s:14FillIntroduced015macCatalystOnlyB0yyF")
+        
+        try assertFindsPath("/Test/FirstGroup/MySnippet", in: tree, asSymbolID: "$snippet__Test.FirstGroup.MySnippet")
+    }
+    
+    func testMixedLanguageFramework() throws {
+        let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
+        var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
+        try loader.loadAll()
+        
+        tree = SymbolPathTree(symbolGraphLoader: loader)
+        
+        try assertFindsPath("MixedLanguageFramework/Bar/myStringFunction(_:)", in: tree, asSymbolID: "c:objc(cs)Bar(cm)myStringFunction:error:")
+        try assertFindsPath("MixedLanguageFramework/Bar/myStringFunction:error:", in: tree, asSymbolID: "c:objc(cs)Bar(cm)myStringFunction:error:")
+
+        try assertPathCollision("MixedLanguageFramework/Foo", in: tree, collisions: [
+            ("c:@E@Foo", "enum"),
+            ("c:@E@Foo", "struct"),
+            ("c:MixedLanguageFramework.h@T@Foo", "typealias"),
+        ])
+        try assertFindsPath("MixedLanguageFramework/Foo-enum/first", in: tree, asSymbolID: "c:@E@Foo@first")
+        try assertFindsPath("MixedLanguageFramework/Foo-struct/first", in: tree, asSymbolID: "c:@E@Foo@first")
+        try assertFindsPath("MixedLanguageFramework/Foo-c.enum/first", in: tree, asSymbolID: "c:@E@Foo@first")
+        try assertFindsPath("MixedLanguageFramework/Foo-swift.struct/first", in: tree, asSymbolID: "c:@E@Foo@first")
+        
+        try assertFindsPath("MixedLanguageFramework/Foo/first-enum.case", in: tree, asSymbolID: "c:@E@Foo@first")
+        try assertFindsPath("MixedLanguageFramework/Foo/first-c.enum.case", in: tree, asSymbolID: "c:@E@Foo@first")
+        try assertFindsPath("MixedLanguageFramework/Foo/first-type.property", in: tree, asSymbolID: "c:@E@Foo@first")
+        try assertFindsPath("MixedLanguageFramework/Foo/first-swift.type.property", in: tree, asSymbolID: "c:@E@Foo@first")
+
+        try assertFindsPath("MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()", in: tree, asSymbolID: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod")
+        try assertFindsPath("MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod", in: tree, asSymbolID: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod")
+    }
+    
     func testParsingPaths() {
         // Check path components without disambiguation
         assertParsedPathComponents("", [])
@@ -769,6 +847,11 @@ class SymbolPathTreeTests: XCTestCase {
         
         assertParsedPathComponents("path-swift.something-hash", [("path", "something", "hash")])
         assertParsedPathComponents("path-c.something-hash", [("path", "something", "hash")])
+        
+        assertParsedPathComponents("path-type.property-hash", [("path", "type.property", "hash")])
+        assertParsedPathComponents("path-swift.type.property-hash", [("path", "type.property", "hash")])
+        assertParsedPathComponents("path-type.property", [("path", "type.property", nil)])
+        assertParsedPathComponents("path-swift.type.property", [("path", "type.property", nil)])
     }
     
     // MARK: Test helpers
@@ -779,9 +862,11 @@ class SymbolPathTreeTests: XCTestCase {
             XCTAssertEqual(symbol.identifier.precise, symbolID, file: file, line: line)
         } catch SymbolPathTree.Error.notFound {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
-        } catch SymbolPathTree.Error.lookupCollision(let collisions) {
-            let nodes = collisions.map { $0.value }
-            XCTFail("Unexpected collision for \(path.singleQuoted); \(nodes.map { return "\($0.value.title) - \($0.value.kind.identifier.identifier) - \($0.value.identifier.precise.stableHashString)"})", file: file, line: line)
+        } catch SymbolPathTree.Error.partialResult {
+            XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
+        } catch SymbolPathTree.Error.lookupCollision(_, let collisions) {
+            let symbols = collisions.map { $0.value }
+            XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
         }
     }
     
@@ -791,9 +876,11 @@ class SymbolPathTreeTests: XCTestCase {
             XCTFail("Unexpectedly found symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
         } catch SymbolPathTree.Error.notFound {
             // This specific error is expected.
-        } catch SymbolPathTree.Error.lookupCollision(let collisions) {
-            let nodes = collisions.map { $0.value }
-            XCTFail("Unexpected collision for \(path.singleQuoted); \(nodes.map { return "\($0.value.title) - \($0.value.kind.identifier.identifier) - \($0.value.identifier.precise.stableHashString)"})", file: file, line: line)
+        } catch SymbolPathTree.Error.partialResult {
+            // For the purpose of this assertion, this also counts as "not found".
+        } catch SymbolPathTree.Error.lookupCollision(_, let collisions) {
+            let symbols = collisions.map { $0.value }
+            XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
         }
     }
     
@@ -803,12 +890,14 @@ class SymbolPathTreeTests: XCTestCase {
             XCTFail("Unexpectedly found unambiguous symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
         } catch SymbolPathTree.Error.notFound {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
-        } catch SymbolPathTree.Error.lookupCollision(let collisions) {
+        } catch SymbolPathTree.Error.partialResult {
+            XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
+        } catch SymbolPathTree.Error.lookupCollision(_, let collisions) {
             let sortedCollisions = collisions.sorted(by: \.disambiguation)
             XCTAssertEqual(sortedCollisions.count, expectedCollisions.count, file: file, line: line)
             
             for (actual, expected) in zip(sortedCollisions, expectedCollisions) {
-                XCTAssertEqual(actual.value.value.identifier.precise, expected.symbolID, file: file, line: line)
+                XCTAssertEqual(actual.value.identifier.precise, expected.symbolID, file: file, line: line)
                 XCTAssertEqual(actual.disambiguation, expected.disambiguation, file: file, line: line)
             }
         }

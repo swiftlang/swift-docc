@@ -167,15 +167,31 @@ class AutomaticCurationTests: XCTestCase {
                 
                 graph.symbols[duplicateSymbol.identifier.precise] = duplicateSymbol
                 
-                // Duplicate all the edges to and from the symbbol
+                // Duplicate all the edges and nodes to and from the symbol
                 for relationship in graph.relationships where relationship.source == sideClassIdentifier {
                     var newRelationship = relationship
                     newRelationship.source = duplicateSymbol.identifier.precise
+                    
+                    // Duplicate the target symbol to avoid symbols being members of more than one other symbol.
+                    let newTarget = relationship.target + suffix
+                    newRelationship.target = newTarget
+                    if let targetSymbol = graph.symbols[relationship.target] {
+                        graph.symbols[newTarget] = targetSymbol
+                    }
+                    
                     graph.relationships.append(newRelationship)
                 }
                 for relationship in graph.relationships where relationship.target == sideClassIdentifier {
                     var newRelationship = relationship
                     newRelationship.target = duplicateSymbol.identifier.precise
+                    
+                    // Duplicate the source symbol to avoid symbols being members of more than one other symbol.
+                    let newSource = relationship.source + suffix
+                    newRelationship.source = newSource
+                    if let targetSymbol = graph.symbols[relationship.target] {
+                        graph.symbols[newSource] = targetSymbol
+                    }
+                    
                     graph.relationships.append(newRelationship)
                 }
                 
