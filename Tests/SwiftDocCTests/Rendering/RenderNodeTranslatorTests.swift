@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -622,6 +622,33 @@ class RenderNodeTranslatorTests: XCTestCase {
             
         }
 
+    }
+
+    /// Verify that symbols with ellipsis operators don't get curated into an unnamed protocol implementation section.
+    func testAutomaticImplementationsWithExtraDots() throws {
+        let fancyProtocolSGFURL = Bundle.module.url(
+            forResource: "FancyProtocol.symbols", withExtension: "json", subdirectory: "Test Resources")!
+
+        // Create a test bundle copy with the symbol graph from above
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { url in
+            try? FileManager.default.copyItem(at: fancyProtocolSGFURL, to: url.appendingPathComponent("FancyProtocol.symbols.json"))
+        }
+        defer {
+            try? FileManager.default.removeItem(at: bundleURL)
+        }
+
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/FancyProtocol/SomeClass", sourceLanguage: .swift)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+
+        let defaultImplementationSection = try XCTUnwrap(renderNode.topicSections.first(where: { $0.title == "Default Implementations" }))
+        XCTAssertEqual(defaultImplementationSection.identifiers, [
+            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Comparable-Implementations",
+            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Equatable-Implementations",
+            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/FancyProtocol-Implementations",
+        ])
     }
     
     func testAutomaticTaskGroupTopicsAreSorted() throws {
