@@ -975,7 +975,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// Creates a topic graph node and a documentation node for the given symbol.
-    private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, referenceAliases: [ResolvedTopicReference], module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, bundle: DocumentationBundle, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
+    private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, bundle: DocumentationBundle, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
         let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, platformName: module.platform.name, moduleReference: moduleReference, bystanderModules: module.bystanders)
         let source: TopicGraph.Node.ContentLocation // TODO: use a list of URLs for the files in a unified graph
         if let symbolGraphURL = symbolGraphURL {
@@ -985,7 +985,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         let graphNode = TopicGraph.Node(reference: reference, kind: documentation.kind, source: source, title: symbol.defaultSymbol!.names.title)
 
-        return ((reference, symbol.uniqueIdentifier, graphNode, documentation, referenceAliases), [])
+        return ((reference, symbol.uniqueIdentifier, graphNode, documentation), [])
     }
     
     /// Returns a map between symbol identifiers and topic references.
@@ -993,187 +993,40 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - symbolGraph: The complete symbol graph to walk through.
     ///   - bundle: The bundle to use when creating symbol references.
-    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], bundle: DocumentationBundle) -> [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]] {
-        // The implementation of this function is fairly tricky because in most cases it has to preserve past behavior.
-        //
-        // This is because symbol references bake the disambiguators into the path, making it the only version of that
-        // path that resolves to that symbol. In other words, a reference with "too few" or "too many" disambiguators
-        // will fail to resolve. Changing what's considered the "correct" disambiguators for a symbol means that links
-        // that used to resolve will break with the new behavior.
-        //
-        // The tests in `SymbolDisambiguationTests` cover the known behaviors that should be preserved.
-        //
-        // The real solution to this problem is to allow symbol links to over-specify disambiguators and improve the
-        // diagnostics when symbol links are ambiguous. (rdar://78518537)
-        // That will allow for fixes to the least amount of disambiguation without breaking existing links.
+    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], symbolHierarchy: SymbolPathTree, bundle: DocumentationBundle) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
+        let disambiguatedPaths = symbolHierarchy.caseInsensitiveDisambiguatedPaths()
         
+        var result: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] = [:]
         
-        // The current implementation works in 3 phases:
-        //  - First, it computes the paths without disambiguators to identify colliding paths.
-        //  - Second, it computes the "correct" disambiguators for each collision.
-        //  - Lastly, it joins together the results in a stable order to avoid indeterministic behavior.
-        
-        
-        let totalSymbolCount = unifiedGraphs.values.map { $0.symbols.count }.reduce(0, +)
-        
-        /// Temporary data structure to hold input to compute paths with or without disambiguation.
-        struct PathCollisionInfo {
-            let symbol: UnifiedSymbolGraph.Symbol
-            let moduleName: String
-            var languages: Set<SourceLanguage>
-        }
-        var pathCollisionInfo = [String: [PathCollisionInfo]]()
-        pathCollisionInfo.reserveCapacity(totalSymbolCount)
-        
-        // Group symbols by path from all of the available symbol graphs
         for (moduleName, symbolGraph) in unifiedGraphs {
-            let symbols = Array(symbolGraph.symbols.values)
-            let pathsAndLanguages: [[(String, SourceLanguage)]] = symbols.concurrentMap { referencesWithoutDisambiguationFor($0, moduleName: moduleName, bundle: bundle).map {
-                ($0.path.lowercased(), $0.sourceLanguage)
-            } }
-
-            for (symbol, symbolPathsAndLanguages) in zip(symbols, pathsAndLanguages) {
-                for (path, language) in symbolPathsAndLanguages {
-                    if let existingReferences = pathCollisionInfo[path] {
-                        if existingReferences.allSatisfy({ $0.symbol.uniqueIdentifier != symbol.uniqueIdentifier}) {
-                            // A collision - different symbol but same paths
-                            pathCollisionInfo[path]!.append(PathCollisionInfo(symbol: symbol, moduleName: moduleName, languages: [language]))
-                        } else {
-                            // Same symbol but in a different source language.
-                            pathCollisionInfo[path]! = pathCollisionInfo[path]!.map { PathCollisionInfo(symbol: $0.symbol, moduleName: $0.moduleName, languages: $0.languages.union([language])) }
-                        }
-                    } else {
-                        // First occurrence of this path
-                        pathCollisionInfo[path] = [PathCollisionInfo(symbol: symbol, moduleName: moduleName, languages: [language])]
-                    }
-                }
-            }
-        }
-        
-        /// Temporary data structure to hold groups of disambiguated references
-        ///
-        /// Since the order of `pathCollisionInfo` isn't stable across program executions, simply joining the results for a given symbol that has different
-        /// paths in different source languages would also result in an unstable order (depending on the order that the different paths were processed).
-        /// Instead we gather all groups of results and join them in a stable order.
-        struct IntermediateResultGroup {
-            let conflictingSymbolLanguage: SourceLanguage
-            let disambiguatedReferences: [ResolvedTopicReference]
-        }
-        var resultGroups = [SymbolGraph.Symbol.Identifier: [IntermediateResultGroup]]()
-        resultGroups.reserveCapacity(totalSymbolCount)
-        
-        // Translate symbols to topic references, adjust paths where necessary.
-        for collisions in pathCollisionInfo.values {
-            let disambiguationSuffixes = collisions.map(\.symbol).requiredDisambiguationSuffixes
-            
-            for (collisionInfo, disambiguationSuffix) in zip(collisions, disambiguationSuffixes) {
-                let language = collisionInfo.languages.contains(.swift) ? .swift : collisionInfo.languages.first!
+            let paths: [ResolvedTopicReference] = Array(symbolGraph.symbols.values).concurrentMap { unifiedSymbol -> ResolvedTopicReference in
+                let symbol = unifiedSymbol
+                let uniqueIdentifier = unifiedSymbol.uniqueIdentifier
                 
-                // If the symbol has externally provided disambiguated path components, trust that those are accurate.
-                if let knownDisambiguatedComponents = knownDisambiguatedSymbolPathComponents?[collisionInfo.symbol.uniqueIdentifier],
-                   collisionInfo.symbol.defaultSymbol?.pathComponents.count == knownDisambiguatedComponents.count
+                if let pathComponents = knownDisambiguatedSymbolPathComponents?[uniqueIdentifier],
+                   let componentsCount = symbol.defaultSymbol?.pathComponents.count,
+                   pathComponents.count == componentsCount
                 {
-                    let symbolReference = SymbolReference(pathComponents: knownDisambiguatedComponents, interfaceLanguages: collisionInfo.symbol.sourceLanguages)
-                    resultGroups[collisionInfo.symbol.defaultIdentifier, default: []].append(
-                        IntermediateResultGroup(
-                            conflictingSymbolLanguage: language,
-                            disambiguatedReferences: [ResolvedTopicReference(symbolReference: symbolReference, moduleName: collisionInfo.moduleName, bundle: bundle)]
-                        )
-                    )
-                    continue
+                    let symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguages: symbol.sourceLanguages)
+                    return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
                 }
                 
-                // If this is a multi-language collision that doesn't need disambiguation, only emit that symbol once.
-                if collisionInfo.languages.count > 1, disambiguationSuffix == (false, false) {
-                    let symbolReference = SymbolReference(
-                        collisionInfo.symbol.uniqueIdentifier,
-                        interfaceLanguages: collisionInfo.symbol.sourceLanguages,
-                        defaultSymbol: collisionInfo.symbol.defaultSymbol,
-                        shouldAddHash: false,
-                        shouldAddKind: false
+                if let path = disambiguatedPaths[uniqueIdentifier] {
+                    return ResolvedTopicReference(
+                        bundleIdentifier: bundle.documentationRootReference.bundleIdentifier,
+                        path: NodeURLGenerator.Path.documentationFolder + path,
+                        sourceLanguages: symbol.sourceLanguages
                     )
-                    
-                    resultGroups[collisionInfo.symbol.defaultIdentifier, default: []].append(
-                        IntermediateResultGroup(
-                            conflictingSymbolLanguage: language,
-                            disambiguatedReferences:[ResolvedTopicReference(symbolReference: symbolReference, moduleName: collisionInfo.moduleName, bundle: bundle)]
-                        )
-                    )
-                    continue
                 }
                 
-                // Emit the disambiguated references for all languages for this symbol's collision.
-                var symbolSelectors = [collisionInfo.symbol.defaultSelector!]
-                for selector in collisionInfo.symbol.mainGraphSelectors where !symbolSelectors.contains(selector) {
-                    symbolSelectors.append(selector)
-                }
-                symbolSelectors = symbolSelectors.filter { collisionInfo.languages.contains(SourceLanguage(id: $0.interfaceLanguage)) }
-                
-                resultGroups[collisionInfo.symbol.defaultIdentifier, default: []].append(
-                    IntermediateResultGroup(
-                        conflictingSymbolLanguage: language,
-                        disambiguatedReferences: symbolSelectors.map { selector  in
-                            let symbolReference = SymbolReference(
-                                collisionInfo.symbol.uniqueIdentifier,
-                                interfaceLanguages: collisionInfo.symbol.sourceLanguages,
-                                defaultSymbol: collisionInfo.symbol.symbol(forSelector: selector),
-                                shouldAddHash: disambiguationSuffix.shouldAddIdHash,
-                                shouldAddKind: disambiguationSuffix.shouldAddKind
-                            )
-                            return ResolvedTopicReference(symbolReference: symbolReference, moduleName: collisionInfo.moduleName, bundle: bundle)
-                        }
-                    )
-                )
+                let symbolReference = SymbolReference(pathComponents: unifiedSymbol.defaultSymbol!.pathComponents, interfaceLanguages: unifiedSymbol.sourceLanguages)
+                return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
             }
-        }
-        
-        return resultGroups.mapValues({
-            return $0.sorted(by: { lhs, rhs in
-                switch (lhs.conflictingSymbolLanguage, rhs.conflictingSymbolLanguage) {
-                // If only one result group is Swift, that comes before the other result.
-                case (.swift, let other) where other != .swift:
-                    return true
-                case (let other, .swift) where other != .swift:
-                    return false
-                    
-                // Otherwise, compare the first path to ensure a deterministic order.
-                default:
-                    return lhs.disambiguatedReferences[0].path < rhs.disambiguatedReferences[0].path
-                }
-            }).flatMap({ $0.disambiguatedReferences })
-        })
-    }
-    
-    private func referencesWithoutDisambiguationFor(_ symbol: UnifiedSymbolGraph.Symbol, moduleName: String, bundle: DocumentationBundle) -> [ResolvedTopicReference] {
-        if let pathComponents = knownDisambiguatedSymbolPathComponents?[symbol.uniqueIdentifier],
-           let componentsCount = symbol.defaultSymbol?.pathComponents.count,
-           pathComponents.count == componentsCount
-        {
-            let symbolReference = SymbolReference(pathComponents: pathComponents, interfaceLanguages: symbol.sourceLanguages)
-            return [ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)]
-        }
-        
-        // A unified symbol that exist in multiple languages may have multiple references.
-        
-        // Find all of the relevant selectors, starting with the `defaultSelector`.
-        // Any reference after the first is considered an alias/alternative to the first reference
-        // and will resolve to the first reference.
-        var symbolSelectors = [symbol.defaultSelector]
-        for selector in symbol.mainGraphSelectors where !symbolSelectors.contains(selector) {
-            symbolSelectors.append(selector)
-        }
-        
-        return symbolSelectors.map { selector  in
-            let defaultSymbol = symbol.symbol(forSelector: selector)!
-            let symbolReference = SymbolReference(
-                symbol.uniqueIdentifier,
-                interfaceLanguages: symbol.sourceLanguages.filter { $0 == SourceLanguage(id: defaultSymbol.identifier.interfaceLanguage) },
-                defaultSymbol: defaultSymbol,
-                shouldAddHash: false,
-                shouldAddKind: false
-            )
-            return ResolvedTopicReference(symbolReference: symbolReference, moduleName: moduleName, bundle: bundle)
-        }
+            for (symbol, reference) in zip(symbolGraph.symbols.values, paths) {
+                result[symbol.defaultIdentifier] = reference
+            }
+         }
+        return result
     }
 
     private func parentChildRelationship(from edge: SymbolGraph.Relationship) -> (ResolvedTopicReference, ResolvedTopicReference)? {
@@ -1197,7 +1050,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
 
     /// The result of converting a symbol into a documentation node.
-    private typealias AddSymbolResult = (reference: ResolvedTopicReference, preciseIdentifier: String, topicGraphNode: TopicGraph.Node, node: DocumentationNode, referenceAliases: [ResolvedTopicReference])
+    private typealias AddSymbolResult = (reference: ResolvedTopicReference, preciseIdentifier: String, topicGraphNode: TopicGraph.Node, node: DocumentationNode)
     /// An optional result of converting a symbol into a documentation along with any related problems.
     private typealias AddSymbolResultWithProblems = (AddSymbolResult, problems: [Problem])
     
@@ -1220,18 +1073,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///  └──────────────────┘             `───────────'
     ///                                       Symbol
     /// ```
-    private func addSymbolsToTopicGraph(symbolGraph: UnifiedSymbolGraph, url: URL?, symbolReferences: [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]], moduleReference: ResolvedTopicReference, bundle: DocumentationBundle) {
+    private func addSymbolsToTopicGraph(symbolGraph: UnifiedSymbolGraph, url: URL?, symbolReferences: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference], moduleReference: ResolvedTopicReference, bundle: DocumentationBundle) {
         let symbols = Array(symbolGraph.symbols.values)
         let results: [AddSymbolResultWithProblems] = symbols.concurrentPerform { symbol, results in
             if let selector = symbol.defaultSelector, let module = symbol.modules[selector] {
-                guard let references = symbolReferences[symbol.defaultIdentifier], let reference = references.first else {
+                guard let reference = symbolReferences[symbol.defaultIdentifier] else {
                     fatalError("Symbol with identifier '\(symbol.uniqueIdentifier)' has no reference. A symbol will always have at least one reference.")
                 }
                 
                 let result = preparedSymbolData(
                     symbol,
                     reference: reference,
-                    referenceAliases: Array(references.dropFirst()),
                     module: module,
                     moduleReference: moduleReference,
                     bundle: bundle,
@@ -1276,52 +1128,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             /// A tree of the symbol hierarchy as defined by the combined symbol graph.
             let tree = SymbolPathTree(symbolGraphLoader: symbolGraphLoader)
-            
-            let disambiguatedFilePaths = tree.caseInsensitiveDisambiguatedPaths()
-            
+                        
             // Build references for all symbols in all of this module's symbol graphs.
-            var symbolReferences = self.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle)
-            for (identifier, references) in symbolReferences {
-                guard let path = disambiguatedFilePaths[identifier.precise] else {
-                    continue // ???: should this ever happen?
-                }
-                if knownDisambiguatedSymbolPathComponents?[identifier.precise] != nil {
-                    // Skip symbols that disambiguated paths already provided
-                    continue
-                }
-                
-                // TODO: Using only `caseInsensitiveDisambiguatedPaths` would result in shorter but still unambiguous references.
-                let disambiguatedReferences: [ResolvedTopicReference] = zip([path], references).map { path, reference in
-                    let disambiguatedPathComponents = SymbolPathTree.parse(path: path)
-
-                    var pathComponents = SymbolPathTree.parse(path: reference.path)
-                    for (pathComponentIndex, disambiguation) in zip(1..., disambiguatedPathComponents.dropFirst()) {
-                        if let kind = disambiguation.1 {
-                            pathComponents[pathComponentIndex].1 = kind
-                        }
-                        if let hash = disambiguation.2 {
-                            pathComponents[pathComponentIndex].2 = hash
-                        }
-                    }
-
-                    let mergedPath = pathComponents
-                        .map { (path, kind, hash) in
-                            var result = path
-                            if let kind = kind {
-                                result += "-\(reference.sourceLanguage.linkDisambiguationID).\(kind)"
-                            }
-                            if let hash = hash {
-                                result += "-\(hash)"
-                            }
-                            return result
-                        }
-                        .joined(separator: "/")
-                        .dropFirst(1)
-
-                    return ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: "/documentation" + String(mergedPath), sourceLanguages: reference.sourceLanguages)
-                }
-                symbolReferences[identifier] = disambiguatedReferences
-            }
+            let symbolReferences = self.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, symbolHierarchy: tree, bundle: bundle)
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
             symbolIndex.reserveCapacity(symbolReferences.count)
@@ -1402,7 +1211,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
                         addPreparedSymbolToContext(
-                            preparedSymbolData(.init(fromSingleSymbol: moduleSymbol, module: rootModule, isMainGraph: true), reference: moduleReference, referenceAliases: [], module: rootModule, moduleReference: moduleReference, bundle: bundle, fileURL: fileURL)
+                            preparedSymbolData(.init(fromSingleSymbol: moduleSymbol, module: rootModule, isMainGraph: true), reference: moduleReference, module: rootModule, moduleReference: moduleReference, bundle: bundle, fileURL: fileURL)
                         )
                     }
 
@@ -1567,7 +1376,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// When building multi-platform documentation symbols might have more than one declaration
     /// depending on variances in their implementation across platforms (e.g. use `NSPoint` vs `CGPoint` parameter in a method).
     /// This method finds matching symbols between graphs and merges their declarations in case there are differences.
-    func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: [ResolvedTopicReference]], moduleReference: ResolvedTopicReference, bundle: DocumentationBundle, fileURL otherSymbolGraphURL: URL?) throws {
+    func mergeSymbolDeclarations(from otherSymbolGraph: UnifiedSymbolGraph, references: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference], moduleReference: ResolvedTopicReference, bundle: DocumentationBundle, fileURL otherSymbolGraphURL: URL?) throws {
         let mergeError = Synchronized<Error?>(nil)
         
         let results: [AddSymbolResultWithProblems] = Array(otherSymbolGraph.symbols.values).concurrentPerform { symbol, result in
@@ -1585,12 +1394,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             guard let existingNode = symbolIndex[symbol.uniqueIdentifier], existingNode.semantic is Symbol else {
                 // New symbols that didn't exist in the previous graphs should be added.
-                guard let references = references[symbol.defaultIdentifier], let reference = references.first else {
+                guard let reference = references[symbol.defaultIdentifier] else {
                     fatalError("Symbol with identifier '\(symbol.uniqueIdentifier)' has no reference. A symbol will always have at least one reference.")
                 }
                 
                 result.append(
-                    preparedSymbolData(symbol, reference: reference, referenceAliases: Array(references.dropFirst()), module: module, moduleReference: moduleReference, bundle: bundle, fileURL: otherSymbolGraphURL)
+                    preparedSymbolData(symbol, reference: reference, module: module, moduleReference: moduleReference, bundle: bundle, fileURL: otherSymbolGraphURL)
                 )
                 return
             }
@@ -2560,7 +2369,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     
                 case .lookupCollision(let partialResultID, let collisions):
                     let partialReference = symbolPathTree.toTopicReference(partialResultID, context: self)
-                    let collisionDescription = collisions.map { "Add \($0.disambiguation.singleQuoted) to refer to \($0.value.title.singleQuoted)"}.sorted()
+                    let collisionDescription = collisions.map { "Add \($0.disambiguation.singleQuoted) to refer to \($0.value.names.title.singleQuoted)"}.sorted()
                     return .failure(unresolvedReference, errorMessage: "Reference is ambiguous at \(String(partialReference.path.dropFirst("/documentation".count)).singleQuoted): \(collisionDescription.joined(separator: ". ")).")
                 }
             }

@@ -17,11 +17,15 @@ public protocol DocCSymbolRepresentable: Equatable {
     ///
     /// For example, a Swift class might use `swift.class`.
     var kindIdentifier: String? { get }
+    // TODO: Document this or remove the other proerty
+    var kindID: String? { get }
     
     /// A unique identifier for this symbol.
     ///
     /// For Swift, this is the USR.
     var preciseIdentifier: String? { get }
+    
+    var parentTitle: String? { get }
     
     /// The case-sensitive title of this symbol as would be used in documentation.
     ///
@@ -123,14 +127,14 @@ extension AbsoluteSymbolLink.LinkComponent {
         case .none:
             return true
         case .kindIdentifier(let kindIdentifier):
-            return symbol.kindIdentifier == kindIdentifier
+            return symbol.kindID == kindIdentifier
         case .preciseIdentifierHash(let preciseIdentifierHash):
             return symbol.preciseIdentifier?.stableHashString == preciseIdentifierHash
         case .kindAndPreciseIdentifier(
             kindIdentifier: let kindIdentifier,
             preciseIdentifierHash: let preciseIdentifierHash):
             return symbol.preciseIdentifier?.stableHashString == preciseIdentifierHash
-                && symbol.kindIdentifier == kindIdentifier
+                && symbol.kindID == kindIdentifier
         }
     }
 }
@@ -154,11 +158,13 @@ public extension Collection where Element: DocCSymbolRepresentable {
         } else {
             // Disambiguate by kind
             return map { currentSymbol in
-                (
-                    shouldAddIdHash: filter {
-                            $0.kindIdentifier == currentSymbol.kindIdentifier
-                        }.count > 1,
-                    shouldAddKind: true
+                let kindCount = filter {
+                    $0.kindIdentifier == currentSymbol.kindIdentifier
+                }.count
+                let parentNameCount = Set(map(\.parentTitle)).count
+                return (
+                    shouldAddIdHash: kindCount > 1,
+                    shouldAddKind: kindCount == 1 && parentNameCount == 1
                 )
             }
         }
@@ -176,6 +182,14 @@ extension SymbolGraph.Symbol: DocCSymbolRepresentable {
     
     public var kindIdentifier: String? {
         "\(self.identifier.interfaceLanguage).\(self.kind.identifier.identifier)"
+    }
+    
+    public var kindID: String? {
+        self.kind.identifier.identifier
+    }
+    
+    public var parentTitle: String? {
+        pathComponents.dropLast().last
     }
     
     public static func == (lhs: SymbolGraph.Symbol, rhs: SymbolGraph.Symbol) -> Bool {
@@ -210,6 +224,30 @@ extension UnifiedSymbolGraph.Symbol: DocCSymbolRepresentable {
         }
 
         return "\(selector.interfaceLanguage).\(self.kind[selector]!.identifier.identifier)"
+    }
+    
+    public var kindID: String? {
+        guard let selector = self.defaultSelector else {
+            fatalError("""
+                Failed to find a supported default selector. \
+                Language unsupported or corrupt symbol graph provided.
+                """
+            )
+        }
+
+        return self.kind[selector]!.identifier.identifier
+    }
+    
+    public var parentTitle: String? {
+        guard let selector = self.defaultSelector else {
+            fatalError("""
+                Failed to find a supported default selector. \
+                Language unsupported or corrupt symbol graph provided.
+                """
+            )
+        }
+
+        return self.pathComponents[selector]!.dropLast().last
     }
 
     public static func == (lhs: UnifiedSymbolGraph.Symbol, rhs: UnifiedSymbolGraph.Symbol) -> Bool {

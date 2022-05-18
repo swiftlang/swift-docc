@@ -19,11 +19,11 @@ class DocCSymbolRepresentableTests: XCTestCase {
     func testDisambiguatedByType() throws {
         try performOverloadSymbolDisambiguationTest(
             correctLink: """
-            doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName-swift.property
+            doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName-property
             """,
             incorrectLinks: [
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName-swift.method",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName-swift.enum.case",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName-method",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName-enum.case",
                 "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedStruct/secondTestMemberName",
             ],
             symbolTitle: "secondTestMemberName",
@@ -46,13 +46,16 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testOverloadedParentAndMember() throws {
+        // TODO: This is already unambiguous at the parent level. The test doesn't handle that.
+        try XCTSkipIf(true, "This is already unambiguous at the parent level. The test doesn't handle that.")
+        
         try performOverloadSymbolDisambiguationTest(
             correctLink: """
-            doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property
+            doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember
             """,
             incorrectLinks: [
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.enum.case",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-type.property",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-enum.case",
             ],
             symbolTitle: "fifthTestMember",
             expectedNumberOfAmbiguousSymbols: 2
@@ -76,12 +79,11 @@ class DocCSymbolRepresentableTests: XCTestCase {
     func testFunctionWithKindIdentifierAndUSRHash() throws {
         try performOverloadSymbolDisambiguationTest(
             correctLink: """
-            doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14g8s
+            doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s
             """,
             incorrectLinks: [
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-method",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-method-14g8s",
             ],
             symbolTitle: "firstTestMemberName(_:)",
             expectedNumberOfAmbiguousSymbols: 6
@@ -127,12 +129,11 @@ class DocCSymbolRepresentableTests: XCTestCase {
         expectedNumberOfAmbiguousSymbols: Int
     ) throws {
         // Build a bundle with an unusual number of overloaded symbols
-        let (url, _, context) = try testBundleAndContext(
+        let (_, _, context) = try testBundleAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
         )
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // Collect the overloaded symbols nodes from the built bundle
         let ambiguousSymbols = context.symbolIndex.values.compactMap(\.symbol).filter {
@@ -161,16 +162,16 @@ class DocCSymbolRepresentableTests: XCTestCase {
             let selectedSymbols = absoluteSymbolLinkLastPathComponent.disambiguateBetweenOverloadedSymbols(
                 ambiguousSymbols
             )
-            
+
             // Assert that it selects a single symbol
             XCTAssertEqual(selectedSymbols.count, 1)
-            
+
             // Assert that the correct symbol is selected
             let selectedSymbol = try XCTUnwrap(selectedSymbols.first)
             XCTAssertEqual(correctSymbolToSelect, selectedSymbol)
         }
         
-        // Now we'll try a couple of inprecise links and verify they don't resolve
+        // Now we'll try a couple of imprecise links and verify they don't resolve
         try incorrectLinks.forEach { incorrectLink in
             let absoluteSymbolLinkLastPathComponent = try XCTUnwrap(
                 AbsoluteSymbolLink(string: incorrectLink)?.basePathComponents.last
@@ -180,7 +181,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             let selectedSymbols = absoluteSymbolLinkLastPathComponent.disambiguateBetweenOverloadedSymbols(
                 ambiguousSymbols
             )
-            
+
             // We expect it to return an empty array since the given
             // absolute symbol link isn't correct
             XCTAssertTrue(selectedSymbols.isEmpty)
@@ -188,12 +189,11 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testLinkComponentInitialization() throws {
-        let (url, _, context) = try testBundleAndContext(
+        let (_, _, context) = try testBundleAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
         )
-        defer { try? FileManager.default.removeItem(at: url) }
         
         var count = 0
         try context.symbolIndex.values.forEach { documentationNode in
@@ -213,7 +213,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             let linkComponent = try XCTUnwrap(
                 documentationNode.symbol?.asLinkComponent
             )
-            
+
             // Confirm that link component we created is the same on the compiler
             // created in a full documentation build.
             XCTAssertEqual(
@@ -224,8 +224,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             count += 1
         }
         
-        // We expect this bundle to contain 5 symbols that need both type and usr
-        // disambiguation.
-        XCTAssertEqual(count, 5)
+        // No type should need both kind and usr disambiguation.
+        XCTAssertEqual(count, 0)
     }
 }

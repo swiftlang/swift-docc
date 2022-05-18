@@ -5,7 +5,13 @@
       },
       "generator" : "app/1.0"
   },
-  "relationships" : [],
+  "relationships" : [
+    {
+      "source" : "s:5MyKit0A5ClassC10myFunction1yyF",
+      "target" : "s:5MyKit0A5ClassC",
+      "kind" : "memberOf"
+    }
+  ],
   "module" : {
     "bystanders" : ["Foundation"],
     "name" : "MyKit",

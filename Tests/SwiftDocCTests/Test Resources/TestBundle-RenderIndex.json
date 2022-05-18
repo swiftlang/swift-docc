@@ -744,7 +744,7 @@
         "type": "groupMarker"
       },
       {
-        "path": "/documentation/sidekit/nonexistent/uncuratedclass",
+        "path": "/documentation/sidekit/uncuratedclass",
         "title": "UncuratedClass",
         "type": "class",
       },

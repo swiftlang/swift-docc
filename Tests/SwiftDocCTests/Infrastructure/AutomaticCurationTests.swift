@@ -397,7 +397,7 @@ class AutomaticCurationTests: XCTestCase {
                 "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
                 
                 "Structures",
-                "/documentation/MixedLanguageFramework/Foo-swift.struct",
+                "/documentation/MixedLanguageFramework/Foo-struct",
                 
                 // SwiftOnlyStruct is manually curated in APICollection.md.
                 // "/documentation/MixedLanguageFramework/SwiftOnlyStruct",
@@ -432,7 +432,7 @@ class AutomaticCurationTests: XCTestCase {
                 // 'MixedLanguageFramework/Foo-c.typealias' is manually curated in a task group titled "Custom" under 'MixedLanguageFramework/Bar/myStringFunction:error:'
                 
                 "Enumerations",
-                "/documentation/MixedLanguageFramework/Foo-swift.struct",
+                "/documentation/MixedLanguageFramework/Foo-struct",
             ]
         )
     }

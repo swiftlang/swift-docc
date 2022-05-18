@@ -177,12 +177,12 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "/documentation/MixedLanguageFramework/Article",
                 "/tutorials/MixedLanguageFramework/TutorialArticle",
                 "/documentation/MixedLanguageFramework/APICollection",
-                "/documentation/MixedLanguageFramework/Foo-swift.struct",
+                "/documentation/MixedLanguageFramework/Foo-struct",
                 "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
-                "/documentation/MixedLanguageFramework/Foo-swift.struct/first",
-                "/documentation/MixedLanguageFramework/Foo-swift.struct/second",
-                "/documentation/MixedLanguageFramework/Foo-swift.struct/third",
-                "/documentation/MixedLanguageFramework/Foo-swift.struct/fourth",
+                "/documentation/MixedLanguageFramework/Foo/first",
+                "/documentation/MixedLanguageFramework/Foo/second",
+                "/documentation/MixedLanguageFramework/Foo/third",
+                "/documentation/MixedLanguageFramework/Foo/fourth",
                 "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)",
                 "/documentation/MixedLanguageFramework/ArticleCuratedInASingleLanguagePage",
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
@@ -233,7 +233,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageProtocol",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-struct",
             ],
             referenceTitles: [
                 "APICollection",
@@ -289,7 +289,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/APICollection",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MixedLanguageProtocol",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-struct",
             ],
             referenceTitles: [
                 "APICollection",
@@ -341,11 +341,11 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "This is the foo’s description.",
             ],
             topicSectionIdentifiers: [
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/init(rawValue:)",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/first",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/fourth",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/second",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/third",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo/init(rawValue:)",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo/first",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo/fourth",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo/second",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo/third",
             ],
             referenceTitles: [
                 "Foo",
@@ -394,10 +394,10 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                 "This is the foo’s description.",
             ],
             topicSectionIdentifiers: [
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/first",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/fourth",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/second",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo-swift.struct/third",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo/first",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo/fourth",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo/second",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Foo/third",
             ],
             referenceTitles: [
                 "Foo",
@@ -747,8 +747,8 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssertEqual(
             topLevelFrameworkPage.topicSections.flatMap(\.identifiers),
             [
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyError-swift.struct/Code",
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyError-swift.struct",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyError-struct/Code",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyError-struct",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyErrorDomain",
             ]
         )
@@ -758,7 +758,7 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssertEqual(
             objectiveCTopLevelFrameworkPage.topicSections.flatMap(\.identifiers),
             [
-                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyError-swift.struct/Code",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyError-struct/Code",
                 "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MyErrorDomain",
             ]
         )

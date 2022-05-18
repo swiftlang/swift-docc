@@ -106,7 +106,7 @@ final class RenderIndexTests: XCTestCase {
                               },
                               {
                                 "title": "Foo",
-                                "path": "/documentation/mixedlanguageframework/foo-c.typealias",
+                                "path": "/documentation/mixedlanguageframework/foo-typealias",
                                 "type": "typealias"
                               }
                             ]
@@ -249,27 +249,27 @@ final class RenderIndexTests: XCTestCase {
                             "type": "groupMarker"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/first",
+                            "path": "\/documentation\/mixedlanguageframework\/foo\/first",
                             "title": "first",
                             "type": "case"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/fourth",
+                            "path": "\/documentation\/mixedlanguageframework\/foo\/fourth",
                             "title": "fourth",
                             "type": "case"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/second",
+                            "path": "\/documentation\/mixedlanguageframework\/foo\/second",
                             "title": "second",
                             "type": "case"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/third",
+                            "path": "\/documentation\/mixedlanguageframework\/foo\/third",
                             "title": "third",
                             "type": "case"
                           }
                         ],
-                        "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct",
+                        "path": "\/documentation\/mixedlanguageframework\/foo-struct",
                         "title": "Foo",
                         "type": "enum"
                       }
@@ -485,7 +485,7 @@ final class RenderIndexTests: XCTestCase {
                             "type": "groupMarker"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/init(rawvalue:)",
+                            "path": "\/documentation\/mixedlanguageframework\/foo\/init(rawvalue:)",
                             "title": "init(rawValue: UInt)",
                             "type": "init"
                           },
@@ -494,27 +494,27 @@ final class RenderIndexTests: XCTestCase {
                             "type": "groupMarker"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/first",
+                            "path": "\/documentation\/mixedlanguageframework\/foo\/first",
                             "title": "static var first: Foo",
                             "type": "property"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/fourth",
+                            "path": "\/documentation\/mixedlanguageframework\/foo\/fourth",
                             "title": "static var fourth: Foo",
                             "type": "property"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/second",
+                            "path": "\/documentation\/mixedlanguageframework\/foo\/second",
                             "title": "static var second: Foo",
                             "type": "property"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/third",
+                            "path": "\/documentation\/mixedlanguageframework\/foo\/third",
                             "title": "static var third: Foo",
                             "type": "property"
                           }
                         ],
-                        "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct",
+                        "path": "\/documentation\/mixedlanguageframework\/foo-struct",
                         "title": "Foo",
                         "type": "struct"
                       }
@@ -568,7 +568,7 @@ final class RenderIndexTests: XCTestCase {
       "interfaceLanguages": {
         "swift": [
           {
-            "path": "/documentation/framework/foo-swift.struct",
+            "path": "/documentation/framework/foo-struct",
             "title": "Foo",
             "type": "struct",
             "\(property)": true

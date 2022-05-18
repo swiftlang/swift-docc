@@ -1,4 +1,4 @@
-# ``MyKit/MyClass/myFunction()``
+# ``MyKit/myFunction()``
 
 @Metadata {
    @DocumentationExtension(mergeBehavior: override)

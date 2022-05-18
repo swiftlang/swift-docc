@@ -36,12 +36,16 @@ struct SymbolPathTree {
                 return !lhs.key.lastPathComponent.contains("@")
             })
         
-        for (_, graph) in symbolGraphs {
+        for (url, graph) in symbolGraphs {
             let moduleName = graph.module.name
-            guard loader.hasPrimaryURL(moduleName: moduleName) else { continue }
-            
             let moduleNode: Node
-            if let existingModuleNode = roots[moduleName] {
+            
+            if !loader.hasPrimaryURL(moduleName: moduleName) {
+                guard let moduleName = SymbolGraphLoader.moduleNameFor(url),
+                      let existingModuleNode = roots[moduleName]
+                else { continue }
+                moduleNode = existingModuleNode
+            } else if let existingModuleNode = roots[moduleName] {
                 moduleNode = existingModuleNode
             } else {
                 let moduleSymbol = SymbolGraph.Symbol(
@@ -79,7 +83,7 @@ struct SymbolPathTree {
                     }
                 } else if let targetNodes = allNodes[relationship.target] {
                     for targetNode in targetNodes {
-                        assert(targetNode.value.pathComponents.first != sourceNode.value.pathComponents.first)
+                        assert(targetNode.value.pathComponents.first != sourceNode.value.pathComponents.first || loader.hasPrimaryURL(moduleName: moduleName))
                         _ = targetNode.add(child: sourceNode)
                     }
                 } else {
@@ -102,9 +106,24 @@ struct SymbolPathTree {
                 }
             }
             
-            for topLevelNode in topLevelCandidates.values {
+            for topLevelNode in topLevelCandidates.values /*where topLevelNode.value.pathComponents.count == 1*/ {
                 _ = moduleNode.add(child: topLevelNode)
             }
+//            for node in topLevelCandidates.values where node.value.pathComponents.count > 1 {
+//                var parent = moduleNode
+//                var components = node.value.pathComponents[...]
+//                while !components.isEmpty, let child = try? parent.children[components.first!]?.find(nil, nil) {
+//                    parent = child
+//                    components = components.dropFirst()
+//                }
+//                components = components.dropLast()
+//                for component in components {
+//                    let nodeWithoutSymbol = Node(value: nil)
+//                    _ = parent.add(child: nodeWithoutSymbol, path: component, kind: "<missing>", hash: "<missing>")
+//                    parent = nodeWithoutSymbol
+//                }
+//                _ = parent.add(child: node)
+//            }
         }
         
         allNodes.removeAll()
@@ -114,9 +133,10 @@ struct SymbolPathTree {
         func descend(_ node: Node) {
             assert(node.identifier == nil)
             node.identifier = ResolvedIdentifier()
-            lookup[node.identifier] = node
-            allNodes[node.value.identifier.precise, default: []].append(node)
-            
+            if node.value != nil {
+                lookup[node.identifier] = node
+                allNodes[node.value.identifier.precise, default: []].append(node)
+            }
             for tree in node.children.values {
                 for (_, subtree) in tree.storage {
                     for (_, node) in subtree {
@@ -141,13 +161,20 @@ struct SymbolPathTree {
     
     func caseInsensitiveDisambiguatedPaths() -> [String: String] {
         func descend(_ node: Node, accumulatedPath: String) -> [(String, (String, Bool))] {
-            var results: [(String, (String, Bool))] = [(node.value.identifier.precise, (accumulatedPath, node.value.identifier.interfaceLanguage == "swift"))]
+            var results: [(String, (String, Bool))] = []
             let caseInsensitiveChildren = [String: DisambiguationTree](node.children.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { $0.merge(with: $1) })
             
             for (_, tree) in caseInsensitiveChildren {
-                let disambiguatedChildren = tree.disambiguatedValues(includeLanguage: true)
+                let disambiguatedChildren = tree.disambiguatedValues()
+                let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { !$0.disambiguation.isEmpty && !$0.value.children.isEmpty }.map { $0.value.value.identifier.precise })
                 for (node, disambiguation) in disambiguatedChildren {
-                    let path = accumulatedPath + "/" + node.value.pathComponents.last! + disambiguation
+                    var path = accumulatedPath + "/" + node.value.pathComponents.last!
+                    results.append(
+                        (node.value.identifier.precise, (path + disambiguation, node.value.identifier.interfaceLanguage == "swift"))
+                    )
+                    if uniqueNodesWithChildren.count > 1 {
+                        path += disambiguation
+                    }
                     results += descend(node, accumulatedPath: path)
                 }
             }
@@ -158,6 +185,9 @@ struct SymbolPathTree {
         
         for (moduleName, node) in roots {
             let path = "/" + moduleName
+            gathered.append(
+                (moduleName, (path, node.value.identifier.interfaceLanguage == "swift"))
+            )
             gathered += descend(node, accumulatedPath: path)
         }
         
@@ -168,26 +198,31 @@ struct SymbolPathTree {
         fileprivate var children: [String: DisambiguationTree]
         
         var parent: Node?
-        var value: SymbolGraph.Symbol
+        var value: SymbolGraph.Symbol!
         var identifier: ResolvedIdentifier!
         
-        init(value: SymbolGraph.Symbol) {
+        fileprivate init(value: SymbolGraph.Symbol!, children: [String: DisambiguationTree] = [:]) {
             self.value = value
-            self.children = [:]
+            self.children = children
         }
         
         func add(child: Node) -> (String, String)? {
-            let path = child.value.pathComponents.last!
-            let kind = child.value.kind.identifier.identifier
-            let hash = child.value.identifier.precise.stableHashString
-            
+            return add(
+                child: child,
+                path: child.value.pathComponents.last!,
+                kind: child.value.kind.identifier.identifier,
+                hash: child.value.identifier.precise.stableHashString
+            )
+        }
+        
+        fileprivate func add(child: Node, path: String, kind: String, hash: String) -> (String, String)? {
             child.parent = self
             return children[path, default: .init()].add(kind, hash, child)
         }
         
         func merge(with other: Node) -> Node {
             let new = Node(value: self.value)
-            assert(self.parent?.value == other.parent?.value)
+            assert(self.parent?.value.identifier.precise == other.parent?.value.identifier.precise)
             new.identifier = self.identifier
             new.parent = self.parent
             new.children = self.children.merging(other.children, uniquingKeysWith: { $0.merge(with: $1) })
@@ -291,7 +326,12 @@ struct SymbolPathTree {
                 }
                 if possibleMatches.count == 1 {
                     return possibleMatches.first!
-                } else {
+                }
+                // If all matches are the same symbol, return the Swift version of that symbol
+                if possibleMatches.dropFirst().allSatisfy({ $0.value.identifier.precise == possibleMatches.first!.value.identifier.precise }) {
+                    return possibleMatches.first(where: { $0.value.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
+                }
+                else {
                     // Wrap the original collision
                     throw Error.lookupCollision(partialResult: node.identifier, collisions: collisions.map { ($0.node.value, $0.disambiguation) })
                 }
@@ -471,7 +511,7 @@ fileprivate struct DisambiguationTree {
         return DisambiguationTree(storage: self.storage.merging(other.storage, uniquingKeysWith: { lhs, rhs in
             lhs.merging(rhs, uniquingKeysWith: {
                 lhsValue, rhsValue in
-                assert(lhsValue.value == rhsValue.value)
+                assert(lhsValue.value.identifier.precise == rhsValue.value.identifier.precise)
                 return lhsValue
             })
         }))
@@ -516,7 +556,7 @@ fileprivate struct DisambiguationTree {
         throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, String($0.disambiguation.dropFirst())) })
     }
     
-    func disambiguatedValues(includeLanguage: Bool = false) -> [(value: Value, disambiguation: String)] {
+    func disambiguatedValues() -> [(value: Value, disambiguation: String)] {
         if storage.count == 1 {
             let tree = storage.values.first!
             if tree.count == 1 {
@@ -528,11 +568,7 @@ fileprivate struct DisambiguationTree {
         for (kind, kindTree) in storage {
             if kindTree.count == 1 {
                 // No other match has this kind
-                if includeLanguage {
-                    collisions.append((value: kindTree.first!.value, disambiguation: "-\(kindTree.first!.value.value.identifier.interfaceLanguage).\(kind)"))
-                } else {
-                    collisions.append((value: kindTree.first!.value, disambiguation: "-"+kind))
-                }
+                collisions.append((value: kindTree.first!.value, disambiguation: "-"+kind))
                 continue
             }
             for (usr, value) in kindTree {
@@ -542,11 +578,7 @@ fileprivate struct DisambiguationTree {
                     collisions.append((value: value, disambiguation: "-"+usr))
                 } else {
                     // This needs to be disambiguated by both kind and USR
-                    if includeLanguage {
-                        collisions.append((value: value, disambiguation: "-\(value.value.identifier.interfaceLanguage).\(kind)-\(usr)"))
-                    } else {
-                        collisions.append((value: value, disambiguation: "-\(kind)-\(usr)"))
-                    }
+                    collisions.append((value: value, disambiguation: "-\(kind)-\(usr)"))
                 }
             }
         }

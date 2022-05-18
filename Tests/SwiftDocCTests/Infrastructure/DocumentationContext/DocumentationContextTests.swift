@@ -1231,7 +1231,6 @@ let expected = """
  │   ╰ doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection
  ╰ doc://org.swift.docc.example/documentation/Test-Bundle/article2
  doc://org.swift.docc.example/documentation/SideKit
- ├ doc://org.swift.docc.example/documentation/SideKit/NonExistent/UncuratedClass
  ├ doc://org.swift.docc.example/documentation/SideKit/SideClass
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element
  │ │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/Element/Protocol-Implementations
@@ -1241,9 +1240,10 @@ let expected = """
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/myFunction()
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/path
  │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/url
- ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol
-   ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi
-     ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn
+ ├ doc://org.swift.docc.example/documentation/SideKit/SideProtocol
+ │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi
+ │   ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn
+ ╰ doc://org.swift.docc.example/documentation/SideKit/UncuratedClass
  doc://org.swift.docc.example/documentation/Test
  ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup
    ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup/MySnippet
@@ -1361,9 +1361,8 @@ let expected = """
     }
 
     // Verify that a symbol that has no parents in the symbol graph is automatically curated under the module node.
-    func testRootSymbolsAreCureatedInModule() throws {
+    func testRootSymbolsAreCuratedInModule() throws {
         let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle")
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // Verify that SideClass doesn't have a memberOf relationship at all.
         let graphData = try Data(contentsOf: url.appendingPathComponent("sidekit.symbols.json"))
@@ -1378,10 +1377,10 @@ let expected = """
         XCTAssertEqual(parents.map {$0.path}, ["/documentation/SideKit"])
     }
     
-    /// Tests whether tutoral curated multiple times gets the correct breadcrumbs and hierarchy.
+    /// Tests whether tutorial curated multiple times gets the correct breadcrumbs and hierarchy.
     func testCurateTutorialMultipleTimes() throws {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
             ## Topics
@@ -1392,8 +1391,6 @@ let expected = """
             """)
             try text.write(to: myKitURL, atomically: true, encoding: .utf8)
         }
-        
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift))
@@ -1457,8 +1454,8 @@ let expected = """
         }
         
         // Verify the non-overload collisions were resolved
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.enum.case", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-enum.case", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-var", sourceLanguage: .swift)))
     }
     
     func testModuleLanguageFallsBackToSwiftIfItHasNoSymbols() throws {
@@ -1586,19 +1583,18 @@ let expected = """
         }
         
         // Verify the non-overload collisions were resolved
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-swift.var-9053a", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var-959hd", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-9053a", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-959hd", sourceLanguage: .swift)))
     }
 
     func testUnknownSymbolKind() throws {
         // Change the symbol kind to an unknown and load the symbol graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             let myKitURL = root.appendingPathComponent("mykit-iOS.symbols.json")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "\"identifier\" : \"swift.method\"", with: "\"identifier\" : \"blip-blop\"")
             try text.write(to: myKitURL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a function node, verify its kind is uknown
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
@@ -1664,9 +1660,9 @@ let expected = """
         XCTAssert(symbolGraphProblems.isEmpty, "There shouldn't be any errors or warnings in the symbol graphs")
         
         // Verify the non-overload collisions form different symbol graph files were resolved
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-class", sourceLanguage: .swift)))
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/path", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/sideClass-swift.var", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/sideClass-var", sourceLanguage: .swift)))
     }
 
     func testUnresolvedSidecarDiagnostics() throws {
@@ -1680,14 +1676,13 @@ let expected = """
         """
         
         // Add a sidecar file for a symbol that doesn't exist
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             unknownSymbolSidecarURL = root.appendingPathComponent("documentation/unknownSymbol.md")
             otherUnknownSymbolSidecarURL = root.appendingPathComponent("documentation/xanotherSidecarFileForThisUnknownSymbol.md")
             
             try content.write(to: unknownSymbolSidecarURL, atomically: true, encoding: .utf8)
             try content.write(to: otherUnknownSymbolSidecarURL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         let unmatchedSidecarProblem = context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.SymbolUnmatched" })
         
@@ -1717,7 +1712,7 @@ let expected = """
         
         // Add an article without curating it anywhere
         // This will be uncurated because there's more than one module in TestBundle.
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             unknownSymbolSidecarURL = root.appendingPathComponent("UncuratedArticle.md")
             
             try """
@@ -1726,7 +1721,6 @@ let expected = """
             This article won't be curated anywhere.
             """.write(to: unknownSymbolSidecarURL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         let curationDiagnostics =  context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ArticleUncurated" }).map(\.diagnostic)
         let sidecarDiagnostic = try XCTUnwrap(curationDiagnostics.first(where: { $0.source?.standardizedFileURL == unknownSymbolSidecarURL.standardizedFileURL }))
@@ -1737,7 +1731,7 @@ let expected = """
     
     func testUpdatesReferencesForChildrenOfCollisions() throws {
         // Add some symbol collisions to graph
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             let sideKitURL = root.appendingPathComponent("sidekit.symbols.json")
             var text = try String(contentsOf: sideKitURL)
             
@@ -1853,26 +1847,27 @@ let expected = """
             """)
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
-        
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
 
+        print(context.symbolPathTree.dump())
+        print(context.symbolPathTree.caseInsensitiveDisambiguatedPaths().values.sorted().joined(separator: "\n"))
+        
         // Test that collision symbol reference was updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test", sourceLanguage: .swift)))
         
         // Test that collision symbol child reference was updated
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/path", sourceLanguage: .swift)))
 
         // Test that nested collisions were updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/NestedEnum-swift.enum", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/nestedEnum-swift.property", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/NestedEnum-enum", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/nestedEnum-property", sourceLanguage: .swift)))
         
         // Test that child of nested collision is updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/NestedEnum/path", sourceLanguage: .swift)))
         
         // Verify that the symbol index has been updated with the rewritten collision-corrected symbol paths
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.reference.path, "/documentation/SideKit/SideClass/Test/nestedEnum-swift.property")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testEE"]?.reference.path, "/documentation/SideKit/SideClass/Test/NestedEnum-swift.enum")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10tEstPP"]?.reference.path, "/documentation/SideKit/SideClass/Test/NestedEnum-swift.enum/path")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.reference.path, "/documentation/SideKit/SideClass/Test/nestedEnum-property")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testEE"]?.reference.path, "/documentation/SideKit/SideClass/Test/NestedEnum-enum")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10tEstPP"]?.reference.path, "/documentation/SideKit/SideClass/Test/NestedEnum/path")
         
         XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()"]?.reference.path, "/documentation/SideKit/SideProtocol/func()-6ijsi")
         XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()DefaultImp"]?.reference.path, "/documentation/SideKit/SideProtocol/func()-2dxqn")
@@ -2389,7 +2384,7 @@ let expected = """
 
     func testWarnOnMultipleMarkdownExtensions() throws {
         let fileContent = """
-        # ``MyKit/MyClass/myFunction()``
+        # ``MyKit/myFunction()``
 
         A cool function
 
@@ -2412,7 +2407,7 @@ let expected = """
             ## Topics
 
             ### Articles
-            - ``MyKit/MyClass/myFunction()``
+            - ``MyKit/myFunction()``
             """),
             InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
         ])
@@ -2425,7 +2420,7 @@ let expected = """
         let identifier = "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
         let duplicateMarkdownProblems = context.problems.filter({ $0.diagnostic.identifier == identifier })
         XCTAssertEqual(duplicateMarkdownProblems.count, 2)
-        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.localizedSummary, "Multiple occurrences of \'/documentation/MyKit/MyClass/myFunction()\' found")
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.localizedSummary, "Multiple occurrences of \'/documentation/MyKit/myFunction()\' found")
     }
     
     /// This test verifies that collision nodes and children of collision nodes are correctly
@@ -2450,7 +2445,7 @@ let expected = """
 
             // Add doc extension file for a child of a collision symbol
             try """
-            # ``ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property``
+            # ``ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember``
             fifthTestMember abstract.
             ## Topics
             ### Basics
@@ -2475,7 +2470,7 @@ let expected = """
         XCTAssertTrue(tgNode1.contains(articleReference))
         
         // Fetch the "fifthTestMember" node
-        let reference2 = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property", sourceLanguage: .swift)
+        let reference2 = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember", sourceLanguage: .swift)
         let node2 = try context.entity(with: reference2)
         let symbol2 = try XCTUnwrap(node2.semantic as? Symbol)
         

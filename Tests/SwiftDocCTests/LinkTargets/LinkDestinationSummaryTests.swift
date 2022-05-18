@@ -417,7 +417,7 @@ class ExternalLinkableTests: XCTestCase {
                             summary.referenceURL
                                 .deletingLastPathComponent() // myStringFunction:error:
                                 .deletingLastPathComponent() // Bar
-                                .appendingPathComponent("Foo-c.typealias").absoluteString,
+                                .appendingPathComponent("Foo-typealias").absoluteString,
                         ]
                     )
                 ]
