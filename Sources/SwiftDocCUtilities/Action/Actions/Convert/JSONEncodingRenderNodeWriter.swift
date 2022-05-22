@@ -92,7 +92,7 @@ class JSONEncodingRenderNodeWriter {
         let encoder = RenderJSONEncoder.makeEncoder()
         
         let data = try renderNode.encodeToJSON(with: encoder, renderReferenceCache: renderReferenceCache)
-        try fileManager.createFile(at: renderNodeTargetFileURL, contents: data)
+        try fileManager.createFile(at: renderNodeTargetFileURL, contents: data, options: nil)
         
         guard let indexHTML = transformForStaticHostingIndexHTML else {
             return
