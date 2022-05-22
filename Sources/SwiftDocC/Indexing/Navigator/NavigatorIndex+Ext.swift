@@ -75,6 +75,9 @@ public class FileSystemRenderNodeProvider: RenderNodeProvider {
 }
 
 extension RenderNode {
+    private static let typesThatShouldNotUseNavigatorTitle: Set<NavigatorIndex.PageType> = [
+        .framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType
+    ]
     
     /// Returns a navigator title preferring the fragments inside the metadata, if applicable.
     func navigatorTitle() -> String? {
@@ -83,7 +86,9 @@ extension RenderNode {
         // FIXME: Use `metadata.navigatorTitle` for all Swift symbols (SR-15947).
         if identifier.sourceLanguage == .swift || (metadata.navigatorTitle ?? []).isEmpty {
             let pageType = navigatorPageType()
-            guard ![.framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType].contains(pageType) else { return metadata.title }
+            guard !Self.typesThatShouldNotUseNavigatorTitle.contains(pageType) else {
+                return metadata.title
+            }
             fragments = metadata.fragments
         } else {
             fragments = metadata.navigatorTitle
@@ -96,8 +101,13 @@ extension RenderNode {
     public func navigatorPageType() -> NavigatorIndex.PageType {
         
         // This is a workaround to support plist keys.
-        if metadata.roleHeading?.lowercased() == "property list key" { return  .propertyListKey }
-        else if metadata.roleHeading?.lowercased() == "property list key reference" { return  .propertyListKeyReference }
+        if let roleHeading = metadata.roleHeading?.lowercased() {
+            if roleHeading == "property list key" {
+                return .propertyListKey
+            } else if roleHeading == "property list key reference" {
+                return .propertyListKeyReference
+            }
+        }
         
         switch self.kind {
         case .article:
