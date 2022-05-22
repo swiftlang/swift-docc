@@ -25,13 +25,24 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         case footer = "custom-footer"
     }
     
-    init(targetFolder: URL, bundleRootFolder: URL?, fileManager: FileManagerProtocol, context: DocumentationContext, indexer: ConvertAction.Indexer?, enableCustomTemplates: Bool = false) {
+    init(
+        targetFolder: URL,
+        bundleRootFolder: URL?,
+        fileManager: FileManagerProtocol,
+        context: DocumentationContext,
+        indexer: ConvertAction.Indexer?,
+        enableCustomTemplates: Bool = false,
+        transformForStaticHostingIndexHTML: URL?
+    ) {
         self.targetFolder = targetFolder
         self.bundleRootFolder = bundleRootFolder
         self.fileManager = fileManager
         self.context = context
         self.renderNodeWriter = JSONEncodingRenderNodeWriter(
-            targetFolder: targetFolder, fileManager: fileManager)
+            targetFolder: targetFolder,
+            fileManager: fileManager,
+            transformForStaticHostingIndexHTML: transformForStaticHostingIndexHTML
+        )
         self.indexer = indexer
         self.enableCustomTemplates = enableCustomTemplates
     }
