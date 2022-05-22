@@ -272,6 +272,10 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         }
     }
     
+    func createFile(at url: URL, contents: Data, options: NSData.WritingOptions?) throws {
+        try createFile(at: url, contents: contents)
+    }
+    
     func contents(atPath: String) -> Data? {
         filesLock.lock()
         defer { filesLock.unlock() }
