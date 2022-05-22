@@ -159,7 +159,7 @@ public class NavigatorIndex {
         let information = try environment.openDatabase(named: "information", flags: [])
         self.information = information
         
-        let data = try Data(contentsOf: url.appendingPathComponent("availability.index"))
+        let data = try Data(contentsOf: url.appendingPathComponent("availability.index", isDirectory: false))
         let plistDecoder = PropertyListDecoder()
         let availabilityIndex = try plistDecoder.decode(AvailabilityIndex.self, from: data)
         self.availabilityIndex = availabilityIndex
@@ -170,7 +170,7 @@ public class NavigatorIndex {
         self.pathHasher = PathHasher(rawValue: information.get(type: String.self, forKey: NavigatorIndex.pathHasherKey) ?? "") ?? .fnv1
         
         if readNavigatorTree {
-            self.navigatorTree = try NavigatorTree.read(from: url.appendingPathComponent("navigator.index"), bundleIdentifier: self.bundleIdentifier, interfaceLanguages: availabilityIndex.interfaceLanguages, presentationIdentifier: presentationIdentifier)
+            self.navigatorTree = try NavigatorTree.read(from: url.appendingPathComponent("navigator.index", isDirectory: false), bundleIdentifier: self.bundleIdentifier, interfaceLanguages: availabilityIndex.interfaceLanguages, presentationIdentifier: presentationIdentifier)
         } else {
             self.navigatorTree = NavigatorTree()
         }

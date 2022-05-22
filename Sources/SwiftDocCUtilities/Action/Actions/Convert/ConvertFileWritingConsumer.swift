@@ -70,7 +70,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
                 let assetName = sourceURL.lastPathComponent
                 try fileManager.copyItem(
                     at: sourceURL,
-                    to: destinationFolder.appendingPathComponent(assetName)
+                    to: destinationFolder.appendingPathComponent(assetName, isDirectory: false)
                 )
             }
         }
@@ -178,7 +178,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
     // Injects a <template> tag into the index.html <body> using the contents of
     // the given URL for the provided HTML file
     private func injectCustomTemplate(_ templateURL: URL, identifiedBy id: CustomTemplateIdentifier) throws {
-        let index = targetFolder.appendingPathComponent("index.html")
+        let index = targetFolder.appendingPathComponent("index.html", isDirectory: false)
         guard let indexData = fileManager.contents(atPath: index.path),
               let indexContents = String(data: indexData, encoding: .utf8),
               let templateData = fileManager.contents(atPath: templateURL.path),

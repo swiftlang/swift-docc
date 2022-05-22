@@ -22,7 +22,7 @@ public protocol DirectoryPathOption: ParsableArguments {
 extension DirectoryPathOption {
     /// The provided ``url`` or the "current directory" if the user didn't provide an argument.
     public var urlOrFallback: URL {
-        return url ?? URL(fileURLWithPath: ".")
+        return url ?? URL(fileURLWithPath: ".", isDirectory: true)
     }
 
     public mutating func validate() throws {
