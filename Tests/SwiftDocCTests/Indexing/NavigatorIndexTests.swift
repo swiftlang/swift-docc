@@ -1446,6 +1446,59 @@ Root
             XCTAssertEqual("e47cfd13c4af", pathHasher.hash("/mykit/myclass/myfunc"))
         }
     }
+    
+    func testNormalizedNavigatorIndexIdentifier() throws {
+        let topicReference = ResolvedTopicReference(
+            bundleIdentifier: "org.swift.example",
+            path: "/documentation/path/sub-path",
+            fragment: nil,
+            sourceLanguage: .swift
+        )
+        
+        XCTAssertEqual(
+            topicReference.normalizedNavigatorIndexIdentifier(forLanguage: 0),
+            NavigatorIndex.Identifier(
+                bundleIdentifier:  "org.swift.example",
+                path: "/documentation/path/sub-path",
+                fragment: nil,
+                languageIdentifier: 0
+            )
+        )
+        
+        let topicReferenceWithCapitalization = ResolvedTopicReference(
+            bundleIdentifier: "org.Swift.Example",
+            path: "/documentation/Path/subPath",
+            fragment: nil,
+            sourceLanguage: .swift
+        )
+        
+        XCTAssertEqual(
+            topicReferenceWithCapitalization.normalizedNavigatorIndexIdentifier(forLanguage: 1),
+            NavigatorIndex.Identifier(
+                bundleIdentifier:  "org.swift.example",
+                path: "/documentation/path/subpath",
+                fragment: nil,
+                languageIdentifier: 1
+            )
+        )
+        
+        let topicReferenceWithFragment = ResolvedTopicReference(
+            bundleIdentifier: "org.Swift.Example",
+            path: "/documentation/Path/subPath",
+            fragment: "FRAGMENT",
+            sourceLanguage: .swift
+        )
+        
+        XCTAssertEqual(
+            topicReferenceWithFragment.normalizedNavigatorIndexIdentifier(forLanguage: 1),
+            NavigatorIndex.Identifier(
+                bundleIdentifier:  "org.swift.example",
+                path: "/documentation/path/subpath",
+                fragment: "FRAGMENT",
+                languageIdentifier: 1
+            )
+        )
+    }
 
     func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) throws -> NavigatorIndex {
         let (bundle, context) = try testBundleAndContext(named: testBundleName)
