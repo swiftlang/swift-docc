@@ -301,32 +301,45 @@ public struct ConvertAction: Action, RecreatingContext {
         let temporaryFolder = try createTempFolder(
             with: htmlTemplateDirectory)
         
-        var indexHTMLData: Data?
-
-        // The `template-index.html` is a duplicate version of `index.html` with extra template
-        // tokens that allow for customizing the base-path.
-        // If a base bath is provided we will transform the template using the base path
-        // to produce a replacement index.html file.
-        // After any required transforming has been done the template file will be removed.
-        let templateURL: URL = temporaryFolder.appendingPathComponent(HTMLTemplate.templateFileName.rawValue)
-        if fileManager.fileExists(atPath: templateURL.path) {
-            // If the `transformForStaticHosting` is not set but there is a `hostingBasePath`
-            // then transform the index template
-            if !transformForStaticHosting,
-               let hostingBasePath = hostingBasePath,
-               !hostingBasePath.isEmpty  {
-                indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: temporaryFolder, hostingBasePath: hostingBasePath)
-                let indexURL = temporaryFolder.appendingPathComponent(HTMLTemplate.indexFileName.rawValue)
-                try indexHTMLData!.write(to: indexURL)
-            }
-            
-            try fileManager.removeItem(at: templateURL)
-        }
         
         defer {
             try? fileManager.removeItem(at: temporaryFolder)
         }
 
+        let indexHTML: URL?
+        if let htmlTemplateDirectory = htmlTemplateDirectory {
+            let indexHTMLUrl = temporaryFolder.appendingPathComponent(
+                HTMLTemplate.indexFileName.rawValue,
+                isDirectory: false
+            )
+            indexHTML = indexHTMLUrl
+            
+            let customHostingBasePathProvided = !(hostingBasePath?.isEmpty ?? true)
+            if customHostingBasePathProvided {
+                let data = try StaticHostableTransformer.indexHTMLData(
+                    in: htmlTemplateDirectory,
+                    with: hostingBasePath,
+                    fileManager: fileManager
+                )
+                
+                // A hosting base path was provided which means we need to replace the standard
+                // 'index.html' file with the transformed one.
+                try fileManager.createFile(at: indexHTMLUrl, contents: data)
+            }
+            
+            let indexHTMLTemplateURL = temporaryFolder.appendingPathComponent(
+                HTMLTemplate.templateFileName.rawValue,
+                isDirectory: false
+            )
+            
+            // Delete any existing 'index-template.html' file that
+            // was copied into the temporary output directory with the
+            // HTML template.
+            try? fileManager.removeItem(at: indexHTMLTemplateURL)
+        } else {
+            indexHTML = nil
+        }
+        
         var coverageAction = CoverageAction(
             documentationCoverageOptions: documentationCoverageOptions,
             workingDirectory: temporaryFolder,
@@ -346,7 +359,8 @@ public struct ConvertAction: Action, RecreatingContext {
             fileManager: fileManager,
             context: context,
             indexer: indexer,
-            enableCustomTemplates: experimentalEnableCustomTemplates
+            enableCustomTemplates: experimentalEnableCustomTemplates,
+            transformForStaticHostingIndexHTML: transformForStaticHosting ? indexHTML : nil
         )
 
         let analysisProblems: [Problem]
@@ -382,24 +396,6 @@ public struct ConvertAction: Action, RecreatingContext {
             allProblems.append(contentsOf: indexerProblems)
         }
 
-        // Process Static Hosting as needed.
-        if transformForStaticHosting,
-           let templateDirectory = htmlTemplateDirectory,
-           // If this conversion didn't actually produce documentation, then we expect
-           // the creation of this data provider to fail because there will be no 'data' subdirectory
-           // in the documentation output. (r91790147)
-           let dataProvider = try? LocalFileSystemDataProvider(
-               rootURL: temporaryFolder.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
-           )
-        {
-            if indexHTMLData == nil {
-                indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: templateDirectory, hostingBasePath: hostingBasePath)
-            }
-            
-            let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: temporaryFolder, indexHTMLData: indexHTMLData!)
-            try transformer.transform()
-        }
-        
         // Stop the "total time" metric here. The moveOutput time isn't very interesting to include in the benchmark.
         // New tasks and computations should be added above this line so that they're included in the benchmark.
         benchmark(end: totalTimeMetric)
@@ -422,7 +418,8 @@ public struct ConvertAction: Action, RecreatingContext {
                 bundleRootFolder: rootURL,
                 fileManager: fileManager,
                 context: context,
-                indexer: nil
+                indexer: nil,
+                transformForStaticHostingIndexHTML: nil
             )
 
             try outputConsumer.consume(benchmarks: Benchmark.main)
