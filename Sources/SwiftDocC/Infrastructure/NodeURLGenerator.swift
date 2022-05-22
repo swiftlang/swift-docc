@@ -99,14 +99,37 @@ public struct NodeURLGenerator {
         }
     }
     
+    /// Returns the reference's path in a format that is safe for writing to disk.
+    public static func fileSafeReferencePath(
+        _ reference: ResolvedTopicReference,
+        lowercased: Bool = false
+    ) -> String {
+        guard !reference.path.removingLeadingSlash.isEmpty else {
+            return ""
+        }
+        
+        let safeURL = fileSafeURL(reference.url)
+        let pathRemovingLeadingSlash = safeURL.path.removingLeadingSlash
+        
+        if lowercased {
+            return pathRemovingLeadingSlash.lowercased()
+        } else {
+            return pathRemovingLeadingSlash
+        }
+    }
+    
     /// Returns a URL appropriate for the given reference.
     public func urlForReference(_ reference: ResolvedTopicReference, lowercased: Bool = false) -> URL {
-        if reference.path.removingLeadingSlash.isEmpty {
+        let safePath = Self.fileSafeReferencePath(reference, lowercased: lowercased)
+        return urlForReference(reference, fileSafePath: safePath)
+    }
+    
+    /// Returns a URL appropriate for the given reference and file safe path.
+    public func urlForReference(_ reference: ResolvedTopicReference, fileSafePath safePath: String) -> URL {
+        if safePath.isEmpty {
             // Return the root path for the conversion: /documentation.json
             return baseURL.appendingPathComponent("documentation")
         } else {
-            let safeURL = fileSafeURL(reference.url)
-            let safePath = (lowercased) ? safeURL.path.removingLeadingSlash.lowercased() : safeURL.path.removingLeadingSlash
             let url = baseURL.appendingPathComponent(safePath)
             return url.withFragment(reference.url.fragment)
         }
@@ -119,7 +142,7 @@ public struct NodeURLGenerator {
     /// there might be more complex rules for "safe" paths beyond simply replacing a set of
     /// characters. For example a period is a safe character but when a file path component
     /// starts with a period that might be problematic when hosted on a generic web server.
-    public func fileSafeURL(_ url: URL) -> URL {
+    public static func fileSafeURL(_ url: URL) -> URL {
         // Prepend leading period with a "'" to avoid file names looking like hidden files on web servers
         var isURLModified = false
         let pathComponents = url.pathComponents
@@ -158,5 +181,10 @@ public struct NodeURLGenerator {
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         components.path = newPath
         return components.url!
+    }
+    
+    @available(*, deprecated, message: "Use the static version of 'NodeURLGenerator.fileSafeURL(_:)' instead")
+    public func fileSafeURL(_ url: URL) -> URL {
+        return Self.fileSafeURL(url)
     }
 }

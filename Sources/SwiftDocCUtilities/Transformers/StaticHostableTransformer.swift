@@ -153,18 +153,46 @@ struct StaticHostableTransformer {
 
 extension StaticHostableTransformer {
     
-    /// Transforms an index-template.html file by replacing the template tag with the provided `hostingBasePath`
-    static func transformHTMLTemplate(htmlTemplate: URL, hostingBasePath: String?) throws -> Data {
+    /// Returns the data for the `index.html` file that should be used in the DocC archive
+    /// produced by this conversion.
+    ///
+    /// Takes into account whether or not a custom hosting base path is provided and inserts
+    /// that path into the returned data if necessary.
+    ///
+    /// - Parameters:
+    ///   - htmlTemplateDirectory: The directory containing the `index.html` and `index-template.html`
+    ///     file that should be used.
+    ///   - hostingBasePath: The base path the produced DocC archive will be hosted at.
+    ///   - fileManager: The file manager that should be used for all file operations.
+    static func indexHTMLData(
+        in htmlTemplateDirectory: URL,
+        with hostingBasePath: String?,
+        fileManager: FileManagerProtocol
+    ) throws -> Data {
+        let customHostingBasePathProvided = !(hostingBasePath?.isEmpty ?? true)
         
-        let indexFileName = hostingBasePath != nil ? HTMLTemplate.templateFileName.rawValue : HTMLTemplate.indexFileName.rawValue
-        let indexFileURL = htmlTemplate.appendingPathComponent(indexFileName)
-        var indexHTML = try String(contentsOfFile: indexFileURL.path)
-
-
-        if let hostingBasePath = hostingBasePath {
-
-            var replacementString = hostingBasePath
-
+        let indexHTMLFileName: String
+        if customHostingBasePathProvided {
+            indexHTMLFileName = HTMLTemplate.templateFileName.rawValue
+        } else {
+            indexHTMLFileName = HTMLTemplate.indexFileName.rawValue
+        }
+        
+        let indexHTMLUrl = htmlTemplateDirectory.appendingPathComponent(
+            indexHTMLFileName,
+            isDirectory: false
+        )
+        
+        guard let indexHTMLData = fileManager.contents(atPath: indexHTMLUrl.path),
+              var indexHTML = String(data: indexHTMLData, encoding: .utf8)
+        else {
+            throw TemplateOption.invalidHTMLTemplateError(
+                path: indexHTMLUrl.path,
+                expectedFile: indexHTMLFileName
+            )
+        }
+        
+        if customHostingBasePathProvided, var replacementString = hostingBasePath {
             // We need to ensure that the base path has a leading /
             if !replacementString.hasPrefix("/") {
                 replacementString = "/" + replacementString
