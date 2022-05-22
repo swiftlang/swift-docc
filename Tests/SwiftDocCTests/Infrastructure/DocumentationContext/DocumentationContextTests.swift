@@ -430,6 +430,44 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertThrowsError(try context.resource(with: imageFigure), "Images should be registered (and referred to) by their name, not by their path.")
     }
     
+    func testResourceExists() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        
+        let existingImageReference = ResourceReference(
+            bundleIdentifier: bundle.identifier,
+            path: "introposter"
+        )
+        let nonexistentImageReference = ResourceReference(
+            bundleIdentifier: bundle.identifier,
+            path: "nonexistent-image"
+        )
+        XCTAssertTrue(
+            context.resourceExists(with: existingImageReference),
+            "\(existingImageReference.path) expected in \(bundle.displayName)"
+        )
+        XCTAssertFalse(
+            context.resourceExists(with: nonexistentImageReference),
+            "\(nonexistentImageReference.path) does not exist in \(bundle.displayName)"
+        )
+        
+        let correctImageReference = ResourceReference(
+            bundleIdentifier: bundle.identifier,
+            path: "figure1.jpg"
+        )
+        let incorrectImageReference = ResourceReference(
+            bundleIdentifier: bundle.identifier,
+            path: "images/figure1.jpg"
+        )
+        XCTAssertTrue(
+            context.resourceExists(with: correctImageReference),
+            "\(correctImageReference.path) expected in \(bundle.displayName)"
+        )
+        XCTAssertFalse(
+            context.resourceExists(with: incorrectImageReference),
+            "Images are registered and referenced by name, not path."
+        )
+    }
+    
     func testURLs() throws {
         let exampleDocumentation = Folder(name: "unit-test.docc", content: [
             Folder(name: "Symbols", content: []),
