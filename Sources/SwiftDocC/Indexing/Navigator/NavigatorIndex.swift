@@ -409,12 +409,14 @@ public class NavigatorIndex {
 }
 
 extension ResolvedTopicReference {
-    func navigatorIndexIdentifier(
+    func normalizedNavigatorIndexIdentifier(
         forLanguage languageIdentifier: InterfaceLanguage.ID
     ) -> NavigatorIndex.Identifier {
+        let normalizedPath = NodeURLGenerator.fileSafeReferencePath(self, lowercased: true)
+        
         return NavigatorIndex.Identifier(
-            bundleIdentifier: bundleIdentifier,
-            path: path,
+            bundleIdentifier: bundleIdentifier.lowercased(),
+            path: "/" + normalizedPath,
             fragment: fragment,
             languageIdentifier: languageIdentifier
         )
@@ -586,10 +588,6 @@ extension NavigatorIndex {
                 throw Error.navigatorIndexIsNil
             }
             
-            guard let title = (usePageTitle) ? renderNode.metadata.title : renderNode.navigatorTitle() else {
-                throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title and so can't have a usable entry in the index.")
-            }
-            
             // Process the language
             let interfaceLanguage = renderNode.identifier.sourceLanguage
             let interfaceLanguageID = interfaceLanguage.id.lowercased()
@@ -605,13 +603,20 @@ extension NavigatorIndex {
                 idToLanguage[interfaceLanguageID] = language
             }
 
-            let identifier = renderNode.identifier.navigatorIndexIdentifier(forLanguage: language.mask)
-            guard identifierToNode[identifier] == nil else {
+            let normalizedIdentifier = renderNode
+                .identifier
+                .normalizedNavigatorIndexIdentifier(forLanguage: language.mask)
+            
+            guard identifierToNode[normalizedIdentifier] == nil else {
                 return // skip as item exists already.
             }
             
+            guard let title = (usePageTitle) ? renderNode.metadata.title : renderNode.navigatorTitle() else {
+                throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title and so can't have a usable entry in the index.")
+            }
+            
             // Get the identifier path
-            let identifierPath = NodeURLGenerator().urlForReference(renderNode.identifier, lowercased: true).path
+            let identifierPath = normalizedIdentifier.path
             
             // Store the language inside the availability index.
             navigatorIndex.availabilityIndex.add(language: language)
@@ -688,7 +693,7 @@ extension NavigatorIndex {
                 let fragment = "\(title)#\(index)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
                 
                 let groupIdentifier = Identifier(
-                    bundleIdentifier: identifier.bundleIdentifier,
+                    bundleIdentifier: normalizedIdentifier.bundleIdentifier,
                     path: identifierPath,
                     fragment: fragment,
                     languageIdentifier: language.mask
@@ -737,20 +742,14 @@ extension NavigatorIndex {
                 }
             }
             
-            let normalizedIdentifier = renderNode
-                .identifier
-                .normalizedForNavigation
-                .navigatorIndexIdentifier(forLanguage: language.mask)
-            
             // Keep track of the node
             identifierToNode[normalizedIdentifier] = navigatorNode
             identifierToChildren[normalizedIdentifier] = children
             pendingUncuratedReferences.insert(normalizedIdentifier)
             
             // Track a multiple curated node
-            if multiCuratedUnvisited.contains(normalizedIdentifier) {
+            if multiCuratedUnvisited.remove(normalizedIdentifier) != nil {
                 multiCurated[normalizedIdentifier] = navigatorNode
-                multiCuratedUnvisited.remove(normalizedIdentifier)
             }
             
             // Bump the nodes counter.
@@ -1205,21 +1204,6 @@ fileprivate extension Error {
     }
 }
 
-
-extension ResolvedTopicReference {
-    
-    /// Returns a normalized instance useful to build a navigator index.
-    /// - Note: This logic relies on what `PresentationURLGenerator.presentationURLForReference(_: _:)` does in the last line of code.
-    ///         Changing the logic of this normalization method without fixing the other logic would generate a mismatch and break the navigator index process.
-    var normalizedForNavigation: ResolvedTopicReference {
-        let normalizedPath = NodeURLGenerator().urlForReference(self).path
-        return ResolvedTopicReference(bundleIdentifier: bundleIdentifier.lowercased(),
-                                      path: normalizedPath.lowercased(),
-                                      fragment: fragment,
-                                      sourceLanguages: sourceLanguages)
-    }
-    
-}
 
 extension LMDB.Database {
     enum NodeError: Error {
