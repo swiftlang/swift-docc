@@ -24,7 +24,7 @@ class NodeURLGeneratorTests: XCTestCase {
     
     /// Tests that a list of URLs are not changed by `NodeURLGenerator.fileSafeURL(_:)`
     func testFileNameSafeURLUnchanged() throws {
-        XCTAssertEqual(unchangedURLs.map({ generator.fileSafeURL($0) }), unchangedURLs)
+        XCTAssertEqual(unchangedURLs.map({ NodeURLGenerator.fileSafeURL($0) }), unchangedURLs)
     }
 
     let unsafeInputURLs = [
@@ -41,7 +41,7 @@ class NodeURLGeneratorTests: XCTestCase {
     
     /// Tests that a list of URLs are "safe-ified" successfully
     func testFileNameSafeURLSafeified() throws {
-        XCTAssertEqual(unsafeInputURLs.map({ generator.fileSafeURL($0) }), safeOutputURLs)
+        XCTAssertEqual(unsafeInputURLs.map({ NodeURLGenerator.fileSafeURL($0) }), safeOutputURLs)
     }
     
     /// Tests that baseURL is not "safe-ified" when passed
@@ -102,7 +102,7 @@ class NodeURLGeneratorTests: XCTestCase {
     /// Tests that long path components are trimmed
     func testLongPathComponents() throws {
         for offset in 0..<inputLongPaths.count {
-            XCTAssertEqual(generator.fileSafeURL(URL(fileURLWithPath: inputLongPaths[offset])), URL(fileURLWithPath: outputLongPaths[offset]) )
+            XCTAssertEqual(NodeURLGenerator.fileSafeURL(URL(fileURLWithPath: inputLongPaths[offset])), URL(fileURLWithPath: outputLongPaths[offset]) )
         }
     }
 }
