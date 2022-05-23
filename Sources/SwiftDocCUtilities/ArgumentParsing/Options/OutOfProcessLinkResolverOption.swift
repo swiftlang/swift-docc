@@ -25,7 +25,7 @@ public struct OutOfProcessLinkResolverOption: ParsableArguments {
     /// the environment variable `DOCC_LINK_RESOLVER_EXECUTABLE`.
     var linkResolverExecutableURL: URL? {
         ProcessInfo.processInfo.environment[OutOfProcessLinkResolverOption.environmentVariableKey]
-            .map { URL(fileURLWithPath: $0) }
+            .map { URL(fileURLWithPath: $0, isDirectory: false) }
     }
 
     public mutating func validate() throws {

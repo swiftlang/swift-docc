@@ -61,19 +61,56 @@ public struct NodeURLGenerator {
             switch self {
             case .documentation(let path):
                 // Format: "/documentation/MyKit/MyClass/myFunction(_:)"
-                return Self.documentationFolderURL.appendingPathComponent(urlReadablePath(path.removingLeadingSlash)).path
+                return Self.documentationFolderURL
+                    .appendingPathComponent(
+                        urlReadablePath(path.removingLeadingSlash),
+                        isDirectory: false
+                    )
+                    .path
             case .documentationCuration(let parentPath, let name):
                 // Format: "/documentation/MyKit/MyClass/MyCollection"
-                return Self.rootURL.appendingPathComponent(urlReadablePath(parentPath.removingLeadingSlash)).appendingPathComponent(urlReadablePath(name)).path
+                return Self.rootURL
+                    .appendingPathComponent(
+                        urlReadablePath(parentPath.removingLeadingSlash),
+                        isDirectory: true
+                    )
+                    .appendingPathComponent(
+                        urlReadablePath(name),
+                        isDirectory: false
+                    )
+                    .path
             case .article(let bundleName, let articleName):
                 // Format: "/documentation/MyBundle/MyArticle"
-                return Self.documentationFolderURL.appendingPathComponent(urlReadablePath(bundleName)).appendingPathComponent(urlReadablePath(articleName)).path
+                return Self.documentationFolderURL
+                    .appendingPathComponent(
+                        urlReadablePath(bundleName),
+                        isDirectory: true
+                    )
+                    .appendingPathComponent(
+                        urlReadablePath(articleName),
+                        isDirectory: false
+                    )
+                    .path
             case .technology(let technologyName):
                 // Format: "/tutorials/MyTechnology"
-                return Self.tutorialsFolderURL.appendingPathComponent(urlReadablePath(technologyName)).path
+                return Self.tutorialsFolderURL
+                    .appendingPathComponent(
+                        urlReadablePath(technologyName),
+                        isDirectory: false
+                    )
+                    .path
             case .tutorial(let bundleName, let tutorialName):
                 // Format: "/tutorials/MyBundle/MyTutorial"
-                return Self.tutorialsFolderURL.appendingPathComponent(urlReadablePath(bundleName)).appendingPathComponent(urlReadablePath(tutorialName)).path
+                return Self.tutorialsFolderURL
+                    .appendingPathComponent(
+                        urlReadablePath(bundleName),
+                        isDirectory: true
+                    )
+                    .appendingPathComponent(
+                        urlReadablePath(tutorialName),
+                        isDirectory: false
+                    )
+                    .path
             }
         }
     }
@@ -127,9 +164,9 @@ public struct NodeURLGenerator {
     public func urlForReference(_ reference: ResolvedTopicReference, fileSafePath safePath: String) -> URL {
         if safePath.isEmpty {
             // Return the root path for the conversion: /documentation.json
-            return baseURL.appendingPathComponent("documentation")
+            return baseURL.appendingPathComponent("documentation", isDirectory: false)
         } else {
-            let url = baseURL.appendingPathComponent(safePath)
+            let url = baseURL.appendingPathComponent(safePath, isDirectory: false)
             return url.withFragment(reference.url.fragment)
         }
     }
