@@ -34,7 +34,9 @@ public struct CoverageAction: Action {
 
             let summaryString = try CoverageDataEntry.generateSummary(
                 ofDataAt: workingDirectory.appendingPathComponent(
-                    ConvertFileWritingConsumer.docCoverageFileName),
+                    ConvertFileWritingConsumer.docCoverageFileName,
+                    isDirectory: false
+                ),
                 fileManager: fileManager,
                 shouldGenerateBrief: true,
                 shouldGenerateDetailed: (documentationCoverageOptions.level == .detailed)

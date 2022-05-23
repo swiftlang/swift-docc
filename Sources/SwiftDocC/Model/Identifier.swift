@@ -482,7 +482,10 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
     ///   - parent: The resolved parent reference of the unresolved reference.
     ///   - unresolvedChild: The other unresolved reference.
     public init(parent: ResolvedTopicReference, unresolvedChild: UnresolvedTopicReference) {
-        var components = URLComponents(url: parent.url.appendingPathComponent(unresolvedChild.path), resolvingAgainstBaseURL: false)!
+        var components = URLComponents(
+            url: parent.url.appendingPathComponent(unresolvedChild.path, isDirectory: false),
+            resolvingAgainstBaseURL: false
+        )!
         components.fragment = unresolvedChild.fragment
         self.init(topicURL: ValidatedURL(components: components))
     }
