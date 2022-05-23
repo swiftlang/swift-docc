@@ -40,7 +40,7 @@ extension Docc {
 
         /// The path to the directory that all build output should be placed in.
         public var outputURL: URL {
-            documentationBundle.urlOrFallback.appendingPathComponent("index")
+            documentationBundle.urlOrFallback.appendingPathComponent("index", isDirectory: true)
         }
 
         // MARK: - Execution

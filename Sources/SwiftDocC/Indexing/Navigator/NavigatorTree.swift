@@ -287,7 +287,7 @@ public class NavigatorTree {
     
     /// Read a tree by loading the whole data into disk and then process the content.
     fileprivate static func __readAtomically(from path: String, bundleIdentifier: String? = nil, interfaceLanguageMap: [InterfaceLanguage.ID: InterfaceLanguage], presentationIdentifier: String? = nil) throws -> NavigatorTree {
-        let fileUrl = URL(fileURLWithPath: path)
+        let fileUrl = URL(fileURLWithPath: path, isDirectory: false)
         let data = try Data(contentsOf: fileUrl)
         
         var map = [UInt32: Node]()
