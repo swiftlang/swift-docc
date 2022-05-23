@@ -601,7 +601,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchy = hierarchy
         
-        node.variants = variants(for: documentationNode)
+        // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
+        // advertising the page as "Swift", which is the language DocC assigns to pages in article only pages.
+        // (github.com/apple/swift-docc/issues/240).
+        if let topLevelModule = context.soleRootModuleReference,
+           try! context.entity(with: topLevelModule).kind.isSymbol
+        {
+            node.variants = variants(for: documentationNode)
+        }
         
         if let abstract = article.abstractSection,
             let abstractContent = visitMarkup(abstract.content) as? [RenderInlineContent] {
@@ -1008,7 +1015,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let moduleName = context.moduleName(forModuleReference: symbol.moduleReference)
         
         node.metadata.modulesVariants = VariantCollection(defaultValue:
-            [RenderMetadata.Module(name: moduleName, relatedModules: symbol.bystanderModuleNames)]
+            [RenderMetadata.Module(name: moduleName.displayName, relatedModules: symbol.bystanderModuleNames)]
         )
         
         node.metadata.extendedModuleVariants = VariantCollection<String?>(defaultValue: symbol.extendedModule)
@@ -1031,7 +1038,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
         } ?? .init(defaultValue:
-            defaultAvailability(for: bundle, moduleName: moduleName, currentPlatforms: context.externalMetadata.currentPlatforms)?
+            defaultAvailability(for: bundle, moduleName: moduleName.symbolName, currentPlatforms: context.externalMetadata.currentPlatforms)?
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
         )
