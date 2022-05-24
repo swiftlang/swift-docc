@@ -53,15 +53,15 @@ public class DocumentationSchemeHandler: NSObject {
     public func setData(data: [String: Data]) {
         memoryProvider.removeAllFiles()
         
-        for (key, value) in data {
-            memoryProvider.addFile(path: key, data: value)
+        for (key, symbol) in data {
+            memoryProvider.addFile(path: key, data: symbol)
         }
     }
     
     /// Set the template files of the renderer.
     public func setTemplate(files: [String: Data]) {
-        for (key, value) in files {
-            memoryProvider.addFile(path: key, data: value)
+        for (key, symbol) in files {
+            memoryProvider.addFile(path: key, data: symbol)
         }
     }
     

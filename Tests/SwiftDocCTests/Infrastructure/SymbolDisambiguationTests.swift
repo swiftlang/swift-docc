@@ -247,17 +247,7 @@ class SymbolDisambiguationTests: XCTestCase {
                 name: "SymbolDisambiguationTests",
                 platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: nil)
             ),
-            symbols: [
-                SymbolGraph.Symbol(
-                    identifier: SymbolGraph.Symbol.Identifier(precise: "common-parent-symbol", interfaceLanguage: "swift"),
-                    names: SymbolGraph.Symbol.Names(title: "Title", navigator: nil, subHeading: nil, prose: nil), // names doesn't matter for path disambiguation
-                    pathComponents: ["Something"],
-                    docComment: nil,
-                    accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
-                    kind: SymbolGraph.Symbol.Kind(parsedIdentifier: SymbolGraph.Symbol.KindIdentifier.class, displayName: "Kind Display Name"), // kind display names doesn't matter for path disambiguation
-                    mixins: [:]
-                )
-            ] + swiftSymbols.map {
+            symbols: swiftSymbols.map {
                 SymbolGraph.Symbol(
                     identifier: SymbolGraph.Symbol.Identifier(precise: $0.preciseID, interfaceLanguage: "swift"),
                     names: SymbolGraph.Symbol.Names(title: "Title", navigator: nil, subHeading: nil, prose: nil), // names doesn't matter for path disambiguation
@@ -268,9 +258,7 @@ class SymbolDisambiguationTests: XCTestCase {
                     mixins: [:]
                 )
             },
-            relationships: swiftSymbols.map {
-                SymbolGraph.Relationship(source: $0.preciseID, target: "common-parent-symbol", kind: .memberOf, targetFallback: nil)
-            }
+            relationships: []
         )
         let swiftSymbolGraphPath = URL(fileURLWithPath:"fake-path-for-swift-symbol-graph.symbols.json")
         let unified = try XCTUnwrap(UnifiedSymbolGraph(fromSingleGraph: graph, at: URL(fileURLWithPath: "fake-path-for-swift-symbol-graph")))
@@ -284,17 +272,7 @@ class SymbolDisambiguationTests: XCTestCase {
                 name: "SymbolDisambiguationTests",
                 platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: nil)
             ),
-            symbols: [
-                SymbolGraph.Symbol(
-                    identifier: SymbolGraph.Symbol.Identifier(precise: "common-parent-symbol", interfaceLanguage: "objective-c"),
-                    names: SymbolGraph.Symbol.Names(title: "Title", navigator: nil, subHeading: nil, prose: nil), // names doesn't matter for path disambiguation
-                    pathComponents: ["Something"],
-                    docComment: nil,
-                    accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
-                    kind: SymbolGraph.Symbol.Kind(parsedIdentifier: SymbolGraph.Symbol.KindIdentifier.class, displayName: "Kind Display Name"), // kind display names doesn't matter for path disambiguation
-                    mixins: [:]
-                )
-            ] + objectiveCSymbols.map {
+            symbols: objectiveCSymbols.map {
                 SymbolGraph.Symbol(
                     identifier: SymbolGraph.Symbol.Identifier(precise: $0.preciseID, interfaceLanguage: "objective-c"),
                     names: SymbolGraph.Symbol.Names(title: "Title", navigator: nil, subHeading: nil, prose: nil), // names doesn't matter for path disambiguation
@@ -305,15 +283,13 @@ class SymbolDisambiguationTests: XCTestCase {
                     mixins: [:]
                 )
             },
-            relationships: objectiveCSymbols.map {
-                SymbolGraph.Relationship(source: $0.preciseID, target: "common-parent-symbol", kind: .memberOf, targetFallback: nil)
-            }
+            relationships: []
         )
         let objcSymbolGraphPath = URL(fileURLWithPath: "fake-path-for-objc-symbol-graph.symbols.json")
         unified.mergeGraph(graph: graph2, at: URL(fileURLWithPath: "fake-path-for-swift-objc-graph"))
         
         let uniqueSymbolCount = Set(swiftSymbols.map(\.preciseID) + objectiveCSymbols.map(\.preciseID)).count
-        XCTAssertEqual(unified.symbols.count - 1, uniqueSymbolCount) // Exclude the common class that the other symbols are members of
+        XCTAssertEqual(unified.symbols.count, uniqueSymbolCount)
         
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(

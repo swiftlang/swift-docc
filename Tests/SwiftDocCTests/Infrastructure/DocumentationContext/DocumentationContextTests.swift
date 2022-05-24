@@ -1847,12 +1847,9 @@ let expected = """
             """)
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
-
-        print(context.symbolPathTree.dump())
-        print(context.symbolPathTree.caseInsensitiveDisambiguatedPaths().values.sorted().joined(separator: "\n"))
         
         // Test that collision symbol reference was updated
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-enum", sourceLanguage: .swift)))
         
         // Test that collision symbol child reference was updated
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test/path", sourceLanguage: .swift)))
@@ -2384,7 +2381,7 @@ let expected = """
 
     func testWarnOnMultipleMarkdownExtensions() throws {
         let fileContent = """
-        # ``MyKit/myFunction()``
+        # ``MyKit/MyClass/myFunction()``
 
         A cool function
 
@@ -2407,7 +2404,7 @@ let expected = """
             ## Topics
 
             ### Articles
-            - ``MyKit/myFunction()``
+            - ``MyKit/MyClass/myFunction()``
             """),
             InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
         ])
@@ -2420,7 +2417,7 @@ let expected = """
         let identifier = "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
         let duplicateMarkdownProblems = context.problems.filter({ $0.diagnostic.identifier == identifier })
         XCTAssertEqual(duplicateMarkdownProblems.count, 2)
-        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.localizedSummary, "Multiple occurrences of \'/documentation/MyKit/myFunction()\' found")
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.localizedSummary, "Multiple occurrences of \'/documentation/MyKit/MyClass/myFunction()\' found")
     }
     
     /// This test verifies that collision nodes and children of collision nodes are correctly

@@ -1127,7 +1127,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             var moduleReferences = [String: ResolvedTopicReference]()
             
             /// A tree of the symbol hierarchy as defined by the combined symbol graph.
-            let tree = SymbolPathTree(symbolGraphLoader: symbolGraphLoader)
+            let tree = SymbolPathTree(symbolGraphLoader: symbolGraphLoader, knownDisambiguatedPathComponents: knownDisambiguatedSymbolPathComponents)
                         
             // Build references for all symbols in all of this module's symbol graphs.
             let symbolReferences = self.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, symbolHierarchy: tree, bundle: bundle)
@@ -1926,6 +1926,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                   // Check that the node hasn't got any parents
                   topicGraph.reverseEdges[reference] == nil,
                   // Check that the symbol does have a parent in the symbol graph
+                  node.parent?.symbol != nil,
                   let symbolGraphParentReference = node.parent.map({ symbolsURLHierarchy.toTopicReference($0.identifier, context: self) }),
                   // Fetch the topic graph node matching the symbol graph parent reference
                   let topicGraphParentNode = topicGraph.nodeWithReference(symbolGraphParentReference)

@@ -11,19 +11,14 @@
 import XCTest
 import SymbolKit
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class SymbolPathTreeTests: XCTestCase {
     
-    override func setUpWithError() throws {
-        let (_, context) = try testBundleAndContext(named: "MixedFramework")
-        tree = context.symbolPathTree
-    }
-    override func tearDown() {
-        tree = nil
-    }
-    var tree: SymbolPathTree!
-    
     func testFindingUnambiguousAbsolutePaths() throws {
+        let (_, context) = try testBundleAndContext(named: "MixedFramework")
+        let tree = try XCTUnwrap(context.symbolPathTree)
+        
         try assertFindsPath("/MixedFramework", in: tree, asSymbolID: "MixedFramework")
         
         // @objc public enum MyEnum: Int {
@@ -286,6 +281,9 @@ class SymbolPathTreeTests: XCTestCase {
     }
     
     func testAmbiguousPaths() throws {
+        let (_, context) = try testBundleAndContext(named: "MixedFramework")
+        let tree = try XCTUnwrap(context.symbolPathTree)
+        
         // public enum CollisionsWithDifferentKinds {
         //     case something
         //     public var something: String { "" }
@@ -378,6 +376,9 @@ class SymbolPathTreeTests: XCTestCase {
     }
     
     func testRedundantKindDisambiguation() throws {
+        let (_, context) = try testBundleAndContext(named: "MixedFramework")
+        let tree = try XCTUnwrap(context.symbolPathTree)
+        
         try assertFindsPath("/MixedFramework-module", in: tree, asSymbolID: "MixedFramework")
         
         // @objc public enum MyEnum: Int {
@@ -427,6 +428,9 @@ class SymbolPathTreeTests: XCTestCase {
     }
     
     func testBothRedundantDisambiguations() throws {
+        let (_, context) = try testBundleAndContext(named: "MixedFramework")
+        let tree = try XCTUnwrap(context.symbolPathTree)
+        
         try assertFindsPath("/MixedFramework-module-9r7pl", in: tree, asSymbolID: "MixedFramework")
         
         // @objc public enum MyEnum: Int {
@@ -476,8 +480,10 @@ class SymbolPathTreeTests: XCTestCase {
     }
     
     func testDisambiguatedPaths() throws {
+        let (_, context) = try testBundleAndContext(named: "MixedFramework")
+        let tree = try XCTUnwrap(context.symbolPathTree)
+        
         let paths = tree.caseInsensitiveDisambiguatedPaths()
-        print(tree.dump())
         // @objc public enum MyEnum: Int {
         //     case firstCase
         //     case secondCase
@@ -595,6 +601,9 @@ class SymbolPathTreeTests: XCTestCase {
     }
     
     func testFindingRelativePaths() throws {
+        let (_, context) = try testBundleAndContext(named: "MixedFramework")
+        let tree = try XCTUnwrap(context.symbolPathTree)
+        
         let moduleNode = try tree.findNode(path: "/MixedFramework")
         
         // @objc public enum MyEnum: Int {
@@ -747,6 +756,9 @@ class SymbolPathTreeTests: XCTestCase {
     // TODO: It might be nice to support "almost absolute symbol links" that start top-level in some module but doesn't include the module name in the path
     
     func testPathWithDocumentationPrefix() throws {
+        let (_, context) = try testBundleAndContext(named: "MixedFramework")
+        let tree = try XCTUnwrap(context.symbolPathTree)
+        
         let moduleNode = try tree.findNode(path: "/MixedFramework")
         
         XCTAssertEqual(try tree.find(path: "MyEnum", parent: moduleNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
@@ -760,7 +772,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testTestBundle() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        tree = context.symbolPathTree
+        let tree = try XCTUnwrap(context.symbolPathTree)
         
         // Test finding the parent via the `fromTopicReference` integration shim.
         let parentID = tree.fromTopicReference(ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift), context: context)
@@ -799,7 +811,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testMixedLanguageFramework() throws {
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
-        tree = context.symbolPathTree
+        let tree = try XCTUnwrap(context.symbolPathTree)
         
         try assertFindsPath("MixedLanguageFramework/Bar/myStringFunction(_:)", in: tree, asSymbolID: "c:objc(cs)Bar(cm)myStringFunction:error:")
         try assertFindsPath("MixedLanguageFramework/Bar/myStringFunction:error:", in: tree, asSymbolID: "c:objc(cs)Bar(cm)myStringFunction:error:")
@@ -844,7 +856,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testOverloadedSymbols() throws {
         let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
-        tree = context.symbolPathTree
+        let tree = try XCTUnwrap(context.symbolPathTree)
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         
@@ -858,6 +870,128 @@ class SymbolPathTreeTests: XCTestCase {
                        "/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember")
         XCTAssertEqual(paths["s:8ShapeKit22overloadedparentstructV15fifthTestMemberSivp"],
                        "/ShapeKit/overloadedparentstruct-6a7lx/fifthTestMember")
+    }
+    
+    func testOneSymbolPathsWithKnownDisambiguation() throws {
+        let exampleDocumentation = Folder(name: "MyKit.docc", content: [
+            CopyOfFile(original: Bundle.module.url(forResource: "mykit-one-symbol.symbols", withExtension: "json", subdirectory: "Test Resources")!),
+            InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
+        ])
+        let tempURL = try createTemporaryDirectory()
+        let bundleURL = try exampleDocumentation.write(inside: tempURL)
+
+        do {
+            let (_, _, context) = try loadBundle(from: bundleURL)
+            let tree = try XCTUnwrap(context.symbolPathTree)
+            
+            try assertFindsPath("/MyKit/MyClass/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
+            try assertPathNotFound("/MyKit/MyClass-swift.class/myFunction()", in: tree)
+            try assertPathNotFound("/MyKit/MyClass", in: tree)
+            
+            XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
+                           "/MyKit/MyClass/myFunction()")
+            
+            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.reference.path,
+                           "/documentation/MyKit/MyClass/myFunction()")
+        }
+        
+        do {
+            let (_, _, context) = try loadBundle(from: bundleURL) { context in
+                context.knownDisambiguatedSymbolPathComponents = [
+                    "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
+                ]
+            }
+            let tree = try XCTUnwrap(context.symbolPathTree)
+            
+            try assertFindsPath("/MyKit/MyClass-swift.class/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
+            try assertPathNotFound("/MyKit/MyClass", in: tree)
+            try assertPathNotFound("/MyKit/MyClass-swift.class", in: tree)
+            
+            XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
+                           "/MyKit/MyClass-class/myFunction()")
+            
+            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.reference.path,
+                           "/documentation/MyKit/MyClass-swift.class/myFunction()")
+        }
+        
+        do {
+            let (_, _, context) = try loadBundle(from: bundleURL) { context in
+                context.knownDisambiguatedSymbolPathComponents = [
+                    "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class-hash", "myFunction()"]
+                ]
+            }
+            let tree = try XCTUnwrap(context.symbolPathTree)
+            
+            try assertFindsPath("/MyKit/MyClass-swift.class-hash/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
+            try assertPathNotFound("/MyKit/MyClass", in: tree)
+            try assertPathNotFound("/MyKit/MyClass-swift.class", in: tree)
+            try assertPathNotFound("/MyKit/MyClass-swift.class-hash", in: tree)
+            
+            
+            XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
+                           "/MyKit/MyClass-class-hash/myFunction()")
+            
+            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.reference.path,
+                           "/documentation/MyKit/MyClass-swift.class-hash/myFunction()")
+        }
+    }
+    
+    func testPartialSymbolGraphPaths() throws {
+        let symbolPaths = [
+            ["A", "B", "C"],
+            ["A", "B", "C2"],
+            ["X", "Y"],
+            ["X", "Y2", "Z", "W"],
+        ]
+        let graph = SymbolGraph(
+            metadata: SymbolGraph.Metadata(
+                formatVersion: SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1),
+                generator: "unit-test"
+            ),
+            module: SymbolGraph.Module(
+                name: "Module",
+                platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: nil)
+            ),
+            symbols: symbolPaths.map {
+                SymbolGraph.Symbol(
+                    identifier: SymbolGraph.Symbol.Identifier(precise: $0.joined(separator: "."), interfaceLanguage: "swift"),
+                    names: SymbolGraph.Symbol.Names(title: "Title", navigator: nil, subHeading: nil, prose: nil), // names doesn't matter for path disambiguation
+                    pathComponents: $0,
+                    docComment: nil,
+                    accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
+                    kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .class, displayName: "Kind Display Name"), // kind display names doesn't matter for path disambiguation
+                    mixins: [:]
+                )
+            },
+            relationships: []
+        )
+        let exampleDocumentation = Folder(name: "MyKit.docc", content: [
+            try TextFile(name: "mykit.symbols.json", utf8Content: XCTUnwrap(String(data: JSONEncoder().encode(graph), encoding: .utf8))),
+            InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
+        ])
+        let tempURL = try createTemporaryDirectory()
+        let bundleURL = try exampleDocumentation.write(inside: tempURL)
+        
+        let (_, _, context) = try loadBundle(from: bundleURL)
+        let tree = try XCTUnwrap(context.symbolPathTree)
+        
+        try assertPathNotFound("/Module/A", in: tree)
+        try assertPathNotFound("/Module/A/B", in: tree)
+        try assertFindsPath("/Module/A/B/C", in: tree, asSymbolID: "A.B.C")
+        try assertFindsPath("/Module/A/B/C2", in: tree, asSymbolID: "A.B.C2")
+        
+        try assertPathNotFound("/Module/X", in: tree)
+        try assertFindsPath("/Module/X/Y", in: tree, asSymbolID: "X.Y")
+        try assertPathNotFound("/Module/X/Y2", in: tree)
+        try assertPathNotFound("/Module/X/Y2/Z", in: tree)
+        try assertFindsPath("/Module/X/Y2/Z/W", in: tree, asSymbolID: "X.Y2.Z.W")
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths.keys.sorted(), ["A.B.C", "A.B.C2", "Module", "X.Y", "X.Y2.Z.W"])
+        XCTAssertEqual(paths["A.B.C"], "/Module/A/B/C")
+        XCTAssertEqual(paths["A.B.C2"], "/Module/A/B/C2")
+        XCTAssertEqual(paths["X.Y"], "/Module/X/Y")
+        XCTAssertEqual(paths["X.Y2.Z.W"], "/Module/X/Y2/Z/W")
     }
     
     func testParsingPaths() {
