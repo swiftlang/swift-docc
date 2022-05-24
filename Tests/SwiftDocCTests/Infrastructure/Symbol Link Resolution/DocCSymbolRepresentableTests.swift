@@ -38,7 +38,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             """,
             incorrectLinks: [
                 "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedByCaseStruct/ThirdTestMemberName",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedByCaseStruct/ThirdTestMemberName-swift.enum.case",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedByCaseStruct/ThirdTestMemberName-enum.case",
             ],
             symbolTitle: "thirdtestmembername",
             expectedNumberOfAmbiguousSymbols: 4
@@ -46,8 +46,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testOverloadedParentAndMember() throws {
-        // TODO: This is already unambiguous at the parent level. The test doesn't handle that.
-        try XCTSkipIf(true, "This is already unambiguous at the parent level. The test doesn't handle that.")
+        try XCTSkipIf(true, "This is already unambiguous at the parent level. The `AbsoluteSymbolLink.LinkComponent` doesn't have the information to identify that.")
         
         try performOverloadSymbolDisambiguationTest(
             correctLink: """
@@ -97,8 +96,8 @@ class DocCSymbolRepresentableTests: XCTestCase {
             """,
             incorrectLinks: [
                 "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-961zx",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-swift.property",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-swift.property-961zx",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-property",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-property-961zx",
                 "doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/firstmember",
             ],
             symbolTitle: "firstMember",
@@ -113,8 +112,8 @@ class DocCSymbolRepresentableTests: XCTestCase {
             """,
             incorrectLinks: [
                 "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-961zx",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-swift.property",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-swift.property-961zx",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-property",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol/firstMember-property-961zx",
                 "doc://com.shapes.ShapeKit/documentation/ShapeKit/RegularParent/firstmember",
             ],
             symbolTitle: "firstMember",
