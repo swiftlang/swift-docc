@@ -913,7 +913,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     case let link as Link:
                         if !allowExternalLinks {
                             // For links require documentation scheme
-                            guard let _ = link.destination.flatMap(ValidatedURL.init)?.requiring(scheme: ResolvedTopicReference.urlScheme) else {
+                            guard let _ = link.destination.flatMap(ValidatedURL.init(parsingAndEscapingFragmentIfNeeded:))?.requiring(scheme: ResolvedTopicReference.urlScheme) else {
                                 return nil
                             }
                         }

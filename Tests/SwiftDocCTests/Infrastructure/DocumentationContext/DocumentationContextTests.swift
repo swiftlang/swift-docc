@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -2362,6 +2362,96 @@ let expected = """
         let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("sidekit.md") == true }
         XCTAssertEqual(linkResolutionProblems.count, 1)
         XCTAssertEqual(linkResolutionProblems.first?.diagnostic.identifier, "org.swift.docc.unresolvedTopicReference")
+    }
+    
+    func testResolvingLinksToHeaders() throws {
+        let tempURL = try createTemporaryDirectory()
+
+        let bundleURL = try Folder(name: "module-links.docc", content: [
+            InfoPlist(displayName: "Test", identifier: "com.test.docc"),
+            TextFile(name: "article.md", utf8Content: """
+                # Top Level Article
+                
+                @Metadata {
+                  @TechnologyRoot
+                }
+                
+                A top level article with various headers with special characters
+                
+                ## Overview
+                
+                All these header can be linked to
+                
+                ### Comma: first, second
+                
+                ### Apostrophe: first's second
+                
+                ### Prime: first′s second
+                
+                ### En dash: first–second
+                
+                ### Double hyphen: first--second
+                
+                ### Em dash: first—second
+                                                
+                ### Triple hyphen: first---second
+                
+                ### Emoji: 💻
+                
+                ## Topics
+                
+                ### Links to on-page headings
+                
+                - <doc:article#Comma:-first,-second>
+                - <doc:article#Comma:-first-second>
+                
+                - <doc:article#Apostrophe:-first's-second>
+                - <doc:article#Apostrophe:-firsts-second>
+                
+                - <doc:article#Prime:-first′s-second>
+                - <doc:article#Prime:-firsts-second>
+                
+                - <doc:article#En-dash:-first–second>
+                - <doc:article#En-dash:-first-second>
+                
+                - <doc:article#Double-hyphen:-first--second>
+                - <doc:article#Double-hyphen:-first-second>
+                
+                - <doc:article#Em-dash:-first-second>
+                - <doc:article#Em-dash:-first---second>
+                
+                - <doc:article#Triple-hyphen:-first---second>
+                - <doc:article#Triple-hyphen:-first-second>
+                
+                - <doc:article#Emoji:-💻>
+                - <doc:article#Emoji:-%F0%9F%92%BB>
+                
+                """),
+        ]).write(inside: tempURL)
+
+        let (_, _, context) = try loadBundle(from: bundleURL)
+        
+        let articleReference = try XCTUnwrap(context.knownPages.first)
+        let node = try context.entity(with: articleReference)
+        let article = try XCTUnwrap(node.semantic as? Article)
+        
+        let taskGroup = try XCTUnwrap(article.topics?.taskGroups.first)
+        XCTAssertEqual(taskGroup.heading?.plainText, "Links to on-page headings")
+        XCTAssertEqual(taskGroup.links.count, 16)
+        
+        XCTAssertEqual(node.anchorSections.first?.title, "Overview")
+        for (index, anchor) in node.anchorSections.dropFirst().enumerated() {
+            XCTAssertEqual(taskGroup.links.dropFirst(index * 2 + 0).first?.destination, anchor.reference.absoluteString)
+            XCTAssertEqual(taskGroup.links.dropFirst(index * 2 + 1).first?.destination, anchor.reference.absoluteString)
+        }
+        
+        XCTAssertEqual(node.anchorSections.dropFirst().first?.reference.absoluteString, "doc://com.test.docc/documentation/article#Comma-first-second")
+        XCTAssertEqual(node.anchorSections.dropFirst(2).first?.reference.absoluteString, "doc://com.test.docc/documentation/article#Apostrophe-firsts-second")
+        XCTAssertEqual(node.anchorSections.dropFirst(3).first?.reference.absoluteString, "doc://com.test.docc/documentation/article#Prime-firsts-second")
+        
+        XCTAssertEqual(node.anchorSections.dropLast(2).last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Em-dash-first-second")
+        XCTAssertEqual(node.anchorSections.dropLast().last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Triple-hyphen-first-second")
+        XCTAssertEqual(node.anchorSections.last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Emoji-%F0%9F%92%BB")
     }
 
     func testWarnOnMultipleMarkdownExtensions() throws {

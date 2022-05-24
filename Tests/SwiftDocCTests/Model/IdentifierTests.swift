@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -40,6 +40,28 @@ class IdentifierTests: XCTestCase {
         XCTAssertEqual(urlReadableFragment("Test replacing 'complete' sentence"), "Test-replacing-complete-sentence")
         
         XCTAssertEqual(urlReadableFragment("💻"), "💻")
+    }
+    
+    func testURLReadableFragmentTwice() {
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment("")), "")
+
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" ä ö ")), "ä-ö")
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" asdö  ")), "asdö")
+        
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" ASD  ")), "ASD")
+        
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" ASD ASD  ")), "ASD-ASD")
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" 3äêòNS  ")), "3äêòNS")
+
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment("    Aä    êò  B   CD    ")), "Aä-êò-B-CD")
+
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" This is a 'test' ")), "This-is-a-test")
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" This is a \"test\" ")), "This-is-a-test")
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" This is a `test` ")), "This-is-a-test")
+        
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment("Test replacing 'complete' sentence")), "Test-replacing-complete-sentence")
+        
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment("💻")), "💻")
     }
     
     func testReusingReferences() {
