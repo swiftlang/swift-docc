@@ -16,11 +16,21 @@ class JSONEncodingRenderNodeWriterTests: XCTestCase {
     /// Verifies that if we fail during writing a JSON file the execution
     /// does not deadlock.
     func testThrowingDuringWritingDoesNotDeadlock() throws {
+        let temporaryDirectory = try createTemporaryDirectory()
+        let indexHTML = temporaryDirectory.appendingPathComponent("index.html", isDirectory: false)
+        try "html".write(
+            to: indexHTML,
+            atomically: true,
+            encoding: .utf8
+        )
+        
         // Setting up the URL generator with a lengthy target folder path
         // that is guaranteed to throw if we try writing a file.
         let writer = JSONEncodingRenderNodeWriter(
             targetFolder: URL(fileURLWithPath: String(repeating: "A", count: 4096)),
-            fileManager: FileManager.default)
+            fileManager: FileManager.default,
+            transformForStaticHostingIndexHTML: indexHTML
+        )
         
         let renderNode = RenderNode(identifier: .init(bundleIdentifier: "com.test", path: "/documentation/test", sourceLanguage: .swift), kind: .article)
         

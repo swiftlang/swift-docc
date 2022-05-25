@@ -89,7 +89,11 @@ struct TransformForStaticHostingAction: Action {
         }
         
         // Transform the indexHTML if needed.
-        let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: htmlTemplateDirectory, hostingBasePath: hostingBasePath)
+        let indexHTMLData = try StaticHostableTransformer.indexHTMLData(
+            in: htmlTemplateDirectory,
+            with: hostingBasePath,
+            fileManager: FileManager.default
+        )
 
         // Create a StaticHostableTransformer targeted at the archive data folder
         let dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName))

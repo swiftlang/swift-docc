@@ -72,7 +72,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     }
 
     mutating func visitImage(_ image: Image) -> Markup? {
-        if let reference = image.reference(in: bundle), (try? context.resource(with: reference)) == nil {
+        if let reference = image.reference(in: bundle), !context.resourceExists(with: reference) {
             problems.append(unresolvedResourceProblem(resource: reference, source: source, range: image.range, severity: .warning))
         }
 

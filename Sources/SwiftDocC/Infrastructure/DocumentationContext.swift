@@ -2361,6 +2361,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return try dataProvider.contentsOfURL(resource.url, in: bundle)
     }
     
+    /// Returns true if a resource with the given identifier exists in the registered bundle.
+    public func resourceExists(with identifier: ResourceReference) -> Bool{
+        guard let assetManager = assetManagers[identifier.bundleIdentifier] else {
+            return false
+        }
+        
+        return assetManager.bestKey(forAssetName: identifier.path) != nil
+    }
     
     /**
      Returns an externally resolved node for the given reference.

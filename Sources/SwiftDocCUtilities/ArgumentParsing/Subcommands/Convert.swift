@@ -291,7 +291,7 @@ extension Docc {
                         neededFileName = HTMLTemplate.indexFileName.rawValue
                     }
 
-                    let indexTemplate = templateURL.appendingPathComponent(neededFileName)
+                    let indexTemplate = templateURL.appendingPathComponent(neededFileName, isDirectory: false)
                     if !FileManager.default.fileExists(atPath: indexTemplate.path) {
                         throw TemplateOption.invalidHTMLTemplateError(
                             path: templateURL.path,
