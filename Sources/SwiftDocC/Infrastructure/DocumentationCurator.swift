@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -54,7 +54,7 @@ struct DocumentationCurator {
     /// Tries to resolve a link in the current module/context.
     mutating func referenceFromLink(link: Link, resolved: ResolvedTopicReference, source: URL?) -> ResolvedTopicReference? {
         // Try a link to a topic
-        guard let unresolved = link.destination.flatMap(ValidatedURL.init)?
+        guard let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAuthoredLink:))?
             .requiring(scheme: ResolvedTopicReference.urlScheme)
             .map(UnresolvedTopicReference.init(topicURL:)) else {
                 // Emit a warning regarding the invalid link found in a task group.

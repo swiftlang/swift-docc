@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -291,7 +291,7 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         let newReference = ResolvedTopicReference(
             bundleIdentifier: bundleIdentifier,
             urlReadablePath: newPath,
-            urlReadableFragment: reference.fragment,
+            urlReadableFragment: reference.fragment.map(urlReadableFragment),
             sourceLanguages: sourceLanguages
         )
         return newReference
@@ -553,8 +553,11 @@ func urlReadablePath(_ path: String) -> String {
 }
 
 private extension CharacterSet {
-    static let invalidCharacterSet = CharacterSet(charactersIn: "'\"`")
-    static let whitespaceAndDashes = CharacterSet(charactersIn: "-").union(.whitespaces)
+    static let fragmentCharactersToRemove = CharacterSet.punctuationCharacters // Remove punctuation from fragments
+        .union(CharacterSet(charactersIn: "`"))       // Also consider back-ticks as punctuation. They are used as quotes around symbols or other code.
+        .subtracting(CharacterSet(charactersIn: "-")) // Don't remove hyphens. They are used as a whitespace replacement.
+    static let whitespaceAndDashes = CharacterSet.whitespaces
+        .union(CharacterSet(charactersIn: "-–—")) // hyphen, en dash, em dash
 }
 
 /// Creates a more readable version of a fragment by replacing characters that are not allowed in the fragment of a URL with hyphens.
@@ -572,7 +575,7 @@ func urlReadableFragment(_ fragment: String) -> String {
         .joined(separator: "-")
     
     // Remove invalid characters
-    fragment.unicodeScalars.removeAll(where: CharacterSet.invalidCharacterSet.contains)
+    fragment.unicodeScalars.removeAll(where: CharacterSet.fragmentCharactersToRemove.contains)
     
     return fragment
 }
