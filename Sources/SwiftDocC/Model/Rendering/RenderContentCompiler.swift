@@ -113,7 +113,7 @@ struct RenderContentCompiler: MarkupVisitor {
             }
         }
         
-        guard let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAndEscapingFragmentIfNeeded:))
+        guard let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAuthoredLink:))
             .map({ UnresolvedTopicReference(topicURL: $0) }),
             // Try to resolve in the local context
             case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier) else {

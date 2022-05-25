@@ -44,7 +44,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // Test resolving
-        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc:/TestTutorial")!)
+        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:/TestTutorial")!)
         let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "", sourceLanguage: .swift)
         
         guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
@@ -56,7 +56,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual("/tutorials/Test-Bundle/TestTutorial", resolved.path)
         
         // Test lowercasing of path
-        let unresolvedUppercase = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc:/TESTTUTORIAL")!)
+        let unresolvedUppercase = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:/TESTTUTORIAL")!)
         guard case .failure = context.resolve(.unresolved(unresolvedUppercase), in: parent) else {
             XCTFail("Did incorrectly resolve \(unresolvedUppercase)")
             return
@@ -2749,7 +2749,7 @@ let expected = """
         
         // Try resolving the new resolvable node
         XCTAssertNoThrow(try context.entity(with: resolvableReference))
-        switch context.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc:resolvable-article")!)), in: moduleReference) {
+        switch context.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:resolvable-article")!)), in: moduleReference) {
         case .success: break
         case .failure(_, let errorMessage): XCTFail("Did not resolve resolvable link. Error: \(errorMessage)")
         }
@@ -2902,7 +2902,7 @@ let expected = """
             // Tutorial
             XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
             
-            let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsing: "doc:Test"))))
+            let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsingExact: "doc:Test"))))
             let expected = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
 
             // Resolve from various locations in the bundle
@@ -2941,7 +2941,7 @@ let expected = """
             // Symbol
             XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)])
             
-            let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsing: "doc:Test"))))
+            let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsingExact: "doc:Test"))))
             let expected = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
             
             let symbolReference = try XCTUnwrap(context.symbolIndex["s:12Minimal_docs4TestV"]?.reference)
@@ -3000,7 +3000,7 @@ let expected = """
 
             // Verify we resolve/not resolve non-symbols when calling directly context.resolve(...)
             // with an explicity preference.
-            let unresolvedSymbolRef1 = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "Test")!)
+            let unresolvedSymbolRef1 = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "Test")!)
             switch context.resolve(.unresolved(unresolvedSymbolRef1), in: moduleReference, fromSymbolLink: true) {
                 case .failure(_, let errorMessage): XCTFail("Did not resolve a symbol link to the symbol Test. Error: \(errorMessage)")
                 default: break
@@ -3010,7 +3010,7 @@ let expected = """
                 default: break
             }
 
-            let articleRef1 = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "Article")!)
+            let articleRef1 = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "Article")!)
             switch context.resolve(.unresolved(articleRef1), in: moduleReference, fromSymbolLink: true) {
                 case .success: XCTFail("Did resolve a symbol link to an article")
                 default: break

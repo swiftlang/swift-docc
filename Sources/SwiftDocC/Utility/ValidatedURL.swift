@@ -37,7 +37,9 @@ public struct ValidatedURL: Hashable, Equatable {
     /// > URL with the "someMethodWithFirstValue" scheme which is a valid link but which won't resolve to the intended symbol.
     /// >
     /// > When working with symbol destinations use ``init(symbolPath:)`` instead.
-    init?(parsing string: String) {
+    /// >
+    /// > When working with authored documentation links use ``init(parsingAuthoredLink:)`` instead.
+    init?(parsingExact string: String) {
         guard let components = URLComponents(string: string) else {
             return nil
         }
@@ -53,9 +55,9 @@ public struct ValidatedURL: Hashable, Equatable {
     ///
     /// Use this to parse author provided documentation links that may contain links to on-page subsections. Escaping the fragment allows authors
     /// to write links to subsections using characters that wouldn't otherwise be allowed in a fragment of a URL.
-    init?(parsingAndEscapingFragmentIfNeeded string: String) {
+    init?(parsingAuthoredLink string: String) {
         // Try to parse the string without escaping anything
-        if let parsed = ValidatedURL(parsing: string) {
+        if let parsed = ValidatedURL(parsingExact: string) {
             self.components = parsed.components
             return
         }

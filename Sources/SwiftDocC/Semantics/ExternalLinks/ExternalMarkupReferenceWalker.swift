@@ -37,7 +37,7 @@ struct ExternalMarkupReferenceWalker: MarkupVisitor {
     mutating func visitLink(_ link: Link) {
         // Only process documentation links to external bundles
         guard let destination = link.destination,
-            let url = ValidatedURL(parsing: destination),
+            let url = ValidatedURL(parsingExact: destination),
             url.components.scheme == ResolvedTopicReference.urlScheme,
             let bundleID = url.components.host,
             bundleID != bundle.identifier else {

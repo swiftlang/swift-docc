@@ -879,7 +879,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // At this point we consider all articles with an H1 containing link "documentation extension" - some links might not resolve in the final documentation hierarchy
                 // and we will emit warnings for those later on when we finalize the bundle discovery phase.
                 if let link = result.value.title?.child(at: 0) as? AnyLink,
-                   let url = link.destination.flatMap(ValidatedURL.init(parsing:)) {
+                   let url = link.destination.flatMap(ValidatedURL.init(parsingExact:)) {
                     let reference = result.topicGraphNode.reference
                     
                     let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue

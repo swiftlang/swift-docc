@@ -54,7 +54,7 @@ struct DocumentationCurator {
     /// Tries to resolve a link in the current module/context.
     mutating func referenceFromLink(link: Link, resolved: ResolvedTopicReference, source: URL?) -> ResolvedTopicReference? {
         // Try a link to a topic
-        guard let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAndEscapingFragmentIfNeeded:))?
+        guard let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAuthoredLink:))?
             .requiring(scheme: ResolvedTopicReference.urlScheme)
             .map(UnresolvedTopicReference.init(topicURL:)) else {
                 // Emit a warning regarding the invalid link found in a task group.
