@@ -45,7 +45,7 @@ class TutorialReferenceTests: XCTestCase {
             guard case let .unresolved(unresolved) = tutorialReference.topic else {
                 fatalError()
             }
-            XCTAssertEqual(ValidatedURL(parsing: tutorialLink), unresolved.topicURL)
+            XCTAssertEqual(ValidatedURL(parsingExact: tutorialLink), unresolved.topicURL)
         }
         XCTAssertTrue(problems.isEmpty)
     }

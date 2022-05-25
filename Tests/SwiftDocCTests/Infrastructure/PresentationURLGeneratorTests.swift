@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -31,7 +31,7 @@ class PresentationURLGeneratorTests: XCTestCase {
         
         // Fragment
         let fragment = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: "test URL! FRAGMENT", sourceLanguage: .swift)
-        XCTAssertEqual(generator.presentationURLForReference(fragment).absoluteString, "https://host:1024/webPrefix/path#test-URL!-FRAGMENT")
+        XCTAssertEqual(generator.presentationURLForReference(fragment).absoluteString, "https://host:1024/webPrefix/path#test-URL-FRAGMENT")
     }
     
     func testExternalURLs() throws {
