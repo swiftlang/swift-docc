@@ -1623,12 +1623,16 @@
             },
             "TutorialsMetadata": {
                 "type": "object",
+                "required": ["version"],
                 "properties": {
                     "category": {
                         "type": "string"
                     },
                     "categoryPathComponent": {
                         "type": "string"
+                    },
+                    "version": {
+                        "$ref" : "#/components/schemas/Version"
                     }
                 }
             },
@@ -1871,6 +1875,12 @@
                         "items": {
                             "$ref": "#/components/schemas/VariantOverride"
                         }
+                    },
+                    "versions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VersionPatch"
+                        }
                     }
                 }
             },
@@ -1994,7 +2004,8 @@
             },
             "DocumentationMetadata": {
                 "required": [
-                    "title"
+                    "title",
+                    "version"
                 ],
                 "type": "object",
                 "properties": {
@@ -2054,6 +2065,9 @@
                         "items": {
                             "$ref": "#/components/schemas/SymbolTag"
                         }
+                    },
+                    "version": {
+                        "$ref" : "#/components/schemas/Version"
                     }
                 }
             },
@@ -2853,6 +2867,33 @@
                         "items": {
                             "type": "string"
                         }
+                    }
+                }
+            },
+            "VersionPatch": {
+                "type": "object",
+                "required": ["version"],
+                "properties": {
+                    "version": {
+                        "$ref" : "#/components/schemas/Version"
+                    },
+                    "patch": {
+                        "$ref": "#/components/schemas/JSONPatch"
+                    }
+                }
+            },
+            "Version": {
+                "type": "object",
+                "required": ["identifier", "displayName", "nodeHash"],
+                "properties": {
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "nodeHash": {
+                        "type": "string"
                     }
                 }
             }
