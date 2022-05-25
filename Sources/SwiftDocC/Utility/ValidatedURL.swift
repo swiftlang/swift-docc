@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -37,10 +37,37 @@ public struct ValidatedURL: Hashable, Equatable {
     /// > URL with the "someMethodWithFirstValue" scheme which is a valid link but which won't resolve to the intended symbol.
     /// >
     /// > When working with symbol destinations use ``init(symbolPath:)`` instead.
-    init?(parsing string: String) {
+    /// >
+    /// > When working with authored documentation links use ``init(parsingAuthoredLink:)`` instead.
+    init?(parsingExact string: String) {
         guard let components = URLComponents(string: string) else {
             return nil
         }
+        self.components = components
+    }
+    
+    /// Creates a new RFC 3986 valid URL by using the given string URL and percent escaping the fragment component if necessary.
+    ///
+    /// Will return `nil` when the given `string` is not a valid URL.
+    /// - Parameter string: Source URL address as string.
+    ///
+    /// If the parsed fragment component contains characters not allowed in the fragment of a URL, those characters will be percent encoded.
+    ///
+    /// Use this to parse author provided documentation links that may contain links to on-page subsections. Escaping the fragment allows authors
+    /// to write links to subsections using characters that wouldn't otherwise be allowed in a fragment of a URL.
+    init?(parsingAuthoredLink string: String) {
+        // Try to parse the string without escaping anything
+        if let parsed = ValidatedURL(parsingExact: string) {
+            self.components = parsed.components
+            return
+        }
+        
+        // If the string doesn't contain a fragment and the string couldn't be parsed with `ValidatedURL(parsing:)` above, then consider it invalid.
+        guard let fragmentSeparatorIndex = string.firstIndex(of: "#"), var components = URLComponents(string: String(string[..<fragmentSeparatorIndex])) else {
+            return nil
+        }
+        
+        components.percentEncodedFragment = String(string[fragmentSeparatorIndex...].dropFirst()).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
         self.components = components
     }
     
