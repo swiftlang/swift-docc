@@ -868,7 +868,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // At this point we consider all articles with an H1 containing link "documentation extension" - some links might not resolve in the final documentation hierarchy
                 // and we will emit warnings for those later on when we finalize the bundle discovery phase.
                 if let link = result.value.title?.child(at: 0) as? AnyLink,
-                   let url = link.destination.flatMap(ValidatedURL.init) {
+                   let url = link.destination.flatMap(ValidatedURL.init(parsingExact:)) {
                     let reference = result.topicGraphNode.reference
                     
                     let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
@@ -2090,6 +2090,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return try dataProvider.contentsOfURL(resource.url, in: bundle)
     }
     
+    /// Returns true if a resource with the given identifier exists in the registered bundle.
+    public func resourceExists(with identifier: ResourceReference) -> Bool{
+        guard let assetManager = assetManagers[identifier.bundleIdentifier] else {
+            return false
+        }
+        
+        return assetManager.bestKey(forAssetName: identifier.path) != nil
+    }
     
     /**
      Returns an externally resolved node for the given reference.

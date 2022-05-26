@@ -44,7 +44,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // Test resolving
-        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc:/TestTutorial")!)
+        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:/TestTutorial")!)
         let parent = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "", sourceLanguage: .swift)
         
         guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: parent) else {
@@ -56,7 +56,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertEqual("/tutorials/Test-Bundle/TestTutorial", resolved.path)
         
         // Test lowercasing of path
-        let unresolvedUppercase = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc:/TESTTUTORIAL")!)
+        let unresolvedUppercase = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:/TESTTUTORIAL")!)
         guard case .failure = context.resolve(.unresolved(unresolvedUppercase), in: parent) else {
             XCTFail("Did incorrectly resolve \(unresolvedUppercase)")
             return
@@ -428,6 +428,44 @@ class DocumentationContextTests: XCTestCase {
 
         XCTAssertNoThrow(try context.resource(with: figure), "\(figure.path) expected in \(bundle.displayName)")
         XCTAssertThrowsError(try context.resource(with: imageFigure), "Images should be registered (and referred to) by their name, not by their path.")
+    }
+    
+    func testResourceExists() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        
+        let existingImageReference = ResourceReference(
+            bundleIdentifier: bundle.identifier,
+            path: "introposter"
+        )
+        let nonexistentImageReference = ResourceReference(
+            bundleIdentifier: bundle.identifier,
+            path: "nonexistent-image"
+        )
+        XCTAssertTrue(
+            context.resourceExists(with: existingImageReference),
+            "\(existingImageReference.path) expected in \(bundle.displayName)"
+        )
+        XCTAssertFalse(
+            context.resourceExists(with: nonexistentImageReference),
+            "\(nonexistentImageReference.path) does not exist in \(bundle.displayName)"
+        )
+        
+        let correctImageReference = ResourceReference(
+            bundleIdentifier: bundle.identifier,
+            path: "figure1.jpg"
+        )
+        let incorrectImageReference = ResourceReference(
+            bundleIdentifier: bundle.identifier,
+            path: "images/figure1.jpg"
+        )
+        XCTAssertTrue(
+            context.resourceExists(with: correctImageReference),
+            "\(correctImageReference.path) expected in \(bundle.displayName)"
+        )
+        XCTAssertFalse(
+            context.resourceExists(with: incorrectImageReference),
+            "Images are registered and referenced by name, not path."
+        )
     }
     
     func testURLs() throws {
@@ -2378,6 +2416,96 @@ let expected = """
         XCTAssertEqual(linkResolutionProblems.count, 1)
         XCTAssertEqual(linkResolutionProblems.first?.diagnostic.identifier, "org.swift.docc.unresolvedTopicReference")
     }
+    
+    func testResolvingLinksToHeaders() throws {
+        let tempURL = try createTemporaryDirectory()
+
+        let bundleURL = try Folder(name: "module-links.docc", content: [
+            InfoPlist(displayName: "Test", identifier: "com.test.docc"),
+            TextFile(name: "article.md", utf8Content: """
+                # Top Level Article
+                
+                @Metadata {
+                  @TechnologyRoot
+                }
+                
+                A top level article with various headers with special characters
+                
+                ## Overview
+                
+                All these header can be linked to
+                
+                ### Comma: first, second
+                
+                ### Apostrophe: first's second
+                
+                ### Prime: first′s second
+                
+                ### En dash: first–second
+                
+                ### Double hyphen: first--second
+                
+                ### Em dash: first—second
+                                                
+                ### Triple hyphen: first---second
+                
+                ### Emoji: 💻
+                
+                ## Topics
+                
+                ### Links to on-page headings
+                
+                - <doc:article#Comma:-first,-second>
+                - <doc:article#Comma:-first-second>
+                
+                - <doc:article#Apostrophe:-first's-second>
+                - <doc:article#Apostrophe:-firsts-second>
+                
+                - <doc:article#Prime:-first′s-second>
+                - <doc:article#Prime:-firsts-second>
+                
+                - <doc:article#En-dash:-first–second>
+                - <doc:article#En-dash:-first-second>
+                
+                - <doc:article#Double-hyphen:-first--second>
+                - <doc:article#Double-hyphen:-first-second>
+                
+                - <doc:article#Em-dash:-first-second>
+                - <doc:article#Em-dash:-first---second>
+                
+                - <doc:article#Triple-hyphen:-first---second>
+                - <doc:article#Triple-hyphen:-first-second>
+                
+                - <doc:article#Emoji:-💻>
+                - <doc:article#Emoji:-%F0%9F%92%BB>
+                
+                """),
+        ]).write(inside: tempURL)
+
+        let (_, _, context) = try loadBundle(from: bundleURL)
+        
+        let articleReference = try XCTUnwrap(context.knownPages.first)
+        let node = try context.entity(with: articleReference)
+        let article = try XCTUnwrap(node.semantic as? Article)
+        
+        let taskGroup = try XCTUnwrap(article.topics?.taskGroups.first)
+        XCTAssertEqual(taskGroup.heading?.plainText, "Links to on-page headings")
+        XCTAssertEqual(taskGroup.links.count, 16)
+        
+        XCTAssertEqual(node.anchorSections.first?.title, "Overview")
+        for (index, anchor) in node.anchorSections.dropFirst().enumerated() {
+            XCTAssertEqual(taskGroup.links.dropFirst(index * 2 + 0).first?.destination, anchor.reference.absoluteString)
+            XCTAssertEqual(taskGroup.links.dropFirst(index * 2 + 1).first?.destination, anchor.reference.absoluteString)
+        }
+        
+        XCTAssertEqual(node.anchorSections.dropFirst().first?.reference.absoluteString, "doc://com.test.docc/documentation/article#Comma-first-second")
+        XCTAssertEqual(node.anchorSections.dropFirst(2).first?.reference.absoluteString, "doc://com.test.docc/documentation/article#Apostrophe-firsts-second")
+        XCTAssertEqual(node.anchorSections.dropFirst(3).first?.reference.absoluteString, "doc://com.test.docc/documentation/article#Prime-firsts-second")
+        
+        XCTAssertEqual(node.anchorSections.dropLast(2).last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Em-dash-first-second")
+        XCTAssertEqual(node.anchorSections.dropLast().last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Triple-hyphen-first-second")
+        XCTAssertEqual(node.anchorSections.last?.reference.absoluteString, "doc://com.test.docc/documentation/article#Emoji-%F0%9F%92%BB")
+    }
 
     func testWarnOnMultipleMarkdownExtensions() throws {
         let fileContent = """
@@ -2636,7 +2764,7 @@ let expected = """
         
         // Try resolving the new resolvable node
         XCTAssertNoThrow(try context.entity(with: resolvableReference))
-        switch context.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "doc:resolvable-article")!)), in: moduleReference) {
+        switch context.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:resolvable-article")!)), in: moduleReference) {
         case .success: break
         case .failure(_, let errorMessage): XCTFail("Did not resolve resolvable link. Error: \(errorMessage)")
         }
@@ -2788,7 +2916,7 @@ let expected = """
             // Tutorial
             XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/Test-Bundle/Test", sourceLanguage: .swift)])
             
-            let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsing: "doc:Test"))))
+            let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsingExact: "doc:Test"))))
             let expected = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
 
             // Resolve from various locations in the bundle
@@ -2827,7 +2955,7 @@ let expected = """
             // Symbol
             XCTAssertNotNil(context.documentationCache[ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Minimal_docs/Test", sourceLanguage: .swift)])
             
-            let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsing: "doc:Test"))))
+            let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsingExact: "doc:Test"))))
             let expected = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
             
             let symbolReference = try XCTUnwrap(context.symbolIndex["s:12Minimal_docs4TestV"]?.reference)
@@ -2886,7 +3014,7 @@ let expected = """
 
             // Verify we resolve/not resolve non-symbols when calling directly context.resolve(...)
             // with an explicit preference.
-            let unresolvedSymbolRef1 = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "Test")!)
+            let unresolvedSymbolRef1 = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "Test")!)
             switch context.resolve(.unresolved(unresolvedSymbolRef1), in: moduleReference, fromSymbolLink: true) {
                 case .failure(_, let errorMessage): XCTFail("Did not resolve a symbol link to the symbol Test. Error: \(errorMessage)")
                 default: break
@@ -2896,7 +3024,7 @@ let expected = """
                 default: break
             }
 
-            let articleRef1 = UnresolvedTopicReference(topicURL: ValidatedURL(parsing: "Article")!)
+            let articleRef1 = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "Article")!)
             switch context.resolve(.unresolved(articleRef1), in: moduleReference, fromSymbolLink: true) {
                 case .success: XCTFail("Did resolve a symbol link to an article")
                 default: break

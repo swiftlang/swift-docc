@@ -46,7 +46,7 @@ public struct AbsoluteSymbolLink: CustomStringConvertible {
         // Begin by constructing a validated URL from the given string.
         // Normally symbol links would be validated with `init(symbolPath:)` but since this is expected
         // to be an absolute URL we parse it with `init(parsing:)` instead.
-        guard let validatedURL = ValidatedURL(parsing: string)?.requiring(scheme: ResolvedTopicReference.urlScheme) else {
+        guard let validatedURL = ValidatedURL(parsingExact: string)?.requiring(scheme: ResolvedTopicReference.urlScheme) else {
             return nil
         }
         
