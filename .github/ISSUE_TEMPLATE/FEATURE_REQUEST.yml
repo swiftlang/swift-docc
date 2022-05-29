@@ -1,0 +1,52 @@
+name: Feature Request
+description: A suggestion for a new feature
+labels: [enhancement]
+body:
+- type: markdown
+  attributes:
+    value: "## Thank you for contributing to Swift-DocC!"
+- type: markdown
+  attributes:
+    value: |
+      Before you submit your issue, please replace each textarea
+      below with information about your proposed feature.
+- type: markdown
+  attributes:
+    value: "## Feature Request"
+- type: input
+  attributes:
+    label: Feature Name
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Description
+    description: |
+      A description of your proposed feature.
+      Sample documentation catalogs that show what's missing, 
+      or what new capabilities will be possible, are very helpful! 
+      Provide links to existing issues or external references/discussions, if appropriate.
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Motivation
+    description: A description of the use-case this proposal is trying to serve.
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Importance
+    description: |
+      A description of the importance of this change.
+      Does this feature unlock entirely new use-cases?
+      Or is it possible to achieve the same functionality with existing functionality
+      and this change would improve the user experience?
+  validations:
+    required: false
+- type: textarea
+  attributes:
+    label: Alternatives Considered
+    description: If you considered alternative approaches for this feature, please include them here.
+  validations:
+    required: false
