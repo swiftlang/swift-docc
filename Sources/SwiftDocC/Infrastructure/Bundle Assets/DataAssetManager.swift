@@ -118,13 +118,15 @@ struct DataAssetManager {
         for dataURL in datas {
             let meta = try referenceMetaInformationForDataURL(dataURL, dataProvider: dataProvider, bundle: documentationBundle)
 
+            let referenceURL = URL(fileURLWithPath: meta.reference, isDirectory: false)
+            
             // Store the image with given scale information and display scale.
-            let name = URL(fileURLWithPath: meta.reference).lastPathComponent
+            let name = referenceURL.lastPathComponent
             storage[name, default: DataAsset()]
                 .register(dataURL, with: meta.traits)
             
             if name.contains(".") {
-                let nameNoExtension = URL(fileURLWithPath: name).deletingPathExtension().lastPathComponent
+                let nameNoExtension = referenceURL.deletingPathExtension().lastPathComponent
                 fuzzyKeyIndex[nameNoExtension] = name
             }
         }

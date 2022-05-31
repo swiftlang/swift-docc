@@ -104,7 +104,7 @@ public struct DocumentationNode {
                 // so we can index all anchors found in the bundle for link resolution.
                 if let heading = child as? Heading, heading.level > 1, heading.level < 4 {
                     anchorSections.append(
-                        AnchorSection(reference: reference.withFragment(urlReadableFragment(heading.plainText)), title: heading.plainText)
+                        AnchorSection(reference: reference.withFragment(heading.plainText), title: heading.plainText)
                     )
                 }
             }

@@ -61,6 +61,16 @@ protocol FileManagerProtocol {
     ///
     /// - Throws: If the file couldn't be created with the specified contents.
     func createFile(at: URL, contents: Data) throws
+    
+    /// Creates a file with the given contents at the given url with the specified
+    /// writing options.
+    ///
+    /// - Parameters:
+    ///   - at: The location to create the file
+    ///   - contents: The data to write to the file.
+    ///   - options: Options for writing the data. Provide `nil` to use the default
+    ///              writing options of the file manager.
+    func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws
 }
 
 extension FileManagerProtocol {
@@ -81,4 +91,11 @@ extension FileManager: FileManagerProtocol {
         try contents.write(to: location, options: .atomic)
     }
     
+    func createFile(at location: URL, contents: Data, options writingOptions: NSData.WritingOptions?) throws {
+        if let writingOptions = writingOptions {
+            try contents.write(to: location, options: writingOptions)
+        } else {
+            try contents.write(to: location)
+        }
+    }
 }
