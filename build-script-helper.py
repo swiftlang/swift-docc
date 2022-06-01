@@ -93,8 +93,6 @@ def run(args):
       printerr('Executing: %s' % ' '.join(e.cmd))
       sys.exit(1)
 
-  output_dir = os.path.realpath(os.path.join(args.build_dir, args.configuration))
-
   if should_run_action('generate-xcodeproj', args.build_actions):
     print("** Generating Xcode project for %s **" % package_name)
     try:
