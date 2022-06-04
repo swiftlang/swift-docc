@@ -311,8 +311,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                         }
                     }
                 } catch {
-                    results.append(.init(description: error.localizedDescription, source: source))
-                    diagnosticEngine.emit(.init(description: error.localizedDescription, source: source))
+                    recordProblem(from: error, in: &results, withIdentifier: "render-node")
                 }
             }
         }
@@ -327,8 +326,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         do {
             try outputConsumer.consume(assetsInBundle: bundle)
         } catch {
-            conversionProblems.append(.init(description: error.localizedDescription, source: nil))
-            diagnosticEngine.emit(.init(description: error.localizedDescription, source: nil))
+            recordProblem(from: error, in: &conversionProblems, withIdentifier: "assets")
         }
         
         // Write various metadata
@@ -338,8 +336,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                 try outputConsumer.consume(indexingRecords: indexingRecords)
                 try outputConsumer.consume(assets: assets)
             } catch {
-                conversionProblems.append(.init(description: error.localizedDescription, source: nil))
-                diagnosticEngine.emit(.init(description: error.localizedDescription, source: nil))
+                recordProblem(from: error, in: &conversionProblems, withIdentifier: "metadata")
             }
         }
         
@@ -347,8 +344,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             do {
                 try outputConsumer.consume(problems: context.problems + conversionProblems)
             } catch {
-                conversionProblems.append(.init(description: error.localizedDescription, source: nil))
-                diagnosticEngine.emit(.init(description: error.localizedDescription, source: nil))
+                recordProblem(from: error, in: &conversionProblems, withIdentifier: "problems")
             }
         }
 
@@ -357,9 +353,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             do {
                 try outputConsumer.consume(documentationCoverageInfo: coverageInfo)
             } catch {
-                let problem = Problem(description: error.localizedDescription, source: nil)
-                conversionProblems.append(problem)
-                diagnosticEngine.emit(problem)
+                recordProblem(from: error, in: &conversionProblems, withIdentifier: "coverage")
             }
         case .none:
             break
@@ -412,6 +406,34 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         return isDocumentPathToConvert || isExternalIDToConvert
     }
     
+    /// Record a problem from the given error in the given problem array.
+    ///
+    /// Creates a ``Problem`` from the given `Error` and identifier, emits it to the
+    /// ``DocumentationConverter``'s ``DiagnosticEngine``, and appends it to the given
+    /// problem array.
+    ///
+    /// - Parameters:
+    ///   - error: The error that describes the problem.
+    ///   - problems: The array that the created problem should be appended to.
+    ///   - identifier: A unique identifier the problem.
+    private func recordProblem(
+        from error: Swift.Error,
+        in problems: inout [Problem],
+        withIdentifier identifier: String
+    ) {
+        let singleDiagnostic = Diagnostic(
+            source: nil,
+            severity: .error,
+            range: nil,
+            identifier: "org.swift.docc.documentation-converter.\(identifier)",
+            summary: error.localizedDescription
+        )
+        let problem = Problem(diagnostic: singleDiagnostic, possibleSolutions: [])
+        
+        diagnosticEngine.emit(problem)
+        problems.append(problem)
+    }
+    
     enum Error: DescribedError {
         case doesNotContainBundle(url: URL)
         
@@ -425,23 +447,5 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                     """
             }
         }
-    }
-}
-
-private extension Problem {
-    /// Creates a new problem with the given description and documentation source location.
-    ///
-    /// Use this to provide a user-friendly description of an error,
-    /// along with a direct reference to the source file and line number where you call this initializer.
-    ///
-    /// - Parameters:
-    ///   - description: A brief description of the problem.
-    ///   - source: The URL for the documentation file that caused this problem, if any.
-    ///   - file: The source file where you call this initializer.
-    init(description: String, source: URL?, file: String = #file) {
-        let fileName = URL(fileURLWithPath: file).deletingPathExtension().lastPathComponent
-        
-        let singleDiagnostic = Diagnostic(source: source, severity: .error, range: nil, identifier: "org.swift.docc.\(fileName)", summary: description)
-        self.init(diagnostic: singleDiagnostic, possibleSolutions: [])
     }
 }
