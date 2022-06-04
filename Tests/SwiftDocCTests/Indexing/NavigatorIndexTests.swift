@@ -349,7 +349,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
         
-        // Create an index 10 times to ensure we have not undeterministic behavior across builds
+        // Create an index 10 times to ensure we have not indeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
@@ -531,7 +531,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
         
-        // Create an index 10 times to ensure we have not undeterministic behavior across builds
+        // Create an index 10 times to ensure we have not indeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, usePageTitle: true)
@@ -580,7 +580,7 @@ Root
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         var results = Set<String>()
         
-        // Create an index 10 times to ensure we have not undeterministic behavior across builds
+        // Create an index 10 times to ensure we have not indeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, writePathsOnDisk: false)
@@ -659,7 +659,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
         
-        // Create an index 10 times to ensure we have no undeterministic behavior across builds
+        // Create an index 10 times to ensure we have no indeterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)

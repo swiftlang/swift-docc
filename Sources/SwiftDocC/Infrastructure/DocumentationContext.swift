@@ -1116,9 +1116,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameter bundle: The bundle to load symbol graph files from.
     /// - Returns: A pair of the references to all loaded modules and the hierarchy of all the loaded symbol's references.
-    private func registerSymbols(from bundle: DocumentationBundle, symbolGraphLoader: SymbolGraphLoader) throws -> (moduleReferences: Set<ResolvedTopicReference>, urlHierarchy: SymbolPathTree) {
+    private func registerSymbols(from bundle: DocumentationBundle, symbolGraphLoader: SymbolGraphLoader) throws -> Set<ResolvedTopicReference> {
         // Making sure that we correctly let decoding memory get released, do not remove the autorelease pool.
-        return try autoreleasepool { () -> (Set<ResolvedTopicReference>, SymbolPathTree) in
+        return try autoreleasepool { () -> Set<ResolvedTopicReference> in
             /// We need only unique relationships so we'll collect them in a set.
             var combinedRelationships = Set<SymbolGraph.Relationship>()
             /// Collect symbols from all symbol graphs.
@@ -1126,11 +1126,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             var moduleReferences = [String: ResolvedTopicReference]()
             
-            /// A tree of the symbol hierarchy as defined by the combined symbol graph.
-            let tree = SymbolPathTree(symbolGraphLoader: symbolGraphLoader, knownDisambiguatedPathComponents: knownDisambiguatedSymbolPathComponents)
-                        
             // Build references for all symbols in all of this module's symbol graphs.
-            let symbolReferences = self.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, symbolHierarchy: tree, bundle: bundle)
+            let symbolReferences = self.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, symbolHierarchy: symbolPathTree, bundle: bundle)
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
             symbolIndex.reserveCapacity(symbolReferences.count)
@@ -1279,7 +1276,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 registerReference(reference)
             }
 
-            return (moduleReferences: Set(moduleReferences.values), urlHierarchy: tree)
+            return Set(moduleReferences.values)
         }
     }
     
@@ -1528,8 +1525,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             topicGraph.addNode(graphNode)
             documentationCache[reference] = documentation
             
+            let filename = article.source.deletingPathExtension().lastPathComponent
+            let articleID = symbolPathTree.addTopLevelNonSymbol(name: filename, type: "article")
+            nonSymbolTreeLookup[articleID] = article.topicGraphNode.reference
             for anchor in documentation.anchorSections {
-                nodeAnchorSections[anchor.reference] = anchor
+                let anchorID = symbolPathTree.addNonSymbolChild(parent: articleID, name: anchor.reference.fragment!, type: "anchor")
+                nonSymbolTreeLookup[anchorID] = anchor.reference // For link resolution
+                nodeAnchorSections[anchor.reference] = anchor    // For rendering
             }
             
             // Remove the article from the context
@@ -1567,9 +1569,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         articles.map { article in
             guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(
                 for: article,
-                
-                // Articles are available in the same languages the only root module is available in. If there is more
-                // than one module, we cannot determine what languages it's available in and default to Swift.
+                // Articles are available in the same languages the only root module is available in.
+                // If there is more than one module, we cannot determine what languages it's available in and default to Swift.
                 availableSourceLanguages: soleRootModuleReference.map { sourceLanguages(for: $0) },
                 kind: .article,
                 in: bundle
@@ -1584,13 +1585,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let graphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: article.source), title: title)
             topicGraph.addNode(graphNode)
             
-            for anchor in documentation.anchorSections {
-                nodeAnchorSections[anchor.reference] = anchor
-            }
-            
             var article = article
             // Update the article's topic graph node with the one we just added to the topic graph.
             article.topicGraphNode = graphNode
+            
+            let filename = article.source.deletingPathExtension().lastPathComponent
+            let articleID = symbolPathTree.addArticle(name: filename)
+            nonSymbolTreeLookup[articleID] = article.topicGraphNode.reference
+            for anchor in documentation.anchorSections {
+                let anchorID = symbolPathTree.addNonSymbolChild(parent: articleID, name: anchor.reference.fragment!, type: "anchor")
+                nonSymbolTreeLookup[anchorID] = anchor.reference // For link resolution
+                nodeAnchorSections[anchor.reference] = anchor    // For rendering
+            }
+            
             return article
         }
     }
@@ -1715,11 +1722,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         // Load all bundle symbol graphs into the loader.
         var symbolGraphLoader: SymbolGraphLoader!
+        var symbolsURLHierarchy: SymbolPathTree!
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             symbolGraphLoader = SymbolGraphLoader(bundle: bundle, dataProvider: self.dataProvider)
             do {
                 try symbolGraphLoader.loadAll()
+                symbolsURLHierarchy = SymbolPathTree(symbolGraphLoader: symbolGraphLoader, bundleName: urlReadablePath(bundle.displayName), knownDisambiguatedPathComponents: knownDisambiguatedSymbolPathComponents)
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -1776,12 +1785,70 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let (technologies, tutorials, tutorialArticles, allArticles) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
 
+        symbolPathTree = symbolsURLHierarchy
+        
+        var tutorialReferenceLookup = [ResolvedTopicReference: ResolvedIdentifier]()
+        tutorialReferenceLookup.reserveCapacity(tutorials.count + tutorialArticles.count)
+        
+        for tutorial in tutorials {
+            let reference = tutorial.topicGraphNode.reference
+            let tutorialID = symbolPathTree.addTutorial(name: urlReadablePath(tutorial.source.deletingPathExtension().lastPathComponent))
+            nonSymbolTreeLookup[tutorialID] = reference
+            tutorialReferenceLookup[reference] = tutorialID
+            
+            for landmark in tutorial.value.landmarks {
+                let landmarkID = symbolPathTree.addNonSymbolChild(parent: tutorialID, name: urlReadableFragment(landmark.title), type: "landmark")
+                nonSymbolTreeLookup[landmarkID] = reference.withFragment(landmark.title)
+            }
+        }
+        
+        for article in tutorialArticles {
+            let reference = article.topicGraphNode.reference
+            let tutorialID = symbolPathTree.addTutorial(name: urlReadablePath(article.source.deletingPathExtension().lastPathComponent))
+            nonSymbolTreeLookup[tutorialID] = reference
+            tutorialReferenceLookup[reference] = tutorialID
+            
+            for landmark in article.value.landmarks {
+                let landmarkID = symbolPathTree.addNonSymbolChild(parent: tutorialID, name: urlReadableFragment(landmark.title), type: "landmark")
+                nonSymbolTreeLookup[landmarkID] = reference.withFragment(landmark.title)
+            }
+        }
+                
+        for technology in technologies {
+            let reference = technology.topicGraphNode.reference
+
+            let technologyID = symbolPathTree.addTechnology(name: urlReadablePath(technology.source.deletingPathExtension().lastPathComponent))
+            nonSymbolTreeLookup[technologyID] = reference
+            
+            var anonymousVolumeID: ResolvedIdentifier?
+            for volume in technology.value.volumes {
+                if anonymousVolumeID == nil, volume.name == nil {
+                    anonymousVolumeID = symbolPathTree.addNonSymbolChild(parent: technologyID, name: "$volume", type: "volume")
+                    nonSymbolTreeLookup[anonymousVolumeID!] = reference.appendingPath("$volume")
+                }
+                
+                let chapterParentID: ResolvedIdentifier
+                let chapterParentReference: ResolvedTopicReference
+                if let name = volume.name {
+                    chapterParentID = symbolPathTree.addNonSymbolChild(parent: technologyID, name: name, type: "volume")
+                    chapterParentReference = reference.appendingPath(name)
+                    nonSymbolTreeLookup[chapterParentID] = chapterParentReference
+                } else {
+                    chapterParentID = technologyID
+                    chapterParentReference = reference
+                }
+                
+                for chapter in volume.chapters {
+                    let chapterID = symbolPathTree.addNonSymbolChild(parent: technologyID, name: chapter.name, type: "volume")
+                    nonSymbolTreeLookup[chapterID] = chapterParentReference.appendingPath(chapter.name)
+                }
+            }
+        }
+        
         let rootPages = registerRootPages(from: rootPageArticles, in: bundle)
-        let (moduleReferences, symbolsURLHierarchy) = try registerSymbols(from: bundle, symbolGraphLoader: symbolGraphLoader)
+        let moduleReferences = try registerSymbols(from: bundle, symbolGraphLoader: symbolGraphLoader)
         // We don't need to keep the loader in memory after we've registered all symbols.
         symbolGraphLoader = nil
-        
-        symbolPathTree = symbolsURLHierarchy
         
         try shouldContinueRegistration()
         
@@ -1840,6 +1907,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         // Emit warnings for any remaining uncurated files.
         emitWarningsForUncuratedTopics()
+        
+        for (id, node) in symbolPathTree.lookup {
+            guard let symbol = node.symbol else { continue }
+            let docNode = symbolIndex[symbol.identifier.precise]!
+            for anchor in docNode.anchorSections {
+                let identifier = symbolPathTree.addNonSymbolChild(parent: id, name: anchor.reference.fragment!, type: "anchor")
+                nonSymbolTreeLookup[identifier] = anchor.reference
+            }
+        }
         
         // Fifth, resolve links in nodes that are added solely via curation
         try preResolveExternalLinks(references: Array(allCuratedReferences), bundle: bundle)
@@ -1966,7 +2042,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Start crawling at top-level symbols and decent the hierarchy following custom curations,
         // finally curate the top-level symbols under the module. We do this to account for the fact
         // top-level types aren't initially children of the module.
-        let topLevelModuleReferences = tree.topLevelSymbols().map { tree.toTopicReference($0, context: self) }  + rootModules
+        let topLevelModuleReferences = tree.topLevelSymbols().map { tree.toTopicReference($0, context: self) } + rootModules
         
         // Crawl hierarchy under a root page for custom curations
         let rootPageReferences = rootPages.map(\.topicGraphNode.reference)
@@ -2065,6 +2141,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             topicGraph.reverseEdges[reference]?.removeAll(where: { $0.bundleIdentifier == bundle.identifier })
             topicGraph.nodes[reference] = nil
         }
+        
+        // TODO: Remove components from symbol path tree
+        symbolPathTree = nil
     }
 
     // MARK: - Getting documentation relationships
@@ -2308,81 +2387,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
             }
             
-            // Check if the unresolved reference is an article or tutorial content
-            if !isCurrentlyResolvingSymbolLink {
-                func attemptToResolve(_ reference: ResolvedTopicReference) -> TopicReferenceResolutionResult? {
-                    if topicGraph.nodes.keys.contains(reference) {
-                        cacheReference(reference, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
-                        return .success(reference)
-                    } else if reference.fragment != nil, nodeAnchorSections.keys.contains(reference) {
-                        return .success(reference)
-                    } else {
-                        return nil
-                    }
-                }
-                
-                // 1. Check if reference is already resolved but not found in the cache
-                let alreadyResolved = ResolvedTopicReference(
-                    bundleIdentifier: parent.bundleIdentifier,
-                    path: unresolvedReference.path.prependingLeadingSlash,
-                    fragment: unresolvedReference.topicURL.components.fragment,
-                    sourceLanguages: parent.sourceLanguages
-                )
-                if let resolved = attemptToResolve(alreadyResolved) {
-                    return resolved
-                }
-
-                // 2. Check if resolvable in any of the root non-symbol contexts
-                guard let currentBundle = bundle(identifier: parent.bundleIdentifier) else {
-                    return .failure(unresolvedReference, errorMessage: "No bundle matches parent reference.")
-                }
-                
-                // First look up articles path
-                let articleReference = currentBundle.articlesDocumentationRootReference.appendingPathOfReference(unresolvedReference)
-                if let resolved = attemptToResolve(articleReference) {
-                    return resolved
-                }
-                
-                // Then technology tutorials root path (for individual tutorial pages)
-                let tutorialReference = currentBundle.technologyTutorialsRootReference.appendingPathOfReference(unresolvedReference)
-                if let resolved = attemptToResolve(tutorialReference) {
-                    return resolved
-                }
-                
-                // Then tutorials root path (for tutorial table of contents pages)
-                let tutorialRootReference = currentBundle.tutorialsRootReference.appendingPathOfReference(unresolvedReference)
-                if let resolved = attemptToResolve(tutorialRootReference) {
-                    return resolved
-                }
-            }
-            
-            func handleSymbolLinkResolutionError(_ error: SymbolPathTree.Error) -> TopicReferenceResolutionResult {
-                switch error {
-                case .partialResult(let partialResultID, let remaining, let available):
-                    let partialReference = symbolPathTree.toTopicReference(partialResultID, context: self)
-                    // The automatically added protocol implementation sections exist in the topic graph but don't represent symbols so they're not in the symbol path tree.
-                    let maybeResolved = ResolvedTopicReference(
-                        bundleIdentifier: partialReference.bundleIdentifier,
-                        path: "\(partialReference.path)/\(remaining)" ,
-                        fragment: unresolvedReference.topicURL.components.fragment,
-                        sourceLanguages: partialReference.sourceLanguages
-                    )
-                    if topicGraph.nodes.keys.contains(maybeResolved) {
-                        cacheReference(maybeResolved, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
-                        return .success(maybeResolved)
-                    }
-                    return .failure(unresolvedReference, errorMessage: "Symbol at \(String(partialReference.path.dropFirst("/documentation".count)).singleQuoted) can't resolve \(remaining.singleQuoted). Available children: \(available.joined(separator: ", ")).")
-                    
-                case .notFound:
-                    return .failure(unresolvedReference, errorMessage: "No local documentation matches this reference.")
-                    
-                case .lookupCollision(let partialResultID, let collisions):
-                    let partialReference = symbolPathTree.toTopicReference(partialResultID, context: self)
-                    let collisionDescription = collisions.map { "Add \($0.disambiguation.singleQuoted) to refer to \($0.value.names.title.singleQuoted)"}.sorted()
-                    return .failure(unresolvedReference, errorMessage: "Reference is ambiguous at \(String(partialReference.path.dropFirst("/documentation".count)).singleQuoted): \(collisionDescription.joined(separator: ". ")).")
-                }
-            }
-            
             do {
                 if let bundleID = unresolvedReference.bundleIdentifier,
                    !registeredBundles.contains(where: { bundle in
@@ -2398,17 +2402,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     }
                 }
                 
-                let parentID = symbolPathTree.fromTopicReference(parent, context: self)
-                let found = try symbolPathTree.findNode(path: unresolvedReference.path, parent: parentID)
-                let foundReference = symbolPathTree.toTopicReference(found.identifier, context: self)
-                
-                // Check if the unresolved reference is for a heading on the found symbol.
-                if let fragment = unresolvedReference.fragment {
-                    let subSectionReference = foundReference.withFragment(fragment)
-                    return nodeAnchorSections.keys.contains(subSectionReference)
-                    ? .success(subSectionReference)
-                    : .failure(unresolvedReference, errorMessage: "No subsection matches \(fragment) in \(foundReference.path).")
+                if symbolPathTree == nil {
+                    // TODO: Find a proper way to rebuild the symbol path tree after unregistering a documentation bundle.
+                    return .failure(unresolvedReference, errorMessage: "Context has been emptied")
                 }
+                
+                let parentID = symbolPathTree.fromTopicReference(parent, context: self)
+                let found = try symbolPathTree.find(path: unresolvedReference.path + (unresolvedReference.fragment.map { "#\(urlReadableFragment($0))" } ?? ""), parent: parentID, prioritizeSymbols: isCurrentlyResolvingSymbolLink)
+                let foundReference = symbolPathTree.toTopicReference(found, context: self)
                 
                 cacheReference(foundReference, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
                 return .success(foundReference)
@@ -2419,7 +2420,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                       let knownBundleIdentifier = registeredBundles.first(where: { $0.identifier == referenceBundleIdentifier || urlReadablePath($0.displayName) == referenceBundleIdentifier })?.identifier,
                       let fallbackResolver = fallbackReferenceResolvers[knownBundleIdentifier]
                 else {
-                    return handleSymbolLinkResolutionError(error)
+                    return .failure(unresolvedReference, errorMessage: error.errorMessage(context: self))
                 }
                 
                 // Legacy code path for fallback resolvers
@@ -2485,7 +2486,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     }
                 }
                 // Give up: there is no local or external document for this reference.
-                return handleSymbolLinkResolutionError(error)
+                return .failure(unresolvedReference, errorMessage: error.errorMessage(context: self))
             } catch {
                 fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
             }
@@ -2497,6 +2498,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     var symbolPathTree: SymbolPathTree!
+    var nonSymbolTreeLookup: [ResolvedIdentifier: ResolvedTopicReference] = [:]
     
     /// Update the asset with a new value given the assets name and the topic it's referenced in.
     ///

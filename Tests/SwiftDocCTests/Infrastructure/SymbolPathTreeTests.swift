@@ -604,7 +604,7 @@ class SymbolPathTreeTests: XCTestCase {
         let (_, context) = try testBundleAndContext(named: "MixedFramework")
         let tree = try XCTUnwrap(context.symbolPathTree)
         
-        let moduleNode = try tree.findNode(path: "/MixedFramework")
+        let moduleID = try tree.find(path: "/MixedFramework", prioritizeSymbols: true)
         
         // @objc public enum MyEnum: Int {
         //     case firstCase
@@ -620,86 +620,86 @@ class SymbolPathTreeTests: XCTestCase {
         //     public var myStructProperty: MyStructTypeAlias { 0 }
         //     public static var myStructTypeProperty: MyStructTypeAlias { 0 }
         // }
-        let myEnumNode = try tree.findNode(path: "MyEnum", parent: moduleNode.identifier)
-        XCTAssertEqual(try tree.find(path: "firstCase", parent: myEnumNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
-        XCTAssertEqual(try tree.find(path: "secondCase", parent: myEnumNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
-        XCTAssertEqual(try tree.find(path: "myEnumFunction()", parent: myEnumNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MyEnumTypeAlias", parent: myEnumNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "myEnumProperty", parent: myEnumNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        let myEnumID = try tree.find(path: "MyEnum", parent: moduleID, prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "firstCase", parent: myEnumID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
+        XCTAssertEqual(try tree.findSymbol(path: "secondCase", parent: myEnumID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
+        XCTAssertEqual(try tree.findSymbol(path: "myEnumFunction()", parent: myEnumID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnumTypeAlias", parent: myEnumID).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "myEnumProperty", parent: myEnumID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
-        let myStructNode = try tree.findNode(path: "MyStruct", parent: moduleNode.identifier)
-        XCTAssertEqual(try tree.find(path: "myStructFunction()", parent: myStructNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MyStructTypeAlias", parent: myStructNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "myStructProperty", parent: myStructNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
-        XCTAssertEqual(try tree.find(path: "myStructTypeProperty", parent: myStructNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
+        let myStructID = try tree.find(path: "MyStruct", parent: moduleID, prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "myStructFunction()", parent: myStructID).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStructTypeAlias", parent: myStructID).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "myStructProperty", parent: myStructID).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "myStructTypeProperty", parent: myStructID).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
         
         // Resolve symbols with the same parent
-        let myFirstCaseNode = try tree.findNode(path: "firstCase", parent: myEnumNode.identifier)
-        XCTAssertEqual(try tree.find(path: "firstCase", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
-        XCTAssertEqual(try tree.find(path: "secondCase", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
-        XCTAssertEqual(try tree.find(path: "myEnumFunction()", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MyEnumTypeAlias", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "myEnumProperty", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        let myFirstCaseID = try tree.find(path: "firstCase", parent: myEnumID, prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "firstCase", parent: myFirstCaseID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
+        XCTAssertEqual(try tree.findSymbol(path: "secondCase", parent: myFirstCaseID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
+        XCTAssertEqual(try tree.findSymbol(path: "myEnumFunction()", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnumTypeAlias", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "myEnumProperty", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
-        let myStructFunctionNode = try tree.findNode(path: "myStructFunction()", parent: myStructNode.identifier)
-        XCTAssertEqual(try tree.find(path: "myStructFunction()", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MyStructTypeAlias", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "myStructProperty", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
-        XCTAssertEqual(try tree.find(path: "myStructTypeProperty", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
+        let myStructFunctionID = try tree.find(path: "myStructFunction()", parent: myStructID, prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "myStructFunction()", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStructTypeAlias", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "myStructProperty", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "myStructTypeProperty", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
         
         // Resolve symbols accessible from the parent's parent
-        XCTAssertEqual(try tree.find(path: "MyEnum", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
-        XCTAssertEqual(try tree.find(path: "MyEnum/firstCase", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
-        XCTAssertEqual(try tree.find(path: "MyEnum/secondCase", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
-        XCTAssertEqual(try tree.find(path: "MyEnum/myEnumFunction()", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MyEnum/MyEnumTypeAlias", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "MyEnum/myEnumProperty", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum", parent: myFirstCaseID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/firstCase", parent: myFirstCaseID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/secondCase", parent: myFirstCaseID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/myEnumFunction()", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/MyEnumTypeAlias", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/myEnumProperty", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
-        XCTAssertEqual(try tree.find(path: "MyStruct", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV")
-        XCTAssertEqual(try tree.find(path: "MyStruct/myStructFunction()", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MyStruct/MyStructTypeAlias", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "MyStruct/myStructProperty", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
-        XCTAssertEqual(try tree.find(path: "MyStruct/myStructTypeProperty", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework8MyStructV")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct/myStructFunction()", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct/MyStructTypeAlias", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct/myStructProperty", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct/myStructTypeProperty", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
         
-        XCTAssertEqual(try tree.find(path: "MyEnum", parent: myStructFunctionNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
-        XCTAssertEqual(try tree.find(path: "MyEnum/firstCase", parent: myStructFunctionNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
-        XCTAssertEqual(try tree.find(path: "MyEnum/secondCase", parent: myStructFunctionNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
-        XCTAssertEqual(try tree.find(path: "MyEnum/myEnumFunction()", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MyEnum/MyEnumTypeAlias", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "MyEnum/myEnumProperty", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum", parent: myStructFunctionID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/firstCase", parent: myStructFunctionID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/secondCase", parent: myStructFunctionID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/myEnumFunction()", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/MyEnumTypeAlias", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum/myEnumProperty", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
-        XCTAssertEqual(try tree.find(path: "MyStruct", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV")
-        XCTAssertEqual(try tree.find(path: "MyStruct/myStructFunction()", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MyStruct/MyStructTypeAlias", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "MyStruct/myStructProperty", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
-        XCTAssertEqual(try tree.find(path: "MyStruct/myStructTypeProperty", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct/myStructFunction()", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct/MyStructTypeAlias", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct/myStructProperty", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "MyStruct/myStructTypeProperty", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
         
-        XCTAssertEqual(try tree.find(path: "MixedFramework", parent: myFirstCaseNode.identifier).identifier.precise, "MixedFramework")
-        XCTAssertEqual(try tree.find(path: "MixedFramework", parent: myStructFunctionNode.identifier).identifier.precise, "MixedFramework")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework", parent: myFirstCaseID).identifier.precise, "MixedFramework")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework", parent: myStructFunctionID).identifier.precise, "MixedFramework")
         
         // All the way up and all the way down
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/firstCase-enum.case", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/secondCase-enum.case", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/myEnumFunction()-method", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/MyEnumTypeAlias-typealias", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyEnum-enum/myEnumProperty-property", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework-module/MyEnum-enum/firstCase-enum.case", parent: myFirstCaseID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework-module/MyEnum-enum/secondCase-enum.case", parent: myFirstCaseID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework-module/MyEnum-enum/myEnumFunction()-method", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework-module/MyEnum-enum/MyEnumTypeAlias-typealias", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework-module/MyEnum-enum/myEnumProperty-property", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyStruct-struct/myStructFunction()-method", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyStruct-struct/MyStructTypeAlias-typealias", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyStruct-struct/myStructProperty-property", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
-        XCTAssertEqual(try tree.find(path: "MixedFramework-module/MyStruct-struct/myStructTypeProperty-type.property", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework-module/MyStruct-struct/myStructFunction()-method", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework-module/MyStruct-struct/MyStructTypeAlias-typealias", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework-module/MyStruct-struct/myStructProperty-property", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework-module/MyStruct-struct/myStructTypeProperty-type.property", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
         
         // Absolute links
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/firstCase-enum.case", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/secondCase-enum.case", parent: myFirstCaseNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/myEnumFunction()-method", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/MyEnumTypeAlias-typealias", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyEnum-enum/myEnumProperty-property", parent: myFirstCaseNode.identifier).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "/MixedFramework-module/MyEnum-enum/firstCase-enum.case", parent: myFirstCaseID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase")
+        XCTAssertEqual(try tree.findSymbol(path: "/MixedFramework-module/MyEnum-enum/secondCase-enum.case", parent: myFirstCaseID).identifier.precise, "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase")
+        XCTAssertEqual(try tree.findSymbol(path: "/MixedFramework-module/MyEnum-enum/myEnumFunction()-method", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "/MixedFramework-module/MyEnum-enum/MyEnumTypeAlias-typealias", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "/MixedFramework-module/MyEnum-enum/myEnumProperty-property", parent: myFirstCaseID).identifier.precise, "s:14MixedFramework6MyEnumO02myD8PropertySivp")
         
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyStruct-struct/myStructFunction()-method", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyStruct-struct/MyStructTypeAlias-typealias", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyStruct-struct/myStructProperty-property", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
-        XCTAssertEqual(try tree.find(path: "/MixedFramework-module/MyStruct-struct/myStructTypeProperty-type.property", parent: myStructFunctionNode.identifier).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
+        XCTAssertEqual(try tree.findSymbol(path: "/MixedFramework-module/MyStruct-struct/myStructFunction()-method", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD8FunctionyyF")
+        XCTAssertEqual(try tree.findSymbol(path: "/MixedFramework-module/MyStruct-struct/MyStructTypeAlias-typealias", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV0cD9TypeAliasa")
+        XCTAssertEqual(try tree.findSymbol(path: "/MixedFramework-module/MyStruct-struct/myStructProperty-property", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD8PropertySivp")
+        XCTAssertEqual(try tree.findSymbol(path: "/MixedFramework-module/MyStruct-struct/myStructTypeProperty-type.property", parent: myStructFunctionID).identifier.precise, "s:14MixedFramework8MyStructV02myD12TypePropertySivpZ")
         
         // @objc(MySwiftClassObjectiveCName)
         // public class MySwiftClassSwiftName: NSObject {
@@ -709,48 +709,48 @@ class SymbolPathTreeTests: XCTestCase {
         //     @objc(myMethodObjectiveCName)
         //     public func myMethodSwiftName() -> Int { 0 }
         // }
-        let mySwiftClassSwiftNode = try tree.findNode(path: "MySwiftClassSwiftName", parent: moduleNode.identifier)
-        XCTAssertEqual(try tree.find(path: "myPropertySwiftName", parent: mySwiftClassSwiftNode.identifier).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName")
-        XCTAssertEqual(try tree.find(path: "myMethodSwiftName()", parent: mySwiftClassSwiftNode.identifier).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName")
-        XCTAssertThrowsError(try tree.find(path: "myPropertyObjectiveCName", parent: mySwiftClassSwiftNode.identifier))
-        XCTAssertThrowsError(try tree.find(path: "myMethodObjectiveCName", parent: mySwiftClassSwiftNode.identifier))
+        let mySwiftClassSwiftID = try tree.find(path: "MySwiftClassSwiftName", parent: moduleID, prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "myPropertySwiftName", parent: mySwiftClassSwiftID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName")
+        XCTAssertEqual(try tree.findSymbol(path: "myMethodSwiftName()", parent: mySwiftClassSwiftID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName")
+        XCTAssertThrowsError(try tree.findSymbol(path: "myPropertyObjectiveCName", parent: mySwiftClassSwiftID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "myMethodObjectiveCName", parent: mySwiftClassSwiftID))
         
-        let mySwiftClassObjCNode = try tree.findNode(path: "MySwiftClassObjectiveCName", parent: moduleNode.identifier)
-        XCTAssertEqual(try tree.find(path: "myPropertyObjectiveCName", parent: mySwiftClassObjCNode.identifier).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName")
-        XCTAssertEqual(try tree.find(path: "myMethodObjectiveCName", parent: mySwiftClassObjCNode.identifier).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName")
-        XCTAssertThrowsError(try tree.find(path: "myPropertySwiftName", parent: mySwiftClassObjCNode.identifier))
-        XCTAssertThrowsError(try tree.find(path: "myMethodSwiftName()", parent: mySwiftClassObjCNode.identifier))
+        let mySwiftClassObjCID = try tree.find(path: "MySwiftClassObjectiveCName", parent: moduleID, prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "myPropertyObjectiveCName", parent: mySwiftClassObjCID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName")
+        XCTAssertEqual(try tree.findSymbol(path: "myMethodObjectiveCName", parent: mySwiftClassObjCID).identifier.precise, "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName")
+        XCTAssertThrowsError(try tree.findSymbol(path: "myPropertySwiftName", parent: mySwiftClassObjCID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "myMethodSwiftName()", parent: mySwiftClassObjCID))
         
         // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
         //     MyObjectiveCOptionNone                                      = 0,
         //     MyObjectiveCOptionFirst                                     = 1 << 0,
         //     MyObjectiveCOptionSecond NS_SWIFT_NAME(secondCaseSwiftName) = 1 << 1
         // };
-        let myOptionAsEnum = try tree.findNode(path: "MyObjectiveCOption-enum", parent: moduleNode.identifier)
-        XCTAssertEqual(try tree.find(path: "MyObjectiveCOptionNone", parent: myOptionAsEnum.identifier).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionNone")
-        XCTAssertEqual(try tree.find(path: "MyObjectiveCOptionFirst", parent: myOptionAsEnum.identifier).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
-        XCTAssertEqual(try tree.find(path: "MyObjectiveCOptionSecond", parent: myOptionAsEnum.identifier).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
-        XCTAssertThrowsError(try tree.find(path: "none", parent: myOptionAsEnum.identifier))
-        XCTAssertThrowsError(try tree.find(path: "first", parent: myOptionAsEnum.identifier))
-        XCTAssertThrowsError(try tree.find(path: "second", parent: myOptionAsEnum.identifier))
-        XCTAssertThrowsError(try tree.find(path: "secondCaseSwiftName", parent: myOptionAsEnum.identifier))
+        let myOptionAsEnumID = try tree.find(path: "MyObjectiveCOption-enum", parent: moduleID, prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "MyObjectiveCOptionNone", parent: myOptionAsEnumID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionNone")
+        XCTAssertEqual(try tree.findSymbol(path: "MyObjectiveCOptionFirst", parent: myOptionAsEnumID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
+        XCTAssertEqual(try tree.findSymbol(path: "MyObjectiveCOptionSecond", parent: myOptionAsEnumID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
+        XCTAssertThrowsError(try tree.findSymbol(path: "none", parent: myOptionAsEnumID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "first", parent: myOptionAsEnumID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "second", parent: myOptionAsEnumID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "secondCaseSwiftName", parent: myOptionAsEnumID))
         
-        let myOptionAsStruct = try tree.findNode(path: "MyObjectiveCOption-struct", parent: moduleNode.identifier)
-        XCTAssertEqual(try tree.find(path: "first", parent: myOptionAsStruct.identifier).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
-        XCTAssertEqual(try tree.find(path: "secondCaseSwiftName", parent: myOptionAsStruct.identifier).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
-        XCTAssertThrowsError(try tree.find(path: "none", parent: myOptionAsStruct.identifier))
-        XCTAssertThrowsError(try tree.find(path: "second", parent: myOptionAsStruct.identifier))
-        XCTAssertThrowsError(try tree.find(path: "MyObjectiveCOptionNone", parent: myOptionAsStruct.identifier))
-        XCTAssertThrowsError(try tree.find(path: "MyObjectiveCOptionFirst", parent: myOptionAsStruct.identifier))
-        XCTAssertThrowsError(try tree.find(path: "MyObjectiveCOptionSecond", parent: myOptionAsStruct.identifier))
+        let myOptionAsStructID = try tree.find(path: "MyObjectiveCOption-struct", parent: moduleID, prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "first", parent: myOptionAsStructID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
+        XCTAssertEqual(try tree.findSymbol(path: "secondCaseSwiftName", parent: myOptionAsStructID).identifier.precise, "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
+        XCTAssertThrowsError(try tree.findSymbol(path: "none", parent: myOptionAsStructID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "second", parent: myOptionAsStructID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOptionNone", parent: myOptionAsStructID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOptionFirst", parent: myOptionAsStructID))
+        XCTAssertThrowsError(try tree.findSymbol(path: "MyObjectiveCOptionSecond", parent: myOptionAsStructID))
         
         // typedef NSInteger MyTypedObjectiveCExtensibleEnum NS_TYPED_EXTENSIBLE_ENUM;
         //
         // MyTypedObjectiveCExtensibleEnum const MyTypedObjectiveCExtensibleEnumFirst;
         // MyTypedObjectiveCExtensibleEnum const MyTypedObjectiveCExtensibleEnumSecond;
-        let myTypedExtensibleEnumNode = try tree.findNode(path: "MyTypedObjectiveCExtensibleEnum-struct", parent: moduleNode.identifier)
-        XCTAssertEqual(try tree.find(path: "first", parent: myTypedExtensibleEnumNode.identifier).identifier.precise, "c:@MyTypedObjectiveCExtensibleEnumFirst")
-        XCTAssertEqual(try tree.find(path: "second", parent: myTypedExtensibleEnumNode.identifier).identifier.precise, "c:@MyTypedObjectiveCExtensibleEnumSecond")
+        let myTypedExtensibleEnumID = try tree.find(path: "MyTypedObjectiveCExtensibleEnum-struct", parent: moduleID, prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "first", parent: myTypedExtensibleEnumID).identifier.precise, "c:@MyTypedObjectiveCExtensibleEnumFirst")
+        XCTAssertEqual(try tree.findSymbol(path: "second", parent: myTypedExtensibleEnumID).identifier.precise, "c:@MyTypedObjectiveCExtensibleEnumSecond")
     }
     
     // TODO: It might be nice to support "almost absolute symbol links" that start top-level in some module but doesn't include the module name in the path
@@ -759,15 +759,15 @@ class SymbolPathTreeTests: XCTestCase {
         let (_, context) = try testBundleAndContext(named: "MixedFramework")
         let tree = try XCTUnwrap(context.symbolPathTree)
         
-        let moduleNode = try tree.findNode(path: "/MixedFramework")
+        let moduleID = try tree.find(path: "/MixedFramework", prioritizeSymbols: true)
         
-        XCTAssertEqual(try tree.find(path: "MyEnum", parent: moduleNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
-        XCTAssertEqual(try tree.find(path: "MixedFramework/MyEnum", parent: moduleNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
-        XCTAssertEqual(try tree.find(path: "documentation/MixedFramework/MyEnum", parent: moduleNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
-        XCTAssertEqual(try tree.find(path: "/documentation/MixedFramework/MyEnum", parent: moduleNode.identifier).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        XCTAssertEqual(try tree.findSymbol(path: "MyEnum", parent: moduleID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        XCTAssertEqual(try tree.findSymbol(path: "MixedFramework/MyEnum", parent: moduleID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        XCTAssertEqual(try tree.findSymbol(path: "documentation/MixedFramework/MyEnum", parent: moduleID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
+        XCTAssertEqual(try tree.findSymbol(path: "/documentation/MixedFramework/MyEnum", parent: moduleID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
         
-        assertParsedPathComponents("documentation/MixedFramework/MyEnum", [("/", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
-        assertParsedPathComponents("/documentation/MixedFramework/MyEnum", [("/", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
+        assertParsedPathComponents("documentation/MixedFramework/MyEnum", [("documentation", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
+        assertParsedPathComponents("/documentation/MixedFramework/MyEnum", [("documentation", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
     }
     
     func testTestBundle() throws {
@@ -777,20 +777,20 @@ class SymbolPathTreeTests: XCTestCase {
         // Test finding the parent via the `fromTopicReference` integration shim.
         let parentID = tree.fromTopicReference(ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift), context: context)
         XCTAssertNotNil(parentID)
-        XCTAssertEqual(try tree.find(path: "globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
-        XCTAssertEqual(try tree.find(path: "MyKit/globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
-        XCTAssertEqual(try tree.find(path: "/MyKit/globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        XCTAssertEqual(try tree.findSymbol(path: "globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyKit/globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        XCTAssertEqual(try tree.findSymbol(path: "/MyKit/globalFunction(_:considering:)", parent: parentID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
           
-        let myKidModuleNode = try tree.findNode(path: "/MyKit")
-        XCTAssertEqual(try tree.find(path: "globalFunction(_:considering:)", parent: myKidModuleNode.identifier).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
-        XCTAssertEqual(try tree.find(path: "MyKit/globalFunction(_:considering:)", parent: myKidModuleNode.identifier).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
-        XCTAssertEqual(try tree.find(path: "/MyKit/globalFunction(_:considering:)", parent: myKidModuleNode.identifier).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        let myKidModuleID = try tree.find(path: "/MyKit", prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "globalFunction(_:considering:)", parent: myKidModuleID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        XCTAssertEqual(try tree.findSymbol(path: "MyKit/globalFunction(_:considering:)", parent: myKidModuleID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
+        XCTAssertEqual(try tree.findSymbol(path: "/MyKit/globalFunction(_:considering:)", parent: myKidModuleID).identifier.precise, "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF")
         
-        XCTAssertEqual(try tree.find(path: "MyClass/init()-33vaw", parent: myKidModuleNode.identifier).identifier.precise, "s:5MyKit0A5ClassCACycfcDUPLICATE")
+        XCTAssertEqual(try tree.findSymbol(path: "MyClass/init()-33vaw", parent: myKidModuleID).identifier.precise, "s:5MyKit0A5ClassCACycfcDUPLICATE")
         
         // Test finding symbol from an extension
-        let sideKidModuleNode = try tree.findNode(path: "/SideKit")
-        XCTAssertEqual(try tree.find(path: "UncuratedClass/angle", parent: sideKidModuleNode.identifier).identifier.precise, "s:So14UncuratedClassCV5MyKitE5angle12CoreGraphics7CGFloatVSgvp")
+        let sideKidModuleID = try tree.find(path: "/SideKit", prioritizeSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "UncuratedClass/angle", parent: sideKidModuleID).identifier.precise, "s:So14UncuratedClassCV5MyKitE5angle12CoreGraphics7CGFloatVSgvp")
         try assertFindsPath("/SideKit/SideClass/Element", in: tree, asSymbolID: "s:7SideKit0A5ClassC7Elementa")
         try assertFindsPath("/SideKit/SideClass/Element/inherited()", in: tree, asSymbolID: "s:7SideKit0A5::SYNTESIZED::inheritedFF")
         try assertPathCollision("/SideKit/SideProtocol/func()", in: tree, collisions: [
@@ -807,6 +807,19 @@ class SymbolPathTreeTests: XCTestCase {
         try assertFindsPath("/SideKit/UncuratedClass", in: tree, asSymbolID: "s:7SideKit14UncuratedClassC")
         XCTAssertEqual(paths["s:7SideKit14UncuratedClassC"],
                        "/SideKit/UncuratedClass")
+        
+        // Test finding non-symbol children
+        let discussionID = try tree.find(path: "/SideKit#Discussion", prioritizeSymbols: false)
+        XCTAssertNil(tree.lookup[discussionID]!.symbol)
+        XCTAssertEqual(tree.lookup[discussionID]!.name, "Discussion")
+        
+        let protocolImplementationsID = try tree.find(path: "/SideKit/SideClass/Element/Protocol-Implementations", prioritizeSymbols: false)
+        XCTAssertNil(tree.lookup[protocolImplementationsID]!.symbol)
+        XCTAssertEqual(tree.lookup[protocolImplementationsID]!.name, "Protocol-Implementations")
+        
+        let landmarkID = try tree.find(path: "/Test-Bundle/TestTutorial#Create-a-New-AR-Project-💻", prioritizeSymbols: false)
+        XCTAssertNil(tree.lookup[landmarkID]!.symbol)
+        XCTAssertEqual(tree.lookup[landmarkID]!.name, "Create-a-New-AR-Project-💻")
     }
     
     func testMixedLanguageFramework() throws {
@@ -997,12 +1010,13 @@ class SymbolPathTreeTests: XCTestCase {
     func testParsingPaths() {
         // Check path components without disambiguation
         assertParsedPathComponents("", [])
-        assertParsedPathComponents("/", [("/", nil, nil)])
-        assertParsedPathComponents("/first", [("/", nil, nil), ("first", nil, nil)])
+        assertParsedPathComponents("/", [])
+        assertParsedPathComponents("/first", [("first", nil, nil)])
         assertParsedPathComponents("first", [("first", nil, nil)])
         assertParsedPathComponents("first/second/third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
         assertParsedPathComponents("first/", [("first", nil, nil)])
         assertParsedPathComponents("first//second", [("first", nil, nil), ("second", nil, nil)])
+        assertParsedPathComponents("first/second#third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
 
         // Check disambiguation
         assertParsedPathComponents("path-hash", [("path", nil, "hash")])
@@ -1025,35 +1039,35 @@ class SymbolPathTreeTests: XCTestCase {
     
     private func assertFindsPath(_ path: String, in tree: SymbolPathTree, asSymbolID symbolID: String, file: StaticString = #file, line: UInt = #line) throws {
         do {
-            let symbol = try tree.find(path: path)
+            let symbol = try tree.findSymbol(path: path)
             XCTAssertEqual(symbol.identifier.precise, symbolID, file: file, line: line)
         } catch SymbolPathTree.Error.notFound {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
         } catch SymbolPathTree.Error.partialResult {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
         } catch SymbolPathTree.Error.lookupCollision(_, let collisions) {
-            let symbols = collisions.map { $0.value }
+            let symbols = collisions.map { $0.node.symbol! }
             XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.names.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
         }
     }
     
     private func assertPathNotFound(_ path: String, in tree: SymbolPathTree, file: StaticString = #file, line: UInt = #line) throws {
         do {
-            let symbol = try tree.find(path: path)
+            let symbol = try tree.findSymbol(path: path)
             XCTFail("Unexpectedly found symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
         } catch SymbolPathTree.Error.notFound {
             // This specific error is expected.
         } catch SymbolPathTree.Error.partialResult {
             // For the purpose of this assertion, this also counts as "not found".
         } catch SymbolPathTree.Error.lookupCollision(_, let collisions) {
-            let symbols = collisions.map { $0.value }
+            let symbols = collisions.map { $0.node.symbol! }
             XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.names.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
         }
     }
     
     private func assertPathCollision(_ path: String, in tree: SymbolPathTree, collisions expectedCollisions: [(symbolID: String, disambiguation: String)], file: StaticString = #file, line: UInt = #line) throws {
         do {
-            let symbol = try tree.find(path: path)
+            let symbol = try tree.findSymbol(path: path)
             XCTFail("Unexpectedly found unambiguous symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
         } catch SymbolPathTree.Error.notFound {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
@@ -1062,21 +1076,32 @@ class SymbolPathTreeTests: XCTestCase {
         } catch SymbolPathTree.Error.lookupCollision(_, let collisions) {
             let sortedCollisions = collisions.sorted(by: \.disambiguation)
             XCTAssertEqual(sortedCollisions.count, expectedCollisions.count, file: file, line: line)
-            
             for (actual, expected) in zip(sortedCollisions, expectedCollisions) {
-                XCTAssertEqual(actual.value.identifier.precise, expected.symbolID, file: file, line: line)
+                XCTAssertEqual(actual.node.symbol.identifier.precise, expected.symbolID, file: file, line: line)
                 XCTAssertEqual(actual.disambiguation, expected.disambiguation, file: file, line: line)
             }
         }
     }
     
     private func assertParsedPathComponents(_ path: String, _ expected: [(String, String?, String?)], file: StaticString = #file, line: UInt = #line) {
-        let actual = SymbolPathTree.parse(path: path)
+        let (actual, _) = SymbolPathTree.parse(path: path)
         XCTAssertEqual(actual.count, expected.count, file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {
-            XCTAssertEqual(actualComponents.0, expectedComponents.0, "Incorrect path component", file: file, line: line)
-            XCTAssertEqual(actualComponents.1, expectedComponents.1, "Incorrect kind disambiguation", file: file, line: line)
-            XCTAssertEqual(actualComponents.2, expectedComponents.2, "Incorrect hash disambiguation", file: file, line: line)
+            XCTAssertEqual(actualComponents.name, expectedComponents.0, "Incorrect path component", file: file, line: line)
+            XCTAssertEqual(actualComponents.kind, expectedComponents.1, "Incorrect kind disambiguation", file: file, line: line)
+            XCTAssertEqual(actualComponents.hash, expectedComponents.2, "Incorrect hash disambiguation", file: file, line: line)
         }
     }
+}
+
+extension SymbolPathTree {
+    func findSymbol(path rawPath: String, parent: ResolvedIdentifier? = nil) throws -> SymbolGraph.Symbol {
+        let id = try find(path: rawPath, parent: parent, prioritizeSymbols: true)
+        return lookup[id]!.symbol
+    }
+//
+//    func findSymbolAndID(path rawPath: String, parent: ResolvedIdentifier? = nil) throws -> (SymbolGraph.Symbol, ResolvedIdentifier) {
+//        let id = try find(path: rawPath, parent: parent, prioritizeSymbols: true)
+//        return (lookup[id]!.symbol, id)
+//    }
 }

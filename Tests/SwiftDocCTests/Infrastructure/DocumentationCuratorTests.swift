@@ -33,7 +33,7 @@ class DocumentationCuratorTests: XCTestCase {
         let dataProvider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
         try workspace.registerProvider(dataProvider)
         
-        var crawler = DocumentationCurator.init(in: context, bundle: bundle)
+        var crawler = DocumentationCurator(in: context, bundle: bundle)
         let mykit = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", sourceLanguage: .swift))
 
         var symbolsWithCustomCuration = [ResolvedTopicReference]()

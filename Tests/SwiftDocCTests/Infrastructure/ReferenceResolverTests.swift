@@ -165,7 +165,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test references to symbols in root paths
     func testReferencesToTutorial() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -178,7 +178,6 @@ class ReferenceResolverTests: XCTestCase {
             - <doc:/Test-Bundle/TestTutorial>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
@@ -192,8 +191,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test references to technology pages
     func testReferencesToTechnologyPages() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
-            /// Article that curates `SideClass`
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             try """
             # ``SideKit/SideClass/myFunction()``
             SideKit module root symbol
@@ -204,7 +202,6 @@ class ReferenceResolverTests: XCTestCase {
             - <doc:/tutorials/TestOverview>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
@@ -218,7 +215,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test external references
     func testExternalReferencesConsiderBundleIdentifier() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -231,7 +228,6 @@ class ReferenceResolverTests: XCTestCase {
             - <https://www.example.com/MyKit>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
@@ -326,7 +322,7 @@ class ReferenceResolverTests: XCTestCase {
         """
         
         // TestBundle has more than one module, so automatic registration and curation won't happen
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             referencingArticleURL = root.appendingPathComponent("article.md")
             try source.write(to: referencingArticleURL, atomically: true, encoding: .utf8)
             
@@ -341,7 +337,6 @@ class ReferenceResolverTests: XCTestCase {
             Its references aren't resolved, so this won't raise a warning: <doc:InvalidReferenceThatWillNotWarn>
             """.write(to: uncuratedArticleFile, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         let diagnostics = context.problems.filter({ $0.diagnostic.source?.standardizedFileURL == uncuratedArticleFile.standardizedFileURL }).map(\.diagnostic)
         let diagnostic = try XCTUnwrap(diagnostics.first(where: { $0.identifier == "org.swift.docc.ArticleUncurated" }))

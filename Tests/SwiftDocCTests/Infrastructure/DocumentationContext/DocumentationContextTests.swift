@@ -2750,23 +2750,42 @@ let expected = """
     
     // Verifies if the context resolves linkable nodes.
     func testLinkableNodes() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            try "# Article1".write(to: url.appendingPathComponent("resolvable-article.md"), atomically: true, encoding: .utf8)
+            let myKitURL = url.appendingPathComponent("documentation").appendingPathComponent("mykit.md")
+            try String(contentsOf: myKitURL)
+                .replacingOccurrences(of: " - <doc:article>", with: " - <doc:resolvable-article>")
+                .write(to: myKitURL, atomically: true, encoding: .utf8)
+        }
         let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
-        let moduleTopicGraphNode = try XCTUnwrap(context.topicGraph.nodeWithReference(moduleReference))
 
-        // Add a new resolvable node
-        let resolvableReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/resolvable-article", sourceLanguage: .swift)
-        let resolvableNode = try DocumentationNode(reference: resolvableReference, article: Article(markup: Document(parsing: "# Article1"), metadata: nil, redirects: nil))
-        context.documentationCache[resolvableReference] = resolvableNode
-        
-        let resolvableTopicGraphNode = TopicGraph.Node(reference: resolvableReference, kind: .article, source: .external, title: "Article1", isResolvable: true)
-        context.topicGraph.addEdge(from: moduleTopicGraphNode, to: resolvableTopicGraphNode)
-        
         // Try resolving the new resolvable node
-        XCTAssertNoThrow(try context.entity(with: resolvableReference))
         switch context.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:resolvable-article")!)), in: moduleReference) {
-        case .success: break
-        case .failure(_, let errorMessage): XCTFail("Did not resolve resolvable link. Error: \(errorMessage)")
+        case .success(let resolvedReference):
+            XCTAssertEqual(resolvedReference.absoluteString, "doc://\(bundle.identifier)/documentation/Test-Bundle/resolvable-article")
+            XCTAssertNoThrow(try context.entity(with: resolvedReference))
+        case .failure(_, let errorMessage):
+            XCTFail("Did not resolve resolvable link. Error: \(errorMessage)")
+        }
+    }
+    
+    func testArticleThatLooksLikeHashDisambiguation() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            try "# Article1".write(to: url.appendingPathComponent("resolvable-hash.md"), atomically: true, encoding: .utf8)
+            let myKitURL = url.appendingPathComponent("documentation").appendingPathComponent("mykit.md")
+            try String(contentsOf: myKitURL)
+                .replacingOccurrences(of: " - <doc:article>", with: " - <doc:resolvable-hash>")
+                .write(to: myKitURL, atomically: true, encoding: .utf8)
+        }
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+
+        // Try resolving the new resolvable node
+        switch context.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:resolvable-hash")!)), in: moduleReference) {
+        case .success(let resolvedReference):
+            XCTAssertEqual(resolvedReference.absoluteString, "doc://\(bundle.identifier)/documentation/Test-Bundle/resolvable-hash")
+            XCTAssertNoThrow(try context.entity(with: resolvedReference))
+        case .failure(_, let errorMessage):
+            XCTFail("Did not resolve resolvable link. Error: \(errorMessage)")
         }
     }
     

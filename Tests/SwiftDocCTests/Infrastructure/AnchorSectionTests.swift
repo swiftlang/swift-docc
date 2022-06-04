@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,13 +20,16 @@ class AnchorSectionTests: XCTestCase {
         let (bundle, context) = try testBundleAndContext(named: "BundleWithLonelyDeprecationDirective")
         
         // Verify the sub-sections of the article have been collected in the context
-        [
+        try [
             ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Section", sourceLanguage: .swift),
             ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
-            XCTAssertTrue(context.nodeAnchorSections.keys.contains(sectionReference))
+            XCTAssertNoThrow(try context.symbolPathTree.find(path: sectionReference.url.withoutHostAndPortAndScheme().absoluteString, prioritizeSymbols: false))
         }
+        
+        XCTAssertNoThrow(try context.symbolPathTree.find(path: "Article#Article-Sub-Section", prioritizeSymbols: false))
+        XCTAssertNoThrow(try context.symbolPathTree.find(path: "Article#Article-Sub-Sub-Section", prioritizeSymbols: false))
         
         // Load the module page
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework", sourceLanguage: .swift)

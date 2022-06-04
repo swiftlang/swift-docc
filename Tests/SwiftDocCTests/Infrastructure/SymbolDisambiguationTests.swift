@@ -328,8 +328,6 @@ class SymbolDisambiguationTests: XCTestCase {
         
         let context = try DocumentationContext(dataProvider: provider)
         
-        print(context.symbolPathTree.dump())
-        
         var references = context.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], symbolHierarchy: context.symbolPathTree, bundle: bundle)
         references[SymbolGraph.Symbol.Identifier(precise: "common-parent-symbol", interfaceLanguage: "swift")] = nil
         return references
