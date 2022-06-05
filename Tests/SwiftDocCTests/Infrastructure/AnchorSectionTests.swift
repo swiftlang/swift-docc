@@ -25,11 +25,11 @@ class AnchorSectionTests: XCTestCase {
             ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/TechnologyX/Article", fragment: "Article-Sub-Sub-Section", sourceLanguage: .swift),
         ]
         .forEach { sectionReference in
-            XCTAssertNoThrow(try context.symbolPathTree.find(path: sectionReference.url.withoutHostAndPortAndScheme().absoluteString, prioritizeSymbols: false))
+            XCTAssertNoThrow(try context.pathHierarchy.find(path: sectionReference.url.withoutHostAndPortAndScheme().absoluteString, prioritizeSymbols: false))
         }
         
-        XCTAssertNoThrow(try context.symbolPathTree.find(path: "Article#Article-Sub-Section", prioritizeSymbols: false))
-        XCTAssertNoThrow(try context.symbolPathTree.find(path: "Article#Article-Sub-Sub-Section", prioritizeSymbols: false))
+        XCTAssertNoThrow(try context.pathHierarchy.find(path: "Article#Article-Sub-Section", prioritizeSymbols: false))
+        XCTAssertNoThrow(try context.pathHierarchy.find(path: "Article#Article-Sub-Sub-Section", prioritizeSymbols: false))
         
         // Load the module page
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/CoolFramework", sourceLanguage: .swift)

@@ -993,7 +993,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - symbolGraph: The complete symbol graph to walk through.
     ///   - bundle: The bundle to use when creating symbol references.
-    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], symbolHierarchy: SymbolPathTree, bundle: DocumentationBundle) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
+    func referencesForSymbols(in unifiedGraphs: [String: UnifiedSymbolGraph], symbolHierarchy: PathHierarchy, bundle: DocumentationBundle) -> [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] {
         let disambiguatedPaths = symbolHierarchy.caseInsensitiveDisambiguatedPaths()
         
         var result: [SymbolGraph.Symbol.Identifier: ResolvedTopicReference] = [:]
@@ -1127,7 +1127,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             var moduleReferences = [String: ResolvedTopicReference]()
             
             // Build references for all symbols in all of this module's symbol graphs.
-            let symbolReferences = self.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, symbolHierarchy: symbolPathTree, bundle: bundle)
+            let symbolReferences = self.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, symbolHierarchy: pathHierarchy, bundle: bundle)
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
             symbolIndex.reserveCapacity(symbolReferences.count)
@@ -1526,10 +1526,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             documentationCache[reference] = documentation
             
             let filename = article.source.deletingPathExtension().lastPathComponent
-            let articleID = symbolPathTree.addTopLevelNonSymbol(name: filename, type: "article")
+            let articleID = pathHierarchy.addTopLevelNonSymbol(name: filename, type: "article")
             nonSymbolTreeLookup[articleID] = article.topicGraphNode.reference
             for anchor in documentation.anchorSections {
-                let anchorID = symbolPathTree.addNonSymbolChild(parent: articleID, name: anchor.reference.fragment!, type: "anchor")
+                let anchorID = pathHierarchy.addNonSymbolChild(parent: articleID, name: anchor.reference.fragment!, type: "anchor")
                 nonSymbolTreeLookup[anchorID] = anchor.reference // For link resolution
                 nodeAnchorSections[anchor.reference] = anchor    // For rendering
             }
@@ -1590,10 +1590,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             article.topicGraphNode = graphNode
             
             let filename = article.source.deletingPathExtension().lastPathComponent
-            let articleID = symbolPathTree.addArticle(name: filename)
+            let articleID = pathHierarchy.addArticle(name: filename)
             nonSymbolTreeLookup[articleID] = article.topicGraphNode.reference
             for anchor in documentation.anchorSections {
-                let anchorID = symbolPathTree.addNonSymbolChild(parent: articleID, name: anchor.reference.fragment!, type: "anchor")
+                let anchorID = pathHierarchy.addNonSymbolChild(parent: articleID, name: anchor.reference.fragment!, type: "anchor")
                 nonSymbolTreeLookup[anchorID] = anchor.reference // For link resolution
                 nodeAnchorSections[anchor.reference] = anchor    // For rendering
             }
@@ -1722,13 +1722,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         // Load all bundle symbol graphs into the loader.
         var symbolGraphLoader: SymbolGraphLoader!
-        var symbolsURLHierarchy: SymbolPathTree!
+        var symbolsURLHierarchy: PathHierarchy!
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             symbolGraphLoader = SymbolGraphLoader(bundle: bundle, dataProvider: self.dataProvider)
             do {
                 try symbolGraphLoader.loadAll()
-                symbolsURLHierarchy = SymbolPathTree(symbolGraphLoader: symbolGraphLoader, bundleName: urlReadablePath(bundle.displayName), knownDisambiguatedPathComponents: knownDisambiguatedSymbolPathComponents)
+                symbolsURLHierarchy = PathHierarchy(symbolGraphLoader: symbolGraphLoader, bundleName: urlReadablePath(bundle.displayName), knownDisambiguatedPathComponents: knownDisambiguatedSymbolPathComponents)
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -1785,31 +1785,31 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let (technologies, tutorials, tutorialArticles, allArticles) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
 
-        symbolPathTree = symbolsURLHierarchy
+        pathHierarchy = symbolsURLHierarchy
         
         var tutorialReferenceLookup = [ResolvedTopicReference: ResolvedIdentifier]()
         tutorialReferenceLookup.reserveCapacity(tutorials.count + tutorialArticles.count)
         
         for tutorial in tutorials {
             let reference = tutorial.topicGraphNode.reference
-            let tutorialID = symbolPathTree.addTutorial(name: urlReadablePath(tutorial.source.deletingPathExtension().lastPathComponent))
+            let tutorialID = pathHierarchy.addTutorial(name: urlReadablePath(tutorial.source.deletingPathExtension().lastPathComponent))
             nonSymbolTreeLookup[tutorialID] = reference
             tutorialReferenceLookup[reference] = tutorialID
             
             for landmark in tutorial.value.landmarks {
-                let landmarkID = symbolPathTree.addNonSymbolChild(parent: tutorialID, name: urlReadableFragment(landmark.title), type: "landmark")
+                let landmarkID = pathHierarchy.addNonSymbolChild(parent: tutorialID, name: urlReadableFragment(landmark.title), type: "landmark")
                 nonSymbolTreeLookup[landmarkID] = reference.withFragment(landmark.title)
             }
         }
         
         for article in tutorialArticles {
             let reference = article.topicGraphNode.reference
-            let tutorialID = symbolPathTree.addTutorial(name: urlReadablePath(article.source.deletingPathExtension().lastPathComponent))
+            let tutorialID = pathHierarchy.addTutorial(name: urlReadablePath(article.source.deletingPathExtension().lastPathComponent))
             nonSymbolTreeLookup[tutorialID] = reference
             tutorialReferenceLookup[reference] = tutorialID
             
             for landmark in article.value.landmarks {
-                let landmarkID = symbolPathTree.addNonSymbolChild(parent: tutorialID, name: urlReadableFragment(landmark.title), type: "landmark")
+                let landmarkID = pathHierarchy.addNonSymbolChild(parent: tutorialID, name: urlReadableFragment(landmark.title), type: "landmark")
                 nonSymbolTreeLookup[landmarkID] = reference.withFragment(landmark.title)
             }
         }
@@ -1817,20 +1817,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for technology in technologies {
             let reference = technology.topicGraphNode.reference
 
-            let technologyID = symbolPathTree.addTechnology(name: urlReadablePath(technology.source.deletingPathExtension().lastPathComponent))
+            let technologyID = pathHierarchy.addTechnology(name: urlReadablePath(technology.source.deletingPathExtension().lastPathComponent))
             nonSymbolTreeLookup[technologyID] = reference
             
             var anonymousVolumeID: ResolvedIdentifier?
             for volume in technology.value.volumes {
                 if anonymousVolumeID == nil, volume.name == nil {
-                    anonymousVolumeID = symbolPathTree.addNonSymbolChild(parent: technologyID, name: "$volume", type: "volume")
+                    anonymousVolumeID = pathHierarchy.addNonSymbolChild(parent: technologyID, name: "$volume", type: "volume")
                     nonSymbolTreeLookup[anonymousVolumeID!] = reference.appendingPath("$volume")
                 }
                 
                 let chapterParentID: ResolvedIdentifier
                 let chapterParentReference: ResolvedTopicReference
                 if let name = volume.name {
-                    chapterParentID = symbolPathTree.addNonSymbolChild(parent: technologyID, name: name, type: "volume")
+                    chapterParentID = pathHierarchy.addNonSymbolChild(parent: technologyID, name: name, type: "volume")
                     chapterParentReference = reference.appendingPath(name)
                     nonSymbolTreeLookup[chapterParentID] = chapterParentReference
                 } else {
@@ -1839,7 +1839,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
                 
                 for chapter in volume.chapters {
-                    let chapterID = symbolPathTree.addNonSymbolChild(parent: technologyID, name: chapter.name, type: "volume")
+                    let chapterID = pathHierarchy.addNonSymbolChild(parent: technologyID, name: chapter.name, type: "volume")
                     nonSymbolTreeLookup[chapterID] = chapterParentReference.appendingPath(chapter.name)
                 }
             }
@@ -1908,11 +1908,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Emit warnings for any remaining uncurated files.
         emitWarningsForUncuratedTopics()
         
-        for (id, node) in symbolPathTree.lookup {
+        for (id, node) in pathHierarchy.lookup {
             guard let symbol = node.symbol else { continue }
             let docNode = symbolIndex[symbol.identifier.precise]!
             for anchor in docNode.anchorSections {
-                let identifier = symbolPathTree.addNonSymbolChild(parent: id, name: anchor.reference.fragment!, type: "anchor")
+                let identifier = pathHierarchy.addNonSymbolChild(parent: id, name: anchor.reference.fragment!, type: "anchor")
                 nonSymbolTreeLookup[identifier] = anchor.reference
             }
         }
@@ -1989,7 +1989,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// This will include all symbols that were not manually curated by the documentation author.
     /// - Returns: An ordered list of symbol references that have been added to the topic graph automatically.
-    private func autoCurateSymbolsInTopicGraph(symbolsURLHierarchy: SymbolPathTree, engine: DiagnosticEngine) -> [(child: ResolvedTopicReference, parent: ResolvedTopicReference)] {
+    private func autoCurateSymbolsInTopicGraph(symbolsURLHierarchy: PathHierarchy, engine: DiagnosticEngine) -> [(child: ResolvedTopicReference, parent: ResolvedTopicReference)] {
         // We'll collect references in an array to keep them pre-order in respect to their position in the symbol hierarchy
         var automaticallyCuratedSymbols = [(ResolvedTopicReference, ResolvedTopicReference)]()
         
@@ -2038,11 +2038,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// ## See Also
     /// - ``DocumentationCurator``
-    func crawlSymbolCuration<Modules: Sequence>(rootModules: Modules, rootPages: Articles, symbolsURLHierarchy tree: SymbolPathTree, bundle: DocumentationBundle) throws -> Set<ResolvedTopicReference> where Modules.Element == ResolvedTopicReference {
+    func crawlSymbolCuration<Modules: Sequence>(rootModules: Modules, rootPages: Articles, symbolsURLHierarchy: PathHierarchy, bundle: DocumentationBundle) throws -> Set<ResolvedTopicReference> where Modules.Element == ResolvedTopicReference {
         // Start crawling at top-level symbols and decent the hierarchy following custom curations,
         // finally curate the top-level symbols under the module. We do this to account for the fact
         // top-level types aren't initially children of the module.
-        let topLevelModuleReferences = tree.topLevelSymbols().map { tree.toTopicReference($0, context: self) } + rootModules
+        let topLevelModuleReferences = symbolsURLHierarchy.topLevelSymbols().map { symbolsURLHierarchy.toTopicReference($0, context: self) } + rootModules
         
         // Crawl hierarchy under a root page for custom curations
         let rootPageReferences = rootPages.map(\.topicGraphNode.reference)
@@ -2143,7 +2143,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         // TODO: Remove components from symbol path tree
-        symbolPathTree = nil
+        pathHierarchy = nil
     }
 
     // MARK: - Getting documentation relationships
@@ -2402,18 +2402,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     }
                 }
                 
-                if symbolPathTree == nil {
+                if pathHierarchy == nil {
                     // TODO: Find a proper way to rebuild the symbol path tree after unregistering a documentation bundle.
                     return .failure(unresolvedReference, errorMessage: "Context has been emptied")
                 }
                 
-                let parentID = symbolPathTree.fromTopicReference(parent, context: self)
-                let found = try symbolPathTree.find(path: unresolvedReference.path + (unresolvedReference.fragment.map { "#\(urlReadableFragment($0))" } ?? ""), parent: parentID, prioritizeSymbols: isCurrentlyResolvingSymbolLink)
-                let foundReference = symbolPathTree.toTopicReference(found, context: self)
+                let parentID = pathHierarchy.fromTopicReference(parent, context: self)
+                let found = try pathHierarchy.find(path: PathHierarchy.path(for: unresolvedReference), parent: parentID, prioritizeSymbols: isCurrentlyResolvingSymbolLink)
+                let foundReference = pathHierarchy.toTopicReference(found, context: self)
                 
                 cacheReference(foundReference, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
                 return .success(foundReference)
-            } catch let error as SymbolPathTree.Error {
+            } catch let error as PathHierarchy.Error {
                 // Check if a fallback reference resolver should resolve this
                 let referenceBundleIdentifier = unresolvedReference.bundleIdentifier ?? parent.bundleIdentifier
                 guard !fallbackReferenceResolvers.isEmpty,
@@ -2497,7 +2497,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    var symbolPathTree: SymbolPathTree!
+    var pathHierarchy: PathHierarchy!
     var nonSymbolTreeLookup: [ResolvedIdentifier: ResolvedTopicReference] = [:]
     
     /// Update the asset with a new value given the assets name and the topic it's referenced in.

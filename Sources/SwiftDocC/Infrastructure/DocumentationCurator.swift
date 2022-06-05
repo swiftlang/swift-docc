@@ -118,10 +118,10 @@ struct DocumentationCurator {
         // Move the article from the article cache to the documentation
         context.documentationCache[reference] = documentationNode
         
-        let articleID = context.symbolPathTree.addArticle(name: articleFilename)
+        let articleID = context.pathHierarchy.addArticle(name: articleFilename)
         context.nonSymbolTreeLookup[articleID] = reference
         for anchor in documentationNode.anchorSections {
-            let anchorID = context.symbolPathTree.addNonSymbolChild(parent: articleID, name: anchor.reference.fragment!, type: "anchor")
+            let anchorID = context.pathHierarchy.addNonSymbolChild(parent: articleID, name: anchor.reference.fragment!, type: "anchor")
             context.nonSymbolTreeLookup[anchorID] = anchor.reference // For link resolution
             context.nodeAnchorSections[anchor.reference] = anchor    // For rendering
         }

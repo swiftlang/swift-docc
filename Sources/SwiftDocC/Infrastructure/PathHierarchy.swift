@@ -25,11 +25,11 @@ struct ResolvedIdentifier: Equatable, Hashable {
 // TODO: Optimize performance (inline TODOs and more)
 // TODO: Document (both API and some important implementation aspects)
 
-struct SymbolPathTree {
+struct PathHierarchy {
     
     init(symbolGraphLoader loader: SymbolGraphLoader, bundleName: String, knownDisambiguatedPathComponents: [String: [String]]? = nil) {
         var roots: [String: Node] = [:]
-        var allNodes: [String: [SymbolPathTree.Node]] = [:]
+        var allNodes: [String: [Node]] = [:]
         
         let symbolGraphs = loader.symbolGraphs
             .sorted(by: { lhs, _ in
@@ -56,16 +56,16 @@ struct SymbolPathTree {
                     accessLevel: SymbolGraph.Symbol.AccessControl(rawValue: "public"),
                     kind: SymbolGraph.Symbol.Kind(parsedIdentifier: .module, displayName: "Framework"), // TODO: Customizable module display name
                     mixins: [:])
-                let newModuleNode = SymbolPathTree.Node(symbol: moduleSymbol)
+                let newModuleNode = Node(symbol: moduleSymbol)
                 roots[moduleName] = newModuleNode
                 moduleNode = newModuleNode
                 allNodes[moduleName] = [moduleNode]
             }
             
-            var nodes: [String: SymbolPathTree.Node] = [:]
+            var nodes: [String: Node] = [:]
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
-                let node = SymbolPathTree.Node(symbol: symbol)
+                let node = Node(symbol: symbol)
                 nodes[id] = node
                 allNodes[id, default: []].append(node)
             }
@@ -216,7 +216,6 @@ struct SymbolPathTree {
         self.lookup[newReference] = newNode
 
         roots[name] = newNode
-//        _ = parent.add(child: newNode, kind: type, hash: "<missing>")
         
         return newReference
     }
@@ -273,12 +272,12 @@ struct SymbolPathTree {
     }
     
     final class Node {
-        fileprivate var children: [String: DisambiguationTree]
+        fileprivate private(set) var children: [String: DisambiguationTree]
         
-        var parent: Node?
-        var name: String
-        var symbol: SymbolGraph.Symbol!
-        var identifier: ResolvedIdentifier!
+        private(set) var parent: Node?
+        private(set) var name: String
+        private(set) var symbol: SymbolGraph.Symbol!
+        fileprivate(set) var identifier: ResolvedIdentifier!
         
         fileprivate init(symbol: SymbolGraph.Symbol!) {
             self.symbol = symbol
@@ -292,7 +291,7 @@ struct SymbolPathTree {
             self.children = [:]
         }
         
-        func add(child: Node) -> Bool {
+        fileprivate func add(child: Node) -> Bool {
             return add(
                 child: child,
                 kind: child.symbol.kind.identifier.identifier,
@@ -300,12 +299,12 @@ struct SymbolPathTree {
             )
         }
         
-        func add(child: Node, kind: String, hash: String) -> Bool {
+        fileprivate func add(child: Node, kind: String, hash: String) -> Bool {
             child.parent = self
             return children[child.name, default: .init()].add(kind, hash, child)
         }
         
-        func merge(with other: Node) {
+        fileprivate func merge(with other: Node) {
             assert(self.parent?.symbol?.identifier.precise == other.parent?.symbol?.identifier.precise)
             self.children = self.children.merging(other.children, uniquingKeysWith: { $0.merge(with: $1) })
             
@@ -494,7 +493,6 @@ struct SymbolPathTree {
         }
     }
     
-    
     struct PathComponent {
         let full: String
         let name: String
@@ -518,7 +516,7 @@ struct SymbolPathTree {
         return (components.map(Self.parse(pathComponent:)), isAbsolute)
     }
     
-    fileprivate static func parse(pathComponent original: Substring) -> PathComponent {
+    private static func parse(pathComponent original: Substring) -> PathComponent {
         let full = String(original)
         guard let dashIndex = original.lastIndex(of: "-") else {
             return PathComponent(full: full, name: full, kind: nil, hash: nil)
@@ -562,10 +560,18 @@ struct SymbolPathTree {
     }
 }
 
-// MARK: Integration shim
+// MARK: Bridging
 
-// TODO: Remove the need for these.
-extension SymbolPathTree {
+// TODO: Remove the need for bridging like this.
+
+extension PathHierarchy {
+    static func path(for unresolved: UnresolvedTopicReference) -> String {
+        guard let fragment = unresolved.fragment else {
+            return unresolved.path
+        }
+        return "\(unresolved.path)#\(urlReadableFragment(fragment))"
+    }
+    
     func toTopicReference(_ identifier: ResolvedIdentifier, context: DocumentationContext) -> ResolvedTopicReference {
         let node = lookup[identifier]!
         if let symbol = node.symbol {
@@ -577,7 +583,6 @@ extension SymbolPathTree {
     
     func fromTopicReference(_ reference: ResolvedTopicReference, context: DocumentationContext) -> ResolvedIdentifier? {
         guard !reference.path.isEmpty, reference.path != "/" else { return nil }
-        
         do {
             return try find(path: reference.path, parent: nil, prioritizeSymbols: false)
         } catch {
@@ -609,7 +614,9 @@ extension SymbolPathTree {
     }
 }
 
-extension SymbolPathTree.Error {
+// MARK: Error messages
+
+extension PathHierarchy.Error {
     func errorMessage(context: DocumentationContext) -> String {
         switch self {
         case .partialResult(let partialResult, let remaining, let available):
@@ -625,9 +632,8 @@ extension SymbolPathTree.Error {
     }
 }
 
-extension SymbolPathTree.Node {
-    // These are only intended for error messages.
-    fileprivate func pathWithoutDisambiguation() -> String {
+private extension PathHierarchy.Node {
+    func pathWithoutDisambiguation() -> String {
         var components = [name]
         var node = self
         while let parent = node.parent {
@@ -637,7 +643,7 @@ extension SymbolPathTree.Node {
         return "/" + components.joined(separator: "/")
     }
     
-    fileprivate func fullNameOfValue(context: DocumentationContext) -> String {
+    func fullNameOfValue(context: DocumentationContext) -> String {
         guard let identifier = identifier else { return name }
         if let symbol = symbol {
             return context.symbolIndex[symbol.identifier.precise]!.name.description
@@ -658,7 +664,7 @@ private struct DumpableNode {
     var children: [DumpableNode]
 }
 
-private extension SymbolPathTree.Node {
+private extension PathHierarchy.Node {
     func dumpableNode() -> DumpableNode {
         return DumpableNode(
             name: symbol.map { "{ \($0.identifier.precise) : \($0.identifier.interfaceLanguage).\($0.kind.identifier.identifier) }" } ?? "[ \(name) ]",
@@ -682,7 +688,7 @@ private extension SymbolPathTree.Node {
     }
 }
 
-extension SymbolPathTree {
+extension PathHierarchy {
     func dump() -> String {
         let root = DumpableNode(name: ".", children: roots.sorted(by: \.key).map { $0.value.dumpableNode() } + [articlesParent.dumpableNode(), tutorialParent.dumpableNode(), tutorialOverviewParent.dumpableNode()])
         return Self.dump(root)
@@ -708,13 +714,14 @@ extension SymbolPathTree {
     }
 }
 
-fileprivate struct DisambiguationTree {
-    typealias Value = SymbolPathTree.Node
+// MARK: Disambiguation tree
+
+private struct DisambiguationTree {
     // TODO: I have some ideas for how to optimize this. The tree is known to be small and be fixed depth.
-    var storage: [String: [String: Value]] = [:]
+    var storage: [String: [String: PathHierarchy.Node]] = [:]
     
     @discardableResult
-    mutating func add(_ kind: String, _ usr: String, _ value: Value) -> Bool {
+    mutating func add(_ kind: String, _ usr: String, _ value: PathHierarchy.Node) -> Bool {
         if let existing = storage[kind]?[usr] {
             existing.merge(with: value)
             return true
@@ -735,10 +742,10 @@ fileprivate struct DisambiguationTree {
     }
     
     enum Error: Swift.Error {
-        case lookupCollision([(node: SymbolPathTree.Node, disambiguation: String)])
+        case lookupCollision([(node: PathHierarchy.Node, disambiguation: String)])
     }
     
-    func find(_ kind: String?, _ usr: String?) throws -> Value? {
+    func find(_ kind: String?, _ usr: String?) throws -> PathHierarchy.Node? {
         if let kind = kind {
             guard let first = storage[kind] else { return nil }
             if let usr = usr {
@@ -773,7 +780,7 @@ fileprivate struct DisambiguationTree {
         throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, String($0.disambiguation.dropFirst())) })
     }
     
-    func disambiguatedValues() -> [(value: Value, disambiguation: String)] {
+    func disambiguatedValues() -> [(value: PathHierarchy.Node, disambiguation: String)] {
         if storage.count == 1 {
             let tree = storage.values.first!
             if tree.count == 1 {
@@ -781,7 +788,7 @@ fileprivate struct DisambiguationTree {
             }
         }
         
-        var collisions: [(value: Value, disambiguation: String)] = []
+        var collisions: [(value: PathHierarchy.Node, disambiguation: String)] = []
         for (kind, kindTree) in storage {
             if kindTree.count == 1 {
                 // No other match has this kind

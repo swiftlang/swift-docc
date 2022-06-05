@@ -186,7 +186,7 @@ class SymbolDisambiguationTests: XCTestCase {
         var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
         try loader.loadAll()
         
-        let references = context.referencesForSymbols(in: loader.unifiedGraphs, symbolHierarchy: context.symbolPathTree, bundle: bundle).mapValues({ $0.path })
+        let references = context.referencesForSymbols(in: loader.unifiedGraphs, symbolHierarchy: context.pathHierarchy, bundle: bundle).mapValues({ $0.path })
         XCTAssertEqual(references, [
             .init(precise: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift"):
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
@@ -328,7 +328,7 @@ class SymbolDisambiguationTests: XCTestCase {
         
         let context = try DocumentationContext(dataProvider: provider)
         
-        var references = context.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], symbolHierarchy: context.symbolPathTree, bundle: bundle)
+        var references = context.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], symbolHierarchy: context.pathHierarchy, bundle: bundle)
         references[SymbolGraph.Symbol.Identifier(precise: "common-parent-symbol", interfaceLanguage: "swift")] = nil
         return references
     }

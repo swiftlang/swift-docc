@@ -13,11 +13,11 @@ import SymbolKit
 @testable import SwiftDocC
 import SwiftDocCTestUtilities
 
-class SymbolPathTreeTests: XCTestCase {
+class PathHierarchyTests: XCTestCase {
     
     func testFindingUnambiguousAbsolutePaths() throws {
         let (_, context) = try testBundleAndContext(named: "MixedFramework")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         try assertFindsPath("/MixedFramework", in: tree, asSymbolID: "MixedFramework")
         
@@ -282,7 +282,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testAmbiguousPaths() throws {
         let (_, context) = try testBundleAndContext(named: "MixedFramework")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         // public enum CollisionsWithDifferentKinds {
         //     case something
@@ -377,7 +377,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testRedundantKindDisambiguation() throws {
         let (_, context) = try testBundleAndContext(named: "MixedFramework")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         try assertFindsPath("/MixedFramework-module", in: tree, asSymbolID: "MixedFramework")
         
@@ -429,7 +429,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testBothRedundantDisambiguations() throws {
         let (_, context) = try testBundleAndContext(named: "MixedFramework")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         try assertFindsPath("/MixedFramework-module-9r7pl", in: tree, asSymbolID: "MixedFramework")
         
@@ -481,7 +481,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testDisambiguatedPaths() throws {
         let (_, context) = try testBundleAndContext(named: "MixedFramework")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         // @objc public enum MyEnum: Int {
@@ -602,7 +602,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testFindingRelativePaths() throws {
         let (_, context) = try testBundleAndContext(named: "MixedFramework")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         let moduleID = try tree.find(path: "/MixedFramework", prioritizeSymbols: true)
         
@@ -757,7 +757,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testPathWithDocumentationPrefix() throws {
         let (_, context) = try testBundleAndContext(named: "MixedFramework")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         let moduleID = try tree.find(path: "/MixedFramework", prioritizeSymbols: true)
         
@@ -772,7 +772,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testTestBundle() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         // Test finding the parent via the `fromTopicReference` integration shim.
         let parentID = tree.fromTopicReference(ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift), context: context)
@@ -824,7 +824,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testMixedLanguageFramework() throws {
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         try assertFindsPath("MixedLanguageFramework/Bar/myStringFunction(_:)", in: tree, asSymbolID: "c:objc(cs)Bar(cm)myStringFunction:error:")
         try assertFindsPath("MixedLanguageFramework/Bar/myStringFunction:error:", in: tree, asSymbolID: "c:objc(cs)Bar(cm)myStringFunction:error:")
@@ -869,7 +869,7 @@ class SymbolPathTreeTests: XCTestCase {
     
     func testOverloadedSymbols() throws {
         let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         
@@ -895,7 +895,7 @@ class SymbolPathTreeTests: XCTestCase {
 
         do {
             let (_, _, context) = try loadBundle(from: bundleURL)
-            let tree = try XCTUnwrap(context.symbolPathTree)
+            let tree = try XCTUnwrap(context.pathHierarchy)
             
             try assertFindsPath("/MyKit/MyClass/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
             try assertPathNotFound("/MyKit/MyClass-swift.class/myFunction()", in: tree)
@@ -914,7 +914,7 @@ class SymbolPathTreeTests: XCTestCase {
                     "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class", "myFunction()"]
                 ]
             }
-            let tree = try XCTUnwrap(context.symbolPathTree)
+            let tree = try XCTUnwrap(context.pathHierarchy)
             
             try assertFindsPath("/MyKit/MyClass-swift.class/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
             try assertPathNotFound("/MyKit/MyClass", in: tree)
@@ -933,7 +933,7 @@ class SymbolPathTreeTests: XCTestCase {
                     "s:5MyKit0A5ClassC10myFunctionyyF": ["MyClass-swift.class-hash", "myFunction()"]
                 ]
             }
-            let tree = try XCTUnwrap(context.symbolPathTree)
+            let tree = try XCTUnwrap(context.pathHierarchy)
             
             try assertFindsPath("/MyKit/MyClass-swift.class-hash/myFunction()", in: tree, asSymbolID: "s:5MyKit0A5ClassC10myFunctionyyF")
             try assertPathNotFound("/MyKit/MyClass", in: tree)
@@ -986,7 +986,7 @@ class SymbolPathTreeTests: XCTestCase {
         let bundleURL = try exampleDocumentation.write(inside: tempURL)
         
         let (_, _, context) = try loadBundle(from: bundleURL)
-        let tree = try XCTUnwrap(context.symbolPathTree)
+        let tree = try XCTUnwrap(context.pathHierarchy)
         
         try assertPathNotFound("/Module/A", in: tree)
         try assertPathNotFound("/Module/A/B", in: tree)
@@ -1037,43 +1037,43 @@ class SymbolPathTreeTests: XCTestCase {
     
     // MARK: Test helpers
     
-    private func assertFindsPath(_ path: String, in tree: SymbolPathTree, asSymbolID symbolID: String, file: StaticString = #file, line: UInt = #line) throws {
+    private func assertFindsPath(_ path: String, in tree: PathHierarchy, asSymbolID symbolID: String, file: StaticString = #file, line: UInt = #line) throws {
         do {
             let symbol = try tree.findSymbol(path: path)
             XCTAssertEqual(symbol.identifier.precise, symbolID, file: file, line: line)
-        } catch SymbolPathTree.Error.notFound {
+        } catch PathHierarchy.Error.notFound {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
-        } catch SymbolPathTree.Error.partialResult {
+        } catch PathHierarchy.Error.partialResult {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
-        } catch SymbolPathTree.Error.lookupCollision(_, let collisions) {
+        } catch PathHierarchy.Error.lookupCollision(_, let collisions) {
             let symbols = collisions.map { $0.node.symbol! }
             XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.names.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
         }
     }
     
-    private func assertPathNotFound(_ path: String, in tree: SymbolPathTree, file: StaticString = #file, line: UInt = #line) throws {
+    private func assertPathNotFound(_ path: String, in tree: PathHierarchy, file: StaticString = #file, line: UInt = #line) throws {
         do {
             let symbol = try tree.findSymbol(path: path)
             XCTFail("Unexpectedly found symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
-        } catch SymbolPathTree.Error.notFound {
+        } catch PathHierarchy.Error.notFound {
             // This specific error is expected.
-        } catch SymbolPathTree.Error.partialResult {
+        } catch PathHierarchy.Error.partialResult {
             // For the purpose of this assertion, this also counts as "not found".
-        } catch SymbolPathTree.Error.lookupCollision(_, let collisions) {
+        } catch PathHierarchy.Error.lookupCollision(_, let collisions) {
             let symbols = collisions.map { $0.node.symbol! }
             XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.names.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
         }
     }
     
-    private func assertPathCollision(_ path: String, in tree: SymbolPathTree, collisions expectedCollisions: [(symbolID: String, disambiguation: String)], file: StaticString = #file, line: UInt = #line) throws {
+    private func assertPathCollision(_ path: String, in tree: PathHierarchy, collisions expectedCollisions: [(symbolID: String, disambiguation: String)], file: StaticString = #file, line: UInt = #line) throws {
         do {
             let symbol = try tree.findSymbol(path: path)
             XCTFail("Unexpectedly found unambiguous symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
-        } catch SymbolPathTree.Error.notFound {
+        } catch PathHierarchy.Error.notFound {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
-        } catch SymbolPathTree.Error.partialResult {
+        } catch PathHierarchy.Error.partialResult {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
-        } catch SymbolPathTree.Error.lookupCollision(_, let collisions) {
+        } catch PathHierarchy.Error.lookupCollision(_, let collisions) {
             let sortedCollisions = collisions.sorted(by: \.disambiguation)
             XCTAssertEqual(sortedCollisions.count, expectedCollisions.count, file: file, line: line)
             for (actual, expected) in zip(sortedCollisions, expectedCollisions) {
@@ -1084,7 +1084,7 @@ class SymbolPathTreeTests: XCTestCase {
     }
     
     private func assertParsedPathComponents(_ path: String, _ expected: [(String, String?, String?)], file: StaticString = #file, line: UInt = #line) {
-        let (actual, _) = SymbolPathTree.parse(path: path)
+        let (actual, _) = PathHierarchy.parse(path: path)
         XCTAssertEqual(actual.count, expected.count, file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {
             XCTAssertEqual(actualComponents.name, expectedComponents.0, "Incorrect path component", file: file, line: line)
@@ -1094,7 +1094,7 @@ class SymbolPathTreeTests: XCTestCase {
     }
 }
 
-extension SymbolPathTree {
+extension PathHierarchy {
     func findSymbol(path rawPath: String, parent: ResolvedIdentifier? = nil) throws -> SymbolGraph.Symbol {
         let id = try find(path: rawPath, parent: parent, prioritizeSymbols: true)
         return lookup[id]!.symbol
