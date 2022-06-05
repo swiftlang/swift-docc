@@ -385,6 +385,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             NonOverviewHeadingChecker(sourceFile: source).any(),
             SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
             TopicsSectionWithoutSubheading(sourceFile: source).any(),
+            TutorialDirectiveMisuseChecker(sourceFile: source).any(),
         ])
         checker.visit(document)
         diagnosticEngine.emit(checker.problems)
