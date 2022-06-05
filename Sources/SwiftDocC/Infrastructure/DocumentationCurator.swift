@@ -119,10 +119,10 @@ struct DocumentationCurator {
         context.documentationCache[reference] = documentationNode
         
         let articleID = context.pathHierarchy.addArticle(name: articleFilename)
-        context.nonSymbolTreeLookup[articleID] = reference
+        context.resolvedReferenceMap[articleID] = reference
         for anchor in documentationNode.anchorSections {
             let anchorID = context.pathHierarchy.addNonSymbolChild(parent: articleID, name: anchor.reference.fragment!, type: "anchor")
-            context.nonSymbolTreeLookup[anchorID] = anchor.reference // For link resolution
+            context.resolvedReferenceMap[anchorID] = anchor.reference // For link resolution
             context.nodeAnchorSections[anchor.reference] = anchor    // For rendering
         }
         
@@ -140,7 +140,7 @@ struct DocumentationCurator {
     ///   - nodeReference: The root reference to start crawling.
     ///   - prepareForCuration: An optional closure to call just before walking the node's task group links.
     ///   - relateNodes: A closure to call when a parent <-> child relationship is found.
-    mutating func crawlChildren(of nodeReference: ResolvedTopicReference, prepareForCuration: (ResolvedTopicReference) -> Void = {_ in}, relateNodes: (ResolvedTopicReference, ResolvedTopicReference) -> Void) throws {
+    mutating func crawlChildren(of nodeReference: ResolvedTopicReference, prepareForCuration: (ResolvedTopicReference) -> Void = {_ in }, relateNodes: (ResolvedTopicReference, ResolvedTopicReference) -> Void) throws {
         // Keeping track if all articles have been curated.
         curatedNodes.insert(nodeReference)
 

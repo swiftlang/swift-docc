@@ -112,9 +112,9 @@ enum GeneratedDocumentationTopics {
                     symbol.automaticTaskGroupsVariants[trait]?.append(inheritedSection)
                 }
             }
-            let symbolID = context.pathHierarchy.fromTopicReference(parent, context: context)!
+            let symbolID = context.resolvedReferenceMap[parent]!
             let taskGroupID = context.pathHierarchy.addNonSymbolChild(parent: symbolID, name: urlReadablePath(title), type: "taskGroup")
-            context.nonSymbolTreeLookup[taskGroupID] = collectionReference
+            context.resolvedReferenceMap[taskGroupID] = collectionReference
         } else {
             fatalError("createCollectionNode() should be used only to add nodes under symbols.")
         }

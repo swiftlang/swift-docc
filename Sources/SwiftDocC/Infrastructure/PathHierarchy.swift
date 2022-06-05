@@ -179,9 +179,9 @@ struct PathHierarchy {
     }
     
     private(set) var roots: [String: Node]
-    private let articlesParent: Node
+    let articlesParent: Node
     let tutorialParent: Node
-    private let tutorialOverviewParent: Node
+    let tutorialOverviewParent: Node
     
     private(set) var lookup: [ResolvedIdentifier: Node]
     
@@ -572,27 +572,6 @@ extension PathHierarchy {
         return "\(unresolved.path)#\(urlReadableFragment(fragment))"
     }
     
-    func toTopicReference(_ identifier: ResolvedIdentifier, context: DocumentationContext) -> ResolvedTopicReference {
-        let node = lookup[identifier]!
-        if let symbol = node.symbol {
-            return context.symbolIndex[symbol.identifier.precise]!.reference
-        } else {
-            return context.nonSymbolTreeLookup[identifier]!
-        }
-    }
-    
-    func fromTopicReference(_ reference: ResolvedTopicReference, context: DocumentationContext) -> ResolvedIdentifier? {
-        guard !reference.path.isEmpty, reference.path != "/" else { return nil }
-        do {
-            return try find(path: reference.path, parent: nil, prioritizeSymbols: false)
-        } catch {
-            if let moduleName = context.parents(of: reference).first?.pathComponents[2] {
-                return roots[moduleName]?.identifier
-            }
-            return nil
-        }
-    }
-    
     // TODO: This is only needed for the parent <-> child relationships
     func traversePreOrder(_ observe: (Node) -> Void) {
         for node in lookup.values {
@@ -648,7 +627,7 @@ private extension PathHierarchy.Node {
         if let symbol = symbol {
             return context.symbolIndex[symbol.identifier.precise]!.name.description
         }
-        let reference = context.nonSymbolTreeLookup[identifier]!
+        let reference = context.resolvedReferenceMap[identifier]!
         if reference.fragment != nil {
             return context.nodeAnchorSections[reference]!.title
         } else {
@@ -690,7 +669,13 @@ private extension PathHierarchy.Node {
 
 extension PathHierarchy {
     func dump() -> String {
-        let root = DumpableNode(name: ".", children: roots.sorted(by: \.key).map { $0.value.dumpableNode() } + [articlesParent.dumpableNode(), tutorialParent.dumpableNode(), tutorialOverviewParent.dumpableNode()])
+        var children = roots.sorted(by: \.key).map { $0.value.dumpableNode() }
+        if articlesParent.symbol == nil {
+            children.append(articlesParent.dumpableNode()) // The article parent can be the same node as the module
+        }
+        children.append(contentsOf: [tutorialParent.dumpableNode(), tutorialOverviewParent.dumpableNode()])
+        
+        let root = DumpableNode(name: ".", children: children)
         return Self.dump(root)
     }
     
