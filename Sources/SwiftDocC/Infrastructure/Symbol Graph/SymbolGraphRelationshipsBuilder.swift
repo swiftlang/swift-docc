@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -248,6 +248,24 @@ struct SymbolGraphRelationshipsBuilder {
         }
         
         requiredSymbol.isRequired = true
+    }
+    
+    /// Adds a relationship from a type member to a protocol requirement.
+    /// - Parameters:
+    ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - bundle: A documentation bundle.
+    ///   - symbolIndex: A symbol lookup map by precise identifier.
+    ///   - engine: A diagnostic collecting engine.
+    static func addOptionalRequirementRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+        // Resolve source symbol
+        guard let requiredNode = symbolIndex[edge.source],
+            let requiredSymbol = requiredNode.semantic as? Symbol else {
+            // The source node for requirement relationship not found.
+            engine.emit(NodeProblem.notFound(edge.source))
+            return
+        }
+        
+        requiredSymbol.isRequired = false
     }
     
     /// Sets a node in the context as an inherited symbol if the origin symbol is provided in the given relationship.

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -152,5 +152,19 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         
         // Test default implementation was added
         XCTAssertTrue((symbolIndex["A"]!.semantic as! Symbol).isRequired)
+    }
+    
+    func testOptionalRequirementRelationship() throws {
+        let bundle = try testBundle(named: "TestBundle")
+        var symbolIndex = [String: DocumentationNode]()
+        let engine = DiagnosticEngine()
+        
+        let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
+        
+        // Adding the relationship
+        SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        
+        // Test default implementation was added
+        XCTAssertTrue(!(symbolIndex["A"]!.semantic as! Symbol).isRequired)
     }
 }
