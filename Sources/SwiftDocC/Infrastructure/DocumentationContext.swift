@@ -253,9 +253,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// External metadata injected into the context, for example via command line arguments.
     public var externalMetadata = ExternalMetadata()
     
-    /// A synchronized reference cache to store resolved references.
-    let referenceCache = Synchronized([String: ResolvedTopicReference]())
-    
     /// Initializes a documentation context with a given `dataProvider` and registers all the documentation bundles that it provides.
     ///
     /// - Parameter dataProvider: The data provider to register bundles from.
@@ -311,7 +308,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - dataProvider: The provider that removed this bundle.
     ///   - bundle: The bundle that was removed.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
-        referenceCache.sync { $0.removeAll() }
         ResolvedTopicReference.purgePool(for: bundle.identifier)
         unregister(bundle)
     }
@@ -2323,11 +2319,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         topicGraph.traverseBreadthFirst(from: node, observe)
     }
     
-    /// Safely add a resolved reference to the reference cache
-    func cacheReference(_ resolved: ResolvedTopicReference, withKey key: ResolvedTopicReferenceCacheKey) {
-        referenceCache.sync { $0[key] = resolved }
-    }
-    
     /// Looks up the topic graph directly using a symbol link path.
     /// - Parameters:
     ///   - path: A possibly absolute symbol path.
@@ -2367,18 +2358,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool = false) -> TopicReferenceResolutionResult {
         switch reference {
         case .unresolved(let unresolvedReference):
-            
-            // Check if that unresolved reference was already resolved in that parent context
-            if let cachedReference: ResolvedTopicReference = self.referenceCache.sync({
-                return $0[ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent)]
-            }) {
-                if isCurrentlyResolvingSymbolLink && !(documentationCache[cachedReference]?.semantic is Symbol) {
-                    // When resolving a symbol link, ignore non-symbol matches,
-                    // do continue to try resolving the symbol as if cached match was not found.
-                } else {
-                    return .success(cachedReference)
-                }
-            }
 
             // Check if the unresolved reference is external
             if let bundleID = unresolvedReference.bundleIdentifier {
@@ -2415,7 +2394,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let found = try pathHierarchy.find(path: PathHierarchy.path(for: unresolvedReference), parent: parentID, prioritizeSymbols: isCurrentlyResolvingSymbolLink)
                 let foundReference = resolvedReferenceMap[found]!
                 
-                cacheReference(foundReference, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
                 return .success(foundReference)
             } catch let error as PathHierarchy.Error {
                 // Check if a fallback reference resolver should resolve this
@@ -2480,8 +2458,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     let reference = fallbackResolver.resolve(.unresolved(unresolvedReference), sourceLanguage: parent.sourceLanguage)
                     
                     if case .success(let resolvedReference) = reference {
-                        cacheReference(resolvedReference, withKey: ResolvedTopicReference.cacheIdentifier(unresolvedReference, fromSymbolLink: isCurrentlyResolvingSymbolLink, in: parent))
-                        
                         // Register the resolved reference in the context so that it can be looked up via its absolute
                         // path. We only do this for in-bundle content, and since we've just resolved an in-bundle link,
                         // we register the reference.
