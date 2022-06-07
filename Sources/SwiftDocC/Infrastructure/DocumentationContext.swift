@@ -1104,10 +1104,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         diagnosticEngine.emit(result.problems)
     }
-
-    /// Reference lookup index.
-    private(set) var referencesIndex = [String: ResolvedTopicReference]()
-
+    
+    private var cachedResolvedFallbackReferences = Synchronized<[String: ResolvedTopicReference]>([:])
+    
     /// Loads all graph files from a given `bundle` and merges them together while building the symbol relationships and loading any available markdown documentation for those symbols.
     ///
     /// - Parameter bundle: The bundle to load symbol graph files from.
@@ -1269,20 +1268,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             // Build relationships in the completed graph
             buildRelationships(combinedRelationships, bundle: bundle, engine: diagnosticEngine)
-            
-            // Index references
-            referencesIndex.removeAll()
-            referencesIndex.reserveCapacity(knownIdentifiers.count)
-            for reference in knownIdentifiers {
-                registerReference(reference)
-            }
 
             return Set(moduleReferences.values)
         }
-    }
-    
-    private func registerReference(_ resolvedReference: ResolvedTopicReference) {
-        referencesIndex[resolvedReference.absoluteString] = resolvedReference
     }
 
     private func shouldContinueRegistration() throws {
@@ -2318,20 +2306,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         topicGraph.traverseBreadthFirst(from: node, observe)
     }
-    
-    /// Looks up the topic graph directly using a symbol link path.
-    /// - Parameters:
-    ///   - path: A possibly absolute symbol path.
-    ///   - parent: A resolved reference.
-    /// - Returns: A resolved topic reference, `nil` if no node matched the path.
-    func referenceFor(absoluteSymbolPath path: String, parent: ResolvedTopicReference) -> ResolvedTopicReference? {
-        // Check if `destination` is a known absolute reference URL.
-        if let match = referencesIndex[path] { return match }
-        
-        // Check if `destination` is a known absolute symbol path.
-        let referenceURLString = "doc://\(parent.bundleIdentifier)/documentation/\(path.hasPrefix("/") ? String(path.dropFirst()) : path)"
-        return referencesIndex[referenceURLString]
-    }
 
     /// Returns whether a documentation node only has snippet or snippet group children.
     func onlyHasSnippetRelatedChildren(for reference: ResolvedTopicReference) -> Bool {
@@ -2406,6 +2380,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
                 
                 // Legacy code path for fallback resolvers
+                
+                if let cached = cachedResolvedFallbackReferences.sync({ $0[unresolvedReference.topicURL.absoluteString] }) {
+                    return .success(cached)
+                }
                 var allCandidateURLs = [URL]()
                 
                 let alreadyResolved = ResolvedTopicReference(
@@ -2454,14 +2432,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 allCandidateURLs.append(currentBundle.documentationRootReference.url.appendingPathComponent(unresolvedReference.path))
                 
                 for candidateURL in allCandidateURLs {
+                    if let cached = cachedResolvedFallbackReferences.sync({ $0[candidateURL.absoluteString] }) {
+                        return .success(cached)
+                    }
                     let unresolvedReference = UnresolvedTopicReference(topicURL: ValidatedURL(candidateURL)!)
                     let reference = fallbackResolver.resolve(.unresolved(unresolvedReference), sourceLanguage: parent.sourceLanguage)
                     
                     if case .success(let resolvedReference) = reference {
-                        // Register the resolved reference in the context so that it can be looked up via its absolute
-                        // path. We only do this for in-bundle content, and since we've just resolved an in-bundle link,
-                        // we register the reference.
-                        registerReference(resolvedReference)
+                        cachedResolvedFallbackReferences.sync({ $0[resolvedReference.absoluteString] = resolvedReference })
                         return .success(resolvedReference)
                     }
                 }

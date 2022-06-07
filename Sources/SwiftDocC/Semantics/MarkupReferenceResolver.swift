@@ -113,23 +113,13 @@ struct MarkupReferenceResolver: MarkupRewriter {
     }
 
     mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> String {
-        if let cached = context.referenceFor(absoluteSymbolPath: unresolvedDestination, parent: rootReference) {
-            guard context.topicGraph.isLinkable(cached) == true else {
-                problems.append(disabledLinkDestinationProblem(reference: cached, source: source, range: range, severity: .warning))
-                return unresolvedDestination
-            }
-            return cached.absoluteString
-        }
-
-        // We don't require a scheme here as the link can be a relative one, e.g. ``SwiftUI/View``.
+        // The absolute symbol link may be written with a scheme and bundle identifier.
         let url = ValidatedURL(parsingExact: unresolvedDestination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: unresolvedDestination)
         let unresolved = TopicReference.unresolved(.init(topicURL: url))
         guard let resolvedURL = resolve(reference: unresolved, range: range, severity: .warning, fromSymbolLink: true) else {
             return unresolvedDestination
         }
-
         return resolvedURL.absoluteString
-
     }
     
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> Markup? {

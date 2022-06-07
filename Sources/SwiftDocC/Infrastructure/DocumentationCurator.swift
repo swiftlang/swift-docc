@@ -32,20 +32,14 @@ struct DocumentationCurator {
     private(set) var curatedNodes: Set<ResolvedTopicReference>
     
     /// Tries to resolve a symbol link in the current module/context.
-    func referenceFromSymbolLink(link: SymbolLink, resolved: ResolvedTopicReference) -> ResolvedTopicReference? {
+    func referenceFromSymbolLink(link: SymbolLink, resolved parent: ResolvedTopicReference) -> ResolvedTopicReference? {
         guard let destination = link.destination else {
             return nil
         }
         
-        // Optimization for absolute links.
-        if let cached = context.referenceFor(absoluteSymbolPath: destination, parent: resolved) {
-            return cached
-        }
-        
-        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(symbolPath: destination)) 
-        let maybeResolved = context.resolve(.unresolved(unresolved), in: resolved, fromSymbolLink: true)
-        
-        if case let .success(resolved) = maybeResolved {
+        // The symbol link may be written with a scheme and bundle identifier.
+        let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)
+        if case let .success(resolved) = context.resolve(.unresolved(.init(topicURL: url)), in: parent, fromSymbolLink: true) {
             return resolved
         }
         return nil
