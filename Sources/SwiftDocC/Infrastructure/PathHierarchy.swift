@@ -274,7 +274,7 @@ struct PathHierarchy {
     final class Node {
         fileprivate private(set) var children: [String: DisambiguationTree]
         
-        private(set) var parent: Node?
+        private(set) unowned var parent: Node?
         private(set) var name: String
         private(set) var symbol: SymbolGraph.Symbol!
         fileprivate(set) var identifier: ResolvedIdentifier!
