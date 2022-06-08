@@ -535,6 +535,126 @@ final class RenderIndexTests: XCTestCase {
         )
     }
     
+    func testRenderIndexGenerationForMixedLanguageFrameworkThatCuratesObjectiveCOnlyTopicInSwiftOnlyPage() throws {
+        let renderIndex = try generatedRenderIndex(
+            for: "MixedLanguageFrameworkSingleLanguageCuration",
+            with: "org.swift.MixedLanguageFramework"
+        )
+
+        XCTAssertEqual(
+            renderIndex,
+            try RenderIndex.fromString(#"""
+                {
+                  "interfaceLanguages": {
+                    "swift": [
+                      {
+                        "title": "Structures",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/swiftonlystruct",
+                        "title": "SwiftOnlyStruct",
+                        "type": "struct",
+                        "children": [
+                          {
+                            "title": "Objective-C–only symbols",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "ObjectiveCOnlyClass",
+                            "path": "/documentation/mixedlanguageframework/objectiveconlyclass",
+                            "type": "class"
+                          },
+                          {
+                            "title": "MultiCuratedObjectiveCOnlyClass1",
+                            "path": "/documentation/mixedlanguageframework/multicuratedobjectiveconlyclass1",
+                            "type": "class"
+                          },
+                          {
+                            "title": "MultiCuratedObjectiveCOnlyClass2",
+                            "path": "/documentation/mixedlanguageframework/multicuratedobjectiveconlyclass2",
+                            "type": "class"
+                          }
+                        ]
+                      }
+                    ],
+                    "occ": [
+                      {
+                        "title": "Multi-curated Objective-C–only symbols",
+                        "type": "groupMarker"
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/multicuratedobjectiveconlyclass1",
+                        "title": "MultiCuratedObjectiveCOnlyClass1",
+                        "type": "class",
+                        "children": [
+                          {
+                            "title": "Multi-curated Objective-C–only symbols",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "MultiCuratedObjectiveCOnlyClass2",
+                            "path": "/documentation/mixedlanguageframework/multicuratedobjectiveconlyclass2",
+                            "type": "class"
+                          },
+                          {
+                            "title": "Swift-only symbols",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "SwiftOnlyStruct",
+                            "path": "/documentation/mixedlanguageframework/swiftonlystruct",
+                            "type": "struct"
+                          }
+                        ]
+                      },
+                      {
+                        "path": "/documentation/mixedlanguageframework/multicuratedobjectiveconlyclass1",
+                        "title": "MultiCuratedObjectiveCOnlyClass1",
+                        "type": "class",
+                        "children": [
+                          {
+                            "title": "Multi-curated Objective-C–only symbols",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "MultiCuratedObjectiveCOnlyClass2",
+                            "path": "/documentation/mixedlanguageframework/multicuratedobjectiveconlyclass2",
+                            "type": "class"
+                          },
+                          {
+                            "title": "Swift-only symbols",
+                            "type": "groupMarker"
+                          },
+                          {
+                            "title": "SwiftOnlyStruct",
+                            "path": "/documentation/mixedlanguageframework/swiftonlystruct",
+                            "type": "struct"
+                          }
+                        ]
+                      },
+                      {
+                        "title": "MultiCuratedObjectiveCOnlyClass2",
+                        "path": "/documentation/mixedlanguageframework/multicuratedobjectiveconlyclass2",
+                        "type": "class"
+                      }
+                    ]
+                  },
+                  "schemaVersion": {
+                    "major": 0,
+                    "minor": 1,
+                    "patch": 0
+                  }
+                }
+                """#
+            ),
+            """
+            Generated render index does not match expected index. Actual index was: \
+            \(String(data: (try? JSONEncoder().encode(renderIndex)) ?? Data(), encoding: .utf8) ?? "")
+            """
+        )
+    }
+    
     func testRenderIndexGenerationWithExternalNode() throws {
         try testRenderIndexGenerationFromJSON(
             makeRenderIndexJSONSingleNode(withOptionalProperty: "external")

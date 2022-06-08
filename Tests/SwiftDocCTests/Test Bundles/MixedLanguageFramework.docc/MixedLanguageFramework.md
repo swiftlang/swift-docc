@@ -4,6 +4,11 @@ This framework is available to both Swift and Objective-C clients.
 
 ## Topics
 
+@Comment {
+    All the topics here should appear in both Swift and Objective-C variants of the page, 
+    since they're manually curated.
+}
+
 ### Swift-only APIs
 
 - ``SwiftOnlyStruct``

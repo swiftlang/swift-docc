@@ -514,10 +514,10 @@ extension NavigatorIndex {
     ///
     /// Used to identify relationships in the navigator index during the index build process.
     public struct Identifier: Hashable {
-        let bundleIdentifier: String
-        let path: String
-        let fragment: String?
-        let languageIdentifier: InterfaceLanguage.ID
+        var bundleIdentifier: String
+        var path: String
+        var fragment: String?
+        var languageIdentifier: InterfaceLanguage.ID
         
         init(
             bundleIdentifier: String,
@@ -529,6 +529,12 @@ extension NavigatorIndex {
             self.path = path
             self.fragment = fragment
             self.languageIdentifier = languageIdentifier
+        }
+        
+        func withLanguageIdentifier(_ languageIdentifier: InterfaceLanguage.ID) -> Identifier {
+            var identifier = self
+            identifier.languageIdentifier = languageIdentifier
+            return identifier
         }
     }
     
@@ -914,14 +920,12 @@ extension NavigatorIndex {
                 let (nodeID, parent) = nodesMultiCurated[index]
                 let placeholders = identifierToChildren[nodeID]!
                 for reference in placeholders {
-                    if let child = identifierToNode[reference] {
-                        parent.add(child: child)
-                        pendingUncuratedReferences.remove(reference)
+                    if let childNode = relateChild(withReference: reference, to: parent) {
                         if !multiCurated.keys.contains(reference) && reference.fragment == nil {
                             // As the children of a multi-curated node is itself curated multiple times
                             // we need to process it as well, ignoring items with fragments as those are sections.
-                            nodesMultiCurated.append((reference, child))
-                            multiCurated[reference] = child
+                            nodesMultiCurated.append((reference, childNode))
+                            multiCurated[reference] = childNode
                         }
                     }
                 }
@@ -932,11 +936,7 @@ extension NavigatorIndex {
             for (nodeIdentifier, placeholders) in identifierToChildren {
                 for reference in placeholders {
                     let parent = identifierToNode[nodeIdentifier]!
-                    if let child = identifierToNode[reference] {
-                        let needsCopy = multiCurated[reference] != nil
-                        parent.add(child: (needsCopy) ? child.copy() : child)
-                        pendingUncuratedReferences.remove(reference)
-                    }
+                    relateChild(withReference: reference, to: parent)
                 }
             }
             
@@ -1272,6 +1272,68 @@ extension NavigatorIndex {
         
         func availabilityEntryIDs(for availabilityID: UInt64) -> [Int]? {
             return availabilityIDs[Int(availabilityID)]
+        }
+                
+        @discardableResult
+        private func relateChild(
+            withReference childReference: Identifier,
+            to parentNode: NavigatorTree.Node
+        ) -> NavigatorTree.Node? {
+            func relateChild(
+                childReference: Identifier,
+                to parentNode: NavigatorTree.Node,
+                languageIDOverride: InterfaceLanguage.ID? = nil
+            ) -> NavigatorTree.Node? {
+                guard let child = identifierToNode[childReference] else {
+                    return nil
+                }
+                
+                let newChildNode: NavigatorTree.Node
+                
+                if let languageIDOverride = languageIDOverride {
+                    newChildNode = child.copy()
+                    
+                    // Override the node's item's language.
+                    newChildNode.item = newChildNode.item.withLanguageID(languageIDOverride)
+                    
+                    newChildNode.children = []
+                } else if multiCurated[childReference] != nil {
+                    newChildNode = child.copy()
+                } else {
+                    newChildNode = child
+                }
+                
+                parentNode.add(child: newChildNode)
+                pendingUncuratedReferences.remove(childReference)
+                return newChildNode
+            }
+            
+            // Try to relate the child given the exact reference.
+            if let childNode = relateChild(childReference: childReference, to: parentNode) {
+                return childNode
+            }
+            
+            // Otherwise, try to relate the child in another language.
+            let otherLanguages = InterfaceLanguage.all
+                .map(\.mask)
+                .filter { $0 != childReference.languageIdentifier }
+            
+            for languageIdentifier in otherLanguages {
+                let candidateReference = childReference.withLanguageIdentifier(languageIdentifier)
+                
+                if let childNode = relateChild(
+                    childReference: candidateReference,
+                    to: parentNode,
+                    
+                    // Keep the original reference's language.
+                    languageIDOverride: childReference.languageIdentifier
+                ) {
+                    // We found the child in another language.
+                    return childNode
+                }
+            }
+            
+            return nil
         }
     }
     

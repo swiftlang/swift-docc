@@ -30,7 +30,7 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
     public let pageType: UInt8
     
     /// The language identifier of the item.
-    public let languageID: UInt8
+    public internal(set) var languageID: UInt8
     
     /// The title of the entry.
     public let title: String
@@ -143,6 +143,17 @@ public final class NavigatorItem: Serializable, Codable, Equatable, CustomString
         data.append(Data(path.utf8))
         
         return data
+    }
+    
+    func withLanguageID(_ languageID: InterfaceLanguage.ID) -> NavigatorItem {
+        NavigatorItem(
+            pageType: pageType,
+            languageID: languageID,
+            title: title,
+            platformMask: platformMask,
+            availabilityID: availabilityID,
+            path: path
+        )
     }
     
     // MARK: - Equatable
