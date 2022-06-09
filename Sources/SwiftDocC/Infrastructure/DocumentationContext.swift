@@ -817,7 +817,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         // to preserve the order of documents by url
-        let analyzedDocumentsSorted = analyzedDocuments.sorted(by: {$0.0.path > $1.0.path})
+        let analyzedDocumentsSorted = analyzedDocuments.sorted(by: \.0.absoluteString)
 
         for analyzedDocument in analyzedDocumentsSorted {
             // Store the references we encounter to ensure they're unique. The file name is currently the only part of the URL considered for the topic reference, so collisions may occur.

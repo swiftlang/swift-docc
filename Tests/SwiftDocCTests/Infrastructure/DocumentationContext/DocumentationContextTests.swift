@@ -660,7 +660,7 @@ class DocumentationContextTests: XCTestCase {
 
         XCTAssert(problemWithDuplicateReference.count==2)
 
-        XCTAssert(problemWithDuplicateReference[0].diagnostic.localizedDescription == "/Users/sradmin/Library/Developer/Xcode/DerivedData/swift-docc-dqymopzdtzbqmnbkvrtkjxsnnyyt/Build/Products/Debug/SwiftDocCTests.xctest/Contents/Resources/SwiftDocC_SwiftDocCTests.bundle/Contents/Resources/Test Bundles/TestBundleWithDupMD.docc/documentation1/overview.md: warning: Redeclaration of \'overview.md\'; this file will be skipped\nThis content was already declared at \'file:///Users/sradmin/Library/Developer/Xcode/DerivedData/swift-docc-dqymopzdtzbqmnbkvrtkjxsnnyyt/Build/Products/Debug/SwiftDocCTests.xctest/Contents/Resources/SwiftDocC_SwiftDocCTests.bundle/Contents/Resources/Test%20Bundles/TestBundleWithDupMD.docc/overview.md\'")
+        XCTAssert(problemWithDuplicateReference[0].diagnostic.localizedDescription == "/Users/sradmin/Library/Developer/Xcode/DerivedData/swift-docc-dqymopzdtzbqmnbkvrtkjxsnnyyt/Build/Products/Debug/SwiftDocCTests.xctest/Contents/Resources/SwiftDocC_SwiftDocCTests.bundle/Contents/Resources/Test Bundles/TestBundleWithDupMD.docc/documentation1/overview.md: warning: Redeclaration of \'overview.md\'; this file will be skipped\nThis content was already declared at \'file:///Users/sradmin/Library/Developer/Xcode/DerivedData/swift-docc-dqymopzdtzbqmnbkvrtkjxsnnyyt/Build/Products/Debug/SwiftDocCTests.xctest/Contents/Resources/SwiftDocC_SwiftDocCTests.bundle/Contents/Resources/Test%20Bundles/TestBundleWithDupMD.docc/documentation/overview.md\'")
     }
 
     func testGraphChecks() throws {
