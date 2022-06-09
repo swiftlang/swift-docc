@@ -1,0 +1,62 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.104.28 clang-1400.0.12.6.3)"
+    },
+    "module": {
+        "name": "MixedLanguageFramework",
+        "platform": {
+            "architecture": "x86_64",
+            "operatingSystem": {
+                "minimumVersion": {
+                    "major": 11,
+                    "minor": 0,
+                    "patch": 0
+                },
+                "name": "macosx"
+            },
+            "vendor": "apple"
+        }
+    },
+    "relationships": [],
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "s:22MixedLanguageFramework15SwiftOnlyStruct1V",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SwiftOnlyStruct1"
+            ],
+            "names": {
+                "title": "SwiftOnlyStruct1"
+            },
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "s:22MixedLanguageFramework15SwiftOnlyStruct2V",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SwiftOnlyStruct2"
+            ],
+            "names": {
+                "title": "SwiftOnlyStruct2"
+            },
+            "accessLevel": "public"
+        }
+    ]
+}
