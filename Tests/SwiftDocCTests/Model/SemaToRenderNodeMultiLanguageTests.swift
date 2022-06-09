@@ -494,9 +494,11 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
                  "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/MultiCuratedObjectiveCOnlyClass1",
              ],
              referenceTitles: [
-                 "MixedLanguageFramework",
-                 "MultiCuratedObjectiveCOnlyClass1",
-                 "SwiftOnlyStruct1",
+                "MixedLanguageFramework",
+                "MultiCuratedObjectiveCOnlyClass1",
+                "MultiCuratedObjectiveCOnlyClass2",
+                "SwiftOnlyStruct1",
+                "SwiftOnlyStruct2",
              ],
              referenceFragments: [],
              failureMessage: { fieldName in

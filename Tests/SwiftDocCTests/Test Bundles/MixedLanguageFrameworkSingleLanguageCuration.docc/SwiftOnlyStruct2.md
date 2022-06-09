@@ -7,5 +7,5 @@ This is a Swift-only symbol.
 ### Objective-C–only symbols
 
 - ``ObjectiveCOnlyClass``
-- ``MultiCuratedObjectiveCOnlyClass``
+- ``MultiCuratedObjectiveCOnlyClass1``
 - ``MultiCuratedObjectiveCOnlyClass2``
