@@ -653,6 +653,16 @@ class DocumentationContextTests: XCTestCase {
         )
     }
     
+    func testDetectsMultipleMDfilesWithSameName() throws {
+        let (_, context) = try testBundleAndContext(named: "TestBundleWithDupMD")
+
+        let problemWithDuplicateReference = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+
+        XCTAssert(problemWithDuplicateReference.count==2)
+
+        XCTAssert(problemWithDuplicateReference[0].diagnostic.localizedDescription == "/Users/sradmin/Library/Developer/Xcode/DerivedData/swift-docc-dqymopzdtzbqmnbkvrtkjxsnnyyt/Build/Products/Debug/SwiftDocCTests.xctest/Contents/Resources/SwiftDocC_SwiftDocCTests.bundle/Contents/Resources/Test Bundles/TestBundleWithDupMD.docc/documentation1/overview.md: warning: Redeclaration of \'overview.md\'; this file will be skipped\nThis content was already declared at \'file:///Users/sradmin/Library/Developer/Xcode/DerivedData/swift-docc-dqymopzdtzbqmnbkvrtkjxsnnyyt/Build/Products/Debug/SwiftDocCTests.xctest/Contents/Resources/SwiftDocC_SwiftDocCTests.bundle/Contents/Resources/Test%20Bundles/TestBundleWithDupMD.docc/overview.md\'")
+    }
+
     func testGraphChecks() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)

@@ -816,7 +816,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             throw error
         }
         
-        for analyzedDocument in analyzedDocuments {
+        // to preserve the order of documents by url
+        let analyzedDocumentsSorted = analyzedDocuments.sorted(by: {String($0.0.absoluteURL) > String($1.0.absoluteURL)})
+
+        for analyzedDocument in analyzedDocumentsSorted {
             // Store the references we encounter to ensure they're unique. The file name is currently the only part of the URL considered for the topic reference, so collisions may occur.
             let (url, analyzed) = analyzedDocument
 
