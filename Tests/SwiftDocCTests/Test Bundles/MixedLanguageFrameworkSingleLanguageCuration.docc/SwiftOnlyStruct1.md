@@ -7,3 +7,5 @@ This is an awesome, Swift-only symbol.
 ### Objective-C–only symbols
 
 - ``MultiCuratedObjectiveCOnlyClass1``
+
+<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->

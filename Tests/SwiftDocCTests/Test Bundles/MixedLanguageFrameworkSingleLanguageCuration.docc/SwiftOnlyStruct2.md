@@ -9,3 +9,5 @@ This is a Swift-only symbol.
 - ``ObjectiveCOnlyClass``
 - ``MultiCuratedObjectiveCOnlyClass1``
 - ``MultiCuratedObjectiveCOnlyClass2``
+
+<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
