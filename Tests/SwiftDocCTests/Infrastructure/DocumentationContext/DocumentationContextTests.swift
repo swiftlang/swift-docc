@@ -644,13 +644,13 @@ class DocumentationContextTests: XCTestCase {
     
     func testDetectsReferenceCollision() throws {
         let (_, context) = try testBundleAndContext(named: "TestBundleWithDupe")
-        
-        XCTAssert(
-            context.problems.contains { problem in
-                problem.diagnostic.identifier == "org.swift.docc.DuplicateReference"
-                    && problem.diagnostic.localizedSummary == "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped"
-            }
-        )
+
+        let problemWithDuplicate = context.problems.filter{ $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+
+        XCTAssert(problemWithDuplicate.count == 1)
+
+        XCTAssert(problemWithDuplicate[0].diagnostic.localizedSummary == "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped")
+
     }
     
     func testDetectsMultipleMDfilesWithSameName() throws {
