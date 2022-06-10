@@ -51,7 +51,7 @@ enum GeneratedDocumentationTopics {
                 // If we don't have a resolved `sourceOrigin` parent, fall back to parsing its display name
 
                 // Detect the path components of the providing the default implementation.
-                let typeComponents = originDisplayName.components(separatedBy: ".").filter({ !$0.isEmpty })
+                let typeComponents = originDisplayName.split(separator: ".")
 
                 // Verify that the fully qualified name contains at least a type name and default implementation name.
                 guard typeComponents.count >= 2 else { return }
@@ -59,7 +59,7 @@ enum GeneratedDocumentationTopics {
                 // Get the fully qualified type.
                 fromType = typeComponents.dropLast().joined(separator: ".")
                 // The name of the type is second to last.
-                typeSimpleName = typeComponents[typeComponents.count-2]
+                typeSimpleName = String(typeComponents[typeComponents.count-2])
             }
 
             // Create a type with inherited symbols, if needed.
