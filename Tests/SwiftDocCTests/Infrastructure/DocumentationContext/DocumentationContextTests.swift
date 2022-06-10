@@ -645,11 +645,12 @@ class DocumentationContextTests: XCTestCase {
     func testDetectsReferenceCollision() throws {
         let (_, context) = try testBundleAndContext(named: "TestBundleWithDupe")
 
-        let problemWithDuplicate = context.problems.filter{ $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+        let problemWithDuplicate = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
 
-        XCTAssert(problemWithDuplicate.count == 1)
+        XCTAssertEqual(problemWithDuplicate.count, 1)
 
-        XCTAssert(problemWithDuplicate[0].diagnostic.localizedSummary == "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped")
+        let localizedSummary = try XCTUnwrap(problemWithDuplicate.first?.diagnostic.localizedSummary)
+        XCTAssertEqual(localizedSummary, "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped")
 
     }
     
@@ -658,9 +659,13 @@ class DocumentationContextTests: XCTestCase {
 
         let problemWithDuplicateReference = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
 
-        XCTAssert(problemWithDuplicateReference.count==2)
+        XCTAssertEqual(problemWithDuplicateReference.count, 2)
 
-        XCTAssert(problemWithDuplicateReference[0].diagnostic.localizedDescription == "/Users/sradmin/Library/Developer/Xcode/DerivedData/swift-docc-dqymopzdtzbqmnbkvrtkjxsnnyyt/Build/Products/Debug/SwiftDocCTests.xctest/Contents/Resources/SwiftDocC_SwiftDocCTests.bundle/Contents/Resources/Test Bundles/TestBundleWithDupMD.docc/documentation1/overview.md: warning: Redeclaration of \'overview.md\'; this file will be skipped\nThis content was already declared at \'file:///Users/sradmin/Library/Developer/Xcode/DerivedData/swift-docc-dqymopzdtzbqmnbkvrtkjxsnnyyt/Build/Products/Debug/SwiftDocCTests.xctest/Contents/Resources/SwiftDocC_SwiftDocCTests.bundle/Contents/Resources/Test%20Bundles/TestBundleWithDupMD.docc/documentation/overview.md\'")
+        let localizedSummary = try XCTUnwrap(problemWithDuplicateReference.first?.diagnostic.localizedSummary)
+        XCTAssertEqual(localizedSummary, "Redeclaration of \'overview.md\'; this file will be skipped")
+
+        let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.localizedSummary)
+        XCTAssertEqual(localizedSummarySecond, "Redeclaration of \'overview.md\'; this file will be skipped")
     }
 
     func testGraphChecks() throws {
