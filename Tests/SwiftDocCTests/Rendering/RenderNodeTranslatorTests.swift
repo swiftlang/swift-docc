@@ -630,11 +630,8 @@ class RenderNodeTranslatorTests: XCTestCase {
             forResource: "FancyProtocol.symbols", withExtension: "json", subdirectory: "Test Resources")!
 
         // Create a test bundle copy with the symbol graph from above
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { url in
             try? FileManager.default.copyItem(at: fancyProtocolSGFURL, to: url.appendingPathComponent("FancyProtocol.symbols.json"))
-        }
-        defer {
-            try? FileManager.default.removeItem(at: bundleURL)
         }
 
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/FancyProtocol/SomeClass", sourceLanguage: .swift)
