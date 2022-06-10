@@ -1888,7 +1888,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let reference = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,
             path: path,
-            sourceLanguages: availableSourceLanguages ?? [.swift]
+            sourceLanguages: availableSourceLanguages
+                // FIXME: Pages in article-only catalogs should not be inferred as "Swift" as a fallback
+                // (github.com/apple/swift-docc/issues/240).
+                ?? [.swift]
         )
         
         let title = article.topicGraphNode.title
