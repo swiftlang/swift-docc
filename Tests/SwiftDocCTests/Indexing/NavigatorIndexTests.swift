@@ -578,6 +578,36 @@ Root
         )
     }
     
+    func testMultiCuratesChildrenOfMultiCuratedPages() throws {
+        let navigatorIndex = try generatedNavigatorIndex(for: "MultiCuratedSubtree", bundleIdentifier: "org.swift.MultiCuratedSubtree")
+        
+        XCTAssertEqual(
+            navigatorIndex.navigatorTree.root.dumpTree(),
+            """
+            [Root]
+            ┗╸Swift
+              ┗╸MultiCuratedSubtree
+                ┣╸Curation Roots
+                ┣╸FirstCurationRoot
+                ┃ ┣╸Multicurated trees
+                ┃ ┗╸MultiCuratedStruct
+                ┃   ┣╸Enumerations
+                ┃   ┗╸MultiCuratedStruct.MultiCuratedEnum
+                ┃     ┣╸Enumeration Cases
+                ┃     ┣╸MultiCuratedStruct.MultiCuratedEnum.firstCase
+                ┃     ┗╸MultiCuratedStruct.MultiCuratedEnum.secondCase
+                ┗╸SecondCurationRoot
+                  ┣╸Multicurated trees
+                  ┗╸MultiCuratedStruct
+                    ┣╸Enumerations
+                    ┗╸MultiCuratedStruct.MultiCuratedEnum
+                      ┣╸Enumeration Cases
+                      ┣╸MultiCuratedStruct.MultiCuratedEnum.firstCase
+                      ┗╸MultiCuratedStruct.MultiCuratedEnum.secondCase
+            """
+        )
+    }
+    
     func testNavigatorIndexUsingPageTitleGeneration() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)

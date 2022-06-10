@@ -1,0 +1,139 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.113.202 clang-1400.0.16.2)"
+    },
+    "module": {
+        "name": "MultiCuratedSubtree",
+        "platform": {
+            "architecture": "x86_64",
+            "operatingSystem": {
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 4,
+                    "patch": 0
+                },
+                "name": "macosx"
+            },
+            "vendor": "apple"
+        }
+    },
+    "relationships": [
+        {
+            "kind": "memberOf",
+            "source": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO10secondCaseyA2EmF",
+            "target": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:19MultiCuratedSubtree0aB6StructV0aB4EnumO",
+            "sourceOrigin": {
+                "displayName": "Equatable.!=(_:_:)",
+                "identifier": "s:SQsE2neoiySbx_xtFZ"
+            },
+            "target": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO",
+            "target": "s:SH",
+            "targetFallback": "Swift.Hashable"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO9firstCaseyA2EmF",
+            "target": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO",
+            "target": "s:19MultiCuratedSubtree0aB6StructV"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO",
+            "target": "s:SQ",
+            "targetFallback": "Swift.Equatable"
+        }
+    ],
+    "symbols": [
+        {
+            "accessLevel": "public",
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO"
+            },
+            "kind": {
+                "displayName": "Enumeration",
+                "identifier": "swift.enum"
+            },
+            "names": {
+                "title": "MultiCuratedStruct.MultiCuratedEnum"
+            },
+            "pathComponents": [
+                "MultiCuratedStruct",
+                "MultiCuratedEnum"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:19MultiCuratedSubtree0aB6StructV"
+            },
+            "kind": {
+                "displayName": "Structure",
+                "identifier": "swift.struct"
+            },
+            "names": {
+                "title": "MultiCuratedStruct"
+            },
+            "pathComponents": [
+                "MultiCuratedStruct"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO10secondCaseyA2EmF"
+            },
+            "kind": {
+                "displayName": "Case",
+                "identifier": "swift.enum.case"
+            },
+            "names": {
+                "title": "MultiCuratedStruct.MultiCuratedEnum.secondCase"
+            },
+            "pathComponents": [
+                "MultiCuratedStruct",
+                "MultiCuratedEnum",
+                "secondCase"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:19MultiCuratedSubtree0aB6StructV0aB4EnumO9firstCaseyA2EmF"
+            },
+            "kind": {
+                "displayName": "Case",
+                "identifier": "swift.enum.case"
+            },
+            "names": {
+                "title": "MultiCuratedStruct.MultiCuratedEnum.firstCase"
+            },
+            "pathComponents": [
+                "MultiCuratedStruct",
+                "MultiCuratedEnum",
+                "firstCase"
+            ]
+        }
+    ]
+}
+
