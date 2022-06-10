@@ -77,7 +77,7 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
                 renderNode.addVariantOverride(
                     pointerComponents: ["identifier"],
                     value: ResolvedTopicReference(
-                        bundleIdentifier: "new bundle identifier",
+                        bundleIdentifier: "new-bundle-identifier",
                         path: "/path",
                         fragment: nil,
                         sourceLanguage: .objectiveC
@@ -193,7 +193,7 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
     ) throws {
         var renderNode = RenderNode(
             identifier: ResolvedTopicReference(
-                bundleIdentifier: "bundle identifier",
+                bundleIdentifier: "bundle-identifier",
                 path: "",
                 fragment: nil,
                 sourceLanguage: .swift
