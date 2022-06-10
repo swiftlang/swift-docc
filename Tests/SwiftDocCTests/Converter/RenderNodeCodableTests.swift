@@ -134,6 +134,30 @@ class RenderNodeCodableTests: XCTestCase {
         XCTAssertNil(decodedNode.variantOverrides)
     }
     
+    func testDecodingRenderNodeDoesNotCacheReferences() throws {
+        let exampleRenderNodeJSON = Bundle.module.url(
+            forResource: "Operator",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let uniqueBundleIdentifier = #function
+        
+        let renderNodeWithUniqueBundleID = try String(
+            contentsOf: exampleRenderNodeJSON
+        )
+        .replacingOccurrences(
+            of: "org.swift.docc.example",
+            with: uniqueBundleIdentifier
+        )
+        
+        _ = try JSONDecoder().decode(RenderNode.self, from: Data(renderNodeWithUniqueBundleID.utf8))
+        
+        ResolvedTopicReference.sharedPool.sync { sharedPool in
+            XCTAssertNil(sharedPool[uniqueBundleIdentifier])
+        }
+    }
+    
     private func assertVariantOverrides(_ variantOverrides: VariantOverrides) throws {
         XCTAssertEqual(variantOverrides.values.count, 1)
         let variantOverride = try XCTUnwrap(variantOverrides.values.first)
