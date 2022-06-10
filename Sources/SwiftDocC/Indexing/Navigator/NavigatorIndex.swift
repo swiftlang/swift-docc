@@ -910,25 +910,32 @@ extension NavigatorIndex {
             // Assign the children to the parents, starting with multi curated nodes
             var nodesMultiCurated = multiCurated.map { ($0, $1) }
             
-            for index in 0..<nodesMultiCurated.count {
-                let (nodeID, parent) = nodesMultiCurated[index]
-                let placeholders = identifierToChildren[nodeID]!
-                for reference in placeholders {
-                    if let child = identifierToNode[reference] {
-                        parent.add(child: child)
-                        pendingUncuratedReferences.remove(reference)
-                        if !multiCurated.keys.contains(reference) && reference.fragment == nil {
-                            // As the children of a multi-curated node is itself curated multiple times
-                            // we need to process it as well, ignoring items with fragments as those are sections.
-                            nodesMultiCurated.append((reference, child))
-                            multiCurated[reference] = child
+            while !nodesMultiCurated.isEmpty {
+                // The children of the multicurated nodes. These need to be tracked so we can multicurate them as well.
+                var nodesMultiCuratedChildren: [(Identifier, NavigatorTree.Node)] = []
+                
+                for index in 0..<nodesMultiCurated.count {
+                    let (nodeID, parent) = nodesMultiCurated[index]
+                    let placeholders = identifierToChildren[nodeID]!
+                    for reference in placeholders {
+                        if let child = identifierToNode[reference] {
+                            parent.add(child: child)
+                            pendingUncuratedReferences.remove(reference)
+                            if !multiCurated.keys.contains(reference) && reference.fragment == nil {
+                                // As the children of a multi-curated node is itself curated multiple times
+                                // we need to process it as well, ignoring items with fragments as those are sections.
+                                nodesMultiCuratedChildren.append((reference, child))
+                                multiCurated[reference] = child
+                            }
                         }
                     }
+                    // Once assigned, placeholders can be removed as we use copy later.
+                    identifierToChildren[nodeID]!.removeAll()
                 }
-                // Once assigned, placeholders can be removed as we use copy later.
-                identifierToChildren[nodeID]!.removeAll()
+                
+                nodesMultiCurated = nodesMultiCuratedChildren
             }
-            
+                
             for (nodeIdentifier, placeholders) in identifierToChildren {
                 for reference in placeholders {
                     let parent = identifierToNode[nodeIdentifier]!
