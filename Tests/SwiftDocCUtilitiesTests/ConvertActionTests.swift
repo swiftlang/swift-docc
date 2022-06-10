@@ -1563,6 +1563,38 @@ class ConvertActionTests: XCTestCase {
             "platform2" : PlatformVersion(.init(11, 12, 13), beta: false),
         ])
     }
+    
+    func testResolvedTopicReferencesAreCachedByDefaultWhenConverting() throws {
+        let bundle = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: #function),
+                CopyOfFile(original: symbolGraphFile),
+            ]
+        )
+        
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: [:],
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
+        
+        _ = try action.perform(logHandle: .none)
+        
+        ResolvedTopicReference.sharedPool.sync { sharedPool in
+            XCTAssertEqual(sharedPool[#function]?.count, 8)
+        }
+    }
 
     func testIgnoresAnalyzerHintsByDefault() throws {
         func runCompiler(analyze: Bool) throws -> [Problem] {
@@ -1813,7 +1845,7 @@ class ConvertActionTests: XCTestCase {
         
         let indexURL = targetURL.appendingPathComponent("index")
         
-        let indexFromConvertAction = try NavigatorIndex(url: indexURL)
+        let indexFromConvertAction = try NavigatorIndex.readNavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromConvertAction.count, 37)
         
         try FileManager.default.removeItem(at: indexURL)
@@ -1827,7 +1859,7 @@ class ConvertActionTests: XCTestCase {
         )
         _ = try indexAction.perform(logHandle: .standardOutput)
         
-        let indexFromIndexAction = try NavigatorIndex(url: indexURL)
+        let indexFromIndexAction = try NavigatorIndex.readNavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromIndexAction.count, 37)
         
         XCTAssertEqual(
@@ -1870,7 +1902,7 @@ class ConvertActionTests: XCTestCase {
         
         _ = try action.perform(logHandle: .none)
         
-        let index = try NavigatorIndex(url: targetDirectory.appendingPathComponent("index"))
+        let index = try NavigatorIndex.readNavigatorIndex(url: targetDirectory.appendingPathComponent("index"))
         func assertAllChildrenAreObjectiveC(_ node: NavigatorTree.Node) {
             XCTAssertEqual(
                 node.item.languageID,
@@ -1922,7 +1954,7 @@ class ConvertActionTests: XCTestCase {
         
         _ = try action.perform(logHandle: .none)
         
-        let index = try NavigatorIndex(
+        let index = try NavigatorIndex.readNavigatorIndex(
             url: temporaryTestOutputDirectory.appendingPathComponent("index")
         )
         

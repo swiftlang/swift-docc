@@ -253,6 +253,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// External metadata injected into the context, for example via command line arguments.
     public var externalMetadata = ExternalMetadata()
     
+    /// A synchronized reference cache to store resolved references.
+    let referenceCache = Synchronized([String: ResolvedTopicReference]())
+    
     /// Initializes a documentation context with a given `dataProvider` and registers all the documentation bundles that it provides.
     ///
     /// - Parameter dataProvider: The data provider to register bundles from.
@@ -298,6 +301,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle that was added.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
         try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
+            // Enable reference caching for this documentation bundle.
+            ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
+            
             try self.register(bundle)
         }
     }
@@ -308,7 +314,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - dataProvider: The provider that removed this bundle.
     ///   - bundle: The bundle that was removed.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
+        referenceCache.sync { $0.removeAll() }
+        
+        // Purge the reference cache for this bundle and disable reference caching for
+        // this bundle moving forward.
         ResolvedTopicReference.purgePool(for: bundle.identifier)
+        
         unregister(bundle)
     }
     
@@ -1617,7 +1628,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let reference = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,
             path: path,
-            sourceLanguages: availableSourceLanguages ?? [.swift]
+            sourceLanguages: availableSourceLanguages
+                // FIXME: Pages in article-only catalogs should not be inferred as "Swift" as a fallback
+                // (github.com/apple/swift-docc/issues/240).
+                ?? [.swift]
         )
         
         let title = article.topicGraphNode.title

@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -92,8 +92,6 @@ def run(args):
       printerr('FAIL: Building %s failed' % package_name)
       printerr('Executing: %s' % ' '.join(e.cmd))
       sys.exit(1)
-
-  output_dir = os.path.realpath(os.path.join(args.build_dir, args.configuration))
 
   if should_run_action('generate-xcodeproj', args.build_actions):
     print("** Generating Xcode project for %s **" % package_name)

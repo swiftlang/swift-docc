@@ -58,7 +58,7 @@ class IndexActionTests: XCTestCase {
             )
             _ = try indexAction.perform(logHandle: .standardOutput)
             
-            let index = try NavigatorIndex(url: indexURL)
+            let index = try NavigatorIndex.readNavigatorIndex(url: indexURL)
             
             resultIndexDumps.insert(index.navigatorTree.root.dumpTree())
             XCTAssertTrue(engine.problems.isEmpty, "Indexing bundle at \(targetURL) resulted in unexpected issues")
