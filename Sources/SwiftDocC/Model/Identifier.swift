@@ -96,6 +96,15 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
     static func purgePool(for bundleIdentifier: String) {
         sharedPool.sync { $0.removeValue(forKey: bundleIdentifier) }
     }
+    
+    /// Enables reference caching for any identifiers created with the given bundle identifier.
+    static func enableReferenceCaching(for bundleIdentifier: ReferenceBundleIdentifier) {
+        sharedPool.sync { sharedPool in
+            if !sharedPool.keys.contains(bundleIdentifier) {
+                sharedPool[bundleIdentifier] = [:]
+            }
+        }
+    }
 
     /// The URL scheme for `doc://` links.
     public static let urlScheme = "doc"
@@ -174,7 +183,10 @@ public struct ResolvedTopicReference: Hashable, Codable, Equatable, CustomString
         )
 
         // Cache the reference
-        Self.sharedPool.sync { $0[bundleIdentifier, default: [:]][key] = self }
+        Self.sharedPool.sync { sharedPool in
+            // If we have a shared pool for this bundle identifier, cache the reference
+            sharedPool[bundleIdentifier]?[key] = self
+        }
     }
     
     private static func cacheKey(

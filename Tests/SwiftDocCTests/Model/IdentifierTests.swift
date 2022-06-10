@@ -68,6 +68,9 @@ class IdentifierTests: XCTestCase {
         // Verify the bundle doesn't exist in the pool
         XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
         
+        // Enable caching for our test bundle identifier
+        ResolvedTopicReference.enableReferenceCaching(for: #function)
+        
         // Create a resolved reference
         let ref = ResolvedTopicReference(bundleIdentifier: #function, path: "/path/child", sourceLanguage: .swift)
         _ = ref // to suppress the warning above
@@ -89,6 +92,9 @@ class IdentifierTests: XCTestCase {
         // Verify there are no references in the pool for that bundle
         XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
         
+        // Re-enable caching for our test bundle identifier
+        ResolvedTopicReference.enableReferenceCaching(for: #function)
+        
         let ref1 = ResolvedTopicReference(bundleIdentifier: #function, path: "/path/child", sourceLanguage: .swift)
         _ = ref1
         
@@ -102,6 +108,24 @@ class IdentifierTests: XCTestCase {
         XCTAssertEqual(references1.contains(where: { pair -> Bool in
             return pair.key.contains("/path/child")
         }), true)
+    }
+    
+    func testReferencesAreNotCachedByDefault() {
+        // Verify the bundle doesn't exist in the pool
+        XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
+        
+        // Create a resolved reference
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: #function,
+            path: "/path/child",
+            sourceLanguage: .swift
+        )
+        
+        // Verify the bundle still doesn't exist in the pool
+        XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
+        
+        // Add a use of 'reference' to suppress Swift's 'reference' was never used warning
+        XCTAssertNotNil(reference)
     }
     
     func testReferenceInitialPathComponents() {
