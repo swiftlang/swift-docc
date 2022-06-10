@@ -646,6 +646,13 @@ class RenderNodeTranslatorTests: XCTestCase {
             "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Equatable-Implementations",
             "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/FancyProtocol-Implementations",
         ])
+        let implReferences = defaultImplementationSection.identifiers.compactMap({ renderNode.references[$0] as? TopicRenderReference })
+        XCTAssertEqual(implReferences.map({ $0.title }), [
+            "Comparable Implementations",
+            "Equatable Implementations",
+            "FancyProtocol Implementations",
+        ])
+
     }
     
     func testAutomaticTaskGroupTopicsAreSorted() throws {
