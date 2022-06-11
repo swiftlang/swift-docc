@@ -27,6 +27,4 @@ public enum Relationship {
     case defaultImplementation(TopicReference)
     /// A protocol of which the current node is a requirement.
     case requirementOf(TopicReference)
-    /// A protocol of which the current node is an optional requirement.
-    case optionalRequirementOf(TopicReference)
 }

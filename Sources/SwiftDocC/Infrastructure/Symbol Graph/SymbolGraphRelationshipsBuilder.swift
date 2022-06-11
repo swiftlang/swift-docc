@@ -232,22 +232,24 @@ struct SymbolGraphRelationshipsBuilder {
         }
     }
     
-    /// Adds a relationship from a type member to a protocol requirement.
+    /// Adds a required relationship from a type member to a protocol requirement.
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
     ///   - bundle: A documentation bundle.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
     static func addRequirementRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
-        // Resolve source symbol
-        guard let requiredNode = symbolIndex[edge.source],
-            let requiredSymbol = requiredNode.semantic as? Symbol else {
-            // The source node for requirement relationship not found.
-            engine.emit(NodeProblem.notFound(edge.source))
-            return
-        }
-        
-        requiredSymbol.isRequired = true
+        addProtocolRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine, required: true)
+    }
+    
+    /// Adds an optional relationship from a type member to a protocol requirement.
+    /// - Parameters:
+    ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - bundle: A documentation bundle.
+    ///   - symbolIndex: A symbol lookup map by precise identifier.
+    ///   - engine: A diagnostic collecting engine.
+    static func addOptionalRequirementRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+        addProtocolRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine, required: false)
     }
     
     /// Adds a relationship from a type member to a protocol requirement.
@@ -256,7 +258,8 @@ struct SymbolGraphRelationshipsBuilder {
     ///   - bundle: A documentation bundle.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addOptionalRequirementRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+    ///   - required: A bool value indicating whether the protocol requirement is required or optional
+    private static func addProtocolRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine, required: Bool) {
         // Resolve source symbol
         guard let requiredNode = symbolIndex[edge.source],
             let requiredSymbol = requiredNode.semantic as? Symbol else {
@@ -264,8 +267,7 @@ struct SymbolGraphRelationshipsBuilder {
             engine.emit(NodeProblem.notFound(edge.source))
             return
         }
-        
-        requiredSymbol.isRequired = false
+        requiredSymbol.isRequired = required
     }
     
     /// Sets a node in the context as an inherited symbol if the origin symbol is provided in the given relationship.
