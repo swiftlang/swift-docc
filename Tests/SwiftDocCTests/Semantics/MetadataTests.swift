@@ -208,7 +208,7 @@ class MetadataTests: XCTestCase {
         
         XCTAssertEqual(solution.summary, "Change the title")
         XCTAssertEqual(solution.replacements.count, 2)
-        XCTAssertEqual(solution.replacements.first?.range, SourceLocation(line: 4, column: 4, source: nil) ..< SourceLocation(line: 4, column: 17, source: nil))
+        XCTAssertEqual(solution.replacements.first?.range, SourceLocation(line: 4, column: 4, source: nil) ..< SourceLocation(line: 4, column: 31, source: nil))
         XCTAssertEqual(solution.replacements.first?.replacement, "")
         
         XCTAssertEqual(solution.replacements.last?.range, SourceLocation(line: 1, column: 1, source: nil) ..< SourceLocation(line: 1, column: 16, source: nil))
