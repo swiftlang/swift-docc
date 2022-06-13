@@ -1564,6 +1564,38 @@ class ConvertActionTests: XCTestCase {
             "platform2" : PlatformVersion(.init(11, 12, 13), beta: false),
         ])
     }
+    
+    func testResolvedTopicReferencesAreCachedByDefaultWhenConverting() throws {
+        let bundle = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: #function),
+                CopyOfFile(original: symbolGraphFile),
+            ]
+        )
+        
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: [:],
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
+        
+        _ = try action.perform(logHandle: .none)
+        
+        ResolvedTopicReference.sharedPool.sync { sharedPool in
+            XCTAssertEqual(sharedPool[#function]?.count, 8)
+        }
+    }
 
     func testIgnoresAnalyzerHintsByDefault() throws {
         func runCompiler(analyze: Bool) throws -> [Problem] {
