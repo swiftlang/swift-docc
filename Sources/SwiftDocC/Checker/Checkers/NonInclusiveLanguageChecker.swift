@@ -163,7 +163,7 @@ public struct NonInclusiveLanguageChecker: Checker {
 /// The default list of terms to look for in documentation.
 fileprivate let builtinExcludedTerms: [NonInclusiveLanguageChecker.Term] = [
     NonInclusiveLanguageChecker.Term(
-        expression: #"black\W?list\w{0,2}"#,
+        expression: #"black\W*list\w{0,2}"#,
         message: "Choose a more inclusive alternative that’s appropriate to the context, such as deny list/allow list or unapproved list/approved list.",
         replacement: "deny list"
     ),
@@ -178,7 +178,7 @@ fileprivate let builtinExcludedTerms: [NonInclusiveLanguageChecker.Term] = [
         replacement: "secondary"
     ),
     NonInclusiveLanguageChecker.Term(
-        expression: #"white\W?list\w{0,2}"#,
+        expression: #"white\W*list\w{0,2}"#,
         message: "Choose a more inclusive alternative that’s appropriate to the context, such as deny list/allow list or unapproved list/approved list.",
         replacement: "allow list"
     )
