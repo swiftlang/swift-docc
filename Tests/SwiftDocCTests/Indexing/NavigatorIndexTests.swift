@@ -65,10 +65,10 @@ class NavigatorIndexingTests: XCTestCase {
         return root
     }
     
-    func generateSmallTree() -> Node {
+    func generateSmallTree(bundleIdentifier: String = testBundleIdentifier) -> Node {
         var index = 1
         let rootItem = NavigatorItem(pageType: 1, languageID: Language.all.rawValue, title: "Root", platformMask: 1, availabilityID: 1)
-        let root = Node(item: rootItem, bundleIdentifier: "org.swift.docc.example")
+        let root = Node(item: rootItem, bundleIdentifier: bundleIdentifier)
         
         @discardableResult func addItems(n: Int, items: [Node], language: Language) -> [Node] {
             var leaves = [Node]()
@@ -241,6 +241,28 @@ Root
         XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: bundleIdentifierValidator), "The tree has bundle identifier missing.")
         XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: presentationIdentifierValidator), "The tree lacks the presentation identifier.")
         XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: attributesValidator), "The tree lacks the correct attributes.")
+    }
+    
+    func testLoadingNavigatorIndexDoesNotCacheReferences() throws {
+        let uniqueTestBundleIdentifier = #function
+        
+        let targetURL = try createTemporaryDirectory()
+        let indexURL = targetURL.appendingPathComponent("nav.index")
+        
+        let root = generateSmallTree(bundleIdentifier: uniqueTestBundleIdentifier)
+        
+        let original = NavigatorTree(root: root)
+        try original.write(to: indexURL)
+        _ = try NavigatorTree.read(
+            from: indexURL,
+            bundleIdentifier: uniqueTestBundleIdentifier,
+            interfaceLanguages: [.swift],
+            atomically: true
+        )
+        
+        ResolvedTopicReference.sharedPool.sync { sharedPool in
+            XCTAssertNil(sharedPool[uniqueTestBundleIdentifier])
+        }
     }
     
   
@@ -552,6 +574,36 @@ Root
             """
             Expected the node with title "Article curated in a single-language page" to be curated in the Swift \
             navigator tree.
+            """
+        )
+    }
+    
+    func testMultiCuratesChildrenOfMultiCuratedPages() throws {
+        let navigatorIndex = try generatedNavigatorIndex(for: "MultiCuratedSubtree", bundleIdentifier: "org.swift.MultiCuratedSubtree")
+        
+        XCTAssertEqual(
+            navigatorIndex.navigatorTree.root.dumpTree(),
+            """
+            [Root]
+            ┗╸Swift
+              ┗╸MultiCuratedSubtree
+                ┣╸Curation Roots
+                ┣╸FirstCurationRoot
+                ┃ ┣╸Multicurated trees
+                ┃ ┗╸MultiCuratedStruct
+                ┃   ┣╸Enumerations
+                ┃   ┗╸MultiCuratedStruct.MultiCuratedEnum
+                ┃     ┣╸Enumeration Cases
+                ┃     ┣╸MultiCuratedStruct.MultiCuratedEnum.firstCase
+                ┃     ┗╸MultiCuratedStruct.MultiCuratedEnum.secondCase
+                ┗╸SecondCurationRoot
+                  ┣╸Multicurated trees
+                  ┗╸MultiCuratedStruct
+                    ┣╸Enumerations
+                    ┗╸MultiCuratedStruct.MultiCuratedEnum
+                      ┣╸Enumeration Cases
+                      ┣╸MultiCuratedStruct.MultiCuratedEnum.firstCase
+                      ┗╸MultiCuratedStruct.MultiCuratedEnum.secondCase
             """
         )
     }

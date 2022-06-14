@@ -1,3 +1,8 @@
+<!--
+If you're opening a PR to cherry-pick a change for a release branch, use this template instead:
+https://github.com/apple/swift-docc/blob/main/.github/PULL_REQUEST_TEMPLATE/CHERRY_PICK.md
+-->
+
 Bug/issue #, if applicable: 
 
 ## Summary

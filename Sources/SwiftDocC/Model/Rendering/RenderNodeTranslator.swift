@@ -601,7 +601,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         node.hierarchy = hierarchy
         
-        node.variants = variants(for: documentationNode)
+        // Emit variants only if we're not compiling an article-only catalog to prevent renderers from
+        // advertising the page as "Swift", which is the language DocC assigns to pages in article only pages.
+        // (github.com/apple/swift-docc/issues/240).
+        if let topLevelModule = context.soleRootModuleReference,
+           try! context.entity(with: topLevelModule).kind.isSymbol
+        {
+            node.variants = variants(for: documentationNode)
+        }
         
         if let abstract = article.abstractSection,
             let abstractContent = visitMarkup(abstract.content) as? [RenderInlineContent] {
@@ -633,6 +640,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         topics,
                         allowExternalLinks: false,
                         allowedTraits: [trait],
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -712,6 +720,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         seeAlso,
                         allowExternalLinks: true,
                         allowedTraits: [trait],
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -871,10 +880,41 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     /// Renders a list of topic groups.
+    ///
+    /// When rendering topic groups for a page that is available in multiple languages,
+    /// you can provide the total available traits the parent page will be available in,
+    /// as well as the _specific_ traits this particular render section should be created for.
+    /// Any referenced pages that are included in the _available_ traits
+    /// but excluded from the _allowed_ traits will be filtered out.
+    ///
+    /// This behavior is designed to ensure that all items in the task group will be rendered
+    /// in _some_ task group of the parent page, whether in the currently provided allowed traits,
+    /// or in a different subset of the page's available traits.
+    /// However, if a task-group item's language isn't included in any of the available traits,
+    /// it will _not_ be filtered out since otherwise it would be invisible to the reader
+    /// of the documentation regardless of which of the available traits they view.
+    ///
+    /// - Parameters:
+    ///   - topics: The topic groups to be rendered.
+    ///
+    ///   - allowExternalLinks: Whether or not external links should be included in the
+    ///     rendered task groups.
+    ///
+    ///   - allowedTraits: The traits that the returned render section should filter for.
+    ///
+    ///     These traits should be a _subset_ of the given available traits.
+    ///
+    ///   - availableTraits: The traits that are available in the parent page that this render
+    ///     section belongs to.
+    ///
+    ///     This method will only filter for allowed traits that are also explicitly available.
+    ///
+    ///   - contentCompiler: The current render content compiler.
     private mutating func renderGroups(
         _ topics: GroupedSection,
         allowExternalLinks: Bool,
         allowedTraits: Set<DocumentationDataVariantsTrait>,
+        availableTraits: Set<DocumentationDataVariantsTrait>,
         contentCompiler: inout RenderContentCompiler
     ) -> [TaskGroupRenderSection] {
         return topics.taskGroups.compactMap { group in
@@ -896,12 +936,23 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     return true
                 }
                 
-                return context.sourceLanguages(for: reference)
-                    .contains { sourceLanguage in
-                        allowedTraits.contains { trait in
-                            trait.interfaceLanguage == sourceLanguage.id
-                        }
+                let referenceSourceLanguageIDs = Set(context.sourceLanguages(for: reference).map(\.id))
+                
+                let availableSourceLanguageTraits = Set(availableTraits.compactMap(\.interfaceLanguage))
+                if availableSourceLanguageTraits.isDisjoint(with: referenceSourceLanguageIDs) {
+                    // The set of available source language traits has no members in common with the
+                    // set of source languages the given reference is available in.
+                    //
+                    // Since we should only filter for traits that are available in the parent page,
+                    // just return true. (See the documentation of this method for more details).
+                    return true
+                }
+                
+                return referenceSourceLanguageIDs.contains { sourceLanguageID in
+                    allowedTraits.contains { trait in
+                        trait.interfaceLanguage == sourceLanguageID
                     }
+                }
             }
             
             let taskGroupRenderSection = TaskGroupRenderSection(
@@ -1181,6 +1232,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         topics,
                         allowExternalLinks: false,
                         allowedTraits: [trait],
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )
@@ -1287,6 +1339,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         seeAlso,
                         allowExternalLinks: true,
                         allowedTraits: [trait],
+                        availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
                 )

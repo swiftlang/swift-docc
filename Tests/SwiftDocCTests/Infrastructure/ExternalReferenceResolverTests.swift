@@ -20,6 +20,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         var expectedFragment: String? = nil
         var resolvedEntityTitle = "Externally Resolved Title"
         var resolvedEntityKind = DocumentationNode.Kind.article
+        var resolvedEntityLanguage = SourceLanguage.swift
         var resolvedEntityDeclarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
         
         enum Error: Swift.Error {
@@ -32,7 +33,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             if let path = reference.url?.path {
                 resolvedExternalPaths.append(path)
             }
-            return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, fragment: expectedFragment, sourceLanguage: .swift))
+            return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, fragment: expectedFragment, sourceLanguage: resolvedEntityLanguage))
         }
         
         func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
@@ -70,7 +71,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             return DocumentationNode(
                 reference: reference,
                 kind: resolvedEntityKind,
-                sourceLanguage: .swift,
+                sourceLanguage: resolvedEntityLanguage,
                 name: .conceptual(title: resolvedEntityTitle),
                 markup: Document(parsing: "Externally Resolved Markup Content", options: [.parseBlockDirectives, .parseSymbolLinks]),
                 semantic: semantic
@@ -141,6 +142,77 @@ class ExternalReferenceResolverTests: XCTestCase {
             XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
             return
         }
+    }
+    
+    // Asserts that an external reference from a source language not locally included
+    // in the current DocC catalog is still included in any rendered topic groups that
+    // manually curate it. (94406023)
+    func testExternalReferenceInOtherLanguageIsIncludedInTopicGroup() throws {
+        let externalResolver = TestExternalReferenceResolver()
+        externalResolver.bundleIdentifier = "com.test.external"
+        externalResolver.expectedReferencePath = "/path/to/external/api"
+        externalResolver.resolvedEntityTitle = "Name of API"
+        externalResolver.resolvedEntityKind = .technology
+        
+        // Set the language of the externally resolved entity to 'data'.
+        externalResolver.resolvedEntityLanguage = .data
+        
+        let (_, bundle, context) = try testBundleAndContext(
+            copying: "TestBundle",
+            externalResolvers: [externalResolver.bundleIdentifier: externalResolver]
+        ) { url in
+            let sideClassExtension = """
+                # ``SideKit/SideClass``
+
+                ## Topics
+                    
+                ### External reference
+
+                - <doc://com.test.external/path/to/external/api>
+                
+                """
+            
+            let sideClassExtensionURL = url.appendingPathComponent(
+                "documentation/sideclass.md",
+                isDirectory: false
+            )
+            try sideClassExtension.write(to: sideClassExtensionURL, atomically: true, encoding: .utf8)
+        }
+        
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let sideClassReference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/SideKit/SideClass",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: sideClassReference)
+        let fileURL = try XCTUnwrap(context.documentURL(for: node.reference))
+        let renderNode = try converter.convert(node, at: fileURL)
+        
+        // First assert that the external reference is included in the render node's references
+        // and is defined as expected.
+        let externalRenderReference = try XCTUnwrap(
+            renderNode.references["doc://com.test.external/path/to/external/api"] as? TopicRenderReference
+        )
+        XCTAssertEqual(
+            externalRenderReference.identifier.identifier,
+            "doc://com.test.external/path/to/external/api"
+        )
+        XCTAssertEqual(externalRenderReference.title, "Name of API")
+        XCTAssertEqual(externalRenderReference.url, "/example/path/to/external/api")
+        XCTAssertEqual(externalRenderReference.kind, .overview)
+        XCTAssertEqual(externalRenderReference.role, RenderMetadata.Role.overview.rawValue)
+        
+        // Then assert the topic group including that reference was actually included.
+        let externalReferencesTopicSection = try XCTUnwrap(
+            renderNode.topicSections.first { topicSection in
+                topicSection.title == "External reference"
+            }
+        )
+        XCTAssertEqual(
+            externalReferencesTopicSection.identifiers.first,
+            externalRenderReference.identifier.identifier
+        )
     }
     
     func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() throws {

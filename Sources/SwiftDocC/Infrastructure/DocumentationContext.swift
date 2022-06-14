@@ -312,6 +312,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle that was added.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
         try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
+            // Enable reference caching for this documentation bundle.
+            ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
+            
             try self.register(bundle)
         }
     }
@@ -323,7 +326,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle that was removed.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
         referenceCache.sync { $0.removeAll() }
+        
+        // Purge the reference cache for this bundle and disable reference caching for
+        // this bundle moving forward.
         ResolvedTopicReference.purgePool(for: bundle.identifier)
+        
         unregister(bundle)
     }
     
@@ -1564,28 +1571,24 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - ``SymbolGraphRelationshipsBuilder``
     func buildRelationships(_ relationships: Set<SymbolGraph.Relationship>, bundle: DocumentationBundle, engine: DiagnosticEngine) {
         for edge in relationships {
-            // Build conformant type <-> protocol relationships
-            if case .conformsTo = edge.kind {
+            switch edge.kind {
+            case .conformsTo:
+                // Build conformant type <-> protocol relationships
                 SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
-                continue
-            }
-            
-            // Build implementation <-> protocol requirement relationships.
-            if case .defaultImplementationOf = edge.kind {
+            case .defaultImplementationOf:
+                // Build implementation <-> protocol requirement relationships.
                 SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, in: bundle, context: self, symbolIndex: &symbolIndex, engine: diagnosticEngine)
-                continue
-            }
-            
-            // Build ancestor <-> offspring relationships.
-            if case .inheritsFrom = edge.kind {
+            case .inheritsFrom:
+                // Build ancestor <-> offspring relationships.
                 SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
-                continue
-            }
-            
-            // Build required member -> protocol relationships.
-            if case .requirementOf = edge.kind {
+            case .requirementOf:
+                // Build required member -> protocol relationships.
                 SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
-                continue
+            case .optionalRequirementOf:
+                // Build optional required member -> protocol relationships.
+                SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+            default:
+                break
             }
         }
     }
@@ -1884,7 +1887,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let reference = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,
             path: path,
-            sourceLanguages: availableSourceLanguages ?? [.swift]
+            sourceLanguages: availableSourceLanguages
+                // FIXME: Pages in article-only catalogs should not be inferred as "Swift" as a fallback
+                // (github.com/apple/swift-docc/issues/240).
+                ?? [.swift]
         )
         
         let title = article.topicGraphNode.title
