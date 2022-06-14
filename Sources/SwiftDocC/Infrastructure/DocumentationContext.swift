@@ -312,6 +312,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle that was added.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didAddBundle bundle: DocumentationBundle) throws {
         try benchmark(wrap: Benchmark.Duration(id: "bundle-registration")) {
+            // Enable reference caching for this documentation bundle.
+            ResolvedTopicReference.enableReferenceCaching(for: bundle.identifier)
+            
             try self.register(bundle)
         }
     }
@@ -323,7 +326,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle that was removed.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
         referenceCache.sync { $0.removeAll() }
+        
+        // Purge the reference cache for this bundle and disable reference caching for
+        // this bundle moving forward.
         ResolvedTopicReference.purgePool(for: bundle.identifier)
+        
         unregister(bundle)
     }
     
