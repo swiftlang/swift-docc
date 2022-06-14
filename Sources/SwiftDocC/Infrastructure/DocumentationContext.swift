@@ -1568,28 +1568,24 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - ``SymbolGraphRelationshipsBuilder``
     func buildRelationships(_ relationships: Set<SymbolGraph.Relationship>, bundle: DocumentationBundle, engine: DiagnosticEngine) {
         for edge in relationships {
-            // Build conformant type <-> protocol relationships
-            if case .conformsTo = edge.kind {
+            switch edge.kind {
+            case .conformsTo:
+                // Build conformant type <-> protocol relationships
                 SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
-                continue
-            }
-            
-            // Build implementation <-> protocol requirement relationships.
-            if case .defaultImplementationOf = edge.kind {
+            case .defaultImplementationOf:
+                // Build implementation <-> protocol requirement relationships.
                 SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, in: bundle, context: self, symbolIndex: &symbolIndex, engine: diagnosticEngine)
-                continue
-            }
-            
-            // Build ancestor <-> offspring relationships.
-            if case .inheritsFrom = edge.kind {
+            case .inheritsFrom:
+                // Build ancestor <-> offspring relationships.
                 SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
-                continue
-            }
-            
-            // Build required member -> protocol relationships.
-            if case .requirementOf = edge.kind {
+            case .requirementOf:
+                // Build required member -> protocol relationships.
                 SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
-                continue
+            case .optionalRequirementOf:
+                // Build optional required member -> protocol relationships.
+                SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+            default:
+                break
             }
         }
     }
