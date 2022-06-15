@@ -113,7 +113,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     }
 
     mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> String {
-        if let cached = context.referenceFor(absoluteSymbolPath: unresolvedDestination, parent: rootReference) {
+        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: unresolvedDestination, parent: rootReference) {
             guard context.topicGraph.isLinkable(cached) == true else {
                 problems.append(disabledLinkDestinationProblem(reference: cached, source: source, range: range, severity: .warning))
                 return unresolvedDestination
