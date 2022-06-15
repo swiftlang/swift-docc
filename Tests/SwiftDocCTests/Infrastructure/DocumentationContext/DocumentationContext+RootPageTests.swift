@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -48,7 +48,7 @@ class DocumentationContext_RootPageTests: XCTestCase {
         // Verify all articles were loaded in the context
         XCTAssertEqual(context.knownIdentifiers.count, 2)
         
-        // Verify /documentation/RealeaseNotes is a root node
+        // Verify /documentation/ReleaseNotes is a root node
         XCTAssertEqual(context.rootModules.map({ $0.url.path }), ["/documentation/ReleaseNotes"])
         
         // Verify the root was crawled

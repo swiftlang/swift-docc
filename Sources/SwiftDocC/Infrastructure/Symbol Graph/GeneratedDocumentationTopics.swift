@@ -234,7 +234,7 @@ enum GeneratedDocumentationTopics {
             }
         }
         
-        // Create the API Collection nodes and the neccessary topic graph curation.
+        // Create the API Collection nodes and the necessary topic graph curation.
         for (typeReference, collections) in inheritanceIndex.implementingTypes where !collections.inheritedFromTypeName.isEmpty {
             for (_, collection) in collections.inheritedFromTypeName where !collection.identifiers.isEmpty {
                 // Create a collection for the given provider type's inherited symbols

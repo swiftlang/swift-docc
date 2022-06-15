@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -183,8 +183,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         do {
             // We rename the iOS graph file to contain a "@" which makes it being loaded after main symbol graphs
             // to simulate the loading order we want to test.
-            let (url, _, context) = try testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
-            defer { try? FileManager.default.removeItem(at: url) }
+            let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
 
             guard let availability = (context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
@@ -204,8 +203,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         do {
             // We rename the Mac Catalyst graph file to contain a "@" which makes it being loaded after main symbol graphs
             // to simulate the loading order we want to test.
-            let (url, _, context) = try testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
-            defer { try? FileManager.default.removeItem(at: url) }
+            let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
             
             guard let availability = (context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
@@ -222,12 +220,11 @@ class SymbolGraphLoaderTests: XCTestCase {
     
     // Tests if main and bystanders graphs are loaded
     func testLoadingModuleBystanderExtensions() throws {
-        let (url, bundle, _) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+        let (_, bundle, _) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         var loader = try makeSymbolGraphLoader(symbolGraphURLs: bundle.symbolGraphURLs)
         try loader.loadAll()

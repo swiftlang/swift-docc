@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -148,7 +148,6 @@ func aBlackListedFunc() {
         let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Load the bundle
         let (_, _, context) = try loadBundle(from: bundleURL, codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: .error, configureContext: nil)
@@ -169,7 +168,6 @@ func aBlackListedFunc() {
         let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
 
         for expectation in expectations {
             let (severity, enabled) = expectation
