@@ -1490,6 +1490,18 @@ let expected = """
                 "interfaceLanguage": "swift"
               }
             },
+            """).replacingOccurrences(of: "\"relationships\" : [", with: """
+            "relationships" : [
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10testEC",
+              "target" : "s:7SideKit0A5ClassC"
+            },
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10testV",
+              "target" : "s:7SideKit0A5ClassC"
+            },
             """)
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
         }
@@ -1601,6 +1613,23 @@ let expected = """
                 "precise" : "s:7SideKit0A5ClassC10tEstV",
                 "interfaceLanguage": "swift"
               }
+            },
+            """).replacingOccurrences(of: "\"relationships\" : [", with: """
+            "relationships" : [
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10testE",
+              "target" : "s:7SideKit0A5ClassC"
+            },
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10testSV",
+              "target" : "s:7SideKit0A5ClassC"
+            },
+            {
+              "kind" : "memberOf",
+              "source" : "s:7SideKit0A5ClassC10tEstV",
+              "target" : "s:7SideKit0A5ClassC"
             },
             """)
             try text.write(to: sideKitURL, atomically: true, encoding: .utf8)
