@@ -812,7 +812,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             throw error
         }
         
-        for analyzedDocument in analyzedDocuments {
+        // to preserve the order of documents by url
+        let analyzedDocumentsSorted = analyzedDocuments.sorted(by: \.0.absoluteString)
+
+        for analyzedDocument in analyzedDocumentsSorted {
             // Store the references we encounter to ensure they're unique. The file name is currently the only part of the URL considered for the topic reference, so collisions may occur.
             let (url, analyzed) = analyzedDocument
 
@@ -1317,9 +1320,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             case .requirementOf:
                 // Build required member -> protocol relationships.
                 SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+            case .optionalRequirementOf:
                 
+                SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
             default:
-                continue
+                break
             }
         }
     }

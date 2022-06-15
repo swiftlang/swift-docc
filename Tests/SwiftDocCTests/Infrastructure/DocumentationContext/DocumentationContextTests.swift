@@ -644,15 +644,30 @@ class DocumentationContextTests: XCTestCase {
     
     func testDetectsReferenceCollision() throws {
         let (_, context) = try testBundleAndContext(named: "TestBundleWithDupe")
-        
-        XCTAssert(
-            context.problems.contains { problem in
-                problem.diagnostic.identifier == "org.swift.docc.DuplicateReference"
-                    && problem.diagnostic.localizedSummary == "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped"
-            }
-        )
+
+        let problemWithDuplicate = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+
+        XCTAssertEqual(problemWithDuplicate.count, 1)
+
+        let localizedSummary = try XCTUnwrap(problemWithDuplicate.first?.diagnostic.localizedSummary)
+        XCTAssertEqual(localizedSummary, "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped")
+
     }
     
+    func testDetectsMultipleMDfilesWithSameName() throws {
+        let (_, context) = try testBundleAndContext(named: "TestBundleWithDupMD")
+
+        let problemWithDuplicateReference = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.DuplicateReference" }
+
+        XCTAssertEqual(problemWithDuplicateReference.count, 2)
+
+        let localizedSummary = try XCTUnwrap(problemWithDuplicateReference.first?.diagnostic.localizedSummary)
+        XCTAssertEqual(localizedSummary, "Redeclaration of \'overview.md\'; this file will be skipped")
+
+        let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.localizedSummary)
+        XCTAssertEqual(localizedSummarySecond, "Redeclaration of \'overview.md\'; this file will be skipped")
+    }
+
     func testGraphChecks() throws {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace)

@@ -40,25 +40,35 @@ enum GeneratedDocumentationTopics {
         ///   - reference: The parent type reference.
         ///   - originDisplayName: The origin display name as provided by the symbol graph.
         ///   - extendedModuleName: Extended module name.
-        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, originDisplayName: String, extendedModuleName: String) throws {
-            // Detect the path components of the providing the default implementation.
-            let typeComponents = originDisplayName.components(separatedBy: ".")
-            
-            // Verify that the fully qualified name contains at least a type name and default implementation name.
-            guard typeComponents.count >= 2 else { return }
-            
+        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, originDisplayName: String, originParentSymbol: ResolvedTopicReference?, extendedModuleName: String) throws {
+            let fromType: String
+            let typeSimpleName: String
+            if let originParentSymbol = originParentSymbol, !originParentSymbol.pathComponents.isEmpty {
+                // If we have a resolved symbol for the parent of `sourceOrigin`, use that for the names
+                fromType = originParentSymbol.pathComponents.joined(separator: ".")
+                typeSimpleName = originParentSymbol.pathComponents.last!
+            } else {
+                // If we don't have a resolved `sourceOrigin` parent, fall back to parsing its display name
+
+                // Detect the path components of the providing the default implementation.
+                let typeComponents = originDisplayName.split(separator: ".")
+
+                // Verify that the fully qualified name contains at least a type name and default implementation name.
+                guard typeComponents.count >= 2 else { return }
+
+                // Get the fully qualified type.
+                fromType = typeComponents.dropLast().joined(separator: ".")
+                // The name of the type is second to last.
+                typeSimpleName = String(typeComponents[typeComponents.count-2])
+            }
+
             // Create a type with inherited symbols, if needed.
             if !implementingTypes.keys.contains(reference) {
                 implementingTypes[reference] = Collections()
             }
             
-            // Get the fully qualified type.
-            let fromType = typeComponents.dropLast().joined(separator: ".")
-            
             // Create a new default implementations provider, if needed.
             if !implementingTypes[reference]!.inheritedFromTypeName.keys.contains(fromType) {
-                // The name of the type is second to last.
-                let typeSimpleName = typeComponents[typeComponents.count-2]
                 implementingTypes[reference]!.inheritedFromTypeName[fromType] = Collections.APICollection(title: "\(typeSimpleName) Implementations", parentReference: reference)
             }
             
@@ -217,8 +227,15 @@ enum GeneratedDocumentationTopics {
                let child = context.symbolIndex[relationship.source],
                // Get the swift extension data
                let extends = child.symbol?.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
+                var originParentSymbol: ResolvedTopicReference? = nil
+                if let originSymbol = context.symbolIndex[origin.identifier] {
+                    let originID = context.resolvedReferenceMap[originSymbol.reference]!
+                    if let parentID = context.pathHierarchy.lookup[originID]!.parent?.identifier {
+                        originParentSymbol = context.resolvedReferenceMap[parentID]
+                    }
+                }
                 // Add the inherited symbol to the index.
-                try inheritanceIndex.add(child.reference, to: parent.reference, originDisplayName: origin.displayName, extendedModuleName: extends.extendedModule)
+                try inheritanceIndex.add(child.reference, to: parent.reference, originDisplayName: origin.displayName, originParentSymbol: originParentSymbol, extendedModuleName: extends.extendedModule)
             }
         }
         

@@ -22,3 +22,4 @@ DerivedData
 docc-dist-build
 .docc-build
 .swiftpm
+.vscode
