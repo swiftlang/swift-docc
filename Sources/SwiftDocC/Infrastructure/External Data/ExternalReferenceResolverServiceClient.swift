@@ -68,6 +68,7 @@ class ExternalReferenceResolverServiceClient {
                 }
             } catch {
                 result = .failure(.failedToEncodeRequest(underlyingError: error))
+                resultGroup.leave()
             }
         }
         
