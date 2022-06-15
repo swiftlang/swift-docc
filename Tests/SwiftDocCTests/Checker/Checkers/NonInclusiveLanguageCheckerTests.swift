@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -33,10 +33,10 @@ class NonInclusiveLanguageCheckerTests: XCTestCase {
 
     func testMatchTermWithSpaces() throws {
         let source = """
-# A White  listed title
-# A Black    listed title
-# A White listed title
-"""
+        # A White  listed title
+        # A Black    listed title
+        # A White listed title
+        """
         let document = Document(parsing: source)
         var checker = NonInclusiveLanguageChecker(sourceFile: nil)
         checker.visit(document)
@@ -62,7 +62,6 @@ class NonInclusiveLanguageCheckerTests: XCTestCase {
         XCTAssertEqual(rangeThree.lowerBound.column, 5)
         XCTAssertEqual(rangeThree.upperBound.line, 3)
         XCTAssertEqual(rangeThree.upperBound.column, 17)
-
     }
 
     func testMatchTermInAbstract() throws {
