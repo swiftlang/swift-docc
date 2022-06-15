@@ -1,0 +1,6 @@
+- **Explanation**: _A description of the issue being fixed or enhancement being made. This can be brief, but it should be clear._
+- **Scope**: _An assessment of the impact/importance of the change. For example, is the change a source-breaking language change, etc._
+- **GitHub Issue**: _The issue number if the change fixes/implements an issue/enhancement on [GitHub Issues](https://github.com/apple/swift-docc/issues)._
+- **Risk**: _What is the (specific) risk to the release for taking this change?_
+- **Testing**: _What specific testing has been done or needs to be done to further validate any impact of this change?_
+- **Reviewer**: _One or more code owners for the impacted components should review the change. Technical review can be delegated by a code owner or otherwise requested as deemed appropriate or useful._
