@@ -419,7 +419,7 @@ Root
             
             let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
             XCTAssertEqual(renderIndex.interfaceLanguages.keys.count, 1)
-            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.count, 27)
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.count, 29)
             
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.title, "Functions")
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.path, nil)
@@ -703,7 +703,10 @@ Root
             XCTAssertNil(navigatorIndex.path(for: 0)) // Root should have not path persisted.
             XCTAssertEqual(navigatorIndex.path(for: 1), "/documentation/fillintroduced")
             XCTAssertEqual(navigatorIndex.path(for: 4), "/tutorials/testoverview")
-            XCTAssertEqual(navigatorIndex.path(for: 10), "/documentation/fillintroduced/maccatalystonlydeprecated()")
+            XCTAssertEqual(navigatorIndex.path(for: 9), "/documentation/fillintroduced/maccatalystonlydeprecated()")
+            XCTAssertEqual(navigatorIndex.path(for: 10), "/documentation/fillintroduced/maccatalystonlyintroduced()")
+            XCTAssertEqual(navigatorIndex.path(for: 21), "/documentation/mykit/globalfunction(_:considering:)")
+            XCTAssertEqual(navigatorIndex.path(for: 23), "/documentation/sidekit/uncuratedclass/angle")
             
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
@@ -726,7 +729,7 @@ Root
         XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
         
         // Get the Swift language group.
-        XCTAssertEqual(navigatorIndex.navigatorTree.numericIdentifierToNode[1]?.children.count, 5)
+        XCTAssertEqual(navigatorIndex.navigatorTree.numericIdentifierToNode[1]?.children.count, 4)
 
         assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
         assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), try testTree(named: "testNavigatorIndexGenerationWithLanguageGrouping"))

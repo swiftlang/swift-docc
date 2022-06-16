@@ -148,15 +148,17 @@
 ┃ ┃   ┗╸Protocol Implementations
 ┃ ┃     ┣╸Instance Methods
 ┃ ┃     ┗╸inherited()
-┃ ┗╸SideProtocol
-┃   ┣╸Instance Methods
-┃   ┗╸func1()
-┃     ┗╸SideProtocol Implementations
-┃       ┗╸func1()
-┣╸Technology X
-┃ ┣╸Chapter 1
-┃ ┣╸Basic Augmented Reality App
-┃ ┣╸Making an Augmented Reality App
-┃ ┣╸Advanced Augmented Reality App
-┃ ┗╸Basic Augmented Reality App
-┗╸UncuratedClass
+┃ ┣╸SideProtocol
+┃ ┃ ┣╸Instance Methods
+┃ ┃ ┗╸func1()
+┃ ┃   ┗╸SideProtocol Implementations
+┃ ┃     ┗╸func1()
+┃ ┣╸Classes
+┃ ┗╸UncuratedClass
+┗╸Technology X
+  ┣╸Chapter 1
+  ┣╸Basic Augmented Reality App
+  ┣╸Making an Augmented Reality App
+  ┣╸Advanced Augmented Reality App
+  ┗╸Basic Augmented Reality App
+

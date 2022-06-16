@@ -389,16 +389,6 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 basePathComponents: []
             }
             """,
-            // doc://org.swift.docc.example/documentation/SideKit/NonExistent/UncuratedClass:
-            """
-            {
-                bundleID: 'org.swift.docc.example',
-                module: 'SideKit',
-                topLevelSymbol: (name: 'NonExistent', suffix: (none)),
-                representsModule: false,
-                basePathComponents: [(name: 'UncuratedClass', suffix: (none))]
-            }
-            """,
             // doc://org.swift.docc.example/documentation/SideKit/SideClass:
             """
             {
@@ -507,6 +497,16 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 topLevelSymbol: (name: 'SideProtocol', suffix: (none)),
                 representsModule: false,
                 basePathComponents: [(name: 'func()', suffix: (idHash: '6ijsi'))]
+            }
+            """,
+            // doc://org.swift.docc.example/documentation/SideKit/UncuratedClass:
+            """
+            {
+                bundleID: 'org.swift.docc.example',
+                module: 'SideKit',
+                topLevelSymbol: (name: 'UncuratedClass', suffix: (none)),
+                representsModule: false,
+                basePathComponents: []
             }
             """,
             // doc://org.swift.docc.example/documentation/SideKit/UncuratedClass/angle:

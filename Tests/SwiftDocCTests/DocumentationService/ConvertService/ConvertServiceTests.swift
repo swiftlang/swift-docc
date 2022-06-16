@@ -591,7 +591,7 @@ class ConvertServiceTests: XCTestCase {
                 "/documentation/MyKit/MyProtocol",
                 "/documentation/SideKit/SideClass/init()",
                 "/documentation/SideKit/SideClass/Element/inherited()",
-                "/documentation/SideKit/NonExistent/UncuratedClass",
+                "/documentation/SideKit/UncuratedClass",
                 "/documentation/Test-Bundle/article2",
                 "/documentation/SideKit/SideClass/Element/Protocol-Implementations",
                 "/documentation/FillIntroduced/iOSMacOSOnly()",

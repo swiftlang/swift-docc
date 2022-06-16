@@ -1293,10 +1293,10 @@ let expected = """
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/myFunction()
  │ ├ doc://org.swift.docc.example/documentation/SideKit/SideClass/path
  │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideClass/url
- ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol
-   ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi
-     ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn
- doc://org.swift.docc.example/documentation/SideKit/NonExistent/UncuratedClass
+ ├ doc://org.swift.docc.example/documentation/SideKit/SideProtocol
+ │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi
+ │   ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn
+ ╰ doc://org.swift.docc.example/documentation/SideKit/UncuratedClass
  doc://org.swift.docc.example/documentation/Test
  ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup
    ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup/MySnippet
