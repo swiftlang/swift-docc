@@ -30,8 +30,8 @@ public struct AbstractContainsFormattedTextOnly: Checker {
         
         var diagnosticIdentifier: String {
             switch self {
-            case .image: return "org.swift.docc.AbstractContainsImage"
-            case .link: return "org.swift.docc.AbstractContainsLink"
+            case .image: return "org.swift.docc.SummaryContainsImage"
+            case .link: return "org.swift.docc.SummaryContainsLink"
             }
         }
         
@@ -45,9 +45,9 @@ public struct AbstractContainsFormattedTextOnly: Checker {
     
     private mutating func foundInvalidContent(_ invalidContent: InvalidContent, markup: Markup) {
         let explanation = """
-            Abstracts should only contain (formatted) text. To resolve this issue, place links and images elsewhere in the document, or remove them.
+            Summary should only contain (formatted) text. To resolve this issue, place links and images elsewhere in the document, or remove them.
             """
-        let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: markup.range, identifier: invalidContent.diagnosticIdentifier, summary: "\(invalidContent.description.capitalized) in document abstract will not be displayed", explanation: explanation)
+        let diagnostic = Diagnostic(source: sourceFile, severity: .warning, range: markup.range, identifier: invalidContent.diagnosticIdentifier, summary: "\(invalidContent.description.capitalized) in document summary will not be displayed", explanation: explanation)
         let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
         problems.append(problem)
     }

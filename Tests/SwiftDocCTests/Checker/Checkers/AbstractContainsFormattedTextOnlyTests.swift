@@ -51,7 +51,7 @@ This paragraph isn't [analyzed](http://example.com/image.jpg).
         XCTAssertTrue(problem.possibleSolutions.isEmpty)
         
         let image = document.child(at: 1)!.child(at: 0)! as! Image
-        verifyDiagnostic(diagnostic: problem.diagnostic, expectedIdentifier: "org.swift.docc.AbstractContainsImage", expectedRange: image.range!)
+        verifyDiagnostic(diagnostic: problem.diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
     }
     
     func testTopLevelLink() {
@@ -71,7 +71,7 @@ More info [here](http://example.com/image.jpg).
         XCTAssertTrue(problem.possibleSolutions.isEmpty)
         
         let link = document.child(at: 1)!.child(at: 1)! as! Link
-        verifyDiagnostic(diagnostic: problem.diagnostic, expectedIdentifier: "org.swift.docc.AbstractContainsLink", expectedRange: link.range!)
+        verifyDiagnostic(diagnostic: problem.diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)
     }
     
     func testMultipleTopLevelInvalidElements() {
@@ -94,9 +94,9 @@ More info [here](http://example.com/image.jpg).
         let image2 = abstract.child(at: 2)! as! Link
         let image3 = abstract.child(at: 4)! as! Image
         
-        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.AbstractContainsImage", expectedRange: image1.range!)
-        verifyDiagnostic(diagnostic: checker.problems[1].diagnostic, expectedIdentifier: "org.swift.docc.AbstractContainsLink", expectedRange: image2.range!)
-        verifyDiagnostic(diagnostic: checker.problems[2].diagnostic, expectedIdentifier: "org.swift.docc.AbstractContainsImage", expectedRange: image3.range!)
+        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image1.range!)
+        verifyDiagnostic(diagnostic: checker.problems[1].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: image2.range!)
+        verifyDiagnostic(diagnostic: checker.problems[2].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image3.range!)
     }
     
     func testLinkWithinEmphasis() {
@@ -114,7 +114,7 @@ Hello *[world](http://example.com)*.
         }
 
         let link = document.child(at: 1)!.child(at: 1)!.child(at: 0)! as! Link
-        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.AbstractContainsLink", expectedRange: link.range!)
+        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)
     }
     
     func testImagesWithinBold() {
@@ -131,7 +131,7 @@ Hello **![image](http://example.com/image1.jpg)** World
         }
 
         let image = document.child(at: 1)!.child(at: 1)!.child(at: 0)! as! Image
-        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.AbstractContainsImage", expectedRange: image.range!)
+        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
     }
     
     func testImageInALink() {
@@ -149,7 +149,7 @@ Hello **[![image](http://example.com/image1.jpg)](http://example.com)** World.
         let link = document.child(at: 1)!.child(at: 1)!.child(at: 0)! as! Link
         let image = document.child(at: 1)!.child(at: 1)!.child(at: 0)!.child(at: 0)! as! Image
         
-        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.AbstractContainsLink", expectedRange: link.range!)
-        verifyDiagnostic(diagnostic: checker.problems[1].diagnostic, expectedIdentifier: "org.swift.docc.AbstractContainsImage", expectedRange: image.range!)
+        verifyDiagnostic(diagnostic: checker.problems[0].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsLink", expectedRange: link.range!)
+        verifyDiagnostic(diagnostic: checker.problems[1].diagnostic, expectedIdentifier: "org.swift.docc.SummaryContainsImage", expectedRange: image.range!)
     }
 }
