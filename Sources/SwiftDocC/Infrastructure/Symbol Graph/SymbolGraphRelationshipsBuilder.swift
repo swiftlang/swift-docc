@@ -276,8 +276,9 @@ struct SymbolGraphRelationshipsBuilder {
     ///   - edge: A symbol graph relationship with a source and a target.
     ///   - context: A documentation context.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
+    ///   - moduleName: The symbol name of the current module.
     ///   - engine: A diagnostic collecting engine.
-    static func addInheritedDefaultImplementation(edge: SymbolGraph.Relationship, context: DocumentationContext, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+    static func addInheritedDefaultImplementation(edge: SymbolGraph.Relationship, context: DocumentationContext, symbolIndex: inout [String: DocumentationNode], moduleName: String, engine: DiagnosticEngine) {
         func setAsInheritedSymbol(origin: SymbolGraph.Relationship.SourceOrigin, for node: inout DocumentationNode, originNode: DocumentationNode?) {
             (node.semantic as! Symbol).origin = origin
             
@@ -293,7 +294,10 @@ struct SymbolGraphRelationshipsBuilder {
             // Remove any inherited docs from the original symbol if the feature is disabled.
             // However, when the docs are inherited from within the same module, its content can be resolved in
             // the local context, so keeping those inherited docs provide a better user experience.
-            if !context.externalMetadata.inheritDocs && node.unifiedSymbol?.documentedSymbol?.isDocCommentFromSameModule == false {
+            if !context.externalMetadata.inheritDocs {
+                if let docCommentSourceModuleName = node.unifiedSymbol?.documentedSymbol?.docComment?.moduleName, docCommentSourceModuleName == moduleName {
+                    return
+                }
                 node.unifiedSymbol?.docComment.removeAll()
             }
         }

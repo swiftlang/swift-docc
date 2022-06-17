@@ -2656,7 +2656,9 @@ Document @1:1-11:19
                       "start": {"line": 1, "character": 4},
                       "end": {"line": 1, "character": 21}
                     }
-                  }]
+                  }],
+                  "module": "SideKit",
+                  "uri": "file://path/to/file.swift"
                 }
                 """,
                 expectedRenderedAbstract: [.text("Authored abstract")]
@@ -2666,8 +2668,13 @@ Document @1:1-11:19
                 {
                   "lines": [{
                     "text": "Authored abstract",
-                    "range": null
-                  }]
+                    "range": {
+                      "start": {"line": 1, "character": 4},
+                      "end": {"line": 1, "character": 21}
+                    }
+                  }],
+                  "module": "OtherModule",
+                  "uri": "file://path/to/file.swift"
                 }
                 """,
                 expectedRenderedAbstract: [.text("Inherited from "), .codeVoice(code: "Module.Protocol.inherited()"), .text(".")]

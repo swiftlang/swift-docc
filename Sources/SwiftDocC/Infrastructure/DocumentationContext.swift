@@ -1378,7 +1378,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             // Check if it's a memberOf or implementation relationship.
                             && (relationship.kind == .memberOf || relationship.kind == .defaultImplementationOf) {
                             
-                            SymbolGraphRelationshipsBuilder.addInheritedDefaultImplementation(edge: relationship, context: self, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                            SymbolGraphRelationshipsBuilder.addInheritedDefaultImplementation(edge: relationship, context: self, symbolIndex: &symbolIndex, moduleName: moduleName, engine: diagnosticEngine)
                         }
                     }
 
