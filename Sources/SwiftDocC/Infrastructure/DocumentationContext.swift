@@ -1383,6 +1383,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                     edge: relationship,
                                     context: self,
                                     symbolIndex: &symbolIndex,
+                                    moduleName: moduleName,
                                     engine: diagnosticEngine
                                 )
                             }
