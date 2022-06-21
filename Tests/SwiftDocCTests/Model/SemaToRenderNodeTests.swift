@@ -2641,6 +2641,40 @@ Document @1:1-11:19
             let expectedRenderedAbstract: [RenderInlineContent]
         }
         let testData = [
+            // With the new module information
+            TestData(
+                docCommentJSON: """
+                {
+                  "lines": [{
+                    "text": "Authored abstract",
+                    "range": {
+                      "start": {"line": 1, "character": 4},
+                      "end": {"line": 1, "character": 21}
+                    }
+                  }],
+                  "module": "SideKit",
+                  "uri": "file://path/to/file.swift"
+                }
+                """,
+                expectedRenderedAbstract: [.text("Authored abstract")]
+            ),
+            TestData(
+                docCommentJSON: """
+                {
+                  "lines": [{
+                    "text": "Authored abstract",
+                    "range": {
+                      "start": {"line": 1, "character": 4},
+                      "end": {"line": 1, "character": 21}
+                    }
+                  }],
+                  "module": "OtherModule",
+                  "uri": "file://path/to/file.swift"
+                }
+                """,
+                expectedRenderedAbstract: [.text("Inherited from "), .codeVoice(code: "Module.Protocol.inherited()"), .text(".")]
+            ),
+            // Without the new module information
             TestData(
                 docCommentJSON: """
                 {
