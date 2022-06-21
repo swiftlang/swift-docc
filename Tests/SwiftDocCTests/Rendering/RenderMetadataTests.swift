@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -89,18 +89,17 @@ class RenderMetadataTests: XCTestCase {
             }
         }
         
-        XCTAssert(typesOfPages.isEmpty, "Never verifed page with semantics: \(typesOfPages.map { "\($0)" }.joined(separator: ", "))")
+        XCTAssert(typesOfPages.isEmpty, "Never verified page with semantics: \(typesOfPages.map { "\($0)" }.joined(separator: ", "))")
     }
     
     /// Test that a bystanders symbol graph is loaded, symbols are merged into the main module
     /// and the bystanders are included in the render node metadata.
     func testRendersBystandersFromSymbolGraph() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
             let bystanderSymbolGraphURL = Bundle.module.url(
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         // Verify the symbol from bystanders graph is present in the documentation context.
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction1()", sourceLanguage: .swift)

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,7 +19,7 @@ fileprivate let jsonEncoder = JSONEncoder()
 class ConstraintsRenderSectionTests: XCTestCase {
     
     func testSingleConstraint() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -38,7 +38,6 @@ class ConstraintsRenderSectionTests: XCTestCase {
             })
             try jsonEncoder.encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
@@ -50,7 +49,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testSingleRedundantConstraint() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -69,7 +68,6 @@ class ConstraintsRenderSectionTests: XCTestCase {
             })
             try jsonEncoder.encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
@@ -80,7 +78,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testSingleRedundantConstraintForLeaves() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -99,7 +97,6 @@ class ConstraintsRenderSectionTests: XCTestCase {
             })
             try jsonEncoder.encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
@@ -110,7 +107,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testPreservesNonRedundantConstraints() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -130,7 +127,6 @@ class ConstraintsRenderSectionTests: XCTestCase {
             })
             try jsonEncoder.encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
@@ -141,7 +137,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testGroups2Constraints() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -161,7 +157,6 @@ class ConstraintsRenderSectionTests: XCTestCase {
             })
             try jsonEncoder.encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
@@ -172,7 +167,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testGroups3Constraints() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -193,7 +188,6 @@ class ConstraintsRenderSectionTests: XCTestCase {
             })
             try jsonEncoder.encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
@@ -204,7 +198,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testRenderReferences() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -224,7 +218,6 @@ class ConstraintsRenderSectionTests: XCTestCase {
             })
             try jsonEncoder.encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
@@ -243,7 +236,7 @@ class ConstraintsRenderSectionTests: XCTestCase {
     }
 
     func testRenderReferencesWithNestedTypeInSelf() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { bundleURL in
             // Add constraints to `MyClass`
             let graphURL = bundleURL.appendingPathComponent("mykit-iOS.symbols.json")
             var graph = try jsonDecoder.decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -263,7 +256,6 @@ class ConstraintsRenderSectionTests: XCTestCase {
             })
             try jsonEncoder.encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         // Compile docs and verify contents
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))

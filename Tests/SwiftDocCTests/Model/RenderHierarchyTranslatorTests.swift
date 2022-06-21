@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -87,7 +87,7 @@ class RenderHierarchyTranslatorTests: XCTestCase {
     
     func testMultiplePaths() throws {
         // Curate "TestTutorial" under MyKit as well as TechnologyX.
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             let myKitURL = root.appendingPathComponent("documentation/mykit.md")
             let text = try String(contentsOf: myKitURL).replacingOccurrences(of: "## Topics", with: """
             ## Topics
@@ -98,8 +98,6 @@ class RenderHierarchyTranslatorTests: XCTestCase {
             """)
             try text.write(to: myKitURL, atomically: true, encoding: .utf8)
         }
-        
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", sourceLanguage: .swift)

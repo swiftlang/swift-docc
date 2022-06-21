@@ -134,7 +134,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
 
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
-        if let cached = context.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
+        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
             return cached
         } 
 

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -77,7 +77,7 @@ class ReferenceResolverTests: XCTestCase {
     
     // Tests all reference syntax formats to a child symbol
     func testReferencesToChildFromFramework() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -97,7 +97,6 @@ class ReferenceResolverTests: XCTestCase {
 
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
@@ -111,7 +110,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test relative paths to non-child symbol
     func testReferencesToGrandChildFromFramework() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -124,7 +123,6 @@ class ReferenceResolverTests: XCTestCase {
             - ``/documentation/SideKit/SideClass/myFunction()``
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit", sourceLanguage: .swift))
@@ -138,7 +136,7 @@ class ReferenceResolverTests: XCTestCase {
     
     // Test references to a sibling symbol
     func testReferencesToSiblingFromFramework() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -151,7 +149,6 @@ class ReferenceResolverTests: XCTestCase {
             - ``/documentation/SideKit/SideClass/path``
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
@@ -165,7 +162,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test references to symbols in root paths
     func testReferencesToTutorial() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -178,7 +175,6 @@ class ReferenceResolverTests: XCTestCase {
             - <doc:/Test-Bundle/TestTutorial>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
@@ -192,7 +188,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test references to technology pages
     func testReferencesToTechnologyPages() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -204,7 +200,6 @@ class ReferenceResolverTests: XCTestCase {
             - <doc:/tutorials/TestOverview>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
@@ -218,7 +213,7 @@ class ReferenceResolverTests: XCTestCase {
 
     // Test external references
     func testExternalReferencesConsiderBundleIdentifier() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit/SideClass/myFunction()``
@@ -231,7 +226,6 @@ class ReferenceResolverTests: XCTestCase {
             - <https://www.example.com/MyKit>
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/myFunction()", sourceLanguage: .swift))
@@ -326,7 +320,7 @@ class ReferenceResolverTests: XCTestCase {
         """
         
         // TestBundle has more than one module, so automatic registration and curation won't happen
-        let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             referencingArticleURL = root.appendingPathComponent("article.md")
             try source.write(to: referencingArticleURL, atomically: true, encoding: .utf8)
             
@@ -341,7 +335,6 @@ class ReferenceResolverTests: XCTestCase {
             Its references aren't resolved, so this won't raise a warning: <doc:InvalidReferenceThatWillNotWarn>
             """.write(to: uncuratedArticleFile, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         let diagnostics = context.problems.filter({ $0.diagnostic.source?.standardizedFileURL == uncuratedArticleFile.standardizedFileURL }).map(\.diagnostic)
         let diagnostic = try XCTUnwrap(diagnostics.first(where: { $0.identifier == "org.swift.docc.ArticleUncurated" }))

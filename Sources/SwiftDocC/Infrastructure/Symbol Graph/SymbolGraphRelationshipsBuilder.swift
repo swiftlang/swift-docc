@@ -29,11 +29,19 @@ struct SymbolGraphRelationshipsBuilder {
     /// The target is optional, because the protocol might be from a different symbol graph.
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - selector: The symbol graph selector in which the relationship is relevant.
     ///   - bundle: A documentation bundle.
     ///   - context: A documentation context.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addImplementationRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, context: DocumentationContext, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+    static func addImplementationRelationship(
+        edge: SymbolGraph.Relationship,
+        selector: UnifiedSymbolGraph.Selector,
+        in bundle: DocumentationBundle,
+        context: DocumentationContext,
+        symbolIndex: inout [String: DocumentationNode],
+        engine: DiagnosticEngine
+    ) {
         // Resolve source symbol
         guard let implementorNode = symbolIndex[edge.source],
             let implementorSymbol = implementorNode.semantic as? Symbol else {
@@ -77,7 +85,10 @@ struct SymbolGraphRelationshipsBuilder {
         // Add default implementations to the requirement symbol.
         if let interfaceSymbol = optionalInterfaceNode?.semantic as? Symbol {
             // Add a default implementation
-            interfaceSymbol.defaultImplementations.addImplementation(
+            interfaceSymbol.defaultImplementationsVariants[
+                DocumentationDataVariantsTrait(for: selector),
+                default: DefaultImplementationsSection()
+            ].addImplementation(
                 Implementation(reference: .successfullyResolved(implementorNode.reference), parent: parentName, fallbackName: edge.targetFallback)
             )
             
@@ -104,7 +115,13 @@ struct SymbolGraphRelationshipsBuilder {
     ///   - bundle: A documentation bundle.
     ///   - symbolIndex: A symbol-lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addConformanceRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+    static func addConformanceRelationship(
+        edge: SymbolGraph.Relationship,
+        selector: UnifiedSymbolGraph.Selector,
+        in bundle: DocumentationBundle,
+        symbolIndex: inout [String: DocumentationNode],
+        engine: DiagnosticEngine
+    ) {
         // Resolve source symbol
         guard let conformingNode = symbolIndex[edge.source],
             let conformingSymbol = conformingNode.semantic as? Symbol else {
@@ -135,7 +152,7 @@ struct SymbolGraphRelationshipsBuilder {
             
             if let targetFallback = edge.targetFallback {
                 conformingSymbol.relationshipsVariants[
-                    DocumentationDataVariantsTrait(interfaceLanguage: conformingNode.sourceLanguage.id),
+                    DocumentationDataVariantsTrait(for: selector),
                     default: RelationshipsSection()
                 ].targetFallbacks[.unresolved(unresolved)] = targetFallback
             }
@@ -147,12 +164,12 @@ struct SymbolGraphRelationshipsBuilder {
         // Add relationships depending whether it's class inheritance or protocol conformance
         if conformingSymbol.kind.identifier == .protocol {
             conformingSymbol.relationshipsVariants[
-                DocumentationDataVariantsTrait(interfaceLanguage: conformingNode.sourceLanguage.id),
+                DocumentationDataVariantsTrait(for: selector),
                 default: RelationshipsSection()
             ].addRelationship(.inheritsFrom(conformanceNodeReference))
         } else {
             conformingSymbol.relationshipsVariants[
-                DocumentationDataVariantsTrait(interfaceLanguage: conformingNode.sourceLanguage.id),
+                DocumentationDataVariantsTrait(for: selector),
                 default: RelationshipsSection()
             ].addRelationship(.conformsTo(conformanceNodeReference, relationshipConstraints?.constraints))
         }
@@ -160,12 +177,12 @@ struct SymbolGraphRelationshipsBuilder {
         if let conformanceNode = optionalConformanceNode, let conformanceSymbol = conformanceNode.semantic as? Symbol {
             if let rawSymbol = conformingNode.symbol, rawSymbol.kind.identifier == .protocol {
                 conformanceSymbol.relationshipsVariants[
-                    DocumentationDataVariantsTrait(interfaceLanguage: conformanceNode.sourceLanguage.id),
+                    DocumentationDataVariantsTrait(for: selector),
                     default: RelationshipsSection()
                 ].addRelationship(.inheritedBy(.successfullyResolved(conformingNode.reference)))
             } else {
                 conformanceSymbol.relationshipsVariants[
-                    DocumentationDataVariantsTrait(interfaceLanguage: conformanceNode.sourceLanguage.id),
+                    DocumentationDataVariantsTrait(for: selector),
                     default: RelationshipsSection()
                 ].addRelationship(.conformingType(.successfullyResolved(conformingNode.reference), relationshipConstraints?.constraints))
             }
@@ -178,10 +195,17 @@ struct SymbolGraphRelationshipsBuilder {
     /// The target is optional, because the protocol or class might be from a different module.
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - selector: The symbol graph selector in which the relationship is relevant.
     ///   - bundle: A documentation bundle.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addInheritanceRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
+    static func addInheritanceRelationship(
+        edge: SymbolGraph.Relationship,
+        selector: UnifiedSymbolGraph.Selector,
+        in bundle: DocumentationBundle,
+        symbolIndex: inout [String: DocumentationNode],
+        engine: DiagnosticEngine
+    ) {
         // Resolve source symbol
         guard let childNode = symbolIndex[edge.source],
             let childSymbol = childNode.semantic as? Symbol else {
@@ -212,7 +236,7 @@ struct SymbolGraphRelationshipsBuilder {
             // At this point the parent node we are inheriting from is unresolved, so let's add a fallback in case we can not resolve it later.
             if let targetFallback = edge.targetFallback {
                 childSymbol.relationshipsVariants[
-                    DocumentationDataVariantsTrait(interfaceLanguage: language.id),
+                    DocumentationDataVariantsTrait(for: selector),
                     default: RelationshipsSection()
                 ].targetFallbacks[.unresolved(unresolved)] = targetFallback
             }
@@ -220,13 +244,13 @@ struct SymbolGraphRelationshipsBuilder {
         
         // Add relationships
         childSymbol.relationshipsVariants[
-            DocumentationDataVariantsTrait(interfaceLanguage: childNode.sourceLanguage.id),
+            DocumentationDataVariantsTrait(for: selector),
             default: RelationshipsSection()
         ].addRelationship(.inheritsFrom(parentNodeReference))
         
         if let parentNode = optionalParentNode, let parentSymbol = parentNode.semantic as? Symbol {
             parentSymbol.relationshipsVariants[
-                DocumentationDataVariantsTrait(interfaceLanguage: parentNode.sourceLanguage.id),
+                DocumentationDataVariantsTrait(for: selector),
                 default: RelationshipsSection()
             ].addRelationship(.inheritedBy(.successfullyResolved(childNode.reference)))
         }
@@ -235,31 +259,66 @@ struct SymbolGraphRelationshipsBuilder {
     /// Adds a required relationship from a type member to a protocol requirement.
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - selector: The symbol graph selector in which the relationship is relevant.
     ///   - bundle: A documentation bundle.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addRequirementRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
-        addProtocolRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine, required: true)
+    static func addRequirementRelationship(
+        edge: SymbolGraph.Relationship,
+        selector: UnifiedSymbolGraph.Selector,
+        in bundle: DocumentationBundle,
+        symbolIndex: inout [String: DocumentationNode],
+        engine: DiagnosticEngine
+    ) {
+        addProtocolRelationship(
+            edge: edge,
+            selector: selector,
+            in: bundle,
+            symbolIndex: &symbolIndex,
+            engine: engine,
+            required: true
+        )
     }
     
     /// Adds an optional relationship from a type member to a protocol requirement.
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - selector: The symbol graph selector in which the relationship is relevant.
     ///   - bundle: A documentation bundle.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
-    static func addOptionalRequirementRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine) {
-        addProtocolRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine, required: false)
+    static func addOptionalRequirementRelationship(
+        edge: SymbolGraph.Relationship,
+        selector: UnifiedSymbolGraph.Selector,
+        in bundle: DocumentationBundle,
+        symbolIndex: inout [String: DocumentationNode],
+        engine: DiagnosticEngine
+    ) {
+        addProtocolRelationship(
+            edge: edge,
+            selector: selector,
+            in: bundle,
+            symbolIndex: &symbolIndex,
+            engine: engine,
+            required: false
+        )
     }
     
     /// Adds a relationship from a type member to a protocol requirement.
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - selector: The symbol graph selector in which the relationship is relevant.
     ///   - bundle: A documentation bundle.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - engine: A diagnostic collecting engine.
     ///   - required: A bool value indicating whether the protocol requirement is required or optional
-    private static func addProtocolRelationship(edge: SymbolGraph.Relationship, in bundle: DocumentationBundle, symbolIndex: inout [String: DocumentationNode], engine: DiagnosticEngine, required: Bool) {
+    private static func addProtocolRelationship(
+        edge: SymbolGraph.Relationship,
+        selector: UnifiedSymbolGraph.Selector,
+        in bundle: DocumentationBundle,
+        symbolIndex: inout [String: DocumentationNode],
+        engine: DiagnosticEngine, required: Bool
+    ) {
         // Resolve source symbol
         guard let requiredNode = symbolIndex[edge.source],
             let requiredSymbol = requiredNode.semantic as? Symbol else {
@@ -274,11 +333,18 @@ struct SymbolGraphRelationshipsBuilder {
     ///
     /// - Parameters:
     ///   - edge: A symbol graph relationship with a source and a target.
+    ///   - selector: The symbol graph selector in which the relationship is relevant.
     ///   - context: A documentation context.
     ///   - symbolIndex: A symbol lookup map by precise identifier.
     ///   - moduleName: The symbol name of the current module.
     ///   - engine: A diagnostic collecting engine.
-    static func addInheritedDefaultImplementation(edge: SymbolGraph.Relationship, context: DocumentationContext, symbolIndex: inout [String: DocumentationNode], moduleName: String, engine: DiagnosticEngine) {
+    static func addInheritedDefaultImplementation(
+        edge: SymbolGraph.Relationship,
+        context: DocumentationContext, 
+        symbolIndex: inout [String: DocumentationNode], 
+        moduleName: String, 
+        engine: DiagnosticEngine
+    ) {
         func setAsInheritedSymbol(origin: SymbolGraph.Relationship.SourceOrigin, for node: inout DocumentationNode, originNode: DocumentationNode?) {
             (node.semantic as! Symbol).origin = origin
             

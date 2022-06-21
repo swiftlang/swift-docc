@@ -77,7 +77,6 @@
         }
       ],
       "pathComponents" : [
-        "NonExistent",
         "UncuratedClass"
       ]
     },

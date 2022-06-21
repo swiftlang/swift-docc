@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -490,7 +490,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileOverviewWithEmptyChapter() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
             try """
             @Tutorials(name: "Technology X") {
                @Intro(title: "Technology X") {
@@ -553,7 +553,6 @@ class SemaToRenderNodeTests: XCTestCase {
             }
             """.write(to: url.appendingPathComponent("TestOverview.tutorial"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         try assertCompileOverviewWithNoVolumes(
             bundle: bundle,
@@ -919,7 +918,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileSymbol() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
             // Remove the SideClass sub heading to match the expectations of this test
             let graphURL = url.appendingPathComponent("sidekit.symbols.json")
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -932,7 +931,6 @@ class SemaToRenderNodeTests: XCTestCase {
             })
             try JSONEncoder().encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         
@@ -1568,7 +1566,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Override with both a low and a high value
         for version in [SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1), SymbolGraph.SemanticVersion(major: 99, minor: 99, patch: 99)] {
-            let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
                 // Duplicate the symbol graph
                 let myKitURL = url.appendingPathComponent("mykit-iOS.symbols.json")
                 let myClassUSR = "s:5MyKit0A5ClassC"
@@ -1593,7 +1591,6 @@ class SemaToRenderNodeTests: XCTestCase {
                     try JSONEncoder().encode(graph).write(to: myKitURLForOtherPlatform)
                 }
             })
-            defer { try? FileManager.default.removeItem(at: url) }
             
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
             
@@ -2516,13 +2513,12 @@ Document @1:1-11:19
         let sgURL = Bundle.module.url(
             forResource: "TestBundle.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle.
             try String(contentsOf: sgURL)
                 .replacingOccurrences(of: #"identifier" : "s:OriginalUSR"#, with: #"identifier" : "s:5MyKit0A5MyProtocol0Afunc()"#)
                 .write(to: url.appendingPathComponent("sidekit.symbols.json"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
@@ -2543,14 +2539,13 @@ Document @1:1-11:19
         let sgURL = Bundle.module.url(
             forResource: "TestBundle.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle but
             // from the MyKit module.
             try String(contentsOf: sgURL)
                 .replacingOccurrences(of: #"identifier" : "s:OriginalUSR"#, with: #"identifier" : "s:5MyKit0A5ClassC"#)
                 .write(to: url.appendingPathComponent("sidekit.symbols.json"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
@@ -2598,7 +2593,7 @@ Document @1:1-11:19
 
     /// Tests doc extensions are matched to inherited symbols
     func testInheritedSymbolDocExtension() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try? """
             # ``SideKit/SideClass/Element/inherited()``
             Doc extension abstract.
@@ -2606,7 +2601,6 @@ Document @1:1-11:19
             Doc extension discussion. Missing: ![image](my-inherited-image.png).
             """.write(to: url.appendingPathComponent("inherited.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
@@ -2711,7 +2705,7 @@ Document @1:1-11:19
         for testData in testData {
             let sgURL = Bundle.module.url(forResource: "TestBundle.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
          
-            let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
                 // Replace the out-of-bundle origin with a symbol from the same bundle but
                 // from the MyKit module.
                 var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: sgURL))
@@ -2721,7 +2715,6 @@ Document @1:1-11:19
                 try JSONEncoder().encode(graph)
                     .write(to: url.appendingPathComponent("sidekit.symbols.json"))
             })
-            defer { try? FileManager.default.removeItem(at: url) }
             
             let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
             let node = try context.entity(with: myFuncReference)
@@ -2858,7 +2851,7 @@ Document @1:1-11:19
 
     /// Tests links to symbols that have deprecation summary in markdown appear deprecated.
     func testLinkToDeprecatedSymbolViaDirectiveIsDeprecated() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``MyKit/MyProtocol``
             @DeprecationSummary {
@@ -2866,7 +2859,6 @@ Document @1:1-11:19
             }
             """.write(to: url.appendingPathComponent("documentation").appendingPathComponent("myprotocol.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -2997,7 +2989,7 @@ Document @1:1-11:19
     }
     
     func testVisitTutorialMediaWithoutExtension() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
             try """
             @Tutorials(name: "Technology X") {
                @Intro(title: "Technology X") {
@@ -3019,7 +3011,6 @@ Document @1:1-11:19
             }
             """.write(to: url.appendingPathComponent("TestOverview.tutorial"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         guard let technologyDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")

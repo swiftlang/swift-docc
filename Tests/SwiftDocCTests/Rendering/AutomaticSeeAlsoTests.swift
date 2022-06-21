@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -17,7 +17,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with no authored See Also and with no curated siblings
     /// does not have a See Also section.
     func testNoSeeAlso() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # SideKit
@@ -27,7 +27,6 @@ class AutomaticSeeAlsoTests: XCTestCase {
             - ``SideClass``
             """.write(to: root.appendingPathComponent("documentation/sidekit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
@@ -41,7 +40,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with authored See Also and with no curated siblings
     /// does include an authored See Also section
     func testAuthoredSeeAlso() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -59,7 +58,6 @@ class AutomaticSeeAlsoTests: XCTestCase {
             - ``SideKit``
             """.write(to: root.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
@@ -78,7 +76,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// Test that a symbol with authored See Also and with curated siblings
     /// does include both in See Also with authored section first
     func testAuthoredAndAutomaticSeeAlso() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
             /// Article that curates `SideClass`
             try """
             # ``SideKit``
@@ -103,7 +101,6 @@ class AutomaticSeeAlsoTests: XCTestCase {
             Side Article abstract.
             """.write(to: root.appendingPathComponent("documentation/sidearticle.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))

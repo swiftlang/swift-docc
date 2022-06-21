@@ -186,7 +186,7 @@ class SymbolDisambiguationTests: XCTestCase {
     func testMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
-        let aliases = [String: [String]](uniqueKeysWithValues: context.referenceAliases.map({ ($0.key.path, $0.value.map(\.path).sorted()) }))
+        let aliases = [String: [String]](uniqueKeysWithValues: context.documentationCacheBasedLinkResolver.referenceAliases.map({ ($0.key.path, $0.value.map(\.path).sorted()) }))
         XCTAssertEqual(aliases, [
             "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)": [
                 "/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
@@ -208,7 +208,7 @@ class SymbolDisambiguationTests: XCTestCase {
         var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
         try loader.loadAll()
         
-        let references = context.referencesForSymbols(in: loader.unifiedGraphs, bundle: bundle).mapValues({ $0.map(\.path) })
+        let references = context.documentationCacheBasedLinkResolver.referencesForSymbols(in: loader.unifiedGraphs, bundle: bundle, context: context).mapValues({ $0.map(\.path) })
         XCTAssertEqual(references, [
             .init(precise: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift"): [
                 "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
@@ -363,6 +363,6 @@ class SymbolDisambiguationTests: XCTestCase {
         let context = try DocumentationContext(dataProvider: provider)
         
         
-        return context.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], bundle: bundle)
+        return context.documentationCacheBasedLinkResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], bundle: bundle, context: context)
     }
 }
