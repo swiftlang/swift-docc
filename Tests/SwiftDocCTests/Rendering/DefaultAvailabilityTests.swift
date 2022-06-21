@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -99,11 +99,10 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether the default availability is merged with beta status from the command line
     func testBundleWithDefaultAvailabilityInBetaDocs() throws {
         // Copy an Info.plist with default availability
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // Set a beta status for the docs (which would normally be set via command line argument)
         context.externalMetadata.currentPlatforms = [
@@ -142,7 +141,7 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether when Mac Catalyst availability is missing we fall back on iOS availability
     func testBundleWithMissingCatalystAvailability() throws {
         // Copy an Info.plist with default availability
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
             do {
                 try FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
                 let infoPlist = try String(contentsOf: self.infoPlistAvailabilityURL)
@@ -152,7 +151,6 @@ class DefaultAvailabilityTests: XCTestCase {
                 XCTFail("Could not copy Info.plist with custom availability in the test bundle")
             }
         }
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
 
@@ -193,11 +191,10 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test whether the default availability is not beta when not matching current target platform
     func testBundleWithDefaultAvailabilityNotInBetaDocs() throws {
         // Copy an Info.plist with default availability of macOS 10.15.1
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // Set a beta status for the docs (which would normally be set via command line argument)
         context.externalMetadata.currentPlatforms = ["macOS": PlatformVersion(VersionTriplet(10, 16, 0), beta: true)]
@@ -217,10 +214,9 @@ class DefaultAvailabilityTests: XCTestCase {
         }
     }
 
-    // Test that a symbol is unavailable and default availability does not preceed the "unavailable" attribute.
+    // Test that a symbol is unavailable and default availability does not precede the "unavailable" attribute.
     func testUnavailableAvailability() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { _ in }
-        defer { try? FileManager.default.removeItem(at: url) }
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { _ in }
         
         // Set a beta status for the docs (which would normally be set via command line argument)
         context.externalMetadata.currentPlatforms = ["iOS": PlatformVersion(VersionTriplet(14, 0, 0), beta: true)]
@@ -250,11 +246,11 @@ class DefaultAvailabilityTests: XCTestCase {
         }
     }
 
-    /// This test, along with `testInitializeWithCorrectAvailablityWithRawValue`,
+    /// This test, along with `testInitializeWithCorrectAvailabilityWithRawValue`,
     /// verifies that `DefaultAvailability` is correctly initialized with only **one** Mac
     /// Catalyst `ModuleAvailability`.
     ///
-    /// It used to be that if a bundle include "Mac Catalyst" in it's default availibities, the ``ModuleAvailability``
+    /// It used to be that if a bundle include "Mac Catalyst" in it's default availabilities , the ``ModuleAvailability``
     /// instances that were created would include an extra Mac Catalyst entry, where the ``PlatformName``s of
     /// the modules looked like this:
     ///
@@ -272,7 +268,7 @@ class DefaultAvailabilityTests: XCTestCase {
     /// ```
     ///
     /// - Bug: [rdar://71544773](rdar://71544773)
-    func testInitializeWithCorrectAvailablity() throws {
+    func testInitializeWithCorrectAvailability() throws {
         let plistEntries: [String: [[String: String]]] = [
             "SwiftUI": [
                 [
@@ -309,7 +305,7 @@ class DefaultAvailabilityTests: XCTestCase {
         XCTAssertEqual(module.filter({ $0.platformName.displayName == "Mac Catalyst" }).count, 1)
     }
 
-    func testInitializeWithCorrectAvailablityWithRawValue() throws {
+    func testInitializeWithCorrectAvailabilityWithRawValue() throws {
         let plistEntries: [String: [[String: String]]] = [
             "SwiftUI": [
                 [
@@ -349,11 +345,10 @@ class DefaultAvailabilityTests: XCTestCase {
     // Test that setting default availability doesn't prevent symbols with "universal" deprecation
     // (i.e. a platform of '*' and unconditional deprecation) from showing up as deprecated.
     func testUniversalDeprecationWithDefaultAvailability() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "BundleWithLonelyDeprecationDirective", excludingPaths: [], codeListings: [:]) { (url) in
+        let (_, bundle, context) = try testBundleAndContext(copying: "BundleWithLonelyDeprecationDirective", excludingPaths: [], codeListings: [:]) { (url) in
             try? FileManager.default.removeItem(at: url.appendingPathComponent("Info.plist"))
             try? FileManager.default.copyItem(at: self.infoPlistAvailabilityURL, to: url.appendingPathComponent("Info.plist"))
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let node = try context.entity(
             with: ResolvedTopicReference(

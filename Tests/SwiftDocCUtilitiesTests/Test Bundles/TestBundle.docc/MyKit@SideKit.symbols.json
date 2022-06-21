@@ -26,7 +26,7 @@
     {
       "kind" : "memberOf",
       "source" : "s:So14UncuratedClassCV5MyKitE5angle12CoreGraphics7CGFloatVSgvp",
-      "target" : "c:7SideKit14UncuratedClassC",
+      "target" : "s:7SideKit14UncuratedClassC",
       "targetFallback" : "SideKit.UncuratedClass"
     }
   ],
