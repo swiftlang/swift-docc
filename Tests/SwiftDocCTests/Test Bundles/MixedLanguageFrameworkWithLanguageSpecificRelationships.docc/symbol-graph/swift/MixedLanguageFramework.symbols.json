@@ -1,0 +1,132 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.116.4 clang-1400.0.25)"
+    },
+    "module": {
+        "name": "MixedLanguageFramework",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 13,
+                    "minor": 0,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.class",
+                "displayName": "Class"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)SymbolWithLanguageSpecificRelationships",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SymbolWithLanguageSpecificRelationships"
+            ],
+            "names": {
+                "title": "SymbolWithLanguageSpecificRelationships"
+            },
+            "accessLevel": "open"
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Method"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)myMethod",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SymbolWithLanguageSpecificRelationships",
+                "myMethod"
+            ],
+            "names": {
+                "title": "myMethod"
+            },
+            "accessLevel": "open"
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Method"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)myMethodDefaultImplementation",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SymbolWithLanguageSpecificRelationships",
+                "myMethodDefaultImplementation"
+            ],
+            "names": {
+                "title": "myMethodDefaultImplementation"
+            },
+            "accessLevel": "open"
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Method"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)myOptionalMethod",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SymbolWithLanguageSpecificRelationships",
+                "myOptionalMethod"
+            ],
+            "names": {
+                "title": "myOptionalMethod"
+            },
+            "accessLevel": "open"
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "conformsTo",
+            "source": "c:objc(cs)SymbolWithLanguageSpecificRelationships",
+            "target": "s:SH",
+            "targetFallback": "Swift.Hashable"
+        },
+        {
+            "kind": "inheritsFrom",
+            "source": "c:objc(cs)SymbolWithLanguageSpecificRelationships",
+            "target": "c:objc(cs)NSObject",
+            "targetFallback": "ObjectiveC.NSObject"
+        },
+        {
+            "kind": "defaultImplementationOf",
+            "source": "c:objc(cs)myMethodDefaultImplementation",
+            "target": "c:objc(cs)myMethod"
+        },
+        {
+            "kind": "requirementOf",
+            "source": "c:objc(cs)myMethod",
+            "target": "c:objc(cs)SymbolWithLanguageSpecificRelationships"
+        },
+        {
+            "kind": "requirementOf",
+            "source": "c:objc(cs)myOptionalMethod",
+            "target": "c:objc(cs)SymbolWithLanguageSpecificRelationships"
+        },
+        {
+            "kind": "optionalRequirementOf",
+            "source": "c:objc(cs)myOptionalMethod",
+            "target": "c:objc(cs)SymbolWithLanguageSpecificRelationships"
+        }
+    ]
+}

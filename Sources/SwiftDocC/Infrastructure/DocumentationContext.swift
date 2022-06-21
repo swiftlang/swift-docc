@@ -1091,7 +1091,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             /// A tree of the symbol hierarchy as defined by the combined symbol graph.
             var symbolsURLHierarchy = BidirectionalTree<ResolvedTopicReference>(root: bundle.documentationRootReference)
             /// We need only unique relationships so we'll collect them in a set.
-            var combinedRelationships = Set<SymbolGraph.Relationship>()
+            var combinedRelationships = [UnifiedSymbolGraph.Selector: Set<SymbolGraph.Relationship>]()
             /// Collect symbols from all symbol graphs.
             var combinedSymbols = [String: UnifiedSymbolGraph.Symbol]()
             
@@ -1168,13 +1168,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     addSymbolsToTopicGraph(symbolGraph: unifiedSymbolGraph, url: fileURL, symbolReferences: symbolReferences, moduleReference: moduleReference, bundle: bundle)
                     
                     // For inherited symbols we remove the source docs (if inheriting docs is disabled) before creating their documentation nodes.
-                    for relationship in unifiedSymbolGraph.relationships {
-                        // Check for an origin key.
-                        if relationship.mixins[SymbolGraph.Relationship.SourceOrigin.mixinKey] != nil
-                            // Check if it's a memberOf or implementation relationship.
-                            && (relationship.kind == .memberOf || relationship.kind == .defaultImplementationOf) {
-                            
-                            SymbolGraphRelationshipsBuilder.addInheritedDefaultImplementation(edge: relationship, context: self, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                    for (_, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
+                        for relationship in relationships {
+                            // Check for an origin key.
+                            if relationship.mixins[SymbolGraph.Relationship.SourceOrigin.mixinKey] != nil
+                                // Check if it's a memberOf or implementation relationship.
+                                && (relationship.kind == .memberOf || relationship.kind == .defaultImplementationOf) {
+                                
+                                SymbolGraphRelationshipsBuilder.addInheritedDefaultImplementation(
+                                    edge: relationship,
+                                    context: self,
+                                    symbolIndex: &symbolIndex,
+                                    engine: diagnosticEngine
+                                )
+                            }
                         }
                     }
 
@@ -1205,33 +1212,45 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 
                 // Collect symbols and relationships
                 combinedSymbols.merge(unifiedSymbolGraph.symbols, uniquingKeysWith: { $1 })
-                combinedRelationships.formUnion(unifiedSymbolGraph.relationships)
+                
+                for (selector, relationships) in unifiedSymbolGraph.relationshipsByLanguage {
+                    combinedRelationships[selector, default: []].formUnion(relationships)
+                }
+                
+                // Keep track of relationships that refer to symbols that are absent from the symbol graph, so that
+                // we can diagnose them.
+                combinedRelationships[
+                    .init(interfaceLanguage: "unknown", platform: nil),
+                    default: []
+                ].formUnion(unifiedSymbolGraph.orphanRelationships)
             }
             
             try shouldContinueRegistration()
-
-            // Add parent <-> child edges to the URL tree
-            try combinedRelationships
-                .compactMap(parentChildRelationship(from:))
-                .sorted(by: Self.sortRelationshipsPreOrder)
-                .forEach({ pair in
-                    // Add the relationship to the URL hierarchy
-                    let (parentRef, childRef) = pair
-                    // If the unique reference already exists, it's been added by another symbol graph
-                    // likely built for a different target platform, ignore it as it's the exact same symbol.
-                    if (try? symbolsURLHierarchy.parent(of: childRef)) == nil {
-                        do {
-                            try symbolsURLHierarchy.add(childRef, parent: parentRef)
-                        } catch let error as BidirectionalTree<ResolvedTopicReference>.Error {
-                            switch error {
-                            // Some parents might not exist if they are types from other frameworks and
-                            // those are not pulled into and available in the current symbol graph.
-                            case .nodeNotFound: break
-                            default: throw error
+            
+            for (_, relationships) in combinedRelationships {
+                // Add parent <-> child edges to the URL tree
+                try relationships
+                    .compactMap(parentChildRelationship(from:))
+                    .sorted(by: Self.sortRelationshipsPreOrder)
+                    .forEach({ pair in
+                        // Add the relationship to the URL hierarchy
+                        let (parentRef, childRef) = pair
+                        // If the unique reference already exists, it's been added by another symbol graph
+                        // likely built for a different target platform, ignore it as it's the exact same symbol.
+                        if (try? symbolsURLHierarchy.parent(of: childRef)) == nil {
+                            do {
+                                try symbolsURLHierarchy.add(childRef, parent: parentRef)
+                            } catch let error as BidirectionalTree<ResolvedTopicReference>.Error {
+                                switch error {
+                                    // Some parents might not exist if they are types from other frameworks and
+                                    // those are not pulled into and available in the current symbol graph.
+                                case .nodeNotFound: break
+                                default: throw error
+                                }
                             }
                         }
-                    }
-                })
+                    })
+            }
 
             // Update the children of collision URLs. Walk the tree and update any dependents of updated URLs
             for moduleReference in moduleReferences.values {
@@ -1241,12 +1260,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             
             // Create inherited API collections
-            try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
-                relationships: combinedRelationships,
-                parentOfFunction: { try? symbolsURLHierarchy.parent(of: $0) },
-                context: self,
-                bundle: bundle
-            )
+            for (_, relationships) in combinedRelationships {
+                try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
+                    relationships: relationships,
+                    parentOfFunction: { try? symbolsURLHierarchy.parent(of: $0) },
+                    context: self,
+                    bundle: bundle
+                )
+            }
 
             // Parse and prepare the nodes' content concurrently.
             let updatedNodes: [(node: DocumentationNode, matchedArticleURL: URL?)] = Array(symbolIndex.values)
@@ -1288,8 +1309,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationships)
             
-            // Build relationships in the completed graph
-            buildRelationships(combinedRelationships, bundle: bundle, engine: diagnosticEngine)
+            for (selector, relationships) in combinedRelationships {
+                // Build relationships in the completed graph
+                buildRelationships(relationships, selector: selector, bundle: bundle, engine: diagnosticEngine)
+            }
             
             // Index references
             documentationCacheBasedLinkResolver.referencesIndex.removeAll()
@@ -1317,24 +1340,59 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// ## See Also
     /// - ``SymbolGraphRelationshipsBuilder``
-    func buildRelationships(_ relationships: Set<SymbolGraph.Relationship>, bundle: DocumentationBundle, engine: DiagnosticEngine) {
+    func buildRelationships(
+        _ relationships: Set<SymbolGraph.Relationship>,
+        selector: UnifiedSymbolGraph.Selector,
+        bundle: DocumentationBundle,
+        engine: DiagnosticEngine
+    ) {
         for edge in relationships {
             switch edge.kind {
             case .conformsTo:
                 // Build conformant type <-> protocol relationships
-                SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                SymbolGraphRelationshipsBuilder.addConformanceRelationship(
+                    edge: edge,
+                    selector: selector,
+                    in: bundle,
+                    symbolIndex: &symbolIndex,
+                    engine: diagnosticEngine
+                )
             case .defaultImplementationOf:
                 // Build implementation <-> protocol requirement relationships.
-                SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, in: bundle, context: self, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                SymbolGraphRelationshipsBuilder.addImplementationRelationship(
+                    edge: edge,
+                    selector: selector,
+                    in: bundle,
+                    context: self,
+                    symbolIndex: &symbolIndex, engine: diagnosticEngine
+                )
             case .inheritsFrom:
                 // Build ancestor <-> offspring relationships.
-                SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                SymbolGraphRelationshipsBuilder.addInheritanceRelationship(
+                    edge: edge,
+                    selector: selector,
+                    in: bundle,
+                    symbolIndex: &symbolIndex,
+                    engine: diagnosticEngine
+                )
             case .requirementOf:
                 // Build required member -> protocol relationships.
-                SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                SymbolGraphRelationshipsBuilder.addRequirementRelationship(
+                    edge: edge,
+                    selector: selector,
+                    in: bundle,
+                    symbolIndex: &symbolIndex,
+                    engine: diagnosticEngine
+                )
             case .optionalRequirementOf:
                 // Build optional required member -> protocol relationships.
-                SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: diagnosticEngine)
+                SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(
+                    edge: edge,
+                    selector: selector,
+                    in: bundle,
+                    symbolIndex: &symbolIndex,
+                    engine: diagnosticEngine
+                )
             default:
                 break
             }
@@ -1342,7 +1400,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph, using an `externalSymbolResolver` (if not `nil`).
-    func resolveExternalSymbols(in symbols: [String: UnifiedSymbolGraph.Symbol], relationships: Set<SymbolGraph.Relationship>) throws {
+    func resolveExternalSymbols(
+        in symbols: [String: UnifiedSymbolGraph.Symbol],
+        relationships: [UnifiedSymbolGraph.Selector: Set<SymbolGraph.Relationship>]
+    ) throws {
         guard let symbolResolver = externalSymbolResolver else {
             return
         }
@@ -1352,8 +1413,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Add all the symbols that are the target of a relationship. These could for example be protocols that are being conformed to,
         // classes that are being subclassed, or methods that are being overridden.
-        for edge in relationships where symbolIndex[edge.target] == nil {
-            symbolsToResolve.insert(edge.target)
+        for (_, relationships) in relationships {
+            for edge in relationships where symbolIndex[edge.target] == nil {
+                symbolsToResolve.insert(edge.target)
+            }
         }
         
         // Add all the types that are referenced in a declaration. These could for example be the type of an argument or return value.
