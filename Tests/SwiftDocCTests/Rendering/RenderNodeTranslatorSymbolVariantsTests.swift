@@ -701,7 +701,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
-    func testEncodesNilTopicsSectionsForVariantIfDefaultIsNonEmpty() throws {
+    func testEncodesNilTopicsSectionsForArticleVariantIfDefaultIsNonEmpty() throws {
         try assertMultiVariantArticle(
             configureArticle: { article in
                 article.automaticTaskGroups = []
@@ -725,6 +725,26 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 // than `[]`. Since the `RenderNode` decoder implementation encodes `[]` rather than `nil` into the
                 // model when the JSON value is `null` (`topicSections` is not optional in the model), we can't use it
                 // for this test. Instead, we decode the JSON using a proxy type that has an optional `topicSections`.
+                
+                struct RenderNodeProxy: Codable {
+                    var topicSections: [TaskGroupRenderSection]?
+                }
+                
+                XCTAssertNil(
+                    try JSONDecoder().decode(RenderNodeProxy.self, from: renderNodeData).topicSections,
+                    "Expected topicSections to be null in the JSON because the article has no Objective-C topics."
+                )
+            }
+        )
+    }
+    
+    func testEncodesNilTopicsSectionsForSymbolVariantIfDefaultIsNonEmpty() throws {
+        try assertMultiVariantSymbol(
+            assertOriginalRenderNode: { renderNode in
+                XCTAssertEqual(renderNode.topicSections.count, 6)
+            },
+            assertDataAfterApplyingVariant: { renderNodeData in
+                // See reasoning for the RenderNodeProxy type in the similar test above.
                 
                 struct RenderNodeProxy: Codable {
                     var topicSections: [TaskGroupRenderSection]?
@@ -848,7 +868,13 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 XCTAssertEqual(renderNode.topicSections.count, 2)
             },
             assertAfterApplyingVariant: { renderNode in
-                XCTAssertEqual(renderNode.topicSections.count, 2)
+                XCTAssert(
+                    renderNode.topicSections.isEmpty,
+                    """
+                    Expected no topics section for the Objective-C variant, because there are no Objective-C \
+                    relationships.
+                    """
+                )
             }
         )
     }
@@ -1040,7 +1066,8 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         configureSymbol: (Symbol) throws -> () = { _ in },
         configureRenderNodeTranslator: (inout RenderNodeTranslator) -> () = { _ in },
         assertOriginalRenderNode: (RenderNode) throws -> (),
-        assertAfterApplyingVariant: (RenderNode) throws -> ()
+        assertAfterApplyingVariant: (RenderNode) throws -> () = { _ in },
+        assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
     ) throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
         
@@ -1066,7 +1093,8 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             identifier: identifier,
             configureRenderNodeTranslator: configureRenderNodeTranslator,
             assertOriginalRenderNode: assertOriginalRenderNode,
-            assertAfterApplyingVariant: assertAfterApplyingVariant
+            assertAfterApplyingVariant: assertAfterApplyingVariant,
+            assertDataAfterApplyingVariant: assertDataAfterApplyingVariant
         )
     }
     
