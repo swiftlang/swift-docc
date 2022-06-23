@@ -990,6 +990,30 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    func testDoesNotEmitObjectiveCSeeAlsoIfEmpty() throws {
+        func makeSeeAlsoSection(destination: String) -> SeeAlsoSection {
+            SeeAlsoSection(content: [
+                UnorderedList(
+                    ListItem(Paragraph(Link(destination: destination)))
+                )
+            ])
+        }
+        
+        try assertMultiVariantSymbol(
+            configureSymbol: { symbol in
+                symbol.seeAlsoVariants[.swift] = makeSeeAlsoSection(
+                    destination: "doc://org.swift.docc.example/documentation/MyKit/MyProtocol"
+                )
+            },
+            assertOriginalRenderNode: { renderNode in
+                XCTAssertEqual(renderNode.seeAlsoSections.count, 2)
+            },
+            assertAfterApplyingVariant: { renderNode in
+                XCTAssert(renderNode.seeAlsoSections.isEmpty)
+            }
+        )
+    }
+    
     func testDeprecationSummaryVariants() throws {
         try assertMultiVariantSymbol(
             configureSymbol: { symbol in
