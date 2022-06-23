@@ -103,7 +103,7 @@ struct DiffResultsTable {
         var result = ""
         var number = number
         var digit = 0
-        while number > 10 {
+        while number >= 10 {
             (number, digit) = number.quotientAndRemainder(dividingBy: 10)
             result = superscriptCharacters[digit] + result
         }
