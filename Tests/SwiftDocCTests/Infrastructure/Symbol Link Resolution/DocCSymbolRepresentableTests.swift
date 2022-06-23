@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -127,12 +127,11 @@ class DocCSymbolRepresentableTests: XCTestCase {
         expectedNumberOfAmbiguousSymbols: Int
     ) throws {
         // Build a bundle with an unusual number of overloaded symbols
-        let (url, _, context) = try testBundleAndContext(
+        let (_, _, context) = try testBundleAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
         )
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // Collect the overloaded symbols nodes from the built bundle
         let ambiguousSymbols = context.symbolIndex.values.compactMap(\.symbol).filter {
@@ -188,12 +187,11 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testLinkComponentInitialization() throws {
-        let (url, _, context) = try testBundleAndContext(
+        let (_, _, context) = try testBundleAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
         )
-        defer { try? FileManager.default.removeItem(at: url) }
         
         var count = 0
         try context.symbolIndex.values.forEach { documentationNode in

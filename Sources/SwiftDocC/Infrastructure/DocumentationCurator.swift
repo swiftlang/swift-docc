@@ -38,7 +38,7 @@ struct DocumentationCurator {
         }
         
         // Optimization for absolute links.
-        if let cached = context.referenceFor(absoluteSymbolPath: destination, parent: resolved) {
+        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: resolved) {
             return cached
         }
         

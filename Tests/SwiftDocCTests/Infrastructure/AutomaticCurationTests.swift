@@ -17,13 +17,12 @@ class AutomaticCurationTests: XCTestCase {
     func testAutomaticTopics() throws {
         // Create each kind of symbol and verify it gets its own topic group automatically
         for kind in AutomaticCuration.groupKindOrder where kind != .module {
-            let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
                 let sidekitURL = url.appendingPathComponent("sidekit.symbols.json")
                 let text = try String(contentsOf: sidekitURL)
                     .replacingOccurrences(of: "\"identifier\" : \"swift.enum.case\"", with: "\"identifier\" : \"\(kind.identifier)\"")
                 try text.write(to: sidekitURL, atomically: true, encoding: .utf8)
             })
-            defer { try? FileManager.default.removeItem(at: url) }
 
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
             // Compile docs and verify the generated Topics section
@@ -38,7 +37,7 @@ class AutomaticCurationTests: XCTestCase {
     }
 
     func testAutomaticTopicsSkippingCustomCuratedSymbols() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
             // Curate some of `SideClass`'s children under SideKit.
             let sideKit = """
             # ``SideKit``
@@ -50,7 +49,6 @@ class AutomaticCurationTests: XCTestCase {
             """
             try sideKit.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
         
@@ -88,7 +86,7 @@ class AutomaticCurationTests: XCTestCase {
         for curatedIndices in variationsOfChildrenToCurate {
             let manualCuration = curatedIndices.map { "- <\(allExpectedChildren[$0])>" }.joined(separator: "\n")
             
-            let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
                 try """
                 # ``SideKit/SideClass``
 
@@ -101,7 +99,6 @@ class AutomaticCurationTests: XCTestCase {
                 \(manualCuration)
                 """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
             }
-            defer { try? FileManager.default.removeItem(at: url) }
             
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
             // Compile docs and verify the generated Topics section
@@ -141,7 +138,7 @@ class AutomaticCurationTests: XCTestCase {
     }
     
     func testSeeAlsoSectionForAutomaticallyCuratedTopics() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("sidekit.symbols.json")))
             
             // Copy `SideClass` a handful of times
@@ -167,15 +164,31 @@ class AutomaticCurationTests: XCTestCase {
                 
                 graph.symbols[duplicateSymbol.identifier.precise] = duplicateSymbol
                 
-                // Duplicate all the edges to and from the symbbol
+                // Duplicate all the edges and nodes to and from the symbol
                 for relationship in graph.relationships where relationship.source == sideClassIdentifier {
                     var newRelationship = relationship
                     newRelationship.source = duplicateSymbol.identifier.precise
+                    
+                    // Duplicate the target symbol to avoid symbols being members of more than one other symbol.
+                    let newTarget = relationship.target + suffix
+                    newRelationship.target = newTarget
+                    if let targetSymbol = graph.symbols[relationship.target] {
+                        graph.symbols[newTarget] = targetSymbol
+                    }
+                    
                     graph.relationships.append(newRelationship)
                 }
                 for relationship in graph.relationships where relationship.target == sideClassIdentifier {
                     var newRelationship = relationship
                     newRelationship.target = duplicateSymbol.identifier.precise
+                    
+                    // Duplicate the source symbol to avoid symbols being members of more than one other symbol.
+                    let newSource = relationship.source + suffix
+                    newRelationship.source = newSource
+                    if let targetSymbol = graph.symbols[relationship.target] {
+                        graph.symbols[newSource] = targetSymbol
+                    }
+                    
                     graph.relationships.append(newRelationship)
                 }
                 
@@ -239,7 +252,6 @@ class AutomaticCurationTests: XCTestCase {
 
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // The first topic section
         do {

@@ -796,6 +796,54 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         )
     }
     
+    func testMultiLanguageSymbolWithLanguageSpecificRelationships() throws {
+        let outputConsumer = try renderNodeConsumer(
+            for: "MixedLanguageFrameworkWithLanguageSpecificRelationships"
+        )
+        
+        let symbol = try outputConsumer.renderNode(withTitle: "SymbolWithLanguageSpecificRelationships")
+        
+        XCTAssertEqual(
+            symbol.relationshipSections.flatMap { [$0.title] + $0.identifiers },
+            [
+                "Inherits From",
+                "doc://org.swift.MixedLanguageFramework/objc(cs)NSObject",
+                "Conforms To",
+                "doc://org.swift.MixedLanguageFramework/SH"
+            ]
+        )
+        
+        let objectiveCSymbol = try renderNodeApplyingObjectiveCVariantOverrides(to: symbol)
+        
+        XCTAssertEqual(
+            objectiveCSymbol.relationshipSections.flatMap { [$0.title] + $0.identifiers },
+            [
+                "Inherits From",
+                "doc://org.swift.MixedLanguageFramework/objc(cs)NSObject"
+            ]
+        )
+    }
+    
+    func testMultiLanguageSymbolWithLanguageSpecificProtocolRequirements() throws {
+        let outputConsumer = try renderNodeConsumer(
+            for: "MixedLanguageFrameworkWithLanguageSpecificRelationships"
+        )
+        
+        let symbol = try outputConsumer.renderNode(withTitle: "myMethod")
+        
+        XCTAssertEqual(
+            symbol.defaultImplementationsSections.flatMap { [$0.title] + $0.identifiers },
+            [
+                "SymbolWithLanguageSpecificRelationships Implementations",
+                "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/SymbolWithLanguageSpecificRelationships/myMethodDefaultImplementation",
+            ]
+        )
+        
+        let objectiveCSymbol = try renderNodeApplyingObjectiveCVariantOverrides(to: symbol)
+        
+        XCTAssert(objectiveCSymbol.relationshipSections.isEmpty)
+    }
+    
     func assertExpectedContent(
         _ renderNode: RenderNode,
         sourceLanguage expectedSourceLanguage: String,

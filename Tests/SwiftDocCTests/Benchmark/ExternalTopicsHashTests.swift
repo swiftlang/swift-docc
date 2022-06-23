@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -51,7 +51,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (url, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -64,8 +64,6 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol2>
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
             }
-
-            defer { try? FileManager.default.removeItem(at: url) }
             
             // Verify that links were resolved
             XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
@@ -91,7 +89,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         
         // Add external links and verify the checksum is always the same
         let hashes: [String] = try (0...10).map { _ -> MetricValue? in
-            let (url, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
+            let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver], externalSymbolResolver: externalSymbolResolver) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -104,8 +102,6 @@ class ExternalTopicsGraphHashTests: XCTestCase {
             - <doc://\(externalResolver.bundleIdentifier)/path/to/external/symbol2>
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
             }
-
-            defer { try? FileManager.default.removeItem(at: url) }
             
             // Verify that links and symbols were resolved
             XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
@@ -132,7 +128,7 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         let externalResolver = self.externalResolver
 
         // Load a bundle with external links
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
         try """
         # ``SideKit/SideClass``
 
@@ -146,7 +142,6 @@ class ExternalTopicsGraphHashTests: XCTestCase {
         """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
     
-        defer { try? FileManager.default.removeItem(at: url) }
         XCTAssertFalse(context.externallyResolvedLinks.isEmpty)
         guard !context.externallyResolvedLinks.isEmpty else { return }
         

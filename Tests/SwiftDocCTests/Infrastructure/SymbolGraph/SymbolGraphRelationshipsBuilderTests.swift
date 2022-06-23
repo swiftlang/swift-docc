@@ -35,6 +35,8 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         return SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .defaultImplementationOf, targetFallback: nil)
     }
     
+    private let swiftSelector = UnifiedSymbolGraph.Selector(interfaceLanguage: "swift", platform: nil)
+    
     func testImplementsRelationship() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         var symbolIndex = [String: DocumentationNode]()
@@ -43,7 +45,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, in: bundle, context: context, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addImplementationRelationship(edge: edge, selector: swiftSelector, in: bundle, context: context, symbolIndex: &symbolIndex, engine: engine)
         
         // Test default implementation was added
         XCTAssertFalse((symbolIndex["B"]!.semantic as! Symbol).defaultImplementations.implementations.isEmpty)
@@ -57,7 +59,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addConformanceRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, engine: engine)
         
         // Test default conforms to was added
         guard let conformsTo = (symbolIndex["A"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
@@ -86,7 +88,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .class, displayName: "Class"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, engine: engine)
         
         // Test inherits was added
         guard let inherits = (symbolIndex["A"]!.semantic as! Symbol).relationships.groups.first(where: { group -> Bool in
@@ -125,7 +127,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         
         let edge = SymbolGraph.Relationship(source: sourceIdentifier.precise, target: targetIdentifier.precise, kind: .inheritsFrom, targetFallback: "MyOtherKit.B")
         
-        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addInheritanceRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, engine: engine)
         
         let relationships = (symbolIndex["A"]!.semantic as! Symbol).relationships
         guard let inheritsShouldHaveFallback = relationships.groups.first(where: { group -> Bool in
@@ -148,7 +150,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .method, displayName: "Method"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addRequirementRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, engine: engine)
         
         // Test default implementation was added
         XCTAssertTrue((symbolIndex["A"]!.semantic as! Symbol).isRequired)
@@ -162,7 +164,7 @@ class SymbolGraphRelationshipsBuilderTests: XCTestCase {
         let edge = createSymbols(in: &symbolIndex, bundle: bundle, sourceType: .init(parsedIdentifier: .method, displayName: "Method"), targetType: .init(parsedIdentifier: .protocol, displayName: "Protocol"))
         
         // Adding the relationship
-        SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(edge: edge, in: bundle, symbolIndex: &symbolIndex, engine: engine)
+        SymbolGraphRelationshipsBuilder.addOptionalRequirementRelationship(edge: edge, selector: swiftSelector, in: bundle, symbolIndex: &symbolIndex, engine: engine)
         
         // Test default implementation was added
         XCTAssertFalse((symbolIndex["A"]!.semantic as! Symbol).isRequired)

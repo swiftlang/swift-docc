@@ -209,7 +209,7 @@ enum GeneratedDocumentationTopics {
     ///   - symbolsURLHierarchy: A symbol graph hierarchy as created during symbol registration.
     ///   - context: A documentation context to update.
     ///   - bundle: The current documentation bundle.
-    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, context: DocumentationContext, bundle: DocumentationBundle) throws {
+    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, parentOfFunction: (ResolvedTopicReference) -> ResolvedTopicReference?, context: DocumentationContext, bundle: DocumentationBundle) throws {
         var inheritanceIndex = InheritedSymbols()
         
         // Walk the symbol graph relationships and look for parent <-> child links that stem in a different module.
@@ -227,14 +227,14 @@ enum GeneratedDocumentationTopics {
                let extends = child.symbol?.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
                 var originParentSymbol: ResolvedTopicReference? = nil
                 if let originSymbol = context.symbolIndex[origin.identifier] {
-                    originParentSymbol = try? symbolsURLHierarchy.parent(of: originSymbol.reference)
+                    originParentSymbol = parentOfFunction(originSymbol.reference)
                 }
                 // Add the inherited symbol to the index.
                 try inheritanceIndex.add(child.reference, to: parent.reference, originDisplayName: origin.displayName, originParentSymbol: originParentSymbol, extendedModuleName: extends.extendedModule)
             }
         }
         
-        // Create the API Collection nodes and the neccessary topic graph curation.
+        // Create the API Collection nodes and the necessary topic graph curation.
         for (typeReference, collections) in inheritanceIndex.implementingTypes where !collections.inheritedFromTypeName.isEmpty {
             for (_, collection) in collections.inheritedFromTypeName where !collection.identifiers.isEmpty {
                 // Create a collection for the given provider type's inherited symbols
