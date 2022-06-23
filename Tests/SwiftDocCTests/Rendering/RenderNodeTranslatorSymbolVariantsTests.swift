@@ -615,6 +615,47 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    func testDoesNotEmitObjectiveCRelationshipsForTopicThatOnlyHasSwiftRelationships() throws {
+        try assertMultiVariantSymbol(
+            configureContext: { context, _ in
+            
+                // Set up an Objective-C title for MyProtocol.
+                let myFunctionNode = try context.entity(
+                    with: ResolvedTopicReference(
+                        bundleIdentifier: "org.swift.docc.example",
+                        path: "/documentation/MyKit/MyProtocol",
+                        fragment: nil,
+                        sourceLanguage: .swift
+                    )
+                )
+                
+                let myProtocol = try XCTUnwrap(myFunctionNode.semantic as? Symbol)
+                myProtocol.titleVariants[.objectiveC] = "MyProtocol"
+            },
+            configureSymbol: { symbol in
+                symbol.relationshipsVariants[.swift] = makeRelationshipSection(
+                    kind: .inheritedBy,
+                    path: "/documentation/MyKit/MyClass/myFunction()"
+                )
+                
+                symbol.relationshipsVariants[.objectiveC] = nil
+            },
+            assertOriginalRenderNode: { renderNode in
+                XCTAssertEqual(renderNode.relationshipSections.count, 1)
+                let relationshipSection = try XCTUnwrap(renderNode.relationshipSections.first)
+                XCTAssertEqual(relationshipSection.title, "Inherited By")
+                
+                XCTAssertEqual(
+                    relationshipSection.identifiers,
+                    ["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"]
+                )
+            },
+            assertAfterApplyingVariant: { renderNode in
+                XCTAssert(renderNode.relationshipSections.isEmpty)
+            }
+        )
+    }
+    
     func testTopicsSectionVariants() throws {
         try assertMultiVariantSymbol(
             configureContext: { context, reference in

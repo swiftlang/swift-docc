@@ -1159,9 +1159,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.relationshipSectionsVariants = VariantCollection<[RelationshipsRenderSection]>(
-            from: symbol.relationshipsVariants
-        ) { trait, relationships in
-            guard !relationships.groups.isEmpty else {
+            from: documentationNode.availableVariantTraits,
+            fallbackDefaultValue: []
+        ) { trait in
+            guard let relationships = symbol.relationshipsVariants[trait], !relationships.groups.isEmpty else {
                 return []
             }
             
