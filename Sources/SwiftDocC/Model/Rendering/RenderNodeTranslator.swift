@@ -1350,22 +1350,20 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 bundle: bundle,
                 renderContext: renderContext,
                 renderer: contentRenderer
-            ) {
+            ), !seeAlso.references.isEmpty {
                 contentCompiler.collectedTopicReferences.append(contentsOf: seeAlso.references)
-                seeAlsoSections.append(TaskGroupRenderSection(
-                    title: seeAlso.title,
-                    abstract: nil,
-                    discussion: nil,
-                    identifiers: seeAlso.references.map { $0.absoluteString },
-                    generated: true
-                ))
+                seeAlsoSections.append(
+                    TaskGroupRenderSection(
+                        title: seeAlso.title,
+                        abstract: nil,
+                        discussion: nil,
+                        identifiers: seeAlso.references.map { $0.absoluteString },
+                        generated: true
+                    )
+                )
             }
             
-            if seeAlsoSections.isEmpty {
-                return nil
-            } else {
-                return seeAlsoSections
-            }
+            return seeAlsoSections
         } ?? .init(defaultValue: [])
         
         node.deprecationSummaryVariants = VariantCollection<[RenderBlockContent]?>(
