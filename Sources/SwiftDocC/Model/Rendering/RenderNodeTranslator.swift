@@ -1279,11 +1279,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 )
             }
             
-            if sections.isEmpty {
-                return nil
-            } else {
-                return sections
-            }
+            return sections
         } ?? .init(defaultValue: [])
         
         node.defaultImplementationsSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
