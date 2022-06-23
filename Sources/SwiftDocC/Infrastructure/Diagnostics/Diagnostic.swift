@@ -32,7 +32,7 @@ public struct Diagnostic: DescribedError {
     ///
     /// ## Example
     ///
-    /// `org.swift.docc.AbstractContainsLink`
+    /// `org.swift.docc.SummaryContainsLink`
     public var identifier: String
 
     /// Provides the short, localized abstract provided by ``localizedExplanation`` in plain text if an
