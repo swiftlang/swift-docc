@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 import Markdown
 
 class RenderNodeTranslatorTests: XCTestCase {
@@ -648,6 +649,120 @@ class RenderNodeTranslatorTests: XCTestCase {
             "FancyProtocol Implementations",
         ])
 
+    }
+    
+    func testAutomaticImplementationsWithExtraDotsFromExternalModule() throws {
+        let inheritedDefaultImplementationsFromExternalModuleSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementationsFromExternalModule.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let testBundle = try Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                CopyOfFile(original: inheritedDefaultImplementationsFromExternalModuleSGF),
+            ]
+        ).write(inside: createTemporaryDirectory())
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/SecondTarget/FancyProtocolConformer", in: testBundle),
+            [
+                "FancyProtocol Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/SecondTarget/OtherFancyProtocolConformer", in: testBundle),
+            [
+                "OtherFancyProtocol Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/SecondTarget/FooConformer", in: testBundle),
+            [
+                "Foo Implementations",
+            ]
+        )
+    }
+    
+    func testAutomaticImplementationsFromCurrentModuleWithMixOfDocCoverage() throws {
+        let inheritedDefaultImplementationsSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        let inheritedDefaultImplementationsAtSwiftSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations@Swift.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let testBundle = try Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                CopyOfFile(original: inheritedDefaultImplementationsSGF),
+                CopyOfFile(original: inheritedDefaultImplementationsAtSwiftSGF),
+            ]
+        ).write(inside: createTemporaryDirectory())
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", in: testBundle),
+            [
+                "Foo Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", in: testBundle),
+            [
+                "Comparable Implementations",
+                "Equatable Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", in: testBundle),
+            [
+                "Comparable Implementations",
+                "Equatable Implementations",
+                "FancyProtocol Implementations",
+                "OtherFancyProtocol Implementations",
+            ]
+        )
+    }
+    
+    func assertDefaultImplementationCollectionTitles(
+        in renderNode: RenderNode,
+        _ expectedTitles: [String],
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        let defaultImplementationSection = try XCTUnwrap(
+            renderNode.topicSections.first(where: { $0.title == "Default Implementations" }),
+            "Expected to find default implementations topic section.",
+            file: file,
+            line: line
+        )
+        
+        let references = defaultImplementationSection.identifiers.compactMap { identifier in
+            renderNode.references[identifier] as? TopicRenderReference
+        }
+        
+        XCTAssertEqual(references.map(\.title), expectedTitles, file: file, line: line)
+    }
+    
+    func loadRenderNode(at path: String, in bundleURL: URL) throws -> RenderNode {
+        let (_, bundle, context) = try loadBundle(from: bundleURL)
+
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        return try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
     }
     
     func testAutomaticTaskGroupTopicsAreSorted() throws {
