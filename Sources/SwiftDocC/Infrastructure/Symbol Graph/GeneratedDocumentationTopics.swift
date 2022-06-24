@@ -40,15 +40,35 @@ enum GeneratedDocumentationTopics {
         ///   - reference: The parent type reference.
         ///   - originDisplayName: The origin display name as provided by the symbol graph.
         ///   - extendedModuleName: Extended module name.
-        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, originDisplayName: String, originParentSymbol: ResolvedTopicReference?, extendedModuleName: String) throws {
+        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, childSymbol: SymbolGraph.Symbol, originDisplayName: String, originSymbol: SymbolGraph.Symbol?, extendedModuleName: String) throws {
             let fromType: String
             let typeSimpleName: String
-            if let originParentSymbol = originParentSymbol, !originParentSymbol.pathComponents.isEmpty {
-                // If we have a resolved symbol for the parent of `sourceOrigin`, use that for the names
-                fromType = originParentSymbol.pathComponents.joined(separator: ".")
-                typeSimpleName = originParentSymbol.pathComponents.last!
+            if let originSymbol = originSymbol, originSymbol.pathComponents.count > 1 {
+                // If we have a resolved symbol for the source origin, use its path components to
+                // find the name of the parent by dropping the last path component.
+                let parentSymbolPathComponents = originSymbol.pathComponents.dropLast()
+                fromType = parentSymbolPathComponents.joined(separator: ".")
+                typeSimpleName = parentSymbolPathComponents.last!
+            } else if let childSymbolName = childSymbol.pathComponents.last,
+                originDisplayName.count > (childSymbolName.count + 1)
+            {
+                // In the case where we don't have a resolved symbol for the source origin,
+                // this allows us to still accurately handle cases like this:
+                //
+                //     "displayName": "SuperFancyProtocol..<..(_:_:)"
+                //
+                // Where there's no way for us to determine which of the periods is the one
+                // splitting the name of the parent type and the symbol name. Using the count
+                // of the symbol name (+1 for the period splitting the names)
+                // from the source is a reliable way to support this.
+                
+                let parentSymbolName = originDisplayName.dropLast(childSymbolName.count + 1)
+                fromType = String(parentSymbolName)
+                typeSimpleName = String(parentSymbolName.split(separator: ".").last ?? parentSymbolName)
             } else {
-                // If we don't have a resolved `sourceOrigin` parent, fall back to parsing its display name
+                // This should never happen but is a last safeguard for the case where
+                // the child symbol is unexpectedly short. In this case, we can attempt to just parse
+                // the parent symbol name out of the origin display name.
 
                 // Detect the path components of the providing the default implementation.
                 let typeComponents = originDisplayName.split(separator: ".")
@@ -209,7 +229,7 @@ enum GeneratedDocumentationTopics {
     ///   - symbolsURLHierarchy: A symbol graph hierarchy as created during symbol registration.
     ///   - context: A documentation context to update.
     ///   - bundle: The current documentation bundle.
-    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, context: DocumentationContext, bundle: DocumentationBundle) throws {
+    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, context: DocumentationContext, bundle: DocumentationBundle) throws {
         var inheritanceIndex = InheritedSymbols()
         
         // Walk the symbol graph relationships and look for parent <-> child links that stem in a different module.
@@ -223,14 +243,14 @@ enum GeneratedDocumentationTopics {
                let parent = context.symbolIndex[relationship.target],
                // Resolve the child
                let child = context.symbolIndex[relationship.source],
+               // Get the child symbol
+               let childSymbol = child.symbol,
                // Get the swift extension data
-               let extends = child.symbol?.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
-                var originParentSymbol: ResolvedTopicReference? = nil
-                if let originSymbol = context.symbolIndex[origin.identifier] {
-                    originParentSymbol = try? symbolsURLHierarchy.parent(of: originSymbol.reference)
-                }
+               let extends = childSymbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
+                let originSymbol = context.symbolIndex[origin.identifier]?.symbol
+                
                 // Add the inherited symbol to the index.
-                try inheritanceIndex.add(child.reference, to: parent.reference, originDisplayName: origin.displayName, originParentSymbol: originParentSymbol, extendedModuleName: extends.extendedModule)
+                try inheritanceIndex.add(child.reference, to: parent.reference, childSymbol: childSymbol, originDisplayName: origin.displayName, originSymbol: originSymbol, extendedModuleName: extends.extendedModule)
             }
         }
         

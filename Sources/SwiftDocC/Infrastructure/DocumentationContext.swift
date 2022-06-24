@@ -1468,7 +1468,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             for (_, relationships) in combinedRelationships {
                 try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
                     relationships: relationships,
-                    symbolsURLHierarchy: &symbolsURLHierarchy,
                     context: self,
                     bundle: bundle
                 )

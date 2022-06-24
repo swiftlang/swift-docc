@@ -1,0 +1,792 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.7"
+    },
+    "module": {
+        "name": "SecondTarget",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 11,
+                    "minor": 0,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:11FirstTarget13FancyProtocolPAAE4zzzzoiyyAaB_p_AaB_ptFZ::SYNTHESIZED::s:12SecondTarget22FancyProtocolConformerV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "FancyProtocolConformer",
+                "....(_:_:)"
+            ],
+            "names": {
+                "title": "....(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "...."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "FancyProtocol",
+                        "preciseIdentifier": "s:11FirstTarget13FancyProtocolP"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "FancyProtocol",
+                        "preciseIdentifier": "s:11FirstTarget13FancyProtocolP"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ")"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "lhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "FancyProtocol",
+                                "preciseIdentifier": "s:11FirstTarget13FancyProtocolP"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "rhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "FancyProtocol",
+                                "preciseIdentifier": "s:11FirstTarget13FancyProtocolP"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "FirstTarget"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "...."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "FancyProtocol",
+                    "preciseIdentifier": "s:11FirstTarget13FancyProtocolP"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "FancyProtocol",
+                    "preciseIdentifier": "s:11FirstTarget13FancyProtocolP"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ")"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///r81423267-reproducer/Sources/FirstTarget/Source.swift",
+                "position": {
+                    "line": 27,
+                    "character": 16
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "s:12SecondTarget22FancyProtocolConformerV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "FancyProtocolConformer"
+            ],
+            "names": {
+                "title": "FancyProtocolConformer",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "FancyProtocolConformer"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "struct"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "FancyProtocolConformer"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "struct"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "FancyProtocolConformer"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///r81423267-reproducer/Sources/SecondTarget/Source.swift",
+                "position": {
+                    "line": 4,
+                    "character": 14
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "s:11FirstTarget3FooPAAE23fooMemberWithDocCommentyyF::SYNTHESIZED::s:12SecondTarget12FooConformerV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "FooConformer",
+                "fooMemberWithDocComment()"
+            ],
+            "names": {
+                "title": "fooMemberWithDocComment()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "fooMemberWithDocComment"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "docComment": {
+                "uri": "file:///r81423267-reproducer/Sources/FirstTarget/Source.swift",
+                "module": "FirstTarget",
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 1,
+                                "character": 8
+                            },
+                            "end": {
+                                "line": 1,
+                                "character": 29
+                            }
+                        },
+                        "text": "This is my great doc."
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "FirstTarget"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "fooMemberWithDocComment"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///r81423267-reproducer/Sources/FirstTarget/Source.swift",
+                "position": {
+                    "line": 7,
+                    "character": 9
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.func.op",
+                "displayName": "Operator"
+            },
+            "identifier": {
+                "precise": "s:11FirstTarget18OtherFancyProtocolPAAE4zlzzoiyyAaB_p_AaB_ptFZ::SYNTHESIZED::s:12SecondTarget27OtherFancyProtocolConformerV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "OtherFancyProtocolConformer",
+                ".<..(_:_:)"
+            ],
+            "names": {
+                "title": ".<..(_:_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": ".<.."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "OtherFancyProtocol",
+                        "preciseIdentifier": "s:11FirstTarget18OtherFancyProtocolP"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "OtherFancyProtocol",
+                        "preciseIdentifier": "s:11FirstTarget18OtherFancyProtocolP"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ")"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "name": "lhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "OtherFancyProtocol",
+                                "preciseIdentifier": "s:11FirstTarget18OtherFancyProtocolP"
+                            }
+                        ]
+                    },
+                    {
+                        "name": "rhs",
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "OtherFancyProtocol",
+                                "preciseIdentifier": "s:11FirstTarget18OtherFancyProtocolP"
+                            }
+                        ]
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "FirstTarget"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": ".<.."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "OtherFancyProtocol",
+                    "preciseIdentifier": "s:11FirstTarget18OtherFancyProtocolP"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "OtherFancyProtocol",
+                    "preciseIdentifier": "s:11FirstTarget18OtherFancyProtocolP"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ")"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///r81423267-reproducer/Sources/FirstTarget/Source.swift",
+                "position": {
+                    "line": 36,
+                    "character": 16
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "s:12SecondTarget12FooConformerV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "FooConformer"
+            ],
+            "names": {
+                "title": "FooConformer",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "FooConformer"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "struct"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "FooConformer"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "struct"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "FooConformer"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///r81423267-reproducer/Sources/SecondTarget/Source.swift",
+                "position": {
+                    "line": 2,
+                    "character": 14
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "s:11FirstTarget3FooPAAE26fooMemberWithoutDocCommentyyF::SYNTHESIZED::s:12SecondTarget12FooConformerV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "FooConformer",
+                "fooMemberWithoutDocComment()"
+            ],
+            "names": {
+                "title": "fooMemberWithoutDocComment()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "fooMemberWithoutDocComment"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "FirstTarget"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "fooMemberWithoutDocComment"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///r81423267-reproducer/Sources/FirstTarget/Source.swift",
+                "position": {
+                    "line": 8,
+                    "character": 9
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "s:12SecondTarget27OtherFancyProtocolConformerV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "OtherFancyProtocolConformer"
+            ],
+            "names": {
+                "title": "OtherFancyProtocolConformer",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "OtherFancyProtocolConformer"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "struct"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "OtherFancyProtocolConformer"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "struct"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "OtherFancyProtocolConformer"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///r81423267-reproducer/Sources/SecondTarget/Source.swift",
+                "position": {
+                    "line": 6,
+                    "character": 14
+                }
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "conformsTo",
+            "source": "s:12SecondTarget22FancyProtocolConformerV",
+            "target": "s:11FirstTarget13FancyProtocolP",
+            "targetFallback": "FirstTarget.FancyProtocol"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:11FirstTarget3FooPAAE23fooMemberWithDocCommentyyF::SYNTHESIZED::s:12SecondTarget12FooConformerV",
+            "target": "s:12SecondTarget12FooConformerV",
+            "sourceOrigin": {
+                "identifier": "s:11FirstTarget3FooP23fooMemberWithDocCommentyyF",
+                "displayName": "Foo.fooMemberWithDocComment()"
+            }
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:12SecondTarget27OtherFancyProtocolConformerV",
+            "target": "s:11FirstTarget18OtherFancyProtocolP",
+            "targetFallback": "FirstTarget.OtherFancyProtocol"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:12SecondTarget12FooConformerV",
+            "target": "s:11FirstTarget3FooP",
+            "targetFallback": "FirstTarget.Foo"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:11FirstTarget3FooPAAE26fooMemberWithoutDocCommentyyF::SYNTHESIZED::s:12SecondTarget12FooConformerV",
+            "target": "s:12SecondTarget12FooConformerV",
+            "sourceOrigin": {
+                "identifier": "s:11FirstTarget3FooPAAE26fooMemberWithoutDocCommentyyF",
+                "displayName": "Foo.fooMemberWithoutDocComment()"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:11FirstTarget13FancyProtocolPAAE4zzzzoiyyAaB_p_AaB_ptFZ::SYNTHESIZED::s:12SecondTarget22FancyProtocolConformerV",
+            "target": "s:12SecondTarget22FancyProtocolConformerV",
+            "sourceOrigin": {
+                "identifier": "s:11FirstTarget13FancyProtocolPAAE4zzzzoiyyAaB_p_AaB_ptFZ",
+                "displayName": "FancyProtocol.....(_:_:)"
+            }
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:11FirstTarget18OtherFancyProtocolPAAE4zlzzoiyyAaB_p_AaB_ptFZ::SYNTHESIZED::s:12SecondTarget27OtherFancyProtocolConformerV",
+            "target": "s:12SecondTarget27OtherFancyProtocolConformerV",
+            "sourceOrigin": {
+                "identifier": "s:11FirstTarget18OtherFancyProtocolPAAE4zlzzoiyyAaB_p_AaB_ptFZ",
+                "displayName": "OtherFancyProtocol..<..(_:_:)"
+            }
+        }
+    ]
+}
