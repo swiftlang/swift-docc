@@ -1,0 +1,107 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.7"
+    },
+    "module": {
+        "name": "FirstTarget",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 11,
+                    "minor": 0,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "s:SL11FirstTargetE26localDefaultImplementationyyF",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Comparable",
+                "localDefaultImplementation()"
+            ],
+            "names": {
+                "title": "localDefaultImplementation()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "localDefaultImplementation"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "localDefaultImplementation"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///r81423267-reproducer/Sources/FirstTarget/Source.swift",
+                "position": {
+                    "line": 46,
+                    "character": 16
+                }
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "memberOf",
+            "source": "s:SL11FirstTargetE26localDefaultImplementationyyF",
+            "target": "s:SL",
+            "targetFallback": "Swift.Comparable"
+        }
+    ]
+}
