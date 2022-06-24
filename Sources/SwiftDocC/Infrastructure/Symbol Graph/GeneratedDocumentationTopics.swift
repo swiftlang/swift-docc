@@ -40,7 +40,7 @@ enum GeneratedDocumentationTopics {
         ///   - reference: The parent type reference.
         ///   - originDisplayName: The origin display name as provided by the symbol graph.
         ///   - extendedModuleName: Extended module name.
-        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, originDisplayName: String, originSymbol: SymbolGraph.Symbol?, sourceSymbol: SymbolGraph.Symbol?, extendedModuleName: String) throws {
+        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, childSymbol: SymbolGraph.Symbol, originDisplayName: String, originSymbol: SymbolGraph.Symbol?, extendedModuleName: String) throws {
             let fromType: String
             let typeSimpleName: String
             if let originSymbol = originSymbol, originSymbol.pathComponents.count > 1 {
@@ -49,9 +49,8 @@ enum GeneratedDocumentationTopics {
                 let parentSymbolPathComponents = originSymbol.pathComponents.dropLast()
                 fromType = parentSymbolPathComponents.joined(separator: ".")
                 typeSimpleName = parentSymbolPathComponents.last!
-            } else if let sourceSymbol = sourceSymbol,
-                let sourceSymbolName = sourceSymbol.pathComponents.last,
-                originDisplayName.count > (sourceSymbolName.count + 1)
+            } else if let childSymbolName = childSymbol.pathComponents.last,
+                originDisplayName.count > (childSymbolName.count + 1)
             {
                 // In the case where we don't have a resolved symbol for the source origin,
                 // this allows us to still accurately handle cases like this:
@@ -63,13 +62,13 @@ enum GeneratedDocumentationTopics {
                 // of the symbol name (+1 for the period splitting the names)
                 // from the source is a reliable way to support this.
                 
-                let parentSymbolName = originDisplayName.dropLast(sourceSymbolName.count + 1)
+                let parentSymbolName = originDisplayName.dropLast(childSymbolName.count + 1)
                 fromType = String(parentSymbolName)
                 typeSimpleName = String(parentSymbolName.split(separator: ".").last ?? parentSymbolName)
             } else {
-                // If we don't have a resolved source origin symbol or source symbol, fall back to
-                // parsing its display name. This should never happen since we expect to
-                // always have a source symbol.
+                // This should never happen but is a last safeguard for the case where
+                // the child symbol is unexpectedly short. In this case, we can attempt to just parse
+                // the parent symbol name out of the origin display name.
 
                 // Detect the path components of the providing the default implementation.
                 let typeComponents = originDisplayName.split(separator: ".")
@@ -244,13 +243,14 @@ enum GeneratedDocumentationTopics {
                let parent = context.symbolIndex[relationship.target],
                // Resolve the child
                let child = context.symbolIndex[relationship.source],
+               // Get the child symbol
+               let childSymbol = child.symbol,
                // Get the swift extension data
-               let extends = child.symbol?.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
+               let extends = childSymbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
                 let originSymbol = context.symbolIndex[origin.identifier]?.symbol
-                let sourceSymbol = context.symbolIndex[relationship.source]?.symbol
                 
                 // Add the inherited symbol to the index.
-                try inheritanceIndex.add(child.reference, to: parent.reference, originDisplayName: origin.displayName, originSymbol: originSymbol, sourceSymbol: sourceSymbol, extendedModuleName: extends.extendedModule)
+                try inheritanceIndex.add(child.reference, to: parent.reference, childSymbol: childSymbol, originDisplayName: origin.displayName, originSymbol: originSymbol, extendedModuleName: extends.extendedModule)
             }
         }
         
