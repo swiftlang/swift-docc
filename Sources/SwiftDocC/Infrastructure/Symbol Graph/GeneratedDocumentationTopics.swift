@@ -224,12 +224,17 @@ enum GeneratedDocumentationTopics {
     ///   ╰ View Implementations
     ///     ╰ accessibilityValue()
     /// ```
+    ///
+    /// > Warning: This method tracks internal state via an ``InheritedSymbols`` inheritance index.
+    /// It must be called **once** per symbol by passing in _all_ of the relationships that apply
+    /// to a symbol.
+    ///
     /// - Parameters:
     ///   - relationships: A set of relationships to inspect.
     ///   - symbolsURLHierarchy: A symbol graph hierarchy as created during symbol registration.
     ///   - context: A documentation context to update.
     ///   - bundle: The current documentation bundle.
-    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, context: DocumentationContext, bundle: DocumentationBundle) throws {
+    static func createInheritedSymbolsAPICollections(relationships: [SymbolGraph.Relationship], context: DocumentationContext, bundle: DocumentationBundle) throws {
         var inheritanceIndex = InheritedSymbols()
         
         // Walk the symbol graph relationships and look for parent <-> child links that stem in a different module.

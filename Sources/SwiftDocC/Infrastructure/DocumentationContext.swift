@@ -1465,13 +1465,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             
             // Create inherited API collections
-            for (_, relationships) in combinedRelationships {
-                try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
-                    relationships: relationships,
-                    context: self,
-                    bundle: bundle
-                )
-            }
+            try GeneratedDocumentationTopics.createInheritedSymbolsAPICollections(
+                relationships: combinedRelationships.flatMap(\.value),
+                context: self,
+                bundle: bundle
+            )
 
             // Parse and prepare the nodes' content concurrently.
             let updatedNodes: [(node: DocumentationNode, matchedArticleURL: URL?)] = Array(symbolIndex.values)
