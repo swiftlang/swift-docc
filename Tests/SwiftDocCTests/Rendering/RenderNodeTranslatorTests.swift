@@ -735,6 +735,81 @@ class RenderNodeTranslatorTests: XCTestCase {
         )
     }
     
+    func testAutomaticImplementationsFromMultiPlatformSymbolGraphs() throws {
+        let inheritedDefaultImplementationsSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraphWithModifiedPlatform = try String(
+            contentsOf: inheritedDefaultImplementationsSGF
+        )
+        .replacingOccurrences(
+            of: """
+                "architecture": "x86_64",
+                """,
+            with: """
+                "architecture": "arm64",
+                """
+        )
+        .replacingOccurrences(
+            of: """
+                "name": "macosx",
+                """,
+            with: """
+                "name": "ios",
+                """
+        )
+        
+        let testBundle = try Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                Folder(
+                    name: "x86_64-apple-macos",
+                    content: [
+                        CopyOfFile(original: inheritedDefaultImplementationsSGF),
+                    ]
+                ),
+                Folder(
+                    name: "arm64-apple-ios",
+                    content: [
+                        DataFile(
+                            name: inheritedDefaultImplementationsSGF.lastPathComponent,
+                            data: Data(symbolGraphWithModifiedPlatform.utf8)
+                        ),
+                    ]
+                ),
+            ]
+        ).write(inside: createTemporaryDirectory())
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", in: testBundle),
+            [
+                "Foo Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", in: testBundle),
+            [
+                "Comparable Implementations",
+                "Equatable Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", in: testBundle),
+            [
+                "Comparable Implementations",
+                "Equatable Implementations",
+                "FancyProtocol Implementations",
+                "OtherFancyProtocol Implementations",
+            ]
+        )
+    }
+    
     func assertDefaultImplementationCollectionTitles(
         in renderNode: RenderNode,
         _ expectedTitles: [String],
