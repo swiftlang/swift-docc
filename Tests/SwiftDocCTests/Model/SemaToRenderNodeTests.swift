@@ -69,10 +69,10 @@ class SemaToRenderNodeTests: XCTestCase {
             let contentSection = tutorialSections.tasks[0].contentSection[0]
             guard case let .contentAndMedia(section) = contentSection,
                 case let .aside(note, noteContent) = section.content[1],
-                note == .note,
+                  note == .init(rawValue: "Note"),
                 case let .aside(important, importantContent) = section.content[2],
-                important == .important else {
-                    XCTFail("Expected `Note` and `Experiment` asides")
+                  important == .init(rawValue: "Important") else {
+                    XCTFail("Expected `Note` and `Important` asides")
                     return
             }
             
@@ -2305,29 +2305,29 @@ Document @1:1-11:19
     }
 
     let asidesStressTest: [RenderBlockContent] = [
-        .aside(style: .note, content: [.paragraph(inlineContent: [.text("This is a note.")])]),
-        .aside(style: .tip, content: [.paragraph(inlineContent: [.text("Here’s a tip.")])]),
-        .aside(style: .important, content: [.paragraph(inlineContent: [.text("Keep this in mind.")])]),
-        .aside(style: .experiment, content: [.paragraph(inlineContent: [.text("Try this out.")])]),
-        .aside(style: .warning, content: [.paragraph(inlineContent: [.text("Watch out for this.")])]),
-        .aside(style: .attention, content: [.paragraph(inlineContent: [.text("Head’s up!")])]),
-        .aside(style: .author, content: [.paragraph(inlineContent: [.text("I wrote this.")])]),
-        .aside(style: .authors, content: [.paragraph(inlineContent: [.text("We wrote this.")])]),
-        .aside(style: .bug, content: [.paragraph(inlineContent: [.text("This is wrong.")])]),
-        .aside(style: .complexity, content: [.paragraph(inlineContent: [.text("This takes time.")])]),
-        .aside(style: .copyright, content: [.paragraph(inlineContent: [.text("2021 Apple Inc.")])]),
-        .aside(style: .date, content: [.paragraph(inlineContent: [.text("1 January 1970")])]),
-        .aside(style: .invariant, content: [.paragraph(inlineContent: [.text("This shouldn’t change.")])]),
-        .aside(style: .mutatingVariant, content: [.paragraph(inlineContent: [.text("This will change.")])]),
-        .aside(style: .nonMutatingVariant, content: [.paragraph(inlineContent: [.text("This changes, but not in the data.")])]),
-        .aside(style: .postcondition, content: [.paragraph(inlineContent: [.text("After calling, this should be true.")])]),
-        .aside(style: .precondition, content: [.paragraph(inlineContent: [.text("Before calling, this should be true.")])]),
-        .aside(style: .remark, content: [.paragraph(inlineContent: [.text("Something you should know.")])]),
-        .aside(style: .requires, content: [.paragraph(inlineContent: [.text("This needs something.")])]),
-        .aside(style: .since, content: [.paragraph(inlineContent: [.text("The beginning of time.")])]),
-        .aside(style: .todo, content: [.paragraph(inlineContent: [.text("This needs work.")])]),
-        .aside(style: .version, content: [.paragraph(inlineContent: [.text("3.1.4")])]),
-        .aside(style: .throws, content: [.paragraph(inlineContent: [.text("A serious error.")])]),
+        .aside(style: .init(rawValue: "Note"), content: [.paragraph(inlineContent: [.text("This is a note.")])]),
+        .aside(style: .init(rawValue: "Tip"), content: [.paragraph(inlineContent: [.text("Here’s a tip.")])]),
+        .aside(style: .init(rawValue: "Important"), content: [.paragraph(inlineContent: [.text("Keep this in mind.")])]),
+        .aside(style: .init(rawValue: "Experiment"), content: [.paragraph(inlineContent: [.text("Try this out.")])]),
+        .aside(style: .init(rawValue: "Warning"), content: [.paragraph(inlineContent: [.text("Watch out for this.")])]),
+        .aside(style: .init(rawValue: "Attention"), content: [.paragraph(inlineContent: [.text("Head’s up!")])]),
+        .aside(style: .init(rawValue: "Author"), content: [.paragraph(inlineContent: [.text("I wrote this.")])]),
+        .aside(style: .init(rawValue: "Authors"), content: [.paragraph(inlineContent: [.text("We wrote this.")])]),
+        .aside(style: .init(rawValue: "Bug"), content: [.paragraph(inlineContent: [.text("This is wrong.")])]),
+        .aside(style: .init(rawValue: "Complexity"), content: [.paragraph(inlineContent: [.text("This takes time.")])]),
+        .aside(style: .init(rawValue: "Copyright"), content: [.paragraph(inlineContent: [.text("2021 Apple Inc.")])]),
+        .aside(style: .init(rawValue: "Date"), content: [.paragraph(inlineContent: [.text("1 January 1970")])]),
+        .aside(style: .init(rawValue: "Invariant"), content: [.paragraph(inlineContent: [.text("This shouldn’t change.")])]),
+        .aside(style: .init(rawValue: "MutatingVariant"), content: [.paragraph(inlineContent: [.text("This will change.")])]),
+        .aside(style: .init(rawValue: "NonMutatingVariant"), content: [.paragraph(inlineContent: [.text("This changes, but not in the data.")])]),
+        .aside(style: .init(rawValue: "Postcondition"), content: [.paragraph(inlineContent: [.text("After calling, this should be true.")])]),
+        .aside(style: .init(rawValue: "Precondition"), content: [.paragraph(inlineContent: [.text("Before calling, this should be true.")])]),
+        .aside(style: .init(rawValue: "Remark"), content: [.paragraph(inlineContent: [.text("Something you should know.")])]),
+        .aside(style: .init(rawValue: "Requires"), content: [.paragraph(inlineContent: [.text("This needs something.")])]),
+        .aside(style: .init(rawValue: "Since"), content: [.paragraph(inlineContent: [.text("The beginning of time.")])]),
+        .aside(style: .init(rawValue: "Todo"), content: [.paragraph(inlineContent: [.text("This needs work.")])]),
+        .aside(style: .init(rawValue: "Version"), content: [.paragraph(inlineContent: [.text("3.1.4")])]),
+        .aside(style: .init(rawValue: "Throws"), content: [.paragraph(inlineContent: [.text("A serious error.")])]),
     ]
     
     func testBareTechnology() throws {
@@ -2469,13 +2469,6 @@ Document @1:1-11:19
         }
         defer {
             try? FileManager.default.removeItem(at: bundleURL)
-        }
-
-        for kind in RenderBlockContent.AsideStyle.allCases {
-            XCTAssert(asidesStressTest.contains(where: {
-                guard case let RenderBlockContent.aside(innerKind, _) = $0 else { return false }
-                return innerKind == kind
-            }), "Please add \(kind) to the asidesStressTest list and Asides.symbols.json.")
         }
         
         // Both of these symbols have the same content; one just has its asides as list items and the other has blockquotes.
@@ -2806,15 +2799,15 @@ Document @1:1-11:19
             asidesStressTest,
             """
             [
-            {"type":"aside", "style":"note",
+            {"type":"aside", "style":"note", "name":"Note",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This is a note."}]}]},
-            {"type":"aside", "style":"tip",
+            {"type":"aside", "style":"tip", "name":"Tip",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Here’s a tip."}]}]},
-            {"type":"aside", "style":"important",
+            {"type":"aside", "style":"important", "name":"Important",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Keep this in mind."}]}]},
-            {"type":"aside", "style":"experiment",
+            {"type":"aside", "style":"experiment","name":"Experiment",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Try this out."}]}]},
-            {"type":"aside", "style":"warning",
+            {"type":"aside", "style":"warning", "name":"Warning",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Watch out for this."}]}]},
             {"type":"aside", "style":"note", "name":"Attention",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Head’s up!"}]}]},
