@@ -2667,8 +2667,40 @@ Document @1:1-11:19
                       "end": {"line": 1, "character": 21}
                     }
                   }],
+                  "module": "SideKit",
+                  "uri": "file://path/with spaces/to/file.swift"
+                }
+                """,
+                expectedRenderedAbstract: [.text("Authored abstract")]
+            ),
+            TestData(
+                docCommentJSON: """
+                {
+                  "lines": [{
+                    "text": "Authored abstract",
+                    "range": {
+                      "start": {"line": 1, "character": 4},
+                      "end": {"line": 1, "character": 21}
+                    }
+                  }],
                   "module": "OtherModule",
                   "uri": "file://path/to/file.swift"
+                }
+                """,
+                expectedRenderedAbstract: [.text("Inherited from "), .codeVoice(code: "Module.Protocol.inherited()"), .text(".")]
+            ),
+            TestData(
+                docCommentJSON: """
+                {
+                  "lines": [{
+                    "text": "Authored abstract",
+                    "range": {
+                      "start": {"line": 1, "character": 4},
+                      "end": {"line": 1, "character": 21}
+                    }
+                  }],
+                  "module": "OtherModule",
+                  "uri": "file://path/with spaces/to/file.swift"
                 }
                 """,
                 expectedRenderedAbstract: [.text("Inherited from "), .codeVoice(code: "Module.Protocol.inherited()"), .text(".")]
