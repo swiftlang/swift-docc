@@ -72,119 +72,93 @@ public enum RenderBlockContent: Equatable {
         }
     }
     
-    /// An aside style.
-    public enum AsideStyle: String, Codable, Equatable, CaseIterable {
-        /// A note aside.
-        case note
-        /// An important aside.
-        case important
-        /// A warning aside.
-        case warning
-        /// An experiment aside.
-        case experiment
-        /// A tip aside.
-        case tip
-        /// An attention aside.
-        case attention
-        /// An author aside.
-        case author
-        /// An authors aside.
-        case authors
-        /// A bug aside.
-        case bug
-        /// A complexity aside.
-        case complexity
-        /// A copyright aside.
-        case copyright
-        /// A date aside.
-        case date
-        /// An invariant aside.
-        case invariant
-        /// A mutatingVariant aside.
-        case mutatingVariant
-        /// A nonMutatingVariant aside.
-        case nonMutatingVariant
-        /// A postcondition aside.
-        case postcondition
-        /// A precondition aside.
-        case precondition
-        /// A remark aside.
-        case remark
-        /// A requires aside.
-        case requires
-        /// A since aside.
-        case since
-        /// A todo aside.
-        case todo
-        /// A version aside.
-        case version
-        /// A throws aside.
-        case `throws`
+    /// A type the describes an aside style.
+    public struct AsideStyle: Codable, Equatable {
+        private static let specialDisplayNames: [String: String] = [
+            "nonmutatingvariant": "Non-Mutating Variant",
+            "mutatingvariant": "Mutating Variant",
+            "todo": "To Do",
+        ]
         
-        /// Creates a new aside style of the given kind.
-        init(_ kind: Aside.Kind) {
-            switch kind {
-            case .note: self = .note
-            case .important: self = .important
-            case .warning: self = .warning
-            case .experiment: self = .experiment
-            case .tip: self = .tip
-            case .attention: self = .attention
-            case .author: self = .author
-            case .authors: self = .authors
-            case .bug: self = .bug
-            case .complexity: self = .complexity
-            case .copyright: self = .copyright
-            case .date: self = .date
-            case .invariant: self = .invariant
-            case .mutatingVariant: self = .mutatingVariant
-            case .nonMutatingVariant: self = .nonMutatingVariant
-            case .postcondition: self = .postcondition
-            case .precondition: self = .precondition
-            case .remark: self = .remark
-            case .requires: self = .requires
-            case .since: self = .since
-            case .todo: self = .todo
-            case .version: self = .version
-            case .throws: self = .throws
+        /// Returns a Boolean value indicating whether two aside styles are equal.
+        ///
+        /// The comparison uses ``rawValue`` and is case-insensitive.
+        ///
+        /// - Parameters:
+        ///   - lhs: An aside style to compare.
+        ///   - rhs: Another aside style to compare.
+        public static func ==(lhs: AsideStyle, rhs: AsideStyle) -> Bool {
+            lhs.rawValue.caseInsensitiveCompare(rhs.rawValue) == .orderedSame
+        }
+        
+        /// The underlying raw string value.
+        public var rawValue: String
+
+        /// The heading text to use when rendering this style of aside.
+        public var displayName: String {
+            if let value = Self.specialDisplayNames[rawValue.lowercased()] {
+                return value
+            } else if rawValue.contains(where: \.isUppercase) {
+                // If any character is upper-cased, assume the content has
+                // specific casing and return the raw value.
+                return rawValue
+            } else {
+                return rawValue.capitalized
             }
         }
 
-        /// Create a new aside style by looking up its display name. Returns nil if no aside style matches.
-        init?(displayName: String) {
-            let casesAndDisplayNames = AsideStyle.allCases.map { (kind: $0, displayName: $0.displayName() )}
-            guard let matchingCaseAndDisplayName = casesAndDisplayNames.first(where: { $0.displayName == displayName }) else {
-                return nil
-            }
-            self = matchingCaseAndDisplayName.kind
-        }
-
-        /// Returns the style of aside to use when rendering.
+        /// The style of aside to use when rendering.
         ///
         /// DocC Render currently has five styles of asides: Note, Tip, Experiment, Important, and Warning. Asides
         /// of these styles can emit their own style into the output, but other styles need to be rendered as one of
-        /// these five styles. This function maps aside styles to the render style used in the output.
-        func renderKind() -> Self {
-            switch self {
-            case .important, .warning, .experiment, .tip:
-                return self
+        /// these five styles. This property maps aside styles to the render style used in the output.
+        var renderKind: String {
+            switch rawValue.lowercased() {
+            case let lowercasedRawValue
+                where [
+                    "important",
+                    "warning",
+                    "experiment",
+                    "tip"
+                ].contains(lowercasedRawValue):
+                return lowercasedRawValue
             default:
-                return .note
+                return "note"
             }
         }
 
-        /// The heading text to use when rendering this style of aside.
-        public func displayName() -> String {
-            switch self {
-            case .mutatingVariant:
-                return "Mutating Variant"
-            case .nonMutatingVariant:
-                return "Non-Mutating Variant"
-            case .todo:
-                return "To Do"
-            default:
-                return self.rawValue.capitalized
-            }
+        /// Creates an aside type for the specified aside kind.
+        /// - Parameter asideKind: The aside kind that provides the display name.
+        public init(asideKind: Aside.Kind) {
+            self.rawValue = asideKind.rawValue
+        }
+        
+        /// Creates an aside style for the specified raw value.
+        /// - Parameter rawValue: The heading text to use when rendering this style of aside.
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+        
+        /// Creates an aside style with the specified display name.
+        /// - Parameter displayName: The heading text to use when rendering this style of aside.
+        public init(displayName: String) {
+            self.rawValue = Self.specialDisplayNames.first(where: { $0.value == displayName })?.key ?? displayName
+        }
+        
+        /// Encodes the aside style into the specified encoder.
+        /// - Parameter encoder: The encoder to write data to.
+        public func encode(to encoder: Encoder) throws {
+            // For backwards compatibility, encode only the display name and
+            // not a key-value pair.
+            var container = encoder.singleValueContainer()
+            try container.encode(rawValue)
+        }
+        
+        /// Creates an aside style by decoding the specified decoder.
+        /// - Parameter decoder: The decoder to read data from.
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            self.rawValue = try container.decode(String.self)
         }
     }
     
@@ -270,10 +244,8 @@ extension RenderBlockContent: Codable {
             self = try .paragraph(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent))
         case .aside:
             var style = try container.decode(AsideStyle.self, forKey: .style)
-            if style == .note,
-               let displayName = try container.decodeIfPresent(String.self, forKey: .name),
-               let decodedKind = AsideStyle(displayName: displayName) {
-                style = decodedKind
+            if style.renderKind == "note", let displayName = try container.decodeIfPresent(String.self, forKey: .name) {
+                style = AsideStyle(displayName: displayName)
             }
             self = try .aside(style: style, content: container.decode([RenderBlockContent].self, forKey: .content))
         case .codeListing:
@@ -337,16 +309,9 @@ extension RenderBlockContent: Codable {
         case .paragraph(let inlineContent):
             try container.encode(inlineContent, forKey: .inlineContent)
         case .aside(let style, let content):
-            let renderKind = style.renderKind()
-            if renderKind != style {
-                // Aside styles after the first five render as notes with a special "name" field
-                try container.encode(renderKind, forKey: .style)
-                try container.encode(style.displayName(), forKey: .name)
-                try container.encode(content, forKey: .content)
-            } else {
-                try container.encode(style, forKey: .style)
-                try container.encode(content, forKey: .content)
-            }
+            try container.encode(style.renderKind, forKey: .style)
+            try container.encode(style.displayName, forKey: .name)
+            try container.encode(content, forKey: .content)
         case .codeListing(let syntax, let code, metadata: let metadata):
             try container.encode(syntax, forKey: .syntax)
             try container.encode(code, forKey: .code)
