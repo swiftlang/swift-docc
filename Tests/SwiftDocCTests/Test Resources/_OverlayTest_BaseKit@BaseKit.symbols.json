@@ -1,0 +1,108 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "app/1.0"
+    },
+    "module": {
+        "name": "OverlayTest",
+        "bystanders": ["BaseKit"],
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 3,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.method",
+                "displayName": "Instance Method"
+            },
+            "identifier": {
+                "precise": "s:7BaseKit11OtherStructV013_OverlayTest_aB0E8someFuncyyF",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "OtherStruct",
+                "someFunc()"
+            ],
+            "names": {
+                "title": "someFunc()",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "someFunc"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "BaseKit"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "someFunc"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///path/to/OverlayTest/_OverlayTest_BaseKit/_OverlayTest_BaseKit.swift",
+                "position": {
+                    "line": 13,
+                    "character": 14
+                }
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "memberOf",
+            "source": "s:7BaseKit11OtherStructV013_OverlayTest_aB0E8someFuncyyF",
+            "target": "s:7BaseKit11OtherStructV",
+            "targetFallback": "BaseKit.OtherStruct"
+        }
+    ]
+}
