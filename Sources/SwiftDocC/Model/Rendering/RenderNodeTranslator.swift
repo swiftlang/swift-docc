@@ -1057,10 +1057,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         let moduleName = context.moduleName(forModuleReference: symbol.moduleReference)
-        
-        node.metadata.modulesVariants = VariantCollection(defaultValue:
-            [RenderMetadata.Module(name: moduleName.displayName, relatedModules: symbol.bystanderModuleNames)]
-        )
+
+        if let crossImportOverlayModule = symbol.crossImportOverlayModule {
+            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: crossImportOverlayModule.declaringModule, relatedModules: crossImportOverlayModule.bystanderModules)])
+        } else {
+            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: nil)]
+            )
+        }
         
         node.metadata.extendedModuleVariants = VariantCollection<String?>(defaultValue: symbol.extendedModule)
         

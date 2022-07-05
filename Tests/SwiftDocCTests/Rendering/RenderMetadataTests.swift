@@ -107,13 +107,40 @@ class RenderMetadataTests: XCTestCase {
         let symbol = try XCTUnwrap(entity.semantic as? Symbol)
         
         // Verify it contains the bystanders data
-        XCTAssertEqual(symbol.bystanderModuleNames, ["Foundation"])
+        XCTAssertEqual(symbol.crossImportOverlayModule?.bystanderModules, ["Foundation"])
         
         // Verify the rendered metadata contains the bystanders
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let renderNode = try converter.convert(entity, at: nil)
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "MyKit")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Foundation"])
+    }
+
+    /// Test that when a bystanders symbol graph is loaded that extends a different module, that
+    /// those symbols correctly report the modules when rendered.
+    func testRendersBystanderExtensionsFromSymbolGraph() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [:]) { url in
+            let baseSymbolGraphURL = Bundle.module.url(
+                forResource: "BaseKit.symbols", withExtension: "json", subdirectory: "Test Resources")!
+            try FileManager.default.copyItem(at: baseSymbolGraphURL, to: url.appendingPathComponent("BaseKit.symbols.json"))
+            let overlaySymbolGraphURL = Bundle.module.url(
+                forResource: "_OverlayTest_BaseKit@BaseKit.symbols", withExtension: "json", subdirectory: "Test Resources")!
+            try FileManager.default.copyItem(at: overlaySymbolGraphURL, to: url.appendingPathComponent("_OverlayTest_BaseKit@BaseKit.symbols.json"))
+        }
+
+        // Verify the symbol from bystanders graph is present in the documentation context.
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/BaseKit/OtherStruct/someFunc()", sourceLanguage: .swift)
+        let entity = try XCTUnwrap(try? context.entity(with: reference))
+        let symbol = try XCTUnwrap(entity.semantic as? Symbol)
+
+        // Verify it contains the bystanders data
+        XCTAssertEqual(symbol.crossImportOverlayModule?.bystanderModules, ["BaseKit"])
+
+        // Verify the rendered metadata contains the bystanders
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let renderNode = try converter.convert(entity, at: nil)
+        XCTAssertEqual(renderNode.metadata.modules?.first?.name, "OverlayTest")
+        XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["BaseKit"])
     }
     
     func testEmitsTitleVariantsDuringEncoding() throws {

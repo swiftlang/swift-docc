@@ -115,7 +115,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     internal(set) public var extendedModule: String?
     
     /// Optional cross-import module names of the symbol.
-    internal(set) public var bystanderModuleNames: [String]?
+    internal(set) public var crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])?
     
     /// Whether the symbol is required in its context, in each language variant the symbol is available in.
     public var isRequiredVariants: DocumentationDataVariants<Bool>
@@ -227,7 +227,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         returnsSectionVariants: DocumentationDataVariants<ReturnsSection>,
         parametersSectionVariants: DocumentationDataVariants<ParametersSection>,
         redirectsVariants: DocumentationDataVariants<[Redirect]>,
-        bystanderModuleNames: [String]? = nil,
+        crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])? = nil,
         originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
         automaticTaskGroupsVariants: DocumentationDataVariants<[AutomaticTaskGroupSection]> = .init(defaultVariantValue: [])
     ) {
@@ -238,7 +238,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.roleHeadingVariants = roleHeadingVariants
         self.platformNameVariants = platformNameVariants
         self.moduleReference = moduleReference
-        self.bystanderModuleNames = bystanderModuleNames
+        self.crossImportOverlayModule = crossImportOverlayModule
         self.isRequiredVariants = requiredVariants
         self.externalIDVariants = externalIDVariants
         self.accessLevelVariants = accessLevelVariants

@@ -124,7 +124,7 @@ if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
         .package(name: "swift-markdown", url: "https://github.com/apple/swift-markdown.git", .branch("main")),
         .package(name: "CLMDB", url: "https://github.com/apple/swift-lmdb.git", .branch("main")),
         .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "1.0.1")),
-        .package(name: "SymbolKit", url: "https://github.com/apple/swift-docc-symbolkit", .branch("main")),
+        .package(name: "SymbolKit", url: "https://github.com/QuietMisdreavus/swift-docc-symbolkit", .branch("graph-module")),
         .package(url: "https://github.com/apple/swift-crypto.git", .upToNextMinor(from: "1.1.2")),
     ]
     
