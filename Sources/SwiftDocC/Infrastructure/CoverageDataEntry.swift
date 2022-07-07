@@ -243,7 +243,11 @@ extension CoverageDataEntry {
                 .protocol,
                 .typeAlias,
                 .associatedType,
-                .typeDef:
+                .typeDef,
+                .extendedClass,
+                .extendedStructure,
+                .extendedEnumeration,
+                .extendedProtocol:
                 self = .types
             case .localVariable,
                 .instanceProperty,
@@ -256,7 +260,7 @@ extension CoverageDataEntry {
                 .typeSubscript,
                 .instanceSubscript:
                 self = .members
-            case .function, .module, .globalVariable, .operator:
+            case .function, .module, .globalVariable, .operator, .extendedModule:
                 self = .globals
             case let kind where SummaryCategory.allKnownNonSymbolKindNames.contains(kind.name):
                 self = .nonSymbol
@@ -297,46 +301,46 @@ extension CoverageDataEntry {
             context: DocumentationContext
         ) throws {
             switch documentationNode.kind {
-            case DocumentationNode.Kind.class:
+            case .class, .extendedClass:
                 self = try .class(
                     memberStats: KindSpecificData.extractChildStats(
                         documentationNode: documentationNode,
                         context: context))
-            case DocumentationNode.Kind.enumeration:
+            case .enumeration, .extendedEnumeration:
                 self = try .enumeration(
                     memberStats: KindSpecificData.extractChildStats(
                         documentationNode: documentationNode,
                         context: context))
-            case DocumentationNode.Kind.structure:
+            case .structure, .extendedStructure:
                 self = try .structure(
                     memberStats:  KindSpecificData.extractChildStats(
                         documentationNode: documentationNode,
                         context: context))
-            case DocumentationNode.Kind.protocol:
-                self = try .enumeration(
+            case .protocol, .extendedProtocol:
+                self = try .protocol(
                     memberStats: KindSpecificData.extractChildStats(
                         documentationNode: documentationNode,
                         context: context))
 
-            case DocumentationNode.Kind.instanceMethod:
+            case .instanceMethod:
                 self = try .instanceMethod(
                     parameterStats: CoverageDataEntry.KindSpecificData.extractFunctionSignatureStats(
                         documentationNode: documentationNode,
                         context: context
                         , fieldName: "method parameters"))
-            case DocumentationNode.Kind.operator:
+            case .operator:
                 self = try .`operator`(
                     parameterStats: CoverageDataEntry.KindSpecificData.extractFunctionSignatureStats(
                         documentationNode: documentationNode,
                         context: context,
                         fieldName: "operator parameters"))
-            case DocumentationNode.Kind.function:
+            case .function:
                 self = try .`operator`(
                     parameterStats: CoverageDataEntry.KindSpecificData.extractFunctionSignatureStats(
                         documentationNode: documentationNode,
                         context: context,
                         fieldName: "function parameters"))
-            case DocumentationNode.Kind.initializer:
+            case .initializer:
                 self = try .`operator`(
                     parameterStats: CoverageDataEntry.KindSpecificData.extractFunctionSignatureStats(
                         documentationNode: documentationNode,

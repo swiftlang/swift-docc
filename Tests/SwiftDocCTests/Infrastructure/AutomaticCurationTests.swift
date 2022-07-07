@@ -16,13 +16,19 @@ import XCTest
 class AutomaticCurationTests: XCTestCase {
     func testAutomaticTopics() throws {
         // Create each kind of symbol and verify it gets its own topic group automatically
+        let decoder = JSONDecoder()
+        
         for kind in AutomaticCuration.groupKindOrder where kind != .module {
+            if !SymbolGraph.Symbol.KindIdentifier.allCases.contains(kind) {
+                decoder.register(symbolKinds: kind)
+            }
+            
             let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
                 let sidekitURL = url.appendingPathComponent("sidekit.symbols.json")
                 let text = try String(contentsOf: sidekitURL)
                     .replacingOccurrences(of: "\"identifier\" : \"swift.enum.case\"", with: "\"identifier\" : \"\(kind.identifier)\"")
                 try text.write(to: sidekitURL, atomically: true, encoding: .utf8)
-            })
+            }, decoder: decoder)
 
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
             // Compile docs and verify the generated Topics section

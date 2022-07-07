@@ -12,7 +12,7 @@ import Foundation
 import XCTest
 @testable import SwiftDocC
 
-class RenderNodeTranslator_SwiftTests: XCTestCase {
+class DocumentationContentRenderer_SwiftTests: XCTestCase {
     
     // Tokens where the type name is incorrectly identified as "typeIdentifier"
     let typeIdentifierTokens: [DeclarationRenderSection.Token] = [
@@ -36,7 +36,7 @@ class RenderNodeTranslator_SwiftTests: XCTestCase {
     func testNavigatorTitle() {
         do {
             // Verify that the type's own name is mapped from "typeIdentifier" to "identifier" kind
-            let mapped = RenderNodeTranslator.Swift.navigatorTitle(for: typeIdentifierTokens, symbolTitle: "Test")
+            let mapped = DocumentationContentRenderer.Swift.navigatorTitle(for: typeIdentifierTokens, symbolTitle: "Test")
             
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "Test", " : ", "Object"])
@@ -44,7 +44,7 @@ class RenderNodeTranslator_SwiftTests: XCTestCase {
         
         do {
             // Verify that the type's own name is left as-is if the expect kind is vended
-            let mapped = RenderNodeTranslator.Swift.navigatorTitle(for: identifierTokens, symbolTitle: "Test")
+            let mapped = DocumentationContentRenderer.Swift.navigatorTitle(for: identifierTokens, symbolTitle: "Test")
 
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "Test", " : ", "Object"])
@@ -55,7 +55,7 @@ class RenderNodeTranslator_SwiftTests: XCTestCase {
     func testSubHeading() {
         do {
             // Verify that the type's own name is mapped from "typeIdentifier" to "identifier" kind
-            let mapped = RenderNodeTranslator.Swift.subHeading(for: typeIdentifierTokens, symbolTitle: "Test", symbolKind: "swift.class")
+            let mapped = DocumentationContentRenderer.Swift.subHeading(for: typeIdentifierTokens, symbolTitle: "Test", symbolKind: "swift.class")
             
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "Test", " : ", "Object"])
@@ -63,7 +63,7 @@ class RenderNodeTranslator_SwiftTests: XCTestCase {
 
         do {
             // Verify that the type's own name is not-mapped from "identifier" kind
-            let mapped = RenderNodeTranslator.Swift.subHeading(for: identifierTokens, symbolTitle: "Test", symbolKind: "swift.class")
+            let mapped = DocumentationContentRenderer.Swift.subHeading(for: identifierTokens, symbolTitle: "Test", symbolKind: "swift.class")
             
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text, .typeIdentifier])
             XCTAssertEqual(mapped.map { $0.text }, ["class", " ", "Test", " : ", "Object"])
@@ -90,7 +90,7 @@ class RenderNodeTranslator_SwiftTests: XCTestCase {
     func testSubHeadingInit() {
         do {
             // Verify that the "init" keyword is mapped to an identifier token to enable syntax highlight
-            let mapped = RenderNodeTranslator.Swift.subHeading(for: initAsKeywordTokens, symbolTitle: "Test", symbolKind: "swift.init")
+            let mapped = DocumentationContentRenderer.Swift.subHeading(for: initAsKeywordTokens, symbolTitle: "Test", symbolKind: "swift.init")
 
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text])
             XCTAssertEqual(mapped.map { $0.text }, ["convenience", " ", "init", "()"])
@@ -98,7 +98,7 @@ class RenderNodeTranslator_SwiftTests: XCTestCase {
 
         do {
             // Verify that if the "init" has correct kind it is not mapped to another kind
-            let mapped = RenderNodeTranslator.Swift.subHeading(for: initAsIdentifierTokens, symbolTitle: "Test", symbolKind: "swift.init")
+            let mapped = DocumentationContentRenderer.Swift.subHeading(for: initAsIdentifierTokens, symbolTitle: "Test", symbolKind: "swift.init")
 
             XCTAssertEqual(mapped.map { $0.kind }, [.keyword, .text, .identifier, .text])
             XCTAssertEqual(mapped.map { $0.text }, ["convenience", " ", "init", "()"])

@@ -15,12 +15,19 @@ import XCTest
 extension XCTestCase {
     
     /// Loads a documentation bundle from the given source URL and creates a documentation context.
-    func loadBundle(from bundleURL: URL, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil, diagnosticFilterLevel: DiagnosticSeverity = .hint, configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    func loadBundle(from bundleURL: URL,
+                    codeListings: [String : AttributedCodeListing] = [:],
+                    externalResolvers: [String: ExternalReferenceResolver] = [:],
+                    externalSymbolResolver: ExternalSymbolResolver? = nil,
+                    diagnosticFilterLevel: DiagnosticSeverity = .hint,
+                    configureContext: ((DocumentationContext) throws -> Void)? = nil,
+                    decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel))
         context.externalReferenceResolvers = externalResolvers
         context.externalSymbolResolver = externalSymbolResolver
         context.externalMetadata.diagnosticLevel = diagnosticFilterLevel
+        context.decoder = decoder
         try configureContext?(context)
         // Load the bundle using automatic discovery
         let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
@@ -32,7 +39,13 @@ extension XCTestCase {
         return (bundleURL, bundle, context)
     }
     
-    func testBundleAndContext(copying name: String, excludingPaths excludedPaths: [String] = [], codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [BundleIdentifier : ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil,  configureBundle: ((URL) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(copying name: String,
+                              excludingPaths excludedPaths: [String] = [],
+                              codeListings: [String : AttributedCodeListing] = [:],
+                              externalResolvers: [BundleIdentifier : ExternalReferenceResolver] = [:],
+                              externalSymbolResolver: ExternalSymbolResolver? = nil,
+                              configureBundle: ((URL) throws -> Void)? = nil,
+                              decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let sourceURL = try XCTUnwrap(Bundle.module.url(
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
         
@@ -52,7 +65,7 @@ extension XCTestCase {
         // Do any additional setup to the custom bundle - adding, modifying files, etc
         try configureBundle?(bundleURL)
         
-        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers, externalSymbolResolver: externalSymbolResolver)
+        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers, externalSymbolResolver: externalSymbolResolver, decoder: decoder)
     }
     
     func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:]) throws -> (DocumentationBundle, DocumentationContext) {

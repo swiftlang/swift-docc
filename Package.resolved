@@ -39,10 +39,10 @@
       },
       {
         "package": "SymbolKit",
-        "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
+        "repositoryURL": "https://github.com/themomax/swift-docc-symbolkit",
         "state": {
-          "branch": "main",
-          "revision": "da6cedd103e0e08a2bc7b14869ec37fba4db72d9",
+          "branch": "docc-extensions-to-external-types-base",
+          "revision": "dba9c2dc32a3c02d5be84b67e9b2c4af108d3ba0",
           "version": null
         }
       },

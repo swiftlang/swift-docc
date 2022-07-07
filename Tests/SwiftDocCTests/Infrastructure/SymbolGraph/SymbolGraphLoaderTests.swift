@@ -41,16 +41,13 @@ class SymbolGraphLoaderTests: XCTestCase {
         }
         
         var loader = try makeSymbolGraphLoader(symbolGraphURLs: symbolGraphURLs)
-        XCTAssertTrue(loader.symbolGraphs.isEmpty)
+        XCTAssertTrue(loader.unifiedGraphs.isEmpty)
         
         try loader.loadAll()
         var moduleNameFrequency = [String: Int]()
         
-        var isMainSymbolGraph = false
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
-            XCTAssertTrue(isMainSymbolGraph)
-            XCTAssertNotNil(graph)
-            moduleNameFrequency[graph.symbolGraph.module.name, default: 0] += 1
+        for (_, graph) in loader.unifiedGraphs {
+            moduleNameFrequency[graph.moduleName, default: 0] += 1
         }
         
         XCTAssertEqual(moduleNameFrequency, ["One": 1, "Two": 1, "Three": 1])
@@ -73,10 +70,8 @@ class SymbolGraphLoaderTests: XCTestCase {
         try loader.loadAll()
         var moduleNameFrequency = [String: Int]()
         
-        var isMainSymbolGraph = false
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
-            XCTAssertFalse(isMainSymbolGraph)
-            moduleNameFrequency[graph.symbolGraph.module.name, default: 0] += 1
+        for (_, graph) in loader.unifiedGraphs {
+            moduleNameFrequency[graph.moduleName, default: 0] += 1
         }
         
         // The loaded module should have the name of the module that was extended.
@@ -109,12 +104,8 @@ class SymbolGraphLoaderTests: XCTestCase {
         try loader.loadAll()
         var moduleNameFrequency = [String: Int]()
         
-        var isMainSymbolGraph = false
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
-            XCTAssertNotNil(graph)
-            XCTAssertEqual(isMainSymbolGraph, !graph.url.lastPathComponent.contains("@"))
-            
-            moduleNameFrequency[graph.symbolGraph.module.name, default: 0] += 1
+        for (_, graph) in loader.unifiedGraphs {
+            moduleNameFrequency[graph.moduleName, default: 0] += 1
         }
         
         // All 4 modules should have different names
@@ -141,13 +132,13 @@ class SymbolGraphLoaderTests: XCTestCase {
         try loader.loadAll()
         
         var loadedGraphs = 0
-        var isMainSymbolGraph = false
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
+        
+        for (_, graph) in loader.unifiedGraphs {
             loadedGraphs += 1
-            XCTAssertTrue(isMainSymbolGraph)
-            XCTAssertEqual(graph.symbolGraph.symbols.count, symbolGraph.symbols.count)
-            XCTAssertEqual(graph.symbolGraph.relationships.count, symbolGraph.relationships.count)
+            XCTAssertEqual(graph.symbols.count, symbolGraph.symbols.count)
+            XCTAssertEqual(graph.relationships.count, symbolGraph.relationships.count)
         }
+        
         XCTAssertEqual(loadedGraphs, 1000)
     }
     
@@ -225,23 +216,23 @@ class SymbolGraphLoaderTests: XCTestCase {
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
         }
-        
+
         var loader = try makeSymbolGraphLoader(symbolGraphURLs: bundle.symbolGraphURLs)
         try loader.loadAll()
-        
-        var isMainSymbolGraph = false
-        
+
         // Verify both main and bystanders graphs are loaded
-        
+
         var foundMainMyKitGraph = false
         var foundBystanderMyKitGraph = false
-        
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
-            if graph.symbolGraph.module.name == "MyKit" {
-                if graph.symbolGraph.module.bystanders == ["Foundation"] {
-                    foundBystanderMyKitGraph = true
-                } else {
-                    foundMainMyKitGraph = true
+
+        for (_, graph) in loader.unifiedGraphs {
+            for (_, moduleData) in graph.moduleData {
+                if graph.moduleName == "MyKit" {
+                    if moduleData.bystanders == ["Foundation"] {
+                        foundBystanderMyKitGraph = true
+                    } else {
+                        foundMainMyKitGraph = true
+                    }
                 }
             }
         }
@@ -259,14 +250,13 @@ class SymbolGraphLoaderTests: XCTestCase {
             
             XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
             
-            var isMainSymbolGraph = false
-            let symbolGraph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph)!.symbolGraph
+            let symbolGraph = loader.unifiedGraphs.values.first!
             
-            XCTAssertEqual(symbolGraph.module.name, "AsyncMethods")
+            XCTAssertEqual(symbolGraph.moduleName, "AsyncMethods")
             
             XCTAssertEqual(symbolGraph.symbols.count, 1, "Only one of the symbols should be decoded")
             let symbol = try XCTUnwrap(symbolGraph.symbols.values.first)
-            let declaration = try XCTUnwrap(symbol.mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)
+            let declaration = try XCTUnwrap(symbol.mixins.values.first?[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)
 
             XCTAssertEqual(shouldContainAsyncVariant, declaration.declarationFragments.contains(where: { fragment in
                 fragment.kind == .keyword && fragment.spelling == "async"
@@ -294,16 +284,15 @@ class SymbolGraphLoaderTests: XCTestCase {
             XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
             #endif
             
-            var isMainSymbolGraph = false
             var foundMainAsyncMethodsGraph = false
             
-            while let symbolGraph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph)?.symbolGraph {
-                if symbolGraph.module.name == "AsyncMethods" {
+            for symbolGraph in loader.unifiedGraphs.values {
+                if symbolGraph.moduleName == "AsyncMethods" {
                     foundMainAsyncMethodsGraph = true
                     
                     XCTAssertEqual(symbolGraph.symbols.count, 1, "Only one of the symbols should be decoded")
                     let symbol = try XCTUnwrap(symbolGraph.symbols.values.first)
-                    let declaration = try XCTUnwrap(symbol.mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)
+                    let declaration = try XCTUnwrap(symbol.mixins.values.first?[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)
                     
                     XCTAssertEqual(shouldContainAsyncVariant, declaration.declarationFragments.contains(where: { fragment in
                         fragment.kind == .keyword && fragment.spelling == "async"

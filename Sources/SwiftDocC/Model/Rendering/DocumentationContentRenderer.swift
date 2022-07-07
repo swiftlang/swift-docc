@@ -151,7 +151,7 @@ public class DocumentationContentRenderer {
         case .collectionGroup: return .collectionGroup
         case .technology, .technologyOverview: return .overview
         case .landingPage: return .article
-        case .module: return .collection
+        case .module, .extendedModule: return .collection
         case .onPageLandmark: return .pseudoSymbol
         case .root: return .collection
         case .sampleCode: return .sampleCode
@@ -484,31 +484,10 @@ extension DocumentationContentRenderer {
         /// Applies Swift symbol navigator titles rules to a title.
         /// Will strip the typeIdentifier's precise identifier.
         static func navigatorTitle(for tokens: [DeclarationRenderSection.Token], symbolTitle: String) -> [DeclarationRenderSection.Token] {
-            guard tokens.count >= 3 else {
-                // Navigator title too short for a type symbol.
-                return tokens
-            }
-            
             // Replace kind "typeIdentifier" with "identifier" if the title matches the pattern:
-            // [keyword=class,protocol,enum,typealias,etc.][ ][typeIdentifier=Self]
+            // [keyword=class,protocol,enum,typealias,etc.][ ]([typeIdentifier=anchestor(Self)][.])*[typeIdentifier=Self]
             
-            if tokens[0].kind == DeclarationRenderSection.Token.Kind.keyword
-                && tokens[1].text == " "
-                && tokens[2].kind == DeclarationRenderSection.Token.Kind.typeIdentifier
-                && tokens[2].text == symbolTitle {
-                
-                // Replace the 2nd token with "identifier" kind.
-                return tokens.enumerated().map { pair -> DeclarationRenderSection.Token in
-                    if pair.offset == 2 {
-                        return DeclarationRenderSection.Token(
-                            text: pair.element.text,
-                            kind: .identifier
-                        )
-                    }
-                    return pair.element
-                }
-            }
-            return tokens
+            return tokens.mapNameFragmentsToIdentifierKind(matching: symbolTitle)
         }
 
         private static let initKeyword = DeclarationRenderSection.Token(text: "init", kind: .keyword)
@@ -520,26 +499,9 @@ extension DocumentationContentRenderer {
             var tokens = tokens
             
             // 1. Replace kind "typeIdentifier" with "identifier" if the title matches the pattern:
-            // [keyword=class,protocol,enum,typealias,etc.][ ][typeIdentifier=Self]
-            if tokens.count >= 3 {
-                if tokens[0].kind == DeclarationRenderSection.Token.Kind.keyword
-                    && tokens[1].text == " "
-                    && tokens[2].kind == DeclarationRenderSection.Token.Kind.typeIdentifier
-                    && tokens[2].text == symbolTitle {
-                    
-                    // Replace the 2nd token with "identifier" kind.
-                    tokens = tokens.enumerated().map { pair -> DeclarationRenderSection.Token in
-                        if pair.offset == 2 {
-                            return DeclarationRenderSection.Token(
-                                text: pair.element.text,
-                                kind: .identifier,
-                                preciseIdentifier: pair.element.preciseIdentifier
-                            )
-                        }
-                        return pair.element
-                    }
-                }
-            }
+            // [keyword=class,protocol,enum,typealias,etc.][ ]([typeIdentifier=anchestor(Self)][.])*[typeIdentifier=Self]
+            tokens = tokens.mapNameFragmentsToIdentifierKind(matching: symbolTitle)
+            
             
             // 2. Map the first found "keyword=init" to an "identifier" kind to enable syntax highlighting.
             let parsedKind = SymbolGraph.Symbol.KindIdentifier(identifier: symbolKind)
@@ -552,4 +514,83 @@ extension DocumentationContentRenderer {
         }
     }
 
+}
+
+private extension Array where Element == DeclarationRenderSection.Token {
+    // Replaces kind "typeIdentifier" with "identifier" if the fragments matches the pattern:
+    // [keyword=class,protocol,enum,typealias,etc.][ ]([typeIdentifier=x_i)][.])*[typeIdentifier=x_i],
+    // where the x_i joined with separator "." equal the `symbolTitle`
+    func mapNameFragmentsToIdentifierKind(matching symbolTitle: String) -> Self {
+        let (includesTypeOrExtensionDeclaration, nameRange) = self.typeOrExtensionDeclaration()
+        
+        if includesTypeOrExtensionDeclaration
+            && self[nameRange].map(\.text).joined() == symbolTitle {
+            return self.enumerated().map { (index, token) -> DeclarationRenderSection.Token in
+                
+                if nameRange.contains(index) && token.kind == .typeIdentifier {
+                    return DeclarationRenderSection.Token(
+                        text: token.text,
+                        kind: .identifier,
+                        preciseIdentifier: token.preciseIdentifier
+                    )
+                }
+                
+                return token
+            }
+        }
+        
+        return self
+    }
+}
+
+private extension Collection where Element == DeclarationRenderSection.Token, Index == Int {
+    func typeOrExtensionDeclaration() -> (includesTypeOrExtensionDeclaration: Bool, name: Range<Index>) {
+        self.reduce(into: TypeOrExtensionDeclarationNameExtractionSM(), { sm, token in sm.consume(token) }).result()
+    }
+}
+
+private enum TypeOrExtensionDeclarationNameExtractionSM {
+    case initial
+    case illegal
+    case foundKeyword
+    case foundIdentifier(Int)
+    case expectIdentifier(Int)
+    case done(Range<Int>)
+    
+    init() {
+        self = .initial
+    }
+    
+    static let expectedNameStartIndex = 2
+    
+    mutating func consume(_ token: DeclarationRenderSection.Token) {
+        switch (self, token.kind, token.text) {
+        case (.initial, .keyword, _):
+            self = .foundKeyword
+        case (.foundKeyword, .text, " "):
+            self = .expectIdentifier(Self.expectedNameStartIndex)
+        case let (.expectIdentifier(index), .identifier, _),
+             let (.expectIdentifier(index), .typeIdentifier, _):
+            self = .foundIdentifier(index+1)
+        case let (.foundIdentifier(index), .text, "."):
+            self = .expectIdentifier(index+1)
+        case let (.foundIdentifier(index), .text, _):
+            self = .done(.init(uncheckedBounds: (Self.expectedNameStartIndex, index)))
+        case let (.done(namerange), _, _):
+            self = .done(namerange)
+        default:
+            self = .illegal
+        }
+    }
+    
+    func result() -> (includesTypeOrExtensionDeclaration: Bool, name: Range<Int>) {
+        switch self {
+        case let .done(range):
+            return (true, range)
+        case let .foundIdentifier(index):
+            return (true, .init(uncheckedBounds: (Self.expectedNameStartIndex, index)))
+        default:
+            return (false, .init(uncheckedBounds: (0, 0)))
+        }
+    }
 }

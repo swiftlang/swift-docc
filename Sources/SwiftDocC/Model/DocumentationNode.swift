@@ -467,8 +467,12 @@ public struct DocumentationNode {
         case .`typeSubscript`: return .typeSubscript
         case .`typealias`: return .typeAlias
         case .`var`: return .globalVariable
-
         case .module: return .module
+        case .extendedModule: return .extendedModule
+        case .extendedStructure: return .extendedStructure
+        case .extendedClass: return .extendedClass
+        case .extendedEnumeration: return .extendedEnumeration
+        case .extendedProtocol: return .extendedProtocol
         default: return .unknown
         }
     }

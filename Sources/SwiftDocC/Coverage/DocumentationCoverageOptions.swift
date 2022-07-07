@@ -185,15 +185,15 @@ extension DocumentationCoverageOptions.KindFilterOptions {
         /// Converts given ``DocumentationNode.Kind`` to corresponding `BitFlagRepresentation` if possible. Returns `nil` if the given Kind is not representable.
         fileprivate init?(kind: DocumentationNode.Kind) {
             switch kind {
-            case .module: // 1
+            case .module, .extendedModule: // 1
                 self = .module
-            case .class: // 2
+            case .class, .extendedClass: // 2
                 self = .class
-            case .structure: // 3
+            case .structure, .extendedStructure: // 3
                 self = .structure
-            case .enumeration: // 4
+            case .enumeration, .extendedEnumeration: // 4
                 self = .enumeration
-            case .protocol: // 5
+            case .protocol, .extendedProtocol: // 5
                 self = .protocol
             case .typeAlias: // 6
                 self = .typeAlias
