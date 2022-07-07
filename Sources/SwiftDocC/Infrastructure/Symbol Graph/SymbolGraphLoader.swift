@@ -44,13 +44,13 @@ struct SymbolGraphLoader {
 
     /// Loads all symbol graphs in the given bundle.
     ///
+    /// - Parameter decoder: A potentially customized `JSONDecoder` to be used for decoding. This decoder is only
+    /// used if the `decodingStrategy` is set to `concurrentlyAllFiles`!
     /// - Throws: If loading and decoding any of the symbol graph files throws, this method re-throws one of the encountered errors.
-    mutating func loadAll() throws {
+    mutating func loadAll(using decoder: JSONDecoder = JSONDecoder()) throws {
         let loadingLock = Lock()
-        let decoder = JSONDecoder()
 
-        var loadedGraphs = [URL: SymbolKit.SymbolGraph]()
-        let graphLoader = GraphCollector()
+        var loadedGraphs = [URL: (usesExtensionSymbolFormat: Bool?, graph: SymbolKit.SymbolGraph)]()
         var loadError: Error?
         let bundle = self.bundle
         let dataProvider = self.dataProvider
@@ -69,18 +69,30 @@ struct SymbolGraphLoader {
                 case .concurrentlyAllFiles:
                     symbolGraph = try decoder.decode(SymbolGraph.self, from: data)
                 case .concurrentlyEachFileInBatches:
-                    symbolGraph = try SymbolGraphConcurrentDecoder.decode(data)
+                    symbolGraph = try SymbolGraphConcurrentDecoder.decode(data, using: decoder)
                 }
 
                 // `moduleNameFor(_:at:)` is static because it's pure function.
-                let (moduleName, _) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
+                let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)
                 // If the bundle provides availability defaults add symbol availability data.
                 self.addDefaultAvailability(to: &symbolGraph, moduleName: moduleName)
 
+                // main symbol graphs are ambiguous
+                var usesExtensionSymbolFormat: Bool? = nil
+                
+                // transform extension block based structure emitted by the compiler to a
+                // custom structure where all extensions to the same type are collected in
+                // one extended type symbol
+                if !isMainSymbolGraph {
+                    let containsExtensionSymbols = try ExtendedTypeFormatTransformation.transformExtensionBlockFormatToExtendedTypeFormat(&symbolGraph, moduleName: moduleName)
+                    
+                    // empty symbol graphs are ambiguous (but shouldn't exist)
+                    usesExtensionSymbolFormat = symbolGraph.symbols.isEmpty ? nil : containsExtensionSymbols
+                }
+                
                 // Store the decoded graph in `loadedGraphs`
                 loadingLock.sync {
-                    loadedGraphs[symbolGraphURL] = symbolGraph
-                    graphLoader.mergeSymbolGraph(symbolGraph, at: symbolGraphURL)
+                    loadedGraphs[symbolGraphURL] = (usesExtensionSymbolFormat, symbolGraph)
                 }
             } catch {
                 // If the symbol graph was invalid, store the error
@@ -109,14 +121,63 @@ struct SymbolGraphLoader {
             bundle.symbolGraphURLs.forEach(loadGraphAtURL)
         }
         
+        // define an appropriate merging strategy based on the graph formats
+        let foundGraphUsingExtensionSymbolFormat = loadedGraphs.values.map(\.usesExtensionSymbolFormat).contains(true)
+        let foundGraphNotUsingExtensionSymbolFormat = loadedGraphs.values.map(\.usesExtensionSymbolFormat).contains(false)
+        
+        guard !foundGraphUsingExtensionSymbolFormat || !foundGraphNotUsingExtensionSymbolFormat else {
+            let usingExtensionSymbolFormat = loadedGraphs.filter { (_, value) in
+                guard let usesExtensionSymbolFormat = value.usesExtensionSymbolFormat else {
+                    return false
+                }
+                return usesExtensionSymbolFormat
+            }.map(\.key)
+            
+            let notUsingExtensionSymbolFormat = loadedGraphs.filter { (_, value) in
+                guard let usesExtensionSymbolFormat = value.usesExtensionSymbolFormat else {
+                    return false
+                }
+                return !usesExtensionSymbolFormat
+            }.map(\.key)
+            
+            throw LoadingError.mixedGraphFormats(usingExtensionSymbolFormat, notUsingExtensionSymbolFormat)
+        }
+        
+        let usingExtensionSymbolFormat = foundGraphUsingExtensionSymbolFormat
+                
+        let graphLoader = GraphCollector(extensionGraphAssociationStrategy: usingExtensionSymbolFormat ? .extendingGraph : .extendedGraph)
+        
+        // feed the loaded graphs into the `graphLoader`
+        for (url, (_, graph)) in loadedGraphs {
+            graphLoader.mergeSymbolGraph(graph, at: url)
+        }
+        
         // In case any of the symbol graphs errors, re-throw the error.
         // We will not process unexpected file formats.
         if let loadError = loadError {
             throw loadError
         }
         
-        self.symbolGraphs = loadedGraphs
+        self.symbolGraphs = loadedGraphs.mapValues(\.graph)
         (self.unifiedGraphs, self.graphLocations) = graphLoader.finishLoading()
+    }
+    
+    private enum LoadingError: DescribedError {
+        case mixedGraphFormats([URL], [URL])
+        
+        var errorDescription: String {
+            switch self {
+            case let .mixedGraphFormats(usingExtensionSymbolFormat, notUsingExtensionSymbolFormat):
+                return """
+                Mixing symbol graph files with and without extension declarations is not supported.
+                
+                Symbol graph files with extension declarations:
+                \(usingExtensionSymbolFormat.map(\.absoluteString).joined(separator: "\n"))
+                Symbol graph files without extension declarations:
+                \(notUsingExtensionSymbolFormat.map(\.absoluteString).joined(separator: "\n"))
+                """
+            }
+        }
     }
     
     // Alias to declutter code
@@ -147,7 +208,7 @@ struct SymbolGraphLoader {
 
         return (symbolGraph, isMainSymbolGraph)
     }
-    
+
     /// If the bundle defines default availability for the symbols in the given symbol graph
     /// this method adds them to each of the symbols in the graph.
     private func addDefaultAvailability(to symbolGraph: inout SymbolGraph, moduleName: String) {
@@ -265,30 +326,6 @@ struct SymbolGraphLoader {
             moduleName = SymbolGraphLoader.moduleNameFor(url)!
         }
         return (moduleName, isMainSymbolGraph)
-    }
-
-    /// Returns the next-available symbol graph in the bundle.
-    /// - Parameter isMainSymbolGraph: An inout Boolean, if `false` the returned symbol graph is an extension to another symbol graph.
-    /// - Returns: The next symbol graph in the bundle and its URL, or `nil` if there are no more symbol graphs.
-    mutating func next(isMainSymbolGraph: inout Bool) throws -> (url: URL, symbolGraph: SymbolGraph)? {
-        isMainSymbolGraph = false
-        guard !symbolGraphs.isEmpty else { return nil }
-        
-        // The first remaining symbol graph,
-        // preferring main symbol graphs over extensions.
-        let url = symbolGraphs.keys
-            .sorted(by: { lhs, _ in
-                return !lhs.lastPathComponent.contains("@")
-            })
-            .first!
-        
-        // Load the symbol graph
-        let symbolGraph: SymbolGraph
-        (symbolGraph, isMainSymbolGraph) = try loadSymbolGraph(at: url)
-        
-        // Remove the graph from the remaining queue and return.
-        symbolGraphs.removeValue(forKey: url)
-        return (url, symbolGraph)
     }
 }
 

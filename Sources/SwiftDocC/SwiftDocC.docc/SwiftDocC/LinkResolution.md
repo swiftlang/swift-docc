@@ -1,4 +1,4 @@
-# Linking between documentation
+# Linking Between Documentation
 
 Connect documentation pages with documentation links.
 
@@ -22,13 +22,13 @@ doc://com.example/path/to/documentation/page#optional-heading
       bundle ID     path in docs hierarchy    heading name 
 ```
 
-## Resolving a documentation link
+## Resolving a Documentation Link
 
 To make authored documentation links easier to write and easier to read in plain text format all authored documentation links are relative links. The symbol links in documentation extension headers are written relative to the scope of modules. All other authored documentation links are written relative to the page where the link is written. 
 
 These relative documentation links can specify path components from higher up in the documentation hierarchy to reference container symbols or container pages.
 
-### Handling ambiguous links
+### Handling Ambiguous Links
 
 It's possible for collisions to occur in documentation links (symbol links or otherwise) where more than one page are represented by the same path. A common cause for documentation link collisions are function overloads (functions with the same name but different arguments or different return values). It's also possible to have documentation link collisions in conceptual content if an article file name is the same as a tutorial file name (excluding the file extension in both cases).
 
@@ -50,9 +50,25 @@ If two or more symbol results have the same kind, then that information doesn't 
 /path/to/someFunction-def456
 ```
 
-Links with added disambiguation information is both harder read and harder write so DocC aims to require as little disambiguation as possible. 
+Links with added disambiguation information is both harder to read and harder to write so DocC aims to require as little disambiguation as possible. 
 
-## Resolving links outside the documentation catalog
+### Handling Type Aliases
+
+Members defined on a `typealias` cannot be linked to using the type alias' name, but must use the original name instead. Only the declaration of the `typealias` itself uses the alias' name.
+
+```swift
+struct A {}
+
+/// This is referred to as ``B``
+typealias B = A
+
+extension B {
+    /// This can only be referred to as ``A/foo()``, not `B/foo()`
+    func foo() { }
+}
+```
+
+## Resolving Links Outside the Documentation Catalog
 
 If a ``DocumentationContext`` is configured with one or more ``DocumentationContext/externalReferenceResolvers`` it is capable of resolving links general documentation links via that ``ExternalReferenceResolver``. External documentation links need to be written with a bundle ID in the URI to identify which external resolver should handle the request.
 

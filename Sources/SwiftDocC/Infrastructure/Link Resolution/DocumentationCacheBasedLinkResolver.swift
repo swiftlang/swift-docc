@@ -495,10 +495,13 @@ final class DocumentationCacheBasedLinkResolver {
         // therefore for the currently processed symbol to be a child of a re-written symbol it needs to have
         // at least 3 components. It's a fair optimization to make since graphs will include a lot of root level symbols.
         guard reference.pathComponents.count > 3,
-            // Fetch the symbol's parent
-            let parentReference = try symbolsURLHierarchy.parent(of: reference),
-            // If the parent path matches the current reference path, bail out
-            parentReference.pathComponents != reference.pathComponents.dropLast()
+                // Fetch the symbol's parent
+                let parentReference = try symbolsURLHierarchy.parent(of: reference),
+                // If the parent path matches the current reference path, bail out
+                parentReference.pathComponents != reference.pathComponents.dropLast(),
+                // If the parent is not from the same module (because we're dealing with a
+                // default implementation of an external protocol), bail out
+                parentReference.pathComponents[..<3] == reference.pathComponents[..<3]
         else { return reference }
         
         // Build an up to date reference path for the current node based on the parent path

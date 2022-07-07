@@ -66,6 +66,18 @@ extension ExternalSymbolResolver {
             symbolKind = .var
         case .module:
             symbolKind = .module
+        case .extendedModule:
+            symbolKind = .extendedModule
+        case .extendedStructure:
+            symbolKind = .extendedStructure
+        case .extendedClass:
+            symbolKind = .extendedClass
+        case .extendedEnumeration:
+            symbolKind = .extendedEnumeration
+        case .extendedProtocol:
+            symbolKind = .extendedProtocol
+        case .unknownExtendedType:
+            symbolKind = .unknownExtendedType
             
         // There shouldn't be any reason for a symbol graph file to reference one of these kinds outside of the symbol graph itself.
         // Return `.class` as the symbol kind (acting as "any symbol") so that the render reference gets a "symbol" role.

@@ -1793,6 +1793,11 @@ let expected = """
             text = text.replacingOccurrences(of: "\"relationships\" : [", with: """
             "relationships" : [
             {
+              "source" : "s:7SideKit0A5ClassC10testSV",
+              "target" : "s:7SideKit0A5ClassC",
+              "kind" : "memberOf"
+            },
+            {
               "source" : "s:7SideKit0A5ClassC10testE",
               "target" : "s:7SideKit0A5ClassC",
               "kind" : "memberOf"
