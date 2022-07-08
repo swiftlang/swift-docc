@@ -252,6 +252,10 @@ struct SymbolGraphLoader {
         let moduleName: String
         if isMainSymbolGraph || symbolGraph.module.bystanders != nil {
             // For main symbol graphs, get the module name from the symbol graph's data
+
+            // When bystander modules are present, the symbol graph is a cross-import overlay, and
+            // we need to preserve the original module name to properly render it. It is still
+            // kept with the extension symbols, due to the merging behavior of UnifiedSymbolGraph.
             moduleName = symbolGraph.module.name
         } else {
             // For extension symbol graphs, derive the extended module's name from the file name.
