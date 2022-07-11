@@ -986,7 +986,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// Creates a topic graph node and a documentation node for the given symbol.
     private func preparedSymbolData(_ symbol: UnifiedSymbolGraph.Symbol, reference: ResolvedTopicReference, module: SymbolGraph.Module, moduleReference: ResolvedTopicReference, bundle: DocumentationBundle, fileURL symbolGraphURL: URL?) -> AddSymbolResultWithProblems {
-        let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, platformName: module.platform.name, moduleReference: moduleReference, bystanderModules: module.bystanders)
+        let documentation = DocumentationNode(reference: reference, unifiedSymbol: symbol, moduleData: module, moduleReference: moduleReference)
         let source: TopicGraph.Node.ContentLocation // TODO: use a list of URLs for the files in a unified graph
         if let symbolGraphURL = symbolGraphURL {
             source = .file(url: symbolGraphURL)

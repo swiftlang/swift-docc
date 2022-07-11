@@ -56,7 +56,35 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 context.preResolveModuleNames()
             },
             configureSymbol: { symbol in
-                symbol.bystanderModuleNames = ["Custom Bystander Title"]
+                symbol.crossImportOverlayModule = ("Custom Module Title", ["Custom Bystander Title"])
+            },
+            assertOriginalRenderNode: { renderNode in
+                try assertModule(
+                    renderNode.metadata.modules,
+                    expectedName: "Custom Module Title",
+                    expectedRelatedModules: ["Custom Bystander Title"]
+                )
+            },
+            assertAfterApplyingVariant: { renderNode in
+                try assertModule(
+                    renderNode.metadata.modules,
+                    expectedName: "Custom Module Title",
+                    expectedRelatedModules: ["Custom Bystander Title"]
+                )
+            }
+        )
+    }
+
+    /// Make sure that when a symbol has `crossImportOverlayModule` information, that module name is used instead of its `moduleReference`.
+    func testMultipleModulesWithDifferentBystanderModule() throws {
+        try assertMultiVariantSymbol(
+            configureContext: { context, resolvedTopicReference in
+                let moduleReference = ResolvedTopicReference(bundleIdentifier: resolvedTopicReference.bundleIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+                context.documentationCache[moduleReference]?.name = .conceptual(title: "Extended Module Title")
+                context.preResolveModuleNames()
+            },
+            configureSymbol: { symbol in
+                symbol.crossImportOverlayModule = ("Custom Module Title", ["Custom Bystander Title"])
             },
             assertOriginalRenderNode: { renderNode in
                 try assertModule(

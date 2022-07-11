@@ -423,7 +423,7 @@ struct ReferenceResolver: SemanticVisitor {
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
             redirectsVariants: symbol.redirectsVariants,
-            bystanderModuleNames: symbol.bystanderModuleNames,
+            crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,
             automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants
         )
