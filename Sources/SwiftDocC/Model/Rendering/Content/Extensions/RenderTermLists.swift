@@ -89,7 +89,7 @@ extension RenderBlockContent.TermListItem {
     /// given list item is not deemed to be a term list item, this
     /// returns `nil`.
     init?(_ listItem: RenderBlockContent.ListItem) {
-        guard case let .paragraph(firstParagraphInlines) = listItem.content.first else {
+        guard case let .paragraph(firstParagraph) = listItem.content.first else {
             // The first child of the list item wasn't a paragraph, so
             // don't continue checking to see if this is a term list item.
             return nil
@@ -98,7 +98,7 @@ extension RenderBlockContent.TermListItem {
         
         // Collapse any contiguous text elements before checking
         // for term indication
-        let collapsedFirstParagraphInlines = firstParagraphInlines.collapsingContiguousTextElements()
+        let collapsedFirstParagraphInlines = firstParagraph.inlineContent.collapsingContiguousTextElements()
         
         let termDefinitionSeparator = ":"
         guard let (termInlines, firstDefinitionInlines) = collapsedFirstParagraphInlines.separatedForTermDefinition(separator: termDefinitionSeparator) else {
@@ -112,8 +112,8 @@ extension RenderBlockContent.TermListItem {
         // Use the definition contents from the first paragraph along
         // with the subsequent block elements in this list item as the
         // complete definition.
-        let definition = RenderBlockContent.TermListItem.Definition(content: [RenderBlockContent.paragraph(inlineContent: firstDefinitionInlines)] + subsequentBlockContents)
-        
+        let definition = RenderBlockContent.TermListItem.Definition(content: [RenderBlockContent.paragraph(.init(inlineContent: firstDefinitionInlines))] + subsequentBlockContents)
+
         self = RenderBlockContent.TermListItem(term: term, definition: definition)
     }
 }

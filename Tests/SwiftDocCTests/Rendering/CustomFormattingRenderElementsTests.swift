@@ -31,7 +31,7 @@ class CustomFormattingRenderElementsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(firstParagraph, [
+        XCTAssertEqual(firstParagraph.inlineContent, [
             .text("Use "),
             .newTerm(inlineContent: [.text("www")]),
             .text(" and "),
@@ -50,9 +50,9 @@ class CustomFormattingRenderElementsTests: XCTestCase {
                     .text("This is a term"),
                 ]),
                 definition: .init(content: [
-                    .paragraph(inlineContent: [
+                    .paragraph(.init(inlineContent: [
                         .text("This is a definition"),
-                    ]),
+                    ])),
                 ])),
         ])
     }

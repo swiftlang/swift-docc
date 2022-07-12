@@ -246,10 +246,10 @@ class ReferenceResolverTests: XCTestCase {
         
         let inlineItems = items.compactMap { listItem in
             return listItem.content.mapFirst { block -> RenderInlineContent? in
-                guard case RenderBlockContent.paragraph(inlineContent: let inlineItems) = block else {
+                guard case RenderBlockContent.paragraph(let p) = block else {
                     return nil
                 }
-                return inlineItems.first
+                return p.inlineContent.first
             }
         }
         

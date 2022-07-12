@@ -77,18 +77,18 @@ class SemaToRenderNodeTests: XCTestCase {
             }
             
             XCTAssertEqual(1, noteContent.count)
-            guard case let .paragraph(noteInlines)? = noteContent.first,
-                noteInlines.count == 1,
-                case let .text(noteText)? = noteInlines.first else {
+            guard case let .paragraph(notePara)? = noteContent.first,
+                notePara.inlineContent.count == 1,
+                case let .text(noteText)? = notePara.inlineContent.first else {
                     XCTFail("Expected single paragraph with single inline text at the start of a 'note' aside")
                     return
             }
             XCTAssertEqual("This is a note.", noteText)
             
             XCTAssertEqual(1, importantContent.count)
-            guard case let .paragraph(importantInlines)? = importantContent.first,
-                noteInlines.count == 1,
-                case let .text(importantText)? = importantInlines.first else {
+            guard case let .paragraph(importantPara)? = importantContent.first,
+                importantPara.inlineContent.count == 1,
+                case let .text(importantText)? = importantPara.inlineContent.first else {
                     XCTFail("Expected single paragraph with single inline text at the start of a 'important' aside")
                     return
             }
@@ -102,7 +102,7 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        guard case .paragraph(let inlineContent)? = caption.first, case .text(let captionText)? = inlineContent.first else {
+        guard case .paragraph(let captionPara)? = caption.first, case .text(let captionText)? = captionPara.inlineContent.first else {
             XCTFail("Expected step caption")
             return
         }
@@ -128,23 +128,23 @@ class SemaToRenderNodeTests: XCTestCase {
             XCTFail("Missing paragraph of content for first choice of first assessment.")
             return
         }
-        XCTAssertEqual(firstChoiceContentParagraph, [RenderInlineContent.codeVoice(code: "anchor.hitTest(view)")])
+        XCTAssertEqual(firstChoiceContentParagraph.inlineContent, [RenderInlineContent.codeVoice(code: "anchor.hitTest(view)")])
         guard case RenderBlockContent.paragraph(let firstChoiceJustificationContentParagraph)? = firstAssessment.choices.first?.justification?.first else {
             XCTFail("Missing paragraph of justification for first choice of first assessment.")
             return
         }
-        XCTAssertEqual(firstChoiceJustificationContentParagraph, [RenderInlineContent.text("This is correct because it is.")])
+        XCTAssertEqual(firstChoiceJustificationContentParagraph.inlineContent, [RenderInlineContent.text("This is correct because it is.")])
         
         guard case RenderBlockContent.paragraph(let lastChoiceContentParagraph)? = firstAssessment.choices.last?.content.first else {
             XCTFail("Missing paragraph of content for last choice of first assessment.")
             return
         }
-        XCTAssertEqual(lastChoiceContentParagraph, [RenderInlineContent.codeVoice(code: "anchor.intersects(view)")])
+        XCTAssertEqual(lastChoiceContentParagraph.inlineContent, [RenderInlineContent.codeVoice(code: "anchor.intersects(view)")])
         guard case RenderBlockContent.paragraph(let lastChoiceJustificationContentParagraph)? = firstAssessment.choices.last?.justification?.first else {
             XCTFail("Missing paragraph of justification for last choice of first assessment.")
             return
         }
-        XCTAssertEqual(lastChoiceJustificationContentParagraph, [RenderInlineContent.text("This is incorrect because it is.")])
+        XCTAssertEqual(lastChoiceJustificationContentParagraph.inlineContent, [RenderInlineContent.text("This is incorrect because it is.")])
         
         XCTAssertEqual(renderNode.references.count, 33)
         guard let simpleImageReference = renderNode.references["figure1"] as? ImageReference else {
@@ -478,9 +478,9 @@ class SemaToRenderNodeTests: XCTestCase {
 
     private func makeListItem(reference: String) -> RenderBlockContent.ListItem {
         return RenderBlockContent.ListItem(content: [
-            RenderBlockContent.paragraph(inlineContent: [
+            RenderBlockContent.paragraph(.init(inlineContent: [
                 .reference(identifier: .init(reference), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil),
-            ]),
+            ])),
         ])
     }
     
@@ -676,24 +676,24 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(tile1Items[1], makeListItem(reference: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2"))
         
         XCTAssertEqual(tiles[2].title, "Xcode and SDKs")
-        guard case .paragraph(let tile2InlineContent) = tiles[2].content[0] else {
+        guard case .paragraph(let tile2Paragraph) = tiles[2].content[0] else {
             XCTFail()
             return
         }
-        XCTAssertEqual(tile2InlineContent, [RenderInlineContent.text("Download Xcode 10, which includes the latest tools and SDKs.")])
+        XCTAssertEqual(tile2Paragraph.inlineContent, [RenderInlineContent.text("Download Xcode 10, which includes the latest tools and SDKs.")])
         
         XCTAssertEqual(tiles[3].title, "Videos")
-        guard case .paragraph(let tile3InlineContent) = tiles[3].content[0] else {
+        guard case .paragraph(let tile3Paragraph) = tiles[3].content[0] else {
             XCTFail()
             return
         }
-        XCTAssertEqual(tile3InlineContent, [RenderInlineContent.text("See AR presentation from WWDC and other events.")])
+        XCTAssertEqual(tile3Paragraph.inlineContent, [RenderInlineContent.text("See AR presentation from WWDC and other events.")])
         
-        guard case .paragraph(let tile4InlineContent) = tiles[4].content[0] else {
+        guard case .paragraph(let tile4Paragraph) = tiles[4].content[0] else {
             XCTFail()
             return
         }
-        XCTAssertEqual(tile4InlineContent, [RenderInlineContent.text("Discuss AR with Apple engineers and other developers.")])
+        XCTAssertEqual(tile4Paragraph.inlineContent, [RenderInlineContent.text("Discuss AR with Apple engineers and other developers.")])
 
         XCTAssertEqual(renderNode.metadata.title, "Technology X")
         
@@ -1042,7 +1042,7 @@ class SemaToRenderNodeTests: XCTestCase {
 
         // Test all identifiers have been resolved to the ``MyClass`` symbol
         XCTAssertEqual(renderNode.topicSections[0].title, "Task Group Excercising Symbol Links")
-        XCTAssertEqual(renderNode.topicSections[0].abstract?.map{ RenderBlockContent.paragraph(inlineContent: [$0]) }.paragraphText.joined(), "Task Group abstract text.")
+        XCTAssertEqual(renderNode.topicSections[0].abstract?.map{ RenderBlockContent.paragraph(.init(inlineContent: [$0])) }.paragraphText.joined(), "Task Group abstract text.")
         
         guard let discussion = renderNode.topicSections[0].discussion as? ContentRenderSection else {
             XCTFail("Could not find group discussion")
@@ -1086,7 +1086,7 @@ class SemaToRenderNodeTests: XCTestCase {
 
         // Test all identifiers have been resolved to the ``MyClass`` symbol
         XCTAssertEqual(renderNode.seeAlsoSections[0].title, "Related Documentation")
-        XCTAssertEqual(renderNode.seeAlsoSections[0].abstract?.map{ RenderBlockContent.paragraph(inlineContent: [$0]) }.paragraphText.joined(), "Further Reading abstract text.")
+        XCTAssertEqual(renderNode.seeAlsoSections[0].abstract?.map{ RenderBlockContent.paragraph(.init(inlineContent: [$0])) }.paragraphText.joined(), "Further Reading abstract text.")
         XCTAssertNil(renderNode.seeAlsoSections[0].discussion)
         guard renderNode.seeAlsoSections[0].identifiers.count == 5 else {
             XCTFail("The amount of identifiers in See Also was not expected")
@@ -1686,17 +1686,17 @@ Document @1:1-11:19
         var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/TestTutorial", sourceLanguage: .swift))
         let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
         let expectedContent: [RenderBlockContent] = [
-            .paragraph(inlineContent: [
-                        RenderInlineContent.text("This is some text.")]),
+            .paragraph(.init(inlineContent: [
+                RenderInlineContent.text("This is some text.")])),
             .unorderedList(items: [
                             RenderBlockContent.ListItem(content: [
-                                        .paragraph(inlineContent: [
-                                                    .text("The next directives should get dropped.")])])]),
+                                .paragraph(.init(inlineContent: [
+                                    .text("The next directives should get dropped.")]))])]),
             .unorderedList(items: [
                             RenderBlockContent.ListItem(content: [
-                                        .paragraph(inlineContent: [
-                                                    .text("@MyOtherDirective")])])]),
-            .paragraph(inlineContent: [.text("This is more text.")]),
+                                .paragraph(.init(inlineContent: [
+                                    .text("@MyOtherDirective")]))])]),
+            .paragraph(.init(inlineContent: [.text("This is more text.")])),
             ]
         XCTAssertEqual(expectedContent, renderContent)
     }
@@ -2302,29 +2302,29 @@ Document @1:1-11:19
     }
 
     let asidesStressTest: [RenderBlockContent] = [
-        .aside(style: .init(rawValue: "Note"), content: [.paragraph(inlineContent: [.text("This is a note.")])]),
-        .aside(style: .init(rawValue: "Tip"), content: [.paragraph(inlineContent: [.text("Here’s a tip.")])]),
-        .aside(style: .init(rawValue: "Important"), content: [.paragraph(inlineContent: [.text("Keep this in mind.")])]),
-        .aside(style: .init(rawValue: "Experiment"), content: [.paragraph(inlineContent: [.text("Try this out.")])]),
-        .aside(style: .init(rawValue: "Warning"), content: [.paragraph(inlineContent: [.text("Watch out for this.")])]),
-        .aside(style: .init(rawValue: "Attention"), content: [.paragraph(inlineContent: [.text("Head’s up!")])]),
-        .aside(style: .init(rawValue: "Author"), content: [.paragraph(inlineContent: [.text("I wrote this.")])]),
-        .aside(style: .init(rawValue: "Authors"), content: [.paragraph(inlineContent: [.text("We wrote this.")])]),
-        .aside(style: .init(rawValue: "Bug"), content: [.paragraph(inlineContent: [.text("This is wrong.")])]),
-        .aside(style: .init(rawValue: "Complexity"), content: [.paragraph(inlineContent: [.text("This takes time.")])]),
-        .aside(style: .init(rawValue: "Copyright"), content: [.paragraph(inlineContent: [.text("2021 Apple Inc.")])]),
-        .aside(style: .init(rawValue: "Date"), content: [.paragraph(inlineContent: [.text("1 January 1970")])]),
-        .aside(style: .init(rawValue: "Invariant"), content: [.paragraph(inlineContent: [.text("This shouldn’t change.")])]),
-        .aside(style: .init(rawValue: "MutatingVariant"), content: [.paragraph(inlineContent: [.text("This will change.")])]),
-        .aside(style: .init(rawValue: "NonMutatingVariant"), content: [.paragraph(inlineContent: [.text("This changes, but not in the data.")])]),
-        .aside(style: .init(rawValue: "Postcondition"), content: [.paragraph(inlineContent: [.text("After calling, this should be true.")])]),
-        .aside(style: .init(rawValue: "Precondition"), content: [.paragraph(inlineContent: [.text("Before calling, this should be true.")])]),
-        .aside(style: .init(rawValue: "Remark"), content: [.paragraph(inlineContent: [.text("Something you should know.")])]),
-        .aside(style: .init(rawValue: "Requires"), content: [.paragraph(inlineContent: [.text("This needs something.")])]),
-        .aside(style: .init(rawValue: "Since"), content: [.paragraph(inlineContent: [.text("The beginning of time.")])]),
-        .aside(style: .init(rawValue: "Todo"), content: [.paragraph(inlineContent: [.text("This needs work.")])]),
-        .aside(style: .init(rawValue: "Version"), content: [.paragraph(inlineContent: [.text("3.1.4")])]),
-        .aside(style: .init(rawValue: "Throws"), content: [.paragraph(inlineContent: [.text("A serious error.")])]),
+        .aside(style: .init(rawValue: "Note"), content: [.paragraph(.init(inlineContent: [.text("This is a note.")]))]),
+        .aside(style: .init(rawValue: "Tip"), content: [.paragraph(.init(inlineContent: [.text("Here’s a tip.")]))]),
+        .aside(style: .init(rawValue: "Important"), content: [.paragraph(.init(inlineContent: [.text("Keep this in mind.")]))]),
+        .aside(style: .init(rawValue: "Experiment"), content: [.paragraph(.init(inlineContent: [.text("Try this out.")]))]),
+        .aside(style: .init(rawValue: "Warning"), content: [.paragraph(.init(inlineContent: [.text("Watch out for this.")]))]),
+        .aside(style: .init(rawValue: "Attention"), content: [.paragraph(.init(inlineContent: [.text("Head’s up!")]))]),
+        .aside(style: .init(rawValue: "Author"), content: [.paragraph(.init(inlineContent: [.text("I wrote this.")]))]),
+        .aside(style: .init(rawValue: "Authors"), content: [.paragraph(.init(inlineContent: [.text("We wrote this.")]))]),
+        .aside(style: .init(rawValue: "Bug"), content: [.paragraph(.init(inlineContent: [.text("This is wrong.")]))]),
+        .aside(style: .init(rawValue: "Complexity"), content: [.paragraph(.init(inlineContent: [.text("This takes time.")]))]),
+        .aside(style: .init(rawValue: "Copyright"), content: [.paragraph(.init(inlineContent: [.text("2021 Apple Inc.")]))]),
+        .aside(style: .init(rawValue: "Date"), content: [.paragraph(.init(inlineContent: [.text("1 January 1970")]))]),
+        .aside(style: .init(rawValue: "Invariant"), content: [.paragraph(.init(inlineContent: [.text("This shouldn’t change.")]))]),
+        .aside(style: .init(rawValue: "MutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This will change.")]))]),
+        .aside(style: .init(rawValue: "NonMutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This changes, but not in the data.")]))]),
+        .aside(style: .init(rawValue: "Postcondition"), content: [.paragraph(.init(inlineContent: [.text("After calling, this should be true.")]))]),
+        .aside(style: .init(rawValue: "Precondition"), content: [.paragraph(.init(inlineContent: [.text("Before calling, this should be true.")]))]),
+        .aside(style: .init(rawValue: "Remark"), content: [.paragraph(.init(inlineContent: [.text("Something you should know.")]))]),
+        .aside(style: .init(rawValue: "Requires"), content: [.paragraph(.init(inlineContent: [.text("This needs something.")]))]),
+        .aside(style: .init(rawValue: "Since"), content: [.paragraph(.init(inlineContent: [.text("The beginning of time.")]))]),
+        .aside(style: .init(rawValue: "Todo"), content: [.paragraph(.init(inlineContent: [.text("This needs work.")]))]),
+        .aside(style: .init(rawValue: "Version"), content: [.paragraph(.init(inlineContent: [.text("3.1.4")]))]),
+        .aside(style: .init(rawValue: "Throws"), content: [.paragraph(.init(inlineContent: [.text("A serious error.")]))]),
     ]
     
     func testBareTechnology() throws {
@@ -2618,11 +2618,11 @@ Document @1:1-11:19
             let discussion = try XCTUnwrap(renderNode.primaryContentSections[1] as? ContentRenderSection)
             XCTAssertEqual(discussion.content, [
                 RenderBlockContent.heading(level: 2, text: "Discussion", anchor: "discussion"),
-                .paragraph(inlineContent: [
+                .paragraph(.init(inlineContent: [
                     .text("Doc extension discussion. Missing: "),
                     .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),
                     .text("."),
-                ])
+                ]))
             ])
         }
     }
@@ -2793,11 +2793,11 @@ Document @1:1-11:19
             let discussion = try XCTUnwrap(renderNode.primaryContentSections[1] as? ContentRenderSection)
             XCTAssertEqual(discussion.content, [
                 RenderBlockContent.heading(level: 2, text: "Discussion", anchor: "discussion"),
-                .paragraph(inlineContent: [
+                .paragraph(.init(inlineContent: [
                     .text("Inherited discussion. Missing: "),
                     .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),
                     .text("."),
-                ]),
+                ])),
             ])
         }
     }

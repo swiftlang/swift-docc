@@ -34,8 +34,8 @@ class TableElementTests: XCTestCase {
         
         XCTAssertEqual(RenderBlockContent.HeaderType(rawValue: "row"), header)
         XCTAssertEqual([RenderBlockContent.TableRow(cells: [
-            [RenderBlockContent.paragraph(inlineContent: [RenderInlineContent.text("cell 1:1")])],
-            [RenderBlockContent.paragraph(inlineContent: [RenderInlineContent.text("cell 1:2")])],
+            [RenderBlockContent.paragraph(.init(inlineContent: [RenderInlineContent.text("cell 1:1")]))],
+            [RenderBlockContent.paragraph(.init(inlineContent: [RenderInlineContent.text("cell 1:2")]))],
         ])], rows)
         XCTAssertEqual(RenderContentMetadata(anchor: "anchor", title: "Figure 1", abstract: [RenderInlineContent.text("Tabulur data")]), metadata)
     }

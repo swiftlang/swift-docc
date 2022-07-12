@@ -58,7 +58,7 @@ class IntroRenderSectionTests: XCTestCase {
             overridingTitle: "Get started",
             overridingTitleInlineContent: [.text("Get started")]
         )
-        intro.content = [.paragraph(inlineContent: [.text("This is the intro.")])]
+        intro.content = [.paragraph(.init(inlineContent: [.text("This is the intro.")]))]
         intro.image = .init("intro.png")
         
         XCTAssertEqual(

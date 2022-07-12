@@ -37,24 +37,24 @@ class RenderNodeSerializationTests: XCTestCase {
         ]
         
         let blockContent: [RenderBlockContent] = [
-            .paragraph(inlineContent: inlines),
+            .paragraph(.init(inlineContent: inlines)),
             .aside(style: .init(rawValue: "Experiment"), content: [
-                .paragraph(inlineContent: [
+                .paragraph(.init(inlineContent: [
                     .text("Try running the project in the Simulator using the "),
                     .strong(inlineContent: [.text("Project > Run")]),
                     .text(" menu item, or the following code:"),
-                ]),
+                ])),
                 .codeListing(syntax: "swift", code: ["xcrun xcodebuild -h", "xcrun xcodebuild build -configuration Debug"], metadata: nil),
             ])
         ]
         
         let steps: [RenderBlockContent] = [
-            .paragraph(inlineContent: [.text("After you download Xcode, create a project.")]),
-            .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [.paragraph(inlineContent: [.text("Caption")])], media: .init("screenshot2.png"), code: nil, runtimePreview: nil),
-            .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: nil, code: .init("helloworld.swift"), runtimePreview: .init("screenshot2.png")),
-            .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: .init("screenshot3.png"), code: nil, runtimePreview: nil),
-            .aside(style: .init(rawValue: "Note"), content: [.paragraph(inlineContent: [.text("Lorem ipsum dolor emit.")])]),
-            .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: .init("screenshot4.png"), code: nil, runtimePreview: nil),
+            .paragraph(.init(inlineContent: [.text("After you download Xcode, create a project.")])),
+            .step(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [.paragraph(.init(inlineContent: [.text("Caption")]))], media: .init("screenshot2.png"), code: nil, runtimePreview: nil),
+            .step(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: nil, code: .init("helloworld.swift"), runtimePreview: .init("screenshot2.png")),
+            .step(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: .init("screenshot3.png"), code: nil, runtimePreview: nil),
+            .aside(style: .init(rawValue: "Note"), content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum dolor emit.")]))]),
+            .step(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: .init("screenshot4.png"), code: nil, runtimePreview: nil),
         ]
         
         var contentAndMedia = ContentAndMediaSection(layout: .horizontal, title: "", media: RenderReferenceIdentifier("screenshot1.png"), mediaPosition: .leading)
@@ -68,20 +68,20 @@ class RenderNodeSerializationTests: XCTestCase {
         
         inputNode.sections.append(tutorialSectionsSection)
         
-        let assessment1 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(inlineContent: [.text("Lorem ipsum dolor sit amet?")])],
+        let assessment1 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(.init(inlineContent: [.text("Lorem ipsum dolor sit amet?")]))],
                                                                      content: nil,
                                                                      choices: [
-            .init(content: [.codeListing(syntax: "swift", code: ["override func viewDidLoad() {", "super.viewDidLoad()", "}"], metadata: nil)], isCorrect: true, justification: [.paragraph(inlineContent: [.text("It's correct because...")])], reaction: "That's right!"),
-            .init(content: [.codeListing(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil)], isCorrect: false, justification: [.paragraph(inlineContent: [.text("It's incorrect because...")])], reaction: "Not quite."),
-            .init(content: [.paragraph(inlineContent: [.text("None of the above.")])], isCorrect: false, justification: [.paragraph(inlineContent: [.text("It's incorrect because...")])], reaction: nil),
+            .init(content: [.codeListing(syntax: "swift", code: ["override func viewDidLoad() {", "super.viewDidLoad()", "}"], metadata: nil)], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "That's right!"),
+            .init(content: [.codeListing(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil)], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Not quite."),
+            .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: nil),
         ])
         
-        let assessment2 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(inlineContent: [.text("Duis aute irure dolor in reprehenderit?")])],
-                                                                     content: [.paragraph(inlineContent: [.text("What is the airspeed velocity of an unladen swallow?")])],
+        let assessment2 = TutorialAssessmentsRenderSection.Assessment(title: [.paragraph(.init(inlineContent: [.text("Duis aute irure dolor in reprehenderit?")]))],
+                                                                     content: [.paragraph(.init(inlineContent: [.text("What is the airspeed velocity of an unladen swallow?")]))],
                                                                      choices: [
-            .init(content: [.codeListing(syntax: "swift", code: ["super.viewWillAppear()"], metadata: nil)], isCorrect: true, justification: [.paragraph(inlineContent: [.text("It's correct because...")])], reaction: "Correct."),
-            .init(content: [.codeListing(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil)], isCorrect: true, justification: [.paragraph(inlineContent: [.text("It's correct because...")])], reaction: "Yep."),
-            .init(content: [.paragraph(inlineContent: [.text("None of the above.")])], isCorrect: false, justification: [.paragraph(inlineContent: [.text("It's incorrect because...")])], reaction: "Close!"),
+            .init(content: [.codeListing(syntax: "swift", code: ["super.viewWillAppear()"], metadata: nil)], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Correct."),
+            .init(content: [.codeListing(syntax: "swift", code: ["sceneView.delegate = self"], metadata: nil)], isCorrect: true, justification: [.paragraph(.init(inlineContent: [.text("It's correct because...")]))], reaction: "Yep."),
+            .init(content: [.paragraph(.init(inlineContent: [.text("None of the above.")]))], isCorrect: false, justification: [.paragraph(.init(inlineContent: [.text("It's incorrect because...")]))], reaction: "Close!"),
         ])
         
         let assessments = TutorialAssessmentsRenderSection(assessments: [assessment1, assessment2], anchor: "Check-Your-Understanding")

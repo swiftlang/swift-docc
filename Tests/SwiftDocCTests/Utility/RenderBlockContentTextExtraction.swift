@@ -15,8 +15,8 @@ extension Sequence where Element == RenderBlockContent {
     var paragraphText: [String] {
         compactMap { block in
             switch block {
-            case .paragraph(inlineContent: let children):
-                switch children[0] {
+            case .paragraph(let p):
+                switch p.inlineContent[0] {
                 case .text(let text): return text
                 default: return nil
                 }

@@ -37,7 +37,7 @@ import Markdown
 /// Block elements can be nested, for example, an aside note contains one or more paragraphs of text.
 public enum RenderBlockContent: Equatable {
     /// A paragraph of content.
-    case paragraph(inlineContent: [RenderInlineContent])
+    case paragraph(Paragraph)
     /// An aside block.
     case aside(style: AsideStyle, content: [RenderBlockContent])
     /// A block of sample code.
@@ -60,6 +60,17 @@ public enum RenderBlockContent: Equatable {
     case termList(items: [TermListItem])
     /// A table that contains a list of row data.
     case table(header: HeaderType, rows: [TableRow], metadata: RenderContentMetadata?)
+
+    /// A paragraph of content.
+    public struct Paragraph: Equatable {
+        /// The content inside the paragraph.
+        public var inlineContent: [RenderInlineContent]
+
+        /// Creates a new paragraph with the given content.
+        public init(inlineContent: [RenderInlineContent]) {
+            self.inlineContent = inlineContent
+        }
+    }
     
     /// An item in a list.
     public struct ListItem: Codable, Equatable {
@@ -241,7 +252,7 @@ extension RenderBlockContent: Codable {
         
         switch type {
         case .paragraph:
-            self = try .paragraph(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent))
+            self = try .paragraph(.init(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent)))
         case .aside:
             var style = try container.decode(AsideStyle.self, forKey: .style)
             if style.renderKind == "note", let displayName = try container.decodeIfPresent(String.self, forKey: .name) {
@@ -306,8 +317,8 @@ extension RenderBlockContent: Codable {
         try container.encode(type, forKey: .type)
         
         switch self {
-        case .paragraph(let inlineContent):
-            try container.encode(inlineContent, forKey: .inlineContent)
+        case .paragraph(let p):
+            try container.encode(p.inlineContent, forKey: .inlineContent)
         case .aside(let style, let content):
             try container.encode(style.renderKind, forKey: .style)
             try container.encode(style.displayName, forKey: .name)

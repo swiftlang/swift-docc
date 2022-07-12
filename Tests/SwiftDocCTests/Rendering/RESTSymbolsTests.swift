@@ -22,8 +22,8 @@ fileprivate extension Array where Element == RenderBlockContent {
         })
         .flatMap { block -> String? in
             switch block {
-            case .paragraph(inlineContent: let inline):
-                switch inline.first {
+            case .paragraph(let p):
+                switch p.inlineContent.first {
                 case .some(.text(let string)): return string
                 default: return nil
                 }
@@ -200,8 +200,8 @@ class RESTSymbolsTests: XCTestCase {
 
         if case RenderBlockContent.endpointExample(let maybeSummary, let request, let response) = example {
             XCTAssertNotNil(maybeSummary)
-            if case RenderBlockContent.paragraph(inlineContent: let summaryContent)? = maybeSummary?.first {
-                XCTAssertEqual(summaryContent, [RenderInlineContent.text("The summary of this endpoint example.")])
+            if case RenderBlockContent.paragraph(let summary)? = maybeSummary?.first {
+                XCTAssertEqual(summary.inlineContent, [RenderInlineContent.text("The summary of this endpoint example.")])
             } else {
                 XCTFail("Summary paragraph not found.")
             }

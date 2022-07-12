@@ -256,10 +256,10 @@ extension Abstracted {
     /// - Parameter compiler: The content compiler to render the abstract.
     /// - Returns: The rendered abstract, or `nil` of the element doesn't have an abstract.
     func renderedAbstract(using compiler: inout RenderContentCompiler) -> LinkDestinationSummary.Abstract? {
-        guard let abstract = abstract, case RenderBlockContent.paragraph(let inlineContent)? = compiler.visitParagraph(abstract).first else {
+        guard let abstract = abstract, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(abstract).first else {
             return nil
         }
-        return inlineContent
+        return p.inlineContent
     }
 }
 
@@ -303,10 +303,10 @@ extension LinkDestinationSummary {
         let title = symbol.titleVariants[summaryTrait] ?? symbol.title
         
         func renderSymbolAbstract(_ symbolAbstract: Paragraph?) -> Abstract? {
-            guard let abstractParagraph = symbolAbstract, case RenderBlockContent.paragraph(let inlineContent)? = compiler.visitParagraph(abstractParagraph).first else {
+            guard let abstractParagraph = symbolAbstract, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(abstractParagraph).first else {
                 return nil
             }
-            return inlineContent
+            return p.inlineContent
         }
         
         let abstract = renderSymbolAbstract(symbol.abstractVariants[summaryTrait] ?? symbol.abstract)
@@ -387,8 +387,8 @@ extension LinkDestinationSummary {
         let abstract: Abstract?
         if let abstracted = landmark as? Abstracted {
             abstract = abstracted.renderedAbstract(using: &compiler) ?? []
-        } else if let paragraph = landmark.markup.children.lazy.compactMap({ $0 as? Paragraph }).first, case RenderBlockContent.paragraph(let inlineContent)? = compiler.visitParagraph(paragraph).first {
-            abstract = inlineContent
+        } else if let paragraph = landmark.markup.children.lazy.compactMap({ $0 as? Paragraph }).first, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(paragraph).first {
+            abstract = p.inlineContent
         } else {
             abstract = nil
         }

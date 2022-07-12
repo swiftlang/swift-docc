@@ -86,8 +86,8 @@ class RenderContentMetadataTests: XCTestCase {
         let renderCell: ([RenderBlockContent]) -> String = { cell in
             return cell.reduce(into: "") { (result, element) in
                 switch element {
-                    case .paragraph(inlineContent: let els):
-                        guard let para = els.first else { return }
+                    case .paragraph(let p):
+                    guard let para = p.inlineContent.first else { return }
                         result.append(para.plainText)
                     default: XCTFail("Unexpected element"); return
                 }

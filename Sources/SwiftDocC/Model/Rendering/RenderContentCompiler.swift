@@ -64,7 +64,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitParagraph(_ paragraph: Paragraph) -> [RenderContent] {
-        return [RenderBlockContent.paragraph(inlineContent: paragraph.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent])]
+        return [RenderBlockContent.paragraph(.init(inlineContent: paragraph.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent]))]
     }
     
     mutating func visitInlineCode(_ inlineCode: InlineCode) -> [RenderContent] {
@@ -188,7 +188,7 @@ struct RenderContentCompiler: MarkupVisitor {
         var headerCells = [RenderBlockContent.TableRow.Cell]()
         for cell in table.head.cells {
             let cellContent = cell.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
-            headerCells.append([RenderBlockContent.paragraph(inlineContent: cellContent as! [RenderInlineContent])])
+            headerCells.append([RenderBlockContent.paragraph(.init(inlineContent: cellContent as! [RenderInlineContent]))])
         }
         
         var rows = [RenderBlockContent.TableRow]()
@@ -196,7 +196,7 @@ struct RenderContentCompiler: MarkupVisitor {
             var cells = [RenderBlockContent.TableRow.Cell]()
             for cell in row.cells {
                 let cellContent = cell.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
-                cells.append([RenderBlockContent.paragraph(inlineContent: cellContent as! [RenderInlineContent])])
+                cells.append([RenderBlockContent.paragraph(.init(inlineContent: cellContent as! [RenderInlineContent]))])
             }
             rows.append(RenderBlockContent.TableRow(cells: cells))
         }
