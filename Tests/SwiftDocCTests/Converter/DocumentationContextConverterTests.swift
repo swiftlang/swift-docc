@@ -26,12 +26,6 @@ class DocumentationContextConverterTests: XCTestCase {
         
         for identifier in context.knownPages {
             let documentationNode = try XCTUnwrap(try context.entity(with: identifier))
-
-            guard !context.onlyHasSnippetRelatedChildren(for: documentationNode.reference),
-                  documentationNode.kind != .snippet,
-                  documentationNode.kind != .snippetGroup else {
-                      continue
-                  }
             
             let renderNode1 = try perNodeConverter.convert(documentationNode, at: nil)
             let renderNode2 = try bulkNodeConverter.renderNode(for: documentationNode, at: nil)

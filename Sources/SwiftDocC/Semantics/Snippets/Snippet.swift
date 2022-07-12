@@ -18,17 +18,29 @@ public final class Snippet: Semantic, DirectiveConvertible {
         enum Path: DirectiveArgument {
             static let argumentName = "path"
         }
+        enum Slice: DirectiveArgument {
+            static let argumentName = "slice"
+        }
     }
 
     public let originalMarkup: BlockDirective
+    
+    /// The path components of a symbol link that would be used to resolve a reference to a snippet,
+    /// only occurring as a block directive argument.
     public let path: String
+    
+    /// An optional named range to limit the lines shown.
+    public let slice: String?
 
     public init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
         let arguments = Semantic.Analyses
-            .HasOnlyKnownArguments<Snippet>(severityIfFound: .warning, allowedArguments: [Semantics.Path.argumentName])
+            .HasOnlyKnownArguments<Snippet>(severityIfFound: .warning, allowedArguments: [Semantics.Path.argumentName, Semantics.Slice.argumentName])
             .analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
 
         let requiredPath = Semantic.Analyses.HasArgument<Snippet, Semantics.Path>(severityIfNotFound: .warning)
+            .analyze(directive, arguments: arguments, problems: &problems)
+        
+        let optionalSlice = Semantic.Analyses.HasArgument<Snippet, Semantics.Slice>(severityIfNotFound: nil)
             .analyze(directive, arguments: arguments, problems: &problems)
 
         if directive.childCount != 0 {
@@ -51,5 +63,6 @@ public final class Snippet: Semantic, DirectiveConvertible {
 
         self.originalMarkup = directive
         self.path = path
+        self.slice = optionalSlice
     }
 }

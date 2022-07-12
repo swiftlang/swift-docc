@@ -196,7 +196,6 @@ extension AutomaticCuration {
             case .`property`: return "Instance Properties"
             case .`protocol`: return "Protocols"
             case .snippet: return "Snippets"
-            case .snippetGroup: return "Snippet Groups"
             case .`struct`: return "Structures"
             case .`subscript`: return "Subscripts"
             case .`typeMethod`: return "Type Methods"

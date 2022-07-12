@@ -84,12 +84,16 @@ struct TopicGraph {
         /// If true, the hierarchy path is resolvable.
         let isResolvable: Bool
         
-        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true) {
+        /// If true, the topic should not be rendered and exists solely to mark relationships.
+        let isVirtual: Bool
+        
+        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false) {
             self.reference = reference
             self.kind = kind
             self.source = source
             self.title = title
             self.isResolvable = isResolvable
+            self.isVirtual = isVirtual
         }
         
         func withReference(_ reference: ResolvedTopicReference) -> Node {

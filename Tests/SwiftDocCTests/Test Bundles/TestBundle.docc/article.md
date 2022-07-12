@@ -6,8 +6,6 @@ This is an article.
 ![](figure1)
 ![](images/figure1.png)
 
-@Snippet(path: "Test/FirstGroup/MySnippet")
-
 ## Topics
 
 ### A Topic
