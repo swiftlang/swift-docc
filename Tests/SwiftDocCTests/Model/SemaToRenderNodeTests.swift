@@ -68,13 +68,15 @@ class SemaToRenderNodeTests: XCTestCase {
         do {
             let contentSection = tutorialSections.tasks[0].contentSection[0]
             guard case let .contentAndMedia(section) = contentSection,
-                case let .aside(note, noteContent) = section.content[1],
-                  note == .init(rawValue: "Note"),
-                case let .aside(important, importantContent) = section.content[2],
-                  important == .init(rawValue: "Important") else {
+                case let .aside(noteAside) = section.content[1],
+                  noteAside.style == .init(rawValue: "Note"),
+                case let .aside(importantAside) = section.content[2],
+                  importantAside.style == .init(rawValue: "Important") else {
                     XCTFail("Expected `Note` and `Important` asides")
                     return
             }
+            let noteContent = noteAside.content
+            let importantContent = importantAside.content
             
             XCTAssertEqual(1, noteContent.count)
             guard case let .paragraph(notePara)? = noteContent.first,
@@ -2302,29 +2304,29 @@ Document @1:1-11:19
     }
 
     let asidesStressTest: [RenderBlockContent] = [
-        .aside(style: .init(rawValue: "Note"), content: [.paragraph(.init(inlineContent: [.text("This is a note.")]))]),
-        .aside(style: .init(rawValue: "Tip"), content: [.paragraph(.init(inlineContent: [.text("Here’s a tip.")]))]),
-        .aside(style: .init(rawValue: "Important"), content: [.paragraph(.init(inlineContent: [.text("Keep this in mind.")]))]),
-        .aside(style: .init(rawValue: "Experiment"), content: [.paragraph(.init(inlineContent: [.text("Try this out.")]))]),
-        .aside(style: .init(rawValue: "Warning"), content: [.paragraph(.init(inlineContent: [.text("Watch out for this.")]))]),
-        .aside(style: .init(rawValue: "Attention"), content: [.paragraph(.init(inlineContent: [.text("Head’s up!")]))]),
-        .aside(style: .init(rawValue: "Author"), content: [.paragraph(.init(inlineContent: [.text("I wrote this.")]))]),
-        .aside(style: .init(rawValue: "Authors"), content: [.paragraph(.init(inlineContent: [.text("We wrote this.")]))]),
-        .aside(style: .init(rawValue: "Bug"), content: [.paragraph(.init(inlineContent: [.text("This is wrong.")]))]),
-        .aside(style: .init(rawValue: "Complexity"), content: [.paragraph(.init(inlineContent: [.text("This takes time.")]))]),
-        .aside(style: .init(rawValue: "Copyright"), content: [.paragraph(.init(inlineContent: [.text("2021 Apple Inc.")]))]),
-        .aside(style: .init(rawValue: "Date"), content: [.paragraph(.init(inlineContent: [.text("1 January 1970")]))]),
-        .aside(style: .init(rawValue: "Invariant"), content: [.paragraph(.init(inlineContent: [.text("This shouldn’t change.")]))]),
-        .aside(style: .init(rawValue: "MutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This will change.")]))]),
-        .aside(style: .init(rawValue: "NonMutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This changes, but not in the data.")]))]),
-        .aside(style: .init(rawValue: "Postcondition"), content: [.paragraph(.init(inlineContent: [.text("After calling, this should be true.")]))]),
-        .aside(style: .init(rawValue: "Precondition"), content: [.paragraph(.init(inlineContent: [.text("Before calling, this should be true.")]))]),
-        .aside(style: .init(rawValue: "Remark"), content: [.paragraph(.init(inlineContent: [.text("Something you should know.")]))]),
-        .aside(style: .init(rawValue: "Requires"), content: [.paragraph(.init(inlineContent: [.text("This needs something.")]))]),
-        .aside(style: .init(rawValue: "Since"), content: [.paragraph(.init(inlineContent: [.text("The beginning of time.")]))]),
-        .aside(style: .init(rawValue: "Todo"), content: [.paragraph(.init(inlineContent: [.text("This needs work.")]))]),
-        .aside(style: .init(rawValue: "Version"), content: [.paragraph(.init(inlineContent: [.text("3.1.4")]))]),
-        .aside(style: .init(rawValue: "Throws"), content: [.paragraph(.init(inlineContent: [.text("A serious error.")]))]),
+        .aside(.init(style: .init(rawValue: "Note"), content: [.paragraph(.init(inlineContent: [.text("This is a note.")]))])),
+        .aside(.init(style: .init(rawValue: "Tip"), content: [.paragraph(.init(inlineContent: [.text("Here’s a tip.")]))])),
+        .aside(.init(style: .init(rawValue: "Important"), content: [.paragraph(.init(inlineContent: [.text("Keep this in mind.")]))])),
+        .aside(.init(style: .init(rawValue: "Experiment"), content: [.paragraph(.init(inlineContent: [.text("Try this out.")]))])),
+        .aside(.init(style: .init(rawValue: "Warning"), content: [.paragraph(.init(inlineContent: [.text("Watch out for this.")]))])),
+        .aside(.init(style: .init(rawValue: "Attention"), content: [.paragraph(.init(inlineContent: [.text("Head’s up!")]))])),
+        .aside(.init(style: .init(rawValue: "Author"), content: [.paragraph(.init(inlineContent: [.text("I wrote this.")]))])),
+        .aside(.init(style: .init(rawValue: "Authors"), content: [.paragraph(.init(inlineContent: [.text("We wrote this.")]))])),
+        .aside(.init(style: .init(rawValue: "Bug"), content: [.paragraph(.init(inlineContent: [.text("This is wrong.")]))])),
+        .aside(.init(style: .init(rawValue: "Complexity"), content: [.paragraph(.init(inlineContent: [.text("This takes time.")]))])),
+        .aside(.init(style: .init(rawValue: "Copyright"), content: [.paragraph(.init(inlineContent: [.text("2021 Apple Inc.")]))])),
+        .aside(.init(style: .init(rawValue: "Date"), content: [.paragraph(.init(inlineContent: [.text("1 January 1970")]))])),
+        .aside(.init(style: .init(rawValue: "Invariant"), content: [.paragraph(.init(inlineContent: [.text("This shouldn’t change.")]))])),
+        .aside(.init(style: .init(rawValue: "MutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This will change.")]))])),
+        .aside(.init(style: .init(rawValue: "NonMutatingVariant"), content: [.paragraph(.init(inlineContent: [.text("This changes, but not in the data.")]))])),
+        .aside(.init(style: .init(rawValue: "Postcondition"), content: [.paragraph(.init(inlineContent: [.text("After calling, this should be true.")]))])),
+        .aside(.init(style: .init(rawValue: "Precondition"), content: [.paragraph(.init(inlineContent: [.text("Before calling, this should be true.")]))])),
+        .aside(.init(style: .init(rawValue: "Remark"), content: [.paragraph(.init(inlineContent: [.text("Something you should know.")]))])),
+        .aside(.init(style: .init(rawValue: "Requires"), content: [.paragraph(.init(inlineContent: [.text("This needs something.")]))])),
+        .aside(.init(style: .init(rawValue: "Since"), content: [.paragraph(.init(inlineContent: [.text("The beginning of time.")]))])),
+        .aside(.init(style: .init(rawValue: "Todo"), content: [.paragraph(.init(inlineContent: [.text("This needs work.")]))])),
+        .aside(.init(style: .init(rawValue: "Version"), content: [.paragraph(.init(inlineContent: [.text("3.1.4")]))])),
+        .aside(.init(style: .init(rawValue: "Throws"), content: [.paragraph(.init(inlineContent: [.text("A serious error.")]))])),
     ]
     
     func testBareTechnology() throws {

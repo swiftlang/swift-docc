@@ -39,7 +39,7 @@ public enum RenderBlockContent: Equatable {
     /// A paragraph of content.
     case paragraph(Paragraph)
     /// An aside block.
-    case aside(style: AsideStyle, content: [RenderBlockContent])
+    case aside(Aside)
     /// A block of sample code.
     case codeListing(syntax: String?, code: [String], metadata: RenderContentMetadata?)
     /// A heading with the given level.
@@ -69,6 +69,20 @@ public enum RenderBlockContent: Equatable {
         /// Creates a new paragraph with the given content.
         public init(inlineContent: [RenderInlineContent]) {
             self.inlineContent = inlineContent
+        }
+    }
+
+    /// An aside block.
+    public struct Aside: Equatable {
+        /// The style of this aside block.
+        public var style: AsideStyle
+
+        /// The content inside this aside block.
+        public var content: [RenderBlockContent]
+
+        public init(style: AsideStyle, content: [RenderBlockContent]) {
+            self.style = style
+            self.content = content
         }
     }
     
@@ -140,7 +154,7 @@ public enum RenderBlockContent: Equatable {
 
         /// Creates an aside type for the specified aside kind.
         /// - Parameter asideKind: The aside kind that provides the display name.
-        public init(asideKind: Aside.Kind) {
+        public init(asideKind: Markdown.Aside.Kind) {
             self.rawValue = asideKind.rawValue
         }
         
@@ -258,7 +272,7 @@ extension RenderBlockContent: Codable {
             if style.renderKind == "note", let displayName = try container.decodeIfPresent(String.self, forKey: .name) {
                 style = AsideStyle(displayName: displayName)
             }
-            self = try .aside(style: style, content: container.decode([RenderBlockContent].self, forKey: .content))
+            self = try .aside(.init(style: style, content: container.decode([RenderBlockContent].self, forKey: .content)))
         case .codeListing:
             self = try .codeListing(
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
@@ -319,10 +333,10 @@ extension RenderBlockContent: Codable {
         switch self {
         case .paragraph(let p):
             try container.encode(p.inlineContent, forKey: .inlineContent)
-        case .aside(let style, let content):
-            try container.encode(style.renderKind, forKey: .style)
-            try container.encode(style.displayName, forKey: .name)
-            try container.encode(content, forKey: .content)
+        case .aside(let a):
+            try container.encode(a.style.renderKind, forKey: .style)
+            try container.encode(a.style.displayName, forKey: .name)
+            try container.encode(a.content, forKey: .content)
         case .codeListing(let syntax, let code, metadata: let metadata):
             try container.encode(syntax, forKey: .syntax)
             try container.encode(code, forKey: .code)

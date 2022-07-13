@@ -181,7 +181,7 @@ class IndexingTests: XCTestCase {
     }
     
     func testRenderBlockContentAside() {
-        let aside = RenderBlockContent.aside(style: .init(rawValue: "Experiment"), content: [.paragraph(.init(inlineContent: [.text("Hello, world!")]))])
+        let aside = RenderBlockContent.aside(.init(style: .init(rawValue: "Experiment"), content: [.paragraph(.init(inlineContent: [.text("Hello, world!")]))]))
         XCTAssertEqual([], aside.headings)
         XCTAssertEqual("Hello, world!", aside.rawIndexableTextContent(references: [:]))
     }

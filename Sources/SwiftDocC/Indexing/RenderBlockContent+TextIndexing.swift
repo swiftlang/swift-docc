@@ -20,8 +20,8 @@ extension RenderBlockContent: TextIndexing {
 
     public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
         switch self {
-        case let .aside(_, blocks):
-            return blocks.rawIndexableTextContent(references: references)
+        case let .aside(a):
+            return a.content.rawIndexableTextContent(references: references)
         case let .orderedList(items):
             return items.map {
                 $0.content.rawIndexableTextContent(references: references)
