@@ -950,9 +950,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTFail("Unexpected content where snippet explanation should be.")
         }
 
-        if case let .codeListing(syntax, code, _) = discussion.content.dropFirst(3).first {
-            XCTAssertEqual(syntax, "swift")
-            XCTAssertEqual(code.joined(separator: "\n"), """
+        if case let .codeListing(l) = discussion.content.dropFirst(3).first {
+            XCTAssertEqual(l.syntax, "swift")
+            XCTAssertEqual(l.code.joined(separator: "\n"), """
                 func foo() {}
                 
                 do {
@@ -981,13 +981,13 @@ class RenderNodeTranslatorTests: XCTestCase {
             return true
         })
 
-        guard case let .codeListing(syntax, code, _) = discussion.content[lastCodeListingIndex] else {
+        guard case let .codeListing(l) = discussion.content[lastCodeListingIndex] else {
             XCTFail("Missing snippet slice code block")
             return
         }
 
-        XCTAssertEqual(syntax, "swift")
-        XCTAssertEqual(code, ["func foo() {}"])
+        XCTAssertEqual(l.syntax, "swift")
+        XCTAssertEqual(l.code, ["func foo() {}"])
     }
     
     func testSnippetSliceTrimsIndentation() throws {
@@ -1005,13 +1005,13 @@ class RenderNodeTranslatorTests: XCTestCase {
             return true
         })
 
-        guard case let .codeListing(syntax, code, _) = discussion.content[lastCodeListingIndex] else {
+        guard case let .codeListing(l) = discussion.content[lastCodeListingIndex] else {
             XCTFail("Missing snippet slice code block")
             return
         }
 
-        XCTAssertEqual(syntax, "swift")
-        XCTAssertEqual(code, ["middle()"])
+        XCTAssertEqual(l.syntax, "swift")
+        XCTAssertEqual(l.code, ["middle()"])
 
     }
 }

@@ -41,7 +41,7 @@ public enum RenderBlockContent: Equatable {
     /// An aside block.
     case aside(Aside)
     /// A block of sample code.
-    case codeListing(syntax: String?, code: [String], metadata: RenderContentMetadata?)
+    case codeListing(CodeListing)
     /// A heading with the given level.
     case heading(level: Int, text: String, anchor: String?)
     /// A list that contains ordered items.
@@ -83,6 +83,23 @@ public enum RenderBlockContent: Equatable {
         public init(style: AsideStyle, content: [RenderBlockContent]) {
             self.style = style
             self.content = content
+        }
+    }
+
+    /// A block of sample code.
+    public struct CodeListing: Equatable {
+        /// The language to use for syntax highlighting, if given.
+        public var syntax: String?
+        /// The lines of code inside the code block.
+        public var code: [String]
+        /// Additional metadata for this code block.
+        public var metadata: RenderContentMetadata?
+
+        /// Make a new `CodeListing` with the given data.
+        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?) {
+            self.syntax = syntax
+            self.code = code
+            self.metadata = metadata
         }
     }
     
@@ -274,11 +291,11 @@ extension RenderBlockContent: Codable {
             }
             self = try .aside(.init(style: style, content: container.decode([RenderBlockContent].self, forKey: .content)))
         case .codeListing:
-            self = try .codeListing(
+            self = try .codeListing(.init(
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
                 code: container.decode([String].self, forKey: .code),
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
-            )
+            ))
         case .heading:
             self = try .heading(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor))
         case .orderedList:
@@ -337,10 +354,10 @@ extension RenderBlockContent: Codable {
             try container.encode(a.style.renderKind, forKey: .style)
             try container.encode(a.style.displayName, forKey: .name)
             try container.encode(a.content, forKey: .content)
-        case .codeListing(let syntax, let code, metadata: let metadata):
-            try container.encode(syntax, forKey: .syntax)
-            try container.encode(code, forKey: .code)
-            try container.encodeIfPresent(metadata, forKey: .metadata)
+        case .codeListing(let l):
+            try container.encode(l.syntax, forKey: .syntax)
+            try container.encode(l.code, forKey: .code)
+            try container.encodeIfPresent(l.metadata, forKey: .metadata)
         case .heading(let level, let text, let anchor):
             try container.encode(level, forKey: .level)
             try container.encode(text, forKey: .text)

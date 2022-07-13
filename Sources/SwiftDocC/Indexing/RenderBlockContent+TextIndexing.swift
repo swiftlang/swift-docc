@@ -34,8 +34,8 @@ extension RenderBlockContent: TextIndexing {
             return items.map {
                 $0.content.rawIndexableTextContent(references: references)
             }.joined(separator: " ")
-        case .codeListing(_, _, let metadata):
-            return metadata?.rawIndexableTextContent(references: references) ?? ""
+        case let .codeListing(l):
+            return l.metadata?.rawIndexableTextContent(references: references) ?? ""
         case let .heading(_, text, _):
             return text
         case .endpointExample:

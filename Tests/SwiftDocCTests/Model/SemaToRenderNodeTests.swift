@@ -1070,8 +1070,8 @@ class SemaToRenderNodeTests: XCTestCase {
         // Check the code sample in the discussion
         XCTAssertTrue(discussion.content.last.map { block -> Bool in
             switch block {
-            case .codeListing(let syntax, let code, _):
-                return syntax == "swift" && code.first == "struct MyClass : MyProtocol"
+            case .codeListing(let l):
+                return l.syntax == "swift" && l.code.first == "struct MyClass : MyProtocol"
             default: return false
             }
         } ?? false)

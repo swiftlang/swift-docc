@@ -41,7 +41,7 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
-        return [RenderBlockContent.codeListing(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil)]
+        return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil))]
     }
     
     mutating func visitHeading(_ heading: Heading) -> [RenderContent] {
@@ -227,11 +227,11 @@ struct RenderContentCompiler: MarkupVisitor {
                 let lines = snippetMixin.lines[lineRange]
                 let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
                 let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
-                return [RenderBlockContent.codeListing(syntax: snippetMixin.language, code: trimmedLines, metadata: nil)]
+                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
             } else {
                 // Render the whole snippet with its explanation content.
                 let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
-                let code = RenderBlockContent.codeListing(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil)
+                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
                 return docCommentContent + [code]
             }
         default:

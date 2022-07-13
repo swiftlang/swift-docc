@@ -54,16 +54,16 @@ class RenderContentMetadataTests: XCTestCase {
             RenderInlineContent.text("Content"),
         ])
         
-        let code = RenderBlockContent.codeListing(syntax: nil, code: [], metadata: metadata)
+        let code = RenderBlockContent.codeListing(.init(syntax: nil, code: [], metadata: metadata))
         let data = try JSONEncoder().encode(code)
         let roundtrip = try JSONDecoder().decode(RenderBlockContent.self, from: data)
         
-        guard case RenderBlockContent.codeListing(_, _, let metadataRoundtrip) = roundtrip else {
+        guard case RenderBlockContent.codeListing(let roundtripListing) = roundtrip else {
             XCTFail("Didn't decode code listing correctly")
             return
         }
         
-        XCTAssertEqual(metadata, metadataRoundtrip)
+        XCTAssertEqual(metadata, roundtripListing.metadata)
     }
     
     func testRenderingTables() throws {
