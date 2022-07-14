@@ -1,10 +1,13 @@
 # ``DocC/DisplayName``
 
-Configures a symbol's documentation page to use a custom display name.
+Configures a symbol's documentation page and any references to that page to show a custom name instead of the symbol name.
+
+- Parameters:
+    - style: The text style used to format the symbol's display name. A value of `conceptual` (the default) denotes a plain text style that's not monospaced. A value of `symbol` denotes a monospaced text style. **(optional)**
 
 ## Overview
 
-Place the `DisplayName` directive within a `Metadata` directive to configure a symbol's documentation page to use a custom display name.
+Place the `DisplayName` directive within a `Metadata` directive to configure a symbol's documentation page and any references to that page to show a custom name.
 
 ```
 # ``SlothCreator``
@@ -14,9 +17,16 @@ Place the `DisplayName` directive within a `Metadata` directive to configure a s
 }
 ```
 
-The custom name will appear as the main header for that page, in the navigator hierarchy, in the breadcrumbs for the customized symbols and its child symbols, and in the link text for symbol links to that symbol. Customizing the title of a symbol page does not alter the URL of that page.
+A custom display name appears in place of the symbol's name in the following locations:
 
-By default, customized symbol display names are "conceptual", meaning that they render without a monospaced text style. To customize a symbol's display name and keep the monospaced text style, specify `symbol` for the optional `style` argument:
+- The main header on the symbol page
+- The navigator hierarchy
+- Breadcrumbs for the symbol page and its child symbol pages 
+- Link text anywhere that includes a link to the symbol page
+
+> Note: Customizing the name of a symbol page doesn't alter the page's URL.
+
+By default, a custom display name renders without a monospaced text style. To retain the monospaced text style that's typically used when referencing APIs, specify a value of `symbol` for the optional `style` parameter:
 
 ```
 # ``SlothCreator``
@@ -26,7 +36,7 @@ By default, customized symbol display names are "conceptual", meaning that they 
 }
 ```
 
-Adding a `DisplayName` directive to a non-symbol page will result in a warning. 
+> Note: Adding a `DisplayName` directive to a non-symbol page results in a warning. 
 
 ### Containing Elements
 
