@@ -38,7 +38,7 @@ class RenderNodeSerializationTests: XCTestCase {
         
         let blockContent: [RenderBlockContent] = [
             .paragraph(inlineContent: inlines),
-            .aside(style: .experiment, content: [
+            .aside(style: .init(rawValue: "Experiment"), content: [
                 .paragraph(inlineContent: [
                     .text("Try running the project in the Simulator using the "),
                     .strong(inlineContent: [.text("Project > Run")]),
@@ -53,7 +53,7 @@ class RenderNodeSerializationTests: XCTestCase {
             .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [.paragraph(inlineContent: [.text("Caption")])], media: .init("screenshot2.png"), code: nil, runtimePreview: nil),
             .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: nil, code: .init("helloworld.swift"), runtimePreview: .init("screenshot2.png")),
             .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: .init("screenshot3.png"), code: nil, runtimePreview: nil),
-            .aside(style: .note, content: [.paragraph(inlineContent: [.text("Lorem ipsum dolor emit.")])]),
+            .aside(style: .init(rawValue: "Note"), content: [.paragraph(inlineContent: [.text("Lorem ipsum dolor emit.")])]),
             .step(content: [.paragraph(inlineContent: [.text("Lorem ipsum")])], caption: [], media: .init("screenshot4.png"), code: nil, runtimePreview: nil),
         ]
         

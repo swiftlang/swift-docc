@@ -1,0 +1,86 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "app/1.0"
+    },
+    "module": {
+        "name": "BaseKit",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 3,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "s:7BaseKit11OtherStructV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "OtherStruct"
+            ],
+            "names": {
+                "title": "OtherStruct",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "OtherStruct"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "struct"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "OtherStruct"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "struct"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "OtherStruct"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///path/to/OverlayTest/BaseKit/BaseKit.swift",
+                "position": {
+                    "line": 9,
+                    "character": 14
+                }
+            }
+        }
+    ],
+    "relationships": []
+}

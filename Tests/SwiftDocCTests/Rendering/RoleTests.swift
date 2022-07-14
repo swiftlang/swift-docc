@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,8 +25,7 @@ class RoleTests: XCTestCase {
     ]
     
     func testNodeRoles() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle")
-        defer { try? FileManager.default.removeItem(at: url) }
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
 
         // Compile docs and verify contents
         for (path, expectedRole) in expectedRoles {
@@ -45,8 +44,7 @@ class RoleTests: XCTestCase {
     }
     
     func testDocumentationRenderReferenceRoles() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle")
-        defer { try? FileManager.default.removeItem(at: url) }
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
 
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit", fragment: nil, sourceLanguage: .swift)
         let source = context.documentURL(for: identifier)
@@ -60,8 +58,7 @@ class RoleTests: XCTestCase {
     }
 
     func testTutorialsRenderReferenceRoles() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle")
-        defer { try? FileManager.default.removeItem(at: url) }
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
 
         let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/tutorials/Test-Bundle/TestTutorial", fragment: nil, sourceLanguage: .swift)
         let source = context.documentURL(for: identifier)

@@ -546,6 +546,11 @@
       "source" : "s:5MyKit0A5ClassCACycfc",
       "target" : "s:5MyKit0A5ClassC",
       "kind" : "memberOf"
+    },
+    {
+      "source" : "s:5MyKit0A5ClassCACycfcDUPLICATE",
+      "target" : "s:5MyKit0A5ClassC",
+      "kind" : "memberOf"
     }
   ]
 }

@@ -68,7 +68,7 @@ extension URLReference {
     /// - Parameter path: The path of the file.
     /// - Returns: The destination URL for the given file path.
     func destinationURL(for path: String) -> URL {
-        return Self.baseURL.appendingPathComponent(path)
+        return Self.baseURL.appendingPathComponent(path, isDirectory: false)
     }
 }
 

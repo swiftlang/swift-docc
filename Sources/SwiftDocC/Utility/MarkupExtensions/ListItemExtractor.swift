@@ -103,7 +103,7 @@ extension ListItem {
     }
 
     /**
-     Extract a "simple tag" from the liset of known list item tags.
+     Extract a "simple tag" from the list of known list item tags.
 
      Expected form:
 

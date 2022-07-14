@@ -12,6 +12,7 @@ import XCTest
 import Foundation
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
+import SymbolKit
 import Markdown
 import SwiftDocCTestUtilities
 
@@ -1563,6 +1564,38 @@ class ConvertActionTests: XCTestCase {
             "platform2" : PlatformVersion(.init(11, 12, 13), beta: false),
         ])
     }
+    
+    func testResolvedTopicReferencesAreCachedByDefaultWhenConverting() throws {
+        let bundle = Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: #function),
+                CopyOfFile(original: symbolGraphFile),
+            ]
+        )
+        
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: [:],
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
+        
+        _ = try action.perform(logHandle: .none)
+        
+        ResolvedTopicReference.sharedPool.sync { sharedPool in
+            XCTAssertEqual(sharedPool[#function]?.count, 8)
+        }
+    }
 
     func testIgnoresAnalyzerHintsByDefault() throws {
         func runCompiler(analyze: Bool) throws -> [Problem] {
@@ -1813,7 +1846,7 @@ class ConvertActionTests: XCTestCase {
         
         let indexURL = targetURL.appendingPathComponent("index")
         
-        let indexFromConvertAction = try NavigatorIndex(url: indexURL)
+        let indexFromConvertAction = try NavigatorIndex.readNavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromConvertAction.count, 37)
         
         try FileManager.default.removeItem(at: indexURL)
@@ -1827,7 +1860,7 @@ class ConvertActionTests: XCTestCase {
         )
         _ = try indexAction.perform(logHandle: .standardOutput)
         
-        let indexFromIndexAction = try NavigatorIndex(url: indexURL)
+        let indexFromIndexAction = try NavigatorIndex.readNavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromIndexAction.count, 37)
         
         XCTAssertEqual(
@@ -1870,7 +1903,7 @@ class ConvertActionTests: XCTestCase {
         
         _ = try action.perform(logHandle: .none)
         
-        let index = try NavigatorIndex(url: targetDirectory.appendingPathComponent("index"))
+        let index = try NavigatorIndex.readNavigatorIndex(url: targetDirectory.appendingPathComponent("index"))
         func assertAllChildrenAreObjectiveC(_ node: NavigatorTree.Node) {
             XCTAssertEqual(
                 node.item.languageID,
@@ -1922,7 +1955,7 @@ class ConvertActionTests: XCTestCase {
         
         _ = try action.perform(logHandle: .none)
         
-        let index = try NavigatorIndex(
+        let index = try NavigatorIndex.readNavigatorIndex(
             url: temporaryTestOutputDirectory.appendingPathComponent("index")
         )
         
@@ -2329,7 +2362,75 @@ class ConvertActionTests: XCTestCase {
         var action = try ConvertAction(fromConvertCommand: convertCommand)
         _ = try action.perform(logHandle: .none)
     }
+    
+    func emitEmptySymbolGraph(moduleName: String, destination: URL) throws {
+        let symbolGraph = SymbolGraph(
+            metadata: .init(
+                formatVersion: .init(major: 0, minor: 0, patch: 1),
+                generator: "unit-test"
+            ),
+            module: .init(
+                name: moduleName,
+                platform: .init()
+            ),
+            symbols: [],
+            relationships: []
+        )
+        
+        // Create a unique subfolder to place the symbol graph in
+        // in case we're emitting multiple symbol graphs with the same filename.
+        let uniqueSubfolder = destination.appendingPathComponent(
+            ProcessInfo.processInfo.globallyUniqueString
+        )
+        try FileManager.default.createDirectory(
+            at: uniqueSubfolder,
+            withIntermediateDirectories: false
+        )
+        
+        try JSONEncoder().encode(symbolGraph).write(
+            to: uniqueSubfolder
+                .appendingPathComponent(moduleName, isDirectory: false)
+                .appendingPathExtension("symbols.json")
+        )
+    }
 
+    // Tests that when `docc convert` is given input that produces multiple pages at the same path
+    // on disk it does not throw an error when attempting to transform it for static hosting. (94311195)
+    func testConvertDocCCatalogThatProducesMultipleDocumentationPagesAtTheSamePathDoesNotThrowError() throws {
+        let temporaryDirectory = try createTemporaryDirectory()
+        
+        let catalogURL = try Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            ]
+        ).write(inside: temporaryDirectory)
+        try emitEmptySymbolGraph(moduleName: "docc", destination: catalogURL)
+        try emitEmptySymbolGraph(moduleName: "DocC", destination: catalogURL)
+        
+        let htmlTemplateDirectory = try Folder.emptyHTMLTemplateDirectory.write(
+            inside: temporaryDirectory
+        )
+        
+        let targetDirectory = temporaryDirectory.appendingPathComponent("target.doccarchive", isDirectory: true)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: catalogURL)
+        
+        var action = try ConvertAction(
+            documentationBundleURL: catalogURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: htmlTemplateDirectory,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: dataProvider,
+            fileManager: FileManager.default,
+            temporaryDirectory: createTemporaryDirectory(),
+            transformForStaticHosting: true
+        )
+        
+        XCTAssertNoThrow(try action.performAndHandleResult())
+    }
     func testConvertWithCustomTemplates() throws {
         let info = InfoPlist(displayName: "TestConvertWithCustomTemplates", identifier: "com.test.example")
         let index = TextFile(name: "index.html", utf8Content: """

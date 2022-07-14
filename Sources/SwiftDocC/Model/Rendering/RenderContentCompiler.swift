@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -35,7 +35,7 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> [RenderContent] {
         let aside = Aside(blockQuote)
-        return [RenderBlockContent.aside(style: RenderBlockContent.AsideStyle(aside.kind),
+        return [RenderBlockContent.aside(style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
                                          content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent])]
     }
     
@@ -95,7 +95,7 @@ struct RenderContentCompiler: MarkupVisitor {
             let externalLinkIdentifier = RenderReferenceIdentifier(forExternalLink: destination)
             
             if linkReferences.keys.contains(externalLinkIdentifier.identifier) {
-                // If we've already seen this link, return the existing reference with an overriden title.
+                // If we've already seen this link, return the existing reference with an overridden title.
                 return [RenderInlineContent.reference(identifier: externalLinkIdentifier,
                                                      isActive: true,
                                                      overridingTitle: plainTextLinkTitle.isEmpty ? nil : plainTextLinkTitle,
@@ -113,7 +113,7 @@ struct RenderContentCompiler: MarkupVisitor {
             }
         }
         
-        guard let unresolved = link.destination.flatMap(ValidatedURL.init)
+        guard let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAuthoredLink:))
             .map({ UnresolvedTopicReference(topicURL: $0) }),
             // Try to resolve in the local context
             case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier) else {
@@ -134,7 +134,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
 
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
-        if let cached = context.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
+        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
             return cached
         } 
 

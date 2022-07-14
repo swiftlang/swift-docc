@@ -233,7 +233,7 @@ Choice @1:1-9:2 isCorrect: true
                 let expectedDump = """
 Choice @1:1-7:2 isCorrect: true
 ├─ MarkupContainer (empty)
-├─ ImageMedia @2:4-2:11 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "blah.png")' altText: 'blah'
+├─ ImageMedia @2:4-2:39 source: 'ResourceReference(bundleIdentifier: "org.swift.docc.example", path: "blah.png")' altText: 'blah'
 └─ Justification @4:4-6:5
    └─ MarkupContainer (1 element)
 """

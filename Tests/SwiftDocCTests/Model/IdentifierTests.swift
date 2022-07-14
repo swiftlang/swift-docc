@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -42,9 +42,34 @@ class IdentifierTests: XCTestCase {
         XCTAssertEqual(urlReadableFragment("💻"), "💻")
     }
     
+    func testURLReadableFragmentTwice() {
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment("")), "")
+
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" ä ö ")), "ä-ö")
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" asdö  ")), "asdö")
+        
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" ASD  ")), "ASD")
+        
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" ASD ASD  ")), "ASD-ASD")
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" 3äêòNS  ")), "3äêòNS")
+
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment("    Aä    êò  B   CD    ")), "Aä-êò-B-CD")
+
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" This is a 'test' ")), "This-is-a-test")
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" This is a \"test\" ")), "This-is-a-test")
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment(" This is a `test` ")), "This-is-a-test")
+        
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment("Test replacing 'complete' sentence")), "Test-replacing-complete-sentence")
+        
+        XCTAssertEqual(urlReadableFragment(urlReadableFragment("💻")), "💻")
+    }
+    
     func testReusingReferences() {
         // Verify the bundle doesn't exist in the pool
         XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
+        
+        // Enable caching for our test bundle identifier
+        ResolvedTopicReference.enableReferenceCaching(for: #function)
         
         // Create a resolved reference
         let ref = ResolvedTopicReference(bundleIdentifier: #function, path: "/path/child", sourceLanguage: .swift)
@@ -67,6 +92,9 @@ class IdentifierTests: XCTestCase {
         // Verify there are no references in the pool for that bundle
         XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
         
+        // Re-enable caching for our test bundle identifier
+        ResolvedTopicReference.enableReferenceCaching(for: #function)
+        
         let ref1 = ResolvedTopicReference(bundleIdentifier: #function, path: "/path/child", sourceLanguage: .swift)
         _ = ref1
         
@@ -80,6 +108,24 @@ class IdentifierTests: XCTestCase {
         XCTAssertEqual(references1.contains(where: { pair -> Bool in
             return pair.key.contains("/path/child")
         }), true)
+    }
+    
+    func testReferencesAreNotCachedByDefault() {
+        // Verify the bundle doesn't exist in the pool
+        XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
+        
+        // Create a resolved reference
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: #function,
+            path: "/path/child",
+            sourceLanguage: .swift
+        )
+        
+        // Verify the bundle still doesn't exist in the pool
+        XCTAssertFalse(ResolvedTopicReference.sharedPool.sync({ $0.keys.contains(#function) }))
+        
+        // Add a use of 'reference' to suppress Swift's 'reference' was never used warning
+        XCTAssertNotNil(reference)
     }
     
     func testReferenceInitialPathComponents() {

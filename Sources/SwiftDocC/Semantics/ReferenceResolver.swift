@@ -73,7 +73,7 @@ struct ReferenceResolver: SemanticVisitor {
     Returns a ``Problem`` if the resource cannot be found; otherwise `nil`.
     */
     private func resolve(resource: ResourceReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem? {
-        if (try? context.resource(with: resource)) == nil {
+        if !context.resourceExists(with: resource) {
             return unresolvedResourceProblem(resource: resource, source: source, range: range, severity: severity)
         } else {
             return nil
@@ -423,7 +423,7 @@ struct ReferenceResolver: SemanticVisitor {
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
             redirectsVariants: symbol.redirectsVariants,
-            bystanderModuleNames: symbol.bystanderModuleNames,
+            crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,
             automaticTaskGroupsVariants: symbol.automaticTaskGroupsVariants
         )

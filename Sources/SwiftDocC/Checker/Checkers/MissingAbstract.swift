@@ -56,7 +56,7 @@ public struct MissingAbstract: Checker {
                                          severity: .information,
                                          range: titleRange,
                                          identifier: "org.swift.docc.DocumentHasNoAbstract",
-                                         summary: "This document does not have an abstract.",
+                                         summary: "This document does not have a summary.",
                                          explanation: explanation)
 
         problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))

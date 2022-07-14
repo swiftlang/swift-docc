@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -514,8 +514,8 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(problems.count, 0)
     }
 
-    func testUnresolvedReferenceWarnignsInDocumentationExtension() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+    func testUnresolvedReferenceWarningsInDocumentationExtension() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             let myKitDocumentationExtensionComment = """
             # ``MyKit/MyClass``
 
@@ -544,7 +544,6 @@ class SymbolTests: XCTestCase {
             XCTAssert(FileManager.default.fileExists(atPath: documentationExtensionURL.path), "Make sure that the existing file is replaced.")
             try myKitDocumentationExtensionComment.write(to: documentationExtensionURL, atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let unresolvedTopicProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }
         
@@ -554,8 +553,8 @@ class SymbolTests: XCTestCase {
         XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'doc://com.test.external/ExternalPage' couldn't be resolved. No external resolver registered for 'com.test.external'." }))
     }
     
-    func testUnresolvedReferenceWarnignsInDocComment() throws {
-        let (url, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+    func testUnresolvedReferenceWarningsInDocComment() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
             
@@ -584,7 +583,6 @@ class SymbolTests: XCTestCase {
             let newGraphData = try JSONEncoder().encode(graph)
             try newGraphData.write(to: url.appendingPathComponent("mykit-iOS.symbols.json"))
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let unresolvedTopicProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }
         
@@ -675,7 +673,7 @@ class SymbolTests: XCTestCase {
     
     func makeDocumentationNodeSymbol(docComment: String, articleContent: String?, file: StaticString = #file, line: UInt = #line) throws -> (Symbol, [Problem]) {
         let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             
             let newDocComment = SymbolGraph.LineList(docComment.components(separatedBy: .newlines).enumerated().map { arg -> SymbolGraph.LineList.Line in
@@ -692,7 +690,6 @@ class SymbolTests: XCTestCase {
             let newGraphData = try JSONEncoder().encode(graph)
             try newGraphData.write(to: url.appendingPathComponent("mykit-iOS.symbols.json"))
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         guard let original = context.symbolIndex[myFunctionUSR], let symbol = original.symbol, let symbolSemantic = original.semantic as? Symbol else {
             XCTFail("Couldn't find the expected symbol", file: (file), line: line)

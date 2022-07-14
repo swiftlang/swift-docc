@@ -104,7 +104,7 @@ public struct DocumentationNode {
                 // so we can index all anchors found in the bundle for link resolution.
                 if let heading = child as? Heading, heading.level > 1, heading.level < 4 {
                     anchorSections.append(
-                        AnchorSection(reference: reference.withFragment(urlReadableFragment(heading.plainText)), title: heading.plainText)
+                        AnchorSection(reference: reference.withFragment(heading.plainText), title: heading.plainText)
                     )
                 }
             }
@@ -159,7 +159,7 @@ public struct DocumentationNode {
     ///   - symbol: The symbol to create a documentation node for.
     ///   - platformName: The name of the platforms for which the node is available.
     ///   - moduleName: The name of the module that the symbol belongs to.
-    init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, bystanderModules: [String]? = nil) {
+    init(reference: ResolvedTopicReference, unifiedSymbol: UnifiedSymbolGraph.Symbol, moduleData: SymbolGraph.Module, moduleReference: ResolvedTopicReference) {
         self.reference = reference
         
         guard let defaultSymbol = unifiedSymbol.defaultSymbol else {
@@ -175,6 +175,8 @@ public struct DocumentationNode {
         self.markup = Document()
         self.docChunks = []
         self.tags = (returns: [], throws: [], parameters: [])
+
+        let platformName = moduleData.platform.name
         
         let symbolAvailabilityVariants = DocumentationDataVariants(
             symbolData: unifiedSymbol.mixins,
@@ -259,7 +261,7 @@ public struct DocumentationNode {
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
             redirectsVariants: .empty,
-            bystanderModuleNames: bystanderModules
+            crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) })
         )
 
         try! semanticSymbol.mergeDeclarations(unifiedSymbol: unifiedSymbol)
@@ -468,9 +470,9 @@ public struct DocumentationNode {
     }
 
     @available(*, deprecated, message: "Use init(reference:symbol:platformName:moduleReference:article:engine:bystanderModules:) instead")
-    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, engine: DiagnosticEngine, bystanderModules: [String]? = nil) {
+    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleName: String, article: Article?, engine: DiagnosticEngine) {
         let assumedModuleReference = ResolvedTopicReference(bundleIdentifier: reference.bundleIdentifier, path: reference.pathComponents.prefix(2).joined(separator: "/"), sourceLanguage: reference.sourceLanguage)
-        self.init(reference: reference, symbol: symbol, platformName: platformName, moduleReference: assumedModuleReference, article: article, engine: engine, bystanderModules: bystanderModules)
+        self.init(reference: reference, symbol: symbol, platformName: platformName, moduleReference: assumedModuleReference, article: article, engine: engine)
     }
     
     /// Initializes a documentation node to represent a symbol from a symbol graph.
@@ -483,7 +485,7 @@ public struct DocumentationNode {
     ///   - article: The documentation extension content for this symbol.
     ///   - engine:The engine that collects any problems encountered during initialization.
     ///   - bystanderModules: An optional list of cross-import module names.
-    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, engine: DiagnosticEngine, bystanderModules: [String]? = nil) {
+    public init(reference: ResolvedTopicReference, symbol: SymbolGraph.Symbol, platformName: String?, moduleReference: ResolvedTopicReference, article: Article?, engine: DiagnosticEngine) {
         self.reference = reference
         
         guard reference.sourceLanguage == .swift else {
@@ -559,8 +561,7 @@ public struct DocumentationNode {
             seeAlsoVariants: .init(swiftVariant: markupModel.seeAlsoSection),
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
-            redirectsVariants: .init(swiftVariant: article?.redirects),
-            bystanderModuleNames: bystanderModules
+            redirectsVariants: .init(swiftVariant: article?.redirects)
         )
         
         updateAnchorSections()

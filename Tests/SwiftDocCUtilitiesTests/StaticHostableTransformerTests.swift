@@ -53,7 +53,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         let basePath =  "test/folder"
         let indexHTML = Folder.testHTMLTemplate(basePath: basePath)
         
-        let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: testTemplateURL, hostingBasePath: basePath)
+        let indexHTMLData = try StaticHostableTransformer.indexHTMLData(in: testTemplateURL, with: basePath, fileManager: fileManager)
         
         let dataURL = targetBundleURL.appendingPathComponent(NodeURLGenerator.Path.dataFolderName)
         let dataProvider = try LocalFileSystemDataProvider(rootURL: dataURL)
@@ -114,7 +114,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
 
         for (basePath, testValue) in basePaths {
 
-            let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: testTemplateURL, hostingBasePath: basePath)
+            let indexHTMLData = try StaticHostableTransformer.indexHTMLData(in: testTemplateURL, with: basePath, fileManager: FileManager.default)
             let testIndexHTML = String(decoding: indexHTMLData, as: UTF8.self)
             let indexHTML = Folder.testHTMLTemplate(basePath: testValue)
             
@@ -163,7 +163,7 @@ class StaticHostableTransformerTests: StaticHostingBaseTests {
         let fileManager = FileManager.default
         for (basePath, testValue) in basePaths {
             let outputURL = try createTemporaryDirectory().appendingPathComponent("output")
-            let indexHTMLData = try StaticHostableTransformer.transformHTMLTemplate(htmlTemplate: testTemplateURL, hostingBasePath: basePath)
+            let indexHTMLData = try StaticHostableTransformer.indexHTMLData(in: testTemplateURL, with: basePath, fileManager: FileManager.default)
           
             let transformer = StaticHostableTransformer(dataProvider: dataProvider, fileManager: fileManager, outputURL: outputURL, indexHTMLData: indexHTMLData)
 

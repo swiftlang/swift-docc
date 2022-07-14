@@ -740,6 +740,15 @@
         "type" : "protocol"
       },
       {
+        "title": "Classes",
+        "type": "groupMarker"
+      },
+      {
+        "path": "/documentation/sidekit/uncuratedclass",
+        "title": "UncuratedClass",
+        "type": "class",
+      },
+      {
         "title" : "Chapter 1",
         "type" : "groupMarker"
       },

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -48,7 +48,7 @@ class DeprecationSummaryTests: XCTestCase {
 
     /// Test for a warning when symbol is not deprecated
     func testIncorrectlyAuthoredDeprecatedSummary() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
             // Add a sidecar file with wrong deprecated summary
             try """
             # ``SideKit/SideClass``
@@ -60,7 +60,6 @@ class DeprecationSummaryTests: XCTestCase {
             Abstract for `SideClass`.
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // Verify the context contains a warning about it.
         XCTAssertNotNil(context.problems.first { problem -> Bool in

@@ -136,48 +136,134 @@ public class NavigatorIndex {
     }()
     
     /**
-     Initialize an `NavigatorIndex` from a given path.
+     Initializes a `NavigatorIndex` from a given path on disk.
      
-     - Parameter url: The URL pointing to the path from which the index should be read.
-     - Parameter bundleIdentifier: The name of the bundle the index is referring to.
-     - Parameter readNavigatorTree: Indicates if the init needs to read the navigator tree from the disk, if false, then `readNavigatorTree` needs to be called later. Default: `true`.
-     - Parameter presentationIdentifier: Indicates if the index has an indentifier useful for presentation contexts.
+     Most uses should be made using just the url parameter:
+     ```swift
+    let indexFilePath = URL(string: "file://path/to/index/on/disk")
+    let index = NavigatorIndex.readNavigatorIndex(url: indexFilePath)
+     ```
+     
+     - Parameters:
+        - url: The URL pointing to the path from which the index should be read.
+        - bundleIdentifier: The name of the bundle the index is referring to.
+        - readNavigatorTree: Indicates if the init the navigator tree should be read from the disk now or later, if false, then `readNavigatorTree` needs to be called later. Default: `true`.
+        - presentationIdentifier: Indicates if the index has an identifier useful for presentation contexts.
+        - onNodeRead: An action to perform after reading a node. This allows clients to perform arbitrary actions on the node while it is being read from disk. This is useful for clients wanting to attach data to ``NavigatorTree/Node/attributes``.
      
      - Throws: A `NavigatorIndex.Error` describing the nature of the problem.
      
      - Note: The index powered by LMDB opens in `readOnly` mode to avoid performing a filesystem lock which fails without writing permissions. As this initializer opens a built index, write permission is not expected.
      */
-    public init(url: URL, bundleIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
-        self.url = url
-        
+    public static func readNavigatorIndex(
+        url: URL,
+        bundleIdentifier: String? = nil,
+        readNavigatorTree: Bool = true,
+        presentationIdentifier: String? = nil,
+        onNodeRead: ((NavigatorTree.Node) -> Void)? = nil
+    ) throws -> NavigatorIndex {
         // To avoid performing a filesystem lock which might fail without write permission, we pass `.readOnly` and `.noLock` to open the index.
         let environment = try LMDB.Environment(path: url.path, flags: [.readOnly, .noLock], maxDBs: 4, mapSize: 100 * 1024 * 1024) // mapSize = 100MB
-        self.environment = environment
-        self.database = try environment.openDatabase(named: "index", flags: [])
-        self.availability = try environment.openDatabase(named: "availability", flags: [])
+        let database = try environment.openDatabase(named: "index", flags: [])
+        let availability = try environment.openDatabase(named: "availability", flags: [])
         
         let information = try environment.openDatabase(named: "information", flags: [])
-        self.information = information
         
-        let data = try Data(contentsOf: url.appendingPathComponent("availability.index"))
+        let data = try Data(contentsOf: url.appendingPathComponent("availability.index", isDirectory: false))
         let plistDecoder = PropertyListDecoder()
         let availabilityIndex = try plistDecoder.decode(AvailabilityIndex.self, from: data)
-        self.availabilityIndex = availabilityIndex
+        let bundleIdentifier = bundleIdentifier ?? information.get(type: String.self, forKey: NavigatorIndex.bundleKey) ?? NavigatorIndex.UnknownBundleIdentifier
         
-        self.presentationIdentifier = presentationIdentifier
-        self.bundleIdentifier = bundleIdentifier ?? information.get(type: String.self, forKey: NavigatorIndex.bundleKey) ?? NavigatorIndex.UnknownBundleIdentifier
-        // Use `.fnv1` by default if no path hasher is set for compatibility reasons.
-        self.pathHasher = PathHasher(rawValue: information.get(type: String.self, forKey: NavigatorIndex.pathHasherKey) ?? "") ?? .fnv1
-        
-        if readNavigatorTree {
-            self.navigatorTree = try NavigatorTree.read(from: url.appendingPathComponent("navigator.index"), bundleIdentifier: self.bundleIdentifier, interfaceLanguages: availabilityIndex.interfaceLanguages, presentationIdentifier: presentationIdentifier)
-        } else {
-            self.navigatorTree = NavigatorTree()
-        }
-        
-        guard self.bundleIdentifier != NavigatorIndex.UnknownBundleIdentifier else {
+        guard bundleIdentifier != NavigatorIndex.UnknownBundleIdentifier else {
             throw Error.missingBundleIndentifier
         }
+        
+        // Use `.fnv1` by default if no path hasher is set for compatibility reasons.
+        let pathHasher = PathHasher(rawValue: information.get(type: String.self, forKey: NavigatorIndex.pathHasherKey) ?? "") ?? .fnv1
+        
+        let navigatorTree: NavigatorTree
+        if readNavigatorTree {
+            navigatorTree = try NavigatorTree.read(
+                from: url.appendingPathComponent("navigator.index", isDirectory: false),
+                bundleIdentifier: bundleIdentifier,
+                interfaceLanguages: availabilityIndex.interfaceLanguages,
+                presentationIdentifier: presentationIdentifier,
+                onNodeRead: onNodeRead)
+        } else {
+            navigatorTree = NavigatorTree()
+        }
+        
+        return NavigatorIndex(
+            url: url,
+            presentationIdentifier: presentationIdentifier,
+            bundleIdentifier: bundleIdentifier,
+            environment: environment,
+            database: database,
+            availability: availability,
+            information: information,
+            availabilityIndex: availabilityIndex,
+            pathHasher: pathHasher,
+            navigatorTree: navigatorTree
+        )
+    }
+    
+    fileprivate init(
+        url: URL,
+        presentationIdentifier: String?,
+        bundleIdentifier: String,
+        environment: LMDB.Environment,
+        database: LMDB.Database,
+        availability: LMDB.Database,
+        information: LMDB.Database,
+        availabilityIndex: AvailabilityIndex,
+        pathHasher: PathHasher,
+        navigatorTree: NavigatorTree
+    ) {
+        self.url = url
+        self.presentationIdentifier = presentationIdentifier
+        self.bundleIdentifier = bundleIdentifier
+        self.environment = environment
+        self.database = database
+        self.availability = availability
+        self.information = information
+        self.availabilityIndex = availabilityIndex
+        self.pathHasher = pathHasher
+        self.navigatorTree = navigatorTree
+    }
+    /**
+     Initialize an `NavigatorIndex` from a given path.
+     
+     - Parameters:
+        - url: The URL pointing to the path from which the index should be read.
+        - bundleIdentifier: The name of the bundle the index is referring to.
+        - readNavigatorTree: Indicates if the init needs to read the navigator tree from the disk, if false, then `readNavigatorTree` needs to be called later. Default: `true`.
+        - presentationIdentifier: Indicates if the index has an indentifier useful for presentation contexts.
+     
+     - Throws: A `NavigatorIndex.Error` describing the nature of the problem.
+     
+     - Note: The index powered by LMDB opens in `readOnly` mode to avoid performing a filesystem lock which fails without writing permissions. As this initializer opens a built index, write permission is not expected.
+     */
+    @available(*, deprecated, message: "Use NavigatorIndex.readNavigatorIndex instead")
+    public convenience init(url: URL, bundleIdentifier: String? = nil, readNavigatorTree: Bool = true, presentationIdentifier: String? = nil) throws {
+        let navigator = try NavigatorIndex.readNavigatorIndex(
+            url: url,
+            bundleIdentifier: bundleIdentifier,
+            readNavigatorTree: readNavigatorTree,
+            presentationIdentifier: presentationIdentifier
+        )
+        
+        self.init(
+            url: navigator.url,
+            presentationIdentifier: navigator.presentationIdentifier,
+            bundleIdentifier: navigator.bundleIdentifier,
+            environment: navigator.environment!,
+            database: navigator.database!,
+            availability: navigator.availability!,
+            information: navigator.information!,
+            availabilityIndex: navigator.availabilityIndex,
+            pathHasher: navigator.pathHasher,
+            navigatorTree: navigator.navigatorTree
+        )
     }
     
     /**
@@ -409,12 +495,14 @@ public class NavigatorIndex {
 }
 
 extension ResolvedTopicReference {
-    func navigatorIndexIdentifier(
+    func normalizedNavigatorIndexIdentifier(
         forLanguage languageIdentifier: InterfaceLanguage.ID
     ) -> NavigatorIndex.Identifier {
+        let normalizedPath = NodeURLGenerator.fileSafeReferencePath(self, lowercased: true)
+        
         return NavigatorIndex.Identifier(
-            bundleIdentifier: bundleIdentifier,
-            path: path,
+            bundleIdentifier: bundleIdentifier.lowercased(),
+            path: "/" + normalizedPath,
             fragment: fragment,
             languageIdentifier: languageIdentifier
         )
@@ -586,10 +674,6 @@ extension NavigatorIndex {
                 throw Error.navigatorIndexIsNil
             }
             
-            guard let title = (usePageTitle) ? renderNode.metadata.title : renderNode.navigatorTitle() else {
-                throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title and so can't have a usable entry in the index.")
-            }
-            
             // Process the language
             let interfaceLanguage = renderNode.identifier.sourceLanguage
             let interfaceLanguageID = interfaceLanguage.id.lowercased()
@@ -605,13 +689,20 @@ extension NavigatorIndex {
                 idToLanguage[interfaceLanguageID] = language
             }
 
-            let identifier = renderNode.identifier.navigatorIndexIdentifier(forLanguage: language.mask)
-            guard identifierToNode[identifier] == nil else {
+            let normalizedIdentifier = renderNode
+                .identifier
+                .normalizedNavigatorIndexIdentifier(forLanguage: language.mask)
+            
+            guard identifierToNode[normalizedIdentifier] == nil else {
                 return // skip as item exists already.
             }
             
+            guard let title = (usePageTitle) ? renderNode.metadata.title : renderNode.navigatorTitle() else {
+                throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title and so can't have a usable entry in the index.")
+            }
+            
             // Get the identifier path
-            let identifierPath = NodeURLGenerator().urlForReference(renderNode.identifier, lowercased: true).path
+            let identifierPath = normalizedIdentifier.path
             
             // Store the language inside the availability index.
             navigatorIndex.availabilityIndex.add(language: language)
@@ -688,7 +779,7 @@ extension NavigatorIndex {
                 let fragment = "\(title)#\(index)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
                 
                 let groupIdentifier = Identifier(
-                    bundleIdentifier: identifier.bundleIdentifier,
+                    bundleIdentifier: normalizedIdentifier.bundleIdentifier,
                     path: identifierPath,
                     fragment: fragment,
                     languageIdentifier: language.mask
@@ -737,20 +828,14 @@ extension NavigatorIndex {
                 }
             }
             
-            let normalizedIdentifier = renderNode
-                .identifier
-                .normalizedForNavigation
-                .navigatorIndexIdentifier(forLanguage: language.mask)
-            
             // Keep track of the node
             identifierToNode[normalizedIdentifier] = navigatorNode
             identifierToChildren[normalizedIdentifier] = children
             pendingUncuratedReferences.insert(normalizedIdentifier)
             
             // Track a multiple curated node
-            if multiCuratedUnvisited.contains(normalizedIdentifier) {
+            if multiCuratedUnvisited.remove(normalizedIdentifier) != nil {
                 multiCurated[normalizedIdentifier] = navigatorNode
-                multiCuratedUnvisited.remove(normalizedIdentifier)
             }
             
             // Bump the nodes counter.
@@ -825,25 +910,32 @@ extension NavigatorIndex {
             // Assign the children to the parents, starting with multi curated nodes
             var nodesMultiCurated = multiCurated.map { ($0, $1) }
             
-            for index in 0..<nodesMultiCurated.count {
-                let (nodeID, parent) = nodesMultiCurated[index]
-                let placeholders = identifierToChildren[nodeID]!
-                for reference in placeholders {
-                    if let child = identifierToNode[reference] {
-                        parent.add(child: child)
-                        pendingUncuratedReferences.remove(reference)
-                        if !multiCurated.keys.contains(reference) && reference.fragment == nil {
-                            // As the children of a multi-curated node is itself curated multiple times
-                            // we need to process it as well, ignoring items with fragments as those are sections.
-                            nodesMultiCurated.append((reference, child))
-                            multiCurated[reference] = child
+            while !nodesMultiCurated.isEmpty {
+                // The children of the multicurated nodes. These need to be tracked so we can multicurate them as well.
+                var nodesMultiCuratedChildren: [(Identifier, NavigatorTree.Node)] = []
+                
+                for index in 0..<nodesMultiCurated.count {
+                    let (nodeID, parent) = nodesMultiCurated[index]
+                    let placeholders = identifierToChildren[nodeID]!
+                    for reference in placeholders {
+                        if let child = identifierToNode[reference] {
+                            parent.add(child: child)
+                            pendingUncuratedReferences.remove(reference)
+                            if !multiCurated.keys.contains(reference) && reference.fragment == nil {
+                                // As the children of a multi-curated node is itself curated multiple times
+                                // we need to process it as well, ignoring items with fragments as those are sections.
+                                nodesMultiCuratedChildren.append((reference, child))
+                                multiCurated[reference] = child
+                            }
                         }
                     }
+                    // Once assigned, placeholders can be removed as we use copy later.
+                    identifierToChildren[nodeID]!.removeAll()
                 }
-                // Once assigned, placeholders can be removed as we use copy later.
-                identifierToChildren[nodeID]!.removeAll()
+                
+                nodesMultiCurated = nodesMultiCuratedChildren
             }
-            
+                
             for (nodeIdentifier, placeholders) in identifierToChildren {
                 for reference in placeholders {
                     let parent = identifierToNode[nodeIdentifier]!
@@ -1205,21 +1297,6 @@ fileprivate extension Error {
     }
 }
 
-
-extension ResolvedTopicReference {
-    
-    /// Returns a normalized instance useful to build a navigator index.
-    /// - Note: This logic relies on what `PresentationURLGenerator.presentationURLForReference(_: _:)` does in the last line of code.
-    ///         Changing the logic of this normalization method without fixing the other logic would generate a mismatch and break the navigator index process.
-    var normalizedForNavigation: ResolvedTopicReference {
-        let normalizedPath = NodeURLGenerator().urlForReference(self).path
-        return ResolvedTopicReference(bundleIdentifier: bundleIdentifier.lowercased(),
-                                      path: normalizedPath.lowercased(),
-                                      fragment: fragment,
-                                      sourceLanguages: sourceLanguages)
-    }
-    
-}
 
 extension LMDB.Database {
     enum NodeError: Error {

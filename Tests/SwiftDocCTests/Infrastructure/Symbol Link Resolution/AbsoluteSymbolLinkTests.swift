@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -223,12 +223,11 @@ class AbsoluteSymbolLinkTests: XCTestCase {
     }
     
     func testCompileSymbolGraphAndValidateLinks() throws {
-        let (url, _, context) = try testBundleAndContext(
+        let (_, _, context) = try testBundleAndContext(
             copying: "TestBundle",
             excludingPaths: [],
             codeListings: [:]
         )
-        defer { try? FileManager.default.removeItem(at: url) }
         let expectedDescriptions = [
             // doc://org.swift.docc.example/documentation/FillIntroduced:
             """
@@ -390,16 +389,6 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 basePathComponents: []
             }
             """,
-            // doc://org.swift.docc.example/documentation/SideKit/NonExistent/UncuratedClass:
-            """
-            {
-                bundleID: 'org.swift.docc.example',
-                module: 'SideKit',
-                topLevelSymbol: (name: 'NonExistent', suffix: (none)),
-                representsModule: false,
-                basePathComponents: [(name: 'UncuratedClass', suffix: (none))]
-            }
-            """,
             // doc://org.swift.docc.example/documentation/SideKit/SideClass:
             """
             {
@@ -510,6 +499,16 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 basePathComponents: [(name: 'func()', suffix: (idHash: '6ijsi'))]
             }
             """,
+            // doc://org.swift.docc.example/documentation/SideKit/UncuratedClass:
+            """
+            {
+                bundleID: 'org.swift.docc.example',
+                module: 'SideKit',
+                topLevelSymbol: (name: 'UncuratedClass', suffix: (none)),
+                representsModule: false,
+                basePathComponents: []
+            }
+            """,
             // doc://org.swift.docc.example/documentation/SideKit/UncuratedClass/angle:
             """
             {
@@ -566,12 +565,11 @@ class AbsoluteSymbolLinkTests: XCTestCase {
     }
     
     func testCompileOverloadedSymbolGraphAndValidateLinks() throws {
-        let (url, _, context) = try testBundleAndContext(
+        let (_, _, context) = try testBundleAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
         )
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let expectedDescriptions = [
             // doc://com.shapes.ShapeKit/documentation/ShapeKit:
@@ -890,12 +888,11 @@ class AbsoluteSymbolLinkTests: XCTestCase {
     }
     
     func testLinkComponentStringConversion() throws {
-        let (url, _, context) = try testBundleAndContext(
+        let (_, _, context) = try testBundleAndContext(
             copying: "OverloadedSymbols",
             excludingPaths: [],
             codeListings: [:]
         )
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let bundlePathComponents = context.symbolIndex.values
             .flatMap(\.reference.pathComponents)

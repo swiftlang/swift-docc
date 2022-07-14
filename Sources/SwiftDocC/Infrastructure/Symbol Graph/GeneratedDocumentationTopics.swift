@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -40,25 +40,55 @@ enum GeneratedDocumentationTopics {
         ///   - reference: The parent type reference.
         ///   - originDisplayName: The origin display name as provided by the symbol graph.
         ///   - extendedModuleName: Extended module name.
-        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, originDisplayName: String, extendedModuleName: String) throws {
-            // Detect the path components of the providing the default implementation.
-            let typeComponents = originDisplayName.components(separatedBy: ".")
-            
-            // Verify that the fully qualified name contains at least a type name and default implementation name.
-            guard typeComponents.count >= 2 else { return }
-            
+        mutating func add(_ childReference: ResolvedTopicReference, to reference: ResolvedTopicReference, childSymbol: SymbolGraph.Symbol, originDisplayName: String, originSymbol: SymbolGraph.Symbol?, extendedModuleName: String) throws {
+            let fromType: String
+            let typeSimpleName: String
+            if let originSymbol = originSymbol, originSymbol.pathComponents.count > 1 {
+                // If we have a resolved symbol for the source origin, use its path components to
+                // find the name of the parent by dropping the last path component.
+                let parentSymbolPathComponents = originSymbol.pathComponents.dropLast()
+                fromType = parentSymbolPathComponents.joined(separator: ".")
+                typeSimpleName = parentSymbolPathComponents.last!
+            } else if let childSymbolName = childSymbol.pathComponents.last,
+                originDisplayName.count > (childSymbolName.count + 1)
+            {
+                // In the case where we don't have a resolved symbol for the source origin,
+                // this allows us to still accurately handle cases like this:
+                //
+                //     "displayName": "SuperFancyProtocol..<..(_:_:)"
+                //
+                // Where there's no way for us to determine which of the periods is the one
+                // splitting the name of the parent type and the symbol name. Using the count
+                // of the symbol name (+1 for the period splitting the names)
+                // from the source is a reliable way to support this.
+                
+                let parentSymbolName = originDisplayName.dropLast(childSymbolName.count + 1)
+                fromType = String(parentSymbolName)
+                typeSimpleName = String(parentSymbolName.split(separator: ".").last ?? parentSymbolName)
+            } else {
+                // This should never happen but is a last safeguard for the case where
+                // the child symbol is unexpectedly short. In this case, we can attempt to just parse
+                // the parent symbol name out of the origin display name.
+
+                // Detect the path components of the providing the default implementation.
+                let typeComponents = originDisplayName.split(separator: ".")
+
+                // Verify that the fully qualified name contains at least a type name and default implementation name.
+                guard typeComponents.count >= 2 else { return }
+
+                // Get the fully qualified type.
+                fromType = typeComponents.dropLast().joined(separator: ".")
+                // The name of the type is second to last.
+                typeSimpleName = String(typeComponents[typeComponents.count-2])
+            }
+
             // Create a type with inherited symbols, if needed.
             if !implementingTypes.keys.contains(reference) {
                 implementingTypes[reference] = Collections()
             }
             
-            // Get the fully qualified type.
-            let fromType = typeComponents.dropLast().joined(separator: ".")
-            
             // Create a new default implementations provider, if needed.
             if !implementingTypes[reference]!.inheritedFromTypeName.keys.contains(fromType) {
-                // The name of the type is second to last.
-                let typeSimpleName = typeComponents[typeComponents.count-2]
                 implementingTypes[reference]!.inheritedFromTypeName[fromType] = Collections.APICollection(title: "\(typeSimpleName) Implementations", parentReference: reference)
             }
             
@@ -194,12 +224,17 @@ enum GeneratedDocumentationTopics {
     ///   ╰ View Implementations
     ///     ╰ accessibilityValue()
     /// ```
+    ///
+    /// > Warning: This method tracks internal state via an ``InheritedSymbols`` inheritance index.
+    /// It must be called **once** per symbol by passing in _all_ of the relationships that apply
+    /// to a symbol.
+    ///
     /// - Parameters:
     ///   - relationships: A set of relationships to inspect.
     ///   - symbolsURLHierarchy: A symbol graph hierarchy as created during symbol registration.
     ///   - context: A documentation context to update.
     ///   - bundle: The current documentation bundle.
-    static func createInheritedSymbolsAPICollections(relationships: Set<SymbolGraph.Relationship>, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, context: DocumentationContext, bundle: DocumentationBundle) throws {
+    static func createInheritedSymbolsAPICollections(relationships: [SymbolGraph.Relationship], context: DocumentationContext, bundle: DocumentationBundle) throws {
         var inheritanceIndex = InheritedSymbols()
         
         // Walk the symbol graph relationships and look for parent <-> child links that stem in a different module.
@@ -213,14 +248,18 @@ enum GeneratedDocumentationTopics {
                let parent = context.symbolIndex[relationship.target],
                // Resolve the child
                let child = context.symbolIndex[relationship.source],
+               // Get the child symbol
+               let childSymbol = child.symbol,
                // Get the swift extension data
-               let extends = child.symbol?.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
+               let extends = childSymbol.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension {
+                let originSymbol = context.symbolIndex[origin.identifier]?.symbol
+                
                 // Add the inherited symbol to the index.
-                try inheritanceIndex.add(child.reference, to: parent.reference, originDisplayName: origin.displayName, extendedModuleName: extends.extendedModule)
+                try inheritanceIndex.add(child.reference, to: parent.reference, childSymbol: childSymbol, originDisplayName: origin.displayName, originSymbol: originSymbol, extendedModuleName: extends.extendedModule)
             }
         }
         
-        // Create the API Collection nodes and the neccessary topic graph curation.
+        // Create the API Collection nodes and the necessary topic graph curation.
         for (typeReference, collections) in inheritanceIndex.implementingTypes where !collections.inheritedFromTypeName.isEmpty {
             for (_, collection) in collections.inheritedFromTypeName where !collection.identifiers.isEmpty {
                 // Create a collection for the given provider type's inherited symbols

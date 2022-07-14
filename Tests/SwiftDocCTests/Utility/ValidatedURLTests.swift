@@ -24,7 +24,7 @@ class ValidatedURLTests: XCTestCase {
         
         // Test ValidatedURL.init(String)
         validURLs.forEach { url in
-            let validated = ValidatedURL(parsing: url.absoluteString)
+            let validated = ValidatedURL(parsingExact: url.absoluteString)
             XCTAssertEqual(url.absoluteString, validated?.absoluteString)
         }
 
@@ -42,7 +42,7 @@ class ValidatedURLTests: XCTestCase {
         
         // Test ValidatedURL.init(String)
         invalidURLs.forEach { url in
-            XCTAssertNil(ValidatedURL(parsing: url.absoluteString))
+            XCTAssertNil(ValidatedURL(parsingExact: url.absoluteString))
         }
 
         // Test ValidatedURL.init(URL)
@@ -86,7 +86,7 @@ class ValidatedURLTests: XCTestCase {
         // Test successful fragment parsing
         fragmentDestinations
             .forEach { url in
-                XCTAssertNotNil(ValidatedURL(parsing: url)?.components.fragment)
+                XCTAssertNotNil(ValidatedURL(parsingExact: url)?.components.fragment)
             }
     }
 }
