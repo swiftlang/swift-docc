@@ -434,7 +434,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 XCTAssertEqual(
                     returnsSection.content,
                     [
-                        .heading(level: 2, text: "Return Value", anchor: "return-value"),
+                        .heading(.init(level: 2, text: "Return Value", anchor: "return-value")),
                         .paragraph(.init(inlineContent: [.text("Swift Returns Section")]))
                     ]
                 )
@@ -444,7 +444,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 XCTAssertEqual(
                     returnsSection.content,
                     [
-                        .heading(level: 2, text: "Return Value", anchor: "return-value"),
+                        .heading(.init(level: 2, text: "Return Value", anchor: "return-value")),
                         .paragraph(.init(inlineContent: [.text("Objective-C Returns Section")]))
                     ]
                 )
@@ -523,7 +523,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 XCTAssertEqual(
                     discussionSection.content,
                     [
-                        .heading(level: 2, text: "Overview", anchor: "overview"),
+                        .heading(.init(level: 2, text: "Overview", anchor: "overview")),
                         .paragraph(.init(inlineContent: [.text("Swift Discussion")]))
                     ]
                 )
@@ -534,7 +534,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 XCTAssertEqual(
                     discussionSection.content,
                     [
-                        .heading(level: 2, text: "Overview", anchor: "overview"),
+                        .heading(.init(level: 2, text: "Overview", anchor: "overview")),
                         .paragraph(.init(inlineContent: [.text("Objective-C Discussion")]))
                     ]
                 )

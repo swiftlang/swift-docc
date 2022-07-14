@@ -24,7 +24,7 @@ public struct ContentRenderSection: RenderSection {
         self.kind = kind
         self.content = content
         if let heading = heading {
-            self.content.insert(RenderBlockContent.heading(level: 2, text: heading, anchor: urlReadableFragment(heading.lowercased())), at: 0)
+            self.content.insert(RenderBlockContent.heading(.init(level: 2, text: heading, anchor: urlReadableFragment(heading.lowercased()))), at: 0)
         }
     }
     

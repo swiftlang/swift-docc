@@ -11,8 +11,8 @@
 extension RenderBlockContent: TextIndexing {
     public var headings: [String] {
         switch self {
-        case .heading(_, let text, _):
-            return [text]
+        case .heading(let h):
+            return [h.text]
         default:
             return []
         }
@@ -36,8 +36,8 @@ extension RenderBlockContent: TextIndexing {
             }.joined(separator: " ")
         case let .codeListing(l):
             return l.metadata?.rawIndexableTextContent(references: references) ?? ""
-        case let .heading(_, text, _):
-            return text
+        case let .heading(h):
+            return h.text
         case .endpointExample:
             return ""
         case .dictionaryExample(summary: let summary, example: _):

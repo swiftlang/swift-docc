@@ -2265,8 +2265,8 @@ Document @1:1-11:19
                 let contentSection = section as? ContentRenderSection,
                 !contentSection.content.isEmpty else { return false }
             switch contentSection.content[0] {
-            case .heading(let level, let text, let anchor):
-                return level == 2 && text == "Return Value" && anchor == "return-value"
+            case .heading(let h):
+                return h.level == 2 && h.text == "Return Value" && h.anchor == "return-value"
             default: return false
             }
         })
@@ -2619,7 +2619,7 @@ Document @1:1-11:19
             // Verify the discussion was inherited.
             let discussion = try XCTUnwrap(renderNode.primaryContentSections[1] as? ContentRenderSection)
             XCTAssertEqual(discussion.content, [
-                RenderBlockContent.heading(level: 2, text: "Discussion", anchor: "discussion"),
+                RenderBlockContent.heading(.init(level: 2, text: "Discussion", anchor: "discussion")),
                 .paragraph(.init(inlineContent: [
                     .text("Doc extension discussion. Missing: "),
                     .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),
@@ -2794,7 +2794,7 @@ Document @1:1-11:19
             // Verify the discussion was inherited.
             let discussion = try XCTUnwrap(renderNode.primaryContentSections[1] as? ContentRenderSection)
             XCTAssertEqual(discussion.content, [
-                RenderBlockContent.heading(level: 2, text: "Discussion", anchor: "discussion"),
+                RenderBlockContent.heading(.init(level: 2, text: "Discussion", anchor: "discussion")),
                 .paragraph(.init(inlineContent: [
                     .text("Inherited discussion. Missing: "),
                     .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),

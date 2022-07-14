@@ -43,7 +43,7 @@ public enum RenderBlockContent: Equatable {
     /// A block of sample code.
     case codeListing(CodeListing)
     /// A heading with the given level.
-    case heading(level: Int, text: String, anchor: String?)
+    case heading(Heading)
     /// A list that contains ordered items.
     case orderedList(items: [ListItem])
     /// A list that contains unordered items.
@@ -100,6 +100,28 @@ public enum RenderBlockContent: Equatable {
             self.syntax = syntax
             self.code = code
             self.metadata = metadata
+        }
+    }
+
+    /// A heading with the given level.
+    public struct Heading: Equatable {
+        /// The level of the heading.
+        ///
+        /// This correlates with heading levels in HTML, so a level of 1 is given the most
+        /// prominence, and a level of 6 the least prominence.
+        public var level: Int
+
+        /// The text in the heading.
+        public var text: String
+
+        /// An optional anchor slug that can be used to link to the heading.
+        public var anchor: String?
+
+        /// Creates a new heading with the given data.
+        public init(level: Int, text: String, anchor: String?) {
+            self.level = level
+            self.text = text
+            self.anchor = anchor
         }
     }
     
@@ -297,7 +319,7 @@ extension RenderBlockContent: Codable {
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
             ))
         case .heading:
-            self = try .heading(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor))
+            self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
         case .orderedList:
             self = try .orderedList(items: container.decode([ListItem].self, forKey: .items))
         case .unorderedList:
@@ -358,10 +380,10 @@ extension RenderBlockContent: Codable {
             try container.encode(l.syntax, forKey: .syntax)
             try container.encode(l.code, forKey: .code)
             try container.encodeIfPresent(l.metadata, forKey: .metadata)
-        case .heading(let level, let text, let anchor):
-            try container.encode(level, forKey: .level)
-            try container.encode(text, forKey: .text)
-            try container.encode(anchor, forKey: .anchor)
+        case .heading(let h):
+            try container.encode(h.level, forKey: .level)
+            try container.encode(h.text, forKey: .text)
+            try container.encode(h.anchor, forKey: .anchor)
         case .orderedList(let items):
             try container.encode(items, forKey: .items)
         case .unorderedList(let items):

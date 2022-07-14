@@ -143,7 +143,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             myFunctionDiscussion.content,
             [
-                RenderBlockContent.heading(level: 2, text: "Discussion", anchor: "discussion"),
+                RenderBlockContent.heading(.init(level: 2, text: "Discussion", anchor: "discussion")),
                 RenderBlockContent.paragraph(.init(inlineContent: [.text("This is the overview for myFunction.")])),
             ]
         )
@@ -165,7 +165,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             myClassDiscussion.content,
             [
-                RenderBlockContent.heading(level: 2, text: "Overview", anchor: "overview"),
+                RenderBlockContent.heading(.init(level: 2, text: "Overview", anchor: "overview")),
                 RenderBlockContent.paragraph(.init(inlineContent: [.text("This is the overview for MyClass.")])),
             ]
         )
@@ -177,7 +177,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let section = ContentRenderSection(kind: .content, content: [], heading: "declaration")
             XCTAssertEqual("declaration", section.content.mapFirst(where: { element -> String? in
                 switch element {
-                case .heading(_, _, let anchor): return anchor
+                case .heading(let h): return h.anchor
                 default: return nil
                 }
             }))
@@ -188,7 +188,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let section = ContentRenderSection(kind: .content, content: [], heading: "DeclaratioN")
             XCTAssertEqual("declaration", section.content.mapFirst(where: { element -> String? in
                 switch element {
-                case .heading(_, _, let anchor): return anchor
+                case .heading(let h): return h.anchor
                 default: return nil
                 }
             }))
@@ -199,7 +199,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let section = ContentRenderSection(kind: .content, content: [], heading: "My Declaration")
             XCTAssertEqual("my-declaration", section.content.mapFirst(where: { element -> String? in
                 switch element {
-                case .heading(_, _, let anchor): return anchor
+                case .heading(let h): return h.anchor
                 default: return nil
                 }
             }))
