@@ -45,7 +45,7 @@ public enum RenderBlockContent: Equatable {
     /// A heading with the given level.
     case heading(Heading)
     /// A list that contains ordered items.
-    case orderedList(items: [ListItem])
+    case orderedList(OrderedList)
     /// A list that contains unordered items.
     case unorderedList(items: [ListItem])
     
@@ -122,6 +122,17 @@ public enum RenderBlockContent: Equatable {
             self.level = level
             self.text = text
             self.anchor = anchor
+        }
+    }
+
+    /// A list that contains ordered items.
+    public struct OrderedList: Equatable {
+        /// The items in this list.
+        public var items: [ListItem]
+
+        /// Creates a new ordered list with the given items.
+        public init(items: [ListItem]) {
+            self.items = items
         }
     }
     
@@ -321,7 +332,7 @@ extension RenderBlockContent: Codable {
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
         case .orderedList:
-            self = try .orderedList(items: container.decode([ListItem].self, forKey: .items))
+            self = try .orderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
         case .unorderedList:
             self = try .unorderedList(items: container.decode([ListItem].self, forKey: .items))
         case .step:
@@ -384,8 +395,8 @@ extension RenderBlockContent: Codable {
             try container.encode(h.level, forKey: .level)
             try container.encode(h.text, forKey: .text)
             try container.encode(h.anchor, forKey: .anchor)
-        case .orderedList(let items):
-            try container.encode(items, forKey: .items)
+        case .orderedList(let l):
+            try container.encode(l.items, forKey: .items)
         case .unorderedList(let items):
             try container.encode(items, forKey: .items)
         case .step(let content, let caption, let media, let code, let runtimePreview):
