@@ -47,7 +47,7 @@ public enum RenderBlockContent: Equatable {
     /// A list that contains ordered items.
     case orderedList(OrderedList)
     /// A list that contains unordered items.
-    case unorderedList(items: [ListItem])
+    case unorderedList(UnorderedList)
     
     /// A step in a multi-step tutorial.
     case step(content: [RenderBlockContent], caption: [RenderBlockContent], media: RenderReferenceIdentifier?, code: RenderReferenceIdentifier?, runtimePreview: RenderReferenceIdentifier?)
@@ -131,6 +131,17 @@ public enum RenderBlockContent: Equatable {
         public var items: [ListItem]
 
         /// Creates a new ordered list with the given items.
+        public init(items: [ListItem]) {
+            self.items = items
+        }
+    }
+
+    /// A list that contains unordered items.
+    public struct UnorderedList: Equatable {
+        /// The items in this list.
+        public var items: [ListItem]
+
+        /// Creates a new unordered list with the given items.
         public init(items: [ListItem]) {
             self.items = items
         }
@@ -334,7 +345,7 @@ extension RenderBlockContent: Codable {
         case .orderedList:
             self = try .orderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
         case .unorderedList:
-            self = try .unorderedList(items: container.decode([ListItem].self, forKey: .items))
+            self = try .unorderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
         case .step:
             self = try .step(content: container.decode([RenderBlockContent].self, forKey: .content), caption: container.decodeIfPresent([RenderBlockContent].self, forKey: .caption) ?? [], media: container.decode(RenderReferenceIdentifier?.self, forKey: .media), code: container.decode(RenderReferenceIdentifier?.self, forKey: .code), runtimePreview: container.decode(RenderReferenceIdentifier?.self, forKey: .runtimePreview))
         case .endpointExample:
@@ -397,8 +408,8 @@ extension RenderBlockContent: Codable {
             try container.encode(h.anchor, forKey: .anchor)
         case .orderedList(let l):
             try container.encode(l.items, forKey: .items)
-        case .unorderedList(let items):
-            try container.encode(items, forKey: .items)
+        case .unorderedList(let l):
+            try container.encode(l.items, forKey: .items)
         case .step(let content, let caption, let media, let code, let runtimePreview):
             try container.encode(content, forKey: .content)
             try container.encode(caption, forKey: .caption)

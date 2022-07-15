@@ -660,19 +660,21 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(resources.tiles.count, 5)
         
         XCTAssertEqual(tiles[0].title, "Documentation")
-        guard case .unorderedList(let tile0Items) = tiles[0].content[1] else {
+        guard case .unorderedList(let tile0List) = tiles[0].content[1] else {
             XCTFail()
             return
         }
+        let tile0Items = tile0List.items
         XCTAssertEqual(tile0Items.count, 2)
         XCTAssertEqual(tile0Items[0], makeListItem(reference: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial"))
         XCTAssertEqual(tile0Items[1], makeListItem(reference: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2"))
         
         XCTAssertEqual(tiles[1].title, "Sample Code")
-        guard case .unorderedList(let tile1Items) = tiles[1].content[1] else {
+        guard case .unorderedList(let tile1List) = tiles[1].content[1] else {
             XCTFail()
             return
         }
+        let tile1Items = tile1List.items
         XCTAssertEqual(tile1Items.count, 2)
         XCTAssertEqual(tile1Items[0], makeListItem(reference: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial"))
         XCTAssertEqual(tile1Items[1], makeListItem(reference: "doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial2"))
@@ -1690,14 +1692,14 @@ Document @1:1-11:19
         let expectedContent: [RenderBlockContent] = [
             .paragraph(.init(inlineContent: [
                 RenderInlineContent.text("This is some text.")])),
-            .unorderedList(items: [
+            .unorderedList(.init(items: [
                             RenderBlockContent.ListItem(content: [
                                 .paragraph(.init(inlineContent: [
-                                    .text("The next directives should get dropped.")]))])]),
-            .unorderedList(items: [
+                                    .text("The next directives should get dropped.")]))])])),
+            .unorderedList(.init(items: [
                             RenderBlockContent.ListItem(content: [
                                 .paragraph(.init(inlineContent: [
-                                    .text("@MyOtherDirective")]))])]),
+                                    .text("@MyOtherDirective")]))])])),
             .paragraph(.init(inlineContent: [.text("This is more text.")])),
             ]
         XCTAssertEqual(expectedContent, renderContent)

@@ -143,14 +143,14 @@ class IndexingTests: XCTestCase {
     // MARK: - Blocks
     
     func testRenderBlockContentUnorderedList() {
-        let list = RenderBlockContent.unorderedList(items: [
+        let list = RenderBlockContent.unorderedList(.init(items: [
             .init(content: [
             .paragraph(.init(inlineContent: [.text("Hello, ")])),
                 ]),
             .init(content: [
                 .paragraph(.init(inlineContent: [.text("world!")])),
                 ]),
-            ])
+            ]))
         XCTAssertEqual([], list.headings)
         XCTAssertEqual("Hello,  world!", list.rawIndexableTextContent(references: [:]))
     }

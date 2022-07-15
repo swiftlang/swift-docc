@@ -134,8 +134,8 @@ class TermListTests: XCTestCase {
         let secondTermList = result[3]
         
         switch firstUnorderedList {
-        case .unorderedList(let items):
-            XCTAssertEqual(items.count, 1)
+        case .unorderedList(let l):
+            XCTAssertEqual(l.items.count, 1)
         default: XCTFail("Unexpected element")
         }
         
@@ -146,8 +146,8 @@ class TermListTests: XCTestCase {
         }
         
         switch secondUnorderedList {
-        case .unorderedList(let items):
-            XCTAssertEqual(items.count, 2)
+        case .unorderedList(let l):
+            XCTAssertEqual(l.items.count, 2)
         default: XCTFail("Unexpected element")
         }
         

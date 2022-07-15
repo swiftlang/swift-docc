@@ -238,10 +238,10 @@ class ReferenceResolverTests: XCTestCase {
         }!
         
         let items = discussion.content.mapFirst(where: { block -> [RenderBlockContent.ListItem]? in
-            guard case RenderBlockContent.unorderedList(items: let items) = block else {
+            guard case RenderBlockContent.unorderedList(let l) = block else {
                 return nil
             }
-            return items
+            return l.items
         })!
         
         let inlineItems = items.compactMap { listItem in

@@ -73,7 +73,7 @@ extension Collection where Element == RenderBlockContent.ListItem {
     ///   list items.
     private func listWithItems(_ items: [ListableItem]) -> RenderContent {
         if let unorderedListItems = items as? [RenderBlockContent.ListItem] {
-            return RenderBlockContent.unorderedList(items: unorderedListItems)
+            return RenderBlockContent.unorderedList(.init(items: unorderedListItems))
         } else if let termListItems = items as? [RenderBlockContent.TermListItem] {
             return RenderBlockContent.termList(items: termListItems)
         } else {

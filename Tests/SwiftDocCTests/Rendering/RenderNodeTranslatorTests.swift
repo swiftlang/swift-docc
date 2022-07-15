@@ -115,11 +115,11 @@ class RenderNodeTranslatorTests: XCTestCase {
         }))
         
         XCTAssert(discussion.content.contains(where: { block in
-            if case .unorderedList(items: let items) = block,
-                items.count == 3,
-                items[0].content.first == .paragraph(.init(inlineContent: [.text("One unordered")])),
-                items[1].content.first == .paragraph(.init(inlineContent: [.text("Two unordered")])),
-                items[2].content.first == .paragraph(.init(inlineContent: [.text("Three unordered")]))
+            if case .unorderedList(let l) = block,
+                l.items.count == 3,
+                l.items[0].content.first == .paragraph(.init(inlineContent: [.text("One unordered")])),
+                l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Two unordered")])),
+                l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Three unordered")]))
             {
                 return true
             } else {
