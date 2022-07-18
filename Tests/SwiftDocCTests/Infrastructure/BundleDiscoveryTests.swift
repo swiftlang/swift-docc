@@ -294,6 +294,9 @@ class BundleDiscoveryTests: XCTestCase {
         // Ensure that `customFooter` is `nil` if no top level `footer.html`
         // file was found in the bundle
         XCTAssertNil(bundle.customFooter)
+        // Ensure that `themeSettings` is `nil` if no `theme-settings.json`
+        // file was found in the bundle
+        XCTAssertNil(bundle.themeSettings)
     }
 
     func testCustomTemplatesFound() throws {
@@ -324,5 +327,37 @@ class BundleDiscoveryTests: XCTestCase {
         // Ensure that `customFooter` points to the location of a top level
         // `footer.html` file if one is found in the bundle
         XCTAssertEqual(bundle.customFooter?.lastPathComponent, "footer.html")
+    }
+
+    func testThemeSettingsFound() throws {
+        let workspace = Folder(name: "TestBundle.docc", content:
+            allFiles.map { CopyOfFile(original: $0) } + [
+                  TextFile(name: "theme-settings.json", utf8Content: """
+                  {
+                    "meta": {},
+                    "theme": {
+                      "colors": {
+                        "text": "#ff0000"
+                      }
+                    },
+                    "features": {}
+                  }
+                  """),
+            ]
+        )
+
+        let tempURL = try createTemporaryDirectory()
+
+        let workspaceURL = try workspace.write(inside: tempURL)
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: workspaceURL)
+
+        let bundles = try dataProvider.bundles(options: BundleDiscoveryOptions())
+
+        XCTAssertEqual(bundles.count, 1)
+        guard let bundle = bundles.first else { return }
+
+        // Ensure that `themeSettings` points to the location of a
+        // `theme-settings.json` file if one is found in the bundle
+        XCTAssertEqual(bundle.themeSettings?.lastPathComponent, "theme-settings.json")
     }
 }
