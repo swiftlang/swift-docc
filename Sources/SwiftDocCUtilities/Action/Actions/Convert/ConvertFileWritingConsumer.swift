@@ -124,6 +124,14 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         if let customFooter = bundle.customFooter, enableCustomTemplates {
             try injectCustomTemplate(customFooter, identifiedBy: .footer)
         }
+
+        // Copy the `theme-settings.json` file into the output directory if provided.
+        if let themeSettings = bundle.themeSettings {
+            try fileManager.copyItem(
+              at: themeSettings,
+              to: targetFolder.appendingPathComponent(themeSettings.lastPathComponent, isDirectory: false)
+            )
+        }
     }
     
     func consume(linkableElementSummaries summaries: [LinkDestinationSummary]) throws {
