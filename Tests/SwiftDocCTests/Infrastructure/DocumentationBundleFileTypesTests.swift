@@ -41,4 +41,18 @@ class DocumentationBundleFileTypesTests: XCTestCase {
         XCTAssertTrue(DocumentationBundleFileTypes.isCustomFooter(
             URL(fileURLWithPath: "DocC.docc/footer.html")))
     }
+
+    func testIsThemeSettingsFile() {
+        XCTAssertTrue(DocumentationBundleFileTypes.isThemeSettingsFile(
+            URL(fileURLWithPath: "theme-settings.json")))
+        XCTAssertTrue(DocumentationBundleFileTypes.isThemeSettingsFile(
+            URL(fileURLWithPath: "/a/b/theme-settings.json")))
+
+        XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
+            URL(fileURLWithPath: "theme-settings.txt")))
+        XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
+            URL(fileURLWithPath: "not-theme-settings.json")))
+        XCTAssertFalse(DocumentationBundleFileTypes.isThemeSettingsFile(
+            URL(fileURLWithPath: "/a/theme-settings.json/bar")))
+    }
 }
