@@ -125,12 +125,15 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
             try injectCustomTemplate(customFooter, identifiedBy: .footer)
         }
 
-        // Copy the `theme-settings.json` file into the output directory if provided.
+        // Copy the `theme-settings.json` file into the output directory if one
+        // is provided. It will override any default `theme-settings.json` file
+        // that the renderer template may already contain.
         if let themeSettings = bundle.themeSettings {
-            try fileManager.copyItem(
-              at: themeSettings,
-              to: targetFolder.appendingPathComponent(themeSettings.lastPathComponent, isDirectory: false)
-            )
+            let targetFile = targetFolder.appendingPathComponent(themeSettings.lastPathComponent, isDirectory: false)
+            if fileManager.fileExists(atPath: targetFile.path) {
+                try fileManager.removeItem(at: targetFile)
+            }
+            try fileManager.copyItem(at: themeSettings, to: targetFile)
         }
     }
     
