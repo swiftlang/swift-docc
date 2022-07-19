@@ -138,8 +138,9 @@ struct RenderContentCompiler: MarkupVisitor {
             return cached
         } 
 
-        let unresolved = UnresolvedTopicReference(topicURL: .init(symbolPath: destination))
-        if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier, fromSymbolLink: true) {
+        // The symbol link may be written with a scheme and bundle identifier.
+        let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)
+        if case let .success(resolved) = context.resolve(.unresolved(.init(topicURL: url)), in: identifier, fromSymbolLink: true) {
             return resolved
         }
 

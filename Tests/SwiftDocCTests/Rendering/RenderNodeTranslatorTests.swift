@@ -954,7 +954,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
         let codeBlockIndex = discussion.content.index(after: lastParagraphIndex)
 
-        guard case let .codeListing(syntax, code, _) = discussion.content[codeBlockIndex] else {
+        guard discussion.content.indices.contains(codeBlockIndex), case let .codeListing(syntax, code, _) = discussion.content[codeBlockIndex] else {
             XCTFail("Missing snippet code block")
             return
         }

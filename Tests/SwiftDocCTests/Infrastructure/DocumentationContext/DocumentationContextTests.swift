@@ -1637,8 +1637,13 @@ let expected = """
         
         // Verify the non-overload collisions were resolved
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-swift.var-9053a", sourceLanguage: .swift)))
-        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var-959hd", sourceLanguage: .swift)))
+        if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-9053a", sourceLanguage: .swift)))
+            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-959hd", sourceLanguage: .swift)))
+        } else {
+            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-swift.var-9053a", sourceLanguage: .swift)))
+            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var-959hd", sourceLanguage: .swift)))
+        }
     }
 
     func testUnknownSymbolKind() throws {
@@ -2562,6 +2567,13 @@ let expected = """
     /// matched with their documentation extension files. Besides verifying the correct content
     /// it verifies also that the curation in these doc extensions is reflected in the topic graph.
     func testMatchesCorrectlyDocExtensionToChildOfCollisionTopic() throws {
+        let fifthTestMemberPath: String
+        if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+            fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember"
+        } else {
+            fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property"
+        }
+        
         let (_, bundle, context) = try testBundleAndContext(copying: "OverloadedSymbols") { url in
             // Add an article to be curated from collided nodes' doc extensions.
             try """
@@ -2586,6 +2598,15 @@ let expected = """
             ### Basics
             - <doc:NewArticle>
             """.write(to: url.appendingPathComponent("fifthTestMember.md"), atomically: true, encoding: .utf8)
+            
+            // Add doc extension file for a child of a collision symbol
+            try """
+            # ``\(fifthTestMemberPath)``
+            fifthTestMember abstract.
+            ## Topics
+            ### Basics
+            - <doc:NewArticle>
+            """.write(to: url.appendingPathComponent("fifthTestMember.md"), atomically: true, encoding: .utf8)
         }
         
         let articleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ShapeKit/NewArticle", sourceLanguage: .swift)
@@ -2604,7 +2625,8 @@ let expected = """
         XCTAssertTrue(tgNode1.contains(articleReference))
         
         // Fetch the "fifthTestMember" node
-        let reference2 = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property", sourceLanguage: .swift)
+        let reference2 = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/\(fifthTestMemberPath)", sourceLanguage: .swift)
+       
         let node2 = try context.entity(with: reference2)
         let symbol2 = try XCTUnwrap(node2.semantic as? Symbol)
         
@@ -2759,23 +2781,22 @@ let expected = """
     
     // Verifies if the context resolves linkable nodes.
     func testLinkableNodes() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            try "# Article1".write(to: url.appendingPathComponent("resolvable-article.md"), atomically: true, encoding: .utf8)
+            let myKitURL = url.appendingPathComponent("documentation").appendingPathComponent("mykit.md")
+            try String(contentsOf: myKitURL)
+                .replacingOccurrences(of: " - <doc:article>", with: " - <doc:resolvable-article>")
+                .write(to: myKitURL, atomically: true, encoding: .utf8)
+        }
         let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
-        let moduleTopicGraphNode = try XCTUnwrap(context.topicGraph.nodeWithReference(moduleReference))
 
-        // Add a new resolvable node
-        let resolvableReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/resolvable-article", sourceLanguage: .swift)
-        let resolvableNode = try DocumentationNode(reference: resolvableReference, article: Article(markup: Document(parsing: "# Article1"), metadata: nil, redirects: nil))
-        context.documentationCache[resolvableReference] = resolvableNode
-        
-        let resolvableTopicGraphNode = TopicGraph.Node(reference: resolvableReference, kind: .article, source: .external, title: "Article1", isResolvable: true)
-        context.topicGraph.addEdge(from: moduleTopicGraphNode, to: resolvableTopicGraphNode)
-        
         // Try resolving the new resolvable node
-        XCTAssertNoThrow(try context.entity(with: resolvableReference))
         switch context.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc:resolvable-article")!)), in: moduleReference) {
-        case .success: break
-        case .failure(_, let errorMessage): XCTFail("Did not resolve resolvable link. Error: \(errorMessage)")
+        case .success(let resolvedReference):
+            XCTAssertEqual(resolvedReference.absoluteString, "doc://\(bundle.identifier)/documentation/Test-Bundle/resolvable-article")
+            XCTAssertNoThrow(try context.entity(with: resolvedReference))
+        case .failure(_, let errorMessage):
+            XCTFail("Did not resolve resolvable link. Error: \(errorMessage)")
         }
     }
     

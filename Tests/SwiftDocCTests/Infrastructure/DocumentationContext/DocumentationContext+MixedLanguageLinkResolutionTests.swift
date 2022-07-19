@@ -13,8 +13,13 @@ import XCTest
 
 class DocumentationContext_MixedLanguageLinkResolutionTests: XCTestCase {
     
-    func testResolvesLinksUsingParentReferenceAlias() throws {
-        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkComplexLinks")
+    func testResolvingLinksWhenSymbolHasSameNameInBothLanguages() throws {
+         let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkComplexLinks") { url in
+             let swiftSymbolGraph = url.appendingPathComponent("symbol-graph/swift/ObjCLinks.symbols.json")
+             try String(contentsOf: swiftSymbolGraph)
+                 .replacingOccurrences(of: "FooSwift", with: "FooObjC")
+                 .write(to: swiftSymbolGraph, atomically: true, encoding: .utf8)
+         }
         
         func assertCanResolveSymbolLinks(
             symbolPaths: String...,
@@ -53,17 +58,17 @@ class DocumentationContext_MixedLanguageLinkResolutionTests: XCTestCase {
         
         assertCanResolveSymbolLinks(
             symbolPaths: "first(_:one:)", "first:one:", "second:two:", "second(_:two:)",
-            parentPath: "FooSwift"
+            parentPath: "FooObjC"
         )
         
         assertCanResolveSymbolLinks(
-            symbolPaths: "FooSwift", "FooObjC", "second:two:", "second(_:two:)",
-            parentPath: "FooSwift/first(_:one:)"
+            symbolPaths: "FooObjC", "second:two:", "second(_:two:)",
+            parentPath: "FooObjC/first(_:one:)"
         )
         
         assertCanResolveSymbolLinks(
-            symbolPaths: "FooSwift", "FooObjC", "first:one:", "first(_:one:)",
-            parentPath: "FooSwift/second(_:two:)"
+            symbolPaths: "FooObjC", "first:one:", "first(_:one:)",
+            parentPath: "FooObjC/second(_:two:)"
         )
     }
 }

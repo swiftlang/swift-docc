@@ -1,0 +1,3352 @@
+{
+  "metadata" : {
+    "formatVersion" : {
+      "major" : 0,
+      "minor" : 5,
+      "patch" : 0
+    },
+    "generator" : "SymbolKit"
+  },
+  "module" : {
+    "name" : "MixedFramework",
+    "platform" : {
+      "architecture" : "x86_64",
+      "operatingSystem" : {
+        "minimumVersion" : {
+          "major" : 12,
+          "minor" : 3,
+          "patch" : 0
+        },
+        "name" : "macos"
+      },
+      "vendor" : "apple"
+    }
+  },
+  "relationships" : [
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@MyObjectiveCEnum@MyObjectiveCEnumFirst",
+      "target" : "c:@E@MyObjectiveCEnum",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@MyObjectiveCEnum@MyObjectiveCEnumSecond",
+      "target" : "c:@E@MyObjectiveCEnum",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@MyObjectiveCEnumObjectiveCName@MyObjectiveCEnumObjectiveCNameFirst",
+      "target" : "c:@E@MyObjectiveCEnumObjectiveCName",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@MyObjectiveCEnumObjectiveCName@MyObjectiveCEnumObjectiveCNameSecond",
+      "target" : "c:@E@MyObjectiveCEnumObjectiveCName",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst",
+      "target" : "c:@E@MyObjectiveCOption",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@MyObjectiveCOption@MyObjectiveCOptionNone",
+      "target" : "c:@E@MyObjectiveCOption",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond",
+      "target" : "c:@E@MyObjectiveCOption",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase",
+      "target" : "c:@M@MixedFramework@E@MyEnum",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase",
+      "target" : "c:@M@MixedFramework@E@MyEnum",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "inheritsFrom",
+      "source" : "c:@M@MixedFramework@objc(cs)MyClass",
+      "target" : "c:objc(cs)NSObject",
+      "targetFallback" : "NSObject"
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(cs)MyClass(im)init",
+      "target" : "c:@M@MixedFramework@objc(cs)MyClass",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(cs)MyClass(im)myInstanceMethod",
+      "target" : "c:@M@MixedFramework@objc(cs)MyClass",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "inheritsFrom",
+      "source" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol",
+      "target" : "c:objc(cs)NSObject",
+      "targetFallback" : "NSObject"
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol(im)init",
+      "target" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol(im)myOtherProtocolMethod",
+      "target" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol(im)myProtocolMethod",
+      "target" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "inheritsFrom",
+      "source" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName",
+      "target" : "c:objc(cs)NSObject",
+      "targetFallback" : "NSObject"
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)init",
+      "target" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName",
+      "target" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName",
+      "target" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(cpy)myProtocolTypeProperty",
+      "target" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(im)myPropertyOptionalMethod",
+      "target" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(im)myProtocolMethod",
+      "target" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(py)myProtocolProperty",
+      "target" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "inheritsFrom",
+      "source" : "c:objc(cs)MyObjectiveCClassObjectiveCName",
+      "target" : "c:objc(cs)NSObject",
+      "targetFallback" : "NSObject"
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(cs)MyObjectiveCClassObjectiveCName(im)myMethodObjectiveCName",
+      "target" : "c:objc(cs)MyObjectiveCClassObjectiveCName",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(cs)MyObjectiveCClassObjectiveCName(im)myMethodWithArgument:",
+      "target" : "c:objc(cs)MyObjectiveCClassObjectiveCName",
+      "targetFallback" : null
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "c:objc(cs)MyObjectiveCClassObjectiveCName(py)myPropertyObjectiveCName",
+      "target" : "c:objc(cs)MyObjectiveCClassObjectiveCName",
+      "targetFallback" : null
+    }
+  ],
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "extern"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:d",
+          "spelling" : "double"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MixedFrameworkVersionNumber"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 46,
+                "line" : 9
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 9
+              }
+            },
+            "text" : "Project version number for MixedFramework."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@MixedFrameworkVersionNumber"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 25,
+          "line" : 10
+        },
+        "uri" : "MixedFramework.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MixedFrameworkVersionNumber"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MixedFrameworkVersionNumber"
+          }
+        ],
+        "title" : "MixedFrameworkVersionNumber"
+      },
+      "pathComponents" : [
+        "MixedFrameworkVersionNumber"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "extern"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "const"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:c",
+          "spelling" : "unsigned char"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MixedFrameworkVersionString"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "[]"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 46,
+                "line" : 12
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 12
+              }
+            },
+            "text" : "Project version string for MixedFramework."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@MixedFrameworkVersionString"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 38,
+          "line" : 13
+        },
+        "uri" : "MixedFramework.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MixedFrameworkVersionString"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MixedFrameworkVersionString"
+          }
+        ],
+        "title" : "MixedFrameworkVersionString"
+      },
+      "pathComponents" : [
+        "MixedFrameworkVersionString"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "@interface"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyClass"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " : "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:objc(cs)NSObject",
+          "spelling" : "NSObject"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 35,
+                "line" : 253
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 253
+              }
+            },
+            "text" : "My Objective-C compatible class"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MyClass"
+      },
+      "kind" : {
+        "displayName" : "Class",
+        "identifier" : "class"
+      },
+      "location" : {
+        "position" : {
+          "character" : 11,
+          "line" : 255
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyClass"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyClass"
+          }
+        ],
+        "title" : "MyClass"
+      },
+      "pathComponents" : [
+        "MyClass"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "id"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "init"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "id"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MyClass(im)init"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 258
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "init"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "init"
+          }
+        ],
+        "title" : "init"
+      },
+      "pathComponents" : [
+        "MyClass",
+        "init"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:v",
+          "spelling" : "void"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myInstanceMethod"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 35,
+                "line" : 256
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 256
+              }
+            },
+            "text" : "An instance method on my class."
+          }
+        ]
+      },
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "c:v",
+            "spelling" : "void"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MyClass(im)myInstanceMethod"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 257
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myInstanceMethod"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "myInstanceMethod"
+          }
+        ],
+        "title" : "myInstanceMethod"
+      },
+      "pathComponents" : [
+        "MyClass",
+        "myInstanceMethod"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "@interface"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyClassThatConformToMyOtherProtocol"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " : "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:objc(cs)NSObject",
+          "spelling" : "NSObject"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 76,
+                "line" : 262
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 262
+              }
+            },
+            "text" : "My Objective-C compatible class that conform to “my other protocol”."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol"
+      },
+      "kind" : {
+        "displayName" : "Class",
+        "identifier" : "class"
+      },
+      "location" : {
+        "position" : {
+          "character" : 11,
+          "line" : 264
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyClassThatConformToMyOtherProtocol"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyClassThatConformToMyOtherProtocol"
+          }
+        ],
+        "title" : "MyClassThatConformToMyOtherProtocol"
+      },
+      "pathComponents" : [
+        "MyClassThatConformToMyOtherProtocol"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "id"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "init"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "id"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol(im)init"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 267
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "init"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "init"
+          }
+        ],
+        "title" : "init"
+      },
+      "pathComponents" : [
+        "MyClassThatConformToMyOtherProtocol",
+        "init"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:v",
+          "spelling" : "void"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myOtherProtocolMethod"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "c:v",
+            "spelling" : "void"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol(im)myOtherProtocolMethod"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 265
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myOtherProtocolMethod"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "myOtherProtocolMethod"
+          }
+        ],
+        "title" : "myOtherProtocolMethod"
+      },
+      "pathComponents" : [
+        "MyClassThatConformToMyOtherProtocol",
+        "myOtherProtocolMethod"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:v",
+          "spelling" : "void"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myProtocolMethod"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "c:v",
+            "spelling" : "void"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MyClassThatConformToMyOtherProtocol(im)myProtocolMethod"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 266
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myProtocolMethod"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "myProtocolMethod"
+          }
+        ],
+        "title" : "myProtocolMethod"
+      },
+      "pathComponents" : [
+        "MyClassThatConformToMyOtherProtocol",
+        "myProtocolMethod"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "enum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyEnum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@T@NSInteger",
+          "spelling" : "NSInteger"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 35,
+                "line" : 270
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 270
+              }
+            },
+            "text" : "My Objective-C compatible enum."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@E@MyEnum"
+      },
+      "kind" : {
+        "displayName" : "Enumeration",
+        "identifier" : "enum"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 271
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyEnum"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyEnum"
+          }
+        ],
+        "title" : "MyEnum"
+      },
+      "pathComponents" : [
+        "MyEnum"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "MyEnumFirstCase"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 24,
+                "line" : 272
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 272
+              }
+            },
+            "text" : "The first enum case."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@E@MyEnum@MyEnumFirstCase"
+      },
+      "kind" : {
+        "displayName" : "Enumeration Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 2,
+          "line" : 273
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyEnumFirstCase"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyEnumFirstCase"
+          }
+        ],
+        "title" : "MyEnumFirstCase"
+      },
+      "pathComponents" : [
+        "MyEnum",
+        "MyEnumFirstCase"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "MyEnumSecondCase"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 25,
+                "line" : 274
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 274
+              }
+            },
+            "text" : "The second enum case."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@E@MyEnum@MyEnumSecondCase"
+      },
+      "kind" : {
+        "displayName" : "Enumeration Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 2,
+          "line" : 275
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyEnumSecondCase"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyEnumSecondCase"
+          }
+        ],
+        "title" : "MyEnumSecondCase"
+      },
+      "pathComponents" : [
+        "MyEnum",
+        "MyEnumSecondCase"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "@interface"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCClassObjectiveCName"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " : "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:objc(cs)NSObject",
+          "spelling" : "NSObject"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 68,
+                "line" : 11
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 11
+              }
+            },
+            "text" : "An Objective-C class with different Swift and Objective-C names."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)MyObjectiveCClassObjectiveCName"
+      },
+      "kind" : {
+        "displayName" : "Class",
+        "identifier" : "class"
+      },
+      "location" : {
+        "position" : {
+          "character" : 11,
+          "line" : 13
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCClassObjectiveCName"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCClassObjectiveCName"
+          }
+        ],
+        "title" : "MyObjectiveCClassObjectiveCName"
+      },
+      "pathComponents" : [
+        "MyObjectiveCClassObjectiveCName"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:v",
+          "spelling" : "void"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myMethodObjectiveCName"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 56,
+                "line" : 18
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 18
+              }
+            },
+            "text" : "A method with different Swift and Objective-C names."
+          }
+        ]
+      },
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "c:v",
+            "spelling" : "void"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)MyObjectiveCClassObjectiveCName(im)myMethodObjectiveCName"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 19
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myMethodObjectiveCName"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "myMethodObjectiveCName"
+          }
+        ],
+        "title" : "myMethodObjectiveCName"
+      },
+      "pathComponents" : [
+        "MyObjectiveCClassObjectiveCName",
+        "myMethodObjectiveCName"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:v",
+          "spelling" : "void"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myMethodWithArgument:"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:objc(cs)NSString",
+          "spelling" : "NSString"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " *)"
+        },
+        {
+          "kind" : "internalParam",
+          "spelling" : "argument"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 56,
+                "line" : 22
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 22
+              }
+            },
+            "text" : "A method with different Swift and Objective-C names."
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 17,
+                "line" : 23
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 23
+              }
+            },
+            "text" : "- Parameters:"
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 29,
+                "line" : 24
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 24
+              }
+            },
+            "text" : "  - argument: An argument"
+          }
+        ]
+      },
+      "functionSignature" : {
+        "parameters" : [
+          {
+            "children" : [
+
+            ],
+            "declarationFragments" : [
+              {
+                "kind" : "text",
+                "spelling" : "("
+              },
+              {
+                "kind" : "typeIdentifier",
+                "preciseIdentifier" : "c:objc(cs)NSString",
+                "spelling" : "NSString"
+              },
+              {
+                "kind" : "text",
+                "spelling" : " *)"
+              },
+              {
+                "kind" : "internalParam",
+                "spelling" : "argument"
+              }
+            ],
+            "name" : "argument"
+          }
+        ],
+        "returns" : [
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "c:v",
+            "spelling" : "void"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)MyObjectiveCClassObjectiveCName(im)myMethodWithArgument:"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 25
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myMethodWithArgument:"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "myMethodWithArgument:"
+          }
+        ],
+        "title" : "myMethodWithArgument:"
+      },
+      "pathComponents" : [
+        "MyObjectiveCClassObjectiveCName",
+        "myMethodWithArgument:"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "@property"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " ("
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "atomic"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "copy"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "readonly"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:objc(cs)NSString",
+          "spelling" : "NSString"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " *"
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myPropertyObjectiveCName"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 58,
+                "line" : 15
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 15
+              }
+            },
+            "text" : "A property with different Swift and Objective-C names."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:objc(cs)MyObjectiveCClassObjectiveCName(py)myPropertyObjectiveCName"
+      },
+      "isReadOnly" : true,
+      "kind" : {
+        "displayName" : "Instance Property",
+        "identifier" : "property"
+      },
+      "location" : {
+        "position" : {
+          "character" : 38,
+          "line" : 16
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myPropertyObjectiveCName"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myPropertyObjectiveCName"
+          }
+        ],
+        "title" : "myPropertyObjectiveCName"
+      },
+      "pathComponents" : [
+        "MyObjectiveCClassObjectiveCName",
+        "myPropertyObjectiveCName"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "@protocol"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCCompatibleProtocol"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 38,
+                "line" : 279
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 279
+              }
+            },
+            "text" : "My Objective-C compatible protocol"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol"
+      },
+      "kind" : {
+        "displayName" : "Protocol",
+        "identifier" : "protocol"
+      },
+      "location" : {
+        "position" : {
+          "character" : 10,
+          "line" : 281
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCCompatibleProtocol"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCCompatibleProtocol"
+          }
+        ],
+        "title" : "MyObjectiveCCompatibleProtocol"
+      },
+      "pathComponents" : [
+        "MyObjectiveCCompatibleProtocol"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:v",
+          "spelling" : "void"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myPropertyOptionalMethod"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 47,
+                "line" : 290
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 290
+              }
+            },
+            "text" : "An optional method\/function of my protocol."
+          }
+        ]
+      },
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "c:v",
+            "spelling" : "void"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(im)myPropertyOptionalMethod"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 291
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myPropertyOptionalMethod"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "myPropertyOptionalMethod"
+          }
+        ],
+        "title" : "myPropertyOptionalMethod"
+      },
+      "pathComponents" : [
+        "MyObjectiveCCompatibleProtocol",
+        "myPropertyOptionalMethod"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:v",
+          "spelling" : "void"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myProtocolMethod"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 37,
+                "line" : 282
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 282
+              }
+            },
+            "text" : "A method\/function on my protocol."
+          }
+        ]
+      },
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "c:v",
+            "spelling" : "void"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(im)myProtocolMethod"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 283
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myProtocolMethod"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "myProtocolMethod"
+          }
+        ],
+        "title" : "myProtocolMethod"
+      },
+      "pathComponents" : [
+        "MyObjectiveCCompatibleProtocol",
+        "myProtocolMethod"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "@property"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " ("
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "nonatomic"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "strong"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "readonly"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@M@MixedFramework@objc(cs)MyClass",
+          "spelling" : "MyClass"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " *"
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myProtocolProperty"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 30,
+                "line" : 284
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 284
+              }
+            },
+            "text" : "A property on my protocol."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(py)myProtocolProperty"
+      },
+      "isReadOnly" : true,
+      "kind" : {
+        "displayName" : "Instance Property",
+        "identifier" : "property"
+      },
+      "location" : {
+        "position" : {
+          "character" : 59,
+          "line" : 285
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myProtocolProperty"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myProtocolProperty"
+          }
+        ],
+        "title" : "myProtocolProperty"
+      },
+      "pathComponents" : [
+        "MyObjectiveCCompatibleProtocol",
+        "myProtocolProperty"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "@property"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " ("
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "class"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "nonatomic"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "strong"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "readonly"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@M@MixedFramework@objc(cs)MyClass",
+          "spelling" : "MyClass"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " *"
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myProtocolTypeProperty"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(cpy)myProtocolTypeProperty"
+      },
+      "isReadOnly" : true,
+      "kind" : {
+        "displayName" : "Type Property",
+        "identifier" : "type.property"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 287
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myProtocolTypeProperty"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myProtocolTypeProperty"
+          }
+        ],
+        "title" : "myProtocolTypeProperty"
+      },
+      "pathComponents" : [
+        "MyObjectiveCCompatibleProtocol",
+        "myProtocolTypeProperty"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "enum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCEnum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@T@NSInteger",
+          "spelling" : "NSInteger"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 21,
+                "line" : 29
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 29
+              }
+            },
+            "text" : "A `NS_ENUM` type."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCEnum"
+      },
+      "kind" : {
+        "displayName" : "Enumeration",
+        "identifier" : "enum"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 30
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnum"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnum"
+          }
+        ],
+        "title" : "MyObjectiveCEnum"
+      },
+      "pathComponents" : [
+        "MyObjectiveCEnum"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCEnumFirst"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 35,
+                "line" : 31
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 31
+              }
+            },
+            "text" : "The first enumeration case."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCEnum@MyObjectiveCEnumFirst"
+      },
+      "kind" : {
+        "displayName" : "Enumeration Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 32
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumFirst"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumFirst"
+          }
+        ],
+        "title" : "MyObjectiveCEnumFirst"
+      },
+      "pathComponents" : [
+        "MyObjectiveCEnum",
+        "MyObjectiveCEnumFirst"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCEnumSecond"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 81,
+                "line" : 33
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 33
+              }
+            },
+            "text" : "The second enumeration case (with different Swift and Objective-C names)."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCEnum@MyObjectiveCEnumSecond"
+      },
+      "kind" : {
+        "displayName" : "Enumeration Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 34
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumSecond"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumSecond"
+          }
+        ],
+        "title" : "MyObjectiveCEnumSecond"
+      },
+      "pathComponents" : [
+        "MyObjectiveCEnum",
+        "MyObjectiveCEnumSecond"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "enum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCEnumObjectiveCName"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@T@NSInteger",
+          "spelling" : "NSInteger"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCEnumObjectiveCName"
+      },
+      "kind" : {
+        "displayName" : "Enumeration",
+        "identifier" : "enum"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 37
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumObjectiveCName"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumObjectiveCName"
+          }
+        ],
+        "title" : "MyObjectiveCEnumObjectiveCName"
+      },
+      "pathComponents" : [
+        "MyObjectiveCEnumObjectiveCName"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCEnumObjectiveCNameFirst"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 35,
+                "line" : 38
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 38
+              }
+            },
+            "text" : "The first enumeration case."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCEnumObjectiveCName@MyObjectiveCEnumObjectiveCNameFirst"
+      },
+      "kind" : {
+        "displayName" : "Enumeration Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 39
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumObjectiveCNameFirst"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumObjectiveCNameFirst"
+          }
+        ],
+        "title" : "MyObjectiveCEnumObjectiveCNameFirst"
+      },
+      "pathComponents" : [
+        "MyObjectiveCEnumObjectiveCName",
+        "MyObjectiveCEnumObjectiveCNameFirst"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCEnumObjectiveCNameSecond"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 81,
+                "line" : 40
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 40
+              }
+            },
+            "text" : "The second enumeration case (with different Swift and Objective-C names)."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCEnumObjectiveCName@MyObjectiveCEnumObjectiveCNameSecond"
+      },
+      "kind" : {
+        "displayName" : "Enumeration Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 41
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumObjectiveCNameSecond"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCEnumObjectiveCNameSecond"
+          }
+        ],
+        "title" : "MyObjectiveCEnumObjectiveCNameSecond"
+      },
+      "pathComponents" : [
+        "MyObjectiveCEnumObjectiveCName",
+        "MyObjectiveCEnumObjectiveCNameSecond"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "enum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCOption"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@T@NSInteger",
+          "spelling" : "NSInteger"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 23,
+                "line" : 44
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 44
+              }
+            },
+            "text" : "A `NS_OPTION` type."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCOption"
+      },
+      "kind" : {
+        "displayName" : "Enumeration",
+        "identifier" : "enum"
+      },
+      "location" : {
+        "position" : {
+          "character" : 8,
+          "line" : 45
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCOption"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCOption"
+          }
+        ],
+        "title" : "MyObjectiveCOption"
+      },
+      "pathComponents" : [
+        "MyObjectiveCOption"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCOptionFirst"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 30,
+                "line" : 48
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 48
+              }
+            },
+            "text" : "The first option case."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst"
+      },
+      "kind" : {
+        "displayName" : "Enumeration Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 49
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCOptionFirst"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCOptionFirst"
+          }
+        ],
+        "title" : "MyObjectiveCOptionFirst"
+      },
+      "pathComponents" : [
+        "MyObjectiveCOption",
+        "MyObjectiveCOptionFirst"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCOptionNone"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 31,
+                "line" : 46
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 46
+              }
+            },
+            "text" : "The \"none\" option case."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCOption@MyObjectiveCOptionNone"
+      },
+      "kind" : {
+        "displayName" : "Enumeration Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 47
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCOptionNone"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCOptionNone"
+          }
+        ],
+        "title" : "MyObjectiveCOptionNone"
+      },
+      "pathComponents" : [
+        "MyObjectiveCOption",
+        "MyObjectiveCOptionNone"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "identifier",
+          "spelling" : "MyObjectiveCOptionSecond"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 31,
+                "line" : 50
+              },
+              "start" : {
+                "character" : 8,
+                "line" : 50
+              }
+            },
+            "text" : "The second option case."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond"
+      },
+      "kind" : {
+        "displayName" : "Enumeration Case",
+        "identifier" : "enum.case"
+      },
+      "location" : {
+        "position" : {
+          "character" : 4,
+          "line" : 51
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCOptionSecond"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyObjectiveCOptionSecond"
+          }
+        ],
+        "title" : "MyObjectiveCOptionSecond"
+      },
+      "pathComponents" : [
+        "MyObjectiveCOption",
+        "MyObjectiveCOptionSecond"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "@interface"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MySwiftClassObjectiveCName"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " : "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:objc(cs)NSObject",
+          "spelling" : "NSObject"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName"
+      },
+      "kind" : {
+        "displayName" : "Class",
+        "identifier" : "class"
+      },
+      "location" : {
+        "position" : {
+          "character" : 11,
+          "line" : 296
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MySwiftClassObjectiveCName"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MySwiftClassObjectiveCName"
+          }
+        ],
+        "title" : "MySwiftClassObjectiveCName"
+      },
+      "pathComponents" : [
+        "MySwiftClassObjectiveCName"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "id"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "init"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "id"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)init"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 299
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "init"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "init"
+          }
+        ],
+        "title" : "init"
+      },
+      "pathComponents" : [
+        "MySwiftClassObjectiveCName",
+        "init"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "text",
+          "spelling" : "- ("
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@T@NSInteger",
+          "spelling" : "NSInteger"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myMethodObjectiveCName"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ";"
+        }
+      ],
+      "functionSignature" : {
+        "parameters" : [
+
+        ],
+        "returns" : [
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "c:@T@NSInteger",
+            "spelling" : "NSInteger"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(im)myMethodObjectiveCName"
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "method"
+      },
+      "location" : {
+        "position" : {
+          "character" : 0,
+          "line" : 298
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myMethodObjectiveCName"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "text",
+            "spelling" : "- "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "myMethodObjectiveCName"
+          }
+        ],
+        "title" : "myMethodObjectiveCName"
+      },
+      "pathComponents" : [
+        "MySwiftClassObjectiveCName",
+        "myMethodObjectiveCName"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "@property"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " ("
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "nonatomic"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "readonly"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ") "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@T@NSInteger",
+          "spelling" : "NSInteger"
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myPropertyObjectiveCName"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@M@MixedFramework@objc(cs)MySwiftClassObjectiveCName(py)myPropertyObjectiveCName"
+      },
+      "isReadOnly" : true,
+      "kind" : {
+        "displayName" : "Instance Property",
+        "identifier" : "property"
+      },
+      "location" : {
+        "position" : {
+          "character" : 42,
+          "line" : 297
+        },
+        "uri" : "MixedFramework-Swift.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myPropertyObjectiveCName"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "myPropertyObjectiveCName"
+          }
+        ],
+        "title" : "myPropertyObjectiveCName"
+      },
+      "pathComponents" : [
+        "MySwiftClassObjectiveCName",
+        "myPropertyObjectiveCName"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "typedef"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@T@NSInteger",
+          "spelling" : "NSInteger"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyTypedObjectiveCEnum"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 27,
+                "line" : 54
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 54
+              }
+            },
+            "text" : "A `NS_TYPED_ENUM` type."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCEnum"
+      },
+      "kind" : {
+        "displayName" : "Type Alias",
+        "identifier" : "typealias"
+      },
+      "location" : {
+        "position" : {
+          "character" : 18,
+          "line" : 55
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCEnum"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCEnum"
+          }
+        ],
+        "title" : "MyTypedObjectiveCEnum"
+      },
+      "pathComponents" : [
+        "MyTypedObjectiveCEnum"
+      ],
+      "type" : "c:@T@NSInteger"
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "const"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCEnum",
+          "spelling" : "MyTypedObjectiveCEnum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyTypedObjectiveCEnumFirst"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 31,
+                "line" : 57
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 57
+              }
+            },
+            "text" : "The first typed enum value."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@MyTypedObjectiveCEnumFirst"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 28,
+          "line" : 58
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCEnumFirst"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCEnumFirst"
+          }
+        ],
+        "title" : "MyTypedObjectiveCEnumFirst"
+      },
+      "pathComponents" : [
+        "MyTypedObjectiveCEnumFirst"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "const"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCEnum",
+          "spelling" : "MyTypedObjectiveCEnum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyTypedObjectiveCEnumSecond"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 32,
+                "line" : 59
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 59
+              }
+            },
+            "text" : "The second typed enum value."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@MyTypedObjectiveCEnumSecond"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 28,
+          "line" : 60
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCEnumSecond"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCEnumSecond"
+          }
+        ],
+        "title" : "MyTypedObjectiveCEnumSecond"
+      },
+      "pathComponents" : [
+        "MyTypedObjectiveCEnumSecond"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "typedef"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:@T@NSInteger",
+          "spelling" : "NSInteger"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyTypedObjectiveCExtensibleEnum"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 38,
+                "line" : 62
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 62
+              }
+            },
+            "text" : "A `NS_TYPED_EXTENSIBLE_ENUM` type."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCExtensibleEnum"
+      },
+      "kind" : {
+        "displayName" : "Type Alias",
+        "identifier" : "typealias"
+      },
+      "location" : {
+        "position" : {
+          "character" : 18,
+          "line" : 63
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCExtensibleEnum"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCExtensibleEnum"
+          }
+        ],
+        "title" : "MyTypedObjectiveCExtensibleEnum"
+      },
+      "pathComponents" : [
+        "MyTypedObjectiveCExtensibleEnum"
+      ],
+      "type" : "c:@T@NSInteger"
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "const"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCExtensibleEnum",
+          "spelling" : "MyTypedObjectiveCExtensibleEnum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyTypedObjectiveCExtensibleEnumFirst"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 36,
+                "line" : 65
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 65
+              }
+            },
+            "text" : "The first extensible enum value."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@MyTypedObjectiveCExtensibleEnumFirst"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 38,
+          "line" : 66
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCExtensibleEnumFirst"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCExtensibleEnumFirst"
+          }
+        ],
+        "title" : "MyTypedObjectiveCExtensibleEnumFirst"
+      },
+      "pathComponents" : [
+        "MyTypedObjectiveCExtensibleEnumFirst"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "const"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCExtensibleEnum",
+          "spelling" : "MyTypedObjectiveCExtensibleEnum"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyTypedObjectiveCExtensibleEnumSecond"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "range" : {
+              "end" : {
+                "character" : 37,
+                "line" : 67
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 67
+              }
+            },
+            "text" : "The second extensible enum value."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "occ",
+        "precise" : "c:@MyTypedObjectiveCExtensibleEnumSecond"
+      },
+      "kind" : {
+        "displayName" : "Global Variable",
+        "identifier" : "var"
+      },
+      "location" : {
+        "position" : {
+          "character" : 38,
+          "line" : 68
+        },
+        "uri" : "ObjectiveCDeclarations.h"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCExtensibleEnumSecond"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyTypedObjectiveCExtensibleEnumSecond"
+          }
+        ],
+        "title" : "MyTypedObjectiveCExtensibleEnumSecond"
+      },
+      "pathComponents" : [
+        "MyTypedObjectiveCExtensibleEnumSecond"
+      ]
+    }
+  ]
+}

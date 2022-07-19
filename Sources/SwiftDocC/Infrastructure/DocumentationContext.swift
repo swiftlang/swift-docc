@@ -110,7 +110,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
+    /// A link resolver that resolves references by finding them in the documentation cache.
     let documentationCacheBasedLinkResolver = DocumentationCacheBasedLinkResolver()
+    /// A link resolver that resolves references by finding them in path hierarchy.
+    var hierarchyBasedLinkResolver: PathHierarchyBasedLinkResolver? = nil
+    
+    static var shouldUseHierarchyBasedLinkResolver: Bool = {
+        return UserDefaults.standard.bool(forKey: "DocCUseHierarchyBasedLinkResolver")
+            || ProcessInfo.processInfo.environment["DOCC_USE_HIERARCHY_BASED_LINK_RESOLVER"] == "YES"
+    }()
     
     /// The provider of documentation bundles for this context.
     var dataProvider: DocumentationContextDataProvider
@@ -315,6 +323,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle that was removed.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
         documentationCacheBasedLinkResolver.unregisterBundle(identifier: bundle.identifier)
+        if Self.shouldUseHierarchyBasedLinkResolver {
+            hierarchyBasedLinkResolver?.unregisterBundle(identifier: bundle.identifier)
+        }
         
         // Purge the reference cache for this bundle and disable reference caching for
         // this bundle moving forward.
@@ -1098,7 +1109,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             var moduleReferences = [String: ResolvedTopicReference]()
             
             // Build references for all symbols in all of this module's symbol graphs.
-            let symbolReferences = documentationCacheBasedLinkResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+            let symbolReferences: [SymbolGraph.Symbol.Identifier : [ResolvedTopicReference]]
+            if Self.shouldUseHierarchyBasedLinkResolver {
+                symbolReferences = hierarchyBasedLinkResolver!.referencesForSymbols(in:symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+                    .mapValues({ [$0] }) // The documentation cache implementation uses an array of values to handle multi languages
+            } else {
+                symbolReferences = documentationCacheBasedLinkResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+            }
             
             // Set the index and cache storage capacity to avoid ad-hoc storage resizing.
             symbolIndex.reserveCapacity(symbolReferences.count)
@@ -1228,35 +1245,41 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             try shouldContinueRegistration()
             
-            for (_, relationships) in combinedRelationships {
-                // Add parent <-> child edges to the URL tree
-                try relationships
-                    .compactMap(parentChildRelationship(from:))
-                    .sorted(by: Self.sortRelationshipsPreOrder)
-                    .forEach({ pair in
-                        // Add the relationship to the URL hierarchy
-                        let (parentRef, childRef) = pair
-                        // If the unique reference already exists, it's been added by another symbol graph
-                        // likely built for a different target platform, ignore it as it's the exact same symbol.
-                        if (try? symbolsURLHierarchy.parent(of: childRef)) == nil {
-                            do {
-                                try symbolsURLHierarchy.add(childRef, parent: parentRef)
-                            } catch let error as BidirectionalTree<ResolvedTopicReference>.Error {
-                                switch error {
-                                    // Some parents might not exist if they are types from other frameworks and
-                                    // those are not pulled into and available in the current symbol graph.
-                                case .nodeNotFound: break
-                                default: throw error
+            if Self.shouldUseHierarchyBasedLinkResolver {
+                // Map the resolved references with their identifiers
+                hierarchyBasedLinkResolver!.addMappingForSymbols(symbolIndex: symbolIndex)
+            } else {
+                // The `symbolsURLHierarchy` is not used when resolving links via the hierarchy-based link resolver.
+                for (_, relationships) in combinedRelationships {
+                    // Add parent <-> child edges to the URL tree
+                    try relationships
+                        .compactMap(parentChildRelationship(from:))
+                        .sorted(by: Self.sortRelationshipsPreOrder)
+                        .forEach({ pair in
+                            // Add the relationship to the URL hierarchy
+                            let (parentRef, childRef) = pair
+                            // If the unique reference already exists, it's been added by another symbol graph
+                            // likely built for a different target platform, ignore it as it's the exact same symbol.
+                            if (try? symbolsURLHierarchy.parent(of: childRef)) == nil {
+                                do {
+                                    try symbolsURLHierarchy.add(childRef, parent: parentRef)
+                                } catch let error as BidirectionalTree<ResolvedTopicReference>.Error {
+                                    switch error {
+                                        // Some parents might not exist if they are types from other frameworks and
+                                        // those are not pulled into and available in the current symbol graph.
+                                    case .nodeNotFound: break
+                                    default: throw error
+                                    }
                                 }
                             }
-                        }
-                    })
-            }
-
-            // Update the children of collision URLs. Walk the tree and update any dependents of updated URLs
-            for moduleReference in moduleReferences.values {
-                try symbolsURLHierarchy.traversePreOrder(from: moduleReference) { reference in
-                    try self.documentationCacheBasedLinkResolver.updateNodeWithReferenceIfCollisionChild(reference, symbolsURLHierarchy: &symbolsURLHierarchy, symbolIndex: &symbolIndex, context: self)
+                        })
+                }
+                
+                // Update the children of collision URLs. Walk the tree and update any dependents of updated URLs
+                for moduleReference in moduleReferences.values {
+                    try symbolsURLHierarchy.traversePreOrder(from: moduleReference) { reference in
+                        try self.documentationCacheBasedLinkResolver.updateNodeWithReferenceIfCollisionChild(reference, symbolsURLHierarchy: &symbolsURLHierarchy, symbolIndex: &symbolIndex, context: self)
+                    }
                 }
             }
             
@@ -1313,10 +1336,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             
             // Index references
-            documentationCacheBasedLinkResolver.referencesIndex.removeAll()
-            documentationCacheBasedLinkResolver.referencesIndex.reserveCapacity(knownIdentifiers.count)
-            for reference in knownIdentifiers {
-                documentationCacheBasedLinkResolver.registerReference(reference)
+            if !Self.shouldUseHierarchyBasedLinkResolver {
+                documentationCacheBasedLinkResolver.referencesIndex.removeAll()
+                documentationCacheBasedLinkResolver.referencesIndex.reserveCapacity(knownIdentifiers.count)
+                for reference in knownIdentifiers {
+                    documentationCacheBasedLinkResolver.registerReference(reference)
+                }
             }
 
             return (moduleReferences: Set(moduleReferences.values), urlHierarchy: symbolsURLHierarchy)
@@ -1604,6 +1629,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             topicGraph.addNode(graphNode)
             documentationCache[reference] = documentation
             
+            if Self.shouldUseHierarchyBasedLinkResolver {
+                hierarchyBasedLinkResolver!.addRootArticle(article, anchorSections: documentation.anchorSections)
+            }
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
             }
@@ -1660,6 +1688,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let graphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: article.source), title: title)
             topicGraph.addNode(graphNode)
             
+            if Self.shouldUseHierarchyBasedLinkResolver {
+                hierarchyBasedLinkResolver!.addArticle(article, anchorSections: documentation.anchorSections)
+            }
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
             }
@@ -1794,11 +1825,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         // Load all bundle symbol graphs into the loader.
         var symbolGraphLoader: SymbolGraphLoader!
+        var hierarchyBasedResolver: PathHierarchyBasedLinkResolver!
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             symbolGraphLoader = SymbolGraphLoader(bundle: bundle, dataProvider: self.dataProvider)
             do {
                 try symbolGraphLoader.loadAll()
+                if Self.shouldUseHierarchyBasedLinkResolver {
+                    let pathHierarchy = PathHierarchy(symbolGraphLoader: symbolGraphLoader, bundleName: urlReadablePath(bundle.displayName), knownDisambiguatedPathComponents: knownDisambiguatedSymbolPathComponents)
+                    hierarchyBasedResolver = PathHierarchyBasedLinkResolver(pathHierarchy: pathHierarchy)
+                }
             } catch {
                 // Pipe the error out of the dispatch queue.
                 discoveryError.sync({
@@ -1854,7 +1890,21 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // All discovery went well, process the inputs.
         let (technologies, tutorials, tutorialArticles, allArticles) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
-
+        
+        if Self.shouldUseHierarchyBasedLinkResolver {
+            hierarchyBasedLinkResolver = hierarchyBasedResolver
+            hierarchyBasedResolver.addMappingForRoots(bundle: bundle)
+            for tutorial in tutorials {
+                hierarchyBasedResolver.addTutorial(tutorial)
+            }
+            for article in tutorialArticles {
+                hierarchyBasedResolver.addTutorialArticle(article)
+            }
+            for technology in technologies {
+                hierarchyBasedResolver.addTechnology(technology)
+            }
+        }
+        
         let rootPages = registerRootPages(from: rootPageArticles, in: bundle)
         let (moduleReferences, symbolsURLHierarchy) = try registerSymbols(from: bundle, symbolGraphLoader: symbolGraphLoader)
         // We don't need to keep the loader in memory after we've registered all symbols.
@@ -1893,7 +1943,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         )
         
         try shouldContinueRegistration()
-        var allCuratedReferences = try crawlSymbolCuration(rootModules: moduleReferences, rootPages: rootPages, symbolsURLHierarchy: symbolsURLHierarchy, bundle: bundle)
+        var allCuratedReferences: Set<ResolvedTopicReference>
+        if Self.shouldUseHierarchyBasedLinkResolver {
+            let topLevelModuleReferences = hierarchyBasedLinkResolver!.topLevelSymbols()
+            allCuratedReferences = try crawlSymbolCuration(in: topLevelModuleReferences, bundle: bundle)
+        } else {
+            allCuratedReferences = try crawlSymbolCuration(rootModules: moduleReferences, rootPages: rootPages, symbolsURLHierarchy: symbolsURLHierarchy, bundle: bundle)
+        }
         
         // Store the list of manually curated references if doc coverage is on.
         if shouldStoreManuallyCuratedReferences {
@@ -1922,6 +1978,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         // Emit warnings for any remaining uncurated files.
         emitWarningsForUncuratedTopics()
+        
+        if Self.shouldUseHierarchyBasedLinkResolver {
+            hierarchyBasedResolver.addAnchorForSymbols(symbolIndex: symbolIndex)
+        }
         
         // Fifth, resolve links in nodes that are added solely via curation
         try preResolveExternalLinks(references: Array(allCuratedReferences), bundle: bundle)
@@ -1995,13 +2055,23 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// This will include all symbols that were not manually curated by the documentation author.
     /// - Returns: An ordered list of symbol references that have been added to the topic graph automatically.
-    private func autoCurateSymbolsInTopicGraph(symbolsURLHierarchy:  BidirectionalTree<ResolvedTopicReference>, engine: DiagnosticEngine)
-        -> [(child: ResolvedTopicReference, parent: ResolvedTopicReference)] {
-        
-        // We'll collect references in an array to keep them pre-order in respect to their position in the symbol hierarchy
+    private func autoCurateSymbolsInTopicGraph(symbolsURLHierarchy: BidirectionalTree<ResolvedTopicReference>, engine: DiagnosticEngine) -> [(child: ResolvedTopicReference, parent: ResolvedTopicReference)] {
         var automaticallyCuratedSymbols = [(ResolvedTopicReference, ResolvedTopicReference)]()
+        if Self.shouldUseHierarchyBasedLinkResolver {
+            hierarchyBasedLinkResolver!.traverseSymbolAndParentPairs { reference, parentReference in
+                guard let topicGraphNode = topicGraph.nodeWithReference(reference),
+                      let topicGraphParentNode = topicGraph.nodeWithReference(parentReference),
+                      // Check that the node hasn't got any parents from manual curation
+                      topicGraph.reverseEdges[reference] == nil
+                else { return }
+                topicGraph.addEdge(from: topicGraphParentNode, to: topicGraphNode)
+                automaticallyCuratedSymbols.append((child: reference, parent: parentReference))
+            }
+            return automaticallyCuratedSymbols
+        }
         
         do {
+            // We'll collect references in an array to keep them pre-order in respect to their position in the symbol hierarchy
             // Walk all symbols and find their nodes in the topic graph
             try symbolsURLHierarchy.traversePreOrder { reference in
                 
@@ -2009,7 +2079,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 guard symbolsURLHierarchy.root != reference,
                     // Fetch the matching topic graph node
                     let topicGraphNode = topicGraph.nodeWithReference(reference),
-                    // Check that the node hasn't got any parents
+                    // Check that the node hasn't got any parents from manual curation
                     topicGraph.reverseEdges[reference] == nil,
                     // Check that the symbol does have a parent in the symbol graph
                     let symbolGraphParentReference = try symbolsURLHierarchy.parent(of: reference),
@@ -2060,7 +2130,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Crawl hierarchy under a root page for custom curations
         let rootPageReferences = rootPages.map(\.topicGraphNode.reference)
-        
         return try crawlSymbolCuration(in: topLevelModuleReferences + rootPageReferences, bundle: bundle)
     }
     
@@ -2348,25 +2417,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
      > Note: If the reference is already resolved, the original reference is returned.
      
      - Parameters:
-       - reference: An unresolved (or resolved) identifer.
-       - parentIdentifier: The *resolved* identifier that serves as an enclosing search context, especially the parent identifier's bundle identifier.
+       - reference: An unresolved (or resolved) reference.
+       - parent: The *resolved* reference that serves as an enclosing search context, especially the parent reference's bundle identifier.
        - fromSymbolLink: If `true` will try to resolve relative links *only* in documentation symbol locations in the hierarchy. If `false` it will try to resolve relative links as tutorials, articles, symbols, etc.
-     - Returns: The resolved identifier for the topic if the parent provided the correct context and the topic exists.
-     
-     We have four approaches to trying to resolve a reference:
-     
-     1. we check if the link is already resolved, i.e. the path is fully formed and there is a matching documentation node
-     2. we check if the link is resolvable in the local context (e.g. the parent), i.e. "MyClass" ~> "MyClass/myFunction()"
-     3. we check if the link is resolvable as a sibling to the parent, i.e. "MyClass/myFunction()" ~> "MyClass/path"
-     4. we check if the link is resolvable in the root context (e.g. the module) of its parent, i.e. we will try resolving 'MyClass' as 'MyKit/MyClass'
-     5. we check if there is a registered external resolver for the link's bundle id and if so, use that resolver
-     
-     If none of these succeeds we will return the original unresolved reference.
+     - Returns: Either the successfully resolved reference for the topic or error information about why the reference couldn't resolve.
      */
     public func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool = false) -> TopicReferenceResolutionResult {
         switch reference {
         case .unresolved(let unresolvedReference):
-            return documentationCacheBasedLinkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
+            if Self.shouldUseHierarchyBasedLinkResolver {
+                return hierarchyBasedLinkResolver!.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
+            } else {
+                return documentationCacheBasedLinkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
+            }
         case .resolved(let resolved):
             // This reference is already resolved (either as a success or a failure), so don't change anything.
             return resolved

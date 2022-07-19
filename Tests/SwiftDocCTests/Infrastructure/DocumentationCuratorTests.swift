@@ -99,7 +99,7 @@ class DocumentationCuratorTests: XCTestCase {
 
         ### Invalid curation
 
-        A few different curationos that should each reasult in warnigns.
+        A few different curations that should each result in warnings.
         The first is a reference to the parent, the second is a reference to self, and the last is an unresolved reference.
 
          - ``MyKit``
