@@ -16,6 +16,7 @@ import SwiftDocCTestUtilities
 class PathHierarchyTests: XCTestCase {
     
     func testFindingUnambiguousAbsolutePaths() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -281,6 +282,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testAmbiguousPaths() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -376,6 +378,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testRedundantKindDisambiguation() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -428,6 +431,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testBothRedundantDisambiguations() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -480,6 +484,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testDisambiguatedPaths() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -601,6 +606,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testFindingRelativePaths() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -753,9 +759,8 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "second", parent: myTypedExtensibleEnumID).identifier.precise, "c:@MyTypedObjectiveCExtensibleEnumSecond")
     }
     
-    // TODO: It might be nice to support "almost absolute symbol links" that start top-level in some module but doesn't include the module name in the path
-    
     func testPathWithDocumentationPrefix() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -771,6 +776,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testTestBundle() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let linkResolver = try XCTUnwrap(context.hierarchyBasedLinkResolver)
         let tree = try XCTUnwrap(linkResolver.pathHierarchy)
@@ -828,6 +834,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testMixedLanguageFramework() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -873,6 +880,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testOverloadedSymbols() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -906,6 +914,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testOneSymbolPathsWithKnownDisambiguation() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let exampleDocumentation = Folder(name: "MyKit.docc", content: [
             CopyOfFile(original: Bundle.module.url(forResource: "mykit-one-symbol.symbols", withExtension: "json", subdirectory: "Test Resources")!),
             InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
@@ -970,6 +979,7 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testPartialSymbolGraphPaths() throws {
+        try XCTSkipUnless(DocumentationContext.shouldUseHierarchyBasedLinkResolver)
         let symbolPaths = [
             ["A", "B", "C"],
             ["A", "B", "C2"],
