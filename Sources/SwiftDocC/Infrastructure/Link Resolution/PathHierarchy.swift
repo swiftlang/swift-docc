@@ -348,13 +348,35 @@ struct PathHierarchy {
                     return child
                 }
             } catch DisambiguationTree.Error.lookupCollision(let collisions) {
+                func wrappedCollisionError() -> Error {
+                    Error.lookupCollision(partialResult: node, collisions: collisions)
+                }
+                
                 // See if the collision can be resolved by looking ahead on level deeper.
                 guard let nextPathComponent = remaining.dropFirst().first else {
                     // This was the last path component so there's nothing to look ahead.
-                    throw Error.lookupCollision(
-                        partialResult: node,
-                        collisions: collisions.map { ($0.node, $0.disambiguation) }
-                    )
+                    //
+                    // It's possible for a symbol that exist on multiple languages to collide with itself.
+                    // Check if the collision can be resolved by finding a unique symbol or an otherwise preferred match.
+                    var uniqueCollisions: [String: Node] = [:]
+                    for (node, _) in collisions {
+                        guard let symbol = node.symbol else {
+                            // Non-symbol collisions should have already been resolved
+                            throw wrappedCollisionError()
+                        }
+                        
+                        let id = symbol.identifier.precise
+                        if symbol.identifier.interfaceLanguage == "swift" || !uniqueCollisions.keys.contains(id) {
+                            uniqueCollisions[id] = node
+                        }
+                        
+                        guard uniqueCollisions.count < 2 else {
+                            // Encountered more than one unique symbol
+                            throw wrappedCollisionError()
+                        }
+                    }
+                    // A wrapped error would have been raised while iterating over the collection.
+                    return uniqueCollisions.first!.value
                 }
                 // Try resolving the rest of the path for each collision ...
                 let possibleMatches = collisions.compactMap {
@@ -365,7 +387,7 @@ struct PathHierarchy {
                     return possibleMatches.first!
                 }
                 // If all matches are the same symbol, return the Swift version of that symbol
-                if possibleMatches.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatches.first!.symbol?.identifier.precise }) {
+                if !possibleMatches.isEmpty, possibleMatches.dropFirst().allSatisfy({ $0.symbol?.identifier.precise == possibleMatches.first!.symbol?.identifier.precise }) {
                     return possibleMatches.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
                 }
                 // Couldn't resolve the collision by look ahead.
@@ -480,9 +502,6 @@ struct PathHierarchy {
         let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name]).sorted()
         throw Error.notFound(availableChildren: topLevelNames)
     }
-    
-    
-    
 }
 
 extension PathHierarchy {
@@ -949,33 +968,36 @@ private struct DisambiguationTree {
     ///  - More than one match is found; indicated by a raised error listing the matches and their missing disambiguation.
     func find(_ kind: String?, _ hash: String?) throws -> PathHierarchy.Node? {
         if let kind = kind {
-            guard let first = storage[kind] else { return nil }
+            // Need to match the provided kind
+            guard let subtree = storage[kind] else { return nil }
             if let hash = hash {
-                return first[hash]
-            } else if first.count == 1 {
-                return first.values.first
+                return subtree[hash]
+            } else if subtree.count == 1 {
+                return subtree.values.first
             } else {
-                // Disambiguate by their USR
-                throw Error.lookupCollision(first.map { ($0.value, $0.key) })
+                // Subtree contains more than one match.
+                throw Error.lookupCollision(subtree.map { ($0.value, $0.key) })
             }
-        } else if storage.count == 1, let first = storage.values.first {
-            if let usr = hash {
-                return first[usr]
-            } else if first.count == 1 {
-                return first.values.first
+        } else if storage.count == 1, let subtree = storage.values.first {
+            // Tree only contains one kind subtree
+            if let hash = hash {
+                return subtree[hash]
+            } else if subtree.count == 1 {
+                return subtree.values.first
             } else {
-                // Disambiguate by their USR
-                throw Error.lookupCollision(first.map { ($0.value, $0.key) })
+                // Subtree contains more than one match.
+                throw Error.lookupCollision(subtree.map { ($0.value, $0.key) })
             }
-        } else if let usr = hash {
-            let kinds = storage.filter { $0.value.keys.contains(usr) }
+        } else if let hash = hash {
+            // Need to match the provided hash
+            let kinds = storage.filter { $0.value.keys.contains(hash) }
             if kinds.isEmpty {
                 return nil
             } else if kinds.count == 1 {
-                return kinds.first!.value[usr]
+                return kinds.first!.value[hash]
             } else {
-                // Disambiguate by their kind
-                throw Error.lookupCollision(kinds.map { ($0.value[usr]!, $0.key) })
+                // Subtree contains more than one match
+                throw Error.lookupCollision(kinds.map { ($0.value[hash]!, $0.key) })
             }
         }
         // Disambiguate by a mix of kinds and USRs

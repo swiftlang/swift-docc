@@ -340,41 +340,76 @@ class PathHierarchyTests: XCTestCase {
         //     MyObjectiveCOptionFirst                                     = 1 << 0,
         //     MyObjectiveCOptionSecond NS_SWIFT_NAME(secondCaseSwiftName) = 1 << 1
         // };
-        try assertPathCollision("/MixedFramework/MyObjectiveCOption", in: tree, collisions: [
-            (symbolID: "c:@E@MyObjectiveCOption", disambiguation: "enum"),
-            (symbolID: "c:@E@MyObjectiveCOption", disambiguation: "struct"),
-        ])
-        // MyObjectiveCOption is ambiguous but the two collisions can be can be disambiguated by checking their children
+        try assertFindsPath("/MixedFramework/MyObjectiveCOption", in: tree, asSymbolID: "c:@E@MyObjectiveCOption")
+        try assertFindsPath("/MixedFramework/MyObjectiveCOption-enum", in: tree, asSymbolID: "c:@E@MyObjectiveCOption")
+        try assertFindsPath("/MixedFramework/MyObjectiveCOption-struct", in: tree, asSymbolID: "c:@E@MyObjectiveCOption")
+        // Since both collisions are the same symbol (in different languages) it can be disambiguated as one of the values.
+        //
+        // Resolving subpaths will pick to the version of the symbol that has those descendants.
         try assertFindsPath("/MixedFramework/MyObjectiveCOption/MyObjectiveCOptionNone", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionNone")
         try assertFindsPath("/MixedFramework/MyObjectiveCOption/MyObjectiveCOptionFirst", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
         try assertFindsPath("/MixedFramework/MyObjectiveCOption/MyObjectiveCOptionSecond", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
         
         try assertFindsPath("/MixedFramework/MyObjectiveCOption/first", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
         try assertFindsPath("/MixedFramework/MyObjectiveCOption/secondCaseSwiftName", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
+        // Using a disambiguation suffix to pick a specific version of the symbol can only find the descendants in that language ...
+        try assertFindsPath("/MixedFramework/MyObjectiveCOption-enum/MyObjectiveCOptionNone", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionNone")
+        try assertFindsPath("/MixedFramework/MyObjectiveCOption-enum/MyObjectiveCOptionFirst", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
+        try assertFindsPath("/MixedFramework/MyObjectiveCOption-enum/MyObjectiveCOptionSecond", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
+        
+        try assertFindsPath("/MixedFramework/MyObjectiveCOption-struct/first", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionFirst")
+        try assertFindsPath("/MixedFramework/MyObjectiveCOption-struct/secondCaseSwiftName", in: tree, asSymbolID: "c:@E@MyObjectiveCOption@MyObjectiveCOptionSecond")
+        // ... but not the descendants in the other language.
+        try assertPathNotFound("/MixedFramework/MyObjectiveCOption-struct/MyObjectiveCOptionNone", in: tree)
+        try assertPathNotFound("/MixedFramework/MyObjectiveCOption-struct/MyObjectiveCOptionFirst", in: tree)
+        try assertPathNotFound("/MixedFramework/MyObjectiveCOption-struct/MyObjectiveCOptionSecond", in: tree)
+        
+        try assertPathNotFound("/MixedFramework/MyObjectiveCOption-enum/first", in: tree)
+        try assertPathNotFound("/MixedFramework/MyObjectiveCOption-enum/secondCaseSwiftName", in: tree)
         
         // typedef NSInteger MyTypedObjectiveCEnum NS_TYPED_ENUM;
         //
         // MyTypedObjectiveCEnum const MyTypedObjectiveCEnumFirst;
         // MyTypedObjectiveCEnum const MyTypedObjectiveCEnumSecond;
-        try assertPathCollision("/MixedFramework/MyTypedObjectiveCEnum", in: tree, collisions: [
-            (symbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCEnum", disambiguation: "struct"),
-            (symbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCEnum", disambiguation: "typealias"),
-        ])
-        // MyTypedObjectiveCEnum is ambiguous but the two collisions can be can be disambiguated by checking their children
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCEnum", in: tree, asSymbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCEnum")
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCEnum-struct", in: tree, asSymbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCEnum")
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCEnum-typealias", in: tree, asSymbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCEnum")
+        // Since both collisions are the same symbol (in different languages) it can be disambiguated as one of the values.
+        //
+        // Resolving subpaths will pick to the version of the symbol that has those descendants.
         try assertFindsPath("/MixedFramework/MyTypedObjectiveCEnum/first", in: tree, asSymbolID: "c:@MyTypedObjectiveCEnumFirst")
         try assertFindsPath("/MixedFramework/MyTypedObjectiveCEnum/second", in: tree, asSymbolID: "c:@MyTypedObjectiveCEnumSecond")
+        
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCEnumFirst", in: tree, asSymbolID: "c:@MyTypedObjectiveCEnumFirst")
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCEnumSecond", in: tree, asSymbolID: "c:@MyTypedObjectiveCEnumSecond")
+        // Using a disambiguation suffix to pick a specific version of the symbol can only find the descendants in that language ...
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCEnum-struct/first", in: tree, asSymbolID: "c:@MyTypedObjectiveCEnumFirst")
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCEnum-struct/second", in: tree, asSymbolID: "c:@MyTypedObjectiveCEnumSecond")
+        // ... but not the descendants in the other language.
+        try assertPathNotFound("MixedFramework/MyTypedObjectiveCEnum-typealias/first", in: tree)
+        try assertPathNotFound("MixedFramework/MyTypedObjectiveCEnum-typealias/second", in: tree)
         
         // typedef NSInteger MyTypedObjectiveCExtensibleEnum NS_TYPED_EXTENSIBLE_ENUM;
         //
         // MyTypedObjectiveCExtensibleEnum const MyTypedObjectiveCExtensibleEnumFirst;
         // MyTypedObjectiveCExtensibleEnum const MyTypedObjectiveCExtensibleEnumSecond;
-        try assertPathCollision("/MixedFramework/MyTypedObjectiveCExtensibleEnum", in: tree, collisions: [
-            (symbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCExtensibleEnum", disambiguation: "struct"),
-            (symbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCExtensibleEnum", disambiguation: "typealias"),
-        ])
-        // MyTypedObjectiveCExtensibleEnum is ambiguous but the two collisions can be can be disambiguated by checking their children
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCExtensibleEnum", in: tree, asSymbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCExtensibleEnum")
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCExtensibleEnum-struct", in: tree, asSymbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCExtensibleEnum")
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCExtensibleEnum-typealias", in: tree, asSymbolID: "c:ObjectiveCDeclarations.h@T@MyTypedObjectiveCExtensibleEnum")
+        // Since both collisions are the same symbol (in different languages) it can be disambiguated as one of the values.
+        //
+        // Resolving subpaths will pick to the version of the symbol that has those descendants.
         try assertFindsPath("/MixedFramework/MyTypedObjectiveCExtensibleEnum/first", in: tree, asSymbolID: "c:@MyTypedObjectiveCExtensibleEnumFirst")
         try assertFindsPath("/MixedFramework/MyTypedObjectiveCExtensibleEnum/second", in: tree, asSymbolID: "c:@MyTypedObjectiveCExtensibleEnumSecond")
+        
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCExtensibleEnumFirst", in: tree, asSymbolID: "c:@MyTypedObjectiveCExtensibleEnumFirst")
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCExtensibleEnumSecond", in: tree, asSymbolID: "c:@MyTypedObjectiveCExtensibleEnumSecond")
+        // Using a disambiguation suffix to pick a specific version of the symbol can only find the descendants in that language ...
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCExtensibleEnum-struct/first", in: tree, asSymbolID: "c:@MyTypedObjectiveCExtensibleEnumFirst")
+        try assertFindsPath("/MixedFramework/MyTypedObjectiveCExtensibleEnum-struct/second", in: tree, asSymbolID: "c:@MyTypedObjectiveCExtensibleEnumSecond")
+        // ... but not the descendants in the other language.
+        try assertPathNotFound("MixedFramework/MyTypedObjectiveCExtensibleEnum-typealias/first", in: tree)
+        try assertPathNotFound("MixedFramework/MyTypedObjectiveCExtensibleEnum-typealias/second", in: tree)
     }
     
     func testRedundantKindDisambiguation() throws {
