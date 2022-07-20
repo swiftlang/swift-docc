@@ -37,6 +37,10 @@ let supportedDirectives: [Directive] = [
         name: "DocumentationExtension",
         isLeaf: true
     ),
+    .init(
+        name: "DisplayName",
+        isLeaf: true
+    ),
 
     // MARK: Technology Root
 
