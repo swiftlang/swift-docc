@@ -2498,6 +2498,64 @@ class ConvertActionTests: XCTestCase {
         let expectedOutput = Folder(name: ".docc-build", content: [expectedIndex])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
     }
+
+    func testConvertWithThemeSettings() throws {
+        let info = InfoPlist(displayName: "TestConvertWithThemeSettings", identifier: "com.test.example")
+        let index = TextFile(name: "index.html", utf8Content: """
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <title>Test</title>
+            </head>
+            <body data-color-scheme="auto"><p>hello</p></body>
+        </html>
+        """)
+        let themeSettings = TextFile(name: "theme-settings.json", utf8Content: """
+        {
+          "meta": {},
+          "theme": {
+            "colors": {
+              "text": "#ff0000"
+            }
+          },
+          "features": {}
+        }
+        """)
+        let template = Folder(name: "template", content: [index])
+        let bundle = Folder(name: "TestConvertWithThemeSettings.docc", content: [
+            info,
+            themeSettings,
+        ])
+
+        let tempURL = try createTemporaryDirectory()
+        let targetURL = tempURL.appendingPathComponent("target", isDirectory: true)
+
+        let bundleURL = try bundle.write(inside: tempURL)
+        let templateURL = try template.write(inside: tempURL)
+
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+
+        var action = try ConvertAction(
+            documentationBundleURL: bundleURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetURL,
+            htmlTemplateDirectory: templateURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: dataProvider,
+            fileManager: FileManager.default,
+            temporaryDirectory: createTemporaryDirectory(),
+            experimentalEnableCustomTemplates: true
+        )
+        let result = try action.perform(logHandle: .standardOutput)
+
+        let expectedOutput = Folder(name: ".docc-build", content: [
+            index,
+            themeSettings,
+        ])
+        expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
+    }
     
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {
         return problems.sorted(by: { (lhs, rhs) -> Bool in
