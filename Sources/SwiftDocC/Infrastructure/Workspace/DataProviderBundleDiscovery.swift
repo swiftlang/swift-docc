@@ -66,8 +66,17 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
 
         let customHeader = findCustomHeader(bundleChildren)?.url
         let customFooter = findCustomFooter(bundleChildren)?.url
+        let themeSettings = findThemeSettings(bundleChildren)?.url
         
-        return DocumentationBundle(info: info, symbolGraphURLs: symbolGraphFiles, markupURLs: markupFiles, miscResourceURLs: miscResources, customHeader: customHeader, customFooter: customFooter)
+        return DocumentationBundle(
+            info: info,
+            symbolGraphURLs: symbolGraphFiles,
+            markupURLs: markupFiles,
+            miscResourceURLs: miscResources,
+            customHeader: customHeader,
+            customFooter: customFooter,
+            themeSettings: themeSettings
+        )
     }
     
     /// Performs a shallow search for the first Info.plist file in the given list of files and directories.
@@ -110,6 +119,10 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
 
     private func findCustomFooter(_ bundleChildren: [FSNode]) -> FSNode.File? {
         return bundleChildren.firstFile { DocumentationBundleFileTypes.isCustomFooter($0.url) }
+    }
+
+    private func findThemeSettings(_ bundleChildren: [FSNode]) -> FSNode.File? {
+        return bundleChildren.firstFile { DocumentationBundleFileTypes.isThemeSettingsFile($0.url) }
     }
 }
 
