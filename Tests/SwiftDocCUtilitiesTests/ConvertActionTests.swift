@@ -2523,8 +2523,8 @@ class ConvertActionTests: XCTestCase {
         """)
         let template = Folder(name: "template", content: [index])
         let bundle = Folder(name: "TestConvertWithThemeSettings.docc", content: [
-          info,
-          themeSettings,
+            info,
+            themeSettings,
         ])
 
         let tempURL = try createTemporaryDirectory()
@@ -2551,8 +2551,8 @@ class ConvertActionTests: XCTestCase {
         let result = try action.perform(logHandle: .standardOutput)
 
         let expectedOutput = Folder(name: ".docc-build", content: [
-          index,
-          themeSettings,
+            index,
+            themeSettings,
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
     }

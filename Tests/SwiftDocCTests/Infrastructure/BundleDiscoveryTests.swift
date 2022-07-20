@@ -332,17 +332,17 @@ class BundleDiscoveryTests: XCTestCase {
     func testThemeSettingsFound() throws {
         let workspace = Folder(name: "TestBundle.docc", content:
             allFiles.map { CopyOfFile(original: $0) } + [
-                  TextFile(name: "theme-settings.json", utf8Content: """
-                  {
-                    "meta": {},
-                    "theme": {
-                      "colors": {
-                        "text": "#ff0000"
-                      }
-                    },
-                    "features": {}
-                  }
-                  """),
+                TextFile(name: "theme-settings.json", utf8Content: """
+                {
+                  "meta": {},
+                  "theme": {
+                    "colors": {
+                      "text": "#ff0000"
+                    }
+                  },
+                  "features": {}
+                }
+                """),
             ]
         )
 
