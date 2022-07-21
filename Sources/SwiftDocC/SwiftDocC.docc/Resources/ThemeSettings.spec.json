@@ -27,7 +27,7 @@
                 "properties": {
                     "title": {
                         "type": "string",
-                        "description": "This can be used to provide a title for the website, which will be appended to the title of the page in the HTML <title> tag with the \"|\" character separating the two."
+                        "description": "This can be used to provide a title for the website, which will be appended to the title of the page in the HTML `<title>` tag with the `\"|\"` character separating the two."
                     }
                 }
             },
