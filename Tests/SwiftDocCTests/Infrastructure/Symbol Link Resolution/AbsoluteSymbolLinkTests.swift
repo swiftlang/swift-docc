@@ -873,7 +873,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             }
             """,
         ]
-        if !DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+        if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             // The cache-based resolver redundantly disambiguates these overloads with both kind and hash ...
             for index in 7...11 {
                 expectedDescriptions[index] = expectedDescriptions[index].replacingOccurrences(

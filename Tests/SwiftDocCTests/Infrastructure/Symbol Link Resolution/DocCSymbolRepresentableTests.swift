@@ -46,7 +46,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testOverloadedParentAndMember() throws {
-        try XCTSkipIf(DocumentationContext.shouldUseHierarchyBasedLinkResolver, "This is already unambiguous at the parent level. The `AbsoluteSymbolLink.LinkComponent` doesn't have the information to identify that.")
+        try XCTSkipIf(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver, "This is already unambiguous at the parent level. The `AbsoluteSymbolLink.LinkComponent` doesn't have the information to identify that.")
         
         try performOverloadSymbolDisambiguationTest(
             correctLink: """
@@ -76,7 +76,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testFunctionWithKindIdentifierAndUSRHash() throws {
-        if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             try performOverloadSymbolDisambiguationTest(
                 correctLink: """
                 doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s
@@ -240,7 +240,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             count += 1
         }
         
-        if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             // With the hierarchy-based resolver it's never necessary to disambiguate with both kind and usr.
             XCTAssertEqual(count, 0)
         } else {

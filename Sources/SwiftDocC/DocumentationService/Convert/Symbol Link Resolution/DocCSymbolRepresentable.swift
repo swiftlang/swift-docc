@@ -156,7 +156,7 @@ public extension Collection where Element: DocCSymbolRepresentable {
             return map { currentSymbol in
                 let kindCount = filter { $0.kindIdentifier == currentSymbol.kindIdentifier }.count
                 
-                if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+                if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
                     return (
                         shouldAddIdHash: kindCount > 1,
                         shouldAddKind: kindCount == 1

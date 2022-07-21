@@ -174,7 +174,7 @@ class SymbolDisambiguationTests: XCTestCase {
             "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.method",
         ])
         
-        if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
                 "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-\("second".stableHashString)",
             ])
@@ -195,7 +195,7 @@ class SymbolDisambiguationTests: XCTestCase {
     func testMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
-        if !DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+        if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             let aliases = [String: [String]](uniqueKeysWithValues: context.documentationCacheBasedLinkResolver.referenceAliases.map({ ($0.key.path, $0.value.map(\.path).sorted()) }))
             XCTAssertEqual(aliases, [
                 "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)": [

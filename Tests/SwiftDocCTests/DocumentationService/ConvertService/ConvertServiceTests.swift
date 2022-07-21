@@ -355,7 +355,7 @@ class ConvertServiceTests: XCTestCase {
                 "/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method"
             )
             
-            if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+            if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
                 XCTAssertEqual(
                     renderNode.abstract?.first,
                     .reference(

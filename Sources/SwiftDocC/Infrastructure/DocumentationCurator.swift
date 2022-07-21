@@ -116,7 +116,7 @@ struct DocumentationCurator {
         
         // Move the article from the article cache to the documentation
         
-        if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
             context.hierarchyBasedLinkResolver!.addArticle(filename: articleFilename, reference: reference, anchorSections: documentationNode.anchorSections)
         }
         

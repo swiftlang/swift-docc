@@ -115,10 +115,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// A link resolver that resolves references by finding them in path hierarchy.
     var hierarchyBasedLinkResolver: PathHierarchyBasedLinkResolver? = nil
     
-    static var shouldUseHierarchyBasedLinkResolver: Bool = {
-        return UserDefaults.standard.bool(forKey: "DocCUseHierarchyBasedLinkResolver")
-            || ProcessInfo.processInfo.environment["DOCC_USE_HIERARCHY_BASED_LINK_RESOLVER"] == "YES"
-    }()
+    /// Gathered differences between the two link resolution implementations.
+    ///
+    /// This is only if ``LinkResolutionMigrationConfiguration/shouldReportLinkResolutionPathMismatches`` or  ``LinkResolutionMigrationConfiguration/shouldReportLinkResolutionResultMismatches`` is enabled.
+    ///
+    /// > Note: This is a temporary property that will go away along with the ``DocumentationCacheBasedLinkResolver`` at some point in the future.
+    var linkResolutionMismatches = LinkResolutionMismatches()
     
     /// The provider of documentation bundles for this context.
     var dataProvider: DocumentationContextDataProvider
@@ -323,7 +325,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle that was removed.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
         documentationCacheBasedLinkResolver.unregisterBundle(identifier: bundle.identifier)
-        if Self.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
             hierarchyBasedLinkResolver?.unregisterBundle(identifier: bundle.identifier)
         }
         
@@ -1110,7 +1112,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             // Build references for all symbols in all of this module's symbol graphs.
             let symbolReferences: [SymbolGraph.Symbol.Identifier : [ResolvedTopicReference]]
-            if Self.shouldUseHierarchyBasedLinkResolver {
+            if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
                 symbolReferences = hierarchyBasedLinkResolver!.referencesForSymbols(in:symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
                     .mapValues({ [$0] }) // The documentation cache implementation uses an array of values to handle multi languages
             } else {
@@ -1245,11 +1247,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             try shouldContinueRegistration()
             
-            if Self.shouldUseHierarchyBasedLinkResolver {
+            if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
                 // Map the resolved references with their identifiers
                 hierarchyBasedLinkResolver!.addMappingForSymbols(symbolIndex: symbolIndex)
-            } else {
-                // The `symbolsURLHierarchy` is not used when resolving links via the hierarchy-based link resolver.
+            }
+            if LinkResolutionMigrationConfiguration.shouldFullySetUpCacheBasedLinkResolver {
+                // When gathering mismatches between the two link resolution implementations it's possible to run both setups.
+                //
+                // The `symbolsURLHierarchy` is only used in the cache-based link resolver to traverse the documentation and
+                // update child references to also include their parent's disambiguation.
                 for (_, relationships) in combinedRelationships {
                     // Add parent <-> child edges to the URL tree
                     try relationships
@@ -1336,11 +1342,24 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             
             // Index references
-            if !Self.shouldUseHierarchyBasedLinkResolver {
+            if LinkResolutionMigrationConfiguration.shouldFullySetUpCacheBasedLinkResolver {
                 documentationCacheBasedLinkResolver.referencesIndex.removeAll()
                 documentationCacheBasedLinkResolver.referencesIndex.reserveCapacity(knownIdentifiers.count)
                 for reference in knownIdentifiers {
                     documentationCacheBasedLinkResolver.registerReference(reference)
+                }
+            }
+            
+            if LinkResolutionMigrationConfiguration.shouldReportLinkResolutionPathMismatches {
+                // This mismatch check needs to happen at the since the cache based implementation traverses the symbols to update them
+                let hierarchyBasedReferences = hierarchyBasedLinkResolver!.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+                
+                for (usr, hierarchyBasedReference) in hierarchyBasedReferences {
+                    let cacheBasedMainReference = symbolIndex[usr.precise]!.reference
+                    
+                    if hierarchyBasedReference.path != cacheBasedMainReference.path {
+                        linkResolutionMismatches.pathsWithMismatchedDisambiguation[hierarchyBasedReference.path] = cacheBasedMainReference.path
+                    }
                 }
             }
 
@@ -1629,7 +1648,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             topicGraph.addNode(graphNode)
             documentationCache[reference] = documentation
             
-            if Self.shouldUseHierarchyBasedLinkResolver {
+            if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
                 hierarchyBasedLinkResolver!.addRootArticle(article, anchorSections: documentation.anchorSections)
             }
             for anchor in documentation.anchorSections {
@@ -1688,7 +1707,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let graphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: article.source), title: title)
             topicGraph.addNode(graphNode)
             
-            if Self.shouldUseHierarchyBasedLinkResolver {
+            if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
                 hierarchyBasedLinkResolver!.addArticle(article, anchorSections: documentation.anchorSections)
             }
             for anchor in documentation.anchorSections {
@@ -1831,7 +1850,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             symbolGraphLoader = SymbolGraphLoader(bundle: bundle, dataProvider: self.dataProvider)
             do {
                 try symbolGraphLoader.loadAll()
-                if Self.shouldUseHierarchyBasedLinkResolver {
+                if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
                     let pathHierarchy = PathHierarchy(symbolGraphLoader: symbolGraphLoader, bundleName: urlReadablePath(bundle.displayName), knownDisambiguatedPathComponents: knownDisambiguatedSymbolPathComponents)
                     hierarchyBasedResolver = PathHierarchyBasedLinkResolver(pathHierarchy: pathHierarchy)
                 }
@@ -1891,7 +1910,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let (technologies, tutorials, tutorialArticles, allArticles) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
         
-        if Self.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
             hierarchyBasedLinkResolver = hierarchyBasedResolver
             hierarchyBasedResolver.addMappingForRoots(bundle: bundle)
             for tutorial in tutorials {
@@ -1944,7 +1963,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         try shouldContinueRegistration()
         var allCuratedReferences: Set<ResolvedTopicReference>
-        if Self.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             let topLevelModuleReferences = hierarchyBasedLinkResolver!.topLevelSymbols()
             allCuratedReferences = try crawlSymbolCuration(in: topLevelModuleReferences, bundle: bundle)
         } else {
@@ -1979,7 +1998,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Emit warnings for any remaining uncurated files.
         emitWarningsForUncuratedTopics()
         
-        if Self.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
             hierarchyBasedResolver.addAnchorForSymbols(symbolIndex: symbolIndex)
         }
         
@@ -2057,7 +2076,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Returns: An ordered list of symbol references that have been added to the topic graph automatically.
     private func autoCurateSymbolsInTopicGraph(symbolsURLHierarchy: BidirectionalTree<ResolvedTopicReference>, engine: DiagnosticEngine) -> [(child: ResolvedTopicReference, parent: ResolvedTopicReference)] {
         var automaticallyCuratedSymbols = [(ResolvedTopicReference, ResolvedTopicReference)]()
-        if Self.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             hierarchyBasedLinkResolver!.traverseSymbolAndParentPairs { reference, parentReference in
                 guard let topicGraphNode = topicGraph.nodeWithReference(reference),
                       let topicGraphParentNode = topicGraph.nodeWithReference(parentReference),
@@ -2425,7 +2444,30 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public func resolve(_ reference: TopicReference, in parent: ResolvedTopicReference, fromSymbolLink isCurrentlyResolvingSymbolLink: Bool = false) -> TopicReferenceResolutionResult {
         switch reference {
         case .unresolved(let unresolvedReference):
-            if Self.shouldUseHierarchyBasedLinkResolver {
+            if LinkResolutionMigrationConfiguration.shouldReportLinkResolutionResultMismatches {
+                let hierarchyBasedResult = hierarchyBasedLinkResolver!.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
+                let cacheBasedResult = documentationCacheBasedLinkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
+                
+                let inputInfo = LinkResolutionMismatches.FailedLinkInfo(
+                    path: unresolvedReference.topicURL.url.withoutHostAndPortAndScheme().absoluteString,
+                    parent: parent.url.withoutHostAndPortAndScheme().absoluteString,
+                    asSymbolLink: isCurrentlyResolvingSymbolLink
+                )
+                switch (hierarchyBasedResult, cacheBasedResult) {
+                case (.success, .failure):
+                    linkResolutionMismatches.mismatchedLinksThatCacheBasedLinkResolverFailedToResolve.insert(inputInfo)
+                case (.failure, .success):
+                    linkResolutionMismatches.mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve.insert(inputInfo)
+                default:
+                    break // No difference to report
+                }
+                
+                return LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver
+                    ? hierarchyBasedResult
+                    : cacheBasedResult
+            }
+            
+            if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
                 return hierarchyBasedLinkResolver!.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
             } else {
                 return documentationCacheBasedLinkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)

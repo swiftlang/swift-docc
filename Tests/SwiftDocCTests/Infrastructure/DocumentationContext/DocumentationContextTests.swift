@@ -1637,7 +1637,7 @@ let expected = """
         
         // Verify the non-overload collisions were resolved
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
-        if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-9053a", sourceLanguage: .swift)))
             XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-959hd", sourceLanguage: .swift)))
         } else {
@@ -2568,7 +2568,7 @@ let expected = """
     /// it verifies also that the curation in these doc extensions is reflected in the topic graph.
     func testMatchesCorrectlyDocExtensionToChildOfCollisionTopic() throws {
         let fifthTestMemberPath: String
-        if DocumentationContext.shouldUseHierarchyBasedLinkResolver {
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember"
         } else {
             fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property"
