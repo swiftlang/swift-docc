@@ -35,7 +35,31 @@
                 "type": "object"
             },
             "Features": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                    "docs": {
+                        "$ref": "#/components/schemas/DocumentationPageFeatures"
+                    }
+                }
+            },
+            "DocumentationPageFeatures": {
+                "type": "object",
+                "properties": {
+                    "quickNavigation": {
+                        "$ref": "#/components/schemas/FeatureFlagEnable"
+                    }
+                }
+            },
+            "FeatureFlagEnable": {
+                "type": "object",
+                "required": [
+                    "enable"
+                ],
+                "properties": {
+                    "enable": {
+                        "type": "boolean"
+                    }
+                }
             }
         },
         "requestBodies": {},
