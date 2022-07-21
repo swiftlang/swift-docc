@@ -10,6 +10,7 @@
         "schemas": {
             "ThemeSettings": {
                 "type": "object",
+                "description": "Settings for customizing the look and feel of the website.",
                 "properties":{
                     "meta": {
                         "$ref": "#/components/schemas/Meta"
@@ -24,18 +25,21 @@
             },
             "Meta": {
                 "type": "object",
+                "description": "Metadata concerning the website as a whole, like the website title.",
                 "properties": {
                     "title": {
                         "type": "string",
-                        "description": "This can be used to provide a title for the website, which will be appended to the title of the page in the HTML `<title>` tag with the `\"|\"` character separating the two."
+                        "description": "A title for the website, which will be appended to the title of the page in the HTML `<title>` tag with the `\"|\"` character separating the two."
                     }
                 }
             },
             "Theme": {
-                "type": "object"
+                "type": "object",
+                "description": "Settings concerning the visual appearance of the website and the styling of its components."
             },
             "Features": {
                 "type": "object",
+                "description": "Flags for enabling or disabling features of the website.",
                 "properties": {
                     "docs": {
                         "$ref": "#/components/schemas/DocumentationPageFeatures"
@@ -44,6 +48,7 @@
             },
             "DocumentationPageFeatures": {
                 "type": "object",
+                "description": "Flags for enabling or disabling `/documentation` page features.",
                 "properties": {
                     "quickNavigation": {
                         "$ref": "#/components/schemas/FeatureFlagEnable"
@@ -52,6 +57,7 @@
             },
             "FeatureFlagEnable": {
                 "type": "object",
+                "description": "Enables a feature if `enable` is `true`.",
                 "required": [
                     "enable"
                 ],
