@@ -1,0 +1,46 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Allowed configuration for theme-settings.json.",
+        "version": "0.3.0",
+        "title": "Theme Settings"
+    },
+    "paths": {},
+    "components": {
+        "schemas": {
+            "ThemeSettings": {
+                "type": "object",
+                "properties":{
+                    "meta": {
+                        "$ref": "#/components/schemas/Meta"
+                    },
+                    "theme": {
+                        "$ref": "#/components/schemas/Theme"
+                    },
+                    "features": {
+                        "$ref": "#/components/schemas/Features"
+                    }
+                }
+            },
+            "Meta": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "This can be used to provide a title for the website, which will be appended to the title of the page in the HTML <title> tag with the \"|\" character separating the two."
+                    }
+                }
+            },
+            "Theme": {
+                "type": "object"
+            },
+            "Features": {
+                "type": "object"
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}
