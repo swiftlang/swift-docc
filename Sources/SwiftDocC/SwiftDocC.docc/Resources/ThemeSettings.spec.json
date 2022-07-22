@@ -35,7 +35,19 @@
             },
             "Theme": {
                 "type": "object",
-                "description": "Settings concerning the visual appearance of the website and the styling of its components."
+                "description": "Settings concerning the visual appearance of the website and the styling of its components.",
+                "properties": {
+                    "border-radius": {
+                        "type": "string",
+                        "description": "The CSS border-radius value used globally for elements like code listings and asides."
+                    },
+                    "code": {
+                        "$ref": "#/components/schemas/CodeSettings"
+                    },
+                    "typography": {
+                        "$ref": "#/components/schemas/TypographySettings"
+                    }
+                }
             },
             "Features": {
                 "type": "object",
@@ -64,6 +76,30 @@
                 "properties": {
                     "enable": {
                         "type": "boolean"
+                    }
+                }
+            },
+            "CodeSettings": {
+                "type": "object",
+                "description": "Settings concerning code listings.",
+                "properties": {
+                    "indentationWidth": {
+                        "type": "integer",
+                        "description": "The number of spaces used to indent multi-parameter Swift symbol declarations."
+                    }
+                }
+            },
+            "TypographySettings": {
+                "type": "object",
+                "description": "Settings related to typography.",
+                "properties": {
+                    "html-font": {
+                        "type": "string",
+                        "description": "The CSS font-family value to be used globally for text in documentation."
+                    },
+                    "html-font-mono": {
+                        "type": "string",
+                        "description": "The CSS font-family value to be used for monospaced code-voice text in documentation."
                     }
                 }
             }
