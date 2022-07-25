@@ -44,6 +44,9 @@
                     "code": {
                         "$ref": "#/components/schemas/CodeSettings"
                     },
+                    "colors": {
+                        "$ref": "#/components/schemas/Colors"
+                    },
                     "typography": {
                         "$ref": "#/components/schemas/TypographySettings"
                     }
@@ -100,6 +103,44 @@
                     "html-font-mono": {
                         "type": "string",
                         "description": "The CSS font-family value to be used for monospaced code-voice text in documentation."
+                    }
+                }
+            },
+            "Colors": {
+                "type": "object",
+                "description": "An object where each key represents the name of a color variable referenced in the renderer. A CSS property in the form `--color-[key]` will either be created or overwritten with the value associated with it.",
+                "additionalProperties": {
+                    "$ref": "#/components/schemas/Color"
+                }
+            },
+            "Color": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/CSSColor"
+                    },
+                    {
+                        "$ref": "#/components/schemas/CSSColorVariants"
+                    }
+                ],
+                "description": "A simple string can be used to configure a color to be used in both light/dark modes while an object with explicit light and dark values can be configured independently for the respective mode."
+            },
+            "CSSColor": {
+                "type": "string",
+                "description": "Any valid CSS color value."
+            },
+            "CSSColorVariants": {
+                "type": "object",
+                "description": "A map of light and dark CSS color values to use as appropriate.",
+                "required": [
+                    "dark",
+                    "light"
+                ],
+                "properties": {
+                    "dark": {
+                        "$ref": "#/components/schemas/CSSColor"
+                    },
+                    "light": {
+                        "$ref": "#/components/schemas/CSSColor"
                     }
                 }
             }
