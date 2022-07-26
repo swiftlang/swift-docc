@@ -158,17 +158,20 @@ class DocumentationMarkupTests: XCTestCase {
             XCTAssertEqual(expected, model.abstractSection?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n"))
         }
 
-        // Contains a HTMLBlock before the abstract
+        // Contains an HTMLBlock comment and a BlockDirective comment before the abstract
         do {
             let source = """
             # Title
             <!--Line a-->
-            Line b
+            @Comment{
+                Line b
+            }
+            Line c
             ## Hello, world!
             Discussion content.
             """
             let expected = """
-            Text \"Line b\"
+            Text \"Line c\"
             """
             let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
             XCTAssertEqual(expected, model.abstractSection?.content.map{ $0.detachedFromParent.debugDescription() }.joined(separator: "\n"))
