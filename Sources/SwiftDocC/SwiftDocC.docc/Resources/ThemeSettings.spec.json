@@ -36,7 +36,8 @@
                                 "properties": {
                                     "indentationWidth": {
                                         "type": "integer",
-                                        "description": "The number of spaces used to indent multi-parameter Swift symbol declarations."
+                                        "description": "The number of spaces used to indent multi-parameter Swift symbol declarations.",
+                                        "minimum": 0
                                     }
                                 }
                             },
