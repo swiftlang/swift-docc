@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,6 +20,7 @@ class ExternalReferenceResolverTests: XCTestCase {
         var expectedFragment: String? = nil
         var resolvedEntityTitle = "Externally Resolved Title"
         var resolvedEntityKind = DocumentationNode.Kind.article
+        var resolvedEntityLanguage = SourceLanguage.swift
         var resolvedEntityDeclarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
         
         enum Error: Swift.Error {
@@ -32,7 +33,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             if let path = reference.url?.path {
                 resolvedExternalPaths.append(path)
             }
-            return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, fragment: expectedFragment, sourceLanguage: .swift))
+            return .success(ResolvedTopicReference(bundleIdentifier: bundleIdentifier, path: expectedReferencePath, fragment: expectedFragment, sourceLanguage: resolvedEntityLanguage))
         }
         
         func entity(with reference: ResolvedTopicReference) throws -> DocumentationNode {
@@ -70,7 +71,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             return DocumentationNode(
                 reference: reference,
                 kind: resolvedEntityKind,
-                sourceLanguage: .swift,
+                sourceLanguage: resolvedEntityLanguage,
                 name: .conceptual(title: resolvedEntityTitle),
                 markup: Document(parsing: "Externally Resolved Markup Content", options: [.parseBlockDirectives, .parseSymbolLinks]),
                 semantic: semantic
@@ -141,6 +142,77 @@ class ExternalReferenceResolverTests: XCTestCase {
             XCTFail("Unexpectedly resolved \(unresolved.topicURL) despite removing a data provider for it")
             return
         }
+    }
+    
+    // Asserts that an external reference from a source language not locally included
+    // in the current DocC catalog is still included in any rendered topic groups that
+    // manually curate it. (94406023)
+    func testExternalReferenceInOtherLanguageIsIncludedInTopicGroup() throws {
+        let externalResolver = TestExternalReferenceResolver()
+        externalResolver.bundleIdentifier = "com.test.external"
+        externalResolver.expectedReferencePath = "/path/to/external/api"
+        externalResolver.resolvedEntityTitle = "Name of API"
+        externalResolver.resolvedEntityKind = .technology
+        
+        // Set the language of the externally resolved entity to 'data'.
+        externalResolver.resolvedEntityLanguage = .data
+        
+        let (_, bundle, context) = try testBundleAndContext(
+            copying: "TestBundle",
+            externalResolvers: [externalResolver.bundleIdentifier: externalResolver]
+        ) { url in
+            let sideClassExtension = """
+                # ``SideKit/SideClass``
+
+                ## Topics
+                    
+                ### External reference
+
+                - <doc://com.test.external/path/to/external/api>
+                
+                """
+            
+            let sideClassExtensionURL = url.appendingPathComponent(
+                "documentation/sideclass.md",
+                isDirectory: false
+            )
+            try sideClassExtension.write(to: sideClassExtensionURL, atomically: true, encoding: .utf8)
+        }
+        
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let sideClassReference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/SideKit/SideClass",
+            sourceLanguage: .swift
+        )
+        let node = try context.entity(with: sideClassReference)
+        let fileURL = try XCTUnwrap(context.documentURL(for: node.reference))
+        let renderNode = try converter.convert(node, at: fileURL)
+        
+        // First assert that the external reference is included in the render node's references
+        // and is defined as expected.
+        let externalRenderReference = try XCTUnwrap(
+            renderNode.references["doc://com.test.external/path/to/external/api"] as? TopicRenderReference
+        )
+        XCTAssertEqual(
+            externalRenderReference.identifier.identifier,
+            "doc://com.test.external/path/to/external/api"
+        )
+        XCTAssertEqual(externalRenderReference.title, "Name of API")
+        XCTAssertEqual(externalRenderReference.url, "/example/path/to/external/api")
+        XCTAssertEqual(externalRenderReference.kind, .overview)
+        XCTAssertEqual(externalRenderReference.role, RenderMetadata.Role.overview.rawValue)
+        
+        // Then assert the topic group including that reference was actually included.
+        let externalReferencesTopicSection = try XCTUnwrap(
+            renderNode.topicSections.first { topicSection in
+                topicSection.title == "External reference"
+            }
+        )
+        XCTAssertEqual(
+            externalReferencesTopicSection.identifiers.first,
+            externalRenderReference.identifier.identifier
+        )
     }
     
     func testResolvesReferencesExternallyOnlyWhenFallbackResolversAreSet() throws {
@@ -282,7 +354,7 @@ Document @1:1-1:35
             .init(kind: .identifier, spelling: "ClassName", preciseIdentifier: nil),
         ])
         
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -295,7 +367,6 @@ Document @1:1-1:35
             - <doc://com.test.external/path/to/external/symbol>
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
@@ -330,7 +401,7 @@ Document @1:1-1:35
         externalResolver.resolvedEntityTitle = "Name of Sample"
         externalResolver.resolvedEntityKind = .sampleCode
         
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
             try """
             # ``SideKit/SideClass``
 
@@ -343,7 +414,6 @@ Document @1:1-1:35
             - <doc://com.test.external/path/to/external/sample>
             """.write(to: url.appendingPathComponent("documentation/sideclass.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
@@ -373,7 +443,6 @@ Document @1:1-1:35
         // Copy the test bundle and add external links to the MyKit Topics.
         let workspace = DocumentationWorkspace()
         let (tempURL, _, _) = try testBundleAndContext(copying: "TestBundle")
-        defer { try? FileManager.default.removeItem(at: tempURL) }
         
         try """
         # ``MyKit``
@@ -414,7 +483,7 @@ Document @1:1-1:35
     // Tests that external references are resolved in tutorial content
     func testResolveExternalReferenceInTutorials() throws {
         let resolver = TestExternalReferenceResolver()
-        let (tempURL, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: ["com.external.bundle": resolver, "com.external.testbundle": resolver], configureBundle: { (bundleURL) in
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: ["com.external.bundle": resolver, "com.external.testbundle": resolver], configureBundle: { (bundleURL) in
             // Replace TestTutorial.tutorial with a copy that includes a bunch of external links
             try FileManager.default.removeItem(at: bundleURL.appendingPathComponent("TestTutorial.tutorial"))
             try FileManager.default.copyItem(
@@ -429,7 +498,6 @@ Document @1:1-1:35
                 to: bundleURL.appendingPathComponent("TestOverview.tutorial")
             )
         })
-        defer { try? FileManager.default.removeItem(at: tempURL) }
 
         // Verify the external symbol is included in cache
         XCTAssertNotNil(context.documentationCache[.init(bundleIdentifier: "com.external.testbundle", path: "/externally/resolved/path", sourceLanguage: .swift)])
@@ -498,7 +566,7 @@ Document @1:1-1:35
 
         // Copy the test bundle and add external links to the MyKit See Also.
         // We're using a See Also group, because external links aren't rendered in Topics groups.
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: ["com.external.testbundle" : resolver]) { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: ["com.external.testbundle" : resolver]) { url in
             try """
             # ``MyKit``
             MyKit module root symbol <doc://com.external.testbundle/not-resolvable-2>
@@ -514,7 +582,6 @@ Document @1:1-1:35
              - <doc://com.external.other-test-bundle/article>
             """.write(to: url.appendingPathComponent("documentation").appendingPathComponent("mykit.md"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // Verify the external link has been collected and pre-resolved.
         XCTAssertEqual(context.externallyResolvedLinks.keys.map({ $0.absoluteString }).sorted(), [
@@ -588,14 +655,13 @@ Document @1:1-1:35
         resolver.expectedFragment = "67890"
         
         // Prepare a test bundle
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: ["com.external.testbundle" : resolver], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", externalResolvers: ["com.external.testbundle" : resolver], externalSymbolResolver: nil, configureBundle: { url in
             // Add external link with fragment
             let myClassMDURL = url.appendingPathComponent("documentation").appendingPathComponent("myclass.md")
             try String(contentsOf: myClassMDURL)
                 .replacingOccurrences(of: "MyClass abstract.", with: "MyClass uses a <doc://com.external.testbundle/article#12345>.")
                 .write(to: myClassMDURL, atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let myClassRef = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift)
         let documentationNode = try context.entity(with: myClassRef)

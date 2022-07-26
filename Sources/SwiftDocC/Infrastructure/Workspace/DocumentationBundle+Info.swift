@@ -64,11 +64,16 @@ extension DocumentationBundle {
         
         enum Error: DescribedError {
             case wrongType(expected: Any.Type, actual: Any.Type)
+            case plistDecodingError(_ context: DecodingError.Context)
             
             var errorDescription: String {
                 switch self {
                 case .wrongType(let expected, let actual):
                     return "Expected '\(expected)', but found '\(actual)'."
+                case .plistDecodingError(let context):
+                    let message = "Unable to decode Info.plist file. Verify that it is correctly formed."
+                    let verboseMessage = ((context.underlyingError as? NSError)?.userInfo["NSDebugDescription"] as? String) ?? context.debugDescription
+                    return [message, verboseMessage].joined(separator: " ")
                 }
             }
         }
@@ -86,10 +91,15 @@ extension DocumentationBundle {
                     propertyListDecoder.userInfo[.bundleDiscoveryOptions] = options
                 }
                 
-                self = try propertyListDecoder.decode(
-                    DocumentationBundle.Info.self,
-                    from: infoPlist
-                )
+                do {
+                    self = try propertyListDecoder.decode(
+                        DocumentationBundle.Info.self,
+                        from: infoPlist
+                    )
+                } catch DecodingError.dataCorrupted(let context) {
+                    throw Error.plistDecodingError(context)
+                }
+                
             } else {
                 try self.init(with: nil, bundleDiscoveryOptions: options)
             }

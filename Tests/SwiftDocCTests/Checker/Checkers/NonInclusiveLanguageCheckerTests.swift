@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -29,6 +29,39 @@ class NonInclusiveLanguageCheckerTests: XCTestCase {
         XCTAssertEqual(range.lowerBound.column, 5)
         XCTAssertEqual(range.upperBound.line, 1)
         XCTAssertEqual(range.upperBound.column, 16)
+    }
+
+    func testMatchTermWithSpaces() throws {
+        let source = """
+        # A White  listed title
+        # A Black    listed title
+        # A White listed title
+        """
+        let document = Document(parsing: source)
+        var checker = NonInclusiveLanguageChecker(sourceFile: nil)
+        checker.visit(document)
+        XCTAssertEqual(checker.problems.count, 3)
+
+        let problem = try XCTUnwrap(checker.problems.first)
+        let range = try XCTUnwrap(problem.diagnostic.range)
+        XCTAssertEqual(range.lowerBound.line, 1)
+        XCTAssertEqual(range.lowerBound.column, 5)
+        XCTAssertEqual(range.upperBound.line, 1)
+        XCTAssertEqual(range.upperBound.column, 18)
+
+        let problemTwo = try XCTUnwrap(checker.problems[1])
+        let rangeTwo = try XCTUnwrap(problemTwo.diagnostic.range)
+        XCTAssertEqual(rangeTwo.lowerBound.line, 2)
+        XCTAssertEqual(rangeTwo.lowerBound.column, 5)
+        XCTAssertEqual(rangeTwo.upperBound.line, 2)
+        XCTAssertEqual(rangeTwo.upperBound.column, 20)
+
+        let problemThree = try XCTUnwrap(checker.problems[2])
+        let rangeThree = try XCTUnwrap(problemThree.diagnostic.range)
+        XCTAssertEqual(rangeThree.lowerBound.line, 3)
+        XCTAssertEqual(rangeThree.lowerBound.column, 5)
+        XCTAssertEqual(rangeThree.upperBound.line, 3)
+        XCTAssertEqual(rangeThree.upperBound.column, 17)
     }
 
     func testMatchTermInAbstract() throws {
@@ -148,7 +181,6 @@ func aBlackListedFunc() {
         let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Load the bundle
         let (_, _, context) = try loadBundle(from: bundleURL, codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, diagnosticFilterLevel: .error, configureContext: nil)
@@ -169,7 +201,6 @@ func aBlackListedFunc() {
         let (bundleURL, _, _) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try self.nonInclusiveContent.write(to: url.appendingPathComponent("documentation").appendingPathComponent("sidekit.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
 
         for expectation in expectations {
             let (severity, enabled) = expectation

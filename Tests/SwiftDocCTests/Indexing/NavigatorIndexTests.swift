@@ -65,10 +65,10 @@ class NavigatorIndexingTests: XCTestCase {
         return root
     }
     
-    func generateSmallTree() -> Node {
+    func generateSmallTree(bundleIdentifier: String = testBundleIdentifier) -> Node {
         var index = 1
         let rootItem = NavigatorItem(pageType: 1, languageID: Language.all.rawValue, title: "Root", platformMask: 1, availabilityID: 1)
-        let root = Node(item: rootItem, bundleIdentifier: "org.swift.docc.example")
+        let root = Node(item: rootItem, bundleIdentifier: bundleIdentifier)
         
         @discardableResult func addItems(n: Int, items: [Node], language: Language) -> [Node] {
             var leaves = [Node]()
@@ -243,6 +243,28 @@ Root
         XCTAssertTrue(validateTree(node: treeWithAttributesNonAtomic.root, validator: attributesValidator), "The tree lacks the correct attributes.")
     }
     
+    func testLoadingNavigatorIndexDoesNotCacheReferences() throws {
+        let uniqueTestBundleIdentifier = #function
+        
+        let targetURL = try createTemporaryDirectory()
+        let indexURL = targetURL.appendingPathComponent("nav.index")
+        
+        let root = generateSmallTree(bundleIdentifier: uniqueTestBundleIdentifier)
+        
+        let original = NavigatorTree(root: root)
+        try original.write(to: indexURL)
+        _ = try NavigatorTree.read(
+            from: indexURL,
+            bundleIdentifier: uniqueTestBundleIdentifier,
+            interfaceLanguages: [.swift],
+            atomically: true
+        )
+        
+        ResolvedTopicReference.sharedPool.sync { sharedPool in
+            XCTAssertNil(sharedPool[uniqueTestBundleIdentifier])
+        }
+    }
+    
   
     func testNavigationTreeLargeDumpAndRead() throws {
 #if os(OSX)
@@ -380,7 +402,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
         
-        // Create an index 10 times to ensure we have not undeterministic behavior across builds
+        // Create an index 10 times to ensure we have not non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)
@@ -397,7 +419,7 @@ Root
             
             let renderIndex = try RenderIndex.fromURL(targetURL.appendingPathComponent("index.json"))
             XCTAssertEqual(renderIndex.interfaceLanguages.keys.count, 1)
-            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.count, 27)
+            XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.count, 29)
             
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.title, "Functions")
             XCTAssertEqual(renderIndex.interfaceLanguages["swift"]?.first?.path, nil)
@@ -556,13 +578,43 @@ Root
         )
     }
     
+    func testMultiCuratesChildrenOfMultiCuratedPages() throws {
+        let navigatorIndex = try generatedNavigatorIndex(for: "MultiCuratedSubtree", bundleIdentifier: "org.swift.MultiCuratedSubtree")
+        
+        XCTAssertEqual(
+            navigatorIndex.navigatorTree.root.dumpTree(),
+            """
+            [Root]
+            ┗╸Swift
+              ┗╸MultiCuratedSubtree
+                ┣╸Curation Roots
+                ┣╸FirstCurationRoot
+                ┃ ┣╸Multicurated trees
+                ┃ ┗╸MultiCuratedStruct
+                ┃   ┣╸Enumerations
+                ┃   ┗╸MultiCuratedStruct.MultiCuratedEnum
+                ┃     ┣╸Enumeration Cases
+                ┃     ┣╸MultiCuratedStruct.MultiCuratedEnum.firstCase
+                ┃     ┗╸MultiCuratedStruct.MultiCuratedEnum.secondCase
+                ┗╸SecondCurationRoot
+                  ┣╸Multicurated trees
+                  ┗╸MultiCuratedStruct
+                    ┣╸Enumerations
+                    ┗╸MultiCuratedStruct.MultiCuratedEnum
+                      ┣╸Enumeration Cases
+                      ┣╸MultiCuratedStruct.MultiCuratedEnum.firstCase
+                      ┗╸MultiCuratedStruct.MultiCuratedEnum.secondCase
+            """
+        )
+    }
+    
     func testNavigatorIndexUsingPageTitleGeneration() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
         
-        // Create an index 10 times to ensure we have not undeterministic behavior across builds
+        // Create an index 10 times to ensure we have not non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, usePageTitle: true)
@@ -611,7 +663,7 @@ Root
         let converter = DocumentationNodeConverter(bundle: bundle, context: context)
         var results = Set<String>()
         
-        // Create an index 10 times to ensure we have not undeterministic behavior across builds
+        // Create an index 10 times to ensure we have not non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true, writePathsOnDisk: false)
@@ -651,7 +703,10 @@ Root
             XCTAssertNil(navigatorIndex.path(for: 0)) // Root should have not path persisted.
             XCTAssertEqual(navigatorIndex.path(for: 1), "/documentation/fillintroduced")
             XCTAssertEqual(navigatorIndex.path(for: 4), "/tutorials/testoverview")
-            XCTAssertEqual(navigatorIndex.path(for: 10), "/documentation/fillintroduced/maccatalystonlydeprecated()")
+            XCTAssertEqual(navigatorIndex.path(for: 9), "/documentation/fillintroduced/maccatalystonlydeprecated()")
+            XCTAssertEqual(navigatorIndex.path(for: 10), "/documentation/fillintroduced/maccatalystonlyintroduced()")
+            XCTAssertEqual(navigatorIndex.path(for: 21), "/documentation/mykit/globalfunction(_:considering:)")
+            XCTAssertEqual(navigatorIndex.path(for: 23), "/documentation/sidekit/uncuratedclass/angle")
             
             assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
             results.insert(navigatorIndex.navigatorTree.root.dumpTree())
@@ -674,7 +729,7 @@ Root
         XCTAssertEqual(Set(navigatorIndex.languages), Set(["Swift"]))
         
         // Get the Swift language group.
-        XCTAssertEqual(navigatorIndex.navigatorTree.numericIdentifierToNode[1]?.children.count, 5)
+        XCTAssertEqual(navigatorIndex.navigatorTree.numericIdentifierToNode[1]?.children.count, 4)
 
         assertUniqueIDs(node: navigatorIndex.navigatorTree.root)
         assertEqualDumps(navigatorIndex.navigatorTree.root.dumpTree(), try testTree(named: "testNavigatorIndexGenerationWithLanguageGrouping"))
@@ -687,7 +742,7 @@ Root
         let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
         var results = Set<String>()
         
-        // Create an index 10 times to ensure we have no undeterministic behavior across builds
+        // Create an index 10 times to ensure we have no non-deterministic behavior across builds
         for _ in 0..<10 {
             let targetURL = try createTemporaryDirectory()
             let builder = NavigatorIndex.Builder(outputURL: targetURL, bundleIdentifier: testBundleIdentifier, sortRootChildrenByName: true)

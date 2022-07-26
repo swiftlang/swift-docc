@@ -87,6 +87,9 @@ public struct DocumentationBundle {
     /// Custom HTML file to use as the footer for rendered output.
     public let customFooter: URL?
 
+    /// JSON settings file used to theme renderer output.
+    public let themeSettings: URL?
+
     /// Default syntax highlighting to use for code samples in this bundle.
     @available(*, deprecated, message: "Use 'info.defaultCodeListingLanguage' instead.")
     public var defaultCodeListingLanguage: String? {
@@ -156,7 +159,8 @@ public struct DocumentationBundle {
         markupURLs: [URL],
         miscResourceURLs: [URL],
         customHeader: URL? = nil,
-        customFooter: URL? = nil
+        customFooter: URL? = nil,
+        themeSettings: URL? = nil
     ) {
         self.info = info
         self.baseURL = baseURL
@@ -166,6 +170,7 @@ public struct DocumentationBundle {
         self.miscResourceURLs = miscResourceURLs
         self.customHeader = customHeader
         self.customFooter = customFooter
+        self.themeSettings = themeSettings
         self.rootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: "/", sourceLanguage: .swift)
         self.documentationRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.documentationFolder, sourceLanguage: .swift)
         self.tutorialsRootReference = ResolvedTopicReference(bundleIdentifier: info.identifier, path: NodeURLGenerator.Path.tutorialsFolder, sourceLanguage: .swift)

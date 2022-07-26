@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,12 +11,12 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 import Markdown
 
 class RenderNodeTranslatorTests: XCTestCase {
     private func findDiscussion(forSymbolPath: String, configureBundle: ((URL) throws -> Void)? = nil) throws -> ContentRenderSection? {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", configureBundle: configureBundle)
-        defer { try? FileManager.default.removeItem(at: url) }
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", configureBundle: configureBundle)
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: forSymbolPath, sourceLanguage: .swift))
         
@@ -37,7 +37,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             return nil
         }
         
-        // In the rendered content find the link excercising paragraph
+        // In the rendered content find the link exercising paragraph
         guard let paragraph = discussion.content
             .compactMap({ block -> [RenderInlineContent]? in
                 switch block {
@@ -261,7 +261,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     // Verifies that links to sections include their container's abstract rdar://72110558
     func testSectionAbstracts() throws {
         // Create an article including a link to a tutorial section
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
             try """
             # Article
             Article abstract
@@ -270,7 +270,6 @@ class RenderNodeTranslatorTests: XCTestCase {
             - <doc://org.swift.docc.example/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>
             """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         let node = try context.entity(with: reference)
@@ -343,7 +342,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     /// Tests the ordering of automatic groups for symbols
     func testAutomaticTaskGroupsOrderingInSymbols() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             SideClass abstract
@@ -352,7 +351,6 @@ class RenderNodeTranslatorTests: XCTestCase {
              - <doc:documentation/MyKit/MyProtocol>
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
@@ -471,7 +469,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     
     /// Tests the ordering of automatic groups for articles
     func testAutomaticTaskGroupsOrderingInArticles() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # Article
             Article abstract
@@ -480,7 +478,6 @@ class RenderNodeTranslatorTests: XCTestCase {
              - <doc:documentation/MyKit/MyProtocol>
             """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
@@ -579,10 +576,9 @@ class RenderNodeTranslatorTests: XCTestCase {
 
     /// Tests the ordering of automatic groups in defining protocol
     func testOrderingOfAutomaticGroupsInDefiningProtocol() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             //
         })
-        defer { try? FileManager.default.removeItem(at: url) }
         
         // Verify "Default Implementations" group on the implementing type
         do {
@@ -623,6 +619,226 @@ class RenderNodeTranslatorTests: XCTestCase {
         }
 
     }
+
+    /// Verify that symbols with ellipsis operators don't get curated into an unnamed protocol implementation section.
+    func testAutomaticImplementationsWithExtraDots() throws {
+        let fancyProtocolSGFURL = Bundle.module.url(
+            forResource: "FancyProtocol.symbols", withExtension: "json", subdirectory: "Test Resources")!
+
+        // Create a test bundle copy with the symbol graph from above
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:]) { url in
+            try? FileManager.default.copyItem(at: fancyProtocolSGFURL, to: url.appendingPathComponent("FancyProtocol.symbols.json"))
+        }
+
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/FancyProtocol/SomeClass", sourceLanguage: .swift)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+
+        let defaultImplementationSection = try XCTUnwrap(renderNode.topicSections.first(where: { $0.title == "Default Implementations" }))
+        XCTAssertEqual(defaultImplementationSection.identifiers, [
+            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Comparable-Implementations",
+            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/Equatable-Implementations",
+            "doc://org.swift.docc.example/documentation/FancyProtocol/SomeClass/FancyProtocol-Implementations",
+        ])
+        let implReferences = defaultImplementationSection.identifiers.compactMap({ renderNode.references[$0] as? TopicRenderReference })
+        XCTAssertEqual(implReferences.map({ $0.title }), [
+            "Comparable Implementations",
+            "Equatable Implementations",
+            "FancyProtocol Implementations",
+        ])
+
+    }
+    
+    func testAutomaticImplementationsWithExtraDotsFromExternalModule() throws {
+        let inheritedDefaultImplementationsFromExternalModuleSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementationsFromExternalModule.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let testBundle = try Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                CopyOfFile(original: inheritedDefaultImplementationsFromExternalModuleSGF),
+            ]
+        ).write(inside: createTemporaryDirectory())
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/SecondTarget/FancyProtocolConformer", in: testBundle),
+            [
+                "FancyProtocol Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/SecondTarget/OtherFancyProtocolConformer", in: testBundle),
+            [
+                "OtherFancyProtocol Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/SecondTarget/FooConformer", in: testBundle),
+            [
+                "Foo Implementations",
+            ]
+        )
+    }
+    
+    func testAutomaticImplementationsFromCurrentModuleWithMixOfDocCoverage() throws {
+        let inheritedDefaultImplementationsSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        let inheritedDefaultImplementationsAtSwiftSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations@Swift.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let testBundle = try Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                CopyOfFile(original: inheritedDefaultImplementationsSGF),
+                CopyOfFile(original: inheritedDefaultImplementationsAtSwiftSGF),
+            ]
+        ).write(inside: createTemporaryDirectory())
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", in: testBundle),
+            [
+                "Foo Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", in: testBundle),
+            [
+                "Comparable Implementations",
+                "Equatable Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", in: testBundle),
+            [
+                "Comparable Implementations",
+                "Equatable Implementations",
+                "FancyProtocol Implementations",
+                "OtherFancyProtocol Implementations",
+            ]
+        )
+    }
+    
+    func testAutomaticImplementationsFromMultiPlatformSymbolGraphs() throws {
+        let inheritedDefaultImplementationsSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraphWithModifiedPlatform = try String(
+            contentsOf: inheritedDefaultImplementationsSGF
+        )
+        .replacingOccurrences(
+            of: """
+                "architecture": "x86_64",
+                """,
+            with: """
+                "architecture": "arm64",
+                """
+        )
+        .replacingOccurrences(
+            of: """
+                "name": "macosx",
+                """,
+            with: """
+                "name": "ios",
+                """
+        )
+        
+        let testBundle = try Folder(
+            name: "unit-test.docc",
+            content: [
+                InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+                Folder(
+                    name: "x86_64-apple-macos",
+                    content: [
+                        CopyOfFile(original: inheritedDefaultImplementationsSGF),
+                    ]
+                ),
+                Folder(
+                    name: "arm64-apple-ios",
+                    content: [
+                        DataFile(
+                            name: inheritedDefaultImplementationsSGF.lastPathComponent,
+                            data: Data(symbolGraphWithModifiedPlatform.utf8)
+                        ),
+                    ]
+                ),
+            ]
+        ).write(inside: createTemporaryDirectory())
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/Bar", in: testBundle),
+            [
+                "Foo Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/OtherStruct", in: testBundle),
+            [
+                "Comparable Implementations",
+                "Equatable Implementations",
+            ]
+        )
+        
+        try assertDefaultImplementationCollectionTitles(
+            in: try loadRenderNode(at: "/documentation/FirstTarget/SomeStruct", in: testBundle),
+            [
+                "Comparable Implementations",
+                "Equatable Implementations",
+                "FancyProtocol Implementations",
+                "OtherFancyProtocol Implementations",
+            ]
+        )
+    }
+    
+    func assertDefaultImplementationCollectionTitles(
+        in renderNode: RenderNode,
+        _ expectedTitles: [String],
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws {
+        let defaultImplementationSection = try XCTUnwrap(
+            renderNode.topicSections.first(where: { $0.title == "Default Implementations" }),
+            "Expected to find default implementations topic section.",
+            file: file,
+            line: line
+        )
+        
+        let references = defaultImplementationSection.identifiers.compactMap { identifier in
+            renderNode.references[identifier] as? TopicRenderReference
+        }
+        
+        XCTAssertEqual(references.map(\.title), expectedTitles, file: file, line: line)
+    }
+    
+    func loadRenderNode(at path: String, in bundleURL: URL) throws -> RenderNode {
+        let (_, bundle, context) = try loadBundle(from: bundleURL)
+
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: path, sourceLanguage: .swift)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        let node = try context.entity(with: reference)
+        let symbol = try XCTUnwrap(node.semantic as? Symbol)
+        return try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+    }
     
     func testAutomaticTaskGroupTopicsAreSorted() throws {
         let (bundle, context) = try testBundleAndContext(named: "DefaultImplementations")
@@ -646,7 +862,7 @@ class RenderNodeTranslatorTests: XCTestCase {
     // Verifies we don't render links to non linkable nodes.
     func testNonLinkableNodes() throws {
         // Create a bundle with variety absolute and relative links and symbol links to a non linkable node.
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``SideKit/SideClass``
             Abstract.
@@ -659,7 +875,6 @@ class RenderNodeTranslatorTests: XCTestCase {
              - ``Element/Protocol-Implementations``
             """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
@@ -702,13 +917,12 @@ class RenderNodeTranslatorTests: XCTestCase {
         
         do {
             // Create a bundle with a link in abstract, then verify the render reference is present in `SideKit` render node references.
-            let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
                 try """
                 # ``SideKit/SideClass``
                 This is a link to <doc:/documentation/SideKit/SideClass/Element>.
                 """.write(to: url.appendingPathComponent("sideclass.md"), atomically: true, encoding: .utf8)
             })
-            defer { try? FileManager.default.removeItem(at: url) }
 
             let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit", sourceLanguage: .swift)
             let node = try context.entity(with: reference)

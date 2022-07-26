@@ -139,7 +139,7 @@ struct SymbolGraphLoader {
         var symbolGraph = symbolGraphs[url]!
         let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: url)
         
-        if !isMainSymbolGraph {
+        if !isMainSymbolGraph && symbolGraph.module.bystanders == nil {
             // If this is an extending another module, change the module name to match the exteneded module.
             // This makes the symbols in this graph have a path that starts with the extended module's name.
             symbolGraph.module.name = moduleName
@@ -250,8 +250,12 @@ struct SymbolGraphLoader {
         let isMainSymbolGraph = !url.lastPathComponent.contains("@")
         
         let moduleName: String
-        if isMainSymbolGraph {
+        if isMainSymbolGraph || symbolGraph.module.bystanders != nil {
             // For main symbol graphs, get the module name from the symbol graph's data
+
+            // When bystander modules are present, the symbol graph is a cross-import overlay, and
+            // we need to preserve the original module name to properly render it. It is still
+            // kept with the extension symbols, due to the merging behavior of UnifiedSymbolGraph.
             moduleName = symbolGraph.module.name
         } else {
             // For extension symbol graphs, derive the extended module's name from the file name.

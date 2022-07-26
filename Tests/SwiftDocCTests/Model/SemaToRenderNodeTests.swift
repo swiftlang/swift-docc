@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -69,10 +69,10 @@ class SemaToRenderNodeTests: XCTestCase {
             let contentSection = tutorialSections.tasks[0].contentSection[0]
             guard case let .contentAndMedia(section) = contentSection,
                 case let .aside(note, noteContent) = section.content[1],
-                note == .note,
+                  note == .init(rawValue: "Note"),
                 case let .aside(important, importantContent) = section.content[2],
-                important == .important else {
-                    XCTFail("Expected `Note` and `Experiment` asides")
+                  important == .init(rawValue: "Important") else {
+                    XCTFail("Expected `Note` and `Important` asides")
                     return
             }
             
@@ -490,7 +490,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileOverviewWithEmptyChapter() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
             try """
             @Tutorials(name: "Technology X") {
                @Intro(title: "Technology X") {
@@ -553,7 +553,6 @@ class SemaToRenderNodeTests: XCTestCase {
             }
             """.write(to: url.appendingPathComponent("TestOverview.tutorial"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         
         try assertCompileOverviewWithNoVolumes(
             bundle: bundle,
@@ -919,7 +918,7 @@ class SemaToRenderNodeTests: XCTestCase {
     }
     
     func testCompileSymbol() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
             // Remove the SideClass sub heading to match the expectations of this test
             let graphURL = url.appendingPathComponent("sidekit.symbols.json")
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: try Data(contentsOf: graphURL))
@@ -932,7 +931,6 @@ class SemaToRenderNodeTests: XCTestCase {
             })
             try JSONEncoder().encode(graph).write(to: graphURL)
         }
-        defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyProtocol", sourceLanguage: .swift))
         
@@ -1568,7 +1566,7 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Override with both a low and a high value
         for version in [SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1), SymbolGraph.SemanticVersion(major: 99, minor: 99, patch: 99)] {
-            let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
                 // Duplicate the symbol graph
                 let myKitURL = url.appendingPathComponent("mykit-iOS.symbols.json")
                 let myClassUSR = "s:5MyKit0A5ClassC"
@@ -1593,7 +1591,6 @@ class SemaToRenderNodeTests: XCTestCase {
                     try JSONEncoder().encode(graph).write(to: myKitURLForOtherPlatform)
                 }
             })
-            defer { try? FileManager.default.removeItem(at: url) }
             
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit/MyClass", sourceLanguage: .swift))
             
@@ -2305,29 +2302,29 @@ Document @1:1-11:19
     }
 
     let asidesStressTest: [RenderBlockContent] = [
-        .aside(style: .note, content: [.paragraph(inlineContent: [.text("This is a note.")])]),
-        .aside(style: .tip, content: [.paragraph(inlineContent: [.text("Here’s a tip.")])]),
-        .aside(style: .important, content: [.paragraph(inlineContent: [.text("Keep this in mind.")])]),
-        .aside(style: .experiment, content: [.paragraph(inlineContent: [.text("Try this out.")])]),
-        .aside(style: .warning, content: [.paragraph(inlineContent: [.text("Watch out for this.")])]),
-        .aside(style: .attention, content: [.paragraph(inlineContent: [.text("Head’s up!")])]),
-        .aside(style: .author, content: [.paragraph(inlineContent: [.text("I wrote this.")])]),
-        .aside(style: .authors, content: [.paragraph(inlineContent: [.text("We wrote this.")])]),
-        .aside(style: .bug, content: [.paragraph(inlineContent: [.text("This is wrong.")])]),
-        .aside(style: .complexity, content: [.paragraph(inlineContent: [.text("This takes time.")])]),
-        .aside(style: .copyright, content: [.paragraph(inlineContent: [.text("2021 Apple Inc.")])]),
-        .aside(style: .date, content: [.paragraph(inlineContent: [.text("1 January 1970")])]),
-        .aside(style: .invariant, content: [.paragraph(inlineContent: [.text("This shouldn’t change.")])]),
-        .aside(style: .mutatingVariant, content: [.paragraph(inlineContent: [.text("This will change.")])]),
-        .aside(style: .nonMutatingVariant, content: [.paragraph(inlineContent: [.text("This changes, but not in the data.")])]),
-        .aside(style: .postcondition, content: [.paragraph(inlineContent: [.text("After calling, this should be true.")])]),
-        .aside(style: .precondition, content: [.paragraph(inlineContent: [.text("Before calling, this should be true.")])]),
-        .aside(style: .remark, content: [.paragraph(inlineContent: [.text("Something you should know.")])]),
-        .aside(style: .requires, content: [.paragraph(inlineContent: [.text("This needs something.")])]),
-        .aside(style: .since, content: [.paragraph(inlineContent: [.text("The beginning of time.")])]),
-        .aside(style: .todo, content: [.paragraph(inlineContent: [.text("This needs work.")])]),
-        .aside(style: .version, content: [.paragraph(inlineContent: [.text("3.1.4")])]),
-        .aside(style: .throws, content: [.paragraph(inlineContent: [.text("A serious error.")])]),
+        .aside(style: .init(rawValue: "Note"), content: [.paragraph(inlineContent: [.text("This is a note.")])]),
+        .aside(style: .init(rawValue: "Tip"), content: [.paragraph(inlineContent: [.text("Here’s a tip.")])]),
+        .aside(style: .init(rawValue: "Important"), content: [.paragraph(inlineContent: [.text("Keep this in mind.")])]),
+        .aside(style: .init(rawValue: "Experiment"), content: [.paragraph(inlineContent: [.text("Try this out.")])]),
+        .aside(style: .init(rawValue: "Warning"), content: [.paragraph(inlineContent: [.text("Watch out for this.")])]),
+        .aside(style: .init(rawValue: "Attention"), content: [.paragraph(inlineContent: [.text("Head’s up!")])]),
+        .aside(style: .init(rawValue: "Author"), content: [.paragraph(inlineContent: [.text("I wrote this.")])]),
+        .aside(style: .init(rawValue: "Authors"), content: [.paragraph(inlineContent: [.text("We wrote this.")])]),
+        .aside(style: .init(rawValue: "Bug"), content: [.paragraph(inlineContent: [.text("This is wrong.")])]),
+        .aside(style: .init(rawValue: "Complexity"), content: [.paragraph(inlineContent: [.text("This takes time.")])]),
+        .aside(style: .init(rawValue: "Copyright"), content: [.paragraph(inlineContent: [.text("2021 Apple Inc.")])]),
+        .aside(style: .init(rawValue: "Date"), content: [.paragraph(inlineContent: [.text("1 January 1970")])]),
+        .aside(style: .init(rawValue: "Invariant"), content: [.paragraph(inlineContent: [.text("This shouldn’t change.")])]),
+        .aside(style: .init(rawValue: "MutatingVariant"), content: [.paragraph(inlineContent: [.text("This will change.")])]),
+        .aside(style: .init(rawValue: "NonMutatingVariant"), content: [.paragraph(inlineContent: [.text("This changes, but not in the data.")])]),
+        .aside(style: .init(rawValue: "Postcondition"), content: [.paragraph(inlineContent: [.text("After calling, this should be true.")])]),
+        .aside(style: .init(rawValue: "Precondition"), content: [.paragraph(inlineContent: [.text("Before calling, this should be true.")])]),
+        .aside(style: .init(rawValue: "Remark"), content: [.paragraph(inlineContent: [.text("Something you should know.")])]),
+        .aside(style: .init(rawValue: "Requires"), content: [.paragraph(inlineContent: [.text("This needs something.")])]),
+        .aside(style: .init(rawValue: "Since"), content: [.paragraph(inlineContent: [.text("The beginning of time.")])]),
+        .aside(style: .init(rawValue: "Todo"), content: [.paragraph(inlineContent: [.text("This needs work.")])]),
+        .aside(style: .init(rawValue: "Version"), content: [.paragraph(inlineContent: [.text("3.1.4")])]),
+        .aside(style: .init(rawValue: "Throws"), content: [.paragraph(inlineContent: [.text("A serious error.")])]),
     ]
     
     func testBareTechnology() throws {
@@ -2470,13 +2467,6 @@ Document @1:1-11:19
         defer {
             try? FileManager.default.removeItem(at: bundleURL)
         }
-
-        for kind in RenderBlockContent.AsideStyle.allCases {
-            XCTAssert(asidesStressTest.contains(where: {
-                guard case let RenderBlockContent.aside(innerKind, _) = $0 else { return false }
-                return innerKind == kind
-            }), "Please add \(kind) to the asidesStressTest list and Asides.symbols.json.")
-        }
         
         // Both of these symbols have the same content; one just has its asides as list items and the other has blockquotes.
         let testReference: (ResolvedTopicReference) throws -> () = { myFuncReference in
@@ -2516,13 +2506,12 @@ Document @1:1-11:19
         let sgURL = Bundle.module.url(
             forResource: "TestBundle.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle.
             try String(contentsOf: sgURL)
                 .replacingOccurrences(of: #"identifier" : "s:OriginalUSR"#, with: #"identifier" : "s:5MyKit0A5MyProtocol0Afunc()"#)
                 .write(to: url.appendingPathComponent("sidekit.symbols.json"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
@@ -2543,14 +2532,13 @@ Document @1:1-11:19
         let sgURL = Bundle.module.url(
             forResource: "TestBundle.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
 
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             // Replace the out-of-bundle origin with a symbol from the same bundle but
             // from the MyKit module.
             try String(contentsOf: sgURL)
                 .replacingOccurrences(of: #"identifier" : "s:OriginalUSR"#, with: #"identifier" : "s:5MyKit0A5ClassC"#)
                 .write(to: url.appendingPathComponent("sidekit.symbols.json"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
 
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
@@ -2598,7 +2586,7 @@ Document @1:1-11:19
 
     /// Tests doc extensions are matched to inherited symbols
     func testInheritedSymbolDocExtension() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try? """
             # ``SideKit/SideClass/Element/inherited()``
             Doc extension abstract.
@@ -2606,7 +2594,6 @@ Document @1:1-11:19
             Doc extension discussion. Missing: ![image](my-inherited-image.png).
             """.write(to: url.appendingPathComponent("inherited.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
         let node = try context.entity(with: myFuncReference)
@@ -2647,6 +2634,72 @@ Document @1:1-11:19
             let expectedRenderedAbstract: [RenderInlineContent]
         }
         let testData = [
+            // With the new module information
+            TestData(
+                docCommentJSON: """
+                {
+                  "lines": [{
+                    "text": "Authored abstract",
+                    "range": {
+                      "start": {"line": 1, "character": 4},
+                      "end": {"line": 1, "character": 21}
+                    }
+                  }],
+                  "module": "SideKit",
+                  "uri": "file://path/to/file.swift"
+                }
+                """,
+                expectedRenderedAbstract: [.text("Authored abstract")]
+            ),
+            TestData(
+                docCommentJSON: """
+                {
+                  "lines": [{
+                    "text": "Authored abstract",
+                    "range": {
+                      "start": {"line": 1, "character": 4},
+                      "end": {"line": 1, "character": 21}
+                    }
+                  }],
+                  "module": "SideKit",
+                  "uri": "file://path/with spaces/to/file.swift"
+                }
+                """,
+                expectedRenderedAbstract: [.text("Authored abstract")]
+            ),
+            TestData(
+                docCommentJSON: """
+                {
+                  "lines": [{
+                    "text": "Authored abstract",
+                    "range": {
+                      "start": {"line": 1, "character": 4},
+                      "end": {"line": 1, "character": 21}
+                    }
+                  }],
+                  "module": "OtherModule",
+                  "uri": "file://path/to/file.swift"
+                }
+                """,
+                expectedRenderedAbstract: [.text("Inherited from "), .codeVoice(code: "Module.Protocol.inherited()"), .text(".")]
+            ),
+            TestData(
+                docCommentJSON: """
+                {
+                  "lines": [{
+                    "text": "Authored abstract",
+                    "range": {
+                      "start": {"line": 1, "character": 4},
+                      "end": {"line": 1, "character": 21}
+                    }
+                  }],
+                  "module": "OtherModule",
+                  "uri": "file://path/with spaces/to/file.swift"
+                }
+                """,
+                expectedRenderedAbstract: [.text("Inherited from "), .codeVoice(code: "Module.Protocol.inherited()"), .text(".")]
+            ),
+            // Without the new module information
             TestData(
                 docCommentJSON: """
                 {
@@ -2677,7 +2730,7 @@ Document @1:1-11:19
         for testData in testData {
             let sgURL = Bundle.module.url(forResource: "TestBundle.docc/sidekit.symbols", withExtension: "json", subdirectory: "Test Bundles")!
          
-            let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+            let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
                 // Replace the out-of-bundle origin with a symbol from the same bundle but
                 // from the MyKit module.
                 var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: sgURL))
@@ -2687,7 +2740,6 @@ Document @1:1-11:19
                 try JSONEncoder().encode(graph)
                     .write(to: url.appendingPathComponent("sidekit.symbols.json"))
             })
-            defer { try? FileManager.default.removeItem(at: url) }
             
             let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
             let node = try context.entity(with: myFuncReference)
@@ -2772,15 +2824,15 @@ Document @1:1-11:19
             asidesStressTest,
             """
             [
-            {"type":"aside", "style":"note",
+            {"type":"aside", "style":"note", "name":"Note",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This is a note."}]}]},
-            {"type":"aside", "style":"tip",
+            {"type":"aside", "style":"tip", "name":"Tip",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Here’s a tip."}]}]},
-            {"type":"aside", "style":"important",
+            {"type":"aside", "style":"important", "name":"Important",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Keep this in mind."}]}]},
-            {"type":"aside", "style":"experiment",
+            {"type":"aside", "style":"experiment","name":"Experiment",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Try this out."}]}]},
-            {"type":"aside", "style":"warning",
+            {"type":"aside", "style":"warning", "name":"Warning",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Watch out for this."}]}]},
             {"type":"aside", "style":"note", "name":"Attention",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"Head’s up!"}]}]},
@@ -2824,7 +2876,7 @@ Document @1:1-11:19
 
     /// Tests links to symbols that have deprecation summary in markdown appear deprecated.
     func testLinkToDeprecatedSymbolViaDirectiveIsDeprecated() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], externalResolvers: [:], externalSymbolResolver: nil, configureBundle: { url in
             try """
             # ``MyKit/MyProtocol``
             @DeprecationSummary {
@@ -2832,7 +2884,6 @@ Document @1:1-11:19
             }
             """.write(to: url.appendingPathComponent("documentation").appendingPathComponent("myprotocol.md"), atomically: true, encoding: .utf8)
         })
-        defer { try? FileManager.default.removeItem(at: url) }
         
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift))
         let symbol = try XCTUnwrap(node.semantic as? Symbol)
@@ -2963,7 +3014,7 @@ Document @1:1-11:19
     }
     
     func testVisitTutorialMediaWithoutExtension() throws {
-        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+        let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
             try """
             @Tutorials(name: "Technology X") {
                @Intro(title: "Technology X") {
@@ -2985,7 +3036,6 @@ Document @1:1-11:19
             }
             """.write(to: url.appendingPathComponent("TestOverview.tutorial"), atomically: true, encoding: .utf8)
         }
-        defer { try? FileManager.default.removeItem(at: url) }
         let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/tutorials/TestOverview", sourceLanguage: .swift))
         guard let technologyDirective = node.markup as? BlockDirective else {
             XCTFail("Unexpected document structure, tutorial not found as first child.")

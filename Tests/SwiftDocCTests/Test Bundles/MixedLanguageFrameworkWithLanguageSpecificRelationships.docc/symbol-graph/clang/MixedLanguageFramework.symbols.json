@@ -1,0 +1,106 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+        },
+        "generator": "SymbolKit"
+    },
+    "module": {
+        "name": "MixedLanguageFramework",
+        "platform": {
+            "architecture": "x86_64",
+            "operatingSystem": {
+                "minimumVersion": {
+                    "major": 13,
+                    "minor": 0,
+                    "patch": 0
+                },
+                "name": "macos"
+            },
+            "vendor": "apple"
+        }
+    },
+    "relationships": [
+        {
+            "kind": "inheritsFrom",
+            "source": "c:objc(cs)SymbolWithLanguageSpecificRelationships",
+            "target": "c:objc(cs)NSObject",
+            "targetFallback": "NSObject"
+        }
+    ],
+    "symbols": [
+        {
+            "accessLevel": "public",
+            "identifier": {
+                "interfaceLanguage": "occ",
+                "precise": "c:objc(cs)SymbolWithLanguageSpecificRelationships"
+            },
+            "kind": {
+                "displayName": "Class",
+                "identifier": "class"
+            },
+            "names": {
+                "title": "SymbolWithLanguageSpecificRelationships"
+            },
+            "pathComponents": [
+                "SymbolWithLanguageSpecificRelationships"
+            ]
+        },
+        {
+            "kind": {
+                "identifier": "method",
+                "displayName": "Method"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)myMethod",
+                "interfaceLanguage": "occ"
+            },
+            "pathComponents": [
+                "SymbolWithLanguageSpecificRelationships",
+                "myMethod"
+            ],
+            "names": {
+                "title": "myMethod"
+            },
+            "accessLevel": "open"
+        },
+        {
+            "kind": {
+                "identifier": "method",
+                "displayName": "Method"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)myMethodDefaultImplementation",
+                "interfaceLanguage": "occ"
+            },
+            "pathComponents": [
+                "SymbolWithLanguageSpecificRelationships",
+                "myMethodDefaultImplementation"
+            ],
+            "names": {
+                "title": "myMethodDefaultImplementation"
+            },
+            "accessLevel": "open"
+        },
+        {
+            "kind": {
+                "identifier": "method",
+                "displayName": "Method"
+            },
+            "identifier": {
+                "precise": "c:objc(cs)myOptionalMethod",
+                "interfaceLanguage": "occ"
+            },
+            "pathComponents": [
+                "SymbolWithLanguageSpecificRelationships",
+                "myOptionalMethod"
+            ],
+            "names": {
+                "title": "myOptionalMethod"
+            },
+            "accessLevel": "open"
+        }
+    ]
+}

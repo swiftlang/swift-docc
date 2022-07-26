@@ -76,4 +76,12 @@ public enum DocumentationBundleFileTypes {
     public static func isCustomFooter(_ url: URL) -> Bool {
         return url.lastPathComponent == customFooterFileName
     }
+
+    private static let themeSettingsFileName = "theme-settings.json"
+    /// Checks if a file is `theme-settings.json`.
+    /// - Parameter url: The file to check.
+    /// - Returns: Whether or not the file at `url` is `theme-settings.json`.
+    public static func isThemeSettingsFile(_ url: URL) -> Bool {
+        return url.lastPathComponent == themeSettingsFileName
+    }
 }

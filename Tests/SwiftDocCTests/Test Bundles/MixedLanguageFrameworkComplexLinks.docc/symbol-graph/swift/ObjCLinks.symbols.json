@@ -24,9 +24,9 @@
   },
   "relationships": [
     {
-      "kind": "memberof",
-      "source": "c:objc(cs)fooobjc(cm)first:one:",
-      "target": "c:objc(cs)fooobjc"
+      "kind": "memberOf",
+      "source": "c:objc(cs)FooObjC(cm)first:one:",
+      "target": "c:objc(cs)FooObjC"
     },
     {
       "kind": "memberOf",

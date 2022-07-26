@@ -56,7 +56,35 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 context.preResolveModuleNames()
             },
             configureSymbol: { symbol in
-                symbol.bystanderModuleNames = ["Custom Bystander Title"]
+                symbol.crossImportOverlayModule = ("Custom Module Title", ["Custom Bystander Title"])
+            },
+            assertOriginalRenderNode: { renderNode in
+                try assertModule(
+                    renderNode.metadata.modules,
+                    expectedName: "Custom Module Title",
+                    expectedRelatedModules: ["Custom Bystander Title"]
+                )
+            },
+            assertAfterApplyingVariant: { renderNode in
+                try assertModule(
+                    renderNode.metadata.modules,
+                    expectedName: "Custom Module Title",
+                    expectedRelatedModules: ["Custom Bystander Title"]
+                )
+            }
+        )
+    }
+
+    /// Make sure that when a symbol has `crossImportOverlayModule` information, that module name is used instead of its `moduleReference`.
+    func testMultipleModulesWithDifferentBystanderModule() throws {
+        try assertMultiVariantSymbol(
+            configureContext: { context, resolvedTopicReference in
+                let moduleReference = ResolvedTopicReference(bundleIdentifier: resolvedTopicReference.bundleIdentifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+                context.documentationCache[moduleReference]?.name = .conceptual(title: "Extended Module Title")
+                context.preResolveModuleNames()
+            },
+            configureSymbol: { symbol in
+                symbol.crossImportOverlayModule = ("Custom Module Title", ["Custom Bystander Title"])
             },
             assertOriginalRenderNode: { renderNode in
                 try assertModule(
@@ -615,6 +643,47 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    func testDoesNotEmitObjectiveCRelationshipsForTopicThatOnlyHasSwiftRelationships() throws {
+        try assertMultiVariantSymbol(
+            configureContext: { context, _ in
+            
+                // Set up an Objective-C title for MyProtocol.
+                let myFunctionNode = try context.entity(
+                    with: ResolvedTopicReference(
+                        bundleIdentifier: "org.swift.docc.example",
+                        path: "/documentation/MyKit/MyProtocol",
+                        fragment: nil,
+                        sourceLanguage: .swift
+                    )
+                )
+                
+                let myProtocol = try XCTUnwrap(myFunctionNode.semantic as? Symbol)
+                myProtocol.titleVariants[.objectiveC] = "MyProtocol"
+            },
+            configureSymbol: { symbol in
+                symbol.relationshipsVariants[.swift] = makeRelationshipSection(
+                    kind: .inheritedBy,
+                    path: "/documentation/MyKit/MyClass/myFunction()"
+                )
+                
+                symbol.relationshipsVariants[.objectiveC] = nil
+            },
+            assertOriginalRenderNode: { renderNode in
+                XCTAssertEqual(renderNode.relationshipSections.count, 1)
+                let relationshipSection = try XCTUnwrap(renderNode.relationshipSections.first)
+                XCTAssertEqual(relationshipSection.title, "Inherited By")
+                
+                XCTAssertEqual(
+                    relationshipSection.identifiers,
+                    ["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"]
+                )
+            },
+            assertAfterApplyingVariant: { renderNode in
+                XCTAssert(renderNode.relationshipSections.isEmpty)
+            }
+        )
+    }
+    
     func testTopicsSectionVariants() throws {
         try assertMultiVariantSymbol(
             configureContext: { context, reference in
@@ -660,7 +729,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
-    func testEncodesNilTopicsSectionsForVariantIfDefaultIsNonEmpty() throws {
+    func testEncodesNilTopicsSectionsForArticleVariantIfDefaultIsNonEmpty() throws {
         try assertMultiVariantArticle(
             configureArticle: { article in
                 article.automaticTaskGroups = []
@@ -684,6 +753,26 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 // than `[]`. Since the `RenderNode` decoder implementation encodes `[]` rather than `nil` into the
                 // model when the JSON value is `null` (`topicSections` is not optional in the model), we can't use it
                 // for this test. Instead, we decode the JSON using a proxy type that has an optional `topicSections`.
+                
+                struct RenderNodeProxy: Codable {
+                    var topicSections: [TaskGroupRenderSection]?
+                }
+                
+                XCTAssertNil(
+                    try JSONDecoder().decode(RenderNodeProxy.self, from: renderNodeData).topicSections,
+                    "Expected topicSections to be null in the JSON because the article has no Objective-C topics."
+                )
+            }
+        )
+    }
+    
+    func testEncodesNilTopicsSectionsForSymbolVariantIfDefaultIsNonEmpty() throws {
+        try assertMultiVariantSymbol(
+            assertOriginalRenderNode: { renderNode in
+                XCTAssertEqual(renderNode.topicSections.count, 6)
+            },
+            assertDataAfterApplyingVariant: { renderNodeData in
+                // See reasoning for the RenderNodeProxy type in the similar test above.
                 
                 struct RenderNodeProxy: Codable {
                     var topicSections: [TaskGroupRenderSection]?
@@ -807,7 +896,13 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
                 XCTAssertEqual(renderNode.topicSections.count, 2)
             },
             assertAfterApplyingVariant: { renderNode in
-                XCTAssertEqual(renderNode.topicSections.count, 2)
+                XCTAssert(
+                    renderNode.topicSections.isEmpty,
+                    """
+                    Expected no topics section for the Objective-C variant, because there are no Objective-C \
+                    relationships.
+                    """
+                )
             }
         )
     }
@@ -923,6 +1018,30 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         )
     }
     
+    func testDoesNotEmitObjectiveCSeeAlsoIfEmpty() throws {
+        func makeSeeAlsoSection(destination: String) -> SeeAlsoSection {
+            SeeAlsoSection(content: [
+                UnorderedList(
+                    ListItem(Paragraph(Link(destination: destination)))
+                )
+            ])
+        }
+        
+        try assertMultiVariantSymbol(
+            configureSymbol: { symbol in
+                symbol.seeAlsoVariants[.swift] = makeSeeAlsoSection(
+                    destination: "doc://org.swift.docc.example/documentation/MyKit/MyProtocol"
+                )
+            },
+            assertOriginalRenderNode: { renderNode in
+                XCTAssertEqual(renderNode.seeAlsoSections.count, 2)
+            },
+            assertAfterApplyingVariant: { renderNode in
+                XCTAssert(renderNode.seeAlsoSections.isEmpty)
+            }
+        )
+    }
+    
     func testDeprecationSummaryVariants() throws {
         try assertMultiVariantSymbol(
             configureSymbol: { symbol in
@@ -999,7 +1118,8 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         configureSymbol: (Symbol) throws -> () = { _ in },
         configureRenderNodeTranslator: (inout RenderNodeTranslator) -> () = { _ in },
         assertOriginalRenderNode: (RenderNode) throws -> (),
-        assertAfterApplyingVariant: (RenderNode) throws -> ()
+        assertAfterApplyingVariant: (RenderNode) throws -> () = { _ in },
+        assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
     ) throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle")
         
@@ -1025,7 +1145,8 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
             identifier: identifier,
             configureRenderNodeTranslator: configureRenderNodeTranslator,
             assertOriginalRenderNode: assertOriginalRenderNode,
-            assertAfterApplyingVariant: assertAfterApplyingVariant
+            assertAfterApplyingVariant: assertAfterApplyingVariant,
+            assertDataAfterApplyingVariant: assertDataAfterApplyingVariant
         )
     }
     

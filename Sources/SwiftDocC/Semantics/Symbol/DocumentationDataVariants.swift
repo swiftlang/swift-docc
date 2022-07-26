@@ -113,10 +113,10 @@ extension DocumentationDataVariants {
     /// > harder to spot new warnings. (rdar://86580516)
     var firstValue: Variant? {
         // A Dictionary's order isn't stable across program executions so accessing the `first` value would
-        // result in indeterministic behavior and also flaky tests.
+        // result in non-deterministic behavior and also flaky tests.
         //
         // Since this convenience accessor exist to transition existing code from only working with Swift symbols,
-        // it accesses the Swift value first, if it exist, and otherwise accesses the real indeterministic first value.
+        // it accesses the Swift value first, if it exist, and otherwise accesses the real non-deterministic first value.
         // This assumes that variant only represents one non-Swift language.
         get { self[.swift] ?? self.values.first?.value }
         set { self[.swift] = newValue }

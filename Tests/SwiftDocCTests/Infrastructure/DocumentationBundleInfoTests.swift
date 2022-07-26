@@ -284,4 +284,50 @@ class DocumentationBundleInfoTests: XCTestCase {
             try DocumentationBundle.Info(bundleDiscoveryOptions: bundleDiscoveryOptions)
         )
     }
+    
+    func testDataCorruptedPlist() throws {
+        let valueMissingInvaildPlist = """
+        <plist version="1.0">
+        <dict>
+          <key>CDDefaultCodeListingLanguage</key>
+          <string>swift</string>
+          <key>CFBundleName</key>
+          <string>Example</string>
+          <key>CFBundleDisplayName</key>
+          <string>Example</string>
+          <key>CFBundleIdentifier</key>
+          <string>org.swift.docc.example</string>
+          <key>CFBundleDevelopmentRegion</key>
+          <string>en</string>
+          <key>CFBundleIconName</key>
+          <string>DocumentationIcon</string>
+          <key>CFBundleIconFile</key>
+          <string>DocumentationIcon</string>
+          <key>CFBundlePackageType</key>
+          <string>DOCS</string>
+          <key>CFBundleShortVersionString</key>
+          <string>0.1.0</string>
+          <key>CFBundleVersion</key>
+          <string>0.1.0</string>
+          <key>CDAppleDefaultAvailability</key>
+        </dict>
+        </plist>
+        """
+        
+        let valueMissingInvaildPlistData = Data(valueMissingInvaildPlist.utf8)
+        XCTAssertThrowsError(
+            try DocumentationBundle.Info(from: valueMissingInvaildPlistData),
+            "Info.plist decode didn't throw as expected"
+        ) { error in
+            XCTAssertTrue(error is DocumentationBundle.Info.Error)
+            let errorTypeChecking: Bool
+            if case DocumentationBundle.Info.Error.plistDecodingError(_) = error {
+                errorTypeChecking = true
+            } else {
+                errorTypeChecking = false
+            }
+            XCTAssertTrue(errorTypeChecking)
+            XCTAssertEqual(error.localizedDescription, "Unable to decode Info.plist file. Verify that it is correctly formed. Value missing for key inside <dict> at line 24")
+        }
+    }
 }

@@ -52,13 +52,13 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
     ///           a ``DocumentationBundle/PropertyListError`` error if the bundle's Info.plist file is invalid.
     /// - Returns: The new documentation bundle.
     private func createBundle(_ directory: FSNode.Directory, _ bundleChildren: [FSNode], options: BundleDiscoveryOptions) throws -> DocumentationBundle {
-        let info: DocumentationBundle.Info
-        
-        var infoPlistData: Data?
+        let infoPlistData: Data?
         if let infoPlistRef = findInfoPlist(bundleChildren) {
             infoPlistData = try contentsOfURL(infoPlistRef.url)
+        } else {
+            infoPlistData = nil
         }
-        info = try DocumentationBundle.Info(from: infoPlistData, bundleDiscoveryOptions: options)
+        let info = try DocumentationBundle.Info(from: infoPlistData, bundleDiscoveryOptions: options)
         
         let markupFiles = findMarkupFiles(bundleChildren, recursive: true).map { $0.url }
         let miscResources = findNonMarkupFiles(bundleChildren, recursive: true).map { $0.url }
@@ -66,8 +66,17 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
 
         let customHeader = findCustomHeader(bundleChildren)?.url
         let customFooter = findCustomFooter(bundleChildren)?.url
+        let themeSettings = findThemeSettings(bundleChildren)?.url
         
-        return DocumentationBundle(info: info, symbolGraphURLs: symbolGraphFiles, markupURLs: markupFiles, miscResourceURLs: miscResources, customHeader: customHeader, customFooter: customFooter)
+        return DocumentationBundle(
+            info: info,
+            symbolGraphURLs: symbolGraphFiles,
+            markupURLs: markupFiles,
+            miscResourceURLs: miscResources,
+            customHeader: customHeader,
+            customFooter: customFooter,
+            themeSettings: themeSettings
+        )
     }
     
     /// Performs a shallow search for the first Info.plist file in the given list of files and directories.
@@ -110,6 +119,10 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
 
     private func findCustomFooter(_ bundleChildren: [FSNode]) -> FSNode.File? {
         return bundleChildren.firstFile { DocumentationBundleFileTypes.isCustomFooter($0.url) }
+    }
+
+    private func findThemeSettings(_ bundleChildren: [FSNode]) -> FSNode.File? {
+        return bundleChildren.firstFile { DocumentationBundleFileTypes.isThemeSettingsFile($0.url) }
     }
 }
 

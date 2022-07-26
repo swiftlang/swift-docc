@@ -15,7 +15,7 @@
         "repositoryURL": "https://github.com/apple/swift-cmark.git",
         "state": {
           "branch": "gfm",
-          "revision": "5bd1108552a4f54d421d3d39f696952495a4b0cf",
+          "revision": "476f7b4fcf12eba381b4aaed8987006fd8fcec9c",
           "version": null
         }
       },
@@ -42,7 +42,7 @@
         "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
         "state": {
           "branch": "main",
-          "revision": "076d5ca9b1501a260d2330504939e5fce49f2c25",
+          "revision": "318e45f5f884f2e172fbcd00d294af2123fb36d1",
           "version": null
         }
       },
@@ -51,7 +51,7 @@
         "repositoryURL": "https://github.com/apple/swift-lmdb.git",
         "state": {
           "branch": "main",
-          "revision": "6ea45a7ebf6d8f72bd299dfcc3299e284bbb92ee",
+          "revision": "584941b1236b15bad74d8163785d389c028b1ad8",
           "version": null
         }
       },
@@ -60,7 +60,7 @@
         "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
           "branch": "main",
-          "revision": "97df6e2812adcf8698204ca5f0756563ef36e5c1",
+          "revision": "2c2354d693a15a07ce2400a16f855bc52c121ec0",
           "version": null
         }
       },

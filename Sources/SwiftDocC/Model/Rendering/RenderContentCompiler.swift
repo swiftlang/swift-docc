@@ -35,7 +35,7 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> [RenderContent] {
         let aside = Aside(blockQuote)
-        return [RenderBlockContent.aside(style: RenderBlockContent.AsideStyle(aside.kind),
+        return [RenderBlockContent.aside(style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
                                          content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent])]
     }
     
@@ -134,7 +134,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
 
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
-        if let cached = context.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
+        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
             return cached
         } 
 
