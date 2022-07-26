@@ -14,7 +14,7 @@ extension Benchmark {
     /// Measures the total output size of a DocC archive.
     public struct ArchiveOutputSize: BenchmarkMetric {
         public static let identifier = "total-archive-output-size"
-        public static let displayName = "Total DocC archive size (bytes)"
+        public static let displayName = "Total DocC archive size"
         public var result: MetricValue?
         
         public init(archiveDirectory: URL) {
@@ -25,7 +25,7 @@ extension Benchmark {
     /// Measures the output size of the data subdirectory in a DocC archive.
     public struct DataDirectoryOutputSize: BenchmarkMetric {
         public static let identifier = "data-subdirectory-output-size"
-        public static let displayName = "Data subdirectory size (bytes)"
+        public static let displayName = "Data subdirectory size"
         public var result: MetricValue?
         
         public init(dataDirectory: URL) {
@@ -36,7 +36,7 @@ extension Benchmark {
     /// Measures the output size of the index subdirectory in a DocC archive.
     public struct IndexDirectoryOutputSize: BenchmarkMetric {
         public static let identifier = "index-subdirectory-output-size"
-        public static let displayName = "Index subdirectory size (bytes)"
+        public static let displayName = "Index subdirectory size"
         public var result: MetricValue?
         
         public init(indexDirectory: URL) {
@@ -67,6 +67,6 @@ extension MetricValue {
             bytes += Int64((try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize ?? 0)
         }
         
-        self = .integer(bytes)
+        self = .bytesOnDisk(bytes)
     }
 }

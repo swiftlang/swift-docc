@@ -18,7 +18,7 @@ class TestMetric: BenchmarkMetric, BenchmarkBlockMetric, DynamicallyIdentifiable
     
     static let identifier = "com.tests.TestMetric"
     static let displayName = "Test Metric"
-    let result: MetricValue? = .string("Result")
+    let result: MetricValue? = .checksum("Result")
     
     var didBegin = false
     var didEnd = false
@@ -139,18 +139,11 @@ class BenchmarkTests: XCTestCase {
         let data = try encoder.encode(testBenchmark)
         
         // Verify the dynamic id and name were encoded
-        let obj = try JSONSerialization.jsonObject(with: data, options: [])
-        guard let roundtrip = obj as? [String: Any],
-            let metrics = roundtrip["metrics"] as? [[String: Any]],
-            let metric = metrics.first,
-            let id = metric["identifier"] as? String,
-            let name = metric["displayName"] as? String else {
-                XCTFail("The decoded metric structure is not valid")
-                return
-            }
+        let result = try JSONDecoder().decode(BenchmarkResults.self, from: data)
+        let metric = try XCTUnwrap(result.metrics.first)
         
-        XCTAssertEqual(id, "com.tests.DynamicMetric")
-        XCTAssertEqual(name, "Dynamic Metric")
+        XCTAssertEqual(metric.id, "com.tests.DynamicMetric")
+        XCTAssertEqual(metric.displayName, "Dynamic Metric")
     }
     
     func testRangeMetricWithBlock() {

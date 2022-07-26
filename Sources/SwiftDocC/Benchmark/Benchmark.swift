@@ -57,28 +57,33 @@ public class Benchmark: Encodable {
         case date, metrics, arguments, platform
     }
     
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+    /// Prepare the gathered measurements into a benchmark results.
+    ///
+    /// The prepared benchmark results are sorted in a stable order that's suitable for presentation.
+    ///
+    /// - Returns: The prepared benchmark results for all the gathered metrics.
+    public func results() -> BenchmarkResults? {
+        guard isEnabled else { return nil }
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .medium
-        try container.encode(dateFormatter.string(from: date), forKey: .date)
-
-        let arguments = Array(CommandLine.arguments.dropFirst())
-        try container.encode(arguments, forKey: .arguments)
-
-        try container.encode(platform, forKey: .platform)
-
-        let metrics = self.metrics.compactMap { log -> BenchmarkResult? in
+        let metrics = metrics.compactMap { log -> BenchmarkResults.Metric? in
             guard let result = log.result else {
                 return nil
             }
             let id = (log as? DynamicallyIdentifiableMetric)?.identifier ?? type(of: log).identifier
             let displayName = (log as? DynamicallyIdentifiableMetric)?.displayName ?? type(of: log).displayName
-            return BenchmarkResult(identifier: id, displayName: displayName, result: result)
+            return .init(id: id, displayName: displayName, value: result)
         }
-        try container.encode(metrics, forKey: .metrics)
+        
+        return BenchmarkResults(
+            platformName: platform,
+            timestamp: date,
+            doccArguments: Array(CommandLine.arguments.dropFirst()),
+            unorderedMetrics: metrics
+        )
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        try results()?.encode(to: encoder)
     }
 }
 
