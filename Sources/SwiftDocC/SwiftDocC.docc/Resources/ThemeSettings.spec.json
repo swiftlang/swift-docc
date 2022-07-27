@@ -177,6 +177,21 @@
                                     "code-plain": {
                                         "$ref": "#/components/schemas/Color"
                                     },
+                                    "documentation-intro-accent": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "documentation-intro-eyebrow": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "documentation-intro-figure": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "documentation-intro-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "documentation-intro-title": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
                                     "dropdown-background": {
                                         "$ref": "#/components/schemas/Color"
                                     },
