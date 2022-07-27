@@ -42,6 +42,8 @@ public struct ConvertAction: Action, RecreatingContext {
     let transformForStaticHosting: Bool
     let hostingBasePath: String?
     
+    let previousArchiveURL: URL?
+    
     
     private(set) var context: DocumentationContext {
         didSet {
@@ -100,7 +102,8 @@ public struct ConvertAction: Action, RecreatingContext {
         inheritDocs: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool = false,
-        hostingBasePath: String? = nil
+        hostingBasePath: String? = nil,
+        previousArchiveURL: URL? = nil
     ) throws
     {
         self.rootURL = documentationBundleURL
@@ -117,6 +120,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.documentationCoverageOptions = documentationCoverageOptions
         self.transformForStaticHosting = transformForStaticHosting
         self.hostingBasePath = hostingBasePath
+        self.previousArchiveURL = previousArchiveURL
         
         let filterLevel: DiagnosticSeverity
         if analyze {

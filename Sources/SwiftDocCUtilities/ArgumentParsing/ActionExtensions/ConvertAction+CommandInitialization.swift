@@ -80,7 +80,8 @@ extension ConvertAction {
             inheritDocs: convert.enableInheritedDocs,
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
             transformForStaticHosting: convert.transformForStaticHosting,
-            hostingBasePath: convert.hostingBasePath
+            hostingBasePath: convert.hostingBasePath,
+            previousArchiveURL: convert.previousArchivePath
         )
     }
 }
