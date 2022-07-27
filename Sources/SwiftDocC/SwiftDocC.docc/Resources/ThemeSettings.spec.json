@@ -605,6 +605,141 @@
                                     "$ref": "#/components/schemas/Color"
                                 }
                             },
+                            "icons": {
+                                "type": "object",
+                                "description": "An object where each key represents a kind of icon used in the website which can be overwritten by providing a relative or absolute URL to an alternate SVG asset.",
+                                "properties": {
+                                    "api-reference": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "article": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "check-circle": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "chevron": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "chevron-rounded": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "clear-rounded": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "close": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "collection": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "curly-brackets": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "diagonal-arrow": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "document": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "download": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "ellipsis": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "endpoint": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "filter": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "forum": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "generic-file": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-chevron-down-circle": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-chevron-down": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-chevron-right": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-close": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-download": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-minus-circle-solid": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-plus-circle": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-plus-circle-solid": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-replay": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "magnifier": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "path": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "play": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "reset-circle": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "search": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "sidenav": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "single-letter": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "spinner": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "swift-file": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "technology": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "timer": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "topic-func": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "topic-func-op": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "topic-subscript": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "tutorial": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "two-letter": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "xcode": {
+                                        "$ref": "#/components/schemas/URL"
+                                    }
+                                }
+                            },
                             "typography": {
                                 "type": "object",
                                 "description": "Settings related to typography.",
@@ -673,6 +808,11 @@
                         "type": "boolean"
                     }
                 }
+            },
+            "URL": {
+                "type": "string",
+                "description": "An absolute URL or relative path.",
+                "format": "uri"
             }
         },
         "requestBodies": {},
