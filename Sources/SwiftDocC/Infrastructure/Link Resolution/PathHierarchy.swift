@@ -112,17 +112,18 @@ struct PathHierarchy {
                 guard let sourceNode = nodes[relationship.source] else {
                     continue
                 }
-                topLevelCandidates.removeValue(forKey: relationship.source)
                 if let targetNode = nodes[relationship.target] {
                     if targetNode.add(symbolChild: sourceNode) {
                         nodes[relationship.source] = nil
                     }
+                    topLevelCandidates.removeValue(forKey: relationship.source)
                 } else if let targetNodes = allNodes[relationship.target] {
                     for targetNode in targetNodes {
                         if targetNode.add(symbolChild: sourceNode) {
                             nodes[relationship.source] = nil
                         }
                     }
+                    topLevelCandidates.removeValue(forKey: relationship.source)
                 } else {
                     // Symbols that are not added to the path hierarchy based on relationships will be added to the path hierarchy based on the symbol's path components.
                     // Using relationships over path components is preferred because it provides information needed to disambiguate path collisions.
@@ -328,7 +329,7 @@ struct PathHierarchy {
                 throw Error.partialResult(
                     partialResult: node,
                     remainingSubpath: remaining.map(\.full).joined(separator: "/"),
-                    availableChildren: node.children.keys.sorted()
+                    availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
                 )
             }
             
@@ -338,7 +339,7 @@ struct PathHierarchy {
                     throw Error.partialResult(
                         partialResult: node,
                         remainingSubpath: remaining.map(\.full).joined(separator: "/"),
-                        availableChildren: node.children.keys.sorted()
+                        availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
                     )
                 }
                 node = child
@@ -484,7 +485,10 @@ struct PathHierarchy {
                         remaining = remaining.dropFirst()
                         return matched
                     }
-                    throw Error.notFound(availableChildren: parentNode.children.keys.sorted())
+                    // No node up the hierarchy from the provided parent has a child that matches the first path component.
+                    // Go back to the provided parent node for diagnostic information about its available children.
+                    parentNode = lookup[parentID]!
+                    throw Error.partialResult(partialResult: parentNode, remainingSubpath: remaining.map({ $0.full }).joined(separator: "/"), availableChildren: parentNode.children.keys.sorted(by: availableChildNameIsBefore))
                 }
                 parentNode = parent
             }
@@ -499,7 +503,7 @@ struct PathHierarchy {
         
         // No place to start the search from could be found.
         // It would be a nice future improvement to allow skipping the module and find top level symbols directly.
-        let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name]).sorted()
+        let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name]).sorted(by: availableChildNameIsBefore)
         throw Error.notFound(availableChildren: topLevelNames)
     }
 }
@@ -674,8 +678,8 @@ extension PathHierarchy {
             let caseInsensitiveChildren = [String: DisambiguationTree](node.children.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { $0.merge(with: $1) })
             
             for (_, tree) in caseInsensitiveChildren {
-                let disambiguatedChildren = tree.disambiguatedValues(includeLanguage: includeLanguage)
-                let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { !$0.disambiguation.isEmpty && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
+                let disambiguatedChildren = tree.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: includeLanguage)
+                let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation.value() != nil && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
                 for (node, disambiguation) in disambiguatedChildren {
                     var path: String
                     if node.symbol == nil && disambiguatedChildren.count == 1 {
@@ -694,11 +698,11 @@ extension PathHierarchy {
                     }
                     if let symbol = node.symbol {
                         results.append(
-                            (symbol.identifier.precise, (path + disambiguation, symbol.identifier.interfaceLanguage == "swift"))
+                            (symbol.identifier.precise, (path + disambiguation.makeSuffix(), symbol.identifier.interfaceLanguage == "swift"))
                         )
                     }
                     if includeDisambiguationForUnambiguousChildren || uniqueNodesWithChildren.count > 1 {
-                        path += disambiguation
+                        path += disambiguation.makeSuffix()
                     }
                     results += descend(node, accumulatedPath: path)
                 }
@@ -777,6 +781,11 @@ extension PathHierarchy {
     }
 }
     
+/// A comparison/sort function for the list of names for the children of the partial result in a diagnostic.
+private func availableChildNameIsBefore(_ lhs: String, _ rhs: String) -> Bool {
+    return lhs.localizedCaseInsensitiveCompare(rhs) == .orderedAscending
+}
+
 extension PathHierarchy.Error {
     /// Formats the error into an error message suitable for presentation
     func errorMessage(context: DocumentationContext) -> String {
@@ -1001,46 +1010,128 @@ private struct DisambiguationTree {
             }
         }
         // Disambiguate by a mix of kinds and USRs
-        throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, String($0.disambiguation.dropFirst())) })
+        throw Error.lookupCollision(self.disambiguatedValues().map { ($0.value, $0.disambiguation.value()) })
     }
     
     /// Returns all values paired with their disambiguation suffixes.
     ///
     /// - Parameter includeLanguage: Whether or not the kind disambiguation information should include the language, for example: "swift".
-    func disambiguatedValues(includeLanguage: Bool = false) -> [(value: PathHierarchy.Node, disambiguation: String)] {
+    func disambiguatedValues(includeLanguage: Bool = false) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
         if storage.count == 1 {
             let tree = storage.values.first!
             if tree.count == 1 {
-                return [(tree.values.first!, "")]
+                return [(tree.values.first!, .none)]
             }
         }
         
-        var collisions: [(value: PathHierarchy.Node, disambiguation: String)] = []
+        var collisions: [(value: PathHierarchy.Node, disambiguation: Disambiguation)] = []
         for (kind, kindTree) in storage {
             if kindTree.count == 1 {
                 // No other match has this kind
                 if includeLanguage, let symbol = kindTree.first!.value.symbol {
-                    collisions.append((value: kindTree.first!.value, disambiguation: "-\(SourceLanguage(id: symbol.identifier.interfaceLanguage).linkDisambiguationID).\(kind)"))
+                    collisions.append((value: kindTree.first!.value, disambiguation: .kind("\(SourceLanguage(id: symbol.identifier.interfaceLanguage).linkDisambiguationID).\(kind)")))
                 } else {
-                    collisions.append((value: kindTree.first!.value, disambiguation: "-"+kind))
+                    collisions.append((value: kindTree.first!.value, disambiguation: .kind(kind)))
                 }
                 continue
             }
             for (usr, value) in kindTree {
-                let kinds = storage.filter { $0.value.keys.contains(usr) }
-                if kinds.count == 1 {
-                    // No other match has this USR
-                    collisions.append((value: value, disambiguation: "-"+usr))
-                } else {
-                    // This needs to be disambiguated by both kind and USR
-                    if includeLanguage, let symbol = value.symbol {
-                        collisions.append((value: value, disambiguation: "-\(SourceLanguage(id: symbol.identifier.interfaceLanguage).linkDisambiguationID).\(kind)-\(usr)"))
-                    } else {
-                        collisions.append((value: value, disambiguation: "-\(kind)-\(usr)"))
-                    }
-                }
+                collisions.append((value: value, disambiguation: .hash(usr)))
             }
         }
         return collisions
+    }
+    
+    /// Returns all values paired with their disambiguation suffixes without needing to disambiguate between two different versions of the same symbol.
+    ///
+    /// - Parameter includeLanguage: Whether or not the kind disambiguation information should include the language, for example: "swift".
+    func disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: Bool) -> [(value: PathHierarchy.Node, disambiguation: Disambiguation)] {
+        typealias DisambiguationPair = (String, String)
+        
+        var uniqueSymbolIDs = [String: [DisambiguationPair]]()
+        var nonSymbols = [DisambiguationPair]()
+        for (kind, kindTree) in storage {
+            for (hash, value) in kindTree {
+                guard let symbol = value.symbol else {
+                    nonSymbols.append((kind, hash))
+                    continue
+                }
+                if symbol.identifier.interfaceLanguage == "swift" {
+                    uniqueSymbolIDs[symbol.identifier.precise, default: []].insert((kind, hash), at: 0)
+                } else {
+                    uniqueSymbolIDs[symbol.identifier.precise, default: []].append((kind, hash))
+                }
+            }
+        }
+        
+        var duplicateSymbols = [String: ArraySlice<DisambiguationPair>]()
+        
+        var new = DisambiguationTree()
+        for (kind, hash) in nonSymbols {
+            new.add(kind, hash, storage[kind]![hash]!)
+        }
+        for (id, symbolDisambiguations) in uniqueSymbolIDs {
+            let (kind, hash) = symbolDisambiguations[0]
+            new.add(kind, hash, storage[kind]![hash]!)
+            
+            if symbolDisambiguations.count > 1 {
+                duplicateSymbols[id] = symbolDisambiguations.dropFirst()
+            }
+        }
+     
+        var disambiguated = new.disambiguatedValues(includeLanguage: includeLanguage)
+        guard !duplicateSymbols.isEmpty else {
+            return disambiguated
+        }
+        
+        for (id, disambiguations) in duplicateSymbols {
+            let primaryDisambiguation = disambiguated.first(where: { $0.value.symbol?.identifier.precise == id })!.disambiguation
+            for (kind, hash) in disambiguations {
+                disambiguated.append((storage[kind]![hash]!, primaryDisambiguation.updated(kind: kind, hash: hash)))
+            }
+        }
+        
+        return disambiguated
+    }
+    
+    /// The computed disambiguation for a given path hierarchy node.
+    enum Disambiguation {
+        /// No disambiguation is needed.
+        case none
+        /// This node is disambiguated by its kind.
+        case kind(String)
+        /// This node is disambiguated by its hash.
+        case hash(String)
+       
+        /// Returns the kind or hash value that disambiguates this node.
+        func value() -> String! {
+            switch self {
+            case .none:
+                return nil
+            case .kind(let value), .hash(let value):
+                return value
+            }
+        }
+        /// Makes a new disambiguation suffix string.
+        func makeSuffix() -> String {
+            switch self {
+            case .none:
+                return ""
+            case .kind(let value), .hash(let value):
+                return "-"+value
+            }
+        }
+        
+        /// Creates a new disambiguation with a new kind or hash value.
+        func updated(kind: String, hash: String) -> Self {
+            switch self {
+            case .none:
+                return .none
+            case .kind:
+                return .kind(kind)
+            case .hash:
+                return .hash(hash)
+            }
+        }
     }
 }
