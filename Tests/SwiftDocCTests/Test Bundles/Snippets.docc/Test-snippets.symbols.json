@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "generator": "SwiftPM",
+    "formatVersion": {
+      "major": 0,
+      "minor": 1,
+      "patch": 0
+    }
+  },
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "$snippet__Test.Snippets.MySnippet",
+      "target": "$snippet__Test.Snippets",
+      "targetFallback": null
+    }
+  ],
+  "symbols": [
+    {
+      "isVirtual": true,
+      "docComment": {
+        "lines": [
+          {
+            "text": "Does a foo. "
+          }
+        ]
+      },
+      "snippet": {
+        "language": "swift",
+        "lines": [
+          "func foo() {}",
+          "",
+          "do {",
+          "  middle()",
+          "}",
+          "",
+          "func bar() {}"
+        ],
+        "slices": {
+          "foo": [
+            0,
+            1
+          ],
+          "middle": [
+            3,
+            4
+          ],
+          "bar": [
+            6,
+            7
+          ]
+        }
+      },
+      "identifier": {
+        "precise": "$snippet__Test.Snippets.MySnippet",
+        "interfaceLanguage": "swift"
+      },
+      "kind": {
+        "displayName": "Snippet",
+        "identifier": "snippet"
+      },
+      "accessLevel": "public",
+      "pathComponents": [
+        "Snippets",
+        "MySnippet"
+      ],
+      "names": {
+        "title": "MySnippet"
+      }
+    }
+  ],
+  "module": {
+    "name": "Snippets",
+    "platform": {},
+    "isVirtual": true
+  }
+}

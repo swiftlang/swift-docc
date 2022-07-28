@@ -20,8 +20,7 @@ class TopicAnchorHashTests: XCTestCase {
             return testBenchmark.metrics[0].result
         }
         .compactMap { value -> String? in
-            guard let value = value,
-                case MetricValue.string(let hash) = value else { return nil }
+            guard case MetricValue.checksum(let hash)? = value else { return nil }
             return hash
         }
         
@@ -38,7 +37,7 @@ class TopicAnchorHashTests: XCTestCase {
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicAnchorHash(context: context), benchmarkLog: testBenchmark)
             guard let value = testBenchmark.metrics.first?.result,
-                case MetricValue.string(let hash) = value else {
+                case MetricValue.checksum(let hash) = value else {
                 XCTFail("Unexpected metric value")
                 return
             }
@@ -60,7 +59,7 @@ class TopicAnchorHashTests: XCTestCase {
             let testBenchmark = Benchmark()
             benchmark(add: Benchmark.TopicAnchorHash(context: context), benchmarkLog: testBenchmark)
             guard let value = testBenchmark.metrics.first?.result,
-                case MetricValue.string(let hash) = value else {
+                case MetricValue.checksum(let hash) = value else {
                 XCTFail("Unexpected metric value")
                 return
             }

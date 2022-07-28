@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "d2930e8fcf9c33162b9fcc1d522bc975e2d4179b",
-          "version": "1.0.1"
+          "revision": "e394bf350e38cb100b6bc4172834770ede1b7232",
+          "version": "1.0.3"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/apple/swift-crypto.git",
         "state": {
           "branch": null,
-          "revision": "9680b7251cd2be22caaed8f1468bd9e8915a62fb",
-          "version": "1.1.2"
+          "revision": "ddb07e896a2a8af79512543b1c7eb9797f8898a5",
+          "version": "1.1.7"
         }
       },
       {
@@ -42,7 +42,7 @@
         "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
         "state": {
           "branch": "main",
-          "revision": "318e45f5f884f2e172fbcd00d294af2123fb36d1",
+          "revision": "da6cedd103e0e08a2bc7b14869ec37fba4db72d9",
           "version": null
         }
       },
@@ -60,7 +60,7 @@
         "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
           "branch": "main",
-          "revision": "2c2354d693a15a07ce2400a16f855bc52c121ec0",
+          "revision": "87c9e60b73174643f1f0bdfd81d41ce379defde0",
           "version": null
         }
       },

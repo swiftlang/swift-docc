@@ -1297,9 +1297,6 @@ let expected = """
  │ ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-6ijsi
  │   ╰ doc://org.swift.docc.example/documentation/SideKit/SideProtocol/func()-2dxqn
  ╰ doc://org.swift.docc.example/documentation/SideKit/UncuratedClass
- doc://org.swift.docc.example/documentation/Test
- ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup
-   ╰ doc://org.swift.docc.example/documentation/Test/FirstGroup/MySnippet
  doc://org.swift.docc.example/tutorials/TestOverview
  ╰ doc://org.swift.docc.example/tutorials/TestOverview/$volume
    ╰ doc://org.swift.docc.example/tutorials/TestOverview/Chapter-1
@@ -1568,7 +1565,7 @@ let expected = """
             "Expected the module to have language 'Swift' since it has 0 symbols."
         )
     }
-
+    
     func testOverloadPlusNonOverloadCollisionPaths() throws {
         // Add some symbol collisions to graph
         let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in

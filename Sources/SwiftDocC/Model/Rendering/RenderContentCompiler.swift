@@ -211,36 +211,29 @@ struct RenderContentCompiler: MarkupVisitor {
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> [RenderContent] {
         switch blockDirective.name {
         case Snippet.directiveName:
-            guard let snippetURL = blockDirective.arguments()[Snippet.Semantics.Path.argumentName],
+            let arguments = blockDirective.arguments()
+            guard let snippetURL = arguments[Snippet.Semantics.Path.argumentName],
                   let snippetReference = resolveSymbolReference(destination: snippetURL.value),
                   let snippetEntity = try? context.entity(with: snippetReference),
                   let snippetSymbol = snippetEntity.symbol,
                   let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
                 return []
             }
-
-            let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
-
-            let codeContent = snippetMixin.chunks.flatMap { chunk -> [RenderContent] in
-                guard !chunk.code.isEmpty else {
-                    return []
-                }
-
-                var elements = [RenderContent]()
-
-                if let chunkName = chunk.name {
-                    elements.append(RenderBlockContent.paragraph(inlineContent: [
-                        RenderInlineContent.strong(inlineContent: [
-                            RenderInlineContent.text(chunkName)
-                        ])
-                    ]))
-                }
-
-                elements.append(RenderBlockContent.codeListing(syntax: chunk.language, code: [chunk.code], metadata: nil))
-                return elements
+            
+            if let requestedSlice = arguments[Snippet.Semantics.Slice.argumentName]?.value,
+               let requestedLineRange = snippetMixin.slices[requestedSlice] {
+                // Render only the slice.
+                let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)
+                let lines = snippetMixin.lines[lineRange]
+                let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
+                let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
+                return [RenderBlockContent.codeListing(syntax: snippetMixin.language, code: trimmedLines, metadata: nil)]
+            } else {
+                // Render the whole snippet with its explanation content.
+                let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
+                let code = RenderBlockContent.codeListing(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil)
+                return docCommentContent + [code]
             }
-
-            return docCommentContent + codeContent
         default:
             return []
         }

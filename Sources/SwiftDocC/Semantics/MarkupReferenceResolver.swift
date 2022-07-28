@@ -10,6 +10,7 @@
 
 import Foundation
 import Markdown
+import SymbolKit
 
 fileprivate func invalidLinkDestinationProblem(destination: String, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.invalidLinkDestination", summary: "Link destination \(destination.singleQuoted) is not a valid URL")
@@ -18,6 +19,11 @@ fileprivate func invalidLinkDestinationProblem(destination: String, source: URL?
 
 fileprivate func disabledLinkDestinationProblem(reference: ResolvedTopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
     return Problem(diagnostic: Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.disabledLinkDestination", summary: "The topic \(reference.path.singleQuoted) cannot be linked to."), possibleSolutions: [])
+}
+
+fileprivate func unknownSnippetSliceProblem(snippetPath: String, slice: String, source: URL?, range: SourceRange?) -> Problem {
+    let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.unknownSnippetSlice", summary: "Snippet slice \(slice.singleQuoted) does not exist in snippet \(snippetPath.singleQuoted); this directive will be ignored")
+    return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
 /**
@@ -44,7 +50,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
     // precise diagnostics.
     var problemForUnresolvedReference: ((_ unresolvedReference: UnresolvedTopicReference, _ source: URL?, _ range: SourceRange?, _ fromSymbolLink: Bool, _ underlyingErrorMessage: String) -> Problem?)? = nil
 
-    private mutating func resolve(reference: TopicReference, range: SourceRange?, severity: DiagnosticSeverity, fromSymbolLink: Bool = false) -> URL? {
+    private mutating func resolve(reference: TopicReference, range: SourceRange?, severity: DiagnosticSeverity, fromSymbolLink: Bool = false) -> ResolvedTopicReference? {
         switch context.resolve(reference, in: rootReference, fromSymbolLink: fromSymbolLink) {
         case .success(let resolved):
             // If the linked node is part of the topic graph,
@@ -55,7 +61,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
                     return nil
                 }
             }
-            return resolved.url
+            return resolved
             
         case .failure(let unresolved, let errorMessage):
             if let callback = problemForUnresolvedReference,
@@ -112,23 +118,18 @@ struct MarkupReferenceResolver: MarkupRewriter {
         return link
     }
 
-    mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> String {
+    mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> ResolvedTopicReference? {
         if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: unresolvedDestination, parent: rootReference) {
             guard context.topicGraph.isLinkable(cached) == true else {
                 problems.append(disabledLinkDestinationProblem(reference: cached, source: source, range: range, severity: .warning))
-                return unresolvedDestination
+                return nil
             }
-            return cached.absoluteString
+            return cached
         }
 
         // We don't require a scheme here as the link can be a relative one, e.g. ``SwiftUI/View``.
         let url = ValidatedURL(parsingExact: unresolvedDestination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: unresolvedDestination)
-        guard let resolvedURL = resolve(reference: .unresolved(.init(topicURL: url)), range: range, severity: .warning, fromSymbolLink: true) else {
-            return unresolvedDestination
-        }
-
-        return resolvedURL.absoluteString
-
+        return resolve(reference: .unresolved(.init(topicURL: url)), range: range, severity: .warning, fromSymbolLink: true)
     }
     
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> Markup? {
@@ -137,7 +138,10 @@ struct MarkupReferenceResolver: MarkupRewriter {
         }
         
         var symbolLink = symbolLink
-        symbolLink.destination = resolveAbsoluteSymbolLink(unresolvedDestination: destination, elementRange: symbolLink.range)
+        if let resolved = resolveAbsoluteSymbolLink(unresolvedDestination: destination, elementRange: symbolLink.range) {
+            symbolLink.destination = resolved.absoluteString
+        }
+        
         return symbolLink
     }
 
@@ -148,8 +152,22 @@ struct MarkupReferenceResolver: MarkupRewriter {
             guard let snippet = Snippet(from: blockDirective, source: source, for: bundle, in: context, problems: &problems) else {
                 return blockDirective
             }
-            let resolvedDestination = resolveAbsoluteSymbolLink(unresolvedDestination: snippet.path, elementRange: blockDirective.range)
-            return BlockDirective(name: Snippet.directiveName, argumentText: "path: \"\(resolvedDestination)\"", children: [])
+            
+            if let resolved = resolveAbsoluteSymbolLink(unresolvedDestination: snippet.path, elementRange: blockDirective.range) {
+                var argumentText = "path: \"\(resolved.absoluteString)\""
+                if let requestedSlice = snippet.slice,
+                   let snippetMixin = try? context.entity(with: resolved).symbol?
+                    .mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet {
+                    guard snippetMixin.slices[requestedSlice] != nil else {
+                        problems.append(unknownSnippetSliceProblem(snippetPath: snippet.path, slice: requestedSlice, source: blockDirective.nameLocation?.source, range: blockDirective.nameRange))
+                        return blockDirective
+                    }
+                    argumentText.append(", slice: \"\(requestedSlice)\"")
+                }
+                return BlockDirective(name: Snippet.directiveName, argumentText: argumentText, children: [])
+            } else {
+                return blockDirective
+            }
         default:
             return defaultVisit(blockDirective)
         }

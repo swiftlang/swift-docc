@@ -23,7 +23,7 @@ extension Benchmark {
         /// - Parameter context: A documentation context containing a topic graph.
         public init(context: DocumentationContext) {
             guard let checksum = context.dumpGraph().data(using: .utf8).map(Checksum.md5) else { return }
-            result = .string(checksum)
+            result = .checksum(checksum)
         }
         
         public var result: MetricValue?
