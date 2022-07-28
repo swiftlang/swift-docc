@@ -12,7 +12,8 @@
                 "type": "object",
                 "required": [
                     "schemaVersion",
-                    "interfaceLanguages"
+                    "interfaceLanguages",
+                    "metadata"
                 ],
                 "properties": {
                     "identifier": {
@@ -24,6 +25,31 @@
                             "type": "array",
                             "items": {
                                 "$ref": "#/components/schemas/Node"
+                            }
+                        }
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "properties": {
+                            "version": {
+                                "$ref" : "#/components/schemas/Version"
+                            }
+                        }
+                    },
+                    "versions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VersionPatch"
+                        }
+                    },
+                    "versionDifferences": {
+                        "description": "A dictionary property that maps from a node identifier to a dictionary of diffs for that node. The node diffs dictionary maps from a version to the type of change (modified/added) the current node should display when diffing against that prior version. If nothing changed against a given version, that version won't appear in the dictionary of diffs.",
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string",
+                                "enum": ["modified", "added"]
                             }
                         }
                     }
@@ -120,7 +146,92 @@
                         "type": "integer"
                     }
                 }
-            }
+            },
+            "JSONPatch": {
+                "type": "array",
+                "items": {
+                    "oneOf": [
+                        {
+                            "type": "object",
+                            "required": [
+                                "op",
+                                "path",
+                                "value"
+                            ],
+                            "properties": {
+                                "op": {
+                                    "type": "string",
+                                    "enum": ["add", "test"]
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "value": {}
+                            }
+                        },
+                        {
+                            "type": "object",
+                            "required": [
+                                "op",
+                                "path"
+                            ],
+                            "properties": {
+                                "op": {
+                                    "type": "string",
+                                    "enum": ["remove"]
+                                },
+                                "path": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        {
+                            "type": "object",
+                            "required": [
+                                "op",
+                                "path",
+                                "from"
+                            ],
+                            "properties": {
+                                "op": {
+                                    "type": "string",
+                                    "enum": ["move", "copy"]
+                                },
+                                "path": {
+                                    "type": "string"
+                                },
+                                "from": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "VersionPatch": {
+                 "type": "object",
+                 "required": ["version"],
+                 "properties": {
+                     "version": {
+                         "$ref" : "#/components/schemas/Version"
+                     },
+                     "patch": {
+                         "$ref": "#/components/schemas/JSONPatch"
+                     }
+                 }
+             },
+             "Version": {
+                 "type": "object",
+                 "required": ["identifier", "displayName"],
+                 "properties": {
+                     "identifier": {
+                         "type": "string"
+                     },
+                     "displayName": {
+                         "type": "string"
+                     }
+                 }
+             },
         },
         "requestBodies": {},
         "securitySchemes": {},
