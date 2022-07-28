@@ -962,7 +962,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             XCTAssertEqual(code.joined(separator: "\n"), """
                 func foo() {}
                 
-                middle()
+                do {
+                  middle()
+                }
                 
                 func bar() {}
                 """)
@@ -993,5 +995,30 @@ class RenderNodeTranslatorTests: XCTestCase {
 
         XCTAssertEqual(syntax, "swift")
         XCTAssertEqual(code, ["func foo() {}"])
+    }
+    
+    func testSnippetSliceTrimsIndentation() throws {
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/SliceIndentation", sourceLanguage: .swift)
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
+        
+        let lastCodeListingIndex = try XCTUnwrap(discussion.content.indices.last {
+            guard case .codeListing = discussion.content[$0] else {
+                return false
+            }
+            return true
+        })
+
+        guard case let .codeListing(syntax, code, _) = discussion.content[lastCodeListingIndex] else {
+            XCTFail("Missing snippet slice code block")
+            return
+        }
+
+        XCTAssertEqual(syntax, "swift")
+        XCTAssertEqual(code, ["middle()"])
+
     }
 }
