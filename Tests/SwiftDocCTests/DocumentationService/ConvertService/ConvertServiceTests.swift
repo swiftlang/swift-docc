@@ -686,7 +686,6 @@ class ConvertServiceTests: XCTestCase {
                 "mykit-iOS.symbols.json",
                 "MyKit@SideKit.symbols.json",
                 "FillIntroduced.symbols.json",
-                "Test-snippets.symbols.json",
             ]
         )
         
@@ -813,7 +812,6 @@ class ConvertServiceTests: XCTestCase {
                 "mykit-iOS.symbols.json",
                 "MyKit@SideKit.symbols.json",
                 "FillIntroduced.symbols.json",
-                "Test-snippets.symbols.json",
             ]
         )
         
