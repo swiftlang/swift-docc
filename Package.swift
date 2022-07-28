@@ -79,7 +79,9 @@ let package = Package(
         // Test utility library
         .target(
             name: "SwiftDocCTestUtilities",
-            dependencies: []),
+            dependencies: [
+                "SymbolKit"
+            ]),
 
         // Command-line tool
         .executableTarget(

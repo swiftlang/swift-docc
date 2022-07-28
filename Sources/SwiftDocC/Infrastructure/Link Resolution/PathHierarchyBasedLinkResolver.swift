@@ -209,7 +209,7 @@ final class PathHierarchyBasedLinkResolver {
         }
         
         do {
-            let parentID = resolvedReferenceMap[parent]
+            let parentID = unresolvedReference.path.hasPrefix("/") ? nil : resolvedReferenceMap[parent]
             let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
             let foundReference = resolvedReferenceMap[found]!
             

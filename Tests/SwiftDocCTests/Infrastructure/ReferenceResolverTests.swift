@@ -344,6 +344,39 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(referencingFileDiagnostics.filter({ $0.identifier == "org.swift.docc.unresolvedTopicReference" }).count, 1)
     }
     
+    func testAbsoluteAndRelativeReferencesToExternalAndExtensionSymbols() throws {
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "BundleWithRelativePathAmbiguity")
+        
+        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        
+        // Get a translated render node
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+        
+        let content = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection).content
+        
+        func assertListedReferencesInSectionMatchHeading(_ absoluteShorthandReference: String) throws {
+            let headingString = "`\(absoluteShorthandReference)`"
+            let absoluteReferenceString = "doc://org.swift.docc.example/documentation\(absoluteShorthandReference)"
+            
+            for listItem in content.contents(of: headingString).listItems() {
+                let reference = try XCTUnwrap(listItem.firstReference(), "found no reference for \(listItem)")
+                XCTAssertEqual(reference.identifier, absoluteReferenceString, "found mismatch for \(listItem)")
+            }
+        }
+        
+        try assertListedReferencesInSectionMatchHeading("/BundleWithRelativePathAmbiguity")
+        try assertListedReferencesInSectionMatchHeading("/Dependency")
+        try assertListedReferencesInSectionMatchHeading("/BundleWithRelativePathAmbiguity/Dependency")
+        try assertListedReferencesInSectionMatchHeading("/Dependency/AmbiguousType")
+        try assertListedReferencesInSectionMatchHeading("/Dependency/AmbiguousProtocol")
+        try assertListedReferencesInSectionMatchHeading("/Dependency/UnambiguousType")
+        try assertListedReferencesInSectionMatchHeading("/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType")
+        try assertListedReferencesInSectionMatchHeading("/BundleWithRelativePathAmbiguity/Dependency/AmbiguousProtocol")
+        try assertListedReferencesInSectionMatchHeading("/Dependency/AmbiguousType/unambiguousFunction()")
+    }
+    
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
         var bundleIdentifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"
@@ -564,4 +597,56 @@ class ReferenceResolverTests: XCTestCase {
 
 private extension DocumentationDataVariantsTrait {
     static var objectiveC: DocumentationDataVariantsTrait { .init(interfaceLanguage: "occ") }
+}
+
+private extension Collection where Element == RenderBlockContent {
+    func contents(of heading: String) -> Slice<Self> {
+        var headingLevel: Int = 1
+        
+        guard let headingIndex = self.firstIndex(where: { element in
+            if case let .heading(elementLevel, elementHeading, _) = element {
+                headingLevel = elementLevel
+                return heading == elementHeading
+            }
+            return false
+        }) else {
+            return Slice(base: self, bounds: self.startIndex..<self.startIndex)
+        }
+        
+        let contentStart = self.index(after: headingIndex)
+        
+        return Slice(base: self, bounds: contentStart..<(self[contentStart...].firstIndex(where: { element in
+            if case let .heading(elementLevel, _, _) = element {
+                return elementLevel <= headingLevel
+            }
+            return false
+        }) ?? self.endIndex))
+    }
+    
+    func listItems() -> [RenderBlockContent.ListItem] {
+        self.compactMap { block -> [RenderBlockContent.ListItem]? in
+            if case let .unorderedList(items) = block {
+                return items
+            }
+            return nil
+        }.flatMap({ $0 })
+    }
+}
+
+private extension RenderBlockContent.ListItem {
+    func firstReference() -> RenderReferenceIdentifier? {
+        self.content.compactMap { block in
+            guard case let .paragraph(inlineContent) = block else {
+                return nil
+            }
+            
+            return inlineContent.compactMap { content in
+                guard case let .reference(identifier, _, _, _) = content else {
+                    return nil
+                }
+                
+                return identifier
+            }.first
+        }.first
+    }
 }

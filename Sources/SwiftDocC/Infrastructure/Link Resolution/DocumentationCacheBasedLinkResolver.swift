@@ -78,8 +78,17 @@ final class DocumentationCacheBasedLinkResolver {
     func referenceFor(absoluteSymbolPath path: String, parent: ResolvedTopicReference) -> ResolvedTopicReference? {
         // Check if `destination` is a known absolute reference URL.
         if let match = referencesIndex[path] { return match }
-        
-        // Check if `destination` is a known absolute symbol path.
+
+        // Check if `destination` is a known absolute symbol path...
+        if !path.hasPrefix("/") && parent.pathComponents.count > 2 {
+            // ...in the parent's module
+            let parentModule = parent.pathComponents[2]
+            let referenceURLString = "doc://\(parent.bundleIdentifier)/documentation/\(parentModule)/\(path)"
+            if let reference = referencesIndex[referenceURLString] {
+                return reference
+            }
+        }
+         // ...globally
         let referenceURLString = "doc://\(parent.bundleIdentifier)/documentation/\(path.hasPrefix("/") ? String(path.dropFirst()) : path)"
         return referencesIndex[referenceURLString]
     }
@@ -299,8 +308,6 @@ final class DocumentationCacheBasedLinkResolver {
     }
     
     
-    // MARK: Symbol reference creation
-    
     /// Returns a map between symbol identifiers and topic references.
     ///
     /// - Parameters:
@@ -324,7 +331,7 @@ final class DocumentationCacheBasedLinkResolver {
         // The current implementation works in 3 phases:
         //  - First, it computes the paths without disambiguators to identify colliding paths.
         //  - Second, it computes the "correct" disambiguators for each collision.
-        //  - Lastly, it joins together the results in a stable order to avoid non-deterministic behavior.
+        //  - Lastly, it joins together the results in a stable order to avoid indeterministic behavior.
         
         
         let totalSymbolCount = unifiedGraphs.values.map { $0.symbols.count }.reduce(0, +)
@@ -335,15 +342,65 @@ final class DocumentationCacheBasedLinkResolver {
             let moduleName: String
             var languages: Set<SourceLanguage>
         }
-        var pathCollisionInfo = [String: [PathCollisionInfo]]()
+        var pathCollisionInfo = [[String]: [PathCollisionInfo]]()
         pathCollisionInfo.reserveCapacity(totalSymbolCount)
         
         // Group symbols by path from all of the available symbol graphs
         for (moduleName, symbolGraph) in unifiedGraphs {
             let symbols = Array(symbolGraph.symbols.values)
-            let pathsAndLanguages: [[(String, SourceLanguage)]] = symbols.concurrentMap { referencesWithoutDisambiguationFor($0, moduleName: moduleName, bundle: bundle, context: context).map {
-                ($0.path.lowercased(), $0.sourceLanguage)
-            } }
+            
+            let referenceMap = symbols.concurrentMap { symbol in
+                (symbol, referencesWithoutDisambiguationFor(symbol, moduleName: moduleName, bundle: bundle, context: context))
+            }.reduce(into: [String: [SourceLanguage: ResolvedTopicReference]](), { result, next in
+                let (symbol, references) = next
+                for reference in references {
+                    result[symbol.uniqueIdentifier, default: [:]][reference.sourceLanguage] = reference
+                }
+            })
+            
+            let parentMap = symbolGraph.relationshipsByLanguage.reduce(into: [String: [SourceLanguage: String]](), { parentMap, next in
+                let (selector, relationships) = next
+                guard let language = SourceLanguage(knownLanguageIdentifier: selector.interfaceLanguage) else {
+                    return
+                }
+                
+                for relationship in relationships {
+                    switch relationship.kind {
+                    case .memberOf, .requirementOf, .declaredIn:
+                        parentMap[relationship.source, default: [:]][language] = relationship.target
+                    default:
+                        break
+                    }
+                }
+            })
+            
+            let pathsAndLanguages: [[([String], SourceLanguage)]] = symbols.concurrentMap { symbol in
+                guard let references = referenceMap[symbol.uniqueIdentifier] else {
+                    return []
+                }
+                
+                return references.map { language, reference in
+                    var prefixLength: Int
+                    if let parentId = parentMap[symbol.uniqueIdentifier]?[language],
+                       let parentReference = referenceMap[parentId]?[language] ?? referenceMap[parentId]?.values.first {
+                        // This is a child of some other symbol
+                        prefixLength = parentReference.pathComponents.count
+                    } else {
+                        // This is a top-level symbol or another symbol without parent (e.g. default implementation)
+                        prefixLength = reference.pathComponents.count-1
+                    }
+                    
+                    // PathComponents can have prefixes which are not known locally. In that case,
+                    // the "empty" segments will be cut out later on. We follow the same logic here, as otherwise
+                    // some collisions would not be detected.
+                    // E.g. consider an extension to an external nested type `SomeModule.SomeStruct.SomeStruct`. The
+                    // parent of this extended type symbol is `SomeModule`, however, the path for the extended type symbol
+                    // is `SomeModule/SomeStruct/SomeStruct`, later on, this will change to `SomeModule/SomeStruct`. Now, if
+                    // we also extend `SomeModule.SomeStruct`, the paths for both extensions could collide. To recognize (and resolve)
+                    // the collision here, we work with the same, shortened paths.
+                    return ((reference.pathComponents[0..<prefixLength] + [reference.pathComponents.last!]).map{ $0.lowercased() }, reference.sourceLanguage)
+                }
+            }
 
             for (symbol, symbolPathsAndLanguages) in zip(symbols, pathsAndLanguages) {
                 for (path, language) in symbolPathsAndLanguages {
@@ -495,10 +552,13 @@ final class DocumentationCacheBasedLinkResolver {
         // therefore for the currently processed symbol to be a child of a re-written symbol it needs to have
         // at least 3 components. It's a fair optimization to make since graphs will include a lot of root level symbols.
         guard reference.pathComponents.count > 3,
-            // Fetch the symbol's parent
-            let parentReference = try symbolsURLHierarchy.parent(of: reference),
-            // If the parent path matches the current reference path, bail out
-            parentReference.pathComponents != reference.pathComponents.dropLast()
+                // Fetch the symbol's parent
+                let parentReference = try symbolsURLHierarchy.parent(of: reference),
+                // If the parent path matches the current reference path, bail out
+                parentReference.pathComponents != reference.pathComponents.dropLast(),
+                // If the parent is not from the same module (because we're dealing with a
+                // default implementation of an external protocol), bail out
+                parentReference.pathComponents[..<3] == reference.pathComponents[..<3]
         else { return reference }
         
         // Build an up to date reference path for the current node based on the parent path

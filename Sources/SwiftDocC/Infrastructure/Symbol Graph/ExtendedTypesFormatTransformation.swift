@@ -75,7 +75,7 @@ extension ExtendedTypesFormatTransformation {
         var keyMap: [String: String] = [:]
         
         // choose canonical extended module symbol for each moduleName
-        for symbol in symbolGraph.symbols.values where symbol.kindIdentifier == "swift." + SymbolGraph.Symbol.KindIdentifier.extendedModule.identifier {
+        for symbol in symbolGraph.symbols.values.filter({symbol in symbol.kindIdentifier == "swift." + SymbolGraph.Symbol.KindIdentifier.extendedModule.identifier }).sorted(by: \.uniqueIdentifier) {
             if let canonical = canonicalSymbolByModuleName[symbol.title] {
                 // merge accesslevel
                 for (selector, level) in symbol.accessLevel {

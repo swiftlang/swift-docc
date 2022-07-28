@@ -165,6 +165,17 @@ struct PathHierarchy {
                     parent = child
                     components = components.dropFirst()
                 }
+                
+                // Symbols corresponding to nested types may appear outside of their original context, where
+                // their parent type may not be present. This happens e.g. for extensions to external nested
+                // types. In such cases, the nested type should be a direct child of whatever its parent is
+                // in this different context. Any other behavior would lead to truly empty pages.
+                var titlePrefix = node.symbol!.title.split(separator: ".").dropLast()
+                while !components.isEmpty && !titlePrefix.isEmpty && components.last! == titlePrefix.last! {
+                    titlePrefix = titlePrefix.dropLast()
+                    components = components.dropLast()
+                }
+                
                 for component in components {
                     let component = Self.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: component.name)
@@ -294,17 +305,36 @@ struct PathHierarchy {
     }
     
     private func findNode(path rawPath: String, parent: ResolvedIdentifier?, onlyFindSymbols: Bool) throws -> Node {
-        // The search for a documentation element can be though of as 3 steps:
         // First, parse the path into structured path components.
         let (path, isAbsolute) = Self.parse(path: rawPath)
         guard !path.isEmpty else {
             throw Error.notFound(availableChildren: [])
         }
         
-        // Second, find the node to start the search relative to.
-        // This may consume or or more path components. See implementation for details.
-        var remaining = path[...]
-        var node = try findRoot(parentID: parent, remaining: &remaining, isAbsolute: isAbsolute, onlyFindSymbols: onlyFindSymbols)
+        // Second, we try to the node matching the path. This is done by first finding
+        // the root of the (possibly relative) path and then searching for the child
+        // from that root.
+        // A relative path could have multiple root candidates (where the first
+        // component is a match). We start searching at the `parent`, working
+        // our way up the tree, trying to find a child for each root candidate.
+        // This function reports all errors found on the way and - if successful - the
+        // matching node.
+        let (node, errors) = try searchForChildOnAllPossibleRoots(parentID: parent, path: path, isAbsolute: isAbsolute, onlyFindSymbols: onlyFindSymbols)
+        
+        if let node = node {
+            return node
+        }
+        
+        // Currently, we only report the first error, which corresponds to
+        // the root candidate closest to the `parent`. Aggregating errors could
+        // help giving more precise suggestions in the future.
+        throw errors.first!
+    }
+    
+    /// Tries to find a node in the subtree of `node` where `remaining` is the relative path from `node` to the child.
+    private func findChild(of node: Node, remaining: ArraySlice<PathComponent>) throws -> Node {
+        var node = node
+        var remaining = remaining
         
         // Third, search for the match relative to the start node.
         if remaining.isEmpty {
@@ -428,11 +458,13 @@ struct PathHierarchy {
     ///
     /// - Parameters:
     ///   - parentID: An optional ID of the node to start the search relative to.
-    ///   - remaining: The parsed path components.
+    ///   - path: The parsed path components.
     ///   - isAbsolute: If the parsed path represent an absolute documentation link.
     ///   - onlyFindSymbols: If symbol results are required.
     /// - Returns: The node to start the relative search relative to.
-    private func findRoot(parentID: ResolvedIdentifier?, remaining: inout ArraySlice<PathComponent>, isAbsolute: Bool, onlyFindSymbols: Bool) throws -> Node {
+    private func searchForChildOnAllPossibleRoots(parentID: ResolvedIdentifier?, path: [PathComponent], isAbsolute: Bool, onlyFindSymbols: Bool) throws -> (Node?, [Error]) {
+        var remaining = path[...]
+        
         // If the first path component is "tutorials" or "documentation" then that
         let isKnownTutorialPath = remaining.first!.full == "tutorials"
         let isKnownDocumentationPath = remaining.first!.full == "documentation"
@@ -455,28 +487,28 @@ struct PathHierarchy {
                         }
                     }
                     remaining = remaining.dropFirst()
-                    return articlesContainer
+                    return (try findChild(of: articlesContainer, remaining: remaining) , [])
                 } else if articlesContainer.children.keys.contains(component.name) || articlesContainer.children.keys.contains(component.full)  {
-                    return articlesContainer
+                    return (try findChild(of: articlesContainer, remaining: remaining) , [])
                 }
             }
             if !isKnownDocumentationPath {
                 if tutorialContainer.name == component.name || tutorialContainer.name == component.full {
                     remaining = remaining.dropFirst()
-                    return tutorialContainer
+                    return (try findChild(of: tutorialContainer, remaining: remaining) , [])
                 } else if tutorialContainer.children.keys.contains(component.name) || tutorialContainer.children.keys.contains(component.full)  {
-                    return tutorialContainer
+                    return (try findChild(of: tutorialContainer, remaining: remaining) , [])
                 }
                 // The parent for tutorial overviews / technologies is "tutorials" which has already been removed above, so no need to check against that name.
                 else if tutorialOverviewContainer.children.keys.contains(component.name) || tutorialOverviewContainer.children.keys.contains(component.full)  {
-                    return tutorialOverviewContainer
+                    return (try findChild(of: tutorialOverviewContainer, remaining: remaining) , [])
                 }
             }
             if !isKnownTutorialPath && isAbsolute {
                 // If this is an absolute non-tutorial link, then the first component will be a module name.
                 if let matched = modules[component.name] ?? modules[component.full] {
                     remaining = remaining.dropFirst()
-                    return matched
+                    return (try findChild(of: matched, remaining: remaining) , [])
                 }
             }
         }
@@ -492,37 +524,73 @@ struct PathHierarchy {
         }
         
         if let parentID = parentID {
+            // We're dealing with a relative path, so search will be a bit more complicated.
+            // Starting from the parent, we ascend in the tree trying to find a node that matches
+            // our search path's first component. If we find one, we try to obtain the descendant
+            // matching the remainder of the search path using `findChild(of:remaining:)`. If that
+            // fails, we continue the search up the tree, after we've saved the error to be returned
+            // later.
+            
+            // Errors collected during the process
+            var errors: [Error] = []
+            
             // If a parent ID was provided, start at that node and continue up the hierarchy until that node has a child that matches the first path components name.
             var parentNode = lookup[parentID]!
             let firstComponent = remaining.first!
             if matches(node: parentNode, component: firstComponent) {
                 remaining = remaining.dropFirst()
-                return parentNode
+                do {
+                    return (try findChild(of: parentNode, remaining: remaining), errors)
+                } catch let error as Error {
+                    errors.append(error)
+                }
             }
-            while !parentNode.children.keys.contains(firstComponent.name) && !parentNode.children.keys.contains(firstComponent.full) {
+            while true {
+                if parentNode.children.keys.contains(firstComponent.name) || parentNode.children.keys.contains(firstComponent.full) {
+                    do {
+                        return (try findChild(of: parentNode, remaining: remaining), errors)
+                    } catch let error as Error {
+                        errors.append(error)
+                    }
+                }
+                
                 guard let parent = parentNode.parent else {
                     if matches(node: parentNode, component: firstComponent){
                         remaining = remaining.dropFirst()
-                        return parentNode
+                        do {
+                            return (try findChild(of: parentNode, remaining: remaining), errors)
+                        } catch let error as Error {
+                            errors.append(error)
+                        }
                     }
                     if let matched = modules[component.name] ?? modules[component.full] {
                         remaining = remaining.dropFirst()
-                        return matched
+                        do {
+                            return (try findChild(of: matched, remaining: remaining), errors)
+                        } catch let error as Error {
+                            errors.append(error)
+                        }
                     }
+                    
                     // No node up the hierarchy from the provided parent has a child that matches the first path component.
                     // Go back to the provided parent node for diagnostic information about its available children.
                     parentNode = lookup[parentID]!
-                    throw Error.partialResult(partialResult: parentNode, remainingSubpath: remaining.map({ $0.full }).joined(separator: "/"), availableChildren: parentNode.children.keys.sorted(by: availableChildNameIsBefore))
+                    
+                    // We've reached the top of the tree...we return all the errors we obtained in the process along with
+                    // the final error providing the partial result.
+                    
+                    errors.append(Error.partialResult(partialResult: parentNode, remainingSubpath: remaining.map({ $0.full }).joined(separator: "/"), availableChildren: parentNode.children.keys.sorted(by: availableChildNameIsBefore)))
+                    return (nil, errors)
                 }
+                
                 parentNode = parent
             }
-            return parentNode
         }
         
         // If no parent ID was provided, check if the first path component is a module name.
         if let matched = modules[component.name] ?? modules[component.full] {
             remaining = remaining.dropFirst()
-            return matched
+            return (try findChild(of: matched, remaining: remaining) , [])
         }
         
         // No place to start the search from could be found.

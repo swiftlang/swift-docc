@@ -1719,6 +1719,29 @@ let expected = """
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass-swift.class/path", sourceLanguage: .swift)))
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/sideClass-swift.var", sourceLanguage: .swift)))
     }
+    
+    /// Tests that collisions caused by contraction of path components in extensions to nested external types are detected.
+    ///
+    /// The external dependency defines the struct `CollidingName` and the nested struct `NonCollidingName.CollidingName`.
+    /// The main module extends both types with a property. Extended Type Symbols are always direct children of the respective Extended
+    /// Module Symbol. Thus, the extended symbol page for `NonCollidingName.CollidingName` does not contain the
+    /// `NonCollidingName` path component and collides with the top-level `CollidingName` struct.
+    func testCollisionFromExtensionToNestedExternalType() throws {
+        // Add some symbol collisions to graph
+        let (bundleURL, _, context) = try testBundleAndContext(copying: "BundleWithCollisionBasedOnNestedTypeExtension")
+        
+        defer { try? FileManager.default.removeItem(at: bundleURL) }
+        
+        // Verify the contraction-based collisions were resolved
+        XCTAssertNoThrow(try context.entity(
+            with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example",
+                                         path: "/documentation/BundleWithCollisionBasedOnNestedTypeExtension/DependencyWithNestedType/CollidingName-813uu",
+                                         sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(
+            with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example",
+                                         path: "/documentation/BundleWithCollisionBasedOnNestedTypeExtension/DependencyWithNestedType/CollidingName-5fbpv",
+                                         sourceLanguage: .swift)))
+    }
 
     func testUnresolvedSidecarDiagnostics() throws {
         var unknownSymbolSidecarURL: URL!
