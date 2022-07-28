@@ -143,10 +143,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// This property is initialized during the registration of a documentation bundle.
     public private(set) var rootModules: [ResolvedTopicReference]!
-    
+        
     /// The topic reference of the root module, if it's the only registered module.
     var soleRootModuleReference: ResolvedTopicReference? {
-        rootModules.count == 1 ? rootModules.first : nil
+        guard rootModules.count > 1 else {
+            return rootModules.first
+        }
+        // There are multiple "root modules" but some may be "virtual".
+        // Removing those may leave only one root module left.
+        let nonVirtualModules = rootModules.filter {
+            topicGraph.nodes[$0]?.isVirtual ?? false
+        }
+        return nonVirtualModules.count == 1 ? nonVirtualModules.first : nil
     }
         
     /// Map of document URLs to topic references.
@@ -993,7 +1001,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         } else {
             source = .external
         }
-        let graphNode = TopicGraph.Node(reference: reference, kind: documentation.kind, source: source, title: symbol.defaultSymbol!.names.title)
+        let graphNode = TopicGraph.Node(reference: reference, kind: documentation.kind, source: source, title: symbol.defaultSymbol!.names.title, isVirtual: module.isVirtual)
 
         return ((reference, symbol.uniqueIdentifier, graphNode, documentation), [])
     }
@@ -1185,7 +1193,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             }
                         }
                     }
-
+                    
                     if let rootURL = symbolGraphLoader.mainModuleURL(forModule: moduleName), let rootModule = unifiedSymbolGraph.moduleData[rootURL] {
                         addPreparedSymbolToContext(
                             preparedSymbolData(.init(fromSingleSymbol: moduleSymbol, module: rootModule, isMainGraph: true), reference: moduleReference, module: rootModule, moduleReference: moduleReference, bundle: bundle, fileURL: fileURL)
@@ -1937,15 +1945,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         topicGraphGlobalAnalysis()
         
         preResolveModuleNames()
-
-        // Symbol Graph modules whose children are all snippets should not
-        // be presented as a top-level preview page.
-        // First, a package might have a similar but different name to its
-        // primary library. Second, snippets are not automatically curated as
-        // other symbols might be.
-        rootModules.removeAll {
-              onlyHasSnippetRelatedChildren(for: $0)
-        }
     }
     
     /// Given a list of topics that have been automatically curated, checks if a topic has been additionally manually curated
@@ -2330,17 +2329,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         topicGraph.traverseBreadthFirst(from: node, observe)
     }
-
-    /// Returns whether a documentation node only has snippet or snippet group children.
-    func onlyHasSnippetRelatedChildren(for reference: ResolvedTopicReference) -> Bool {
-        let children = children(of: reference)
-        guard !children.isEmpty else {
-            return false
-        }
-        return children
-            .compactMap { $0.kind }
-            .allSatisfy({ $0 == .snippet || $0 == .snippetGroup })
-    }
     
     /**
      Attempt to resolve a ``TopicReference``.
@@ -2447,9 +2435,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// The references of all the pages in the topic graph.
     public var knownPages: [ResolvedTopicReference] {
         return topicGraph.nodes.values
-            .filter { $0.kind.isPage &&
-                !externallyResolvedSymbols.contains($0.reference) &&
-                !onlyHasSnippetRelatedChildren(for: $0.reference) }
+            .filter { !$0.isVirtual && $0.kind.isPage &&
+                !externallyResolvedSymbols.contains($0.reference) }
             .map { $0.reference }
     }
     

@@ -275,6 +275,8 @@ extension DocumentationContext {
     func previewPaths() throws -> [String] {
         let urlGenerator = PresentationURLGenerator(context: self, baseURL: URL(string: "/")!)
         
+        let rootModules = try rootModules.filter { try !entity(with: $0).isVirtual }
+        
         return (rootModules + rootTechnologies).map { page in
             urlGenerator.presentationURLForReference(page).absoluteString
         }

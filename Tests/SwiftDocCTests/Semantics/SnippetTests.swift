@@ -16,7 +16,7 @@ import Markdown
 
 class SnippetTests: XCTestCase {
     func testNoPath() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet()
         """
@@ -30,7 +30,7 @@ class SnippetTests: XCTestCase {
     }
 
     func testHasInnerContent() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
         let source = """
         @Snippet(path: "path/to/snippet") {
             This content shouldn't be here.
@@ -46,22 +46,45 @@ class SnippetTests: XCTestCase {
     }
 
     func testLinkResolves() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
         let source = """
-        @Snippet(path: "Test/FirstGroup/MySnippet")
+        @Snippet(path: "Test/Snippets/MySnippet")
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
         let directive = document.child(at: 0) as! BlockDirective
         var problems = [Problem]()
         let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: bundle, in: context, problems: &problems))
-        XCTAssertEqual("Test/FirstGroup/MySnippet", snippet.path)
+        XCTAssertEqual("Test/Snippets/MySnippet", snippet.path)
         XCTAssertNotNil(snippet)
         XCTAssertTrue(problems.isEmpty)
     }
-
-    func testNoTopLevelPageForSnippetModule() throws {
-        let (_, context) = try testBundleAndContext(named: "TestBundle")
-        XCTAssertEqual(3, context.rootModules.count)
-        XCTAssertFalse(context.rootModules.contains { $0.path == "/documentation/Test" })
+    
+    func testUnresolvedSnippetPathDiagnostic() throws {
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
+        let source = """
+        @Snippet(path: "Test/Snippets/DoesntExist")
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        var resolver = MarkupReferenceResolver(context: context, bundle: bundle, source: nil, rootReference: context.rootModules[0])
+        _ = resolver.visit(document)
+        XCTAssertEqual(1, resolver.problems.count)
+        resolver.problems.first.map {
+            XCTAssertEqual("org.swift.docc.unresolvedTopicReference", $0.diagnostic.identifier)
+        }
+    }
+    
+    func testSliceResolves() throws {
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
+        let source = """
+        @Snippet(path: "Test/Snippets/MySnippet", slice: "foo")
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let directive = document.child(at: 0) as! BlockDirective
+        var problems = [Problem]()
+        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: bundle, in: context, problems: &problems))
+        XCTAssertEqual("Test/Snippets/MySnippet", snippet.path)
+        XCTAssertEqual("foo", snippet.slice)
+        XCTAssertNotNil(snippet)
+        XCTAssertTrue(problems.isEmpty)
     }
 }

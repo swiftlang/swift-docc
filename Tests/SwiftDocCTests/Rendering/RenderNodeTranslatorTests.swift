@@ -937,33 +937,54 @@ class RenderNodeTranslatorTests: XCTestCase {
     }
 
     func testSnippetToCodeListing() throws {
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/article", sourceLanguage: .swift)
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
+        
+        if case let .paragraph(elements) = discussion.content[2] {
+            XCTAssertEqual(elements, [.text("Does a foo.")])
+        } else {
+            XCTFail("Unexpected content where snippet explanation should be.")
+        }
 
-        let lastParagraphIndex = try XCTUnwrap(discussion.content.indices.lastIndex {
-            guard case let .paragraph(elements) = discussion.content[$0] else { return false }
-            XCTAssertEqual(elements, [
-                .text("Does a foo."),
-            ], "Missing snippet paragraph")
+        if case let .codeListing(syntax, code, _) = discussion.content[3] {
+            XCTAssertEqual(syntax, "swift")
+            XCTAssertEqual(code.joined(separator: "\n"), """
+                func foo() {}
+                
+                middle()
+                
+                func bar() {}
+                """)
+        } else {
+            XCTFail("Missing snippet code block")
+        }
+    }
+    
+    func testSnippetSliceToCodeListing() throws {
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
+        
+        let lastCodeListingIndex = try XCTUnwrap(discussion.content.indices.last {
+            guard case .codeListing = discussion.content[$0] else {
+                return false
+            }
             return true
         })
 
-        let codeBlockIndex = discussion.content.index(after: lastParagraphIndex)
-
-        guard case let .codeListing(syntax, code, _) = discussion.content[codeBlockIndex] else {
-            XCTFail("Missing snippet code block")
+        guard case let .codeListing(syntax, code, _) = discussion.content[lastCodeListingIndex] else {
+            XCTFail("Missing snippet slice code block")
             return
         }
 
         XCTAssertEqual(syntax, "swift")
-        XCTAssertEqual(code, ["""
-            func foo() {
-              print("Hello, world!")
-            }
-            """])
+        XCTAssertEqual(code, ["func foo() {}"])
     }
 }
