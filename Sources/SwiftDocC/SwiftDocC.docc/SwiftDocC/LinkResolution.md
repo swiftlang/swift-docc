@@ -32,7 +32,7 @@ These relative documentation links can specify path components from higher up in
 
 It's possible for collisions to occur in documentation links (symbol links or otherwise) where more than one page are represented by the same path. A common cause for documentation link collisions are function overloads (functions with the same name but different arguments or different return values). It's also possible to have documentation link collisions in conceptual content if an article file name is the same as a tutorial file name (excluding the file extension in both cases).
 
-If DocC encounters an ambiguous documentation link that could either resolve to an article (using its file name), a tutorial (using its file) names, or a symbol (using the symbol's name in a lone path component) then DocC will prefer the article result over other two results and the tutorial result over the symbol result.
+If DocC encounters an ambiguous documentation link that could either resolve to an article (using its file name), a tutorial (using its file name), or a symbol (using the symbol's name in a lone path component) then DocC will prefer the article result over other two results and the tutorial result over the symbol result.
 
 If DocC encounters an ambiguous link to a symbol (either written as a symbol link or as a general documentation link) then DocC will require that additional information is added to the link to disambiguate between the different symbol results. If the symbols are different kinds (for example a class, an enum, and a property) then DocC will disambiguate the links by appending the kind ID to the ambiguous path component. 
 
