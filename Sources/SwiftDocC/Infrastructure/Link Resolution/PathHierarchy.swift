@@ -314,24 +314,7 @@ struct PathHierarchy {
         
         // Search for the remaining components from the node
         while true {
-            var pathComponent = remaining.first!
-            let children: DisambiguationTree
-            if let match = node.children[pathComponent.name] {
-                children = match
-            } else if let match = node.children[pathComponent.full] {
-                // The path component parsing may treat dash separated words as disambiguation information.
-                // If the parsed name didn't match, also try the original.
-                children = match
-                pathComponent.kind = nil
-                pathComponent.hash = nil
-            } else {
-                // The search has ended with a node that doesn't have a child matching the next path component.
-                throw Error.partialResult(
-                    partialResult: node,
-                    remainingSubpath: remaining.map(\.full).joined(separator: "/"),
-                    availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
-                )
-            }
+            let (children, pathComponent) = try findChildTree(node: &node, remaining: remaining)
             
             do {
                 guard let child = try children.find(pathComponent.kind, pathComponent.hash) else {
@@ -398,6 +381,47 @@ struct PathHierarchy {
                 )
             }
         }
+    }
+    
+    /// Finds the child disambiguation tree for a given node that match the remaining path components.
+    /// - Parameters:
+    ///   - node: The current node.
+    ///   - remaining: The remaining path components.
+    /// - Returns: The child disambiguation tree and path component.
+    private func findChildTree(node: inout Node, remaining: ArraySlice<PathComponent>) throws -> (DisambiguationTree, PathComponent) {
+        var pathComponent = remaining.first!
+        if let match = node.children[pathComponent.name] {
+            return (match, pathComponent)
+        } else if let match = node.children[pathComponent.full] {
+            // The path component parsing may treat dash separated words as disambiguation information.
+            // If the parsed name didn't match, also try the original.
+            pathComponent.kind = nil
+            pathComponent.hash = nil
+            return (match, pathComponent)
+        } else {
+            if node.name == pathComponent.name || node.name == pathComponent.full, let parent = node.parent {
+                // When multiple path components in a row have the same name it's possible that the search started at a node that's
+                // too deep in the hierarchy that won't find the final result.
+                // Check if a match would be found in the parent before raising an error.
+                if let match = parent.children[pathComponent.name] {
+                    node = parent
+                    return (match, pathComponent)
+                } else if let match = parent.children[pathComponent.full] {
+                    node = parent
+                    // The path component parsing may treat dash separated words as disambiguation information.
+                    // If the parsed name didn't match, also try the original.
+                    pathComponent.kind = nil
+                    pathComponent.hash = nil
+                    return (match, pathComponent)
+                }
+            }
+        }
+        // The search has ended with a node that doesn't have a child matching the next path component.
+        throw Error.partialResult(
+            partialResult: node,
+            remainingSubpath: remaining.map(\.full).joined(separator: "/"),
+            availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
+        )
     }
     
     /// Attempt to find the node to start the relative search relative to.
@@ -682,7 +706,9 @@ extension PathHierarchy {
                 let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation.value() != nil && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
                 for (node, disambiguation) in disambiguatedChildren {
                     var path: String
-                    if node.symbol == nil && disambiguatedChildren.count == 1 {
+                    if node.identifier == nil && disambiguatedChildren.count == 1 {
+                        // When descending through placeholder nodes, we trust that the known disambiguation
+                        // that they were created with is necessary.
                         var knownDisambiguation = ""
                         let (kind, subtree) = tree.storage.first!
                         if kind != "_" {
@@ -943,6 +969,12 @@ private struct DisambiguationTree {
     mutating func add(_ kind: String, _ hash: String, _ value: PathHierarchy.Node) -> Bool {
         if let existing = storage[kind]?[hash] {
             existing.merge(with: value)
+            return true
+        } else if storage.count == 1, let existing = storage["_"]?["_"] {
+            // It is possible for articles and other non-symbols to collide with unfindable symbol placeholder nodes.
+            // When this happens, remove the placeholder node and move its children to the real (non-symbol) node.
+            value.merge(with: existing)
+            storage = [kind: [hash: value]]
             return true
         } else {
             storage[kind, default: [:]][hash] = value

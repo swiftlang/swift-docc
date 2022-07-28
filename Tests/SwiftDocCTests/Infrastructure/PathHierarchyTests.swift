@@ -843,8 +843,6 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/FillIntroduced/iOSOnlyDeprecated()", in: tree, asSymbolID: "s:14FillIntroduced17iOSOnlyDeprecatedyyF")
         try assertFindsPath("/FillIntroduced/macCatalystOnlyIntroduced()", in: tree, asSymbolID: "s:14FillIntroduced015macCatalystOnlyB0yyF")
         
-        try assertFindsPath("/Test/FirstGroup/MySnippet", in: tree, asSymbolID: "$snippet__Test.FirstGroup.MySnippet")
-        
         let paths = tree.caseInsensitiveDisambiguatedPaths()
         try assertFindsPath("/SideKit/UncuratedClass", in: tree, asSymbolID: "s:7SideKit14UncuratedClassC")
         XCTAssertEqual(paths["s:7SideKit14UncuratedClassC"],
@@ -946,6 +944,32 @@ class PathHierarchyTests: XCTestCase {
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
+    }
+    
+    func testSnippets() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        let (_, context) = try testBundleAndContext(named: "Snippets")
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        
+        try assertFindsPath("/Snippets/Snippets/MySnippet", in: tree, asSymbolID: "$snippet__Test.Snippets.MySnippet")
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths["$snippet__Test.Snippets.MySnippet"],
+                       "/Snippets/Snippets/MySnippet")
+        
+        // Test relative links from the article that overlap with the snippet's path
+        let snippetsArticleID = try tree.find(path: "/Snippets/Snippets", onlyFindSymbols: false)
+        XCTAssertEqual(try tree.findSymbol(path: "MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
+        XCTAssertEqual(try tree.findSymbol(path: "Snippets/MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
+        XCTAssertEqual(try tree.findSymbol(path: "Snippets/Snippets/MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
+        XCTAssertEqual(try tree.findSymbol(path: "/Snippets/Snippets/MySnippet", parent: snippetsArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
+        
+        // Test relative links from another article (which doesn't overlap with the snippet's path)
+        let sliceArticleID = try tree.find(path: "/Snippets/SliceIndentation", onlyFindSymbols: false)
+        XCTAssertThrowsError(try tree.findSymbol(path: "MySnippet", parent: sliceArticleID))
+        XCTAssertEqual(try tree.findSymbol(path: "Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
+        XCTAssertEqual(try tree.findSymbol(path: "Snippets/Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
+        XCTAssertEqual(try tree.findSymbol(path: "/Snippets/Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
     }
     
     func testOneSymbolPathsWithKnownDisambiguation() throws {
