@@ -325,8 +325,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - bundle: The bundle that was removed.
     public func dataProvider(_ dataProvider: DocumentationContextDataProvider, didRemoveBundle bundle: DocumentationBundle) throws {
         documentationCacheBasedLinkResolver.unregisterBundle(identifier: bundle.identifier)
-        if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
-            hierarchyBasedLinkResolver?.unregisterBundle(identifier: bundle.identifier)
+        if let hierarchyBasedLinkResolver = hierarchyBasedLinkResolver {
+            hierarchyBasedLinkResolver.unregisterBundle(identifier: bundle.identifier)
         }
         
         // Purge the reference cache for this bundle and disable reference caching for
@@ -1214,20 +1214,24 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     // Add this module to the dictionary of processed modules to keep track of repeat symbol graphs
                     moduleReferences[moduleName] = moduleReference
                     
-                    // Add modules as root nodes in the URL tree
-                    try symbolsURLHierarchy.add(moduleReference, parent: symbolsURLHierarchy.root)
+                    if hierarchyBasedLinkResolver == nil || LinkResolutionMigrationConfiguration.shouldReportLinkResolutionMismatches {
+                        // Add modules as root nodes in the URL tree
+                        try symbolsURLHierarchy.add(moduleReference, parent: symbolsURLHierarchy.root)
+                    }
                 }
                 
-                // Map the symbol graph hierarchy into a URL tree to use as default curation
-                // for symbols that aren't manually curated via documentation extension.
-                
-                // Curate all root framework symbols under the module in the URL tree
-                for symbol in unifiedSymbolGraph.symbols.values where symbol.defaultSymbol!.pathComponents.count == 1 {
-                    try symbolIndex[symbol.uniqueIdentifier].map({
-                        // If merging symbol graph extension there can be repeat symbols, don't add them again.
-                        guard (try? symbolsURLHierarchy.parent(of: $0.reference)) == nil else { return }
-                        try symbolsURLHierarchy.add($0.reference, parent: moduleReference)
-                    })
+                if hierarchyBasedLinkResolver == nil || LinkResolutionMigrationConfiguration.shouldReportLinkResolutionMismatches {
+                    // Map the symbol graph hierarchy into a URL tree to use as default curation
+                    // for symbols that aren't manually curated via documentation extension.
+                    
+                    // Curate all root framework symbols under the module in the URL tree
+                    for symbol in unifiedSymbolGraph.symbols.values where symbol.defaultSymbol!.pathComponents.count == 1 {
+                        try symbolIndex[symbol.uniqueIdentifier].map({
+                            // If merging symbol graph extension there can be repeat symbols, don't add them again.
+                            guard (try? symbolsURLHierarchy.parent(of: $0.reference)) == nil else { return }
+                            try symbolsURLHierarchy.add($0.reference, parent: moduleReference)
+                        })
+                    }
                 }
                 
                 // Collect symbols and relationships
@@ -1247,15 +1251,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             try shouldContinueRegistration()
             
-            if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
+            if let hierarchyBasedLinkResolver = hierarchyBasedLinkResolver {
                 // Map the resolved references with their identifiers
-                hierarchyBasedLinkResolver!.addMappingForSymbols(symbolIndex: symbolIndex)
+                hierarchyBasedLinkResolver.addMappingForSymbols(symbolIndex: symbolIndex)
             }
-            if LinkResolutionMigrationConfiguration.shouldFullySetUpCacheBasedLinkResolver {
-                // When gathering mismatches between the two link resolution implementations it's possible to run both setups.
-                //
+            
+            if hierarchyBasedLinkResolver == nil || LinkResolutionMigrationConfiguration.shouldReportLinkResolutionMismatches {
                 // The `symbolsURLHierarchy` is only used in the cache-based link resolver to traverse the documentation and
                 // update child references to also include their parent's disambiguation.
+                //
+                // It is also used to compute the would-be symbol paths when gathering symbol path mismatches between the two
+                // link resolution implementations.
                 for (_, relationships) in combinedRelationships {
                     // Add parent <-> child edges to the URL tree
                     try relationships
@@ -1281,10 +1287,80 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         })
                 }
                 
-                // Update the children of collision URLs. Walk the tree and update any dependents of updated URLs
-                for moduleReference in moduleReferences.values {
-                    try symbolsURLHierarchy.traversePreOrder(from: moduleReference) { reference in
-                        try self.documentationCacheBasedLinkResolver.updateNodeWithReferenceIfCollisionChild(reference, symbolsURLHierarchy: &symbolsURLHierarchy, symbolIndex: &symbolIndex, context: self)
+                
+                // Only update the nodes and symbol index when using the documentation cache-based link resolver otherwise the context will end up in an inconsistent state.
+                if hierarchyBasedLinkResolver == nil {
+                    // Update the children of collision URLs. Walk the tree and update any dependents of updated URLs
+                    for moduleReference in moduleReferences.values {
+                        try symbolsURLHierarchy.traversePreOrder(from: moduleReference) { reference in
+                            try self.documentationCacheBasedLinkResolver.updateNodeWithReferenceIfCollisionChild(reference, symbolsURLHierarchy: &symbolsURLHierarchy, symbolIndex: &symbolIndex, context: self)
+                        }
+                    }
+                }
+                
+                if LinkResolutionMigrationConfiguration.shouldReportLinkResolutionPathMismatches {
+                    // The way that symbol path mismatches are gathered depend on which link resolution implementation is used to resolve links.
+                    if let hierarchyBasedLinkResolver = hierarchyBasedLinkResolver {
+                        // Attempting to use the The documentation cache based link resolver to compute the disambiguated symbol paths when it is not in full control of the symbol index,
+                        // topic graph, and documentation cache will result in the wrong behavior. The issues range from incorrectly computed paths to precondition failures.
+                        //
+                        // To compute what the disambiguated symbol paths would be for the documentation cache based link resolver, one needs to first compute the initial disambiguated
+                        // paths and then traverse them to update the child paths to match their parents disambiguation prefix.
+                        var cacheBasedReferences = documentationCacheBasedLinkResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self).mapValues({ $0.first! })
+                        // Normally the second step would be done by traversing the `symbolsURLHierarchy` but since that is constructed using disambiguated references that didn't originate
+                        // from the documentation cache based link resolver the `symbolsURLHierarchy` can't accurately map to the references that are computed by the documentation cache based link resolver.
+                        //
+                        // Luckily the path hierarchy describe the hierarchical relationships between the symbols in a way where it's possible to get the `Symbol.Identifier` for each symbol.
+                        // By sorting the pairs of `(symbol, parent symbol)` by the symbol's number of path components it's possible to traverse the hierarchy breath first and update the initial disambiguated
+                        // paths from the documentation cache based link resolver so that each child path matches the disambiguation from the parent path.
+                        let sortedSymbolAndParentPairs = hierarchyBasedLinkResolver.pathHierarchy.lookup.values.lazy
+                            .filter { $0.symbol != nil && $0.parent?.symbol != nil }
+                            .sorted(by: \.symbol!.pathComponents.count)
+                            .map { ($0.symbol!.identifier, $0.parent!.symbol!.identifier) }
+                        
+                        for (symbolID, parentID) in sortedSymbolAndParentPairs {
+                            if let symbolCacheReference = cacheBasedReferences[symbolID],
+                               symbolCacheReference.pathComponents.count > 3,
+                               let parentCacheReference = cacheBasedReferences[parentID],
+                               parentCacheReference.pathComponents != symbolCacheReference.pathComponents.dropLast()
+                            {
+                                cacheBasedReferences[symbolID] = parentCacheReference.appendingPath(symbolCacheReference.lastPathComponent)
+                            }
+                        }
+                        
+                        let hierarchyBasedReferences = symbolReferences.mapValues({ $0.first! })
+                        for (id, hierarchyBasedReference) in hierarchyBasedReferences {
+                            guard let cacheBasedMainReference = cacheBasedReferences[id] else {
+                                linkResolutionMismatches.missingPathsInCacheBasedLinkResolver.append(hierarchyBasedReference.path)
+                                continue
+                            }
+                            if hierarchyBasedReference.path != cacheBasedMainReference.path {
+                                linkResolutionMismatches.pathsWithMismatchedDisambiguation[hierarchyBasedReference.path] = cacheBasedMainReference.path
+                            }
+                        }
+                        for (id, cacheBasedReference) in cacheBasedReferences where !hierarchyBasedReferences.keys.contains(id) {
+                            linkResolutionMismatches.missingPathsInHierarchyBasedLinkResolver.append(cacheBasedReference.path)
+                        }
+                    } else {
+                        // If the documentation cache based implementation is used then it has already fully updated the symbol index and the documentation cache by this point.
+                        let hierarchyBasedReferences = hierarchyBasedLinkResolver!.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+                        
+                        for (usr, hierarchyBasedReference) in hierarchyBasedReferences {
+                            guard let cacheBasedMainReference = symbolIndex[usr.precise]?.reference.path else {
+                                linkResolutionMismatches.missingPathsInCacheBasedLinkResolver.append(hierarchyBasedReference.path)
+                                continue
+                            }
+                            
+                            if hierarchyBasedReference.path != cacheBasedMainReference {
+                                linkResolutionMismatches.pathsWithMismatchedDisambiguation[hierarchyBasedReference.path] = cacheBasedMainReference
+                            }
+                        }
+                        for (usr, node) in symbolIndex {
+                            guard let kind = node.symbol?.kind.identifier, kind != .module,
+                                  !hierarchyBasedReferences.keys.contains(where: { $0.precise == usr })
+                            else { continue }
+                            linkResolutionMismatches.missingPathsInHierarchyBasedLinkResolver.append(node.reference.path)
+                        }
                     }
                 }
             }
@@ -1342,24 +1418,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
             
             // Index references
-            if LinkResolutionMigrationConfiguration.shouldFullySetUpCacheBasedLinkResolver {
+            if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
                 documentationCacheBasedLinkResolver.referencesIndex.removeAll()
                 documentationCacheBasedLinkResolver.referencesIndex.reserveCapacity(knownIdentifiers.count)
                 for reference in knownIdentifiers {
                     documentationCacheBasedLinkResolver.registerReference(reference)
-                }
-            }
-            
-            if LinkResolutionMigrationConfiguration.shouldReportLinkResolutionPathMismatches {
-                // This mismatch check needs to happen at the since the cache based implementation traverses the symbols to update them
-                let hierarchyBasedReferences = hierarchyBasedLinkResolver!.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
-                
-                for (usr, hierarchyBasedReference) in hierarchyBasedReferences {
-                    let cacheBasedMainReference = symbolIndex[usr.precise]!.reference
-                    
-                    if hierarchyBasedReference.path != cacheBasedMainReference.path {
-                        linkResolutionMismatches.pathsWithMismatchedDisambiguation[hierarchyBasedReference.path] = cacheBasedMainReference.path
-                    }
                 }
             }
 
@@ -1648,8 +1711,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             topicGraph.addNode(graphNode)
             documentationCache[reference] = documentation
             
-            if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
-                hierarchyBasedLinkResolver!.addRootArticle(article, anchorSections: documentation.anchorSections)
+            if let hierarchyBasedLinkResolver = hierarchyBasedLinkResolver {
+                hierarchyBasedLinkResolver.addRootArticle(article, anchorSections: documentation.anchorSections)
             }
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
@@ -1707,8 +1770,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let graphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: article.source), title: title)
             topicGraph.addNode(graphNode)
             
-            if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
-                hierarchyBasedLinkResolver!.addArticle(article, anchorSections: documentation.anchorSections)
+            if let hierarchyBasedLinkResolver = hierarchyBasedLinkResolver {
+                hierarchyBasedLinkResolver.addArticle(article, anchorSections: documentation.anchorSections)
             }
             for anchor in documentation.anchorSections {
                 nodeAnchorSections[anchor.reference] = anchor
@@ -1998,8 +2061,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Emit warnings for any remaining uncurated files.
         emitWarningsForUncuratedTopics()
         
-        if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
-            hierarchyBasedResolver.addAnchorForSymbols(symbolIndex: symbolIndex)
+        if let hierarchyBasedLinkResolver = hierarchyBasedLinkResolver {
+            hierarchyBasedLinkResolver.addAnchorForSymbols(symbolIndex: symbolIndex)
         }
         
         // Fifth, resolve links in nodes that are added solely via curation

@@ -116,8 +116,8 @@ struct DocumentationCurator {
         
         // Move the article from the article cache to the documentation
         
-        if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
-            context.hierarchyBasedLinkResolver!.addArticle(filename: articleFilename, reference: reference, anchorSections: documentationNode.anchorSections)
+        if let hierarchyBasedLinkResolver = context.hierarchyBasedLinkResolver {
+            hierarchyBasedLinkResolver.addArticle(filename: articleFilename, reference: reference, anchorSections: documentationNode.anchorSections)
         }
         
         context.documentationCache[reference] = documentationNode

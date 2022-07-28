@@ -377,39 +377,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         // Log the peak memory.
         benchmark(add: Benchmark.PeakMemory())
 
-        if LinkResolutionMigrationConfiguration.shouldReportLinkResolutionPathMismatches {
-            if context.linkResolutionMismatches.pathsWithMismatchedDisambiguation.isEmpty {
-                print("All symbol paths have the same disambiguation information in both link resolver implementations.")
-            } else {
-                print("The following symbol paths have the different disambiguation across the two link resolver implementations (new values on the left and current values on the right):")
-            }
-            for (hierarchyBasedPath, mainCacheBasedPath) in context.linkResolutionMismatches.pathsWithMismatchedDisambiguation.sorted(by: \.key) {
-                print("\(hierarchyBasedPath)   !=   \(mainCacheBasedPath)")
-            }
-        }
-        
-        if LinkResolutionMigrationConfiguration.shouldReportLinkResolutionResultMismatches {
-            let mismatchedFailedCacheResults = context.linkResolutionMismatches.mismatchedLinksThatCacheBasedLinkResolverFailedToResolve
-            let mismatchedFailedHierarchyResults = context.linkResolutionMismatches.mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve
-            
-            if mismatchedFailedCacheResults.isEmpty && mismatchedFailedHierarchyResults.isEmpty {
-                print("Both link resolver implementations succeeded and failed to resolve the same links.")
-            } else {
-                if !mismatchedFailedCacheResults.isEmpty {
-                    print("The following links failed to resolve in the current implementation but succeeded in the new implementation:")
-                }
-                for result in mismatchedFailedCacheResults {
-                    print("\(result.path.singleQuoted)   relative to   \(result.parent.singleQuoted)   \(result.asSymbolLink ? "(symbol link)" : "")")
-                }
-                
-                if !mismatchedFailedHierarchyResults.isEmpty {
-                    print("The following links failed to resolve in the new implementation but succeeded in the current implementation:")
-                }
-                for result in mismatchedFailedHierarchyResults {
-                    print("\(result.path.singleQuoted)   relative to   \(result.parent.singleQuoted)   \(result.asSymbolLink ? "(symbol link)" : "")")
-                }
-            }
-        }
+        context.linkResolutionMismatches.reportGatheredMismatchesIfEnabled()
         
         return (analysisProblems: context.problems, conversionProblems: conversionProblems)
     }

@@ -141,8 +141,8 @@ enum GeneratedDocumentationTopics {
                     let inheritedSection = AutomaticTaskGroupSection(title: defaultImplementationGroupTitle, references: [collectionReference], renderPositionPreference: .bottom)
                     symbol.automaticTaskGroupsVariants[trait]?.append(inheritedSection)
                 }
-                if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
-                    context.hierarchyBasedLinkResolver!.addTaskGroup(named: title, reference: collectionReference, to: parent)
+                if let hierarchyBasedLinkResolver = context.hierarchyBasedLinkResolver {
+                    hierarchyBasedLinkResolver.addTaskGroup(named: title, reference: collectionReference, to: parent)
                 }
             }
         } else {
