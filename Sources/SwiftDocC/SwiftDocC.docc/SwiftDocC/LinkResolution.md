@@ -11,8 +11,8 @@ Some links are automatic or created by tools. For example symbol declarations in
 All other documentation links are written in the documentation content; in symbol documentation comments or in markdown or tutorial files. These "authored" documentation links are used to associate documentation extension files with symbols, form links in the documentation content itself, customize the documentation hierarchy, and organize tutorials. 
 
 Developers can write two types of documentation links:
- - Symbol links; a symbol page surrounded by two grave accents on each side: ``MyClass/myProperty``)
- - General documentation links; markdown links with a "doc" scheme: `<doc:MyArticle>` or `<doc:MyArticle>` or .
+ - Symbol links; a symbol path surrounded by two grave accents on each side: ` ``MyClass/myProperty`` `
+ - General documentation links; markdown links with a "doc" scheme: `<doc:MyArticle>` or `<doc:MyClass/myProperty>`.
 
 As the name suggest, symbol links can only link to symbols. General documentation links can link to all types of documentation content: symbols, articles, and tutorials. General documentation links can use the documentation catalogs identifier as the "hostname" of the documentation URI but links within the same catalog only need the path component of the URI. Optionally URI fragments can be used to reference specific headings/sections on a documentation page.
 

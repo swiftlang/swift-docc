@@ -57,7 +57,8 @@ benchmark(add: BundlesCount(context: context))
 ### Default Metrics
 
 - ``Benchmark/Duration``
-- ``Benchmark/OutputSize``
+- ``Benchmark/DataDirectoryOutputSize``
+- ``Benchmark/IndexDirectoryOutputSize``
 - ``Benchmark/PeakMemory``
 - ``Benchmark/TopicGraphHash``
 - ``Benchmark/ExternalTopicsHash``
