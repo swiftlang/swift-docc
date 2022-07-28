@@ -224,7 +224,9 @@ struct RenderContentCompiler: MarkupVisitor {
                 // Render only the slice.
                 let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)
                 let lines = snippetMixin.lines[lineRange]
-                return [RenderBlockContent.codeListing(syntax: snippetMixin.language, code: Array(lines), metadata: nil)]
+                let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
+                let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
+                return [RenderBlockContent.codeListing(syntax: snippetMixin.language, code: trimmedLines, metadata: nil)]
             } else {
                 // Render the whole snippet with its explanation content.
                 let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
