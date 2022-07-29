@@ -93,6 +93,9 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     private var isCancelled: Synchronized<Bool>? = nil
 
     private var processingDurationMetric: Benchmark.Duration?
+    
+    /// Overrides the BuildMetadata that would otherwise have been converted.
+    public var buildMetadataOverride: BuildMetadata?
 
     /// Creates a documentation converter given a documentation bundle's URL.
     ///
@@ -367,7 +370,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         }
         
         try outputConsumer.consume(
-            buildMetadata: BuildMetadata(
+            buildMetadata: buildMetadataOverride ?? BuildMetadata(
                 bundleDisplayName: bundle.displayName,
                 bundleIdentifier: bundle.identifier
             )

@@ -45,7 +45,8 @@ public struct RenderIndex: Codable, Equatable {
     public init(
         interfaceLanguages: [String: [Node]],
         versions: [VersionPatch]? = [],
-        currentVersion: ArchiveVersion? = nil
+        currentVersion: ArchiveVersion? = nil,
+        versionDifferences: [String : [String : RenderIndexChange]]? = nil
     ) {
         self.schemaVersion = Self.currentSchemaVersion
         self.interfaceLanguages = interfaceLanguages
@@ -55,6 +56,7 @@ public struct RenderIndex: Codable, Equatable {
         } else {
             self.metadata = nil
         }
+        self.versionDifferences = versionDifferences
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -234,7 +236,7 @@ extension RenderIndex {
 }
 
 extension RenderIndex {
-    static func fromNavigatorIndex(_ navigatorIndex: NavigatorIndex, with builder: NavigatorIndex.Builder) -> RenderIndex {
+    static func fromNavigatorIndex(_ navigatorIndex: NavigatorIndex, with builder: NavigatorIndex.Builder, versionDifferences: [String:[String:RenderIndexChange]]? = nil) -> RenderIndex {
         // The immediate children of the root represent the interface languages
         // described in this navigator tree.
         let interfaceLanguageRoots = navigatorIndex.navigatorTree.root.children
@@ -257,7 +259,9 @@ extension RenderIndex {
                     )
                 },
                 uniquingKeysWith: +
-            )
+            ),
+            currentVersion: builder.indexVersion,
+            versionDifferences: versionDifferences
         )
     }
 }

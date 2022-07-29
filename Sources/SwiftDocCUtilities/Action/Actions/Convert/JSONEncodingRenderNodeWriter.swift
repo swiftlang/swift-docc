@@ -27,20 +27,33 @@ class JSONEncodingRenderNodeWriter {
         }
     }
     
+    private let buildMetadata: BuildMetadata?
+    
     private let urlGenerator: NodeURLGenerator
     private let fileManager: FileManagerProtocol
     private let renderReferenceCache = RenderReferenceCache([:])
+    
+    /// The changes (modifications, additions, deprecations) made to nodes in the index between archive versions.
+    let differencesCache: Synchronized<[String : [String : RenderIndexChange]]>?
     
     /// Creates a writer object that write render node JSON into a given folder.
     ///
     /// - Parameters:
     ///   - targetFolder: The folder to which the writer object writes the files.
     ///   - fileManager: The file manager with which the writer object writes data to files.
-    init(targetFolder: URL, fileManager: FileManagerProtocol) {
+    ///   - buildMetadata: The metadata for this version of documentation. Should be non-nil only if the differencesCache should be populated.
+    init(targetFolder: URL, fileManager: FileManagerProtocol, buildMetadata: BuildMetadata? = nil) {
         self.urlGenerator = NodeURLGenerator(
             baseURL: targetFolder.appendingPathComponent("data", isDirectory: true)
         )
         self.fileManager = fileManager
+        
+        self.buildMetadata = buildMetadata
+        if buildMetadata != nil {
+            self.differencesCache = Synchronized<[String : [String : RenderIndexChange]]>([:])
+        } else {
+            self.differencesCache = nil
+        }
     }
     
     // The already created directories on disk
@@ -79,6 +92,53 @@ class JSONEncodingRenderNodeWriter {
         }
         
         let encoder = RenderJSONEncoder.makeEncoder()
+        
+        // Get the previous RenderNode from the target file URL to diff against.
+        var previousRenderNode: RenderNode? = nil
+        do {
+            let targetFileData = try Data(contentsOf: targetFileURL)
+            previousRenderNode = try RenderNode.decode(fromJSON: targetFileData)
+            encoder.userInfoPreviousNode = previousRenderNode
+        } catch {
+            // The previous version of this render node does not exist
+        }
+        
+        // Determine which archive versions this RenderNode existed in.
+        if let buildMetadata = buildMetadata {
+            var renderNodeVersionIds = previousRenderNode?.versions?.map({ versionPatch in
+                versionPatch.version.identifier
+            }) ?? []
+            
+            // We're grabbing the previous versions from the previousRenderNode. In that case, the previousRenderNode's versions
+            // will not include its own version.
+            if let previousNodeVersionId = previousRenderNode?.metadata.version?.identifier {
+                renderNodeVersionIds.append(previousNodeVersionId)
+            }
+            
+            let idsNotSeen = buildMetadata.versions?.map { version in
+                version.identifier
+            } ?? []
+            var idsNotSeenSet = Set(idsNotSeen)
+            idsNotSeenSet.remove(renderNode.metadata.version!.identifier) // If we are diffing, the metadata/version must exist.
+            
+            // Remove the versions the RenderNode existed in from the complete set of
+            // of archive versions.
+            for versionId in renderNodeVersionIds {
+                idsNotSeenSet.remove(versionId)
+            }
+            
+            // All versions that remain in idsNotSeenSet are identifiers for versions in which
+            // this render node did not exist.
+            differencesCache?.sync({ differences in
+                for addedId in idsNotSeenSet {
+                    if differences[renderNode.identifier.url.absoluteString] != nil {
+                        differences[renderNode.identifier.url.absoluteString]![addedId] = RenderIndexChange.added
+                    } else {
+                        differences[renderNode.identifier.url.absoluteString] = [addedId : RenderIndexChange.added]
+                    }
+                }
+            })
+        }
         
         let data = try renderNode.encodeToJSON(with: encoder, renderReferenceCache: renderReferenceCache)
         try fileManager.createFile(at: targetFileURL, contents: data)

@@ -347,12 +347,26 @@ public struct ConvertAction: Action, RecreatingContext {
             workingDirectory: temporaryFolder,
             fileManager: fileManager)
 
+        var archiveVersion: ArchiveVersion? = nil
+        var buildMetadata: BuildMetadata? = nil
+        if let bundle = converter.firstAvailableBundle() {
+            archiveVersion = ArchiveVersion.createArchiveVersion(displayName: bundle.versionDisplayName, identifier: bundle.version)
+            buildMetadata = BuildMetadata(bundleDisplayName: bundle.displayName,
+                                          bundleIdentifier: bundle.identifier,
+                                          currentVersion: archiveVersion,
+                                          previousBuildMetadata: previousArchiveURL?.appendingPathComponent(ConvertFileWritingConsumer.buildMetadataFileName, isDirectory: false)
+                                          )
+            // This buildMetadata has an array of all versions available in the archive being produced; override the buildMetadata that would otherwise
+            // have been created.
+            converter.buildMetadataOverride = buildMetadata
+        }
+        
         // An optional indexer, if indexing while converting is enabled.
         var indexer: Indexer? = nil
         
         if let bundleIdentifier = converter.firstAvailableBundle()?.identifier {
             // Create an index builder and prepare it to receive nodes.
-            indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier)
+            indexer = try Indexer(outputURL: temporaryFolder, bundleIdentifier: bundleIdentifier, indexVersion: archiveVersion)
         }
 
         let outputConsumer = ConvertFileWritingConsumer(
@@ -361,7 +375,8 @@ public struct ConvertAction: Action, RecreatingContext {
             fileManager: fileManager,
             context: context,
             indexer: indexer,
-            enableCustomTemplates: experimentalEnableCustomTemplates
+            enableCustomTemplates: experimentalEnableCustomTemplates,
+            buildMetadata: buildMetadata
         )
 
         let analysisProblems: [Problem]
@@ -393,7 +408,12 @@ public struct ConvertAction: Action, RecreatingContext {
             
             // Always emit a JSON representation of the index but only emit the LMDB
             // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
-            let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
+            let indexerProblems = indexer.finalize(emitJSON: true,
+                                                   emitLMDB: buildLMDBIndex,
+                                                   versionDifferences: outputConsumer.renderNodeWriter.differencesCache?.sync{ versionDifferences in
+                                                        return versionDifferences
+                                                    }
+            )
             allProblems.append(contentsOf: indexerProblems)
         }
 
