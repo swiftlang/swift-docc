@@ -27,12 +27,28 @@ extension CodingUserInfoKey {
     static let variantOverrides = CodingUserInfoKey(rawValue: "variantOverrides")!
     
     static let baseEncodingPath = CodingUserInfoKey(rawValue: "baseEncodingPath")!
+    
+    /// A user key that encapsulates the previous RenderNode that will be compared to this one to find differences and create patches.
+    static let previousNode = CodingUserInfoKey(rawValue: "previousNode")!
+    
+    /// A user key that encapsulates the previous RenderIndex that will be compared to this one to find differences and create patches.
+    static let previousIndex = CodingUserInfoKey(rawValue: "previousIndex")!
 }
 
 extension Encoder {
     /// The variant overrides accumulated as part of the encoding process.
     var userInfoVariantOverrides: VariantOverrides? {
         userInfo[.variantOverrides] as? VariantOverrides
+    }
+    
+    /// The previous RenderNode to be used in the diffing process.
+    var userInfoPreviousNode: RenderNode? {
+        userInfo[.previousNode] as? RenderNode
+    }
+    
+    /// The previous RenderIndex to be used in the diffing process.
+    var userInfoPreviousIndex: RenderIndex? {
+        userInfo[.previousIndex] as? RenderIndex
     }
     
     /// The base path to use when creating dynamic JSON pointers
@@ -62,6 +78,26 @@ extension JSONEncoder {
         }
         set {
             userInfo[.variantOverrides] = newValue
+        }
+    }
+    
+    /// The previous RenderNode to be used in the diffing process.
+    public var userInfoPreviousNode: RenderNode? {
+        get {
+            userInfo[.previousNode] as? RenderNode
+        }
+        set {
+            userInfo[.previousNode] = newValue
+        }
+    }
+    
+    /// The previous RenderIndex to be used in the diffing process.
+    public var userInfoPreviousIndex: RenderIndex? {
+        get {
+            userInfo[.previousIndex] as? RenderIndex
+        }
+        set {
+            userInfo[.previousIndex] = newValue
         }
     }
     

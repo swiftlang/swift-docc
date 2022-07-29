@@ -279,10 +279,11 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                         return
                     }
 
-                    guard let renderNode = try converter.renderNode(for: entity, at: source) else {
+                    guard var renderNode = try converter.renderNode(for: entity, at: source) else {
                         // No render node was produced for this entity, so just skip it.
                         return
                     }
+                    renderNode.metadata.version = ArchiveVersion(identifier: bundle.version!, displayName: bundle.versionDisplayName ?? bundle.version!)
                     
                     try outputConsumer.consume(renderNode: renderNode)
 

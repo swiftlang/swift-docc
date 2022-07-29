@@ -222,6 +222,9 @@ public struct RenderNode: VariantContainer {
     /// Information about what API diffs are available for this symbol.
     public var diffAvailability: DiffAvailability?
     
+    /// Previous versions of this RenderNode.
+    public var versions: [VersionPatch]?
+    
     // MARK: Sample code nodes
     
     /// Download information for sample code nodes.

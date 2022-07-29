@@ -69,6 +69,14 @@ public struct DocumentationBundle {
         info.version
     }
     
+    /**
+     The display name of the documentation bundle's version.
+     This is what will be displayed in DocC-Render.
+     */
+    public var versionDisplayName: String? {
+        info.versionDisplayName
+    }
+    
     /// Code listings extracted from the documented modules' source, indexed by their identifier.
     public var attributedCodeListings: [String: AttributedCodeListing]
     

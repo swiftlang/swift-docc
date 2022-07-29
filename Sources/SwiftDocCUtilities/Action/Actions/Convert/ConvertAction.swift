@@ -327,6 +327,17 @@ public struct ConvertAction: Action, RecreatingContext {
             try fileManager.removeItem(at: templateURL)
         }
         
+        // Copy over all items from the previous archive so old assets and pages will be available for viewing older versions.
+        // Most old files will be overwritten by the new ones.
+        if let previousArchiveURL = previousArchiveURL {
+            // TODO: Copy over the rest of the archive too, will have to deal with item already exists error
+            for directory in ["data", "index"] {
+                let targetDataURL = temporaryFolder.appendingPathComponent(directory, isDirectory: true)
+                let previousArchiveDataURL = previousArchiveURL.appendingPathComponent(directory, isDirectory: true)
+                try fileManager.copyItem(at: previousArchiveDataURL, to: targetDataURL)
+            }
+        }
+        
         defer {
             try? fileManager.removeItem(at: temporaryFolder)
         }

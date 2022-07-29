@@ -555,10 +555,6 @@ extension NavigatorIndex {
             guard navigatorIndex == nil && isCompleted == false else { return }
             
             do {
-                // The folder in which the environment, if existing, will be overwritten.
-                if FileManager.default.fileExists(atPath: outputURL.path) {
-                    try FileManager.default.removeItem(at: outputURL)
-                }
                 try FileManager.default.createDirectory(at: outputURL, withIntermediateDirectories: true, attributes: nil)
                 
                 navigatorIndex = try NavigatorIndex(withEmptyTree: outputURL, bundleIdentifier: bundleIdentifier)
@@ -938,6 +934,16 @@ extension NavigatorIndex {
                 }
                 
                 let jsonNavigatorIndexURL = outputURL.appendingPathComponent("index.json")
+                
+                // Get the previous RenderIndex from the target file URL to diff against.
+                do {
+                    let previousRenderIndexData = try Data(contentsOf: jsonNavigatorIndexURL)
+                    let previousRenderIndex = try JSONDecoder().decode(RenderIndex.self, from: previousRenderIndexData)
+                    jsonEncoder.userInfoPreviousIndex = previousRenderIndex
+                } catch {
+                    // There is no previous RenderIndex to diff against.
+                }
+                
                 do {
                     let renderIndexData = try jsonEncoder.encode(renderIndex)
                     try renderIndexData.write(to: jsonNavigatorIndexURL)

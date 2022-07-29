@@ -13,7 +13,7 @@ import Foundation
 extension RenderNode: Codable {
     enum CodingKeys: CodingKey {
         case schemaVersion, identifier, sections, references, metadata, kind, hierarchy
-        case abstract, topicSections, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides
+        case abstract, topicSections, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides, versions
     }
     
     public init(from decoder: Decoder) throws {
@@ -68,6 +68,8 @@ extension RenderNode: Codable {
         diffAvailability = try container.decodeIfPresent(DiffAvailability.self, forKey: .diffAvailability)
         variants = try container.decodeIfPresent([RenderNode.Variant].self, forKey: .variants)
         variantOverrides = try container.decodeIfPresent(VariantOverrides.self, forKey: .variantOverrides)
+        
+        versions = try container.decodeIfPresent([VersionPatch].self, forKey: .versions)  ?? []
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -113,6 +115,21 @@ extension RenderNode: Codable {
             // Otherwise, the variant overrides
             // that have been accumulated while encoding the properties of the render node.
             try container.encode(variantOverrides, forKey: .variantOverrides)
+        }
+    
+        // If given a previous node, produce a diff between it and this RenderNode.
+        if let previousNode = encoder.userInfoPreviousNode {
+            
+            let newVersionPatch = VersionPatch(archiveVersion: previousNode.metadata.version ?? ArchiveVersion(identifier: "N/A", displayName: "N/A"),
+                                               jsonPatch: previousNode.difference(from: self, at: encoder.codingPath))
+            
+            var newVersions: [VersionPatch] = [newVersionPatch]
+            newVersions.append(contentsOf: previousNode.versions ?? [])
+            try metadata.version!.checkIsUniqueFrom(otherVersions: newVersions.map { $0.version }) // TODO: Move this to be done when the archive is passed in.
+            try container.encode(newVersions, forKey: .versions)
+            
+        } else {
+            try container.encode(versions ?? [], forKey: .versions)
         }
     }
 }

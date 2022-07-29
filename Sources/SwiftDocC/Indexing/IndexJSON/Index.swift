@@ -9,6 +9,7 @@
 */
 
 import SymbolKit
+import Foundation
 
 /// A navigation index of the content in a DocC archive, optimized for rendering.
 ///
@@ -31,12 +32,52 @@ public struct RenderIndex: Codable, Equatable {
     /// A mapping of interface languages to the index nodes they contain.
     public let interfaceLanguages: [String: [Node]]
     
+    /// Metadata about the RenderIndex.
+    public let metadata: RenderIndexMetadata?
+    
+    /// Information about previous version of this RenderIndex.
+    public let versions: [VersionPatch]?
+    
+    /// A mapping of node identifiers to what type of change should be rendered when this version of the archive is diffed against previous versions
+    public var versionDifferences: [String : [String : RenderIndexChange]]?
+    
     /// Creates a new render index with the given interface language to node mapping.
     public init(
-        interfaceLanguages: [String: [Node]]
+        interfaceLanguages: [String: [Node]],
+        versions: [VersionPatch]? = [],
+        currentVersion: ArchiveVersion? = nil
     ) {
         self.schemaVersion = Self.currentSchemaVersion
         self.interfaceLanguages = interfaceLanguages
+        self.versions = versions
+        if let currentVersion = currentVersion {
+            self.metadata = RenderIndexMetadata(version: currentVersion)
+        } else {
+            self.metadata = nil
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(schemaVersion, forKey: .schemaVersion)
+        try container.encode(interfaceLanguages, forKey: .interfaceLanguages)
+        try container.encodeIfPresent(metadata, forKey: .metadata)
+        try container.encodeIfPresent(versionDifferences, forKey: .versionDifferences)
+        
+        // If given a previous index, diff between it and this RenderNode.
+        if let previousIndex = encoder.userInfoPreviousIndex {
+            
+            // If diffing against a previous version, this index must have a version.
+            let newVersionPatch = VersionPatch(
+                archiveVersion: previousIndex.metadata?.version ?? ArchiveVersion(identifier: "N/A", displayName: "N/A"),
+                jsonPatch: previousIndex.difference(from: self, at: encoder.codingPath))
+            
+            var newVersions: [VersionPatch] = [newVersionPatch]
+            newVersions.append(contentsOf: previousIndex.versions ?? [])
+            
+            try container.encode(newVersions, forKey: .versions)
+        }
     }
 }
 
@@ -336,12 +377,22 @@ extension NavigatorIndex.PageType {
         }
     }
 }
+
+/// Metadata about a RenderIndex, such as the index's current version.
+public struct RenderIndexMetadata: Equatable, Codable {
+    
+    /// The version of the archive that contains this RenderIndex.
+    public let version: ArchiveVersion
+    
+}
+
 extension RenderIndex: Diffable {
     func difference(from other: RenderIndex, at path: Path) -> Differences {
         var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
         
         diffBuilder.addDifferences(atKeyPath: \.schemaVersion, forKey: CodingKeys.schemaVersion)
         diffBuilder.addDifferences(atKeyPath: \.interfaceLanguages, forKey: CodingKeys.interfaceLanguages)
+        diffBuilder.addDifferences(atKeyPath: \.metadata, forKey: CodingKeys.metadata)
         
         return diffBuilder.differences
     }
