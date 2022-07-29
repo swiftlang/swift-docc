@@ -65,3 +65,28 @@ public struct IntroRenderSection: RenderSection, Equatable {
         content = try container.decodeIfPresent([RenderBlockContent].self, forKey: .content) ?? []
     }
 }
+
+
+// Diffable conformance
+extension IntroRenderSection: Diffable {
+    func difference(from other: IntroRenderSection, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.chapter, forKey: CodingKeys.chapter)
+        diffBuilder.addDifferences(atKeyPath: \.estimatedTimeInMinutes, forKey: CodingKeys.estimatedTimeInMinutes)
+        diffBuilder.addDifferences(atKeyPath: \.xcodeRequirement, forKey: CodingKeys.xcodeRequirement)
+        diffBuilder.addDifferences(atKeyPath: \.backgroundImage, forKey: CodingKeys.backgroundImage)
+        diffBuilder.addDifferences(atKeyPath: \.action, forKey: CodingKeys.action)
+        diffBuilder.addDifferences(atKeyPath: \.image, forKey: CodingKeys.image)
+        diffBuilder.addDifferences(atKeyPath: \.video, forKey: CodingKeys.video)
+        diffBuilder.addDifferences(atKeyPath: \.projectFiles, forKey: CodingKeys.projectFiles)
+        diffBuilder.addDifferences(atKeyPath: \.content, forKey: CodingKeys.content)
+        
+        return diffBuilder.differences
+    }
+    
+    func isSimilar(to other: IntroRenderSection) -> Bool {
+        return title == other.title || other.content == other.content
+    }
+}

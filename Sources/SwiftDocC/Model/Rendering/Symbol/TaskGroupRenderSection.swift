@@ -92,3 +92,23 @@ extension TaskGroupRenderSection {
         self.discussion = nil
     }
 }
+
+// Conformance to Diffable
+extension TaskGroupRenderSection: Diffable {
+    func difference(from other: TaskGroupRenderSection, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.discussion, forKey: CodingKeys.discussion)
+        diffBuilder.addDifferences(atKeyPath: \.identifiers, forKey: CodingKeys.identifiers)
+        diffBuilder.addDifferences(atKeyPath: \.generated, forKey: CodingKeys.generated)
+        diffBuilder.addDifferences(atKeyPath: \.abstract, forKey: CodingKeys.abstract)
+        
+        return diffBuilder.differences
+    }
+    
+    func isSimilar(to other: TaskGroupRenderSection) -> Bool {
+        return ((title != nil) && title == other.title) || ((abstract != nil) && abstract == other.abstract) ||  identifiers == other.identifiers
+//        || discussion == other.discussion
+    }
+}

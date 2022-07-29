@@ -146,6 +146,9 @@ public struct RenderMetadata: VariantContainer {
     
     /// Any tags assigned to the node.
     public var tags: [RenderNode.Tag]?
+    
+    /// The archive version that this node belongs to.
+    public var version: ArchiveVersion?
 }
 
 extension RenderMetadata: Codable {
@@ -157,11 +160,21 @@ extension RenderMetadata: Codable {
     }
     
     /// Metadata about a module dependency.
-    public struct Module: Codable, Equatable {
+    public struct Module: Codable, Equatable, Diffable {
         public let name: String
         /// Possible dependencies to the module, we allow for those in the render JSON model
         /// but have no authoring support at the moment.
         public let relatedModules: [String]?
+
+        /// Returns the difference between two RenderMetadata.Modules.
+        public func difference(from other: RenderMetadata.Module, at path: Path) -> Differences {
+            var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+            
+            diffBuilder.addDifferences(atKeyPath: \.name, forKey: CodingKeys.name)
+            diffBuilder.addDifferences(atKeyPath: \.relatedModules, forKey: CodingKeys.relatedModules)
+
+            return diffBuilder.differences
+        }
     }
 
     public struct CodingKeys: CodingKey, Hashable, Equatable {
@@ -197,6 +210,7 @@ extension RenderMetadata: Codable {
         public static let navigatorTitle = CodingKeys(stringValue: "navigatorTitle")
         public static let sourceFileURI = CodingKeys(stringValue: "sourceFileURI")
         public static let tags = CodingKeys(stringValue: "tags")
+        public static let version = CodingKeys(stringValue: "version")
     }
     
     public init(from decoder: Decoder) throws {
@@ -222,6 +236,7 @@ extension RenderMetadata: Codable {
         navigatorTitleVariants = try container.decodeVariantCollectionIfPresent(ofValueType: [DeclarationRenderSection.Token]?.self, forKey: .navigatorTitle)
         sourceFileURIVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .sourceFileURI)
         tags = try container.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
+        version = try container.decodeIfPresent(ArchiveVersion.self, forKey: .version)
         
         let extraKeys = Set(container.allKeys).subtracting(
             [
@@ -242,7 +257,8 @@ extension RenderMetadata: Codable {
                 .fragments,
                 .navigatorTitle,
                 .sourceFileURI,
-                .tags
+                .tags,
+                .version
             ]
         )
         for extraKey in extraKeys {
@@ -272,6 +288,7 @@ extension RenderMetadata: Codable {
         try container.encodeVariantCollection(fragmentsVariants, forKey: .fragments, encoder: encoder)
         try container.encodeVariantCollection(navigatorTitleVariants, forKey: .navigatorTitle, encoder: encoder)
         try container.encodeVariantCollection(sourceFileURIVariants, forKey: .sourceFileURI, encoder: encoder)
+        try container.encodeIfPresent(version, forKey: .version)
         if let tags = self.tags, !tags.isEmpty {
             try container.encodeIfPresent(tags, forKey: .tags)
         }
@@ -279,5 +296,30 @@ extension RenderMetadata: Codable {
         for (key, value) in extraMetadata {
             try container.encode(AnyMetadata(value), forKey: key)
         }
+    }
+    
+    /// Returns the differences between this RenderMetadata and the given one.
+    public func difference(from other: RenderMetadata, at path: Path) -> Differences {
+
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.externalID, forKey: CodingKeys.externalID)
+        diffBuilder.addDifferences(atKeyPath: \.symbolKind, forKey: CodingKeys.symbolKind)
+        diffBuilder.addDifferences(atKeyPath: \.role, forKey: CodingKeys.role)
+        diffBuilder.addDifferences(atKeyPath: \.roleHeading, forKey: CodingKeys.roleHeading)
+        diffBuilder.addDifferences(atKeyPath: \.version, forKey: CodingKeys.version)
+        diffBuilder.addDifferences(atKeyPath: \.modules, forKey: CodingKeys.modules)
+        diffBuilder.addDifferences(atKeyPath: \.fragments, forKey: CodingKeys.fragments)
+        diffBuilder.addDifferences(atKeyPath: \.navigatorTitle, forKey: CodingKeys.navigatorTitle)
+
+        return diffBuilder.differences
+    }
+
+}
+
+extension RenderMetadata: Diffable {
+    func isSimilar(to other: RenderMetadata) -> Bool {
+        return self.title == other.title
     }
 }

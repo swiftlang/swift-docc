@@ -27,3 +27,11 @@ public struct RenderReferenceHierarchy: Codable, Equatable {
     /// Landing pages' hierarchy contains a single, empty path.
     public let paths: [[String]]
 }
+
+// Diffable conformance
+extension RenderReferenceHierarchy: Diffable {
+    /// Returns the difference between this RenderReferenceHierarchy and the given one.
+    func difference(from other: RenderReferenceHierarchy, at path: Path) -> Differences {
+        return paths.difference(from: other.paths, at: path + [CodingKeys.paths])
+    }
+}

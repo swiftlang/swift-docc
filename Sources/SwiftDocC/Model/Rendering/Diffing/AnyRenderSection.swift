@@ -11,7 +11,35 @@
 /// A RenderSection value that can be diffed.
 ///
 /// An `AnyRenderSection` value forwards difference operations to the underlying base type, each of which determine the difference differently.
-public struct AnyRenderSection: Equatable, Encodable {
+public struct AnyRenderSection: Equatable, Encodable, Diffable {
+    
+    // This forwards the difference methods on to the correct concrete type.
+    func difference(from other: AnyRenderSection, at path: Path) -> Differences {
+        switch (self.value.kind, other.value.kind) {
+        case (.intro, .intro), (.hero, .hero):
+            return (value as! IntroRenderSection).difference(from: (other.value as! IntroRenderSection), at: path)
+//        case (.contentAndMedia, .contentAndMedia):
+//            return (value as! ContentAndMediaSection).difference(from: (other.value as! ContentAndMediaSection), at: path)
+//        case (.contentAndMediaGroup, .contentAndMediaGroup):
+//            return (value as! ContentAndMediaGroupSection).difference(from: (other.value as! ContentAndMediaGroupSection), at: path)
+//        case (.callToAction, .callToAction):
+//            return (value as! CallToActionSection).difference(from: (other.value as! CallToActionSection), at: path)
+//        case (.resources, .resources):
+//            return (value as! ResourcesRenderSection).difference(from: (other.value as! ResourcesRenderSection), at: path)
+        case (.declarations, .declarations):
+            return (value as! DeclarationsRenderSection).difference(from: (other.value as! DeclarationsRenderSection), at: path)
+        case (.discussion, .discussion), (.content, .content):
+            return (value as! ContentRenderSection).difference(from: (other.value as! ContentRenderSection), at: path)
+        case (.taskGroup, .taskGroup):
+            return (value as! TaskGroupRenderSection).difference(from: (other.value as! TaskGroupRenderSection), at: path)
+//        case (.relationships, .relationships):
+//            return (value as! RelationshipsRenderSection).difference(from: (other.value as! RelationshipsRenderSection), at: path)
+//        case (.parameters, .parameters):
+//            return (value as! ParametersRenderSection).difference(from: (other.value as! ParametersRenderSection), at: path)
+        default:
+            return []
+        }
+    }
     
     public static func == (lhs: AnyRenderSection, rhs: AnyRenderSection) -> Bool {
         switch (lhs.value.kind, rhs.value.kind) {
@@ -59,4 +87,7 @@ public struct AnyRenderSection: Equatable, Encodable {
     public var value: RenderSection
     init(_ value: RenderSection) { self.value = value }
     
+    public func isSimilar(to other: AnyRenderSection) -> Bool {
+        return value.kind == other.value.kind
+    }
 }

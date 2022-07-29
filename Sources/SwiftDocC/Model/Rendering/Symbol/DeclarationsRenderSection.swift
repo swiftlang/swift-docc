@@ -172,3 +172,53 @@ extension DeclarationRenderSection: TextIndexing {
         return ""
     }
 }
+
+// Diffable conformance
+extension DeclarationsRenderSection: Diffable {
+    
+    func difference(from other: DeclarationsRenderSection, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.declarations, forKey: CodingKeys.declarations)
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        
+        return diffBuilder.differences
+    }
+    
+}
+
+// Diffable conformance
+extension DeclarationRenderSection: Diffable {
+    
+    func difference(from other: DeclarationRenderSection, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.languages, forKey: CodingKeys.languages)
+        diffBuilder.addDifferences(atKeyPath: \.platforms, forKey: CodingKeys.platforms)
+        diffBuilder.addDifferences(atKeyPath: \.tokens, forKey: CodingKeys.tokens)
+        
+        return diffBuilder.differences
+    }
+    
+    func isSimilar(to other: DeclarationRenderSection) -> Bool {
+        return tokens == other.tokens
+    }
+}
+
+// Diffable conformance
+extension DeclarationRenderSection.Token: Diffable {
+    /// Returns the differences between this Token and the given one.
+    public func difference(from other: DeclarationRenderSection.Token, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.text, forKey: CodingKeys.text)
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        
+        return diffBuilder.differences
+    }
+    
+    public func isSimilar(to other: DeclarationRenderSection.Token) -> Bool {
+        return kind == other.kind || text == self.text
+    }
+}
+

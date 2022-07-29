@@ -307,3 +307,34 @@ public struct TopicRenderReference: RenderReference, VariantContainer, Equatable
         try container.encodeIfPresent(tags, forKey: .tags)
     }
 }
+
+// Conformance to Diffable
+extension TopicRenderReference: Diffable {
+    /// Returns the difference between two TopicRenderReferences.
+    public func difference(from other: TopicRenderReference, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.role, forKey: CodingKeys.role)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.identifier, forKey: CodingKeys.identifier)
+        diffBuilder.addDifferences(atKeyPath: \.kind, forKey: CodingKeys.kind)
+        diffBuilder.addDifferences(atKeyPath: \.required, forKey: CodingKeys.required)
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.url, forKey: CodingKeys.url)
+        diffBuilder.addDifferences(atKeyPath: \.abstract, forKey: CodingKeys.abstract)
+        diffBuilder.addDifferences(atKeyPath: \.fragments, forKey: CodingKeys.fragments)
+        diffBuilder.addDifferences(atKeyPath: \.navigatorTitle, forKey: CodingKeys.navigatorTitle)
+        diffBuilder.addDifferences(atKeyPath: \.estimatedTime, forKey: CodingKeys.estimatedTime)
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.conformance, forKey: CodingKeys.conformance)
+        diffBuilder.addDifferences(atKeyPath: \.isBeta, forKey: CodingKeys.beta)
+        diffBuilder.addDifferences(atKeyPath: \.isDeprecated, forKey: CodingKeys.deprecated)
+        diffBuilder.addDifferences(atKeyPath: \.defaultImplementationCount, forKey: CodingKeys.defaultImplementations)
+        diffBuilder.addDifferences(atKeyPath: \.titleStyle, forKey: CodingKeys.titleStyle)
+        diffBuilder.addDifferences(atKeyPath: \.name, forKey: CodingKeys.name)
+        diffBuilder.addDifferences(atKeyPath: \.ideTitle, forKey: CodingKeys.ideTitle)
+        diffBuilder.addDifferences(atKeyPath: \.tags, forKey: CodingKeys.tags)
+
+        return diffBuilder.differences
+    }
+}

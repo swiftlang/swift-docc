@@ -52,6 +52,10 @@ public struct RenderReferenceIdentifier: Codable, Hashable, Equatable {
         var container = encoder.singleValueContainer()
         try container.encode(identifier)
     }
+    
+    private enum CodingKeys: CodingKey {
+        case identifier
+    }
 }
 
 /// A reference that has a file.
@@ -80,5 +84,13 @@ extension RenderReferenceIdentifier {
     /// - Parameter linkDestination: The full path of the external link represented as a `String`.
     public init(forExternalLink linkDestination: String) {
         self.identifier = "\(linkDestination)"
+    }
+}
+
+// Conformance to Diffable
+extension RenderReferenceIdentifier: Diffable {
+    /// Returns the difference between this RenderReferenceIdentifier and the given one.
+    public func difference(from other: RenderReferenceIdentifier, at path: Path) -> Differences {
+        return propertyDifference(identifier, from: other.identifier, at: path + [CodingKeys.identifier])
     }
 }

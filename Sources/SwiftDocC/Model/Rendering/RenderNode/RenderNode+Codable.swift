@@ -11,7 +11,7 @@
 import Foundation
 
 extension RenderNode: Codable {
-    private enum CodingKeys: CodingKey {
+    enum CodingKeys: CodingKey {
         case schemaVersion, identifier, sections, references, metadata, kind, hierarchy
         case abstract, topicSections, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides
     }

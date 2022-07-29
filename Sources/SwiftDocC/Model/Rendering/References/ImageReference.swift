@@ -70,16 +70,20 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
         try container.encode(identifier, forKey: .identifier)
         try container.encode(altText, forKey: .alt)
         
-        // convert the data asset to a serializable object
+
+        try container.encode(serializeDataAsset(asset: asset), forKey: .variants)
+    }
+    
+    // Convert the data asset to a serializable object.
+    private func serializeDataAsset(asset: DataAsset) -> [VariantProxy] {
         var result = [VariantProxy]()
         // sort assets by URL path for deterministic sorting of images
         asset.variants.sorted(by: \.value.path).forEach { (key, value) in
             let url = value.isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent)
             result.append(VariantProxy(url: url, traits: key))
         }
-        try container.encode(result, forKey: .variants)
+        return result
     }
-    
     
     /// A codable proxy value that the image reference uses to serialize information about its asset variants.
     public struct VariantProxy: Codable {
@@ -116,5 +120,19 @@ public struct ImageReference: MediaReference, URLReference, Equatable {
             try container.encode(url, forKey: .url)
             try container.encode(traits, forKey: .traits)
         }
+    }
+}
+
+// Diffable conformance
+extension ImageReference: Diffable {
+    
+    /// Returns the difference between this ImageReference and the given one.
+    public func difference(from other: ImageReference, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.asset, forKey: CodingKeys.variants)
+        diffBuilder.addDifferences(atKeyPath: \.altText, forKey: CodingKeys.alt)
+        
+        return diffBuilder.differences
     }
 }

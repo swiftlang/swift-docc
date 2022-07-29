@@ -38,3 +38,15 @@ public struct UnresolvedRenderReference: RenderReference, Equatable {
         title = try values.decode(String.self, forKey: .title)
     }
 }
+
+// Diffable conformance
+extension UnresolvedRenderReference: Diffable {
+    /// Returns the difference between this UnresolvedRenderReference and the given one.
+    public func difference(from other: UnresolvedRenderReference, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        
+        return diffBuilder.differences
+    }
+}

@@ -34,3 +34,16 @@ public struct XcodeRequirementReference: RenderReference, Equatable {
         self.url = url
     }
 }
+
+// Diffable conformance
+extension XcodeRequirementReference: Diffable {
+    /// Returns the difference between this XcodeRequirementReference and the given one.
+    public func difference(from other: XcodeRequirementReference, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.url, forKey: CodingKeys.url)
+
+        return diffBuilder.differences
+    }
+}

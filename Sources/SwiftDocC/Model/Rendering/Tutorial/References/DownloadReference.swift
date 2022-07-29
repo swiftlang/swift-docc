@@ -65,3 +65,16 @@ extension DownloadReference {
         url.isAbsoluteWebURL ? url : destinationURL(for: url.lastPathComponent)
     }
 }
+
+// Diffable conformance
+extension DownloadReference: Diffable {
+    /// Returns the difference between this DownloadReference and the given one.
+    public func difference(from other: DownloadReference, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+
+        diffBuilder.addDifferences(atKeyPath: \.url, forKey: CodingKeys.url)
+        diffBuilder.addDifferences(atKeyPath: \.sha512Checksum, forKey: CodingKeys.sha512Checksum)
+
+        return diffBuilder.differences
+    }
+}

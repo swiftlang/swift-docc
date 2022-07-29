@@ -336,3 +336,33 @@ extension NavigatorIndex.PageType {
         }
     }
 }
+extension RenderIndex: Diffable {
+    func difference(from other: RenderIndex, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.schemaVersion, forKey: CodingKeys.schemaVersion)
+        diffBuilder.addDifferences(atKeyPath: \.interfaceLanguages, forKey: CodingKeys.interfaceLanguages)
+        
+        return diffBuilder.differences
+    }
+}
+
+extension RenderIndex.Node: Diffable {
+    func difference(from other: RenderIndex.Node, at path: Path) -> Differences {
+        var diffBuilder = DifferenceBuilder(current: self, other: other, basePath: path)
+        
+        diffBuilder.addDifferences(atKeyPath: \.title, forKey: CodingKeys.title)
+        diffBuilder.addDifferences(atKeyPath: \.path, forKey: CodingKeys.path)
+        diffBuilder.addDifferences(atKeyPath: \.type, forKey: CodingKeys.type)
+        diffBuilder.addDifferences(atKeyPath: \.children, forKey: CodingKeys.children)
+        diffBuilder.addDifferences(atKeyPath: \.isDeprecated, forKey: CodingKeys.deprecated)
+        diffBuilder.addDifferences(atKeyPath: \.isExternal, forKey: CodingKeys.external)
+        diffBuilder.addDifferences(atKeyPath: \.isBeta, forKey: CodingKeys.beta)
+        
+        return diffBuilder.differences
+    }
+    
+    func isSimilar(to other: RenderIndex.Node) -> Bool {
+        return title == other.title || ((children != nil) && children == other.children) || ((path != nil) && path == other.path) || ((type != nil) && type == other.type)
+    }
+}
