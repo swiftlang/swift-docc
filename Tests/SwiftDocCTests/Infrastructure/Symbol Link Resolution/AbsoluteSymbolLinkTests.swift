@@ -520,36 +520,6 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 basePathComponents: [(name: 'angle', suffix: (none))]
             }
             """,
-            // doc://org.swift.docc.example/documentation/Test:
-            """
-            {
-                bundleID: 'org.swift.docc.example',
-                module: 'Test',
-                topLevelSymbol: (name: 'Test', suffix: (none)),
-                representsModule: true,
-                basePathComponents: []
-            }
-            """,
-            // doc://org.swift.docc.example/documentation/Test/FirstGroup:
-            """
-            {
-                bundleID: 'org.swift.docc.example',
-                module: 'Test',
-                topLevelSymbol: (name: 'FirstGroup', suffix: (none)),
-                representsModule: false,
-                basePathComponents: []
-            }
-            """,
-            // doc://org.swift.docc.example/documentation/Test/FirstGroup/MySnippet:
-            """
-            {
-                bundleID: 'org.swift.docc.example',
-                module: 'Test',
-                topLevelSymbol: (name: 'FirstGroup', suffix: (none)),
-                representsModule: false,
-                basePathComponents: [(name: 'MySnippet', suffix: (none))]
-            }
-            """,
         ]
         XCTAssertEqual(expectedDescriptions.count, context.symbolIndex.count)
         

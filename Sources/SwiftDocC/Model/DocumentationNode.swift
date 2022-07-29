@@ -58,6 +58,9 @@ public struct DocumentationNode {
 
     /// The unified symbol data that backs this node, if it's backed by a symbol; otherwise `nil`.
     public var unifiedSymbol: UnifiedSymbolGraph.Symbol?
+    
+    /// If true, the node was created implicitly and should not generally be rendered as a page of documentation.
+    public var isVirtual: Bool
 
     /// A discrete unit of documentation
     struct DocumentationChunk {
@@ -122,7 +125,7 @@ public struct DocumentationNode {
     ///   - markup: The markup that makes up the content for the node.
     ///   - semantic: The parsed documentation structure that's described by the documentation content.
     ///   - platformNames: The names of the platforms for which the node is available.
-    public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: Markup, semantic: Semantic?, platformNames: Set<String>? = nil) {
+    public init(reference: ResolvedTopicReference, kind: Kind, sourceLanguage: SourceLanguage, availableSourceLanguages: Set<SourceLanguage>? = nil, name: Name, markup: Markup, semantic: Semantic?, platformNames: Set<String>? = nil, isVirtual: Bool = false) {
         self.reference = reference
         self.kind = kind
         self.sourceLanguage = sourceLanguage
@@ -133,6 +136,7 @@ public struct DocumentationNode {
         self.symbol = nil
         self.platformNames = platformNames
         self.docChunks = [DocumentationChunk(source: .sourceCode(location: nil), markup: markup)]
+        self.isVirtual = isVirtual
         updateAnchorSections()
     }
 
@@ -171,6 +175,7 @@ public struct DocumentationNode {
         self.name = .symbol(declaration: .init([.plain(defaultSymbol.names.title)]))
         self.symbol = defaultSymbol
         self.unifiedSymbol = unifiedSymbol
+        self.isVirtual = moduleData.isVirtual
         
         self.markup = Document()
         self.docChunks = []
@@ -455,7 +460,6 @@ public struct DocumentationNode {
         case .`property`: return .instanceProperty
         case .`protocol`: return .protocol
         case .snippet: return .snippet
-        case .snippetGroup: return .snippetGroup
         case .`struct`: return .structure
         case .`subscript`: return .instanceSubscript
         case .`typeMethod`: return .typeMethod
@@ -564,6 +568,8 @@ public struct DocumentationNode {
             redirectsVariants: .init(swiftVariant: article?.redirects)
         )
         
+        self.isVirtual = symbol.isVirtual
+        
         updateAnchorSections()
     }
     
@@ -596,6 +602,7 @@ public struct DocumentationNode {
         self.availableSourceLanguages = [reference.sourceLanguage]
         self.docChunks = [DocumentationChunk(source: .documentationExtension, markup: articleMarkup)]
         self.markup = articleMarkup
+        self.isVirtual = false
         
         updateAnchorSections()
     }
