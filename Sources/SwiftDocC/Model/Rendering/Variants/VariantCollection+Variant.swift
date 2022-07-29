@@ -12,7 +12,7 @@ import Foundation
 
 public extension VariantCollection {
     /// A variant for a render node value.
-    struct Variant<Value: Codable> {
+    struct Variant<Value: Codable & Equatable>: Equatable {
         /// The traits associated with the override.
         public var traits: [RenderNode.Variant.Trait]
         

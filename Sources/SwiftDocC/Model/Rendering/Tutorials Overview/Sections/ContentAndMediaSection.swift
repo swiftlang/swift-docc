@@ -9,7 +9,7 @@
 */
 
 /// A section containing textual content and media laid out horizontally or vertically.
-public struct ContentAndMediaSection: RenderSection {
+public struct ContentAndMediaSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .contentAndMedia
     
     /// The layout direction.

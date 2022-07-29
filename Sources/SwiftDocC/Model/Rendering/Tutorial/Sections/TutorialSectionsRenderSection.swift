@@ -11,14 +11,14 @@
 import Foundation
 
 /// A section of a Tutorial page.
-public struct TutorialSectionsRenderSection: RenderSection {
+public struct TutorialSectionsRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .tasks
     
     /// The tasks in the section.
     public var tasks: [Section]
     
     /// A render-friendly representation of a tutorial section.
-    public struct Section: TextIndexing {
+    public struct Section: TextIndexing, Equatable {
         /// The title of the section.
         public var title: String
 

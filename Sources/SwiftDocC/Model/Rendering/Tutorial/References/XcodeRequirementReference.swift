@@ -11,7 +11,7 @@
 import Foundation
 
 /// A reference to a version of Xcode that users of your documentation must use.
-public struct XcodeRequirementReference: RenderReference {
+public struct XcodeRequirementReference: RenderReference, Equatable {
     public var type: RenderReferenceType = .xcodeRequirement
     
     public let identifier: RenderReferenceIdentifier

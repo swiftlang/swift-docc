@@ -9,7 +9,7 @@
 */
 
 /// A section that groups content and media sections.
-public struct ContentAndMediaGroupSection: RenderSection {
+public struct ContentAndMediaGroupSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .contentAndMediaGroup
     
     /// The layout direction of all content and media sections in this group.

@@ -13,7 +13,7 @@ import Foundation
 /// Defines an override for a JSON value for a set of traits.
 ///
 /// Override values are contain the ``patch`` that should be applied for clients that want to process documentation for the override's ``traits``.
-public struct VariantOverride: Codable {
+public struct VariantOverride: Codable, Equatable {
     /// The traits associated with the override.
     public var traits: [RenderNode.Variant.Trait]
     

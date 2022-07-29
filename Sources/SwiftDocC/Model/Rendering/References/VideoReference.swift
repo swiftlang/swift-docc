@@ -11,7 +11,7 @@
 import Foundation
 
 /// A reference to a video.
-public struct VideoReference: MediaReference, URLReference {
+public struct VideoReference: MediaReference, URLReference, Equatable {
     /// The type of this video reference.
     ///
     /// This value is always `.video`.

@@ -26,7 +26,7 @@ public typealias JSONPatch = [JSONPatchOperation]
 /// ### Operations
 ///
 /// - ``PatchOperation``
-public enum JSONPatchOperation: Codable {
+public enum JSONPatchOperation: Codable, Equatable {
     
     /// A replacement operation.
     ///

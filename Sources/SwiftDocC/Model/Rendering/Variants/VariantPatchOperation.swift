@@ -11,7 +11,7 @@
 import Foundation
 
 /// A patch to update a render node value.
-public enum VariantPatchOperation<Value: Codable> {
+public enum VariantPatchOperation<Value: Codable & Equatable>: Equatable {
     /// A replacement operation.
     ///
     /// - Parameter value: The value to use in the replacement.

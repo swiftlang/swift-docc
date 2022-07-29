@@ -9,7 +9,7 @@
 */
 
 /// A section of documentation content.
-public struct ContentRenderSection: RenderSection {
+public struct ContentRenderSection: RenderSection, Equatable {
     public let kind: RenderSectionKind
     
     /// Arbitrary content for this section.

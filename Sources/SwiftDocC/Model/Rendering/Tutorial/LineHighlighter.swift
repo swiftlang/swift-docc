@@ -61,7 +61,7 @@ public struct LineHighlighter {
     /**
      A single line's highlight.
      */
-    public struct Highlight: Codable {
+    public struct Highlight: Codable, Equatable {
         /// The line to highlight.
         public let line: Int
         

@@ -19,7 +19,7 @@ import Foundation
 /// ### Applying Patches
 ///
 /// - ``RenderNodeVariantOverridesApplier``
-public class VariantOverrides: Codable {
+public class VariantOverrides: Codable, Equatable {
     /// The values of the variants, organized by trait.
     public var values = [VariantOverride]()
     
@@ -57,5 +57,9 @@ public class VariantOverrides: Codable {
     public required init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         self.values = try container.decode([VariantOverride].self)
+    }
+    
+    public static func == (lhs: VariantOverrides, rhs: VariantOverrides) -> Bool {
+        return lhs.values == rhs.values
     }
 }

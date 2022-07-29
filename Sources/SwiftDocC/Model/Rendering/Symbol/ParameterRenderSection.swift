@@ -9,7 +9,7 @@
 */
 
 /// A section that contains a list of parameters.
-public struct ParametersRenderSection: RenderSection {
+public struct ParametersRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .parameters
     /// The list of parameter sub-sections.
     public let parameters: [ParameterRenderSection]
@@ -21,7 +21,7 @@ public struct ParametersRenderSection: RenderSection {
 }
 
 /// A section that contains a single, named parameter.
-public struct ParameterRenderSection: Codable {
+public struct ParameterRenderSection: Codable, Equatable {
     /// The parameter name.
     public let name: String
     /// Free-form content to provide information about the parameter.

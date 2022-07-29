@@ -150,21 +150,21 @@ public struct RenderMetadata: VariantContainer {
 
 extension RenderMetadata: Codable {
     /// A list of pre-defined roles to assign to nodes.
-    public enum Role: String {
+    public enum Role: String, Equatable {
         case symbol, containerSymbol, restRequestSymbol, dictionarySymbol, pseudoSymbol, pseudoCollection, collection, collectionGroup, article, sampleCode, unknown
         case table, codeListing, link, subsection, task, overview
         case tutorial = "project"
     }
     
     /// Metadata about a module dependency.
-    public struct Module: Codable {
+    public struct Module: Codable, Equatable {
         public let name: String
         /// Possible dependencies to the module, we allow for those in the render JSON model
         /// but have no authoring support at the moment.
         public let relatedModules: [String]?
     }
 
-    public struct CodingKeys: CodingKey, Hashable {
+    public struct CodingKeys: CodingKey, Hashable, Equatable {
         public var stringValue: String
         
         public init(stringValue: String) {

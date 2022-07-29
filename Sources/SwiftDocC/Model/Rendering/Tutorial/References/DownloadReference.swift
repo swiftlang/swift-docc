@@ -11,7 +11,7 @@
 import Foundation
 
 /// A reference to a resource that can be downloaded.
-public struct DownloadReference: RenderReference, URLReference {
+public struct DownloadReference: RenderReference, URLReference, Equatable {
     /// The name you use for the directory that contains download items.
     ///
     /// This is the name of the directory within the generated build folder

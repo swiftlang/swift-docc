@@ -154,7 +154,7 @@ struct DataAssetManager {
 /// ### Asset Traits
 /// - ``DisplayScale``
 /// - ``UserInterfaceStyle``
-public struct DataAsset: Codable {
+public struct DataAsset: Codable, Equatable {
     /// A context in which you intend clients to use a data asset.
     public enum Context: String, CaseIterable, Codable {
         /// An asset that a user intends to view alongside documentation content.

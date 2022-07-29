@@ -19,7 +19,7 @@ import Foundation
 /// ### Hierarchy Types
 /// - ``RenderReferenceHierarchy``
 /// - ``RenderTutorialsHierarchy``
-public enum RenderHierarchy: Codable {
+public enum RenderHierarchy: Codable, Equatable {
     /// The hierarchy for an API reference render node.
     case reference(RenderReferenceHierarchy)
     /// The hierarchy for tutorials-related render node.

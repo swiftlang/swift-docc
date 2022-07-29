@@ -9,7 +9,7 @@
 */
 
 /// A reference to another page which cannot be resolved.
-public struct UnresolvedRenderReference: RenderReference {
+public struct UnresolvedRenderReference: RenderReference, Equatable {
     /// The type of this unresolvable reference.
     ///
     /// This value is always `.unresolvable`.

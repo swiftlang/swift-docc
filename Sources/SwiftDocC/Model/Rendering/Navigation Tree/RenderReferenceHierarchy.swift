@@ -11,7 +11,7 @@
 import Foundation
 
 /// A node that represents API symbol hierarchy.
-public struct RenderReferenceHierarchy: Codable {
+public struct RenderReferenceHierarchy: Codable, Equatable {
     /// The paths (breadcrumbs) that lead from the landing page to the given symbol.
     ///
     /// A single path is a list of topic-graph references, that trace the curation

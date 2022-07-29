@@ -9,7 +9,7 @@
 */
 
 /// A reference to another page of documentation in the current context.
-public struct TopicRenderReference: RenderReference, VariantContainer {
+public struct TopicRenderReference: RenderReference, VariantContainer, Equatable {
     /// The type of this reference.
     ///
     /// This value is always `.topic`.

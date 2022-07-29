@@ -9,11 +9,11 @@
 */
 
 /// Represents a volume containing a grouped list of tutorials.
-public struct VolumeRenderSection: RenderSection {
+public struct VolumeRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .volume
     
     /// A group in a volume.
-    public struct Chapter: Codable, TextIndexing {
+    public struct Chapter: Codable, TextIndexing, Equatable {
         /// The name of the chapter.
         public var name: String?
         /// An abstract describing the chapter.

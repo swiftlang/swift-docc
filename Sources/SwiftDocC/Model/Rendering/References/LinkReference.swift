@@ -9,7 +9,7 @@
 */
 
 /// A reference to a URL.
-public struct LinkReference: RenderReference {
+public struct LinkReference: RenderReference, Equatable {
     /// The type of this link reference.
     ///
     /// This value is always `.link`.

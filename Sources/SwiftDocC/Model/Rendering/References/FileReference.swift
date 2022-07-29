@@ -13,7 +13,7 @@ import Foundation
 /// A reference to a file resource.
 ///
 /// File resources are used, for example, to display the contents of a source code file in a Tutorial's step.
-public struct FileReference: RenderReference {
+public struct FileReference: RenderReference, Equatable {
     /// The type of this file reference.
     ///
     /// This value is always `.file`.
@@ -71,7 +71,7 @@ public struct FileReference: RenderReference {
 ///
 /// This is not a reference to a specific file, but rather to a type of file. Use a file type reference together with a file reference to display an icon for that file type
 /// alongside the content of that file. For example, a property list file icon alongside the content of a specific property list file.
-public struct FileTypeReference: RenderReference {
+public struct FileTypeReference: RenderReference, Equatable {
     public var type: RenderReferenceType = .fileType
     
     /// The identifier of this reference.

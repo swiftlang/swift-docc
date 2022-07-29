@@ -9,7 +9,7 @@
 */
 
 /// A Tutorial Article section.
-public struct TutorialArticleSection: RenderSection {
+public struct TutorialArticleSection: RenderSection, Equatable {
     
     public let kind: RenderSectionKind = .articleBody
     
@@ -31,7 +31,7 @@ public struct TutorialArticleSection: RenderSection {
 }
 
 /// The layout in which the content should be presented.
-public enum ContentLayout {
+public enum ContentLayout: Equatable {
     /// A full-width layout.
     case fullWidth(content: [RenderBlockContent])
     

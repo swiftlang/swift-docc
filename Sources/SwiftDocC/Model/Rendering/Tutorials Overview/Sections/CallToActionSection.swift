@@ -11,7 +11,7 @@
 import Foundation
 
 /// A section that prompts the user to perform an action.
-public struct CallToActionSection: RenderSection {
+public struct CallToActionSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .callToAction
     
     /// The title of the section.

@@ -9,7 +9,7 @@
 */
 
 /// A section that contains additional resources for learning about a technology.
-public struct ResourcesRenderSection: RenderSection {
+public struct ResourcesRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .resources
     
     /// The resource tiles.

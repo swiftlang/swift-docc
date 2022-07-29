@@ -13,7 +13,7 @@ import Foundation
 /// A section that contains download data for a sample project.
 ///
 /// The `action` property is the reference to the file for download, e.g., `sample.zip`.
-public struct SampleDownloadSection: RenderSection {
+public struct SampleDownloadSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .sampleDownload
     /// The call to action in the section.
     public var action: RenderInlineContent

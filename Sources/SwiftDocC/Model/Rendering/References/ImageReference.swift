@@ -11,7 +11,7 @@
 import Foundation
 
 /// A reference to an image.
-public struct ImageReference: MediaReference, URLReference {
+public struct ImageReference: MediaReference, URLReference, Equatable {
     /// The type of this image reference.
     ///
     /// This value is always `.image`.

@@ -9,7 +9,7 @@
 */
 
 /// A section that checks the user's understanding of the concepts presented in a tutorial.
-public struct TutorialAssessmentsRenderSection: RenderSection {
+public struct TutorialAssessmentsRenderSection: RenderSection, Equatable {
     public var kind: RenderSectionKind = .assessments
     
     /// The questions for this assessment section. 
@@ -24,7 +24,7 @@ public struct TutorialAssessmentsRenderSection: RenderSection {
     public static let title = "Check Your Understanding"
     
     /// A render-friendly representation of an assessment question.
-    public struct Assessment: Codable, TextIndexing {
+    public struct Assessment: Codable, TextIndexing, Equatable {
         /// The type of assessment question.
         ///
         /// The default value is `multiple-choice`.
@@ -43,7 +43,7 @@ public struct TutorialAssessmentsRenderSection: RenderSection {
         
         /// A render-friendly representation of an answer to a
         /// multiple-choice assessment question.
-        public struct Choice: Codable {
+        public struct Choice: Codable, Equatable {
             /// The content of the choice.
             public var content: [RenderBlockContent]
             

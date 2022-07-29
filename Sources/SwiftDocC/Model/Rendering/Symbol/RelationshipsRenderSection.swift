@@ -11,7 +11,7 @@
 import Foundation
 
 /// A section that contains a list of symbol relationships of the same kind.
-public struct RelationshipsRenderSection: RenderSection {
+public struct RelationshipsRenderSection: RenderSection, Equatable {
     public let kind: RenderSectionKind = .relationships
     
     /// A title for the section.
