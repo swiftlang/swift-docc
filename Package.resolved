@@ -39,10 +39,10 @@
       },
       {
         "package": "SymbolKit",
-        "repositoryURL": "https://github.com/bitjammer/swift-docc-symbolkit",
+        "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
         "state": {
-          "branch": "acgarland/5.7/rdar-95220716-snippet-slice-data-model",
-          "revision": "54e260c7364a0a16e0645bdd52e73df9da5d142a",
+          "branch": "release/5.7",
+          "revision": "8682202025906dce29a8b04f9263f40ba87b89d8",
           "version": null
         }
       },
