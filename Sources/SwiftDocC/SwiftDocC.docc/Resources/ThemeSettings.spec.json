@@ -29,20 +29,11 @@
                             "aside": {
                                 "type": "object",
                                 "description": "Settings concerning \"aside\" elements.",
-                                "properties": {
-                                    "border-radius": {
-                                        "type": "string",
-                                        "description": "A CSS value for `border-radius`."
-                                    },
-                                    "border-style": {
-                                        "type": "string",
-                                        "description": "A CSS value for `border-style`."
-                                    },
-                                    "border-width": {
-                                        "type": "string",
-                                        "description": "A CSS value for `border-width`."
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/BorderAttributes"
                                     }
-                                }
+                                ]
                             },
                             "border-radius": {
                                 "type": "string",
@@ -51,19 +42,12 @@
                             "code": {
                                 "type": "object",
                                 "description": "Settings concerning \"code listing\" elements.",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/BorderAttributes"
+                                    }
+                                ],
                                 "properties": {
-                                    "border-radius": {
-                                        "type": "string",
-                                        "description": "A CSS value for `border-radius`."
-                                    },
-                                    "border-style": {
-                                        "type": "string",
-                                        "description": "A CSS value for `border-style`."
-                                    },
-                                    "border-width": {
-                                        "type": "string",
-                                        "description": "A CSS value for `border-width`."
-                                    },
                                     "indentationWidth": {
                                         "type": "integer",
                                         "description": "The number of spaces used to indent multi-parameter Swift symbol declarations.",
@@ -800,6 +784,23 @@
                                 }
                             }
                         }
+                    }
+                }
+            },
+            "BorderAttributes": {
+                "type": "object",
+                "properties": {
+                    "border-radius": {
+                        "type": "string",
+                        "description": "A CSS value for `border-radius`."
+                    },
+                    "border-style": {
+                        "type": "string",
+                        "description": "A CSS value for `border-style`."
+                    },
+                    "border-width": {
+                        "type": "string",
+                        "description": "A CSS value for `border-width`."
                     }
                 }
             },
