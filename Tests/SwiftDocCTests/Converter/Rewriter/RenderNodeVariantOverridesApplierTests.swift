@@ -144,8 +144,8 @@ class RenderNodeVariantOverridesApplierTests: XCTestCase {
                 error.localizedDescription,
                 """
                 Invalid dictionary pointer '/foo'. The component 'foo' is not valid for the object with keys \
-                'hierarchy', 'identifier', 'kind', 'metadata', 'references', 'schemaVersion', 'sections', and \
-                'variantOverrides'.
+                'hierarchy', 'identifier', 'kind', 'metadata', 'references', 'schemaVersion', 'sections', 'variantOverrides', \
+                and 'versions'.
                 """
             )
         }

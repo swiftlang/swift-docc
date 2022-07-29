@@ -2294,7 +2294,7 @@ class ConvertActionTests: XCTestCase {
         let expectedOutput = Folder(name: ".docc-build", content: [
             JSONFile(
                 name: "metadata.json",
-                content: BuildMetadata(bundleDisplayName: "TestBundle", bundleIdentifier: "com.test.example")
+                content: BuildMetadata(bundleDisplayName: "TestBundle", bundleIdentifier: "com.test.example", currentVersion: ArchiveVersion(identifier: "1.0", displayName: "1.0"))
             ),
         ])
         

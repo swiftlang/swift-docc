@@ -1,0 +1,374 @@
+{
+    "seeAlsoSections": [
+        {
+            "title": "Care and Feeding",
+            "identifiers": [
+                "doc:\/\/SlothCreator\/documentation\/SlothCreator\/CareSchedule",
+                "doc:\/\/SlothCreator\/documentation\/SlothCreator\/FoodGenerator",
+                "doc:\/\/SlothCreator\/documentation\/SlothCreator\/Sloth\/Food"
+            ],
+            "generated": true
+        }
+    ],
+    "schemaVersion": {
+        "major": 0,
+        "minor": 3,
+        "patch": 0
+    },
+    "sections": [
+        
+    ],
+    "primaryContentSections": [
+        {
+            "kind": "declarations",
+            "declarations": [
+                {
+                    "tokens": [
+                        {
+                            "kind": "keyword",
+                            "text": "protocol"
+                        },
+                        {
+                            "kind": "text",
+                            "text": " "
+                        },
+                        {
+                            "kind": "identifier",
+                            "text": "Activity"
+                        }
+                    ],
+                    "languages": [
+                        "swift"
+                    ],
+                    "platforms": [
+                        "macOS"
+                    ]
+                }
+            ]
+        }
+    ],
+    "variants": [
+        {
+            "paths": [
+                "\/documentation\/slothcreator\/activity"
+            ],
+            "traits": [
+                {
+                    "interfaceLanguage": "swift"
+                }
+            ]
+        }
+    ],
+    "identifier": {
+        "url": "doc:\/\/SlothCreator\/documentation\/SlothCreator\/Activity",
+        "interfaceLanguage": "swift"
+    },
+    "abstract": [
+        {
+            "type": "text",
+            "text": "A type that declares an activity a Sloth can perform."
+        }
+    ],
+    "kind": "symbol",
+    "metadata": {
+        "fragments": [
+            {
+                "kind": "keyword",
+                "text": "protocol"
+            },
+            {
+                "kind": "text",
+                "text": " "
+            },
+            {
+                "kind": "identifier",
+                "text": "Activity"
+            }
+        ],
+        "version": {
+            "identifier": "version1",
+            "displayName": "Version 1"
+        },
+        "title": "Activity",
+        "roleHeading": "Protocol",
+        "role": "symbol",
+        "symbolKind": "protocol",
+        "externalID": "s:12SlothCreator8ActivityP",
+        "modules": [
+            {
+                "name": "SlothCreator"
+            }
+        ],
+        "navigatorTitle": [
+            {
+                "kind": "identifier",
+                "text": "Activity"
+            }
+        ]
+    },
+    "hierarchy": {
+        "paths": [
+            [
+                "doc:\/\/SlothCreator\/documentation\/SlothCreator"
+            ],
+        ]
+    },
+    "topicSections": [
+        {
+            "title": "Performing an Activity",
+            "identifiers": [
+                "doc:\/\/SlothCreator\/documentation\/SlothCreator\/Activity\/perform(with:)",
+                "doc:\/\/SlothCreator\/documentation\/SlothCreator\/Speed"
+            ]
+        }
+    ],
+    "references": {
+        "doc://SlothCreator/documentation/SlothCreator/Activity/perform(with:)": {
+            "role": "symbol",
+            "title": "perform(with:)",
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "func"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "perform"
+                },
+                {
+                    "kind": "text",
+                    "text": "("
+                },
+                {
+                    "kind": "externalParam",
+                    "text": "with"
+                },
+                {
+                    "kind": "text",
+                    "text": ": "
+                },
+                {
+                    "kind": "keyword",
+                    "text": "inout"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "text": "Sloth",
+                    "preciseIdentifier": "s:12SlothCreator0A0V"
+                },
+                {
+                    "kind": "text",
+                    "text": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "text": "Speed",
+                    "preciseIdentifier": "s:12SlothCreator5SpeedO"
+                }
+            ],
+            "abstract": [
+                {
+                    "type": "text",
+                    "text": "Performs the work or sequence of actions for an activity."
+                }
+            ],
+            "identifier": "doc:\/\/SlothCreator\/documentation\/SlothCreator\/Activity\/perform(with:)",
+            "kind": "symbol",
+            "required": true,
+            "type": "topic",
+            "url": "\/documentation\/slothcreator\/activity\/perform(with:)"
+        },
+        "doc://SlothCreator/documentation/SlothCreator/Activity": {
+            "role": "symbol",
+            "title": "Activity",
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "protocol"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "Activity"
+                }
+            ],
+            "abstract": [
+                {
+                    "type": "text",
+                    "text": "A type that declares an activity a Sloth can perform."
+                }
+            ],
+            "identifier": "doc:\/\/SlothCreator\/documentation\/SlothCreator\/Activity",
+            "kind": "symbol",
+            "type": "topic",
+            "navigatorTitle": [
+                {
+                    "kind": "identifier",
+                    "text": "Activity"
+                }
+            ],
+            "url": "\/documentation\/slothcreator\/activity"
+        },
+        "doc://SlothCreator/documentation/SlothCreator/FoodGenerator": {
+            "role": "symbol",
+            "title": "FoodGenerator",
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "protocol"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "FoodGenerator"
+                }
+            ],
+            "abstract": [
+                {
+                    "type": "text",
+                    "text": "A type that generates food."
+                }
+            ],
+            "identifier": "doc:\/\/SlothCreator\/documentation\/SlothCreator\/FoodGenerator",
+            "kind": "symbol",
+            "type": "topic",
+            "navigatorTitle": [
+                {
+                    "kind": "identifier",
+                    "text": "FoodGenerator"
+                }
+            ],
+            "url": "\/documentation\/slothcreator\/foodgenerator"
+        },
+        "doc://SlothCreator/documentation/SlothCreator/Speed": {
+            "role": "symbol",
+            "title": "Speed",
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "enum"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "Speed"
+                }
+            ],
+            "abstract": [
+                {
+                    "type": "text",
+                    "text": "A measure of a sloth’s speed during an activity."
+                }
+            ],
+            "identifier": "doc:\/\/SlothCreator\/documentation\/SlothCreator\/Speed",
+            "kind": "symbol",
+            "type": "topic",
+            "navigatorTitle": [
+                {
+                    "kind": "identifier",
+                    "text": "Speed"
+                }
+            ],
+            "url": "\/documentation\/slothcreator\/speed"
+        },
+        "doc://SlothCreator/documentation/SlothCreator": {
+            "role": "collection",
+            "title": "SlothCreator",
+            "abstract": [
+                {
+                    "type": "text",
+                    "text": "Catalog sloths you find in nature and create new adorable virtual sloths."
+                }
+            ],
+            "identifier": "doc:\/\/SlothCreator\/documentation\/SlothCreator",
+            "kind": "symbol",
+            "type": "topic",
+            "url": "\/documentation\/slothcreator"
+        },
+        "doc://SlothCreator/documentation/SlothCreator/Sloth/Food": {
+            "role": "symbol",
+            "title": "Sloth.Food",
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "struct"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "Food"
+                }
+            ],
+            "abstract": [
+                {
+                    "type": "text",
+                    "text": "Food that a sloth can consume."
+                }
+            ],
+            "identifier": "doc:\/\/SlothCreator\/documentation\/SlothCreator\/Sloth\/Food",
+            "kind": "symbol",
+            "type": "topic",
+            "navigatorTitle": [
+                {
+                    "kind": "identifier",
+                    "text": "Food"
+                }
+            ],
+            "url": "\/documentation\/slothcreator\/sloth\/food"
+        },
+        "doc://SlothCreator/documentation/SlothCreator/CareSchedule": {
+            "role": "symbol",
+            "title": "CareSchedule",
+            "fragments": [
+                {
+                    "kind": "keyword",
+                    "text": "struct"
+                },
+                {
+                    "kind": "text",
+                    "text": " "
+                },
+                {
+                    "kind": "identifier",
+                    "text": "CareSchedule"
+                }
+            ],
+            "abstract": [
+                {
+                    "type": "text",
+                    "text": "A schedule to maintain the health and happiness of a sloth."
+                }
+            ],
+            "identifier": "doc:\/\/SlothCreator\/documentation\/SlothCreator\/CareSchedule",
+            "kind": "symbol",
+            "type": "topic",
+            "navigatorTitle": [
+                {
+                    "kind": "identifier",
+                    "text": "CareSchedule"
+                }
+            ],
+            "url": "\/documentation\/slothcreator\/careschedule"
+        }
+    }
+}
