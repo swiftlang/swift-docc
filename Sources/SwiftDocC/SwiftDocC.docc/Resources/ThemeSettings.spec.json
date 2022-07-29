@@ -26,14 +26,44 @@
                         "type": "object",
                         "description": "Settings concerning the visual appearance of the website and the styling of its components.",
                         "properties": {
+                            "aside": {
+                                "type": "object",
+                                "description": "Settings concerning \"aside\" elements.",
+                                "properties": {
+                                    "border-radius": {
+                                        "type": "string",
+                                        "description": "A CSS value for `border-radius`."
+                                    },
+                                    "border-style": {
+                                        "type": "string",
+                                        "description": "A CSS value for `border-style`."
+                                    },
+                                    "border-width": {
+                                        "type": "string",
+                                        "description": "A CSS value for `border-width`."
+                                    }
+                                }
+                            },
                             "border-radius": {
                                 "type": "string",
                                 "description": "The CSS border-radius value used globally for elements like code listings and asides."
                             },
                             "code": {
                                 "type": "object",
-                                "description": "Settings concerning code listings.",
+                                "description": "Settings concerning \"code listing\" elements.",
                                 "properties": {
+                                    "border-radius": {
+                                        "type": "string",
+                                        "description": "A CSS value for `border-radius`."
+                                    },
+                                    "border-style": {
+                                        "type": "string",
+                                        "description": "A CSS value for `border-style`."
+                                    },
+                                    "border-width": {
+                                        "type": "string",
+                                        "description": "A CSS value for `border-width`."
+                                    },
                                     "indentationWidth": {
                                         "type": "integer",
                                         "description": "The number of spaces used to indent multi-parameter Swift symbol declarations.",
