@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -158,6 +158,24 @@ class DocumentationMarkupTests: XCTestCase {
             XCTAssertEqual(expected, model.abstractSection?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n"))
         }
 
+        // Contains an HTMLBlock comment and a BlockDirective comment before the abstract
+        do {
+            let source = """
+            # Title
+            <!--Line a-->
+            @Comment{
+                Line b
+            }
+            Line c
+            ## Hello, world!
+            Discussion content.
+            """
+            let expected = """
+            Text \"Line c\"
+            """
+            let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
+            XCTAssertEqual(expected, model.abstractSection?.content.map{ $0.detachedFromParent.debugDescription() }.joined(separator: "\n"))
+        }
     }
     
     func testDeprecation() throws {
