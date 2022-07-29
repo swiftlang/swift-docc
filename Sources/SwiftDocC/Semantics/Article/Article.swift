@@ -31,7 +31,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     ///   - metadata: An optional container for metadata that's unrelated to the article's content.
     ///   - redirects: An optional list of previously known locations for this article.
     init(markup: Markup?, metadata: Metadata?, redirects: [Redirect]?) {
-        let markupModel = markup.map({ DocumentationMarkup(markup: $0) })
+        let markupModel = markup.map { DocumentationMarkup(markup: $0) }
 
         self.markup = markup
         self.metadata = metadata

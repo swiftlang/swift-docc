@@ -22,7 +22,7 @@ import Markdown
 /// # My Document
 /// ```
 /// ### Abstract
-/// The parser parses the abstract from the first leading paragraph in the markup after the title. If the markup doesn't start with a paragraph after the title heading, it's considered to not have an abstract.
+/// The parser parses the abstract from the first leading paragraph (skipping the comments) in the markup after the title. If the markup doesn't start with a paragraph after the title heading, it's considered to not have an abstract.
 /// ```
 /// # My Document
 /// An abstract shortly describing My Document.
@@ -146,6 +146,10 @@ struct DocumentationMarkup {
                     if directive.name == DeprecationSummary.directiveName {
                         deprecation = MarkupContainer(directive.children)
                     }
+                    // Skip other block like @Comment and so on.
+                    return
+                } else if let _ = child as? HTMLBlock {
+                    // Skip HTMLBlock comment.
                     return
                 } else {
                     // Only directives and a single paragraph allowed in an abstract,
