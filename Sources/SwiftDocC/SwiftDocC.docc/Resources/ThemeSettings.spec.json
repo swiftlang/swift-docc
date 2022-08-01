@@ -35,6 +35,15 @@
                                     }
                                 ]
                             },
+                            "badge": {
+                                "type": "object",
+                                "description": "Settings concerning \"badge\" elements.",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/BorderAttributes"
+                                    }
+                                ]
+                            },
                             "border-radius": {
                                 "type": "string",
                                 "description": "The CSS border-radius value used globally for elements like code listings and asides."
