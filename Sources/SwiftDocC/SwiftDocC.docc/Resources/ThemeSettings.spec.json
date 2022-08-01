@@ -434,6 +434,9 @@
                                     "nav-root-subhead": {
                                         "$ref": "#/components/schemas/Color"
                                     },
+                                    "nav-root-title": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
                                     "nav-rule": {
                                         "$ref": "#/components/schemas/Color"
                                     },
@@ -606,6 +609,15 @@
                                         "$ref": "#/components/schemas/Color"
                                     },
                                     "tutorials-overview-eyebrow": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-fill-secondary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-header-text": {
                                         "$ref": "#/components/schemas/Color"
                                     },
                                     "tutorials-overview-icon": {
