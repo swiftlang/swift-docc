@@ -39,6 +39,15 @@
                                 "type": "string",
                                 "description": "The CSS border-radius value used globally for elements like code listings and asides."
                             },
+                            "button": {
+                                "type": "object",
+                                "description": "Settings concerning \"button\" elements.",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/BorderAttributes"
+                                    }
+                                ]
+                            },
                             "code": {
                                 "type": "object",
                                 "description": "Settings concerning \"code listing\" elements.",
@@ -144,6 +153,9 @@
                                         "$ref": "#/components/schemas/Color"
                                     },
                                     "button-background-hover": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "button-border": {
                                         "$ref": "#/components/schemas/Color"
                                     },
                                     "button-text": {
