@@ -154,12 +154,19 @@ public extension Collection where Element: DocCSymbolRepresentable {
         } else {
             // Disambiguate by kind
             return map { currentSymbol in
-                (
-                    shouldAddIdHash: filter {
-                            $0.kindIdentifier == currentSymbol.kindIdentifier
-                        }.count > 1,
-                    shouldAddKind: true
-                )
+                let kindCount = filter { $0.kindIdentifier == currentSymbol.kindIdentifier }.count
+                
+                if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+                    return (
+                        shouldAddIdHash: kindCount > 1,
+                        shouldAddKind: kindCount == 1
+                    )
+                } else {
+                    return (
+                        shouldAddIdHash: kindCount > 1,
+                        shouldAddKind: true
+                    )
+                }
             }
         }
     }

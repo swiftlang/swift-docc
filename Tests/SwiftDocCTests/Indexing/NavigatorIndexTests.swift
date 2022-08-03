@@ -267,6 +267,7 @@ Root
     
   
     func testNavigationTreeLargeDumpAndRead() throws {
+        try XCTSkipIf(true, "These performance measurements aren't compared to previous results.")
 #if os(OSX)
         let targetURL = try createTemporaryDirectory()
         let indexURL = targetURL.appendingPathComponent("nav.index")

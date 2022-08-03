@@ -103,7 +103,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     ///  - currentPlatforms: The current version and beta information for platforms that may be encountered while processing symbol graph files.
     ///   that may be encountered while processing symbol graph files.
     ///  - workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`.
-    ///  - context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`.
+    ///  - context: A provided documentation context.
     ///  - dataProvider: A data provider to use when registering bundles.
     /// - Parameter fileManager: A file persistence manager
     /// - Parameter externalIDsToConvert: The external IDs of the documentation nodes to convert.
@@ -377,6 +377,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         // Log the peak memory.
         benchmark(add: Benchmark.PeakMemory())
 
+        context.linkResolutionMismatches.reportGatheredMismatchesIfEnabled()
+        
         return (analysisProblems: context.problems, conversionProblems: conversionProblems)
     }
     

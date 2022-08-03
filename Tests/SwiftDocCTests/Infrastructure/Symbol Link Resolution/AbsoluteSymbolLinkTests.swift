@@ -541,7 +541,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
             codeListings: [:]
         )
         
-        let expectedDescriptions = [
+        var expectedDescriptions = [
             // doc://com.shapes.ShapeKit/documentation/ShapeKit:
             """
             {
@@ -612,6 +612,56 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 basePathComponents: []
             }
             """,
+            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s:
+            """
+            {
+                bundleID: 'com.shapes.ShapeKit',
+                module: 'ShapeKit',
+                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
+                representsModule: false,
+                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (idHash: '14g8s'))]
+            }
+            """,
+            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ife:
+            """
+            {
+                bundleID: 'com.shapes.ShapeKit',
+                module: 'ShapeKit',
+                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
+                representsModule: false,
+                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (idHash: '14ife'))]
+            }
+            """,
+            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ob0:
+            """
+            {
+                bundleID: 'com.shapes.ShapeKit',
+                module: 'ShapeKit',
+                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
+                representsModule: false,
+                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (idHash: '14ob0'))]
+            }
+            """,
+            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m:
+            """
+            {
+                bundleID: 'com.shapes.ShapeKit',
+                module: 'ShapeKit',
+                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
+                representsModule: false,
+                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (idHash: '4ja8m'))]
+            }
+            """,
+            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf:
+            """
+            {
+                bundleID: 'com.shapes.ShapeKit',
+                module: 'ShapeKit',
+                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
+                representsModule: false,
+                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (idHash: '88rbf'))]
+            }
+            """,
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.enum.case:
             """
             {
@@ -620,56 +670,6 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
                 representsModule: false,
                 basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (kind: 'swift.enum.case'))]
-            }
-            """,
-            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14g8s:
-            """
-            {
-                bundleID: 'com.shapes.ShapeKit',
-                module: 'ShapeKit',
-                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
-                representsModule: false,
-                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (kind: 'swift.method', idHash: '14g8s'))]
-            }
-            """,
-            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14ife:
-            """
-            {
-                bundleID: 'com.shapes.ShapeKit',
-                module: 'ShapeKit',
-                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
-                representsModule: false,
-                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (kind: 'swift.method', idHash: '14ife'))]
-            }
-            """,
-            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14ob0:
-            """
-            {
-                bundleID: 'com.shapes.ShapeKit',
-                module: 'ShapeKit',
-                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
-                representsModule: false,
-                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (kind: 'swift.method', idHash: '14ob0'))]
-            }
-            """,
-            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-4ja8m:
-            """
-            {
-                bundleID: 'com.shapes.ShapeKit',
-                module: 'ShapeKit',
-                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
-                representsModule: false,
-                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (kind: 'swift.method', idHash: '4ja8m'))]
-            }
-            """,
-            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-88rbf:
-            """
-            {
-                bundleID: 'com.shapes.ShapeKit',
-                module: 'ShapeKit',
-                topLevelSymbol: (name: 'OverloadedEnum', suffix: (none)),
-                representsModule: false,
-                basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (kind: 'swift.method', idHash: '88rbf'))]
             }
             """,
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p:
@@ -682,14 +682,14 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 basePathComponents: []
             }
             """,
-            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property:
+            // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember:
             """
             {
                 bundleID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'OverloadedParentStruct', suffix: (idHash: '1jr3p')),
                 representsModule: false,
-                basePathComponents: [(name: 'fifthTestMember', suffix: (kind: 'swift.type.property'))]
+                basePathComponents: [(name: 'fifthTestMember', suffix: (none))]
             }
             """,
             // doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedProtocol:
@@ -832,17 +832,42 @@ class AbsoluteSymbolLinkTests: XCTestCase {
                 basePathComponents: []
             }
             """,
-            // doc://com.shapes.ShapeKit/documentation/ShapeKit/overloadedparentstruct-6a7lx/fifthTestMember-swift.property:
+            // doc://com.shapes.ShapeKit/documentation/ShapeKit/overloadedparentstruct-6a7lx/fifthTestMember:
             """
             {
                 bundleID: 'com.shapes.ShapeKit',
                 module: 'ShapeKit',
                 topLevelSymbol: (name: 'overloadedparentstruct', suffix: (idHash: '6a7lx')),
                 representsModule: false,
-                basePathComponents: [(name: 'fifthTestMember', suffix: (kind: 'swift.property'))]
+                basePathComponents: [(name: 'fifthTestMember', suffix: (none))]
             }
             """,
         ]
+        if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            // The cache-based resolver redundantly disambiguates these overloads with both kind and hash ...
+            for index in 7...11 {
+                expectedDescriptions[index] = expectedDescriptions[index].replacingOccurrences(
+                    of:   "basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (idHash: '",
+                    with: "basePathComponents: [(name: 'firstTestMemberName(_:)', suffix: (kind: 'swift.method', idHash: '"
+                )
+            }
+            // ... because of the above, the cache-based resolver sort the enum case before the methods
+            expectedDescriptions.insert(
+                expectedDescriptions.remove(at: 12),
+                at: 7
+            )
+            
+            // The cache-based resolver redundantly disambiguates these overloads which already have disambiguated parents.
+            expectedDescriptions[14] = expectedDescriptions[14].replacingOccurrences(
+                of:   "basePathComponents: [(name: 'fifthTestMember', suffix: (none))]",
+                with: "basePathComponents: [(name: 'fifthTestMember', suffix: (kind: 'swift.type.property'))]"
+            )
+            expectedDescriptions[29] = expectedDescriptions[29].replacingOccurrences(
+                of:   "basePathComponents: [(name: 'fifthTestMember', suffix: (none))]",
+                with: "basePathComponents: [(name: 'fifthTestMember', suffix: (kind: 'swift.property'))]"
+            )
+        }
+        
         XCTAssertEqual(expectedDescriptions.count, context.symbolIndex.count)
         
         let validatedSymbolLinkDescriptions = context.symbolIndex.values

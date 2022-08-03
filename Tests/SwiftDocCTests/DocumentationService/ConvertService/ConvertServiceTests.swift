@@ -355,10 +355,25 @@ class ConvertServiceTests: XCTestCase {
                 "/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method"
             )
             
-            XCTAssertEqual(
-                renderNode.abstract?.first,
-                .codeVoice(code: "myFunction()")
-            )
+            if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+                XCTAssertEqual(
+                    renderNode.abstract?.first,
+                    .reference(
+                        identifier: .init("""
+                        doc://identifier/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method
+                        """
+                                         ),
+                        isActive: true,
+                        overridingTitle: nil,
+                        overridingTitleInlineContent: nil
+                    )
+                )
+            } else {
+                XCTAssertEqual(
+                    renderNode.abstract?.first,
+                    .codeVoice(code: "myFunction()")
+                )
+            }
         }
         
         let symbolGraphWithAdjustedLink = Data(

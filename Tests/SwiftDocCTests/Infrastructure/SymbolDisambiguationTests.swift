@@ -174,36 +174,47 @@ class SymbolDisambiguationTests: XCTestCase {
             "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.method",
         ])
         
-        // Ideally these wouldn't include the kind information because information doesn't help disambiguate these two references.
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.type.method-\("second".stableHashString)",
-        ])
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "third", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.type.method-\("third".stableHashString)",
-        ])
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
+                "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-\("second".stableHashString)",
+            ])
+            XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "third", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
+                "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-\("third".stableHashString)",
+            ])
+        } else {
+            // The cache-based resolver redundantly disambiguates with both kind and usr when another overload has a different kind.
+            XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
+                "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.type.method-\("second".stableHashString)",
+            ])
+            XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "third", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
+                "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.type.method-\("third".stableHashString)",
+            ])
+        }
     }
     
     func testMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
-        let aliases = [String: [String]](uniqueKeysWithValues: context.documentationCacheBasedLinkResolver.referenceAliases.map({ ($0.key.path, $0.value.map(\.path).sorted()) }))
-        XCTAssertEqual(aliases, [
-            "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)": [
-                "/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
-            ],
-            "/documentation/MixedLanguageFramework/Foo-swift.struct": [
-                "/documentation/MixedLanguageFramework/Foo-c.enum",
-            ],
-            "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()": [
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init",
-            ],
-            "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()": [
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod",
-            ],
-            "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()": [
-                "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod",
-            ],
-        ])
+        if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            let aliases = [String: [String]](uniqueKeysWithValues: context.documentationCacheBasedLinkResolver.referenceAliases.map({ ($0.key.path, $0.value.map(\.path).sorted()) }))
+            XCTAssertEqual(aliases, [
+                "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)": [
+                    "/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
+                ],
+                "/documentation/MixedLanguageFramework/Foo-swift.struct": [
+                    "/documentation/MixedLanguageFramework/Foo-c.enum",
+                ],
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()": [
+                    "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init",
+                ],
+                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()": [
+                    "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod",
+                ],
+                "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()": [
+                    "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod",
+                ],
+            ])
+        }
         
         var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
         try loader.loadAll()
