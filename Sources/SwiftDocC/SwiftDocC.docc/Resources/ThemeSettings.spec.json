@@ -787,6 +787,16 @@
                                     }
                                 }
                             },
+                            "tutorial-step": {
+                                "type": "object",
+                                "description": "Settings related to \"tutorial step\" elements.",
+                                "properties": {
+                                    "border-radius": {
+                                        "type": "string",
+                                        "description": "A CSS value for `border-radius`."
+                                    }
+                                }
+                            },
                             "typography": {
                                 "type": "object",
                                 "description": "Settings related to typography.",
