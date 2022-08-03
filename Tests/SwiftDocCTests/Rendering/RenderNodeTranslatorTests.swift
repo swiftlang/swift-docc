@@ -944,13 +944,13 @@ class RenderNodeTranslatorTests: XCTestCase {
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
         
-        if case let .paragraph(elements) = discussion.content[2] {
+        if case let .paragraph(elements) = discussion.content.dropFirst(2).first {
             XCTAssertEqual(elements, [.text("Does a foo.")])
         } else {
             XCTFail("Unexpected content where snippet explanation should be.")
         }
 
-        if case let .codeListing(syntax, code, _) = discussion.content[3] {
+        if case let .codeListing(syntax, code, _) = discussion.content.dropFirst(3).first {
             XCTAssertEqual(syntax, "swift")
             XCTAssertEqual(code.joined(separator: "\n"), """
                 func foo() {}

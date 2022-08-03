@@ -129,8 +129,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
 
         // We don't require a scheme here as the link can be a relative one, e.g. ``SwiftUI/View``.
         let url = ValidatedURL(parsingExact: unresolvedDestination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: unresolvedDestination)
-        let unresolved = TopicReference.unresolved(.init(topicURL: url))
-        return resolve(reference: unresolved, range: range, severity: .warning, fromSymbolLink: true)
+        return resolve(reference: .unresolved(.init(topicURL: url)), range: range, severity: .warning, fromSymbolLink: true)
     }
     
     mutating func visitSymbolLink(_ symbolLink: SymbolLink) -> Markup? {

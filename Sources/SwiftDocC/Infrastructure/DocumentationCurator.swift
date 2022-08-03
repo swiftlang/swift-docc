@@ -42,10 +42,9 @@ struct DocumentationCurator {
             return cached
         }
         
-        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(symbolPath: destination)) 
-        let maybeResolved = context.resolve(.unresolved(unresolved), in: resolved, fromSymbolLink: true)
-        
-        if case let .success(resolved) = maybeResolved {
+        // The symbol link may be written with a scheme and bundle identifier.
+        let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)
+        if case let .success(resolved) = context.resolve(.unresolved(.init(topicURL: url)), in: resolved, fromSymbolLink: true) {
             return resolved
         }
         return nil
@@ -116,6 +115,11 @@ struct DocumentationCurator {
         context.topicGraph.addNode(curatedNode)
         
         // Move the article from the article cache to the documentation
+        
+        if let hierarchyBasedLinkResolver = context.hierarchyBasedLinkResolver {
+            hierarchyBasedLinkResolver.addArticle(filename: articleFilename, reference: reference, anchorSections: documentationNode.anchorSections)
+        }
+        
         context.documentationCache[reference] = documentationNode
         for anchor in documentationNode.anchorSections {
             context.nodeAnchorSections[anchor.reference] = anchor

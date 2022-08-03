@@ -23,23 +23,20 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
     var testBundleWithLanguageDefault: DocumentationBundle!
     var testBundleWithoutLanguageDefault: DocumentationBundle!
 
-    var bundleBaseURL: URL!
-
-    override func setUp() {
-        func renderSection(for bundle: DocumentationBundle, in context: DocumentationContext) -> ContentRenderSection {
+    override func setUpWithError() throws {
+        func renderSection(for bundle: DocumentationBundle, in context: DocumentationContext) throws -> ContentRenderSection {
             let identifier = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/Default-Code-Listing-Syntax", fragment: nil, sourceLanguage: .swift)
 
             let source = context.documentURL(for: identifier)
 
-            let node = try! context.entity(with: identifier)
+            let node = try context.entity(with: identifier)
             var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: source)
             let renderNode = translator.visit(node.semantic) as! RenderNode
 
             return renderNode.primaryContentSections.first! as! ContentRenderSection
         }
 
-        let (url, bundleWithLanguageDefault, context) = try! testBundleAndContext(copying: "TestBundle")
-        bundleBaseURL = url
+        let (_, bundleWithLanguageDefault, context) = try testBundleAndContext(copying: "TestBundle")
 
         testBundleWithLanguageDefault = bundleWithLanguageDefault
 
@@ -58,12 +55,8 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
             miscResourceURLs: testBundleWithLanguageDefault.miscResourceURLs
         )
 
-        renderSectionWithLanguageDefault = renderSection(for: testBundleWithLanguageDefault, in: context)
-        renderSectionWithoutLanguageDefault = renderSection(for: testBundleWithoutLanguageDefault, in: context)
-    }
-
-    override func tearDown() {
-        try? FileManager.default.removeItem(at: bundleBaseURL)
+        renderSectionWithLanguageDefault = try renderSection(for: testBundleWithLanguageDefault, in: context)
+        renderSectionWithoutLanguageDefault = try renderSection(for: testBundleWithoutLanguageDefault, in: context)
     }
 
     struct CodeListing {

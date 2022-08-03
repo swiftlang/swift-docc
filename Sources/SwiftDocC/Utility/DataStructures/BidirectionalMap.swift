@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -16,7 +16,7 @@ import Foundation
 /// This type is basically a wrapper around two dictionaries not allowing the relationships in
 /// the two dictionaries to get out of sync.
 /// - warning: Do not use optional types for `Value1` and `Value2`. Do not use the same type for `Value1` and `Value2`.
-struct BidirectionalMap<Value1: Hashable, Value2: Hashable>  {
+struct BidirectionalMap<Value1: Hashable, Value2: Hashable>: Sequence {
     private var forward = [Value1: Value2]()
     private var reverse = [Value2: Value1]()
 
@@ -62,5 +62,9 @@ struct BidirectionalMap<Value1: Hashable, Value2: Hashable>  {
     mutating func reserveCapacity(_ count: Int) {
         forward.reserveCapacity(count)
         reverse.reserveCapacity(count)
+    }
+    
+    func makeIterator() -> Dictionary<Value1, Value2>.Iterator {
+        return forward.makeIterator()
     }
 }

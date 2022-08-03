@@ -25,6 +25,10 @@ SwiftDocC provides the APIs you use to load a bundle, parse the symbol-graph met
 - <doc:DocumentationWorkspaceGroup>
 - <doc:DocumentationContextGroup>
 
+### Resolving documentation links
+
+- <doc:LinkResolution>
+
 ### Rendering
 Converting in-memory documentation into rendering nodes and persisting them on disk as JSON.
 
