@@ -43,7 +43,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         // Request a page
         do {
-            let request = makeRequestHead(path: "/tutorials")
+            let request = makeRequestHead(uri: "/tutorials")
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             
@@ -53,7 +53,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         // Request an asset
         do {
-            let request = makeRequestHead(path: "/css/test.css")
+            let request = makeRequestHead(uri: "/css/test.css")
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             
@@ -63,7 +63,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         // Not found error
         do {
-            let request = makeRequestHead(path: "/css/notfound.css")
+            let request = makeRequestHead(uri: "/css/notfound.css")
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             
@@ -73,7 +73,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
         
         // Passed credentials when none required
         do {
-            let request = makeRequestHead(path: "/tutorials", headers: [("Authorization", "Basic \("USER:PASS".data(using: .utf8)!.base64EncodedString())")])
+            let request = makeRequestHead(uri: "/tutorials", headers: [("Authorization", "Basic \("USER:PASS".data(using: .utf8)!.base64EncodedString())")])
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             
@@ -109,7 +109,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         // Request page without credentials
         do {
-            let request = makeRequestHead(path: "/tutorials")
+            let request = makeRequestHead(uri: "/tutorials")
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             
@@ -119,7 +119,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         // Request asset without credentials, e.g. verify we authorize before serving content
         do {
-            let request = makeRequestHead(path: "/css/test.css")
+            let request = makeRequestHead(uri: "/css/test.css")
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             
@@ -129,7 +129,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         // Request error without credentials, e.g. verify we authorize before error handler
         do {
-            let request = makeRequestHead(path: "/css/notfound.css")
+            let request = makeRequestHead(uri: "/css/notfound.css")
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             
@@ -139,7 +139,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         // Request with valid credentials
         do {
-            let request = makeRequestHead(path: "/tutorials", headers: [("Authorization", "Basic \("user:pass".data(using: .utf8)!.base64EncodedString())")])
+            let request = makeRequestHead(uri: "/tutorials", headers: [("Authorization", "Basic \("user:pass".data(using: .utf8)!.base64EncodedString())")])
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             
@@ -149,7 +149,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         // Request error with valid credentials
         do {
-            let request = makeRequestHead(path: "/css/notfound.css", headers: [("Authorization", "Basic \("user:pass".data(using: .utf8)!.base64EncodedString())")])
+            let request = makeRequestHead(uri: "/css/notfound.css", headers: [("Authorization", "Basic \("user:pass".data(using: .utf8)!.base64EncodedString())")])
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             
@@ -159,7 +159,7 @@ class PreviewHTTPHandlerTests: XCTestCase {
 
         // Request with invalid credentials
         do {
-            let request = makeRequestHead(path: "/tutorials", headers: [("Authorization", "Basic \("USER:PASS".data(using: .utf8)!.base64EncodedString())")])
+            let request = makeRequestHead(uri: "/tutorials", headers: [("Authorization", "Basic \("USER:PASS".data(using: .utf8)!.base64EncodedString())")])
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.head(request)))
             XCTAssertNoThrow(try channel.writeInbound(HTTPServerRequestPart.end(nil)))
             

@@ -21,7 +21,7 @@ class FileRequestHandlerTests: XCTestCase {
     let fileIO = NonBlockingFileIO(threadPool: NIOThreadPool(numberOfThreads: 2))
 
     private func verifyAsset(root: URL, path: String, body: String, type: String, file: StaticString = #file, line: UInt = #line) throws {
-        let request = makeRequestHead(path: path)
+        let request = makeRequestHead(uri: path)
         let factory = FileRequestHandler(rootURL: root, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
@@ -95,7 +95,7 @@ class FileRequestHandlerTests: XCTestCase {
     func testFileHandlerAssetsMissing() throws {
         let tempFolderURL = try createTempFolder(content: [])
 
-        let request = makeRequestHead(path: "/css/b00011100.css")
+        let request = makeRequestHead(uri: "/css/b00011100.css")
         let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
@@ -109,7 +109,7 @@ class FileRequestHandlerTests: XCTestCase {
             ])
         ])
 
-        let request = makeRequestHead(path: "/videos/video.mov", headers: [("Range", "bytes=0-1")])
+        let request = makeRequestHead(uri: "/videos/video.mov", headers: [("Range", "bytes=0-1")])
         let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
@@ -128,7 +128,7 @@ class FileRequestHandlerTests: XCTestCase {
             ])
         ])
 
-        let request = makeRequestHead(path: "/videos/../video.mov", headers: [("Range", "bytes=0-1")])
+        let request = makeRequestHead(uri: "/videos/../video.mov", headers: [("Range", "bytes=0-1")])
         let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
@@ -143,7 +143,7 @@ class FileRequestHandlerTests: XCTestCase {
             ])
         ])
 
-        let request = makeRequestHead(path: "/videos/.  ? ? ? ./video.mov", headers: [("Range", "bytes=0-1")])
+        let request = makeRequestHead(uri: "/videos/.  ? ? ? ./video.mov", headers: [("Range", "bytes=0-1")])
         let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         

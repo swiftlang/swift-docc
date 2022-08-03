@@ -14,9 +14,9 @@ import NIOHTTP1
 import XCTest
 @testable import SwiftDocCUtilities
 
-/// Makes a request head part with the given path and headers.
-func makeRequestHead(path: String, headers: [(String, String)]? = nil) -> HTTPRequestHead {
-    var head = HTTPRequestHead(version: .init(major: 1, minor: 1), method: .GET, uri: path)
+/// Makes a request head part with the given URI and headers.
+func makeRequestHead(uri: String, headers: [(String, String)]? = nil) -> HTTPRequestHead {
+    var head = HTTPRequestHead(version: .init(major: 1, minor: 1), method: .GET, uri: uri)
     if let headers = headers {
         for header in headers {
             head.headers.add(name: header.0, value: header.1)
