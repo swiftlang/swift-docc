@@ -136,14 +136,14 @@ class FileRequestHandlerTests: XCTestCase {
         XCTAssertEqual(response.requestError?.status.code, RequestError.init(status: .unauthorized).status.code)
     }
 
-    func testMalformedPath() throws {
+    func testMalformedURI() throws {
         let tempFolderURL = try createTempFolder(content: [
             Folder(name: "videos", content: [
                 TextFile(name: "video.mov", utf8Content: "Hello!"),
             ])
         ])
 
-        let request = makeRequestHead(uri: "/videos/.  ? ? ? ./video.mov", headers: [("Range", "bytes=0-1")])
+        let request = makeRequestHead(uri: "https://invalid host.com", headers: [("Range", "bytes=0-1")])
         let factory = FileRequestHandler(rootURL: tempFolderURL, fileIO: fileIO)
         let response = try responseWithPipeline(request: request, handler: factory)
         
