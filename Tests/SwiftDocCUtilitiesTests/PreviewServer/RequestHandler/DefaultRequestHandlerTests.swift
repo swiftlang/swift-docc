@@ -25,7 +25,7 @@ class DefaultRequestHandlerTests: XCTestCase {
         ])
 
         // Default handler should be invoked for any non-asset path
-        let request = makeRequestHead(path: "/random-path")
+        let request = makeRequestHead(uri: "/random-path")
         let factory = DefaultRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
         
@@ -48,7 +48,7 @@ class DefaultRequestHandlerTests: XCTestCase {
         ])
 
         // Default handler should handle even paths that do exist on disc
-        let request = makeRequestHead(path: "/existing.html")
+        let request = makeRequestHead(uri: "/existing.html")
         let factory = DefaultRequestHandler(rootURL: tempFolderURL)
         let response = try responseWithPipeline(request: request, handler: factory)
         

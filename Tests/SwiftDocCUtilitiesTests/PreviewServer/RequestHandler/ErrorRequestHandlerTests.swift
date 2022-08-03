@@ -18,7 +18,7 @@ import NIOHTTP1
 
 class ErrorRequestHandlerTests: XCTestCase {
     func testErrorHandlerDefault() throws {
-        let request = makeRequestHead(path: "/random-path")
+        let request = makeRequestHead(uri: "/random-path")
         let factory = ErrorRequestHandler()
         let response = try responseWithPipeline(request: request, handler: factory)
         
@@ -27,7 +27,7 @@ class ErrorRequestHandlerTests: XCTestCase {
     }
 
     func testErrorHandlerStatus() throws {
-        let request = makeRequestHead(path: "/random-path")
+        let request = makeRequestHead(uri: "/random-path")
         let factory = ErrorRequestHandler(error: RequestError(status: .notFound))
         let response = try responseWithPipeline(request: request, handler: factory)
         
@@ -36,7 +36,7 @@ class ErrorRequestHandlerTests: XCTestCase {
     }
 
     func testErrorHandlerCustomHeader() throws {
-        let request = makeRequestHead(path: "/random-path")
+        let request = makeRequestHead(uri: "/random-path")
         let factory = ErrorRequestHandler(error: RequestError(status: .notFound), headers: [("Name", "Value")])
         let response = try responseWithPipeline(request: request, handler: factory)
         
@@ -46,7 +46,7 @@ class ErrorRequestHandlerTests: XCTestCase {
     }
 
     func testErrorHandlerCustomHeaderCustomMessage() throws {
-        let request = makeRequestHead(path: "/random-path")
+        let request = makeRequestHead(uri: "/random-path")
         let factory = ErrorRequestHandler(error: RequestError(status: .notFound, message: "Message!"))
         let response = try responseWithPipeline(request: request, handler: factory)
         
