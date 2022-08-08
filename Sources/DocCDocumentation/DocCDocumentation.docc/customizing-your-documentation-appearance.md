@@ -28,36 +28,53 @@ documentation. Any key/value in the `theme.color` object of
 `theme-settings.json` will either update an existing color property used in the
 renderer or add a new one that could be referenced by existing ones.
 
-As a simple example, the following configuration would update the main
-background fill color to `"rebeccapurple"` in both "Light Mode" and "Dark Mode"
-by changing the value of the CSS property to `--color-fill: "rebeccapurple"`.
+**Example**
+
+As a simple example, the following configuration would update the background
+fill color for the "documentation intro" element to `"rebeccapurple"` by
+changing the value of the CSS property to `--color-documentation-intro-fill:
+"rebeccapurple"`.
 
 ```json
 {
   "theme": {
     "color": {
-      "fill": "rebeccapurple"
+      "documentation-intro-fill": "rebeccapurple"
     }
   }
 }
 ```
 
-Note that any valid CSS color value could be used. Also, if you wanted to update
-a color and have it differ in "Light Mode" and "Dark Mode", you could
-alternatively specify an object with `"light"` and `"dark"` values like so:
+![A screenshot of the documentation intro element with a purple background color](theme-screenshot-01.png)
+
+**Example**
+
+Note that any valid CSS color value could be used. Here is a more advanced
+example which demonstrates how specialized dark and light versions of the main
+background fill color could be defined as varying lightness percentages of a
+green hue.
 
 ```json
 {
   "theme": {
     "color": {
+      "hue-green": "120",
       "fill": {
-        "dark": "rgba(0, 0, 0, 0)",
-        "light": "#fff
+        "dark": "hsl(var(--color-hue-green), 100%, 10%)",
+        "light": "hsl(var(--color-hue-green), 100%, 90%)"
       }
     }
   }
 }
 ```
+
+![A screenshot of the green page background in dark mode](theme-screenshot-02.png)
+
+![A screenshot of the green page background in light mode](theme-screenshot-03.png)
+
+As a general rule, the default color properties provided by DocC-Render assumes
+a naming convention where "fill" colors are used for backgrounds and "figure"
+colors are used for foreground colors, like text.
 
 ### Fonts
 
