@@ -88,7 +88,25 @@ colors are used for foreground colors, like text.
 
 ### Fonts
 
-Coming soon
+By default, there are two main fonts used by DocC-Render: one for monospaced
+text in code voice and another for all other text content. With
+`theme-settings.json`, you can customize the CSS `font-family` lists for these
+however you choose.
+
+**Example**
+
+```json
+{
+  "theme": {
+    "typography": {
+      "html-font": "\"Comic Sans MS\", \"Comic Sans\", cursive",
+      "html-font-mono": "\"Courier New\", Courier, monospace"
+    }
+  }
+}
+```
+
+![A screenshot of a documentation page with custom fonts](theme-screenshot-04)
 
 ### Element Borders
 
