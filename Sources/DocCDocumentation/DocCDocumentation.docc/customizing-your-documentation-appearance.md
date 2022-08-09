@@ -81,6 +81,11 @@ As a general rule, the default color properties provided by DocC-Render assumes
 a naming convention where "fill" colors are used for backgrounds and "figure"
 colors are used for foreground colors, like text.
 
+> Tip:
+> For a more complete example of a fully customized documentation website, you
+> can check out [this fork][3] of the DocC documentation that is using this
+> [theme-settings.json file][4].
+
 ### Fonts
 
 Coming soon
@@ -95,5 +100,7 @@ Coming soon
 
 [1]: https://github.com/apple/swift-docc/blob/main/Sources/SwiftDocC/SwiftDocC.docc/Resources/ThemeSettings.spec.json
 [2]: https://drafts.csswg.org/css-variables/
+[3]: https://mportiz08.github.io/swift-docc/documentation/docc
+[4]: https://mportiz08.github.io/swift-docc/theme-settings.json
 
 <!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
