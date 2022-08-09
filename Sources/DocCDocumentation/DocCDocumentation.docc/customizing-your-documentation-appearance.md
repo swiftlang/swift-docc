@@ -51,8 +51,8 @@ changing the value of the CSS property to `--color-documentation-intro-fill:
 
 Note that any valid CSS color value could be used. Here is a more advanced
 example which demonstrates how specialized dark and light versions of the main
-background fill color could be defined as varying lightness percentages of a
-green hue.
+background fill and nav colors could be defined as varying lightness percentages
+of a green hue.
 
 ```json
 {
@@ -62,7 +62,12 @@ green hue.
       "fill": {
         "dark": "hsl(var(--color-hue-green), 100%, 10%)",
         "light": "hsl(var(--color-hue-green), 100%, 90%)"
-      }
+      },
+      "fill-secondary": {
+        "dark": "hsl(var(--color-hue-green), 100%, 20%)",
+        "light": "hsl(var(--color-hue-green), 100%, 80%)"
+      },
+      "nav-solid-background": "var(--color-fill)"
     }
   }
 }
