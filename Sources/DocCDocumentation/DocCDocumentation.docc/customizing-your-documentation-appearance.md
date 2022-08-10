@@ -153,7 +153,23 @@ styles](theme-screenshot-07.png)
 
 ### Metadata and Feature Flags
 
-Coming soon
+You can specify some text that will be used in the HTML `<title>` element for
+all webpages in `theme-settings.json` in place of the default "Documentation"
+text.
+
+**Example**
+
+```json
+{
+  "meta": {
+    "title": "Custom Title",
+  }
+}
+```
+
+With that configuration, the title of this page would change from "Customizing
+Your Documentation Appearance | Documentation" to "Customizing Your Documentation
+Appearance | **Custom Title**".
 
 [1]: https://github.com/apple/swift-docc/blob/main/Sources/SwiftDocC/SwiftDocC.docc/Resources/ThemeSettings.spec.json
 [2]: https://drafts.csswg.org/css-variables/
