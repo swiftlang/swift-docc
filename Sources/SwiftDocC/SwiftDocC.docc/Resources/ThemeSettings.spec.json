@@ -1,0 +1,897 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "description": "Allowed configuration for theme-settings.json.",
+        "version": "0.3.0",
+        "title": "Theme Settings"
+    },
+    "paths": {},
+    "components": {
+        "schemas": {
+            "ThemeSettings": {
+                "type": "object",
+                "description": "Settings for customizing the look and feel of the website.",
+                "properties":{
+                    "meta": {
+                        "type": "object",
+                        "description": "Metadata concerning the website as a whole, like the website title.",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "description": "A title for the website, which will be appended to the title of the page in the HTML `<title>` tag with the `\"|\"` character separating the two."
+                            }
+                        }
+                    },
+                    "theme": {
+                        "type": "object",
+                        "description": "Settings concerning the visual appearance of the website and the styling of its components.",
+                        "properties": {
+                            "aside": {
+                                "type": "object",
+                                "description": "Settings concerning \"aside\" elements.",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/BorderAttributes"
+                                    }
+                                ]
+                            },
+                            "badge": {
+                                "type": "object",
+                                "description": "Settings concerning \"badge\" elements.",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/BorderAttributes"
+                                    }
+                                ]
+                            },
+                            "border-radius": {
+                                "type": "string",
+                                "description": "The CSS border-radius value used globally for elements like code listings and asides."
+                            },
+                            "button": {
+                                "type": "object",
+                                "description": "Settings concerning \"button\" elements.",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/BorderAttributes"
+                                    }
+                                ]
+                            },
+                            "code": {
+                                "type": "object",
+                                "description": "Settings concerning \"code listing\" elements.",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/BorderAttributes"
+                                    }
+                                ],
+                                "properties": {
+                                    "indentationWidth": {
+                                        "type": "integer",
+                                        "description": "The number of spaces used to indent multi-parameter Swift symbol declarations.",
+                                        "minimum": 0
+                                    }
+                                }
+                            },
+                            "colors": {
+                                "type": "object",
+                                "description": "An object where each key represents the name of a color variable referenced in the renderer. A CSS property in the form `--color-[key]` will either be created or overwritten with the value associated with it.",
+                                "properties": {
+                                    "article-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "article-body-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-deprecated": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-deprecated-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-deprecated-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-experiment": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-experiment-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-experiment-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-important": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-important-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-important-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-note": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-note-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-note-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-tip": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-tip-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-tip-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-warning": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-warning-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "aside-warning-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "badge-beta": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "badge-dark-beta": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "badge-dark-default": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "badge-dark-deprecated": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "badge-default": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "badge-deprecated": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "button-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "button-background-active": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "button-background-hover": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "button-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "button-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "call-to-action-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "changes-added": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "changes-added-hover": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "changes-deprecated": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "changes-deprecated-hover": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "changes-modified": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "changes-modified-hover": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "changes-modified-previous-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "code-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "code-collapsible-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "code-collapsible-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "code-line-highlight": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "code-line-highlight-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "code-plain": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "documentation-intro-accent": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "documentation-intro-eyebrow": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "documentation-intro-figure": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "documentation-intro-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "documentation-intro-title": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "dropdown-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "dropdown-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "dropdown-dark-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "dropdown-dark-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "dropdown-dark-option-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "dropdown-dark-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "dropdown-option-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "dropdown-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "eyebrow": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "figure-blue": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "figure-gray": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "figure-gray-secondary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "figure-gray-secondary-alt": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "figure-gray-tertiary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "figure-green": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "figure-light-gray": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "figure-orange": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "figure-red": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-blue": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-gray": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-gray-quaternary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-gray-secondary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-gray-tertiary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-green-secondary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-light-blue-secondary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-orange-secondary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-quaternary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-red-secondary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-secondary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "fill-tertiary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "focus-border-color": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "focus-color": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "form-error": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "form-error-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "form-valid": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "form-valid-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "generic-modal-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "grid": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "header-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "hero-eyebrow": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "link": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "loading-placeholder-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-color": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-current-link": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-border-top-color": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-color": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-current-link": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-expanded": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-hierarchy-collapse-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-hierarchy-collapse-borders": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-hierarchy-item-borders": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-keyline": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-link-color": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-link-color-hover": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-outlines": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-root-subhead": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-rule": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-solid-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-sticking-expanded-keyline": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-stuck": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-uiblur-expanded": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-dark-uiblur-stuck": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-expanded": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-hierarchy-collapse-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-hierarchy-collapse-borders": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-hierarchy-item-borders": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-keyline": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-link-color": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-link-color-hover": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-outlines": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-root-subhead": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-root-title": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-rule": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-solid-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-sticking-expanded-keyline": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-stuck": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-uiblur-expanded": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "nav-uiblur-stuck": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "navigator-item-hover": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "runtime-preview-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "runtime-preview-disabled-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "runtime-preview-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "secondary-label": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "step-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "step-caption": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "step-focused": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "step-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "svg-icon": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-attributes": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-characters": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-comments": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-documentation-markup": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-documentation-markup-keywords": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-heading": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-keywords": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-marks": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-numbers": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-other-class-names": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-other-constants": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-other-declarations": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-other-function-and-method-names": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-other-instance-variables-and-globals": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-other-preprocessor-macros": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-other-type-names": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-param-internal-name": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-plain-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-preprocessor-statements": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-project-class-names": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-project-constants": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-project-function-and-method-names": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-project-instance-variables-and-globals": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-project-preprocessor-macros": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-project-type-names": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-strings": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-type-declarations": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "syntax-urls": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tabnav-item-border-color": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "text-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorial-assessments-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorial-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorial-hero-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorial-hero-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorial-navbar-dropdown-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorial-navbar-dropdown-border": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorial-quiz-border-active": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-background": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-content": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-content-alt": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-eyebrow": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-fill-secondary": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-header-text": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-icon": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-link": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-navigation-link": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-navigation-link-active": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-overview-navigation-link-hover": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "tutorials-teal": {
+                                        "$ref": "#/components/schemas/Color"
+                                    }
+                                },
+                                "additionalProperties": {
+                                    "$ref": "#/components/schemas/Color"
+                                }
+                            },
+                            "icons": {
+                                "type": "object",
+                                "description": "An object where each key represents a kind of icon used in the website which can be overwritten by providing a relative or absolute URL to an alternate SVG asset.",
+                                "properties": {
+                                    "api-reference": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "article": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "check-circle": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "chevron": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "chevron-rounded": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "clear-rounded": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "close": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "collection": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "curly-brackets": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "diagonal-arrow": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "document": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "download": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "ellipsis": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "endpoint": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "filter": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "forum": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "generic-file": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-chevron-down-circle": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-chevron-down": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-chevron-right": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-close": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-download": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-minus-circle-solid": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-plus-circle": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-plus-circle-solid": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "inline-replay": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "magnifier": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "path": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "play": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "reset-circle": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "search": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "sidenav": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "single-letter": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "spinner": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "swift-file": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "technology": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "timer": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "topic-func": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "topic-func-op": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "topic-subscript": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "tutorial": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "two-letter": {
+                                        "$ref": "#/components/schemas/URL"
+                                    },
+                                    "xcode": {
+                                        "$ref": "#/components/schemas/URL"
+                                    }
+                                }
+                            },
+                            "tutorial-step": {
+                                "type": "object",
+                                "description": "Settings related to \"tutorial step\" elements.",
+                                "properties": {
+                                    "border-radius": {
+                                        "type": "string",
+                                        "description": "A CSS value for `border-radius`."
+                                    }
+                                }
+                            },
+                            "typography": {
+                                "type": "object",
+                                "description": "Settings related to typography.",
+                                "properties": {
+                                    "html-font": {
+                                        "type": "string",
+                                        "description": "The CSS font-family value to be used globally for text in documentation."
+                                    },
+                                    "html-font-mono": {
+                                        "type": "string",
+                                        "description": "The CSS font-family value to be used for monospaced code-voice text in documentation."
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "features": {
+                        "type": "object",
+                        "description": "Flags for enabling or disabling features of the website.",
+                        "properties": {
+                            "docs": {
+                                "type": "object",
+                                "description": "flags for enabling or disabling `/documentation` page features.",
+                                "properties": {
+                                    "quicknavigation": {
+                                        "$ref": "#/components/schemas/FeatureFlagEnable"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "BorderAttributes": {
+                "type": "object",
+                "properties": {
+                    "border-radius": {
+                        "type": "string",
+                        "description": "A CSS value for `border-radius`."
+                    },
+                    "border-style": {
+                        "type": "string",
+                        "description": "A CSS value for `border-style`."
+                    },
+                    "border-width": {
+                        "type": "string",
+                        "description": "A CSS value for `border-width`."
+                    }
+                }
+            },
+            "Color": {
+                "oneOf": [
+                    {
+                        "type": "string",
+                        "description": "Any valid CSS color value."
+                    },
+                    {
+                        "type": "object",
+                        "description": "A map of light and dark CSS color values to use as appropriate.",
+                        "required": [
+                            "dark",
+                            "light"
+                        ],
+                        "properties": {
+                            "dark": {
+                                "type": "string"
+                            },
+                            "light": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                ]
+            },
+            "FeatureFlagEnable": {
+                "type": "object",
+                "description": "Enables a feature if `enable` is `true`.",
+                "required": [
+                    "enable"
+                ],
+                "properties": {
+                    "enable": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "URL": {
+                "type": "string",
+                "description": "An absolute URL or relative path.",
+                "format": "uri"
+            }
+        },
+        "requestBodies": {},
+        "securitySchemes": {},
+        "links": {},
+        "callbacks": {}
+    }
+}
