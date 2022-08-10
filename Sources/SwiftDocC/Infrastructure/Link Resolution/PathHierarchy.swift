@@ -504,12 +504,17 @@ struct PathHierarchy {
                     return (try findChild(of: tutorialOverviewContainer, remaining: remaining) , [])
                 }
             }
-            if !isKnownTutorialPath && isAbsolute {
-                // If this is an absolute non-tutorial link, then the first component will be a module name.
-                if let matched = modules[component.name] ?? modules[component.full] {
-                    remaining = remaining.dropFirst()
-                    return (try findChild(of: matched, remaining: remaining) , [])
-                }
+        }
+        
+        if !isKnownTutorialPath && isAbsolute {
+            // If this is an absolute non-tutorial link, then the first component will be a module name.
+            if let matched = modules[component.name] ?? modules[component.full] {
+                remaining = remaining.dropFirst()
+                return (try findChild(of: matched, remaining: remaining) , [])
+            } else {
+                // This is an absolute path that doesn't start with a valid module. Don't continue the search
+                // in relative mode.
+                throw Error.notFound(availableChildren: Array(modules.keys))
             }
         }
         
