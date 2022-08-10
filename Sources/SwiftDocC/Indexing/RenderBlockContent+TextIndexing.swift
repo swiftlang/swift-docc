@@ -42,14 +42,14 @@ extension RenderBlockContent: TextIndexing {
             return ""
         case .dictionaryExample(let e):
             return e.summary?.rawIndexableTextContent(references: references) ?? ""
-        case .table(_, let rows, let metadata):
-            let content = rows.map {
+        case .table(let t):
+            let content = t.rows.map {
                 return $0.cells.map {
                     return $0.rawIndexableTextContent(references: references)
                 }.joined(separator: " ")
             }.joined(separator: " ")
             
-            let meta = metadata?.rawIndexableTextContent(references: references) ?? ""
+            let meta = t.metadata?.rawIndexableTextContent(references: references) ?? ""
             
             return content + " " + meta
         case .termList(let l):

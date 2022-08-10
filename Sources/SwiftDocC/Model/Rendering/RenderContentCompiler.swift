@@ -201,7 +201,7 @@ struct RenderContentCompiler: MarkupVisitor {
             rows.append(RenderBlockContent.TableRow(cells: cells))
         }
         
-        return [RenderBlockContent.table(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, metadata: nil)]
+        return [RenderBlockContent.table(.init(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, metadata: nil))]
     }
 
     mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> [RenderContent] {

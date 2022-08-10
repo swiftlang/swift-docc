@@ -59,7 +59,7 @@ public enum RenderBlockContent: Equatable {
     /// A list of terms.
     case termList(TermList)
     /// A table that contains a list of row data.
-    case table(header: HeaderType, rows: [TableRow], metadata: RenderContentMetadata?)
+    case table(Table)
 
     /// A paragraph of content.
     public struct Paragraph: Equatable {
@@ -209,6 +209,23 @@ public enum RenderBlockContent: Equatable {
         /// Creates a new term list with the given items.
         public init(items: [TermListItem]) {
             self.items = items
+        }
+    }
+
+    /// A table that contains a list of row data.
+    public struct Table: Equatable {
+        /// The style of header in this table.
+        public var header: HeaderType
+        /// The rows in this table.
+        public var rows: [TableRow]
+        /// Additional metadata for this table, if present.
+        public var metadata: RenderContentMetadata?
+
+        /// Creates a new table with the given data.
+        public init(header: HeaderType, rows: [TableRow], metadata: RenderContentMetadata? = nil) {
+            self.header = header
+            self.rows = rows
+            self.metadata = metadata
         }
     }
     
@@ -422,11 +439,11 @@ extension RenderBlockContent: Codable {
         case .dictionaryExample:
             self = try .dictionaryExample(.init(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example)))
         case .table:
-            self = try .table(
+            self = try .table(.init(
                 header: container.decode(HeaderType.self, forKey: .header),
                 rows: container.decode([TableRow].self, forKey: .rows),
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
-            )
+            ))
         case .termList:
             self = try .termList(.init(items: container.decode([TermListItem].self, forKey: .items)))
         }
@@ -488,10 +505,10 @@ extension RenderBlockContent: Codable {
         case .dictionaryExample(let e):
             try container.encodeIfPresent(e.summary, forKey: .summary)
             try container.encode(e.example, forKey: .example)
-        case .table(header: let header, rows: let rows, metadata: let metadata):
-            try container.encode(header, forKey: .header)
-            try container.encode(rows, forKey: .rows)
-            try container.encodeIfPresent(metadata, forKey: .metadata)
+        case .table(let t):
+            try container.encode(t.header, forKey: .header)
+            try container.encode(t.rows, forKey: .rows)
+            try container.encodeIfPresent(t.metadata, forKey: .metadata)
         case .termList(items: let l):
             try container.encode(l.items, forKey: .items)
         }

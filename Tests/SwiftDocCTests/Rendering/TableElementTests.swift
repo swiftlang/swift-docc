@@ -27,16 +27,16 @@ class TableElementTests: XCTestCase {
             return
         }
         
-        guard case RenderBlockContent.table(let header, let rows, let metadata) = discussion.content[1] else {
+        guard case RenderBlockContent.table(let t) = discussion.content[1] else {
             XCTFail("Didn't find a table element in discussion")
             return
         }
         
-        XCTAssertEqual(RenderBlockContent.HeaderType(rawValue: "row"), header)
+        XCTAssertEqual(RenderBlockContent.HeaderType(rawValue: "row"), t.header)
         XCTAssertEqual([RenderBlockContent.TableRow(cells: [
             [RenderBlockContent.paragraph(.init(inlineContent: [RenderInlineContent.text("cell 1:1")]))],
             [RenderBlockContent.paragraph(.init(inlineContent: [RenderInlineContent.text("cell 1:2")]))],
-        ])], rows)
-        XCTAssertEqual(RenderContentMetadata(anchor: "anchor", title: "Figure 1", abstract: [RenderInlineContent.text("Tabulur data")]), metadata)
+        ])], t.rows)
+        XCTAssertEqual(RenderContentMetadata(anchor: "anchor", title: "Figure 1", abstract: [RenderInlineContent.text("Tabulur data")]), t.metadata)
     }
 }

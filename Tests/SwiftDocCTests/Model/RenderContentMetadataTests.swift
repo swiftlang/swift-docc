@@ -37,16 +37,16 @@ class RenderContentMetadataTests: XCTestCase {
             RenderInlineContent.text("Content"),
         ])
         
-        let table = RenderBlockContent.table(header: .both, rows: [], metadata: metadata)
+        let table = RenderBlockContent.table(.init(header: .both, rows: [], metadata: metadata))
         let data = try JSONEncoder().encode(table)
         let roundtrip = try JSONDecoder().decode(RenderBlockContent.self, from: data)
         
-        guard case RenderBlockContent.table(_, _, let metadataRoundtrip) = roundtrip else {
+        guard case RenderBlockContent.table(let t) = roundtrip else {
             XCTFail("Didn't decode table correctly")
             return
         }
         
-        XCTAssertEqual(metadata, metadataRoundtrip)
+        XCTAssertEqual(metadata, t.metadata)
     }
 
     func testCodeListingMetadata() throws {
@@ -95,13 +95,13 @@ class RenderContentMetadataTests: XCTestCase {
         }
         
         switch renderedTable {
-            case .table(let header, let rows, _):
-                XCTAssertEqual(header, .row)
-                XCTAssertEqual(rows.count, 3)
-                guard rows.count == 3 else { return }
-                XCTAssertEqual(rows[0].cells.map(renderCell), ["Column 1", "Column 2"])
-                XCTAssertEqual(rows[1].cells.map(renderCell), ["Cell 1", "Cell 2"])
-                XCTAssertEqual(rows[2].cells.map(renderCell), ["Cell 3", "Cell 4"])
+            case .table(let t):
+                XCTAssertEqual(t.header, .row)
+                XCTAssertEqual(t.rows.count, 3)
+                guard t.rows.count == 3 else { return }
+                XCTAssertEqual(t.rows[0].cells.map(renderCell), ["Column 1", "Column 2"])
+                XCTAssertEqual(t.rows[1].cells.map(renderCell), ["Cell 1", "Cell 2"])
+                XCTAssertEqual(t.rows[2].cells.map(renderCell), ["Cell 3", "Cell 4"])
             default: XCTFail("Unexpected element")
         }
     }
