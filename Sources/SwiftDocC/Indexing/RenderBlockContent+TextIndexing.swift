@@ -40,8 +40,8 @@ extension RenderBlockContent: TextIndexing {
             return h.text
         case .endpointExample:
             return ""
-        case .dictionaryExample(summary: let summary, example: _):
-            return summary?.rawIndexableTextContent(references: references) ?? ""
+        case .dictionaryExample(let e):
+            return e.summary?.rawIndexableTextContent(references: references) ?? ""
         case .table(_, let rows, let metadata):
             let content = rows.map {
                 return $0.cells.map {

@@ -54,7 +54,7 @@ public enum RenderBlockContent: Equatable {
     /// A REST endpoint example that includes a request and the expected response.
     case endpointExample(EndpointExample)
     /// An example that contains a sample code block.
-    case dictionaryExample(summary: [RenderBlockContent]?, example: CodeExample)
+    case dictionaryExample(DictionaryExample)
     
     /// A list of terms.
     case termList(items: [TermListItem])
@@ -184,6 +184,20 @@ public enum RenderBlockContent: Equatable {
             self.summary = summary
             self.request = request
             self.response = response
+        }
+    }
+
+    /// An example that contains a sample code block.
+    public struct DictionaryExample: Equatable {
+        /// A summary of the sample code block.
+        public var summary: [RenderBlockContent]?
+        /// The sample code for the example.
+        public var example: CodeExample
+
+        /// Creates a new example with the given data.
+        public init(summary: [RenderBlockContent]? = nil, example: CodeExample) {
+            self.summary = summary
+            self.example = example
         }
     }
     
@@ -395,7 +409,7 @@ extension RenderBlockContent: Codable {
                 response: container.decode(CodeExample.self, forKey: .response)
             ))
         case .dictionaryExample:
-            self = try .dictionaryExample(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example))
+            self = try .dictionaryExample(.init(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example)))
         case .table:
             self = try .table(
                 header: container.decode(HeaderType.self, forKey: .header),
@@ -460,9 +474,9 @@ extension RenderBlockContent: Codable {
             try container.encodeIfPresent(e.summary, forKey: .summary)
             try container.encode(e.request, forKey: .request)
             try container.encode(e.response, forKey: .response)
-        case .dictionaryExample(summary: let summary, example: let example):
-            try container.encodeIfPresent(summary, forKey: .summary)
-            try container.encode(example, forKey: .example)
+        case .dictionaryExample(let e):
+            try container.encodeIfPresent(e.summary, forKey: .summary)
+            try container.encode(e.example, forKey: .example)
         case .table(header: let header, rows: let rows, metadata: let metadata):
             try container.encode(header, forKey: .header)
             try container.encode(rows, forKey: .rows)
