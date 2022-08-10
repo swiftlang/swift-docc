@@ -28,8 +28,8 @@ extension RenderBlockContent: TextIndexing {
             }.joined(separator: " ")
         case let .paragraph(p):
             return p.inlineContent.rawIndexableTextContent(references: references)
-        case let .step(blocks, caption, _, _, _):
-            return (blocks + caption).rawIndexableTextContent(references: references)
+        case let .step(s):
+            return (s.content + s.caption).rawIndexableTextContent(references: references)
         case let .unorderedList(l):
             return l.items.map {
                 $0.content.rawIndexableTextContent(references: references)

@@ -99,10 +99,14 @@ class SemaToRenderNodeTests: XCTestCase {
         
         let stepsSection = tutorialSections.tasks[0].stepsSection
         
-        guard case .step(_, let caption, let step1Media, let step1Code, let step1RuntimePreview) = stepsSection[2] else {
+        guard case .step(let s) = stepsSection[2] else {
             XCTFail("Expected step")
             return
         }
+        let caption = s.caption
+        let step1Media = s.media
+        let step1Code = s.code
+        let step1RuntimePreview = s.runtimePreview
         
         guard case .paragraph(let captionPara)? = caption.first, case .text(let captionText)? = captionPara.inlineContent.first else {
             XCTFail("Expected step caption")

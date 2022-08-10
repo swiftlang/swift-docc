@@ -156,7 +156,7 @@ class IndexingTests: XCTestCase {
     }
     
     func testRenderBlockContentStep() {
-        let step = RenderBlockContent.step(content: [.paragraph(.init(inlineContent: [.text("Hello, world!")]))], caption: [.paragraph(.init(inlineContent: [.text("Step caption")]))], media: RenderReferenceIdentifier("Media"), code: RenderReferenceIdentifier("Code"), runtimePreview: RenderReferenceIdentifier("Preview"))
+        let step = RenderBlockContent.step(.init(content: [.paragraph(.init(inlineContent: [.text("Hello, world!")]))], caption: [.paragraph(.init(inlineContent: [.text("Step caption")]))], media: RenderReferenceIdentifier("Media"), code: RenderReferenceIdentifier("Code"), runtimePreview: RenderReferenceIdentifier("Preview")))
         XCTAssertEqual([], step.headings)
         XCTAssertEqual("Hello, world! Step caption", step.rawIndexableTextContent(references: [:]))
     }

@@ -50,7 +50,7 @@ public enum RenderBlockContent: Equatable {
     case unorderedList(UnorderedList)
     
     /// A step in a multi-step tutorial.
-    case step(content: [RenderBlockContent], caption: [RenderBlockContent], media: RenderReferenceIdentifier?, code: RenderReferenceIdentifier?, runtimePreview: RenderReferenceIdentifier?)
+    case step(TutorialStep)
     /// A REST endpoint example that includes a request and the expected response.
     case endpointExample(summary: [RenderBlockContent]?, request: CodeExample, response: CodeExample)
     /// An example that contains a sample code block.
@@ -144,6 +144,29 @@ public enum RenderBlockContent: Equatable {
         /// Creates a new unordered list with the given items.
         public init(items: [ListItem]) {
             self.items = items
+        }
+    }
+
+    /// A step in a multi-step tutorial.
+    public struct TutorialStep: Equatable {
+        /// The content inside this tutorial step.
+        public var content: [RenderBlockContent]
+        /// The caption for the step.
+        public var caption: [RenderBlockContent]
+        /// An optional media reference to accompany the step.
+        public var media: RenderReferenceIdentifier?
+        /// The source code file associated with this step.
+        public var code: RenderReferenceIdentifier?
+        /// A rendering of the tutorial step, if available.
+        public var runtimePreview: RenderReferenceIdentifier?
+
+        /// Creates a new tutorial step with the given items.
+        public init(content: [RenderBlockContent], caption: [RenderBlockContent], media: RenderReferenceIdentifier? = nil, code: RenderReferenceIdentifier? = nil, runtimePreview: RenderReferenceIdentifier? = nil) {
+            self.content = content
+            self.caption = caption
+            self.media = media
+            self.code = code
+            self.runtimePreview = runtimePreview
         }
     }
     
@@ -347,7 +370,7 @@ extension RenderBlockContent: Codable {
         case .unorderedList:
             self = try .unorderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
         case .step:
-            self = try .step(content: container.decode([RenderBlockContent].self, forKey: .content), caption: container.decodeIfPresent([RenderBlockContent].self, forKey: .caption) ?? [], media: container.decode(RenderReferenceIdentifier?.self, forKey: .media), code: container.decode(RenderReferenceIdentifier?.self, forKey: .code), runtimePreview: container.decode(RenderReferenceIdentifier?.self, forKey: .runtimePreview))
+            self = try .step(.init(content: container.decode([RenderBlockContent].self, forKey: .content), caption: container.decodeIfPresent([RenderBlockContent].self, forKey: .caption) ?? [], media: container.decode(RenderReferenceIdentifier?.self, forKey: .media), code: container.decode(RenderReferenceIdentifier?.self, forKey: .code), runtimePreview: container.decode(RenderReferenceIdentifier?.self, forKey: .runtimePreview)))
         case .endpointExample:
             self = try .endpointExample(
                 summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary),
@@ -410,12 +433,12 @@ extension RenderBlockContent: Codable {
             try container.encode(l.items, forKey: .items)
         case .unorderedList(let l):
             try container.encode(l.items, forKey: .items)
-        case .step(let content, let caption, let media, let code, let runtimePreview):
-            try container.encode(content, forKey: .content)
-            try container.encode(caption, forKey: .caption)
-            try container.encode(media, forKey: .media)
-            try container.encode(code, forKey: .code)
-            try container.encode(runtimePreview, forKey: .runtimePreview)
+        case .step(let s):
+            try container.encode(s.content, forKey: .content)
+            try container.encode(s.caption, forKey: .caption)
+            try container.encode(s.media, forKey: .media)
+            try container.encode(s.code, forKey: .code)
+            try container.encode(s.runtimePreview, forKey: .runtimePreview)
         case .endpointExample(summary: let summary, request: let request, response: let response):
             try container.encodeIfPresent(summary, forKey: .summary)
             try container.encode(request, forKey: .request)

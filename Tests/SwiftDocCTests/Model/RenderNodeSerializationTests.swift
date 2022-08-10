@@ -50,11 +50,11 @@ class RenderNodeSerializationTests: XCTestCase {
         
         let steps: [RenderBlockContent] = [
             .paragraph(.init(inlineContent: [.text("After you download Xcode, create a project.")])),
-            .step(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [.paragraph(.init(inlineContent: [.text("Caption")]))], media: .init("screenshot2.png"), code: nil, runtimePreview: nil),
-            .step(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: nil, code: .init("helloworld.swift"), runtimePreview: .init("screenshot2.png")),
-            .step(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: .init("screenshot3.png"), code: nil, runtimePreview: nil),
+            .step(.init(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [.paragraph(.init(inlineContent: [.text("Caption")]))], media: .init("screenshot2.png"), code: nil, runtimePreview: nil)),
+            .step(.init(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: nil, code: .init("helloworld.swift"), runtimePreview: .init("screenshot2.png"))),
+            .step(.init(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: .init("screenshot3.png"), code: nil, runtimePreview: nil)),
             .aside(.init(style: .init(rawValue: "Note"), content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum dolor emit.")]))])),
-            .step(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: .init("screenshot4.png"), code: nil, runtimePreview: nil),
+            .step(.init(content: [.paragraph(.init(inlineContent: [.text("Lorem ipsum")]))], caption: [], media: .init("screenshot4.png"), code: nil, runtimePreview: nil)),
         ]
         
         var contentAndMedia = ContentAndMediaSection(layout: .horizontal, title: "", media: RenderReferenceIdentifier("screenshot1.png"), mediaPosition: .leading)
