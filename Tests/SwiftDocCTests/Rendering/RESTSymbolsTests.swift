@@ -198,23 +198,23 @@ class RESTSymbolsTests: XCTestCase {
             return
         }
 
-        if case RenderBlockContent.endpointExample(let maybeSummary, let request, let response) = example {
-            XCTAssertNotNil(maybeSummary)
-            if case RenderBlockContent.paragraph(let summary)? = maybeSummary?.first {
+        if case RenderBlockContent.endpointExample(let e) = example {
+            XCTAssertNotNil(e.summary)
+            if case RenderBlockContent.paragraph(let summary)? = e.summary?.first {
                 XCTAssertEqual(summary.inlineContent, [RenderInlineContent.text("The summary of this endpoint example.")])
             } else {
                 XCTFail("Summary paragraph not found.")
             }
             
-            XCTAssertEqual(request.type, "file")
-            XCTAssertEqual(request.syntax, "http")
-            XCTAssertEqual(request.content.first?.collapsible, false)
-            XCTAssertEqual(request.content.first?.code.joined(), "Request content")
+            XCTAssertEqual(e.request.type, "file")
+            XCTAssertEqual(e.request.syntax, "http")
+            XCTAssertEqual(e.request.content.first?.collapsible, false)
+            XCTAssertEqual(e.request.content.first?.code.joined(), "Request content")
 
-            XCTAssertEqual(response.type, "file")
-            XCTAssertEqual(response.syntax, "json")
-            XCTAssertEqual(response.content.first?.collapsible, true)
-            XCTAssertEqual(response.content.first?.code.joined(), "Response content")
+            XCTAssertEqual(e.response.type, "file")
+            XCTAssertEqual(e.response.syntax, "json")
+            XCTAssertEqual(e.response.content.first?.collapsible, true)
+            XCTAssertEqual(e.response.content.first?.code.joined(), "Response content")
         }
         
         AssertRoundtrip(for: symbol)

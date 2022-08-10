@@ -52,7 +52,7 @@ public enum RenderBlockContent: Equatable {
     /// A step in a multi-step tutorial.
     case step(TutorialStep)
     /// A REST endpoint example that includes a request and the expected response.
-    case endpointExample(summary: [RenderBlockContent]?, request: CodeExample, response: CodeExample)
+    case endpointExample(EndpointExample)
     /// An example that contains a sample code block.
     case dictionaryExample(summary: [RenderBlockContent]?, example: CodeExample)
     
@@ -167,6 +167,23 @@ public enum RenderBlockContent: Equatable {
             self.media = media
             self.code = code
             self.runtimePreview = runtimePreview
+        }
+    }
+
+    /// A REST endpoint example that includes a request and the expected response.
+    public struct EndpointExample: Equatable {
+        /// A summary of the example.
+        public var summary: [RenderBlockContent]?
+        /// The request portion of the example.
+        public var request: CodeExample
+        /// The expected response for the given request.
+        public var response: CodeExample
+
+        /// Creates a new REST endpoint example with the given data.
+        public init(summary: [RenderBlockContent]? = nil, request: CodeExample, response: CodeExample) {
+            self.summary = summary
+            self.request = request
+            self.response = response
         }
     }
     
@@ -372,11 +389,11 @@ extension RenderBlockContent: Codable {
         case .step:
             self = try .step(.init(content: container.decode([RenderBlockContent].self, forKey: .content), caption: container.decodeIfPresent([RenderBlockContent].self, forKey: .caption) ?? [], media: container.decode(RenderReferenceIdentifier?.self, forKey: .media), code: container.decode(RenderReferenceIdentifier?.self, forKey: .code), runtimePreview: container.decode(RenderReferenceIdentifier?.self, forKey: .runtimePreview)))
         case .endpointExample:
-            self = try .endpointExample(
+            self = try .endpointExample(.init(
                 summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary),
                 request: container.decode(CodeExample.self, forKey: .request),
                 response: container.decode(CodeExample.self, forKey: .response)
-            )
+            ))
         case .dictionaryExample:
             self = try .dictionaryExample(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example))
         case .table:
@@ -439,10 +456,10 @@ extension RenderBlockContent: Codable {
             try container.encode(s.media, forKey: .media)
             try container.encode(s.code, forKey: .code)
             try container.encode(s.runtimePreview, forKey: .runtimePreview)
-        case .endpointExample(summary: let summary, request: let request, response: let response):
-            try container.encodeIfPresent(summary, forKey: .summary)
-            try container.encode(request, forKey: .request)
-            try container.encode(response, forKey: .response)
+        case .endpointExample(let e):
+            try container.encodeIfPresent(e.summary, forKey: .summary)
+            try container.encode(e.request, forKey: .request)
+            try container.encode(e.response, forKey: .response)
         case .dictionaryExample(summary: let summary, example: let example):
             try container.encodeIfPresent(summary, forKey: .summary)
             try container.encode(example, forKey: .example)
