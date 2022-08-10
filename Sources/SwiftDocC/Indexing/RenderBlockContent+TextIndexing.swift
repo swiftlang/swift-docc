@@ -52,8 +52,8 @@ extension RenderBlockContent: TextIndexing {
             let meta = metadata?.rawIndexableTextContent(references: references) ?? ""
             
             return content + " " + meta
-        case .termList(let items):
-            return items.map {
+        case .termList(let l):
+            return l.items.map {
                 let definition = $0.definition.content.rawIndexableTextContent(references: references)
                 return $0.term.inlineContent.rawIndexableTextContent(references: references)
                     + ( definition.isEmpty ? "" : " \(definition)" )

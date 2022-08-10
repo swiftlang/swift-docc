@@ -75,7 +75,7 @@ extension Collection where Element == RenderBlockContent.ListItem {
         if let unorderedListItems = items as? [RenderBlockContent.ListItem] {
             return RenderBlockContent.unorderedList(.init(items: unorderedListItems))
         } else if let termListItems = items as? [RenderBlockContent.TermListItem] {
-            return RenderBlockContent.termList(items: termListItems)
+            return RenderBlockContent.termList(.init(items: termListItems))
         } else {
             fatalError()
         }

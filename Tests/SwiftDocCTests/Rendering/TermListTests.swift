@@ -37,13 +37,13 @@ class TermListTests: XCTestCase {
             XCTFail("Discussion section didn't have expected number of contents")
             return
         }
-        guard case let .termList(items) = content.first,
+        guard case let .termList(l) = content.first,
               content.count == 1 else {
             XCTFail("Term list not decoded")
             fatalError()
         }
         
-        XCTAssertEqual(items.count, 4)
+        XCTAssertEqual(l.items.count, 4)
     }
     
     func testRenderingListWithAllTermListItems() throws {
@@ -81,8 +81,8 @@ class TermListTests: XCTestCase {
         let renderedTermList = try XCTUnwrap(result.first)
         
         switch renderedTermList {
-        case .termList(let items):
-            XCTAssertEqual(items.count, 4)
+        case .termList(let l):
+            XCTAssertEqual(l.items.count, 4)
         default: XCTFail("Unexpected element")
         }
         
@@ -140,8 +140,8 @@ class TermListTests: XCTestCase {
         }
         
         switch firstTermList {
-        case .termList(let items):
-            XCTAssertEqual(items.count, 3)
+        case .termList(let l):
+            XCTAssertEqual(l.items.count, 3)
         default: XCTFail("Unexpected element")
         }
         
@@ -152,8 +152,8 @@ class TermListTests: XCTestCase {
         }
         
         switch secondTermList {
-        case .termList(let items):
-            XCTAssertEqual(items.count, 2)
+        case .termList(let l):
+            XCTAssertEqual(l.items.count, 2)
         default: XCTFail("Unexpected element")
         }
         

@@ -57,7 +57,7 @@ public enum RenderBlockContent: Equatable {
     case dictionaryExample(DictionaryExample)
     
     /// A list of terms.
-    case termList(items: [TermListItem])
+    case termList(TermList)
     /// A table that contains a list of row data.
     case table(header: HeaderType, rows: [TableRow], metadata: RenderContentMetadata?)
 
@@ -198,6 +198,17 @@ public enum RenderBlockContent: Equatable {
         public init(summary: [RenderBlockContent]? = nil, example: CodeExample) {
             self.summary = summary
             self.example = example
+        }
+    }
+
+    /// A list of terms.
+    public struct TermList: Equatable {
+        /// The items in this list.
+        public var items: [TermListItem]
+
+        /// Creates a new term list with the given items.
+        public init(items: [TermListItem]) {
+            self.items = items
         }
     }
     
@@ -417,7 +428,7 @@ extension RenderBlockContent: Codable {
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
             )
         case .termList:
-            self = try .termList(items: container.decode([TermListItem].self, forKey: .items))
+            self = try .termList(.init(items: container.decode([TermListItem].self, forKey: .items)))
         }
     }
     
@@ -481,8 +492,8 @@ extension RenderBlockContent: Codable {
             try container.encode(header, forKey: .header)
             try container.encode(rows, forKey: .rows)
             try container.encodeIfPresent(metadata, forKey: .metadata)
-        case .termList(items: let items):
-            try container.encode(items, forKey: .items)
+        case .termList(items: let l):
+            try container.encode(l.items, forKey: .items)
         }
     }
 }
