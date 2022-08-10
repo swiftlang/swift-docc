@@ -1,4 +1,4 @@
-# Linking between documentation
+# Linking Between Documentation
 
 Connect documentation pages with documentation links.
 
@@ -22,13 +22,25 @@ doc://com.example/path/to/documentation/page#optional-heading
       bundle ID     path in docs hierarchy    heading name 
 ```
 
-## Resolving a documentation link
+Both types of links can be used in a relative or absolute way. Absolute symbol links have a leading slash (`/`) and must start with the module they are referring to, for example ` ``/MyModule/MyClass/myProperty`` `.
 
-To make authored documentation links easier to write and easier to read in plain text format all authored documentation links are relative links. The symbol links in documentation extension headers are written relative to the scope of modules. All other authored documentation links are written relative to the page where the link is written. 
+## Resolving a Documentation Link
 
-These relative documentation links can specify path components from higher up in the documentation hierarchy to reference container symbols or container pages.
+To make authored documentation links easier to write and easier to read in plain text format all authored documentation links can be written as relative links. The symbol links in documentation extension headers are written relative to the scope of modules. All other authored documentation links are written relative to the page where the link is written.
 
-### Handling ambiguous links
+These relative documentation links can specify path components from higher up in the documentation hierarchy to reference container symbols or container pages. If a higher-up container page is shadowed by one of its descendants because they share the same name, the higher-up container page must be linked to using an absolute link.
+
+```swift
+struct Container {
+    struct Container {
+        /// ``Container`` links to `Container.Container`
+        /// ``/MyModule/Container`` links to `Container`
+        func foo() { }
+    }
+}
+```
+
+### Handling Ambiguous Links
 
 It's possible for collisions to occur in documentation links (symbol links or otherwise) where more than one page are represented by the same path. A common cause for documentation link collisions are function overloads (functions with the same name but different arguments or different return values). It's also possible to have documentation link collisions in conceptual content if an article file name is the same as a tutorial file name (excluding the file extension in both cases).
 
@@ -52,7 +64,37 @@ If two or more symbol results have the same kind, then that information doesn't 
 
 Links with added disambiguation information is both harder read and harder write so DocC aims to require as little disambiguation as possible. 
 
-## Resolving links outside the documentation catalog
+### Handling Type Aliases
+
+Members defined on a `typealias` cannot be linked to using the type alias' name, but must use the original name instead. Only the declaration of the `typealias` itself uses the alias' name.
+
+```swift
+struct A {}
+
+/// This is referred to as ``B``
+typealias B = A
+
+extension B {
+    /// This can only be referred to as ``A/foo()``, not `B/foo()`
+    func foo() { }
+}
+```
+
+### Handling Nested Types
+
+Sometimes it can happen that a symbol appears in your documentation catalog, but one or more of its original anchestors do not. This happens, for example, when extending a nested type from a different module. In those cases, the path components representing the missing anchestors are not part of the symbol page's link.
+
+Assuming the `Outer` and `Inner` types were defined in a different module called `ExternalModule`, this example shows the correct reference usage:
+
+```swift
+/// This is referred to as ``ExternalModule/Inner``
+extension Outer.Inner {
+    /// This is referred to as ``ExternalModule/Inner/foo()``
+    func foo() { }
+}
+```
+
+## Resolving Links Outside the Documentation Catalog
 
 If a ``DocumentationContext`` is configured with one or more ``DocumentationContext/externalReferenceResolvers`` it is capable of resolving links general documentation links via that ``ExternalReferenceResolver``. External documentation links need to be written with a bundle ID in the URI to identify which external resolver should handle the request.
 
