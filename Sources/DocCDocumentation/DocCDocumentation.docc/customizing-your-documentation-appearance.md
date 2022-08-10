@@ -110,7 +110,46 @@ however you choose.
 
 ### Element Borders
 
-Coming soon
+Another aspect of the renderer that you may wish to modify is the way that it
+applies border to certain elements. With `theme-settings.json`, you can change
+the default border radius for all elements and also individually update the
+border styles for asides, buttons, code listings, and tutorial steps.
+
+**Example**
+
+```json
+{
+  "theme": {
+    "aside": {
+      "border-radius": "6px",
+      "border-style": "double",
+      "border-width": "3px"
+    },
+    "border-radius": "0",
+    "button": {
+      "border-radius": "8px",
+      "border-style": "solid",
+      "border-width": "2px"
+    },
+    "code": {
+      "border-radius": "2px",
+      "border-style": "dashed",
+      "border-width": "2px"
+    },
+    "tutorial-step": {
+      "border-radius": "12px"
+    }
+  }
+}
+```
+
+![A screenshot of a tutorial page with custom button
+borders](theme-screenshot-05.png)
+
+![A screenshot of tutorial steps with custom borders](theme-screenshot-06.png)
+
+![A screenshot of a documentation page with custom code listing and aside border
+styles](theme-screenshot-07.png)
 
 ### Metadata and Feature Flags
 
