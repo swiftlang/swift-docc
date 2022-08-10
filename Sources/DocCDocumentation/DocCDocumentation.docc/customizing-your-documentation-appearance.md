@@ -108,7 +108,7 @@ however you choose.
 
 ![A screenshot of a documentation page with custom fonts](theme-screenshot-04)
 
-### Element Borders
+### Borders
 
 Another aspect of the renderer that you may wish to modify is the way that it
 applies border to certain elements. With `theme-settings.json`, you can change
@@ -151,7 +151,7 @@ borders](theme-screenshot-05.png)
 ![A screenshot of a documentation page with custom code listing and aside border
 styles](theme-screenshot-07.png)
 
-### Metadata and Feature Flags
+### Metadata
 
 You can specify some text that will be used in the HTML `<title>` element for
 all webpages in `theme-settings.json` in place of the default "Documentation"
@@ -170,6 +170,30 @@ text.
 With that configuration, the title of this page would change from "Customizing
 Your Documentation Appearance | Documentation" to "Customizing Your Documentation
 Appearance | **Custom Title**".
+
+### Feature Flags
+
+From time to time, there may be instances of various experimental UI features
+that can be enabled or disabled using `theme-settings.json`.
+
+**Example**
+
+As of the time of writing this, there is only one available "quick navigation"
+feature that is disabled by default and can be enabled with the following
+configuration. Note that this flag may be dropped in the future and new ones may
+be added as necessary for other features.
+
+```json
+{
+  "features": {
+    "docs": {
+      "quickNavigation": {
+        "enable": true
+      }
+    }
+  }
+}
+```
 
 [1]: https://github.com/apple/swift-docc/blob/main/Sources/SwiftDocC/SwiftDocC.docc/Resources/ThemeSettings.spec.json
 [2]: https://drafts.csswg.org/css-variables/
