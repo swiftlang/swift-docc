@@ -151,6 +151,47 @@ borders](theme-screenshot-05.png)
 ![A screenshot of a documentation page with custom code listing and aside border
 styles](theme-screenshot-07.png)
 
+### Icons
+
+It is also possible to use `theme-settings.json` to specify custom icons to use
+in place of the default ones provided by DocC-Render. There are a few basic
+steps to follow in order to override an icon:
+
+1. Find the identifier that maps to the icon you want to override.
+2. Add this value as an `id` attribute to the new SVG icon.
+3. Associate a relative or absolute URL to the new SVG icon with the identifier
+   in `theme-settings.json`.
+
+> Note:
+> You can find all the possible identifier values for every valid icon kind in
+> the Open API [specification][1] for `theme-settings.json`.
+
+**Example**
+
+As a simple example, here is how you could update the icon used for articles in
+the sidebar to be a simple box:
+
+1. Find the identifier for article icons: `"article"`
+2. Add the `id="article"` attribute to the new SVG icon: `simple-box.svg`
+    ```svg
+    <svg viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" id="article">
+      <rect x="2" y="2" width="10" height="10" stroke="currentColor" fill="none"></rect>
+    </svg>
+    ```
+3. Configure `theme-settings.json` to map the URL for the new article icon
+    ```json
+    {
+      "theme": {
+        "icons": {
+          "article": "/images/simple-box.svg"
+        }
+      }
+    }
+    ```
+
+![A screenshot of the sidebar using a custom icon for
+articles](theme-screenshot-08.png)
+
 ### Metadata
 
 You can specify some text that will be used in the HTML `<title>` element for
