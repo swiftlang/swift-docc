@@ -241,4 +241,4 @@ be added as necessary for other features.
 [3]: https://mportiz08.github.io/swift-docc/documentation/docc
 [4]: https://mportiz08.github.io/swift-docc/theme-settings.json
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
