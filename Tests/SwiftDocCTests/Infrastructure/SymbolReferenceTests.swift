@@ -216,4 +216,52 @@ class SymbolReferenceTests: XCTestCase {
             ]
         )
     }
+    
+    func testKnownSourceLanguagesOfUnifiedGraphSymbol() {
+        let module = SymbolGraph.Module(
+            name: "os",
+            platform: SymbolGraph.Platform()
+        )
+        
+        let unifiedSymbol = UnifiedSymbolGraph.Symbol(
+            fromSingleSymbol: makeSymbol(interfaceLanguage: "swift"),
+            module: module,
+            isMainGraph: true
+        )
+        
+        unifiedSymbol.mergeSymbol(
+            symbol: makeSymbol(interfaceLanguage: "c"),
+            module: module,
+            isMainGraph: true
+        )
+        
+        XCTAssertEqual(unifiedSymbol.sourceLanguages.map(\.id).sorted(), ["occ", "swift"])
+    }
+    
+    func testUnknownSourceLanguagesOfUnifiedGraphSymbol() {
+        let module = SymbolGraph.Module(
+            name: "os",
+            platform: SymbolGraph.Platform()
+        )
+        
+        let unifiedSymbol = UnifiedSymbolGraph.Symbol(
+            fromSingleSymbol: makeSymbol(interfaceLanguage: "unknown-language"),
+            module: module,
+            isMainGraph: true
+        )
+        
+        XCTAssertEqual(unifiedSymbol.sourceLanguages.map(\.id).sorted(), ["unknown-language"])
+    }
+    
+    private func makeSymbol(interfaceLanguage: String) -> SymbolGraph.Symbol {
+        SymbolGraph.Symbol(
+            identifier: .init(precise: "abcd", interfaceLanguage: interfaceLanguage),
+            names: .init(title: "abcd", navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: ["test", "abcd"],
+            docComment: nil,
+            accessLevel: .init(rawValue: "public"),
+            kind: .init(parsedIdentifier: .module, displayName: "Framework"),
+            mixins: [:]
+        )
+    }
 }
