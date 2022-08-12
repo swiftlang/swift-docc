@@ -1,4 +1,4 @@
-# Customizing Your Documentation Appearance
+# Customizing the Appearance of Your Documentation Pages
 
 Customize the look and feel of your documentation webpages.
 
