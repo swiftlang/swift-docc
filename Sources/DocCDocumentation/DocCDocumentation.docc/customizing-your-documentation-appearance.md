@@ -8,7 +8,7 @@ By default, rendered documentation webpages produced by DocC come with a default
 visual styling. If you wish, you may make adjustments to this styling by adding
 an optional `theme-settings.json` file to the root of your documentation catalog
 with some configuration. This file is used to customize various things like
-colors and fonts.  You can even make changes to the way that specific elements
+colors and fonts. You can even make changes to the way that specific elements
 appear, like buttons, code listings, and asides. Additionally, some metadata for
 the website can be configured in this file, and it can also be used to opt in or
 opt out of certain default rendering behavior.
