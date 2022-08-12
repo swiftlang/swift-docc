@@ -14,7 +14,7 @@ the website can be configured in this file, and it can also be used to opt in or
 opt out of certain default rendering behavior.
 
 If you're curious about the full capabilities of the `theme-settings.json` file,
-you can check out the latest Open API specification for the it [here][1], which
+you can check out the latest Open API specification for it [here][1], which
 documents all valid settings that could be present.
 
 Let's walk through some basic examples of customizing the appearance of
