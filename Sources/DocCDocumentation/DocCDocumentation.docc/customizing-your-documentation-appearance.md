@@ -22,11 +22,11 @@ documentation now.
 
 ### Colors
 
-DocC-Render utilizes [CSS custom properties][2] (CSS variables) to define the
-various colors that are used throughout the HTML elements of rendered
-documentation. Any key/value in the `theme.color` object of
-`theme-settings.json` will either update an existing color property used in the
-renderer or add a new one that could be referenced by existing ones.
+DocC utilizes [CSS custom properties][2] (CSS variables) to define the various
+colors that are used throughout the HTML elements of rendered documentation. Any
+key/value in the `theme.color` object of `theme-settings.json` will either
+update an existing color property used in the renderer or add a new one that
+could be referenced by existing ones.
 
 **Example**
 
@@ -77,8 +77,8 @@ of a green hue.
 
 ![A screenshot of the green page background in light mode](theme-screenshot-03.png)
 
-As a general rule, the default color properties provided by DocC-Render assumes
-a naming convention where "fill" colors are used for backgrounds and "figure"
+As a general rule, the default color properties provided by DocC assumes a
+naming convention where "fill" colors are used for backgrounds and "figure"
 colors are used for foreground colors, like text.
 
 > Tip:
@@ -88,10 +88,9 @@ colors are used for foreground colors, like text.
 
 ### Fonts
 
-By default, there are two main fonts used by DocC-Render: one for monospaced
-text in code voice and another for all other text content. With
-`theme-settings.json`, you can customize the CSS `font-family` lists for these
-however you choose.
+By default, there are two main fonts used by DocC: one for monospaced text in
+code voice and another for all other text content. With `theme-settings.json`,
+you can customize the CSS `font-family` lists for these however you choose.
 
 **Example**
 
@@ -154,8 +153,8 @@ styles](theme-screenshot-07.png)
 ### Icons
 
 It is also possible to use `theme-settings.json` to specify custom icons to use
-in place of the default ones provided by DocC-Render. There are a few basic
-steps to follow in order to override an icon:
+in place of the default ones provided by DocC. There are a few basic steps to
+follow in order to override an icon:
 
 1. Find the identifier that maps to the icon you want to override.
 2. Add this value as an `id` attribute to the new SVG icon.
