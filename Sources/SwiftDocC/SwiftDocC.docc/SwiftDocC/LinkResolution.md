@@ -28,17 +28,19 @@ Both types of links can be used in a relative or absolute way. Absolute symbol l
 
 To make authored documentation links easier to write and easier to read in plain text format all authored documentation links can be written as relative links. The symbol links in documentation extension headers are written relative to the scope of modules. All other authored documentation links are written relative to the page where the link is written.
 
-These relative documentation links can specify path components from higher up in the documentation hierarchy to reference container symbols or container pages. If a higher-up container page is shadowed by one of its descendants because they share the same name, the higher-up container page must be linked to using an absolute link.
+These relative documentation links can specify path components from higher up in the documentation hierarchy to reference container symbols or container pages. If a higher-up container page is shadowed by one of its descendants because they share the same name, the higher-up container page must be linked to using an absolute link or a sufficiently unambigious relative link.
 
 ```swift
 struct Container {
     struct Container {
         /// ``Container`` links to `Container.Container`
-        /// ``/MyModule/Container`` links to `Container`
+        /// ``MyModule/Container`` links to the outer `Container`
         func foo() { }
     }
 }
 ```
+
+> Note: If `MyModule` were to be named `Container` too, only the absolute link `/Container/Container` could be used to refer to the outer `Container`.
 
 ### Handling Ambiguous Links
 
