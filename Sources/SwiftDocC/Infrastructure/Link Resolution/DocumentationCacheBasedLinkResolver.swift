@@ -331,7 +331,7 @@ final class DocumentationCacheBasedLinkResolver {
         // The current implementation works in 3 phases:
         //  - First, it computes the paths without disambiguators to identify colliding paths.
         //  - Second, it computes the "correct" disambiguators for each collision.
-        //  - Lastly, it joins together the results in a stable order to avoid indeterministic behavior.
+        //  - Lastly, it joins together the results in a stable order to avoid non-deterministic behavior.
         
         
         let totalSymbolCount = unifiedGraphs.values.map { $0.symbols.count }.reduce(0, +)
