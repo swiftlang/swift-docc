@@ -26,68 +26,27 @@ import Markdown
 ///    @DocumentationExtension(mergeBehavior: override)
 /// }
 /// ```
-public final class DocumentationExtension: Semantic, DirectiveConvertible {
-    public static let directiveName = "DocumentationExtension"
+public final class DocumentationExtension: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     /// The merge behavior for this documentation extension.
-    public let behavior: Behavior
+    @DirectiveArgumentWrapped(name: .custom("mergeBehavior"))
+    public var behavior: Behavior
+    
+    static var keyPaths: [String : AnyKeyPath] = [
+        "behavior" : \DocumentationExtension._behavior,
+    ]
     
     /// The merge behavior in a documentation extension.
-    public enum Behavior: String, CaseIterable, Codable, DirectiveArgumentValueConvertible {
+    public enum Behavior: String, CaseIterable, DirectiveArgumentValueConvertible {
         /// Append the documentation-extension content to the in-source content and process them together.
-        case append = "append"
+        case append
         
         /// Completely override any in-source content with the content from the documentation-extension.
-        case override = "override"
-        
-        public init?(rawDirectiveArgumentValue: String) {
-            self.init(rawValue: rawDirectiveArgumentValue)
-        }
-        
-        /// A plain-text representation of the behavior.
-        public var description: String {
-            return self.rawValue
-        }
-    }
-
-    /// Child semantics for a documentation extension.
-    enum Semantics {
-        /// A merge-behavior argument.
-        enum Behavior: DirectiveArgument {
-            /// The type of value for the merge-behavior argument.
-            typealias ArgumentValue = DocumentationExtension.Behavior
-            /// The argument name for the merge-behavior argument.
-            static let argumentName = "mergeBehavior"
-        }
+        case override
     }
     
-    /// Creates a new documentation extension.
-    /// - Parameters:
-    ///   - originalMarkup: The original markup for this documentation extension.
-    ///   - behavior: The merge behavior of this documentation extension.
-    init(originalMarkup: BlockDirective, behavior: Behavior) {
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup
-        self.behavior = behavior
-    }
-    
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        precondition(directive.name == DocumentationExtension.directiveName)
-
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<DocumentationExtension>(severityIfFound: .warning, allowedArguments: [Semantics.Behavior.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        Semantic.Analyses.HasOnlyKnownDirectives<DocumentationExtension>(severityIfFound: .warning, allowedDirectives: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-
-        let requiredBehavior = Semantic.Analyses.HasArgument<DocumentationExtension, Semantics.Behavior>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
-        
-        if directive.hasChildren {
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(DocumentationExtension.directiveName).UnexpectedContent", summary: "\(DocumentationExtension.directiveName.singleQuoted) directive has content but none is expected.")
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
-        }
-        
-        guard let behavior = requiredBehavior else {
-            return nil
-        }
-        
-        self.init(originalMarkup: directive, behavior: behavior)
     }
 }

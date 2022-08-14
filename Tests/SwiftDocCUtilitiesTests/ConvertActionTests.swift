@@ -684,8 +684,8 @@ class ConvertActionTests: XCTestCase {
                     start: .init(line: 11, column: 7),
                     source: URL(string: "TechnologyX.tutorial"),
                     severity: .warning,
-                    summary: "The 'Chapter' directive requires at least one 'TutorialReference' child directive",
-                    explanation: nil,
+                    summary: "Missing required 'TutorialReference' child directive",
+                    explanation: "The 'Chapter' directive requires at least one 'TutorialReference' child directive",
                     notes: []
                 ),
             ]),

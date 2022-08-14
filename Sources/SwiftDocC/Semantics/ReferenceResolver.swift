@@ -269,9 +269,8 @@ struct ReferenceResolver: SemanticVisitor {
         // i.e. doc:/${SOME_TECHNOLOGY}/${PROJECT} or doc://${BUNDLE_ID}/${SOME_TECHNOLOGY}/${PROJECT}
         switch tutorialReference.topic {
         case .unresolved:
-            let arguments = tutorialReference.originalMarkup.arguments()
             let maybeResolved = resolve(tutorialReference.topic, in: bundle.technologyTutorialsRootReference,
-                                        range: arguments[TutorialReference.Semantics.Tutorial.argumentName]?.valueRange,
+                                        range: tutorialReference.originalMarkup.range,
                                         severity: .warning)
             return TutorialReference(originalMarkup: tutorialReference.originalMarkup, tutorial: .resolved(maybeResolved))
         case .resolved:

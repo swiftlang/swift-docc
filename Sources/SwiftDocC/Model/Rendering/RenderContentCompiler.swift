@@ -211,16 +211,18 @@ struct RenderContentCompiler: MarkupVisitor {
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> [RenderContent] {
         switch blockDirective.name {
         case Snippet.directiveName:
-            let arguments = blockDirective.arguments()
-            guard let snippetURL = arguments[Snippet.Semantics.Path.argumentName],
-                  let snippetReference = resolveSymbolReference(destination: snippetURL.value),
+            guard let snippet = Snippet(from: blockDirective, for: bundle, in: context) else {
+                return []
+            }
+            
+            guard let snippetReference = resolveSymbolReference(destination: snippet.path),
                   let snippetEntity = try? context.entity(with: snippetReference),
                   let snippetSymbol = snippetEntity.symbol,
                   let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
                 return []
             }
             
-            if let requestedSlice = arguments[Snippet.Semantics.Slice.argumentName]?.value,
+            if let requestedSlice = snippet.slice,
                let requestedLineRange = snippetMixin.slices[requestedSlice] {
                 // Render only the slice.
                 let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)

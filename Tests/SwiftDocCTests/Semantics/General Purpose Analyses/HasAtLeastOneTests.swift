@@ -65,7 +65,7 @@ class HasAtLeastOneTests: XCTestCase {
             XCTAssertEqual(1, problems.count)
             problems.first.map { problem in
                 XCTAssertEqual(.error, problem.diagnostic.severity)
-                XCTAssertEqual("org.swift.docc.HasAtLeastOne<TestParent, TestChild>", problem.diagnostic.identifier)
+                XCTAssertEqual("org.swift.docc.HasAtLeastOne<Parent, TestChild>", problem.diagnostic.identifier)
             }
         }
         
