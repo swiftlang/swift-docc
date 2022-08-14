@@ -286,7 +286,7 @@ class DocumentationBundleInfoTests: XCTestCase {
     }
     
     func testDataCorruptedPlist() throws {
-        let valueMissingInvaildPlist = """
+        let valueMissingInvalidPlist = """
         <plist version="1.0">
         <dict>
           <key>CDDefaultCodeListingLanguage</key>
@@ -314,9 +314,9 @@ class DocumentationBundleInfoTests: XCTestCase {
         </plist>
         """
         
-        let valueMissingInvaildPlistData = Data(valueMissingInvaildPlist.utf8)
+        let valueMissingInvalidPlistData = Data(valueMissingInvalidPlist.utf8)
         XCTAssertThrowsError(
-            try DocumentationBundle.Info(from: valueMissingInvaildPlistData),
+            try DocumentationBundle.Info(from: valueMissingInvalidPlistData),
             "Info.plist decode didn't throw as expected"
         ) { error in
             XCTAssertTrue(error is DocumentationBundle.Info.Error)
@@ -329,5 +329,29 @@ class DocumentationBundleInfoTests: XCTestCase {
             XCTAssertTrue(errorTypeChecking)
             XCTAssertEqual(error.localizedDescription, "Unable to decode Info.plist file. Verify that it is correctly formed. Value missing for key inside <dict> at line 24")
         }
+    }
+    
+    func testDerivedDisplayNameAsFallback() {
+        let infoPlistWithoutRequiredKeys = """
+        <plist version="1.0">
+        <dict>
+        </dict>
+        </plist>
+        """
+        
+        let infoPlistWithoutRequiredKeysData = Data(infoPlistWithoutRequiredKeys.utf8)
+        
+        XCTAssertEqual(
+            try DocumentationBundle.Info(
+                from: infoPlistWithoutRequiredKeysData,
+                bundleDiscoveryOptions: nil,
+                derivedDisplayName: "Derived Display Name"
+            ),
+            DocumentationBundle.Info(
+                displayName: "Derived Display Name",
+                identifier: "Derived Display Name",
+                version: nil
+            )
+        )
     }
 }

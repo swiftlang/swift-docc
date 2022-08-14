@@ -58,7 +58,11 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
         } else {
             infoPlistData = nil
         }
-        let info = try DocumentationBundle.Info(from: infoPlistData, bundleDiscoveryOptions: options)
+        let info = try DocumentationBundle.Info(
+            from: infoPlistData,
+            bundleDiscoveryOptions: options,
+            derivedDisplayName: directory.url.lastPathComponent
+        )
         
         let markupFiles = findMarkupFiles(bundleChildren, recursive: true).map { $0.url }
         let miscResources = findNonMarkupFiles(bundleChildren, recursive: true).map { $0.url }

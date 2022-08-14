@@ -82,13 +82,18 @@ extension DocumentationBundle {
         /// in the given bundle discovery options if necessary.
         init(
             from infoPlist: Data? = nil,
-            bundleDiscoveryOptions options: BundleDiscoveryOptions? = nil
+            bundleDiscoveryOptions options: BundleDiscoveryOptions? = nil,
+            derivedDisplayName: String? = nil
         ) throws {
             if let infoPlist = infoPlist {
                 let propertyListDecoder = PropertyListDecoder()
                 
                 if let options = options {
                     propertyListDecoder.userInfo[.bundleDiscoveryOptions] = options
+                }
+                
+                if let derivedDisplayName = derivedDisplayName {
+                    propertyListDecoder.userInfo[.derivedDisplayName] = derivedDisplayName
                 }
                 
                 do {
@@ -101,22 +106,29 @@ extension DocumentationBundle {
                 }
                 
             } else {
-                try self.init(with: nil, bundleDiscoveryOptions: options)
+                try self.init(
+                    with: nil,
+                    bundleDiscoveryOptions: options,
+                    derivedDisplayName: derivedDisplayName
+                )
             }
         }
         
         public init(from decoder: Decoder) throws {
             let bundleDiscoveryOptions = decoder.userInfo[.bundleDiscoveryOptions] as? BundleDiscoveryOptions
+            let derivedDisplayName = decoder.userInfo[.derivedDisplayName] as? String
             
             try self.init(
                 with: decoder.container(keyedBy: CodingKeys.self),
-                bundleDiscoveryOptions: bundleDiscoveryOptions
+                bundleDiscoveryOptions: bundleDiscoveryOptions,
+                derivedDisplayName: derivedDisplayName
             )
         }
         
         private init(
             with values: KeyedDecodingContainer<DocumentationBundle.Info.CodingKeys>?,
-            bundleDiscoveryOptions: BundleDiscoveryOptions?
+            bundleDiscoveryOptions: BundleDiscoveryOptions?,
+            derivedDisplayName: String?
         ) throws {
             // Here we define two helper functions that simplify
             // the decoding logic where we'll need to first check if the value
@@ -134,13 +146,16 @@ extension DocumentationBundle {
             }
             
             /// Helper function that decodes a value of the given type for the given key
-            /// in either the Codable container or Info.plist fallbacks.
+            /// in either the Codable container or Info.plist fallbacks or an optional fallback value.
             func decodeOrFallback<T>(
-                _ expectedType: T.Type, with key: CodingKeys
+                _ expectedType: T.Type, with key: CodingKeys,
+                fallback: T? = nil
             ) throws -> T where T : Decodable {
                 if let bundleDiscoveryOptions = bundleDiscoveryOptions {
                     return try values?.decodeIfPresent(T.self, forKey: key)
                         ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
+                } else if let fallback = fallback {
+                    return try values?.decodeIfPresent(T.self, forKey: key) ?? fallback
                 } else if let values = values {
                     return try values.decode(T.self, forKey: key)
                 } else {
@@ -154,11 +169,17 @@ extension DocumentationBundle {
             // This allows us to throw a more comprehensive error that includes
             // **all** missing required keys, instead of just the first one hit.
             
-            let givenKeys = Set(values?.allKeys ?? []).union(
+            var givenKeys = Set(values?.allKeys ?? []).union(
                 bundleDiscoveryOptions?.infoPlistFallbacks.keys.compactMap {
                     CodingKeys(stringValue: $0)
                 } ?? []
             )
+            
+            // If present, we can use the `derivedDisplayName`
+            // as a fallback for the `Info.displayName` and `Info.identifier`.
+            if derivedDisplayName != nil {
+                givenKeys.formUnion([.displayName, .identifier])
+            }
             
             let missingKeys = Self.requiredKeys.subtracting(givenKeys)
             
@@ -170,8 +191,8 @@ extension DocumentationBundle {
             // by decoding the required keys, throwing an error if we fail to
             // decode them for some reason.
             
-            self.displayName = try decodeOrFallback(String.self, with: .displayName)
-            self.identifier = try decodeOrFallback(String.self, with: .identifier)
+            self.displayName = try decodeOrFallback(String.self, with: .displayName, fallback: derivedDisplayName)
+            self.identifier = try decodeOrFallback(String.self, with: .identifier, fallback: derivedDisplayName)
             self.version = try decodeOrFallbackIfPresent(String.self, with: .version)
             
             // Finally, decode the optional keys if they're present.
@@ -261,4 +282,6 @@ extension BundleDiscoveryOptions {
 private extension CodingUserInfoKey {
     /// A user info key to store bundle discovery options in the decoder.
     static let bundleDiscoveryOptions = CodingUserInfoKey(rawValue: "bundleDiscoveryOptions")!
+    /// A user info key to store derived display name in the decoder.
+    static let derivedDisplayName = CodingUserInfoKey(rawValue: "derivedDisplayName")!
 }

@@ -28,17 +28,6 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     }
     
     public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        let info: DocumentationBundle.Info
-        do {
-            info = try DocumentationBundle.Info(bundleDiscoveryOptions: options)
-        } catch {
-            throw Error.notEnoughDataToGenerateBundle(options: options, underlyingError: error)
-        }
-        
-        guard !options.additionalSymbolGraphFiles.isEmpty else {
-            return []
-        }
-        
         // Find all the unique module names from the symbol graph files and generate a top level module page for each of them.
         var moduleNames = Set<String>()
         for url in options.additionalSymbolGraphFiles {
@@ -47,6 +36,25 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
             }
             let container = try JSONDecoder().decode(SymbolGraphModuleContainer.self, from: data)
             moduleNames.insert(container.module.name)
+        }
+        let info: DocumentationBundle.Info
+        do {
+            let derivedDisplayName: String?
+            if moduleNames.count == 1, let moduleName = moduleNames.first {
+                derivedDisplayName = moduleName
+            } else {
+                derivedDisplayName = nil
+            }
+            info = try DocumentationBundle.Info(
+                bundleDiscoveryOptions: options,
+                derivedDisplayName: derivedDisplayName
+            )
+        } catch {
+            throw Error.notEnoughDataToGenerateBundle(options: options, underlyingError: error)
+        }
+        
+        guard !options.additionalSymbolGraphFiles.isEmpty else {
+            return []
         }
         
         if moduleNames.count == 1, let moduleName = moduleNames.first, moduleName != info.displayName {
