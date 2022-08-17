@@ -120,8 +120,8 @@ extension ExtendedTypesFormatTransformation {
     /// If it finds such symbols, it applies the actual transformation. Refer to the sections below to find
     /// out how the two formats differ.
     ///
-    /// In addition, the transformation prepends the given `moduleName` to the `pathComponents` of all
-    /// symbols in the graph.
+    /// In addition, the transformation prepends each symbol's `swiftExtension.extendedModule`
+    /// name to its `pathComponents`.
     ///
     /// ### The Extension Block Symbol Format
     ///

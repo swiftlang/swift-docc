@@ -78,17 +78,8 @@ final class DocumentationCacheBasedLinkResolver {
     func referenceFor(absoluteSymbolPath path: String, parent: ResolvedTopicReference) -> ResolvedTopicReference? {
         // Check if `destination` is a known absolute reference URL.
         if let match = referencesIndex[path] { return match }
-
-        // Check if `destination` is a known absolute symbol path...
-        if !path.hasPrefix("/") && parent.pathComponents.count > 2 {
-            // ...in the parent's module
-            let parentModule = parent.pathComponents[2]
-            let referenceURLString = "doc://\(parent.bundleIdentifier)/documentation/\(parentModule)/\(path)"
-            if let reference = referencesIndex[referenceURLString] {
-                return reference
-            }
-        }
-         // ...globally
+        
+        // Check if `destination` is a known absolute symbol path.
         let referenceURLString = "doc://\(parent.bundleIdentifier)/documentation/\(path.hasPrefix("/") ? String(path.dropFirst()) : path)"
         return referencesIndex[referenceURLString]
     }
@@ -307,6 +298,8 @@ final class DocumentationCacheBasedLinkResolver {
         return .failure(unresolvedReference, errorMessage: "No local documentation matches this reference.")
     }
     
+    
+    // MARK: Symbol reference creation
     
     /// Returns a map between symbol identifiers and topic references.
     ///

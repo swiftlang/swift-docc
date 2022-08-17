@@ -344,37 +344,67 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(referencingFileDiagnostics.filter({ $0.identifier == "org.swift.docc.unresolvedTopicReference" }).count, 1)
     }
     
-    func testAbsoluteAndRelativeReferencesToExternalAndExtensionSymbols() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "BundleWithRelativePathAmbiguity")
+    func testRelativeReferencesToExtensionSymbols() throws {
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
+            // We don't want the external target to be part of the archive as that is not
+            // officially supported yet.
+            try FileManager.default.removeItem(at: root.appendingPathComponent("Dependency.symbols.json"))
+            
+            try """
+            # ``BundleWithRelativePathAmbiguity/Dependency``
+
+            ## Overview
+            
+            ### Module Scope Links
+            
+            - ``BundleWithRelativePathAmbiguity/Dependency``
+            - ``BundleWithRelativePathAmbiguity/Dependency/AmbiguousType``
+            - ``BundleWithRelativePathAmbiguity/Dependency/AmbiguousType/foo()``
+            
+            ### Extended Module Scope Links
+            
+            - ``Dependency``
+            - ``Dependency/AmbiguousType``
+            - ``Dependency/AmbiguousType/foo()``
+            
+            ### Local Scope Links
+            
+            - ``Dependency``
+            - ``AmbiguousType``
+            - ``AmbiguousType/foo()``
+            """.write(to: root.appendingPathComponent("Article.md"), atomically: true, encoding: .utf8)
+        }
         
         defer { try? FileManager.default.removeItem(at: bundleURL) }
         
         // Get a translated render node
-        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity", sourceLanguage: .swift))
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency", sourceLanguage: .swift))
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
         
         let content = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection).content
         
-        func assertListedReferencesInSectionMatchHeading(_ absoluteShorthandReference: String) throws {
-            let headingString = "`\(absoluteShorthandReference)`"
-            let absoluteReferenceString = "doc://org.swift.docc.example/documentation\(absoluteShorthandReference)"
+        let expectedReferences = [
+            "doc://org.swift.docc.example/documentation/BundleWithRelativePathAmbiguity/Dependency",
+            "doc://org.swift.docc.example/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType",
+            "doc://org.swift.docc.example/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType/foo()",
+        ]
+        
+        let sectionContents = [
+            content.contents(of: "Module Scope Links"),
+            content.contents(of: "Extended Module Scope Links"),
+            content.contents(of: "Local Scope Links"),
+        ]
+        
+        let sectionReferences = try sectionContents.map { sectionContent in
+            try sectionContent.listItems().map { item in try XCTUnwrap(item.firstReference(), "found no reference for \(item)") }
+        }
             
-            for listItem in content.contents(of: headingString).listItems() {
-                let reference = try XCTUnwrap(listItem.firstReference(), "found no reference for \(listItem)")
-                XCTAssertEqual(reference.identifier, absoluteReferenceString, "found mismatch for \(listItem)")
+        for resolvedReferencesOfSection in sectionReferences {
+            zip(resolvedReferencesOfSection, expectedReferences).forEach { resolved, expected in
+                XCTAssertEqual(resolved.identifier, expected)
             }
         }
-        
-        try assertListedReferencesInSectionMatchHeading("/BundleWithRelativePathAmbiguity")
-        try assertListedReferencesInSectionMatchHeading("/Dependency")
-        try assertListedReferencesInSectionMatchHeading("/BundleWithRelativePathAmbiguity/Dependency")
-        try assertListedReferencesInSectionMatchHeading("/Dependency/AmbiguousType")
-        try assertListedReferencesInSectionMatchHeading("/Dependency/AmbiguousProtocol")
-        try assertListedReferencesInSectionMatchHeading("/Dependency/UnambiguousType")
-        try assertListedReferencesInSectionMatchHeading("/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType")
-        try assertListedReferencesInSectionMatchHeading("/BundleWithRelativePathAmbiguity/Dependency/AmbiguousProtocol")
-        try assertListedReferencesInSectionMatchHeading("/Dependency/AmbiguousType/unambiguousFunction()")
     }
     
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
