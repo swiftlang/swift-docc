@@ -78,6 +78,7 @@ extension ConvertAction {
             diagnosticLevel: convert.diagnosticLevel,
             emitFixits: convert.emitFixits,
             inheritDocs: convert.enableInheritedDocs,
+            warningAsError: convert.treatWarningAsError,
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
             transformForStaticHosting: convert.transformForStaticHosting,
             hostingBasePath: convert.hostingBasePath,
