@@ -13,7 +13,7 @@ import Foundation
 extension RenderNode: Codable {
     private enum CodingKeys: CodingKey {
         case schemaVersion, identifier, sections, references, metadata, kind, hierarchy
-        case abstract, topicSections, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides
+        case abstract, topicSections, topicSectionsStyle, defaultImplementationsSections, primaryContentSections, relationshipsSections, declarationSections, seeAlsoSections, returnsSection, parametersSection, sampleCodeDownload, downloadNotAvailableSummary, deprecationSummary, diffAvailability, interfaceLanguage, variants, variantOverrides
     }
     
     public init(from decoder: Decoder) throws {
@@ -26,6 +26,7 @@ extension RenderNode: Codable {
         metadata = try container.decode(RenderMetadata.self, forKey: .metadata)
         kind = try container.decode(Kind.self, forKey: .kind)
         hierarchy = try container.decodeIfPresent(RenderHierarchy.self, forKey: .hierarchy)
+        topicSectionsStyle = try container.decodeIfPresent(TopicsSectionStyle.self, forKey: .topicSectionsStyle) ?? .list
         
         primaryContentSectionsVariants = try container.decodeVariantCollectionArrayIfPresent(
             ofValueType: CodableContentSection?.self,
@@ -79,6 +80,9 @@ extension RenderNode: Codable {
         try container.encode(metadata, forKey: .metadata)
         try container.encode(kind, forKey: .kind)
         try container.encode(hierarchy, forKey: .hierarchy)
+        if topicSectionsStyle != .list {
+            try container.encode(topicSectionsStyle, forKey: .topicSectionsStyle)
+        }
         
         try container.encodeVariantCollection(abstractVariants, forKey: .abstract, encoder: encoder)
         

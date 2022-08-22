@@ -73,15 +73,33 @@ extension Semantic.Analyses {
             let arguments = directive.arguments(problems: &problems)
             let source = directive.range?.lowerBound.source
             let diagnosticArgumentName = argumentName.isEmpty ? "unlabeled" : argumentName
+            
             guard let argument = arguments[argumentName] else {
                 if let severity = severityIfNotFound {
-                    let diagnostic = Diagnostic(source: source, severity: severity, range: directive.range, identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName)", summary: "\(Parent.directiveName) expects an argument \(argumentName.singleQuoted) that's convertible to \(valueTypeDiagnosticName.singleQuoted)")
+                    let argumentDiagnosticDescription: String
+                    if argumentName.isEmpty {
+                        argumentDiagnosticDescription = "an unnamed parameter"
+                    } else {
+                        argumentDiagnosticDescription = "the \(argumentName.singleQuoted) parameter"
+                    }
+                    
+                    let diagnostic = Diagnostic(
+                        source: source,
+                        severity: severity,
+                        range: directive.range,
+                        identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName)",
+                        summary: "Missing argument for \(diagnosticArgumentName) parameter",
+                        explanation: """
+                            \(Parent.directiveName) expects an argument for \(argumentDiagnosticDescription) \
+                            that's convertible to \(valueTypeDiagnosticName.singleQuoted)
+                            """
+                    )
                     problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
                 }
                 return nil
             }
             guard let value = convert(argument.value) else {
-                let diagnostic = Diagnostic(source: source, severity: .warning, range: argument.valueRange, identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName).ConversionFailed", summary: "Can't convert \(argument.value.singleQuoted) to type \(valueTypeDiagnosticName)")
+                let diagnostic = Diagnostic(source: source, severity: .warning, range: argument.valueRange, identifier: "org.swift.docc.HasArgument.\(diagnosticArgumentName).ConversionFailed", summary: "Cannot convert \(argument.value.singleQuoted) to type \(valueTypeDiagnosticName.singleQuoted)")
                 let solutions = allowedValues.map { allowedValues -> [Solution] in
                     return allowedValues.compactMap { allowedValue -> Solution? in
                         guard let range = argument.valueRange else {

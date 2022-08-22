@@ -162,6 +162,9 @@ public struct RenderNode: VariantContainer {
     /// The variants of the primary content sections of the node, which are the main sections of a reference documentation node.
     public var primaryContentSectionsVariants: [VariantCollection<CodableContentSection?>] = []
     
+    /// The visual style that should be used when rendering this page's Topics section.
+    public var topicSectionsStyle: TopicsSectionStyle
+    
     /// The default Topics sections of this documentation node, which contain links to useful related documentation nodes.
     public var topicSections: [TaskGroupRenderSection] {
         get { getVariantDefaultValue(keyPath: \.topicSectionsVariants) }
@@ -234,6 +237,7 @@ public struct RenderNode: VariantContainer {
     public init(identifier: ResolvedTopicReference, kind: Kind) {
         self.identifier = identifier
         self.kind = kind
+        self.topicSectionsStyle = .list
     }
     
     // MARK: Tutorials nodes

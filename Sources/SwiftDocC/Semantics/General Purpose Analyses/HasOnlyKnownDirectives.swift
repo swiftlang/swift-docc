@@ -48,7 +48,7 @@ extension Semantic.Analyses {
                         if allowedDirectives.contains(childDirective.name) {
                             summary = nil // This directive is allowed
                         } else {
-                            summary = "Block directive \(childDirective.name.singleQuoted) is unknown or invalid as a child of directive \(directive.name.singleQuoted)."
+                            summary = "\(childDirective.name.singleQuoted) directive is unsupported as a child of the \(directive.name.singleQuoted) directive"
                         }
                     } else if !allowsMarkup {
                         summary = "Arbitrary markup content is not allowed as a child of \(directive.name.singleQuoted)."
@@ -58,7 +58,19 @@ extension Semantic.Analyses {
                     
                     if let summary = summary {
                         let diagnostic = Diagnostic(source: source, severity: severity, range: child.range, identifier: "org.swift.docc.HasOnlyKnownDirectives", summary: summary, explanation: "These directives are allowed: \(allowedDirectivesList)")
-                        problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                        
+                        var solution: Solution?
+                        if let childRange = child.range {
+                            solution = Solution(
+                                summary: "Remove unsupported child content",
+                                replacements: [
+                                    Replacement(range: childRange, replacement: "")
+                                ]
+                            )
+                        }
+                        
+                        
+                        problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solution.map { [$0] } ?? []))
                     }
                 }
             }

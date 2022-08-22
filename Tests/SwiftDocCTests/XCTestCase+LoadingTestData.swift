@@ -77,10 +77,7 @@ extension XCTestCase {
         return bundles[0]
     }
     
-    func parseDirective<Directive: RenderableDirectiveConvertible>(
-        _ directive: Directive.Type,
-        source: () -> String
-    ) throws -> (renderBlockContent: RenderBlockContent?, problemIdentifiers: [String], directive: Directive?) {
+    func testBundleAndContext() throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
                 displayName: "Test",
@@ -96,6 +93,43 @@ extension XCTestCase {
         let workspace = DocumentationWorkspace()
         try workspace.registerProvider(provider)
         let context = try DocumentationContext(dataProvider: workspace)
+        
+        return (bundle, context)
+    }
+    
+    func parseDirective<Directive: DirectiveConvertible>(
+        _ directive: Directive.Type,
+        source: () -> String
+    ) throws -> (problemIdentifiers: [String], directive: Directive?) {
+        let (bundle, context) = try testBundleAndContext()
+        
+        let document = Document(parsing: source(), options: .parseBlockDirectives)
+        
+        let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
+        
+        var problems = [Problem]()
+        let directive = directive.init(
+            from: blockDirectiveContainer,
+            source: nil,
+            for: bundle,
+            in: context,
+            problems: &problems
+        )
+        
+        let problemIDs = problems.map { problem -> String in
+            let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
+            
+            return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
+        }.sorted()
+        
+        return (problemIDs, directive)
+    }
+    
+    func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
+        source: () -> String
+    ) throws -> (renderBlockContent: RenderBlockContent?, problemIdentifiers: [String], directive: Directive?) {
+        let (bundle, context) = try testBundleAndContext()
         
         let document = Document(parsing: source(), options: .parseBlockDirectives)
         

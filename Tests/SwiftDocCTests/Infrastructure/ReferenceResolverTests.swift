@@ -406,7 +406,7 @@ class ReferenceResolverTests: XCTestCase {
         
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil))
+        let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil, options: [:]))
         
         var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
         let resolvedArticle = try XCTUnwrap(resolver.visitArticle(article) as? Article)

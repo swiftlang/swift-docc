@@ -208,6 +208,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             
     func testArticleRoles() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
         
         // Verify article's role
         do {
@@ -218,7 +219,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             My conclusion.
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
-            let article = Article(markup: document.root, metadata: nil, redirects: nil)
+            let article = try XCTUnwrap(
+                Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+            )
             let translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/article", fragment: nil, sourceLanguage: .swift), source: nil)
             
             XCTAssertEqual(RenderMetadata.Role.article, translator.contentRenderer.roleForArticle(article, nodeKind: .article))
@@ -239,7 +242,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             let translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/article", fragment: nil, sourceLanguage: .swift), source: nil)
 
             // Verify a collection group
-            let article1 = Article(markup: document.root, metadata: nil, redirects: nil)
+            let article1 = try XCTUnwrap(
+                Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+            )
             XCTAssertEqual(RenderMetadata.Role.collectionGroup, translator.contentRenderer.roleForArticle(article1, nodeKind: .article))
             
             let metadataSource = """
@@ -247,13 +252,15 @@ class RenderNodeTranslatorTests: XCTestCase {
                @TechnologyRoot
             }
             """
-            let metadataDocument = Document(parsing: metadataSource, options: .parseBlockDirectives)
-            let directive = metadataDocument.child(at: 0) as! BlockDirective
-            var problems = [Problem]()
-            let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let metadataDocument = Document(
+                parsing: source + "\n" + metadataSource,
+                options: .parseBlockDirectives
+            )
 
             // Verify a collection
-            let article2 = Article(markup: document.root, metadata: metadata, redirects: nil)
+            let article2 = try XCTUnwrap(
+                Article(from: metadataDocument.root, source: nil, for: bundle, in: context, problems: &problems)
+            )
             XCTAssertEqual(RenderMetadata.Role.collection, translator.contentRenderer.roleForArticle(article2, nodeKind: .article))
         }
     }
@@ -284,6 +291,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
     func testEmtpyTaskGroupsNotRendered() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
         
         let source = """
             # My Article
@@ -317,7 +325,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             
             """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        let article = Article(markup: document.root, metadata: nil, redirects: nil)
+        let article = try XCTUnwrap(
+            Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+        )
         let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/taskgroups", fragment: nil, sourceLanguage: .swift)
         context.documentationCache[reference] = try DocumentationNode(reference: reference, article: article)
         let topicGraphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: URL(fileURLWithPath: "/path/to/article.md")), title: "My Article")

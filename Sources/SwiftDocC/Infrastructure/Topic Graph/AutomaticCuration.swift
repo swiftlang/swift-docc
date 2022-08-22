@@ -123,6 +123,14 @@ public struct AutomaticCuration {
         renderContext: RenderContext?,
         renderer: DocumentationContentRenderer
     ) throws -> TaskGroup? {
+        if let automaticSeeAlsoOption = node.options?.automaticSeeAlsoBehavior
+            ?? context.options?.automaticSeeAlsoBehavior
+        {
+            guard automaticSeeAlsoOption == .siblingPages else {
+                return nil
+            }
+        }
+        
         // First try getting the canonical path from a render context, default to the documentation context
         guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.pathsTo(node.reference).first,
             !canonicalPath.isEmpty else {

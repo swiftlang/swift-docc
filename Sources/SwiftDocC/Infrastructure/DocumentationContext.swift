@@ -127,6 +127,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// The graph of all the documentation content and their relationships to each other.
     var topicGraph = TopicGraph()
+    
+    /// User-provided global options for this documentation conversion.
+    var options: Options?
 
     /// A value to control whether the set of manually curated references found during bundle registration should be stored. Defaults to `false`. Setting this property to `false` clears any stored references from `manuallyCuratedReferences`.
     public var shouldStoreManuallyCuratedReferences: Bool = false {
@@ -1980,6 +1983,43 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // All discovery went well, process the inputs.
         let (technologies, tutorials, tutorialArticles, allArticles) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
+        
+        let globalOptions = (allArticles + uncuratedDocumentationExtensions.values.flatMap { $0 }).compactMap { article in
+            return article.value.options[.global]
+        }
+        
+        if globalOptions.count > 1 {
+            let extraGlobalOptionsProblems = globalOptions.map { extraOptionsDirective -> Problem in
+                let diagnostic = Diagnostic(
+                    source: extraOptionsDirective.originalMarkup.nameLocation?.source,
+                    severity: .warning,
+                    range: extraOptionsDirective.originalMarkup.range,
+                    identifier: "org.swift.docc.DuplicateGlobalOptions",
+                    summary: "Duplicate \(extraOptionsDirective.scope) \(Options.directiveName.singleQuoted) directive",
+                    explanation: """
+                    A DocC catalog can only contain a single \(Options.directiveName.singleQuoted) \
+                    directive with the \(extraOptionsDirective.scope.rawValue.singleQuoted) scope.
+                    """
+                )
+                
+                guard let range = extraOptionsDirective.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
+                }
+                
+                let solution = Solution(
+                    summary: "Remove extraneous \(extraOptionsDirective.scope) \(Options.directiveName.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+                
+                return Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            }
+            
+            diagnosticEngine.emit(extraGlobalOptionsProblems)
+        } else {
+            options = globalOptions.first
+        }
         
         if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
             hierarchyBasedLinkResolver = hierarchyBasedResolver

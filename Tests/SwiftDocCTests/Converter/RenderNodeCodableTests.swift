@@ -10,6 +10,7 @@
 
 import XCTest
 @testable import SwiftDocC
+import Markdown
 
 class RenderNodeCodableTests: XCTestCase {
     
@@ -156,6 +157,70 @@ class RenderNodeCodableTests: XCTestCase {
         ResolvedTopicReference.sharedPool.sync { sharedPool in
             XCTAssertNil(sharedPool[uniqueBundleIdentifier])
         }
+    }
+    
+    func testDecodeRenderNodeWithoutTopicSectionStyle() throws {
+        let exampleRenderNodeJSON = Bundle.module.url(
+            forResource: "Operator",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let renderNodeData = try Data(contentsOf: exampleRenderNodeJSON)
+        
+        let renderNode = try JSONDecoder().decode(RenderNode.self, from: renderNodeData)
+        XCTAssertEqual(renderNode.topicSectionsStyle, .list)
+    }
+    
+    func testEncodeRenderNodeWithCustomTopicSectionStyle() throws {
+        let (bundle, context) = try testBundleAndContext()
+        var problems = [Problem]()
+        
+        let source = """
+            # My Great Article
+            
+            A great article.
+            
+            @Options {
+                @TopicsVisualStyle(compactGrid)
+            }
+            """
+        
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let article = try XCTUnwrap(
+            Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+        )
+        
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: "org.swift.docc.example",
+            path: "/documentation/test/customTopicSectionStyle",
+            fragment: nil,
+            sourceLanguage: .swift
+        )
+        context.documentationCache[reference] = try DocumentationNode(reference: reference, article: article)
+        let topicGraphNode = TopicGraph.Node(
+            reference: reference,
+            kind: .article,
+            source: .file(url: URL(fileURLWithPath: "/path/to/article.md")),
+            title: "My Article"
+        )
+        context.topicGraph.addNode(topicGraphNode)
+        
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let node = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        XCTAssertEqual(node.topicSectionsStyle, .compactGrid)
+        
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+        
+        let encodedNode = try encoder.encode(node)
+        let decodedNode = try decoder.decode(RenderNode.self, from: encodedNode)
+        XCTAssertEqual(decodedNode.topicSectionsStyle, .compactGrid)
     }
     
     private func assertVariantOverrides(_ variantOverrides: VariantOverrides) throws {

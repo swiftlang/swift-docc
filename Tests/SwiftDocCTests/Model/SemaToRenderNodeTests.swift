@@ -1782,6 +1782,32 @@ Document @1:1-11:19
             """
         )
     }
+    
+    func testArticleRoleHeadingsWithAutomaticTitleHeadingDisabled() throws {
+        try assertRoleHeadingForArticleInTestBundle(expectedRoleHeading: nil, content: """
+            # Article 2
+            
+            @Options {
+                @AutomaticTitleHeading(disabled)
+            }
+
+            This is article 2.
+            """
+        )
+    }
+    
+    func testArticleRoleHeadingsWithAutomaticTitleHeadingForPageKind() throws {
+        try assertRoleHeadingForArticleInTestBundle(expectedRoleHeading: "Article", content: """
+            # Article 2
+            
+            @Options {
+                @AutomaticTitleHeading(pageKind)
+            }
+
+            This is article 2.
+            """
+        )
+    }
 
     func testAPICollectionRoleHeading() throws {
         try assertRoleHeadingForArticleInTestBundle(expectedRoleHeading: nil, content: """

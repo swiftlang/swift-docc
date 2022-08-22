@@ -167,4 +167,45 @@ class ArticleTests: XCTestCase {
         let replacement = try XCTUnwrap(solution.replacements.first)
         XCTAssertEqual(replacement.replacement, "# <#Title#>")
     }
+    
+    func testArticleWithDuplicateOptions() throws {
+        let source = """
+        # Article
+        
+        @Options {
+            @AutomaticSeeAlso(disabled)
+        }
+
+        This is an abstract.
+        
+        @Options {
+            @AutomaticSeeAlso(siblingPages)
+        }
+
+        Here's an overview.
+        """
+        let document = Document(parsing: source, options: [.parseBlockDirectives])
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(article)
+        XCTAssertEqual(
+            problems.map(\.diagnostic.identifier),
+            [
+                "org.swift.docc.HasAtMostOne<Article, Options, local>.DuplicateChildren",
+            ]
+        )
+        
+        XCTAssertEqual(problems.count, 1)
+        XCTAssertEqual(
+            problems.first?.diagnostic.identifier,
+            "org.swift.docc.HasAtMostOne<Article, Options, local>.DuplicateChildren"
+        )
+        XCTAssertEqual(
+            problems.first?.diagnostic.range?.lowerBound.line,
+            9
+        )
+        
+        XCTAssertEqual(article?.options[.local]?.automaticSeeAlsoBehavior, .disabled)
+    }
 }

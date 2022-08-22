@@ -185,7 +185,7 @@ enum GeneratedDocumentationTopics {
             availableSourceLanguages: automaticCurationSourceLanguages,
             name: DocumentationNode.Name.conceptual(title: title),
             markup: Document(parsing: ""),
-            semantic: Article(markup: nil, metadata: nil, redirects: nil)
+            semantic: Article(markup: nil, metadata: nil, redirects: nil, options: [:])
         )
         
         let collectionTaskGroups = try AutomaticCuration.topics(for: temporaryCollectionNode, withTrait: nil, context: context)

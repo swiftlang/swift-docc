@@ -61,6 +61,11 @@ public struct DocumentationNode {
     
     /// If true, the node was created implicitly and should not generally be rendered as a page of documentation.
     public var isVirtual: Bool
+    
+    /// The authored options for this node.
+    ///
+    /// Allows for control of settings such as automatic see also generation.
+    public var options: Options?
 
     /// A discrete unit of documentation
     struct DocumentationChunk {
@@ -137,6 +142,13 @@ public struct DocumentationNode {
         self.platformNames = platformNames
         self.docChunks = [DocumentationChunk(source: .sourceCode(location: nil), markup: markup)]
         self.isVirtual = isVirtual
+        
+        if let article = semantic as? Article {
+            self.options = article.options[.local]
+        } else {
+            self.options = nil
+        }
+        
         updateAnchorSections()
     }
 
@@ -350,6 +362,8 @@ public struct DocumentationNode {
                 defaultVariantValue: ParametersSection(parameters: parameters)
             )
         }
+        
+        options = documentationExtension?.options[.local]
         
         updateAnchorSections()
     }
@@ -603,6 +617,7 @@ public struct DocumentationNode {
         self.docChunks = [DocumentationChunk(source: .documentationExtension, markup: articleMarkup)]
         self.markup = articleMarkup
         self.isVirtual = false
+        self.options = article.options[.local]
         
         updateAnchorSections()
     }
