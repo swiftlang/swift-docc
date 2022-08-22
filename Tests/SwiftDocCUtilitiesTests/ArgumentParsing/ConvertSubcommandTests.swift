@@ -437,4 +437,26 @@ class ConvertSubcommandTests: XCTestCase {
             XCTAssertFalse(convertOptions.transformForStaticHosting)
         }
     }
+    
+    func testTreatWarningAsrror() throws {
+        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        do {
+            // Passing no argument should default to the current working directory.
+            let convert = try Docc.Convert.parse([])
+            let convertAction = try ConvertAction(fromConvertCommand: convert)
+            XCTAssertEqual(convertAction.warningAsError, false)
+        } catch {
+            XCTFail("Failed to run docc convert without arguments.")
+        }
+        do {
+            // Passing no argument should default to the current working directory.
+            let convert = try Docc.Convert.parse([
+                "--treat-warning-as-error"
+            ])
+            let convertAction = try ConvertAction(fromConvertCommand: convert)
+            XCTAssertEqual(convertAction.warningAsError, true)
+        } catch {
+            XCTFail("Failed to run docc convert without arguments.")
+        }
+    }
 }

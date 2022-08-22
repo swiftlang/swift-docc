@@ -129,4 +129,30 @@ class DiagnosticEngineTests: XCTestCase {
             note: Test information
             """)
     }
+    
+    func testWarningAsError() {
+        let error = Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.tests", summary: "Test error"), possibleSolutions: [])
+        let warning = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test warning"), possibleSolutions: [])
+        let information = Problem(diagnostic: Diagnostic(source: nil, severity: .information, range: nil, identifier: "org.swift.docc.tests", summary: "Test information"), possibleSolutions: [])
+
+        let defaultEngine = DiagnosticEngine()
+
+        defaultEngine.emit(error)
+        defaultEngine.emit(warning)
+        defaultEngine.emit(information)
+        XCTAssertEqual(defaultEngine.problems.localizedDescription, """
+            error: Test error
+            warning: Test warning
+            """)
+
+        let engine = DiagnosticEngine(filterLevel: .information, warningAsError: true)
+        engine.emit(error)
+        engine.emit(warning)
+        engine.emit(information)
+        XCTAssertEqual(engine.problems.localizedDescription, """
+            error: Test error
+            error: Test warning
+            note: Test information
+            """)
+    }
 }

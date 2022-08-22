@@ -2557,6 +2557,84 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
     }
     
+    func testWarningAsError() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
+            TextFile(name: "Article.md", utf8Content: """
+            Bad title
+
+            This article has a malformed title and can't be analyzed, so it
+            produces one warning.
+            """),
+        ])
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+
+        do {
+            let engine = DiagnosticEngine()
+            var action = try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: true,
+                targetDirectory: targetDirectory,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
+                diagnosticEngine: engine
+            )
+            let result = try action.perform(logHandle: .none)
+            XCTAssertEqual(engine.problems.count, 1)
+            XCTAssertTrue(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
+            XCTAssertFalse(result.didEncounterError)
+        }
+        do {
+            let engine = DiagnosticEngine(warningAsError: true)
+            var action = try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: true,
+                targetDirectory: targetDirectory,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
+                diagnosticEngine: engine
+            )
+            let result = try action.perform(logHandle: .none)
+            XCTAssertEqual(engine.problems.count, 1)
+            XCTAssertTrue(result.didEncounterError)
+        }
+        
+        do {
+            var action = try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: true,
+                targetDirectory: targetDirectory,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
+                diagnosticEngine: nil,
+                warningAsError: true
+            )
+            let result = try action.perform(logHandle: .none)
+            XCTAssertTrue(result.didEncounterError)
+        }
+
+    }
+
+    
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {
         return problems.sorted(by: { (lhs, rhs) -> Bool in
             guard lhs.diagnostic.identifier != rhs.diagnostic.identifier else {
