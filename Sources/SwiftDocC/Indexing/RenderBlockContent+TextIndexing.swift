@@ -58,6 +58,8 @@ extension RenderBlockContent: TextIndexing {
                 return $0.term.inlineContent.rawIndexableTextContent(references: references)
                     + ( definition.isEmpty ? "" : " \(definition)" )
             }.joined(separator: " ")
+        default:
+            fatalError("unknown RenderBlockContent case in rawIndexableTextContent")
         }
     }
 }

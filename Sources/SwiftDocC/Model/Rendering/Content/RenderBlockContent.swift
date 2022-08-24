@@ -61,6 +61,17 @@ public enum RenderBlockContent: Equatable {
     /// A table that contains a list of row data.
     case table(Table)
 
+    // Warning: If you add a new case to this enum, make sure to handle it in the Codable
+    // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
+    // RenderBlockContent+TextIndexing.swift!
+
+    // This empty-marker case is here because non-frozen enums are only available when Library
+    // Evolution is enabled, which is not available to Swift Packages without unsafe flags
+    // (rdar://78773361). This can be removed once that is available and applied to Swift-DocC
+    // (rdar://89033233).
+    @available(*, deprecated, message: "this enum is nonfrozen and may be expanded in the future; please add a `default` case instead of matching this one")
+    case _nonfrozenEnum_useDefaultCase
+
     /// A paragraph of content.
     public struct Paragraph: Equatable {
         /// The content inside the paragraph.
@@ -466,6 +477,7 @@ extension RenderBlockContent: Codable {
         case .dictionaryExample: return .dictionaryExample
         case .table: return .table
         case .termList: return .termList
+        default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
     
@@ -511,6 +523,8 @@ extension RenderBlockContent: Codable {
             try container.encodeIfPresent(t.metadata, forKey: .metadata)
         case .termList(items: let l):
             try container.encode(l.items, forKey: .items)
+        default:
+            fatalError("unknown RenderBlockContent case in encode method")
         }
     }
 }
