@@ -11,9 +11,21 @@
 import Foundation
 import Markdown
 
+/// A directive convertible semantic object that uses property wrappers
+/// to support automatic parsing with diagnostics.
+///
+/// Conform to this protocol to create a directive that can be automatically
+/// converted from a given block directive markup object.
 protocol AutomaticDirectiveConvertible: DirectiveConvertible, Semantic {
     init(originalMarkup: BlockDirective)
     
+    /// Returns false if the directive is invalid and should not be initialized.
+    ///
+    /// Implement this method to perform additional validation after
+    /// a directive has been parsed.
+    ///
+    /// Return false if a serious enough error is encountered such that the directive
+    /// should not be initialized.
     func validate(
         source: URL?,
         for bundle: DocumentationBundle,
@@ -21,6 +33,42 @@ protocol AutomaticDirectiveConvertible: DirectiveConvertible, Semantic {
         problems: inout [Problem]
     ) -> Bool
     
+    /// The key paths to any property wrapped directive arguments, child directives,
+    /// or child markup properties.
+    ///
+    /// This allows the automatic directive conversion to set these values based on the
+    /// property names that Swift's mirror provides. This should no longer be necessary
+    /// with future improvements to introspection in Swift.
+    ///
+    /// > Important: Provide the key paths to the underscored property wrappers, not the
+    /// > non-underscored projected values of the property wrappers.
+    ///
+    ///     class Intro: Semantic, AutomaticDirectiveConvertible {
+    ///         let originalMarkup: BlockDirective
+    ///
+    ///         @DirectiveArgumentWrapped
+    ///         private(set) var title: String
+    ///
+    ///         @ChildDirective
+    ///         private(set) var video: VideoMedia? = nil
+    ///
+    ///         @ChildDirective
+    ///         private(set) var image: ImageMedia? = nil
+    ///
+    ///         @ChildMarkup(numberOfParagraphs: .zeroOrMore)
+    ///         private(set) var content: MarkupContainer
+    ///
+    ///         static var keyPaths: [String : AnyKeyPath] = [
+    ///             "title"     : \Intro._title,
+    ///             "video"     : \Intro._video,
+    ///             "image"     : \Intro._image,
+    ///             "content"   : \Intro._content,
+    ///         ]
+    ///
+    ///         init(originalMarkup: BlockDirective) {
+    ///             self.originalMarkup = originalMarkup
+    ///         }
+    ///     }
     static var keyPaths: [String : AnyKeyPath] { get }
 }
 
