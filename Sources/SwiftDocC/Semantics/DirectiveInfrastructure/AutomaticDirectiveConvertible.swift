@@ -40,6 +40,19 @@ extension AutomaticDirectiveConvertible {
 }
 
 extension AutomaticDirectiveConvertible {
+    /// Creates a directive from a given piece of block directive markup.
+    ///
+    /// Performs some semantic analyses to determine whether a valid directive can be created
+    /// and returns nils upon failure.
+    ///
+    /// > Tip: ``DirectiveConvertible/init(from:source:for:in:problems:)`` performs
+    /// the same function but supports collecting an array of problems for diagnostics.
+    ///
+    /// - Parameters:
+    ///     - directive: The block directive that will be parsed
+    ///     - source: An optional URL for the source location where this directive is written.
+    ///     - bundle: The documentation bundle that owns the directive.
+    ///     - context: The documentation context in which the bundle resides.
     public init?(
         from directive: BlockDirective,
         source: URL? = nil,

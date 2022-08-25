@@ -31,6 +31,29 @@ enum ChildDirectiveRequirements {
     case oneOrMore
 }
 
+/// A property wrapper that represents a child directive.
+///
+/// This property wrapper is used internally in Swift-DocC when declaring directives
+/// that support specific child directives.
+///
+///     class Row: Semantic, AutomaticDirectiveConvertible {
+///         let originalMarkup: BlockDirective
+///
+///         @ChildDirective
+///         private(set) var columns: [Column]
+///
+///         static var keyPaths: [String : AnyKeyPath] = [
+///             "columns" : \Row._columns,
+///         ]
+///
+///         init(originalMarkup: BlockDirective) {
+///             self.originalMarkup = originalMarkup
+///         }
+///     }
+///
+/// > Warning: This property wrapper is exposed as public API of SwiftDocC so that clients
+/// > have access to its projected value, but it is unsupported to attach this property
+/// > wrapper to new declarations outside of SwiftDocC.
 @propertyWrapper
 public struct ChildDirective<Value>: _ChildDirectiveProtocol {
     let storedAsArray: Bool

@@ -30,6 +30,29 @@ enum _ChildMarkupParagraphs {
     case custom(Int)
 }
 
+/// A property wrapper that represents general-purpose markup within a directive.
+///
+/// This property wrapper is used internally in Swift-DocC when declaring directives
+/// that support child markup content.
+///
+///     class Column: Semantic, AutomaticDirectiveConvertible {
+///         let originalMarkup: BlockDirective
+///
+///         @ChildMarkup(numberOfParagraphs: .oneOrMore)
+///         public private(set) var content: MarkupContainer
+///
+///         static var keyPaths: [String : AnyKeyPath] = [
+///             "content" : \Column._content,
+///         ]
+///
+///         init(originalMarkup: BlockDirective) {
+///             self.originalMarkup = originalMarkup
+///         }
+///     }
+///
+/// > Warning: This property wrapper is exposed as public API of SwiftDocC so that clients
+/// > have access to its projected value, but it is unsupported to attach this property
+/// > wrapper to new declarations outside of SwiftDocC.
 @propertyWrapper
 public struct ChildMarkup<Value>: _ChildMarkupProtocol {
     var parsedValue: Value?

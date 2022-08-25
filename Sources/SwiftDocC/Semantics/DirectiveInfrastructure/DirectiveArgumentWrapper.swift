@@ -32,6 +32,32 @@ enum _DirectiveArgumentName {
     case inferredFromPropertyName
 }
 
+/// A property wrapper that represents a directive argument.
+///
+/// This property wrapper is used internally in Swift-DocC when declaring directives
+/// that accept arguments.
+///
+/// For example, this code snippet declares a `@CustomDisplayName` directive that accepts
+/// a `name` argument with a `String` type.
+///
+///     class CustomDisplayName: Semantic, AutomaticDirectiveConvertible {
+///         let originalMarkup: BlockDirective
+///
+///         @DirectiveArgumentWrapper(name: .unnamed)
+///         private(set) var name: String
+///
+///         static var keyPaths: [String : AnyKeyPath] = [
+///             "name" : \CustomDisplayName._name,
+///         ]
+///
+///         init(originalMarkup: BlockDirective) {
+///             self.originalMarkup = originalMarkup
+///         }
+///     }
+///
+/// > Warning: This property wrapper is exposed as public API of SwiftDocC so that clients
+/// > have access to its projected value, but it is unsupported to attach this property
+/// > wrapper to new declarations outside of SwiftDocC.
 @propertyWrapper
 public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     let name: _DirectiveArgumentName
