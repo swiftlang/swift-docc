@@ -11,21 +11,80 @@
 import Foundation
 
 struct DirectiveIndex {
-    var indexedDirectives = Synchronized<[String : DirectiveMirror.ReflectedDirective]>([:])
+    private static let topLevelReferenceDirectives: [AutomaticDirectiveConvertible.Type] = [
+        Metadata.self,
+        Redirect.self,
+        Snippet.self,
+        DeprecationSummary.self,
+    ]
     
-    static var shared = DirectiveIndex()
+    private static let topLevelTutorialDirectives: [AutomaticDirectiveConvertible.Type] = [
+        Tutorial.self,
+    ]
     
-    mutating func reflection(
+    /// Children of tutorial directives that have not yet been converted to be automatically
+    /// convertible.
+    ///
+    /// This is a temporary workaround until the migration is complete and these child directives
+    /// can be automatically reflected from their parent directives.
+    private static let otherTutorialDirectives: [AutomaticDirectiveConvertible.Type] = [
+        Stack.self,
+        Chapter.self,
+        Choice.self,
+    ]
+    
+    private static var allTopLevelDirectives = topLevelTutorialDirectives
+        + topLevelReferenceDirectives
+        + otherTutorialDirectives
+    
+    let indexedDirectives: [String : DirectiveMirror.ReflectedDirective]
+    
+    static let shared = DirectiveIndex()
+    
+    private init() {
+        // Pre-populate the directory index by iterating through the explicitly declared
+        // top-level directives, finding their children and reflecting those as well.
+        
+        var indexedDirectives = [String : DirectiveMirror.ReflectedDirective]()
+        
+        for directive in Self.allTopLevelDirectives {
+            let mirror = DirectiveMirror(reflecting: directive).reflectedDirective
+            indexedDirectives[mirror.name] = mirror
+        }
+        
+        var foundDirectives = indexedDirectives.values.flatMap(\.childDirectives).map(\.type)
+        
+        while !foundDirectives.isEmpty {
+            let directive = foundDirectives.removeFirst()
+            
+            guard !indexedDirectives.keys.contains(directive.directiveName) else {
+                continue
+            }
+            
+            guard let automaticDirectiveConvertible = directive as? AutomaticDirectiveConvertible.Type else {
+                continue
+            }
+            
+            let mirror = DirectiveMirror(reflecting: automaticDirectiveConvertible).reflectedDirective
+            indexedDirectives[mirror.name] = mirror
+            
+            for childDirective in mirror.childDirectives.map(\.type) {
+                guard !indexedDirectives.keys.contains(childDirective.directiveName) else {
+                    continue
+                }
+                
+                foundDirectives.append(childDirective)
+            }
+        }
+        
+        self.indexedDirectives = indexedDirectives
+    }
+    
+    func reflection(
         of directiveConvertible: AutomaticDirectiveConvertible.Type
     ) -> DirectiveMirror.ReflectedDirective {
-        if let indexedDirective = indexedDirectives.sync({ $0[directiveConvertible.directiveName] }) {
-            return indexedDirective
-        } else {
-            let reflectedDirective = DirectiveMirror(reflecting: directiveConvertible).reflectedDirective
-            indexedDirectives.sync {
-                $0[directiveConvertible.directiveName] = reflectedDirective
-            }
-            return reflectedDirective
-        }
+        // It's a programmer error if an automatic directive convertible
+        // is not in the pre-populated index.
+        return indexedDirectives[directiveConvertible.directiveName]!
     }
 }
