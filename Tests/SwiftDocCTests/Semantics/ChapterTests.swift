@@ -25,8 +25,8 @@ class ChapterTests: XCTestCase {
         XCTAssertNil(chapter)
         XCTAssertEqual(3, problems.count)
         XCTAssertEqual("org.swift.docc.HasArgument.name", problems[0].diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.HasAtLeastOne<\(Chapter.self), \(TutorialReference.self)>", problems[1].diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.Missing", problems[2].diagnostic.identifier)
+        XCTAssertTrue(problems.map(\.diagnostic.identifier).contains("org.swift.docc.HasAtLeastOne<\(Chapter.self), \(TutorialReference.self)>"))
+        XCTAssertTrue(problems.map(\.diagnostic.identifier).contains("org.swift.docc.HasExactlyOne<\(Chapter.self), \(ImageMedia.self)>.Missing"))
         
         XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
     }

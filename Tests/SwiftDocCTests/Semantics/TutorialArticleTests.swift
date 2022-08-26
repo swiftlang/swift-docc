@@ -29,7 +29,7 @@ class TutorialArticleTests: XCTestCase {
             XCTAssertEqual(2, problems.count)
             XCTAssertEqual([
                 "org.swift.docc.HasArgument.time",
-                "org.swift.docc.HasExactlyOne<\(TutorialArticle.self), \(Intro.self)>.Missing",
+                "org.swift.docc.HasExactlyOne<Article, \(Intro.self)>.Missing",
                 ],
                            problems.map { $0.diagnostic.identifier })
         }
@@ -273,9 +273,10 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
             let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
             XCTAssertNotNil(article)
             XCTAssertEqual(3, problems.count)
-            let arbitraryMarkupProblem = problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.HasOnlyKnownDirectives" })
+            let arbitraryMarkupProblem = problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.Stack.UnexpectedContent" })
             XCTAssertNotNil(arbitraryMarkupProblem)
-            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.localizedSummary, "Arbitrary markup content is not allowed as a child of 'Stack'.")
+            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.localizedSummary, "'Stack' contains unexpected content")
+            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.localizedExplanation, "Arbitrary markup content is not allowed as a child of the 'Stack' directive.")
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-81:2

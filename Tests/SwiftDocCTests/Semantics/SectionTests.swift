@@ -28,7 +28,7 @@ class TutorialSectionTests: XCTestCase {
             problems.map { $0.diagnostic.identifier },
             [
                 "org.swift.docc.HasArgument.title",
-                "org.swift.docc.HasExactlyOne<TutorialSection, Steps>.Missing",
+                "org.swift.docc.HasExactlyOne<Section, Steps>.Missing",
             ]
         )
         XCTAssert(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })

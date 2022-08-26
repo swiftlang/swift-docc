@@ -71,8 +71,8 @@ class HasAtMostOneTests: XCTestCase {
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertEqual(2, problems.count)
-            XCTAssertEqual("org.swift.docc.HasAtMostOne<\(TestParent.self), \(TestChild.self)>.DuplicateChildren", problems[0].diagnostic.identifier)
-            XCTAssertEqual("org.swift.docc.HasAtMostOne<\(TestParent.self), \(TestChild.self)>.DuplicateChildren", problems[1].diagnostic.identifier)
+            XCTAssertEqual("org.swift.docc.HasAtMostOne<Parent, \(TestChild.self)>.DuplicateChildren", problems[0].diagnostic.identifier)
+            XCTAssertEqual("org.swift.docc.HasAtMostOne<Parent, \(TestChild.self)>.DuplicateChildren", problems[1].diagnostic.identifier)
             XCTAssertEqual("""
                  warning: Duplicate 'Child' child directive
                  The 'Parent' directive must have at most one 'Child' child directive

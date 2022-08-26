@@ -63,6 +63,6 @@ class TutorialReferenceTests: XCTestCase {
         XCTAssertNil(tutorialReference)
         XCTAssertEqual(problems.count, 1)
         let problem = try XCTUnwrap(problems.first)
-        XCTAssertEqual("org.swift.docc.InvalidTutorialURL", problem.diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.HasArgument.tutorial.ConversionFailed", problem.diagnostic.identifier)
     }
 }

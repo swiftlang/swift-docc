@@ -21,16 +21,26 @@ import Markdown
 ///
 /// - ``DocumentationExtension``
 /// - ``TechnologyRoot``
-public final class Metadata: Semantic, DirectiveConvertible {
-    public static let directiveName = "Metadata"
+public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
     /// Configuration that describes how this documentation extension file merges or overrides the in-source documentation.
-    let documentationOptions: DocumentationExtension?
+    @ChildDirective
+    var documentationOptions: DocumentationExtension? = nil
+    
     /// Configuration to make this page root-level documentation.
-    let technologyRoot: TechnologyRoot?
+    @ChildDirective
+    var technologyRoot: TechnologyRoot? = nil
+    
     /// Configuration to customize this page's symbol's display name.
-    let displayName: DisplayName?
+    @ChildDirective
+    var displayName: DisplayName? = nil
+    
+    static var keyPaths: [String : AnyKeyPath] = [
+        "documentationOptions"  : \Metadata._documentationOptions,
+        "technologyRoot"        : \Metadata._technologyRoot,
+        "displayName"           : \Metadata._displayName,
+    ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
     /// - Parameters:
@@ -45,39 +55,29 @@ public final class Metadata: Semantic, DirectiveConvertible {
         self.displayName = displayName
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        precondition(directive.name == Metadata.directiveName)
-                
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Metadata>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        Semantic.Analyses.HasOnlyKnownDirectives<Metadata>(severityIfFound: .warning, allowedDirectives: [DocumentationExtension.directiveName, TechnologyRoot.directiveName, DisplayName.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        var remainder: MarkupContainer
-        let documentationExtension: DocumentationExtension?
-        (documentationExtension, remainder) = Semantic.Analyses.HasAtMostOne<Metadata, DocumentationExtension>().analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        let technologyRoot: TechnologyRoot?
-        (technologyRoot, remainder) = Semantic.Analyses.HasAtMostOne<Metadata, TechnologyRoot>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
-        
-        let displayName: DisplayName?
-        (displayName, remainder) = Semantic.Analyses.HasAtMostOne<Metadata, DisplayName>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
-        
-        if !remainder.isEmpty {
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(Metadata.directiveName).UnexpectedContent", summary: "\(Metadata.directiveName.singleQuoted) directive has content but none is expected")
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
-        }
-        
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: BlockDirective) {
+        self.originalMarkup = originalMarkup
+    }
+    
+    func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationExtension == nil && technologyRoot == nil && displayName == nil {
-            let diagnostic = Diagnostic(source: source, severity: .information, range: directive.range, identifier: "org.swift.docc.\(Metadata.directiveName).NoConfiguration", summary: "\(Metadata.directiveName.singleQuoted) doesn't configure anything and has no effect")
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil {
+            let diagnostic = Diagnostic(
+                source: source,
+                severity: .information,
+                range: originalMarkup.range,
+                identifier: "org.swift.docc.\(Metadata.directiveName).NoConfiguration",
+                summary: "\(Metadata.directiveName.singleQuoted) doesn't configure anything and has no effect"
+            )
             
-            let solutions = directive.range.map {
+            let solutions = originalMarkup.range.map {
                 [Solution(summary: "Remove this \(Metadata.directiveName.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
             } ?? []
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
         }
         
-        self.init(originalMarkup: directive, documentationExtension: documentationExtension, technologyRoot: technologyRoot, displayName: displayName)
+        return true
     }
 }
 

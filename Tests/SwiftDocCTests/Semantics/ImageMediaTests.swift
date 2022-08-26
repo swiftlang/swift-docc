@@ -80,10 +80,11 @@ class ImageMediaTests: XCTestCase {
         var problems = [Problem]()
         let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(image)
-        XCTAssertEqual(2, problems.count)
+        XCTAssertEqual(4, problems.count)
         XCTAssertFalse(problems.containsErrors)
         
         let expectedIds = [
+            "org.swift.docc.UnknownArgument",
             "org.swift.docc.HasArgument.alt",
             "org.swift.docc.HasArgument.source",
         ]

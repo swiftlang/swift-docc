@@ -105,7 +105,7 @@ class DisplayNameTests: XCTestCase {
         XCTAssertFalse(problems.containsErrors)
         XCTAssertEqual(2, problems.count)
         XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", problems.first?.diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.DisplayName.UnexpectedContent", problems.last?.diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", problems.last?.diagnostic.identifier)
     }
     
     func testExtraContent() throws {
@@ -122,6 +122,7 @@ class DisplayNameTests: XCTestCase {
         XCTAssertNotNil(displayName, "Even if there are warnings we can create a DisplayName value")
         XCTAssertFalse(problems.containsErrors)
         XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.DisplayName.UnexpectedContent", problems.first?.diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.DisplayName.NoInnerContentAllowed", problems.first?.diagnostic.identifier)
+        XCTAssertNotNil(problems.first?.possibleSolutions.first)
     }
 }

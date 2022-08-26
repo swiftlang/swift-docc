@@ -28,8 +28,14 @@ class HasExactlyOneTests: XCTestCase {
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertEqual(1, problems.count)
             problems.first.map { problem in
-                XCTAssertEqual("org.swift.docc.HasExactlyOne<TestParent, TestChild>.Missing", problem.diagnostic.identifier)
-                XCTAssertEqual("error: 'Parent' directive requires exactly one 'Child' child directive", problem.diagnostic.localizedDescription)
+                XCTAssertEqual("org.swift.docc.HasExactlyOne<Parent, TestChild>.Missing", problem.diagnostic.identifier)
+                XCTAssertEqual(
+                    problem.diagnostic.localizedDescription,
+                    """
+                    error: Missing 'Child' child directive
+                    The 'Parent' directive must have exactly one 'Child' child directive
+                    """
+                )
             }
         }
     }
@@ -75,11 +81,11 @@ class HasExactlyOneTests: XCTestCase {
             XCTAssertNotNil(match)
             XCTAssertTrue(remainder.isEmpty)
             XCTAssertEqual(2, problems.count)
-            XCTAssertEqual("org.swift.docc.HasExactlyOne<\(TestParent.self), \(TestChild.self)>.DuplicateChildren", problems[0].diagnostic.identifier)
-            XCTAssertEqual("org.swift.docc.HasExactlyOne<\(TestParent.self), \(TestChild.self)>.DuplicateChildren", problems[1].diagnostic.identifier)
-            XCTAssert(problems.allSatisfy { $0.diagnostic.severity == .warning })
+            XCTAssertEqual("org.swift.docc.HasExactlyOne<Parent, \(TestChild.self)>.DuplicateChildren", problems[0].diagnostic.identifier)
+            XCTAssertEqual("org.swift.docc.HasExactlyOne<Parent, \(TestChild.self)>.DuplicateChildren", problems[1].diagnostic.identifier)
+            XCTAssert(problems.allSatisfy { $0.diagnostic.severity == .error })
             XCTAssertEqual("""
-                 warning: Duplicate 'Child' child directive
+                 error: Duplicate 'Child' child directive
                  The 'Parent' directive must have exactly one 'Child' child directive
                  """, problems[0].diagnostic.localizedDescription)
 

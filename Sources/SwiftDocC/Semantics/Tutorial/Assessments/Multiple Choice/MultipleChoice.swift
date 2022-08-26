@@ -84,15 +84,11 @@ public final class MultipleChoice: Semantic, DirectiveConvertible {
         } else if correctAnswers.count > 1 {
             var diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(MultipleChoice.self).MultipleCorrectChoicesProvided", summary: "`\(MultipleChoice.directiveName)` should contain exactly one `\(Choice.directiveName)` directive marked as the correct option")
             for answer in correctAnswers {
-                let arguments = answer.originalMarkup.arguments()
-                guard let isCorrectArgument = arguments[Choice.Semantics.IsCorrect.argumentName],
-                      let nameRange = isCorrectArgument.nameRange,
-                      let valueRange = isCorrectArgument.valueRange else {
+                guard let range = answer.originalMarkup.range else {
                     continue
                 }
-                let argumentRange = nameRange.lowerBound..<valueRange.upperBound
                 if let source = source {
-                    let note = DiagnosticNote(source: source, range: argumentRange, message: "This `\(Choice.directiveName)` directive is marked as the correct option")
+                    let note = DiagnosticNote(source: source, range: range, message: "This `\(Choice.directiveName)` directive is marked as the correct option")
                     diagnostic.notes.append(note)
                 }
             }

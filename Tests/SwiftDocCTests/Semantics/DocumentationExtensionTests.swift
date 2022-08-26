@@ -93,7 +93,7 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertFalse(problems.containsErrors)
         XCTAssertEqual(2, problems.count)
         XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", problems.first?.diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.DocumentationExtension.UnexpectedContent", problems.last?.diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.DocumentationExtension.NoInnerContentAllowed", problems.last?.diagnostic.identifier)
     }
     
     func testExtraContent() throws {
@@ -110,7 +110,7 @@ class DocumentationExtensionTests: XCTestCase {
         XCTAssertNotNil(options, "Even if there are warnings we can create a DocumentationExtension value")
         XCTAssertFalse(problems.containsErrors)
         XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.DocumentationExtension.UnexpectedContent", problems.first?.diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.DocumentationExtension.NoInnerContentAllowed", problems.first?.diagnostic.identifier)
     }
     
     func testIncorrectArgumentLabel() throws {
