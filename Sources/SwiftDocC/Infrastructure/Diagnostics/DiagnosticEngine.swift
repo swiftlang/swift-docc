@@ -69,7 +69,7 @@ public final class DiagnosticEngine {
     /// - Parameter problems: The array of diagnostics to dispatch to this engine's currently subscribed consumers.
     /// > Note: Diagnostics are dispatched asynchronously.
     public func emit(_ problems: [Problem]) {
-        let mappedProblems = problems.map { problem in
+        let mappedProblems = problems.map { problem -> Problem in
             var problem = problem
             if warningsAsErrors, problem.diagnostic.severity == .warning {
                 problem.diagnostic.severity = .error
