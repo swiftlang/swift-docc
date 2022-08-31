@@ -444,17 +444,17 @@ class ConvertSubcommandTests: XCTestCase {
             // Passing no argument should default to the current working directory.
             let convert = try Docc.Convert.parse([])
             let convertAction = try ConvertAction(fromConvertCommand: convert)
-            XCTAssertEqual(convertAction.warningAsError, false)
+            XCTAssertEqual(convertAction.warningsAsErrors, false)
         } catch {
             XCTFail("Failed to run docc convert without arguments.")
         }
         do {
             // Passing no argument should default to the current working directory.
             let convert = try Docc.Convert.parse([
-                "--treat-warning-as-error"
+                "--warnings-as-errors"
             ])
             let convertAction = try ConvertAction(fromConvertCommand: convert)
-            XCTAssertEqual(convertAction.warningAsError, true)
+            XCTAssertEqual(convertAction.warningsAsErrors, true)
         } catch {
             XCTFail("Failed to run docc convert without arguments.")
         }

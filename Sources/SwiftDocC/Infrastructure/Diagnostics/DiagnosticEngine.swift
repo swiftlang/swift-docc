@@ -34,7 +34,7 @@ public final class DiagnosticEngine {
     }
     
     /// Determines whether warning will be treated as error
-    private let warningAsError: Bool
+    private let warningsAsErrors: Bool
 
     /// Determines which problems should be emitted.
     private var filter: (Problem) -> Bool
@@ -45,9 +45,9 @@ public final class DiagnosticEngine {
     }
 
     /// Creates a new diagnostic engine instance with no consumers.
-    public init(filterLevel: DiagnosticSeverity = .warning, warningAsError: Bool = false) {
+    public init(filterLevel: DiagnosticSeverity = .warning, warningsAsErrors: Bool = false) {
         self.filterLevel = filterLevel
-        self.warningAsError = warningAsError
+        self.warningsAsErrors = warningsAsErrors
         self.filter = { $0.diagnostic.severity.rawValue <= filterLevel.rawValue }
     }
 
@@ -71,7 +71,7 @@ public final class DiagnosticEngine {
     public func emit(_ problems: [Problem]) {
         let mappedProblems = problems.map { problem in
             var problem = problem
-            if warningAsError, problem.diagnostic.severity == .warning {
+            if warningsAsErrors, problem.diagnostic.severity == .warning {
                 problem.diagnostic.severity = .error
             }
             return problem

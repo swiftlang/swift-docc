@@ -130,7 +130,7 @@ class DiagnosticEngineTests: XCTestCase {
             """)
     }
     
-    func testWarningAsError() {
+    func testWarningsAsErrors() {
         let error = Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.tests", summary: "Test error"), possibleSolutions: [])
         let warning = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test warning"), possibleSolutions: [])
         let information = Problem(diagnostic: Diagnostic(source: nil, severity: .information, range: nil, identifier: "org.swift.docc.tests", summary: "Test information"), possibleSolutions: [])
@@ -145,7 +145,7 @@ class DiagnosticEngineTests: XCTestCase {
             warning: Test warning
             """)
 
-        let engine = DiagnosticEngine(filterLevel: .information, warningAsError: true)
+        let engine = DiagnosticEngine(filterLevel: .information, warningsAsErrors: true)
         engine.emit(error)
         engine.emit(warning)
         engine.emit(information)

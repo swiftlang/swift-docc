@@ -140,7 +140,7 @@ extension Docc {
         
         
         @Flag(help: "Treat diagnostics level of warning as error")
-        public var treatWarningAsError = false
+        public var warningsAsErrors = false
         
         /// Arguments for specifying information about the source code repository that hosts the documented project's code.
         @OptionGroup()

@@ -2557,7 +2557,7 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
     }
     
-    func testWarningAsError() throws {
+    func testWarningsAsErrors() throws {
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
@@ -2594,7 +2594,7 @@ class ConvertActionTests: XCTestCase {
             XCTAssertFalse(result.didEncounterError)
         }
         do {
-            let engine = DiagnosticEngine(warningAsError: true)
+            let engine = DiagnosticEngine(warningsAsErrors: true)
             var action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
@@ -2626,7 +2626,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 diagnosticEngine: nil,
-                warningAsError: true
+                warningsAsErrors: true
             )
             let result = try action.perform(logHandle: .none)
             XCTAssertTrue(result.didEncounterError)
