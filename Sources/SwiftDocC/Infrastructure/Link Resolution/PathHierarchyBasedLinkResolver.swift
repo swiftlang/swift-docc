@@ -51,7 +51,10 @@ final class PathHierarchyBasedLinkResolver {
             guard node.symbol != nil else { continue }
             
             guard let parentID = node.parent?.identifier else { continue }
-            observe(resolvedReferenceMap[id]!, resolvedReferenceMap[parentID]!)
+            
+            // Only symbols in the symbol index are added to the reference map.
+            guard let reference = resolvedReferenceMap[id], let parentReference = resolvedReferenceMap[parentID] else { continue }
+            observe(reference, parentReference)
         }
     }
     
