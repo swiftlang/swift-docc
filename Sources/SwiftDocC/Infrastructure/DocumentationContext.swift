@@ -1346,7 +1346,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                 linkResolutionMismatches.pathsWithMismatchedDisambiguation[hierarchyBasedReference.path] = cacheBasedMainReference.path
                             }
                         }
-                        for (id, cacheBasedReference) in cacheBasedReferences where !hierarchyBasedReferences.keys.contains(id) {
+                        for (id, cacheBasedReference) in cacheBasedReferences where !hierarchyBasedReferences.keys.contains(id) && symbolGraphLoader.hasPrimaryURL(moduleName: cacheBasedReference.pathComponents[2]) {
                             linkResolutionMismatches.missingPathsInHierarchyBasedLinkResolver.append(cacheBasedReference.path)
                         }
                     } else {
