@@ -686,6 +686,12 @@ extension PathHierarchy {
 
 // MARK: Determining disambiguated paths
 
+private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted
+
+private func symbolFileName(_ symbolName: String) -> String {
+    return symbolName.components(separatedBy: nonAllowedPathCharacters).joined(separator: "_")
+}
+
 extension PathHierarchy {
     /// Determines the least disambiguated paths for all symbols in the path hierarchy.
     ///
@@ -699,7 +705,7 @@ extension PathHierarchy {
     ) -> [String: String] {
         func descend(_ node: Node, accumulatedPath: String) -> [(String, (String, Bool))] {
             var results: [(String, (String, Bool))] = []
-            let caseInsensitiveChildren = [String: DisambiguationTree](node.children.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { $0.merge(with: $1) })
+            let caseInsensitiveChildren = [String: DisambiguationTree](node.children.map { (symbolFileName($0.key.lowercased()), $0.value) }, uniquingKeysWith: { $0.merge(with: $1) })
             
             for (_, tree) in caseInsensitiveChildren {
                 let disambiguatedChildren = tree.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: includeLanguage)
@@ -718,9 +724,9 @@ extension PathHierarchy {
                         if hash != "_" {
                             knownDisambiguation += "-\(hash)"
                         }
-                        path = accumulatedPath + "/" + node.name + knownDisambiguation
+                        path = accumulatedPath + "/" + symbolFileName(node.name) + knownDisambiguation
                     } else {
-                        path = accumulatedPath + "/" + node.name
+                        path = accumulatedPath + "/" + symbolFileName(node.name)
                     }
                     if let symbol = node.symbol {
                         results.append(
@@ -747,7 +753,23 @@ extension PathHierarchy {
         }
         
         // If a symbol node exist in multiple languages, prioritize the Swift variant.
-        return [String: (String, Bool)](gathered, uniquingKeysWith: { lhs, rhs in lhs.1 ? lhs : rhs }).mapValues({ $0.0 })
+        let result = [String: (String, Bool)](gathered, uniquingKeysWith: { lhs, rhs in lhs.1 ? lhs : rhs }).mapValues({ $0.0 })
+        
+        assert(
+            Set(result.values).count == result.keys.count,
+            {
+                let collisionDescriptions = result
+                    .reduce(into: [String: [String]](), { $0[$1.value, default: []].append($1.key) })
+                    .filter({ $0.value.count > 1 })
+                    .map { "\($0.key)\n\($0.value.map({ "  " + $0 }).joined(separator: "\n"))" }
+                return """
+                Disambiguated paths contain \(collisionDescriptions.count) collision(s):
+                \(collisionDescriptions.joined(separator: "\n"))
+                """
+            }()
+        )
+        
+        return result
     }
 }
 
