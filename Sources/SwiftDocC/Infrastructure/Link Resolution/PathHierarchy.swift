@@ -133,18 +133,6 @@ struct PathHierarchy {
                     continue
                 }
             }
-            for relationship in graph.relationships where [.defaultImplementationOf].contains(relationship.kind) {
-                guard let sourceNode = nodes[relationship.source], sourceNode.parent == nil else {
-                    continue
-                }
-                topLevelCandidates.removeValue(forKey: relationship.source)
-                guard let targetParent = nodes[relationship.target]?.parent else {
-                    continue
-                }
-                if targetParent.add(symbolChild: sourceNode) {
-                    nodes[relationship.source] = nil
-                }
-            }
             
             // The hierarchy doesn't contain any non-symbol nodes yet. It's OK to unwrap the `symbol` property.
             for topLevelNode in topLevelCandidates.values where topLevelNode.symbol!.pathComponents.count == 1 {
