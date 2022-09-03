@@ -2500,15 +2500,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let cacheBasedResult = documentationCacheBasedLinkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
                 
                 let inputInfo = LinkResolutionMismatches.FailedLinkInfo(
-                    path: unresolvedReference.topicURL.url.withoutHostAndPortAndScheme().absoluteString,
-                    parent: parent.url.withoutHostAndPortAndScheme().absoluteString,
+                    path: unresolvedReference.topicURL.url.path + (unresolvedReference.topicURL.url.fragment.map { "#" + $0 } ?? ""),
+                    parent: parent.url.path,
                     asSymbolLink: isCurrentlyResolvingSymbolLink
                 )
                 switch (hierarchyBasedResult, cacheBasedResult) {
                 case (.success, .failure):
-                    linkResolutionMismatches.mismatchedLinksThatCacheBasedLinkResolverFailedToResolve.insert(inputInfo)
+                    linkResolutionMismatches.mismatchedLinksThatCacheBasedLinkResolverFailedToResolve.sync { $0.insert(inputInfo) }
                 case (.failure, .success):
-                    linkResolutionMismatches.mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve.insert(inputInfo)
+                    linkResolutionMismatches.mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve.sync { $0.insert(inputInfo) }
                 default:
                     break // No difference to report
                 }
