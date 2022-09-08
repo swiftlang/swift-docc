@@ -480,11 +480,18 @@ private class LongRunningProcess: ExternalLinkResolving {
             do {
                 // To avoid blocking forever we check if the response can be decoded after each chunk of data.
                 return try JSONDecoder().decode(Response.self, from: response)
-            } catch DecodingError.dataCorrupted {
-                // If the data wasn't valid JSON we read more data and try to decode it again.
-                response += output.fileHandleForReading.availableData
-                continue
             } catch {
+                if case DecodingError.dataCorrupted = error,     // If the data wasn't valid JSON, read more data and try to decode it again.
+                    response.count.isMultiple(of: Int(PIPE_BUF)) // To reduce the risk of deadlocking, check that bytes so far is a multiple of the pipe buffer size.
+                {
+                    let moreResponseData = output.fileHandleForReading.availableData
+                    guard !moreResponseData.isEmpty else {
+                        throw OutOfProcessReferenceResolver.Error.processDidExit(code: Int(process.terminationStatus))
+                    }
+                    response += moreResponseData
+                    continue
+                }
+            
                 // Other errors are re-thrown as wrapped errors.
                 throw OutOfProcessReferenceResolver.Error.unableToDecodeResponseFromClient(response, error)
             }
