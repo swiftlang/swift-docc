@@ -368,34 +368,32 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     }
     
     func testForwardsErrorOutputProcess() throws {
-        throw XCTSkip("This test is flaky rdar://88498898")
-
-//        #if os(macOS)
-//        let temporaryFolder = try createTemporaryDirectory()
-//        
-//        let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
-//        try """
-//        #!/bin/bash
-//        echo "Some error output" 1>&2                   # Write to stderr
-//        echo '{"bundleIdentifier":"com.test.bundle"}'   # Write this resolver's bundle identifier
-//        read                                            # Wait for docc to send a topic URL
-//        """.write(to: executableLocation, atomically: true, encoding: .utf8)
-//        
-//        // `0o0700` is `-rwx------` (read, write, & execute only for owner)
-//        try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
-//        XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
-//         
-//        let didReadErrorOutputExpectation = AsyncronousExpectation(description: "Did read forwarded error output.")
-//        DispatchQueue.global().async {
-//            let resolver = try? OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: {
-//                errorMessage in
-//                XCTAssertEqual(errorMessage, "Some error output\n")
-//                didReadErrorOutputExpectation.fulfill()
-//            })
-//            XCTAssertEqual(resolver?.bundleIdentifier, "com.test.bundle")
-//        }
-//        XCTAssertNotEqual(didReadErrorOutputExpectation.wait(timeout: 20.0), .timedOut)
-//        #endif
+        #if os(macOS)
+        let temporaryFolder = try createTemporaryDirectory()
+        
+        let executableLocation = temporaryFolder.appendingPathComponent("link-resolver-executable")
+        try """
+        #!/bin/bash
+        echo '{"bundleIdentifier":"com.test.bundle"}'   # Write this resolver's bundle identifier
+        echo "Some error output" 1>&2                   # Write to stderr
+        read                                            # Wait for docc to send a topic URL
+        """.write(to: executableLocation, atomically: true, encoding: .utf8)
+        
+        // `0o0700` is `-rwx------` (read, write, & execute only for owner)
+        try FileManager.default.setAttributes([.posixPermissions: 0o0700], ofItemAtPath: executableLocation.path)
+        XCTAssert(FileManager.default.isExecutableFile(atPath: executableLocation.path))
+         
+        let didReadErrorOutputExpectation = expectation(description: "Did read forwarded error output.")
+        
+        let resolver = try? OutOfProcessReferenceResolver(processLocation: executableLocation, errorOutputHandler: {
+            errorMessage in
+            XCTAssertEqual(errorMessage, "Some error output\n")
+            didReadErrorOutputExpectation.fulfill()
+        })
+        XCTAssertEqual(resolver?.bundleIdentifier, "com.test.bundle")
+        
+        wait(for: [didReadErrorOutputExpectation], timeout: 20.0)
+        #endif
     }
     
     func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver) throws {

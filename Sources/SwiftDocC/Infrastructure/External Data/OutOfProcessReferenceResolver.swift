@@ -437,7 +437,7 @@ private class LongRunningProcess: ExternalLinkResolving {
         
         try process.run()
         
-        let errorReadSource = DispatchSource.makeReadSource(fileDescriptor: errorOutput.fileHandleForReading.fileDescriptor)
+        let errorReadSource = DispatchSource.makeReadSource(fileDescriptor: errorOutput.fileHandleForReading.fileDescriptor, queue: .main)
         errorReadSource.setEventHandler { [errorOutput] in
             let data = errorOutput.fileHandleForReading.availableData
             let errorMessage = String(data: data, encoding: .utf8)
