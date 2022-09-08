@@ -227,12 +227,12 @@ Input: ~/Developer/swift-docc/Sources/SwiftDocC/SwiftDocC.docc
 Template: ~/Developer/swift-docc-render-artifact/dist
 ========================================
 Starting Local Preview Server
-   Address: http://localhost:8000/documentation/swiftdocc
+   Address: http://localhost:8080/documentation/swiftdocc
 ========================================
 Monitoring ~/Developer/swift-docc/Sources/SwiftDocC/SwiftDocC.docc for changes...
 ```
 
-And if you navigate to <http://localhost:8000/documentation/swiftdocc> you'll see
+And if you navigate to <http://localhost:8080/documentation/swiftdocc> you'll see
 the rendered documentation for `SwiftDocC`.
   
 ## Versioning
