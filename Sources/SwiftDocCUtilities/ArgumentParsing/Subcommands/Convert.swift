@@ -139,7 +139,7 @@ extension Docc {
         public var enableInheritedDocs = false
         
         
-        @Flag(help: "Treat diagnostics level of warning as error")
+        @Flag(help: "Treat warnings as errors")
         public var warningsAsErrors = false
         
         /// Arguments for specifying information about the source code repository that hosts the documented project's code.

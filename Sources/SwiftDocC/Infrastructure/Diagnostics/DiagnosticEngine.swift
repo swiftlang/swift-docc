@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -33,8 +33,8 @@ public final class DiagnosticEngine {
         }
     }
     
-    /// Determines whether warning will be treated as error
-    private let warningsAsErrors: Bool
+    /// Determines whether warnings will be treated as errors.
+    private let treatWarningsAsErrors: Bool
 
     /// Determines which problems should be emitted.
     private var filter: (Problem) -> Bool
@@ -45,9 +45,9 @@ public final class DiagnosticEngine {
     }
 
     /// Creates a new diagnostic engine instance with no consumers.
-    public init(filterLevel: DiagnosticSeverity = .warning, warningsAsErrors: Bool = false) {
+    public init(filterLevel: DiagnosticSeverity = .warning, treatWarningsAsErrors: Bool = false) {
         self.filterLevel = filterLevel
-        self.warningsAsErrors = warningsAsErrors
+        self.treatWarningsAsErrors = treatWarningsAsErrors
         self.filter = { $0.diagnostic.severity.rawValue <= filterLevel.rawValue }
     }
 
@@ -71,7 +71,7 @@ public final class DiagnosticEngine {
     public func emit(_ problems: [Problem]) {
         let mappedProblems = problems.map { problem -> Problem in
             var problem = problem
-            if warningsAsErrors, problem.diagnostic.severity == .warning {
+            if treatWarningsAsErrors, problem.diagnostic.severity == .warning {
                 problem.diagnostic.severity = .error
             }
             return problem

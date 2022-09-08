@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -2557,7 +2557,7 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
     }
     
-    func testWarningsAsErrors() throws {
+    func testTreatWarningsAsErrors() throws {
         let bundle = Folder(name: "unit-test.docc", content: [
             InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
             CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
@@ -2573,8 +2573,9 @@ class ConvertActionTests: XCTestCase {
         let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
             .appendingPathComponent("target", isDirectory: true)
 
+        // Test DiagnosticEngine with "treatWarningsAsErrors" set to false
         do {
-            let engine = DiagnosticEngine()
+            let engine = DiagnosticEngine(treatWarningsAsErrors: false)
             var action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
@@ -2593,8 +2594,10 @@ class ConvertActionTests: XCTestCase {
             XCTAssertTrue(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
             XCTAssertFalse(result.didEncounterError)
         }
+        
+        // Test DiagnosticEngine with "treatWarningsAsErrors" set to true
         do {
-            let engine = DiagnosticEngine(warningsAsErrors: true)
+            let engine = DiagnosticEngine(treatWarningsAsErrors: true)
             var action = try ConvertAction(
                 documentationBundleURL: bundle.absoluteURL,
                 outOfProcessResolver: nil,
@@ -2626,7 +2629,7 @@ class ConvertActionTests: XCTestCase {
                 fileManager: testDataProvider,
                 temporaryDirectory: createTemporaryDirectory(),
                 diagnosticEngine: nil,
-                warningsAsErrors: true
+                treatWarningsAsErrors: true
             )
             let result = try action.perform(logHandle: .none)
             XCTAssertTrue(result.didEncounterError)
