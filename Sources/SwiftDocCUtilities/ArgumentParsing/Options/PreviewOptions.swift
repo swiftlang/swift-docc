@@ -27,13 +27,13 @@ public struct PreviewOptions: ParsableArguments {
 
     /// The port number to use for the preview web server.
     ///
-    /// Defaults to `8000`.
+    /// Defaults to `8080`.
     @Option(
         name: .shortAndLong,
         help: ArgumentHelp(
             "Port number to use for the preview web server.",
             valueName: "port-number"))
-    public var port: Int = 8000
+    public var port: Int = 8080
 
     /// The options used when configuring the preview server for external connections.
     ///
