@@ -65,12 +65,12 @@ class SampleDownloadTests: XCTestCase {
         
         XCTAssertEqual(section.count, 1)
         
-        guard case let .paragraph(content) = section.first else {
+        guard case let .paragraph(contentParagraph) = section.first else {
             XCTFail("Section is not a paragraph.")
             return
         }
         
-        let text = content.rawIndexableTextContent(references: symbol.references)
+        let text = contentParagraph.inlineContent.rawIndexableTextContent(references: symbol.references)
         XCTAssertEqual(text, "You can experiment with the code. Just use WiFi Access on your Mac to download WiFi access sample code.")
     }
     

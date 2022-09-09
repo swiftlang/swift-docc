@@ -102,7 +102,7 @@ class PreviewActionIntegrationTests: XCTestCase {
 //                tlsCertificateChain: nil,
 //                serverUsername: nil,
 //                serverPassword: nil,
-//                port: 8000, // We ignore this value when we set the `bindServerToSocketPath` property below.
+//                port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
 //                createConvertAction: createConvertAction) else {
 //            XCTFail("Could not create preview action from parameters")
 //            return
@@ -158,8 +158,8 @@ class PreviewActionIntegrationTests: XCTestCase {
 //                let previewInfoEnd = logOutput[previewInfoStart...].range(of: "\n=====")?.lowerBound {
 //                XCTAssertEqual(logOutput[previewInfoStart..<previewInfoEnd], """
 //                Starting Local Preview Server
-//                \t Address: http://localhost:8000/documentation/mykit
-//                \t          http://localhost:8000/tutorials/overview
+//                \t Address: http://localhost:8080/documentation/mykit
+//                \t          http://localhost:8080/tutorials/overview
 //                """)
 //            } else {
 //                XCTFail("Missing preview information in log/print output")
@@ -456,7 +456,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 tlsCertificateChain: nil,
                 serverUsername: nil,
                 serverPassword: nil,
-                port: 8000, // We ignore this value when we set the `bindServerToSocketPath` property below.
+                port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
                 createConvertAction: createConvertAction) else {
             XCTFail("Could not create preview action from parameters")
             return

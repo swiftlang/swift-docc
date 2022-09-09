@@ -33,14 +33,14 @@ class RESTExampleRenderSectionTests: XCTestCase {
         """.data(using: .utf8)!
         
         let content = try JSONDecoder().decode(RenderBlockContent.self, from: jsonData)
-        guard case .dictionaryExample(summary: nil, example: let example) = content else {
+        guard case .dictionaryExample(let e) = content, e.summary == nil else {
             XCTFail("Unexpected type of RenderBlockContent. Expected a 'dictionaryExample'.")
             return
         }
         
-        XCTAssertEqual(example.type, nil, "The `type` is optional in the specification and there's no value to decode in this test.")
-        XCTAssertEqual(example.syntax, nil, "The `syntax` is optional in the specification and there's no value to decode in this test.")
-        XCTAssertEqual(example.content, [
+        XCTAssertEqual(e.example.type, nil, "The `type` is optional in the specification and there's no value to decode in this test.")
+        XCTAssertEqual(e.example.syntax, nil, "The `syntax` is optional in the specification and there's no value to decode in this test.")
+        XCTAssertEqual(e.example.content, [
             CodeExample.Code(collapsible: false, code: ["lines of code", "goes here..."]),
         ])
     }
@@ -54,12 +54,13 @@ class RESTExampleRenderSectionTests: XCTestCase {
         let node = try JSONDecoder().decode(RenderNode.self, from: jsonData)
         
         guard let section = node.primaryContentSections[0] as? ContentRenderSection,
-              case .dictionaryExample(summary: nil, example: let example) = section.content[3]
+              case .dictionaryExample(let e) = section.content[3],
+              e.summary == nil
         else {
             XCTFail("Unexpected type of RenderBlockContent. Expected a 'dictionaryExample'.")
             return
         }
         
-        XCTAssertEqual(example.type, nil, "The `type` is optional in the specification and there's no value to decode in this test.")
+        XCTAssertEqual(e.example.type, nil, "The `type` is optional in the specification and there's no value to decode in this test.")
     }
 }

@@ -27,8 +27,8 @@ class SubscriptSuperscriptElementsTests: XCTestCase {
             return
         }
         
-        guard case RenderBlockContent.paragraph(inlineContent: let content) = discussion.content[1],
-            content.count == 5 else {
+        guard case RenderBlockContent.paragraph(let contentParagraph) = discussion.content[1],
+              contentParagraph.inlineContent.count == 5 else {
             XCTFail("Didn't find a paragraph element in discussion")
             return
         }
@@ -38,6 +38,6 @@ class SubscriptSuperscriptElementsTests: XCTestCase {
             RenderInlineContent.text(" and "),
             RenderInlineContent.superscript(inlineContent: [.text("sup")]),
             RenderInlineContent.text(" to render attributed text."),
-        ], content)
+        ], contentParagraph.inlineContent)
     }
 }
