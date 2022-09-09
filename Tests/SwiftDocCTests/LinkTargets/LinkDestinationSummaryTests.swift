@@ -110,7 +110,6 @@ class ExternalLinkableTests: XCTestCase {
         let summaries = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)
         let pageSummary = summaries[0]
         XCTAssertEqual(pageSummary.title, "Basic Augmented Reality App 💻")
-        XCTAssertEqual(pageSummary.path, "/tutorials/testbundle/tutorial")
         XCTAssertEqual(pageSummary.relativePresentationURL.absoluteString, "/tutorials/testbundle/tutorial")
         XCTAssertEqual(pageSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial")
         XCTAssertEqual(pageSummary.language, .swift)
@@ -129,7 +128,6 @@ class ExternalLinkableTests: XCTestCase {
 
         let sectionSummary = summaries[1]
         XCTAssertEqual(sectionSummary.title, "Create a New AR Project 💻")
-        XCTAssertEqual(sectionSummary.path, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
         XCTAssertEqual(sectionSummary.relativePresentationURL.absoluteString, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
         XCTAssertEqual(sectionSummary.referenceURL.absoluteString, "doc://com.test.example/tutorials/TestBundle/Tutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
         XCTAssertEqual(sectionSummary.language, .swift)
@@ -164,7 +162,6 @@ class ExternalLinkableTests: XCTestCase {
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "MyClass")
-            XCTAssertEqual(summary.path, "/documentation/mykit/myclass")
             XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/myclass")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass")
             XCTAssertEqual(summary.language, .swift)
@@ -203,7 +200,6 @@ class ExternalLinkableTests: XCTestCase {
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "MyProtocol")
-            XCTAssertEqual(summary.path, "/documentation/mykit/myprotocol")
             XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/myprotocol")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyProtocol")
             XCTAssertEqual(summary.language, .swift)
@@ -239,7 +235,6 @@ class ExternalLinkableTests: XCTestCase {
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "myFunction()")
-            XCTAssertEqual(summary.path, "/documentation/mykit/myclass/myfunction()")
             XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/myclass/myfunction()")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()")
             XCTAssertEqual(summary.language, .swift)
@@ -259,7 +254,6 @@ class ExternalLinkableTests: XCTestCase {
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "globalFunction(_:considering:)")
-            XCTAssertEqual(summary.path, "/documentation/mykit/globalfunction(_:considering:)")
             XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/globalfunction(_:considering:)")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/globalFunction(_:considering:)")
             XCTAssertEqual(summary.language, .swift)
@@ -297,7 +291,6 @@ class ExternalLinkableTests: XCTestCase {
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "Bar")
-            XCTAssertEqual(summary.path, "/documentation/mixedlanguageframework/bar")
             XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mixedlanguageframework/bar")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar")
             XCTAssertEqual(summary.language, .swift)
@@ -337,7 +330,6 @@ class ExternalLinkableTests: XCTestCase {
             // Check variant content that is the same as the summarized element
             XCTAssertEqual(variant.title, nil)
             XCTAssertEqual(variant.abstract, nil)
-            XCTAssertEqual(variant.path, nil)
             XCTAssertEqual(variant.usr, nil)
             XCTAssertEqual(variant.kind, nil)
             XCTAssertEqual(variant.taskGroups, nil)
@@ -351,7 +343,6 @@ class ExternalLinkableTests: XCTestCase {
             let summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
             
             XCTAssertEqual(summary.title, "myStringFunction(_:)")
-            XCTAssertEqual(summary.path, "/documentation/mixedlanguageframework/bar/mystringfunction(_:)")
             XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mixedlanguageframework/bar/mystringfunction(_:)")
             XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.MixedLanguageFramework/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)")
             XCTAssertEqual(summary.language, .swift)
@@ -405,7 +396,6 @@ class ExternalLinkableTests: XCTestCase {
             
             // Check variant content that is the same as the summarized element
             XCTAssertEqual(variant.abstract, nil)
-            XCTAssertEqual(variant.path, nil)
             XCTAssertEqual(variant.usr, nil)
             XCTAssertEqual(variant.kind, nil)
             XCTAssertEqual(
@@ -474,7 +464,6 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertEqual(decoded.kind, .class)
         XCTAssertEqual(decoded.title, "ClassName")
         XCTAssertEqual(decoded.abstract?.plainText, "A brief explanation of my class.")
-        XCTAssertEqual(decoded.path, "documentation/MyKit/ClassName")
         XCTAssertEqual(decoded.relativePresentationURL.absoluteString, "documentation/MyKit/ClassName")
         XCTAssertEqual(decoded.declarationFragments, [
             .init(text: "class", kind: .keyword, identifier: nil),

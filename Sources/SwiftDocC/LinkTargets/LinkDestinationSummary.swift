@@ -80,14 +80,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
     /// The language of the summarized element.
     public let language: SourceLanguage
     
-    /// The relative path to this element.
-    ///
-    /// > Note: For elements representing on-page elements, this value will include a fragment component.
-    @available(*, deprecated, message: "Use 'relativePresentationURL' instead.")
-    public var path: String {
-        return relativePresentationURL.absoluteString
-    }
-    
     /// The relative presentation URL for this element.
     public let relativePresentationURL: URL
     
@@ -170,12 +162,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         
         /// The source language of the variant or `nil` if the kind is the same as the summarized element.
         public let language: VariantValue<SourceLanguage>
-        
-        /// The relative path of the variant or `nil` if the relative is the same as the summarized element.
-        @available(*, deprecated, message: "Use 'relativePresentationURL' instead.")
-        public var path: VariantValue<String> {
-            return relativePresentationURL?.absoluteString
-        }
         
         /// The relative presentation URL of the variant or `nil` if the relative is the same as the summarized element.
         public let relativePresentationURL: VariantValue<URL>
