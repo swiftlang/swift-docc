@@ -327,9 +327,9 @@ public class DocumentationContentRenderer {
                     DocumentationMarkup(markup: $0.markup, parseUpToSection: .abstract)
                 })?.abstractSection?.paragraph,
                 let renderedContent = contentCompiler.visit(abstract).first,
-                case let .paragraph(inlines)? = renderedContent as? RenderBlockContent
+                case let .paragraph(p)? = renderedContent as? RenderBlockContent
             {
-                return inlines
+                return p.inlineContent
             } else {
                 return []
             }

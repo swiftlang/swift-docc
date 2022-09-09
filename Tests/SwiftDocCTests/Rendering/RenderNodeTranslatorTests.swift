@@ -41,7 +41,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         guard let paragraph = discussion.content
             .compactMap({ block -> [RenderInlineContent]? in
                 switch block {
-                case .paragraph(inlineContent: let children): return children
+                case .paragraph(let p): return p.inlineContent
                 default: return nil
                 }
             })
@@ -102,11 +102,11 @@ class RenderNodeTranslatorTests: XCTestCase {
         }
         
         XCTAssert(discussion.content.contains(where: { block in
-            if case .orderedList(items: let items) = block,
-                items.count == 3,
-                case .paragraph([.text("One ordered")])? = items[0].content.first,
-                case .paragraph([.text("Two ordered")])? = items[1].content.first,
-                case .paragraph([.text("Three ordered")])? = items[2].content.first
+            if case .orderedList(let l) = block,
+                l.items.count == 3,
+                l.items[0].content.first == .paragraph(.init(inlineContent: [.text("One ordered")])),
+                l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Two ordered")])),
+                l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Three ordered")]))
             {
                 return true
             } else {
@@ -115,11 +115,11 @@ class RenderNodeTranslatorTests: XCTestCase {
         }))
         
         XCTAssert(discussion.content.contains(where: { block in
-            if case .unorderedList(items: let items) = block,
-                items.count == 3,
-                case .paragraph([.text("One unordered")])? = items[0].content.first,
-                case .paragraph([.text("Two unordered")])? = items[1].content.first,
-                case .paragraph([.text("Three unordered")])? = items[2].content.first
+            if case .unorderedList(let l) = block,
+                l.items.count == 3,
+                l.items[0].content.first == .paragraph(.init(inlineContent: [.text("One unordered")])),
+                l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Two unordered")])),
+                l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Three unordered")]))
             {
                 return true
             } else {
@@ -143,8 +143,8 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             myFunctionDiscussion.content,
             [
-                RenderBlockContent.heading(level: 2, text: "Discussion", anchor: "discussion"),
-                RenderBlockContent.paragraph(inlineContent: [.text("This is the overview for myFunction.")]),
+                RenderBlockContent.heading(.init(level: 2, text: "Discussion", anchor: "discussion")),
+                RenderBlockContent.paragraph(.init(inlineContent: [.text("This is the overview for myFunction.")])),
             ]
         )
         
@@ -165,8 +165,8 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             myClassDiscussion.content,
             [
-                RenderBlockContent.heading(level: 2, text: "Overview", anchor: "overview"),
-                RenderBlockContent.paragraph(inlineContent: [.text("This is the overview for MyClass.")]),
+                RenderBlockContent.heading(.init(level: 2, text: "Overview", anchor: "overview")),
+                RenderBlockContent.paragraph(.init(inlineContent: [.text("This is the overview for MyClass.")])),
             ]
         )
     }
@@ -177,7 +177,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let section = ContentRenderSection(kind: .content, content: [], heading: "declaration")
             XCTAssertEqual("declaration", section.content.mapFirst(where: { element -> String? in
                 switch element {
-                case .heading(_, _, let anchor): return anchor
+                case .heading(let h): return h.anchor
                 default: return nil
                 }
             }))
@@ -188,7 +188,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let section = ContentRenderSection(kind: .content, content: [], heading: "DeclaratioN")
             XCTAssertEqual("declaration", section.content.mapFirst(where: { element -> String? in
                 switch element {
-                case .heading(_, _, let anchor): return anchor
+                case .heading(let h): return h.anchor
                 default: return nil
                 }
             }))
@@ -199,7 +199,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let section = ContentRenderSection(kind: .content, content: [], heading: "My Declaration")
             XCTAssertEqual("my-declaration", section.content.mapFirst(where: { element -> String? in
                 switch element {
-                case .heading(_, _, let anchor): return anchor
+                case .heading(let h): return h.anchor
                 default: return nil
                 }
             }))
@@ -886,12 +886,12 @@ class RenderNodeTranslatorTests: XCTestCase {
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
         let paragraph = try XCTUnwrap(discussion.content.last)
 
-        guard case let RenderBlockContent.paragraph(inlineContent: elements) = paragraph else {
+        guard case let RenderBlockContent.paragraph(p) = paragraph else {
             XCTFail("Unexpected discussion content.")
             return
         }
         
-        XCTAssertEqual(elements, [
+        XCTAssertEqual(p.inlineContent, [
             .text("This is a link to "),
             .text("doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations"),
             .text("."),
@@ -944,15 +944,15 @@ class RenderNodeTranslatorTests: XCTestCase {
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
         
-        if case let .paragraph(elements) = discussion.content.dropFirst(2).first {
-            XCTAssertEqual(elements, [.text("Does a foo.")])
+        if case let .paragraph(p) = discussion.content.dropFirst(2).first {
+            XCTAssertEqual(p.inlineContent, [.text("Does a foo.")])
         } else {
             XCTFail("Unexpected content where snippet explanation should be.")
         }
 
-        if case let .codeListing(syntax, code, _) = discussion.content.dropFirst(3).first {
-            XCTAssertEqual(syntax, "swift")
-            XCTAssertEqual(code.joined(separator: "\n"), """
+        if case let .codeListing(l) = discussion.content.dropFirst(3).first {
+            XCTAssertEqual(l.syntax, "swift")
+            XCTAssertEqual(l.code.joined(separator: "\n"), """
                 func foo() {}
                 
                 do {
@@ -981,13 +981,13 @@ class RenderNodeTranslatorTests: XCTestCase {
             return true
         })
 
-        guard case let .codeListing(syntax, code, _) = discussion.content[lastCodeListingIndex] else {
+        guard case let .codeListing(l) = discussion.content[lastCodeListingIndex] else {
             XCTFail("Missing snippet slice code block")
             return
         }
 
-        XCTAssertEqual(syntax, "swift")
-        XCTAssertEqual(code, ["func foo() {}"])
+        XCTAssertEqual(l.syntax, "swift")
+        XCTAssertEqual(l.code, ["func foo() {}"])
     }
     
     func testSnippetSliceTrimsIndentation() throws {
@@ -1005,13 +1005,13 @@ class RenderNodeTranslatorTests: XCTestCase {
             return true
         })
 
-        guard case let .codeListing(syntax, code, _) = discussion.content[lastCodeListingIndex] else {
+        guard case let .codeListing(l) = discussion.content[lastCodeListingIndex] else {
             XCTFail("Missing snippet slice code block")
             return
         }
 
-        XCTAssertEqual(syntax, "swift")
-        XCTAssertEqual(code, ["middle()"])
+        XCTAssertEqual(l.syntax, "swift")
+        XCTAssertEqual(l.code, ["middle()"])
 
     }
 }

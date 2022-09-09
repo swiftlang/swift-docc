@@ -40,13 +40,13 @@ public class ExternalLinkTitleTests: XCTestCase {
         
         let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
         
-        guard case let .paragraph(paragraphContent) = content[1] else {
+        guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
             return
         }
         
         let expectedReferenceIdentifier = RenderReferenceIdentifier.init(forExternalLink: "https://www.example.com")
-        XCTAssertEqual(paragraphContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
+        XCTAssertEqual(firstParagraph.inlineContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
         
         let linkReference = translator.linkReferences[expectedReferenceIdentifier.identifier]
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
@@ -67,13 +67,13 @@ public class ExternalLinkTitleTests: XCTestCase {
         
         let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
         
-        guard case let .paragraph(paragraphContent) = content[1] else {
+        guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
             return
         }
         
         let expectedReferenceIdentifier = RenderReferenceIdentifier.init(forExternalLink: "https://www.example.com")
-        XCTAssertEqual(paragraphContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
+        XCTAssertEqual(firstParagraph.inlineContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
         
         let linkReference = translator.linkReferences[expectedReferenceIdentifier.identifier]
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
@@ -94,13 +94,13 @@ public class ExternalLinkTitleTests: XCTestCase {
         
         let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
         
-        guard case let .paragraph(paragraphContent) = content[1] else {
+        guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
             return
         }
         
         let expectedReferenceIdentifier = RenderReferenceIdentifier.init(forExternalLink: "https://www.example.com")
-        XCTAssertEqual(paragraphContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
+        XCTAssertEqual(firstParagraph.inlineContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
         
         let linkReference = translator.linkReferences[expectedReferenceIdentifier.identifier]
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
@@ -121,13 +121,13 @@ public class ExternalLinkTitleTests: XCTestCase {
         
         let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
         
-        guard case let .paragraph(paragraphContent) = content[1] else {
+        guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
             return
         }
         
         let expectedReferenceIdentifier = RenderReferenceIdentifier.init(forExternalLink: "https://www.example.com")
-        XCTAssertEqual(paragraphContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
+        XCTAssertEqual(firstParagraph.inlineContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
         
         let linkReference = translator.linkReferences[expectedReferenceIdentifier.identifier]
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
@@ -148,13 +148,13 @@ public class ExternalLinkTitleTests: XCTestCase {
         
         let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
         
-        guard case let .paragraph(paragraphContent) = content[1] else {
+        guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
             return
         }
         
         let expectedReferenceIdentifier = RenderReferenceIdentifier.init(forExternalLink: "https://www.example.com")
-        XCTAssertEqual(paragraphContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
+        XCTAssertEqual(firstParagraph.inlineContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
         
         let linkReference = translator.linkReferences[expectedReferenceIdentifier.identifier]
         XCTAssertNotNil(linkReference, "Link reference should have been collected by translator.")
@@ -184,10 +184,11 @@ public class ExternalLinkTitleTests: XCTestCase {
         
         let (translator, content) = try getTranslatorAndBlockContentForMarkup(markupSource)
         
-        guard case let .paragraph(paragraphContent) = content[1] else {
+        guard case let .paragraph(firstParagraph) = content[1] else {
             XCTFail("Unexpected render tree.")
             return
         }
+        let paragraphContent = firstParagraph.inlineContent
         
         let expectedReferenceIdentifier = RenderReferenceIdentifier.init(forExternalLink: "https://www.example.com")
         XCTAssertEqual(paragraphContent[1], RenderInlineContent.reference(identifier: expectedReferenceIdentifier, isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil))
