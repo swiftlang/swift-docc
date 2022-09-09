@@ -37,29 +37,208 @@ import Markdown
 /// Block elements can be nested, for example, an aside note contains one or more paragraphs of text.
 public enum RenderBlockContent: Equatable {
     /// A paragraph of content.
-    case paragraph(inlineContent: [RenderInlineContent])
+    case paragraph(Paragraph)
     /// An aside block.
-    case aside(style: AsideStyle, content: [RenderBlockContent])
+    case aside(Aside)
     /// A block of sample code.
-    case codeListing(syntax: String?, code: [String], metadata: RenderContentMetadata?)
+    case codeListing(CodeListing)
     /// A heading with the given level.
-    case heading(level: Int, text: String, anchor: String?)
+    case heading(Heading)
     /// A list that contains ordered items.
-    case orderedList(items: [ListItem])
+    case orderedList(OrderedList)
     /// A list that contains unordered items.
-    case unorderedList(items: [ListItem])
+    case unorderedList(UnorderedList)
     
     /// A step in a multi-step tutorial.
-    case step(content: [RenderBlockContent], caption: [RenderBlockContent], media: RenderReferenceIdentifier?, code: RenderReferenceIdentifier?, runtimePreview: RenderReferenceIdentifier?)
+    case step(TutorialStep)
     /// A REST endpoint example that includes a request and the expected response.
-    case endpointExample(summary: [RenderBlockContent]?, request: CodeExample, response: CodeExample)
+    case endpointExample(EndpointExample)
     /// An example that contains a sample code block.
-    case dictionaryExample(summary: [RenderBlockContent]?, example: CodeExample)
+    case dictionaryExample(DictionaryExample)
     
     /// A list of terms.
-    case termList(items: [TermListItem])
+    case termList(TermList)
     /// A table that contains a list of row data.
-    case table(header: HeaderType, rows: [TableRow], metadata: RenderContentMetadata?)
+    case table(Table)
+
+    // Warning: If you add a new case to this enum, make sure to handle it in the Codable
+    // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
+    // RenderBlockContent+TextIndexing.swift!
+
+    // This empty-marker case is here because non-frozen enums are only available when Library
+    // Evolution is enabled, which is not available to Swift Packages without unsafe flags
+    // (rdar://78773361). This can be removed once that is available and applied to Swift-DocC
+    // (rdar://89033233).
+    @available(*, deprecated, message: "this enum is nonfrozen and may be expanded in the future; please add a `default` case instead of matching this one")
+    case _nonfrozenEnum_useDefaultCase
+
+    /// A paragraph of content.
+    public struct Paragraph: Equatable {
+        /// The content inside the paragraph.
+        public var inlineContent: [RenderInlineContent]
+
+        /// Creates a new paragraph with the given content.
+        public init(inlineContent: [RenderInlineContent]) {
+            self.inlineContent = inlineContent
+        }
+    }
+
+    /// An aside block.
+    public struct Aside: Equatable {
+        /// The style of this aside block.
+        public var style: AsideStyle
+
+        /// The content inside this aside block.
+        public var content: [RenderBlockContent]
+
+        public init(style: AsideStyle, content: [RenderBlockContent]) {
+            self.style = style
+            self.content = content
+        }
+    }
+
+    /// A block of sample code.
+    public struct CodeListing: Equatable {
+        /// The language to use for syntax highlighting, if given.
+        public var syntax: String?
+        /// The lines of code inside the code block.
+        public var code: [String]
+        /// Additional metadata for this code block.
+        public var metadata: RenderContentMetadata?
+
+        /// Make a new `CodeListing` with the given data.
+        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?) {
+            self.syntax = syntax
+            self.code = code
+            self.metadata = metadata
+        }
+    }
+
+    /// A heading with the given level.
+    public struct Heading: Equatable {
+        /// The level of the heading.
+        ///
+        /// This correlates with heading levels in HTML, so a level of 1 is given the most
+        /// prominence, and a level of 6 the least prominence.
+        public var level: Int
+
+        /// The text in the heading.
+        public var text: String
+
+        /// An optional anchor slug that can be used to link to the heading.
+        public var anchor: String?
+
+        /// Creates a new heading with the given data.
+        public init(level: Int, text: String, anchor: String?) {
+            self.level = level
+            self.text = text
+            self.anchor = anchor
+        }
+    }
+
+    /// A list that contains ordered items.
+    public struct OrderedList: Equatable {
+        /// The items in this list.
+        public var items: [ListItem]
+
+        /// Creates a new ordered list with the given items.
+        public init(items: [ListItem]) {
+            self.items = items
+        }
+    }
+
+    /// A list that contains unordered items.
+    public struct UnorderedList: Equatable {
+        /// The items in this list.
+        public var items: [ListItem]
+
+        /// Creates a new unordered list with the given items.
+        public init(items: [ListItem]) {
+            self.items = items
+        }
+    }
+
+    /// A step in a multi-step tutorial.
+    public struct TutorialStep: Equatable {
+        /// The content inside this tutorial step.
+        public var content: [RenderBlockContent]
+        /// The caption for the step.
+        public var caption: [RenderBlockContent]
+        /// An optional media reference to accompany the step.
+        public var media: RenderReferenceIdentifier?
+        /// The source code file associated with this step.
+        public var code: RenderReferenceIdentifier?
+        /// A rendering of the tutorial step, if available.
+        public var runtimePreview: RenderReferenceIdentifier?
+
+        /// Creates a new tutorial step with the given items.
+        public init(content: [RenderBlockContent], caption: [RenderBlockContent], media: RenderReferenceIdentifier? = nil, code: RenderReferenceIdentifier? = nil, runtimePreview: RenderReferenceIdentifier? = nil) {
+            self.content = content
+            self.caption = caption
+            self.media = media
+            self.code = code
+            self.runtimePreview = runtimePreview
+        }
+    }
+
+    /// A REST endpoint example that includes a request and the expected response.
+    public struct EndpointExample: Equatable {
+        /// A summary of the example.
+        public var summary: [RenderBlockContent]?
+        /// The request portion of the example.
+        public var request: CodeExample
+        /// The expected response for the given request.
+        public var response: CodeExample
+
+        /// Creates a new REST endpoint example with the given data.
+        public init(summary: [RenderBlockContent]? = nil, request: CodeExample, response: CodeExample) {
+            self.summary = summary
+            self.request = request
+            self.response = response
+        }
+    }
+
+    /// An example that contains a sample code block.
+    public struct DictionaryExample: Equatable {
+        /// A summary of the sample code block.
+        public var summary: [RenderBlockContent]?
+        /// The sample code for the example.
+        public var example: CodeExample
+
+        /// Creates a new example with the given data.
+        public init(summary: [RenderBlockContent]? = nil, example: CodeExample) {
+            self.summary = summary
+            self.example = example
+        }
+    }
+
+    /// A list of terms.
+    public struct TermList: Equatable {
+        /// The items in this list.
+        public var items: [TermListItem]
+
+        /// Creates a new term list with the given items.
+        public init(items: [TermListItem]) {
+            self.items = items
+        }
+    }
+
+    /// A table that contains a list of row data.
+    public struct Table: Equatable {
+        /// The style of header in this table.
+        public var header: HeaderType
+        /// The rows in this table.
+        public var rows: [TableRow]
+        /// Additional metadata for this table, if present.
+        public var metadata: RenderContentMetadata?
+
+        /// Creates a new table with the given data.
+        public init(header: HeaderType, rows: [TableRow], metadata: RenderContentMetadata? = nil) {
+            self.header = header
+            self.rows = rows
+            self.metadata = metadata
+        }
+    }
     
     /// An item in a list.
     public struct ListItem: Codable, Equatable {
@@ -129,7 +308,7 @@ public enum RenderBlockContent: Equatable {
 
         /// Creates an aside type for the specified aside kind.
         /// - Parameter asideKind: The aside kind that provides the display name.
-        public init(asideKind: Aside.Kind) {
+        public init(asideKind: Markdown.Aside.Kind) {
             self.rawValue = asideKind.rawValue
         }
         
@@ -241,43 +420,43 @@ extension RenderBlockContent: Codable {
         
         switch type {
         case .paragraph:
-            self = try .paragraph(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent))
+            self = try .paragraph(.init(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent)))
         case .aside:
             var style = try container.decode(AsideStyle.self, forKey: .style)
             if style.renderKind == "note", let displayName = try container.decodeIfPresent(String.self, forKey: .name) {
                 style = AsideStyle(displayName: displayName)
             }
-            self = try .aside(style: style, content: container.decode([RenderBlockContent].self, forKey: .content))
+            self = try .aside(.init(style: style, content: container.decode([RenderBlockContent].self, forKey: .content)))
         case .codeListing:
-            self = try .codeListing(
+            self = try .codeListing(.init(
                 syntax: container.decodeIfPresent(String.self, forKey: .syntax),
                 code: container.decode([String].self, forKey: .code),
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
-            )
+            ))
         case .heading:
-            self = try .heading(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor))
+            self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
         case .orderedList:
-            self = try .orderedList(items: container.decode([ListItem].self, forKey: .items))
+            self = try .orderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
         case .unorderedList:
-            self = try .unorderedList(items: container.decode([ListItem].self, forKey: .items))
+            self = try .unorderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
         case .step:
-            self = try .step(content: container.decode([RenderBlockContent].self, forKey: .content), caption: container.decodeIfPresent([RenderBlockContent].self, forKey: .caption) ?? [], media: container.decode(RenderReferenceIdentifier?.self, forKey: .media), code: container.decode(RenderReferenceIdentifier?.self, forKey: .code), runtimePreview: container.decode(RenderReferenceIdentifier?.self, forKey: .runtimePreview))
+            self = try .step(.init(content: container.decode([RenderBlockContent].self, forKey: .content), caption: container.decodeIfPresent([RenderBlockContent].self, forKey: .caption) ?? [], media: container.decode(RenderReferenceIdentifier?.self, forKey: .media), code: container.decode(RenderReferenceIdentifier?.self, forKey: .code), runtimePreview: container.decode(RenderReferenceIdentifier?.self, forKey: .runtimePreview)))
         case .endpointExample:
-            self = try .endpointExample(
+            self = try .endpointExample(.init(
                 summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary),
                 request: container.decode(CodeExample.self, forKey: .request),
                 response: container.decode(CodeExample.self, forKey: .response)
-            )
+            ))
         case .dictionaryExample:
-            self = try .dictionaryExample(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example))
+            self = try .dictionaryExample(.init(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example)))
         case .table:
-            self = try .table(
+            self = try .table(.init(
                 header: container.decode(HeaderType.self, forKey: .header),
                 rows: container.decode([TableRow].self, forKey: .rows),
                 metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
-            )
+            ))
         case .termList:
-            self = try .termList(items: container.decode([TermListItem].self, forKey: .items))
+            self = try .termList(.init(items: container.decode([TermListItem].self, forKey: .items)))
         }
     }
     
@@ -298,6 +477,7 @@ extension RenderBlockContent: Codable {
         case .dictionaryExample: return .dictionaryExample
         case .table: return .table
         case .termList: return .termList
+        default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
     
@@ -306,43 +486,45 @@ extension RenderBlockContent: Codable {
         try container.encode(type, forKey: .type)
         
         switch self {
-        case .paragraph(let inlineContent):
-            try container.encode(inlineContent, forKey: .inlineContent)
-        case .aside(let style, let content):
-            try container.encode(style.renderKind, forKey: .style)
-            try container.encode(style.displayName, forKey: .name)
-            try container.encode(content, forKey: .content)
-        case .codeListing(let syntax, let code, metadata: let metadata):
-            try container.encode(syntax, forKey: .syntax)
-            try container.encode(code, forKey: .code)
-            try container.encodeIfPresent(metadata, forKey: .metadata)
-        case .heading(let level, let text, let anchor):
-            try container.encode(level, forKey: .level)
-            try container.encode(text, forKey: .text)
-            try container.encode(anchor, forKey: .anchor)
-        case .orderedList(let items):
-            try container.encode(items, forKey: .items)
-        case .unorderedList(let items):
-            try container.encode(items, forKey: .items)
-        case .step(let content, let caption, let media, let code, let runtimePreview):
-            try container.encode(content, forKey: .content)
-            try container.encode(caption, forKey: .caption)
-            try container.encode(media, forKey: .media)
-            try container.encode(code, forKey: .code)
-            try container.encode(runtimePreview, forKey: .runtimePreview)
-        case .endpointExample(summary: let summary, request: let request, response: let response):
-            try container.encodeIfPresent(summary, forKey: .summary)
-            try container.encode(request, forKey: .request)
-            try container.encode(response, forKey: .response)
-        case .dictionaryExample(summary: let summary, example: let example):
-            try container.encodeIfPresent(summary, forKey: .summary)
-            try container.encode(example, forKey: .example)
-        case .table(header: let header, rows: let rows, metadata: let metadata):
-            try container.encode(header, forKey: .header)
-            try container.encode(rows, forKey: .rows)
-            try container.encodeIfPresent(metadata, forKey: .metadata)
-        case .termList(items: let items):
-            try container.encode(items, forKey: .items)
+        case .paragraph(let p):
+            try container.encode(p.inlineContent, forKey: .inlineContent)
+        case .aside(let a):
+            try container.encode(a.style.renderKind, forKey: .style)
+            try container.encode(a.style.displayName, forKey: .name)
+            try container.encode(a.content, forKey: .content)
+        case .codeListing(let l):
+            try container.encode(l.syntax, forKey: .syntax)
+            try container.encode(l.code, forKey: .code)
+            try container.encodeIfPresent(l.metadata, forKey: .metadata)
+        case .heading(let h):
+            try container.encode(h.level, forKey: .level)
+            try container.encode(h.text, forKey: .text)
+            try container.encode(h.anchor, forKey: .anchor)
+        case .orderedList(let l):
+            try container.encode(l.items, forKey: .items)
+        case .unorderedList(let l):
+            try container.encode(l.items, forKey: .items)
+        case .step(let s):
+            try container.encode(s.content, forKey: .content)
+            try container.encode(s.caption, forKey: .caption)
+            try container.encode(s.media, forKey: .media)
+            try container.encode(s.code, forKey: .code)
+            try container.encode(s.runtimePreview, forKey: .runtimePreview)
+        case .endpointExample(let e):
+            try container.encodeIfPresent(e.summary, forKey: .summary)
+            try container.encode(e.request, forKey: .request)
+            try container.encode(e.response, forKey: .response)
+        case .dictionaryExample(let e):
+            try container.encodeIfPresent(e.summary, forKey: .summary)
+            try container.encode(e.example, forKey: .example)
+        case .table(let t):
+            try container.encode(t.header, forKey: .header)
+            try container.encode(t.rows, forKey: .rows)
+            try container.encodeIfPresent(t.metadata, forKey: .metadata)
+        case .termList(items: let l):
+            try container.encode(l.items, forKey: .items)
+        default:
+            fatalError("unknown RenderBlockContent case in encode method")
         }
     }
 }

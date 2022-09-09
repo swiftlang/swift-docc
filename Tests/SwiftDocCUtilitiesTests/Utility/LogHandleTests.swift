@@ -31,7 +31,7 @@ class LogHandleTests: XCTestCase {
         handle.write("""
             ========================================
             Starting Local Preview Server
-                Address: http://localhost:8000/documentation/my-framework
+                Address: http://localhost:8080/documentation/my-framework
             ========================================
             """
         )
@@ -46,7 +46,7 @@ class LogHandleTests: XCTestCase {
         XCTAssertEqual(text, """
             ========================================
             Starting Local Preview Server
-                Address: http://localhost:8000/documentation/my-framework
+                Address: http://localhost:8080/documentation/my-framework
             ========================================
             """
         )

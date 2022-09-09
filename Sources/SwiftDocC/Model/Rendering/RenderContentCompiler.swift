@@ -35,17 +35,17 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> [RenderContent] {
         let aside = Aside(blockQuote)
-        return [RenderBlockContent.aside(style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
-                                         content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent])]
+        return [RenderBlockContent.aside(.init(style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
+                                               content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]))]
     }
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
-        return [RenderBlockContent.codeListing(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil)]
+        return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil))]
     }
     
     mutating func visitHeading(_ heading: Heading) -> [RenderContent] {
-        return [RenderBlockContent.heading(level: heading.level, text: heading.plainText, anchor: urlReadableFragment(heading.plainText))]
+        return [RenderBlockContent.heading(.init(level: heading.level, text: heading.plainText, anchor: urlReadableFragment(heading.plainText)))]
     }
     
     mutating func visitListItem(_ listItem: ListItem) -> [RenderContent] {
@@ -55,7 +55,7 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitOrderedList(_ orderedList: OrderedList) -> [RenderContent] {
         let renderListItems = orderedList.listItems.reduce(into: [], { result, item in result.append(contentsOf: visitListItem(item))})
-        return [RenderBlockContent.orderedList(items: renderListItems as! [RenderBlockContent.ListItem])]
+        return [RenderBlockContent.orderedList(.init(items: renderListItems as! [RenderBlockContent.ListItem]))]
     }
     
     mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> [RenderContent] {
@@ -64,7 +64,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitParagraph(_ paragraph: Paragraph) -> [RenderContent] {
-        return [RenderBlockContent.paragraph(inlineContent: paragraph.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent])]
+        return [RenderBlockContent.paragraph(.init(inlineContent: paragraph.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent]))]
     }
     
     mutating func visitInlineCode(_ inlineCode: InlineCode) -> [RenderContent] {
@@ -188,7 +188,7 @@ struct RenderContentCompiler: MarkupVisitor {
         var headerCells = [RenderBlockContent.TableRow.Cell]()
         for cell in table.head.cells {
             let cellContent = cell.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
-            headerCells.append([RenderBlockContent.paragraph(inlineContent: cellContent as! [RenderInlineContent])])
+            headerCells.append([RenderBlockContent.paragraph(.init(inlineContent: cellContent as! [RenderInlineContent]))])
         }
         
         var rows = [RenderBlockContent.TableRow]()
@@ -196,12 +196,12 @@ struct RenderContentCompiler: MarkupVisitor {
             var cells = [RenderBlockContent.TableRow.Cell]()
             for cell in row.cells {
                 let cellContent = cell.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
-                cells.append([RenderBlockContent.paragraph(inlineContent: cellContent as! [RenderInlineContent])])
+                cells.append([RenderBlockContent.paragraph(.init(inlineContent: cellContent as! [RenderInlineContent]))])
             }
             rows.append(RenderBlockContent.TableRow(cells: cells))
         }
         
-        return [RenderBlockContent.table(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, metadata: nil)]
+        return [RenderBlockContent.table(.init(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, metadata: nil))]
     }
 
     mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> [RenderContent] {
@@ -229,11 +229,11 @@ struct RenderContentCompiler: MarkupVisitor {
                 let lines = snippetMixin.lines[lineRange]
                 let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
                 let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
-                return [RenderBlockContent.codeListing(syntax: snippetMixin.language, code: trimmedLines, metadata: nil)]
+                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
             } else {
                 // Render the whole snippet with its explanation content.
                 let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
-                let code = RenderBlockContent.codeListing(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil)
+                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
                 return docCommentContent + [code]
             }
         default:

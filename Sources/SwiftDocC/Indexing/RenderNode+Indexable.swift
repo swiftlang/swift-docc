@@ -28,7 +28,7 @@ extension RenderNode {
             return sections
         }
         
-        return [ContentRenderSection(kind: .content, content: [.paragraph(inlineContent: abstract ?? [])])]
+        return [ContentRenderSection(kind: .content, content: [.paragraph(.init(inlineContent: abstract ?? []))])]
             + primaryContentSections
     }
 }
@@ -56,7 +56,7 @@ extension RenderNode: Indexable {
         
         let summaryParagraph: RenderBlockContent?
         if let abstract = self.abstract {
-            summaryParagraph = RenderBlockContent.paragraph(inlineContent: abstract)
+            summaryParagraph = RenderBlockContent.paragraph(.init(inlineContent: abstract))
         } else if let intro = self.sections.first as? IntroRenderSection, let firstBlock = intro.content.first, case .paragraph = firstBlock {
             summaryParagraph = firstBlock
         } else {

@@ -16,10 +16,10 @@ extension Sequence where Element == RenderBlockContent {
     /// This property is an empty array if the sequence doesn't contain a paragraph.
     var firstParagraph: [RenderInlineContent] {
         return mapFirst { blockContent in
-            guard case let .paragraph(inlineContent) = blockContent else {
+            guard case let .paragraph(p) = blockContent else {
                 return nil
             }
-            return inlineContent
+            return p.inlineContent
         } ?? []
     }
 }

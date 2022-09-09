@@ -65,8 +65,8 @@ class DefaultCodeBlockSyntaxTests: XCTestCase {
     }
 
     private func codeListing(at index: Int, in renderSection: ContentRenderSection, file: StaticString = #file, line: UInt = #line) throws -> CodeListing {
-        if case let .codeListing(language, lines, _) = renderSection.content[index] {
-            return CodeListing(language: language, lines: lines)
+        if case let .codeListing(l) = renderSection.content[index] {
+            return CodeListing(language: l.syntax, lines: l.code)
         }
 
         XCTFail("Expected code listing at index \(index)", file: (file), line: line)

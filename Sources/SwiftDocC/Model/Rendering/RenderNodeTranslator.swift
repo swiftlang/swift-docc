@@ -88,7 +88,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             createAndRegisterRenderReference(forMedia: $0.source, altText: ($0 as? ImageMedia)?.altText)
         }
         
-        let result = [RenderBlockContent.step(content: renderBlock, caption: caption, media: mediaReference, code: codeReference, runtimePreview: previewReference)]
+        let result = [RenderBlockContent.step(.init(content: renderBlock, caption: caption, media: mediaReference, code: codeReference, runtimePreview: previewReference))]
         
         return result
     }
