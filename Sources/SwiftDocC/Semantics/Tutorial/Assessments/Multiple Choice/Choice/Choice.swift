@@ -14,21 +14,31 @@ import Markdown
 /**
  One of possibly many choices in a ``MultipleChoice`` question.
  */
-public final class Choice: Semantic, DirectiveConvertible {
-    public static let directiveName = "Choice"
+public final class Choice: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
     /// `true` if this choice is a correct one; there can be multiple correct choices.
-    public let isCorrect: Bool
+    @DirectiveArgumentWrapped
+    public private(set) var isCorrect: Bool
     
     /// The markup content of the choice, what the user examines to decide to select this choice.
-    public let content: MarkupContainer
+    @ChildMarkup(numberOfParagraphs: .zeroOrMore)
+    public private(set) var content: MarkupContainer
     
     /// Optional image illustrating the answer.
-    public let image: ImageMedia?
+    @ChildDirective
+    public private(set) var image: ImageMedia? = nil
     
     /// A justification as to whether this choice is correct.
-    public let justification: Justification
+    @ChildDirective
+    public private(set) var justification: Justification
+    
+    static var keyPaths: [String : AnyKeyPath] = [
+        "isCorrect"         : \Choice._isCorrect,
+        "content"           : \Choice._content,
+        "image"             : \Choice._image,
+        "justification"     : \Choice._justification,
+    ]
     
     override var children: [Semantic] {
         var elements: [Semantic] = [content]
@@ -41,46 +51,31 @@ public final class Choice: Semantic, DirectiveConvertible {
     
     init(originalMarkup: BlockDirective, isCorrect: Bool, content: MarkupContainer, image: ImageMedia?, justification: Justification) {
         self.originalMarkup = originalMarkup
-        self.isCorrect = isCorrect
+        super.init()
+        
         self.content = content
+        self.isCorrect = isCorrect
         self.image = image
         self.justification = justification
     }
     
-    enum Semantics {
-        enum IsCorrect: DirectiveArgument {
-            typealias ArgumentValue = Bool
-            static let argumentName = "isCorrect"
-        }
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: BlockDirective) {
+        self.originalMarkup = originalMarkup
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        precondition(directive.name == Choice.directiveName)
-        
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Choice>(severityIfFound: .warning, allowedArguments: [Semantics.IsCorrect.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        Semantic.Analyses.HasOnlyKnownDirectives<Choice>(severityIfFound: .warning, allowedDirectives: [ImageMedia.directiveName, Justification.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        var remainder: MarkupContainer
-        let codeBlocks = directive.children.compactMap { $0 as? CodeBlock }
-        
-        let images: [ImageMedia]
-        (images, remainder) = Semantic.Analyses.ExtractAll<ImageMedia>().analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        let requiredJustification: Justification?
-        (requiredJustification, remainder) = Semantic.Analyses.HasExactlyOne<Choice, Justification>(severityIfNotFound: .warning).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
-                
-        if remainder.isEmpty && codeBlocks.isEmpty && images.isEmpty {
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: directive.range, identifier: "org.swift.docc.\(Choice.self).Empty", summary: "\(Choice.directiveName.singleQuoted) answer content must consist of a paragraph, code block, or \(ImageMedia.directiveName.singleQuoted) directive")
+    func validate(
+        source: URL?,
+        for bundle: DocumentationBundle,
+        in context: DocumentationContext,
+        problems: inout [Problem]
+    ) -> Bool {
+        if content.isEmpty && image == nil {
+            let diagnostic = Diagnostic(source: source, severity: .warning, range: originalMarkup.range, identifier: "org.swift.docc.\(Choice.self).Empty", summary: "\(Choice.directiveName.singleQuoted) answer content must consist of a paragraph, code block, or \(ImageMedia.directiveName.singleQuoted) directive")
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
         }
-
-        guard let justification = requiredJustification,
-            let isCorrect = Semantic.Analyses.HasArgument<Choice, Semantics.IsCorrect>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems) else {
-                return nil
-        }
         
-        self.init(originalMarkup: directive, isCorrect: isCorrect, content: remainder, image: images.first, justification: justification)
+        return true
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {

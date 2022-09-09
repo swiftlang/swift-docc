@@ -21,27 +21,74 @@ extension Semantic.Analyses {
             self.severityIfNotFound = severityIfNotFound
         }
         
-        public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
-            
-            let (matches, remainder) = children.categorize { child -> BlockDirective? in
-                guard let childDirective = child as? BlockDirective,
-                    Child.canConvertDirective(childDirective) else {
-                        return nil
-                }
-                return childDirective
-            }
-            
-            if matches.isEmpty,
-                let severity = severityIfNotFound {
-                let diagnostic = Diagnostic(source: source, severity: severity, range: directive.range, identifier: "org.swift.docc.HasAtLeastOne<\(Parent.self), \(Child.self)>", summary: "The \(Parent.directiveName.singleQuoted) directive requires at least one \(Child.directiveName.singleQuoted) child directive")
-                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
-            }
-            
-            let converted = matches.compactMap { childDirective -> Child? in
-                return Child(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
-            }
-            return (converted, remainder: MarkupContainer(remainder))
+        public func analyze<Children: Sequence>(
+            _ directive: BlockDirective,
+            children: Children,
+            source: URL?,
+            for bundle: DocumentationBundle,
+            in context: DocumentationContext,
+            problems: inout [Problem]
+        ) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
+            Semantic.Analyses.extractAtLeastOne(
+                childType: Child.self,
+                parentDirective: directive,
+                children: children,
+                source: source,
+                for: bundle,
+                in: context,
+                severityIfNotFound: severityIfNotFound,
+                problems: &problems
+            ) as! ([Child], MarkupContainer)
         }
+    }
+    
+    static func extractAtLeastOne<Children: Sequence>(
+        childType: DirectiveConvertible.Type,
+        parentDirective: BlockDirective,
+        children: Children,
+        source: URL?,
+        for bundle: DocumentationBundle,
+        in context: DocumentationContext,
+        severityIfNotFound: DiagnosticSeverity? = .warning,
+        problems: inout [Problem]
+    ) -> ([DirectiveConvertible], remainder: MarkupContainer) where Children.Element == Markup {
+        let (matches, remainder) = children.categorize { child -> BlockDirective? in
+            guard let childDirective = child as? BlockDirective,
+                childType.canConvertDirective(childDirective)
+            else {
+                    return nil
+            }
+            return childDirective
+        }
+        
+        if matches.isEmpty, let severityIfNotFound = severityIfNotFound {
+            let diagnostic = Diagnostic(
+                source: source,
+                severity: severityIfNotFound,
+                range: parentDirective.range,
+                identifier: "org.swift.docc.HasAtLeastOne<\(parentDirective.name), \(childType)>",
+                summary: "Missing required \(childType.directiveName.singleQuoted) child directive",
+                explanation:
+                    """
+                    The \(parentDirective.name.singleQuoted) directive requires at least one \
+                    \(childType.directiveName.singleQuoted) child directive
+                    """
+            )
+                
+            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+        }
+        
+        let converted = matches.compactMap { childDirective -> DirectiveConvertible? in
+            return childType.init(
+                from: childDirective,
+                source: source,
+                for: bundle,
+                in: context,
+                problems: &problems
+            )
+        }
+        
+        return (converted, remainder: MarkupContainer(remainder))
     }
 }
 

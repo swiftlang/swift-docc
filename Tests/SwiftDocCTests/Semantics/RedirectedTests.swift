@@ -94,7 +94,7 @@ class RedirectedTests: XCTestCase {
         XCTAssertEqual(2, problems.count)
         XCTAssertFalse(problems.containsErrors)
         XCTAssertEqual("org.swift.docc.HasOnlyKnownDirectives", problems.first?.diagnostic.identifier)
-        XCTAssertEqual("org.swift.docc.Redirect.UnexpectedContent", problems.last?.diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.Redirected.NoInnerContentAllowed", problems.last?.diagnostic.identifier)
     }
     
     func testExtraContent() throws {
@@ -112,7 +112,7 @@ class RedirectedTests: XCTestCase {
         XCTAssertNotNil(redirected, "Even if there are warnings we can create a Redirected value")
         XCTAssertFalse(problems.containsErrors)
         XCTAssertEqual(1, problems.count)
-        XCTAssertEqual("org.swift.docc.Redirect.UnexpectedContent", problems.first?.diagnostic.identifier)
+        XCTAssertEqual("org.swift.docc.Redirected.NoInnerContentAllowed", problems.first?.diagnostic.identifier)
     }
     
     // MARK: - Redirect support

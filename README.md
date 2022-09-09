@@ -250,7 +250,7 @@ active development and source stability is not guaranteed.
 Swift-DocC tracks all bug reports with 
 [GitHub Issues](https://github.com/apple/swift-docc/issues).
 When you submit a bug report we ask that you follow the
-[provided template](https://github.com/apple/swift-docc/issues/new?template=BUG_REPORT.md)
+[provided template](https://github.com/apple/swift-docc/issues/new?assignees=&labels=bug&template=BUG_REPORT.yml)
 and provide as many details as possible.
 
 > **Note:** You can use the [`environment`](bin/environment) script
@@ -268,7 +268,7 @@ that will help us track down the bug faster.
 ### Submitting a Feature Request
 
 For feature requests, please feel free to file a
-[GitHub issue](https://github.com/apple/swift-docc/issues/new?template=FEATURE_REQUEST.md)
+[GitHub issue](https://github.com/apple/swift-docc/issues/new?assignees=&labels=enhancement&template=FEATURE_REQUEST.yml)
 or start a discussion on the [Swift Forums](https://forums.swift.org/c/development/swift-docc).
 
 Don't hesitate to submit a feature request if you see a way

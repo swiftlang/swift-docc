@@ -14,24 +14,32 @@ import Markdown
 /**
  A tutorial to complete in order to gain knowledge of a ``Technology``.
  */
-public final class Tutorial: Semantic, DirectiveConvertible, Abstracted, Titled, Timed, Redirected {
-    public static let directiveName = "Tutorial"
+public final class Tutorial: Semantic, AutomaticDirectiveConvertible, Abstracted, Titled, Timed, Redirected {
     public let originalMarkup: BlockDirective
     
     /// The estimated time in minutes that the containing ``Tutorial`` will take.
-    public let durationMinutes: Int?
+    @DirectiveArgumentWrapped(name: .custom("time"))
+    public private(set) var durationMinutes: Int? = nil
     
     /// Project files to download to get started with the ``Tutorial``.
-    public let projectFiles: ResourceReference?
+    @DirectiveArgumentWrapped(
+        parseArgument: { bundle, argumentValue in
+            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+        }
+    )
+    public private(set) var projectFiles: ResourceReference? = nil
     
     /// Informal requirements to complete the ``Tutorial``.
-    public let requirements: [XcodeRequirement]
+    @ChildDirective(requirements: .zeroOrOne)
+    public private(set) var requirements: [XcodeRequirement]
     
     /// The Intro section, representing a slide that introduces the tutorial.
-    public let intro: Intro
+    @ChildDirective
+    public private(set) var intro: Intro
 
     /// All of the sections to complete to finish the tutorial.
-    public let sections: [TutorialSection]
+    @ChildDirective(requirements: .oneOrMore)
+    public private(set) var sections: [TutorialSection]
     
     /// The linkable parts of the tutorial.
     ///
@@ -41,10 +49,12 @@ public final class Tutorial: Semantic, DirectiveConvertible, Abstracted, Titled,
     }
     
     /// A section containing various questions to test the reader's knowledge.
-    public let assessments: Assessments?
+    @ChildDirective
+    public private(set) var assessments: Assessments? = nil
     
     /// An image for the final call to action, which directs the reader to the starting point to learn about this category.
-    public let callToActionImage: ImageMedia?
+    @ChildDirective
+    public private(set) var callToActionImage: ImageMedia? = nil
     
     public var abstract: Paragraph? {
         return intro.content.first as? Paragraph
@@ -61,22 +71,25 @@ public final class Tutorial: Semantic, DirectiveConvertible, Abstracted, Titled,
             (assessments.map({ [$0] }) ?? [])
     }
     
-    enum Semantics {
-        enum Time: DirectiveArgument {
-            typealias ArgumentValue = Int
-            static let argumentName = "time"
-        }
-        enum ProjectFiles: DirectiveArgument {
-            static let argumentName = "projectFiles"
-        }
-    }
+    @ChildDirective
+    public private(set) var redirects: [Redirect]? = nil
     
-    public let redirects: [Redirect]?
+    static var keyPaths: [String : AnyKeyPath] = [
+        "durationMinutes"   :   \Tutorial._durationMinutes,
+        "projectFiles"      :   \Tutorial._projectFiles,
+        "requirements"      :   \Tutorial._requirements,
+        "intro"             :   \Tutorial._intro,
+        "sections"          :   \Tutorial._sections,
+        "assessments"       :   \Tutorial._assessments,
+        "callToActionImage" :   \Tutorial._callToActionImage,
+        "redirects"         :   \Tutorial._redirects,
+    ]
     
     init(originalMarkup: BlockDirective, durationMinutes: Int?, projectFiles: ResourceReference?, requirements: [XcodeRequirement], intro: Intro, sections: [TutorialSection], assessments: Assessments?, callToActionImage: ImageMedia?, redirects: [Redirect]?) {
         self.originalMarkup = originalMarkup
         self.durationMinutes = durationMinutes
         self.projectFiles = projectFiles
+        super.init()
         self.requirements = requirements
         self.intro = intro
         self.sections = sections
@@ -85,27 +98,19 @@ public final class Tutorial: Semantic, DirectiveConvertible, Abstracted, Titled,
         self.redirects = redirects
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        precondition(directive.name == Tutorial.directiveName)
-        
-        let arguments = Semantic.Analyses.HasOnlyKnownArguments<Tutorial>(severityIfFound: .warning, allowedArguments: [Semantics.Time.argumentName, Semantics.ProjectFiles.argumentName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        Semantic.Analyses.HasOnlyKnownDirectives<Tutorial>(severityIfFound: .warning, allowedDirectives: [Intro.directiveName, TutorialSection.directiveName, Assessments.directiveName, XcodeRequirement.directiveName, ImageMedia.directiveName, Redirect.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        let optionalTime = Semantic.Analyses.HasArgument<Tutorial, Semantics.Time>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems)
-        let optionalProjectFiles = arguments[Semantics.ProjectFiles.argumentName].map { argument in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argument.value)
-        }
-        
-        var remainder: MarkupContainer
-        let requiredIntro: Intro?
-        (requiredIntro, remainder) = Semantic.Analyses.HasExactlyOne<Tutorial, Intro>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        let sections: [TutorialSection]
-        (sections, remainder) = Semantic.Analyses.HasAtLeastOne<Tutorial, TutorialSection>(severityIfNotFound: .warning).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
-        
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: BlockDirective) {
+        self.originalMarkup = originalMarkup
+    }
+    
+    func validate(
+        source: URL?,
+        for bundle: DocumentationBundle,
+        in context: DocumentationContext,
+        problems: inout [Problem]
+    ) -> Bool {
         var seenSectionTitles = [String: SourceRange]()
-        let sectionsWithoutDuplicates = sections.filter { section -> Bool in
+        sections = sections.filter { section -> Bool in
             let arguments = section.originalMarkup.arguments()
             let thisTitleRange = arguments[TutorialSection.Semantics.Title.argumentName]?.valueRange
             if let previousRange = seenSectionTitles[section.title] {
@@ -120,24 +125,7 @@ public final class Tutorial: Semantic, DirectiveConvertible, Abstracted, Titled,
             return true
         }
         
-        let optionalAssessments: Assessments?
-        (optionalAssessments, remainder) = Semantic.Analyses.HasExactlyOne<Tutorial, Assessments>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
-        
-        let requirement: XcodeRequirement?
-        (requirement, remainder) = Semantic.Analyses.HasAtMostOne<Tutorial, XcodeRequirement>().analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
-        
-        let optionalCallToActionImage: ImageMedia?
-        (optionalCallToActionImage, remainder) = Semantic.Analyses.HasExactlyOne<Technology, ImageMedia>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
-
-        let redirects: [Redirect]
-            (redirects, remainder) = Semantic.Analyses.HasAtLeastOne<Chapter, Redirect>(severityIfNotFound: nil).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
-        
-        guard let intro = requiredIntro else {
-            return nil
-        }
-        let requirements = requirement.map { [$0] } ?? []
-        
-        self.init(originalMarkup: directive, durationMinutes: optionalTime, projectFiles: optionalProjectFiles, requirements: requirements, intro: intro, sections: sectionsWithoutDuplicates, assessments: optionalAssessments, callToActionImage: optionalCallToActionImage, redirects: redirects.isEmpty ? nil : redirects)
+        return true
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {

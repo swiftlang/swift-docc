@@ -182,8 +182,9 @@ extension UnifiedSymbolGraph.Symbol {
         // Adding a dedicated SymbolKit API for this purpose is tracked
         // with github.com/apple/swift-docc-symbolkit/issues/32 and rdar://85982095.
         return Set(
-            pathComponents.keys.compactMap { selector in
-                return SourceLanguage(knownLanguageIdentifier: selector.interfaceLanguage)
+            pathComponents.keys.map { selector in
+                SourceLanguage(knownLanguageIdentifier: selector.interfaceLanguage)
+                    ?? SourceLanguage(id: selector.interfaceLanguage)
             }
         )
     }
