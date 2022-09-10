@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -435,6 +435,28 @@ class ConvertSubcommandTests: XCTestCase {
             ])
             
             XCTAssertFalse(convertOptions.transformForStaticHosting)
+        }
+    }
+    
+    func testTreatWarningAsrror() throws {
+        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        do {
+            // Passing no argument should default to the current working directory.
+            let convert = try Docc.Convert.parse([])
+            let convertAction = try ConvertAction(fromConvertCommand: convert)
+            XCTAssertEqual(convertAction.treatWarningsAsErrors, false)
+        } catch {
+            XCTFail("Failed to run docc convert without arguments.")
+        }
+        do {
+            // Passing no argument should default to the current working directory.
+            let convert = try Docc.Convert.parse([
+                "--warnings-as-errors"
+            ])
+            let convertAction = try ConvertAction(fromConvertCommand: convert)
+            XCTAssertEqual(convertAction.treatWarningsAsErrors, true)
+        } catch {
+            XCTFail("Failed to run docc convert without arguments.")
         }
     }
 }

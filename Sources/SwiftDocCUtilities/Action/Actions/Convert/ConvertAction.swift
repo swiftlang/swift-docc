@@ -33,6 +33,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let htmlTemplateDirectory: URL?
     let emitDigest: Bool
     let inheritDocs: Bool
+    let treatWarningsAsErrors: Bool
     let experimentalEnableCustomTemplates: Bool
     let buildLMDBIndex: Bool
     let documentationCoverageOptions: DocumentationCoverageOptions
@@ -99,6 +100,7 @@ public struct ConvertAction: Action, RecreatingContext {
         diagnosticEngine: DiagnosticEngine? = nil,
         emitFixits: Bool = false,
         inheritDocs: Bool = false,
+        treatWarningsAsErrors: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool = false,
         hostingBasePath: String? = nil,
@@ -135,10 +137,11 @@ public struct ConvertAction: Action, RecreatingContext {
             formattingOptions = []
         }
         self.inheritDocs = inheritDocs
+        self.treatWarningsAsErrors = treatWarningsAsErrors
 
         self.experimentalEnableCustomTemplates = experimentalEnableCustomTemplates
         
-        let engine = diagnosticEngine ?? DiagnosticEngine()
+        let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
         engine.add(DiagnosticConsoleWriter(formattingOptions: formattingOptions))
         

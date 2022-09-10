@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -127,6 +127,40 @@ class DiagnosticEngineTests: XCTestCase {
             error: Test error
             warning: Test warning
             note: Test information
+            """)
+    }
+    
+    func testTreatWarningsAsErrors() {
+        let error = Problem(diagnostic: Diagnostic(source: nil, severity: .error, range: nil, identifier: "org.swift.docc.tests", summary: "Test error"), possibleSolutions: [])
+        let warning = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test warning"), possibleSolutions: [])
+        let information = Problem(diagnostic: Diagnostic(source: nil, severity: .information, range: nil, identifier: "org.swift.docc.tests", summary: "Test information"), possibleSolutions: [])
+
+        let defaultEngine = DiagnosticEngine()
+        defaultEngine.emit(error)
+        defaultEngine.emit(warning)
+        defaultEngine.emit(information)
+        XCTAssertEqual(defaultEngine.problems.localizedDescription, """
+            error: Test error
+            warning: Test warning
+            """)
+
+        let engine = DiagnosticEngine(filterLevel: .information, treatWarningsAsErrors: true)
+        engine.emit(error)
+        engine.emit(warning)
+        engine.emit(information)
+        XCTAssertEqual(engine.problems.localizedDescription, """
+            error: Test error
+            error: Test warning
+            note: Test information
+            """)
+        
+        let errorFilterLevelEngine = DiagnosticEngine(filterLevel: .error, treatWarningsAsErrors: true)
+        errorFilterLevelEngine.emit(error)
+        errorFilterLevelEngine.emit(warning)
+        errorFilterLevelEngine.emit(information)
+        XCTAssertEqual(errorFilterLevelEngine.problems.localizedDescription, """
+            error: Test error
+            error: Test warning
             """)
     }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -2556,6 +2556,87 @@ class ConvertActionTests: XCTestCase {
         ])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
     }
+    
+    func testTreatWarningsAsErrors() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
+            TextFile(name: "Article.md", utf8Content: """
+            Bad title
+
+            This article has a malformed title and can't be analyzed, so it
+            produces one warning.
+            """),
+        ])
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+
+        // Test DiagnosticEngine with "treatWarningsAsErrors" set to false
+        do {
+            let engine = DiagnosticEngine(treatWarningsAsErrors: false)
+            var action = try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: true,
+                targetDirectory: targetDirectory,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
+                diagnosticEngine: engine
+            )
+            let result = try action.perform(logHandle: .none)
+            XCTAssertEqual(engine.problems.count, 1)
+            XCTAssertTrue(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
+            XCTAssertFalse(result.didEncounterError)
+        }
+        
+        // Test DiagnosticEngine with "treatWarningsAsErrors" set to true
+        do {
+            let engine = DiagnosticEngine(treatWarningsAsErrors: true)
+            var action = try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: true,
+                targetDirectory: targetDirectory,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
+                diagnosticEngine: engine
+            )
+            let result = try action.perform(logHandle: .none)
+            XCTAssertEqual(engine.problems.count, 1)
+            XCTAssertTrue(result.didEncounterError)
+        }
+        
+        do {
+            var action = try ConvertAction(
+                documentationBundleURL: bundle.absoluteURL,
+                outOfProcessResolver: nil,
+                analyze: true,
+                targetDirectory: targetDirectory,
+                htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+                emitDigest: false,
+                currentPlatforms: nil,
+                dataProvider: testDataProvider,
+                fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
+                diagnosticEngine: nil,
+                treatWarningsAsErrors: true
+            )
+            let result = try action.perform(logHandle: .none)
+            XCTAssertTrue(result.didEncounterError)
+        }
+
+    }
+
     
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {
         return problems.sorted(by: { (lhs, rhs) -> Bool in
