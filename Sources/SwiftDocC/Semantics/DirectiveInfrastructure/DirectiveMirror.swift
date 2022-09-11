@@ -240,6 +240,15 @@ extension DirectiveMirror {
             }
         }
         
+        var allowsStructuredMarkup: Bool {
+            switch childMarkupSupport {
+            case .supportsMarkup(let markupRequirements):
+                return markupRequirements.first?.markup.supportsStructuredMarkup ?? false
+            case .disallowsMarkup:
+                return false
+            }
+        }
+        
         var requiresMarkup: Bool {
             switch childMarkupSupport {
             case .supportsMarkup(let markupRequirements):

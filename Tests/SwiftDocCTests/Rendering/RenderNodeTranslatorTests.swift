@@ -1014,4 +1014,38 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(l.code, ["middle()"])
 
     }
+    
+    func testRowAndColumn() throws {
+        let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/BestBook/MyArticle",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        
+        let discussion = try XCTUnwrap(
+            renderNode.primaryContentSections.first(
+                where: { $0.kind == .content }
+            ) as? ContentRenderSection
+        )
+        
+        guard case let .row(row) = discussion.content.dropFirst().first else {
+            XCTFail("Expected to find row as first child.")
+            return
+        }
+        
+        XCTAssertEqual(row.numberOfColumns, 8)
+        XCTAssertEqual(row.columns.first?.size, 3)
+        XCTAssertEqual(row.columns.first?.content.count, 1)
+        XCTAssertEqual(row.columns.last?.size, 5)
+        XCTAssertEqual(row.columns.last?.content.count, 3)
+    }
 }

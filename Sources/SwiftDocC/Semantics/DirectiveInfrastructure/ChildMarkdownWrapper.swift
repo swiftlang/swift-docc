@@ -16,6 +16,8 @@ protocol _ChildMarkupProtocol {
     
     var index: Int? { get }
     
+    var supportsStructuredMarkup: Bool { get }
+    
     func setProperty<T>(
         on containingDirective: T,
         named propertyName: String,
@@ -61,6 +63,10 @@ public struct ChildMarkup<Value>: _ChildMarkupProtocol {
     
     var numberOfParagraphs: _ChildMarkupParagraphs
     
+    /// Returns true if the child markup can contain structured markup content like
+    /// rows and columns.
+    var supportsStructuredMarkup: Bool
+    
     public var wrappedValue: Value {
         get {
             parsedValue!
@@ -89,10 +95,15 @@ public struct ChildMarkup<Value>: _ChildMarkupProtocol {
 }
 
 extension ChildMarkup where Value == MarkupContainer {
-    init(numberOfParagraphs: _ChildMarkupParagraphs = .oneOrMore, index: Int? = nil) {
+    init(
+        numberOfParagraphs: _ChildMarkupParagraphs = .oneOrMore,
+        index: Int? = nil,
+        supportsStructure: Bool = false
+    ) {
         self.parsedValue = MarkupContainer()
         self.numberOfParagraphs = numberOfParagraphs
         self.index = index
+        self.supportsStructuredMarkup = supportsStructure
     }
 }
 
@@ -100,10 +111,12 @@ extension ChildMarkup where Value == Optional<MarkupContainer> {
     init(
         value: Value,
         numberOfParagraphs: _ChildMarkupParagraphs = .zeroOrMore,
-        index: Int? = nil
+        index: Int? = nil,
+        supportsStructure: Bool = false
     ) {
         self.parsedValue = value
         self.numberOfParagraphs = numberOfParagraphs
         self.index = index
+        self.supportsStructuredMarkup = supportsStructure
     }
 }
