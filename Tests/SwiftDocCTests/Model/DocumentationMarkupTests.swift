@@ -77,13 +77,17 @@ class DocumentationMarkupTests: XCTestCase {
             My abstract __content__.
             """
             let expected = """
-            Text "My abstract "
-            Strong
-            └─ Text "content"
-            Text "."
+            BlockDirective name: "Directive"
+            └─ BlockDirective name: "NestedDirective"
+            Paragraph
+            ├─ Text "My abstract "
+            ├─ Strong
+            │  └─ Text "content"
+            └─ Text "."
             """
             let model = DocumentationMarkup(markup: Document(parsing: source, options: .parseBlockDirectives))
-            XCTAssertEqual(expected, model.abstractSection?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n"))
+            XCTAssertNil(model.abstractSection)
+            XCTAssertEqual(expected, model.discussionSection?.content.map({ $0.detachedFromParent.debugDescription() }).joined(separator: "\n"))
         }
 
         // Directives in between sections
