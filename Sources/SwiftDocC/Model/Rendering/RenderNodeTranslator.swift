@@ -1145,8 +1145,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 renderNode: &node,
                 translators: [
                     DeclarationsSectionTranslator(),
-                    ReturnsSectionTranslator(),
                     ParametersSectionTranslator(),
+                    ReturnsSectionTranslator(),
                     DiscussionSectionTranslator(),
                 ]
             )
