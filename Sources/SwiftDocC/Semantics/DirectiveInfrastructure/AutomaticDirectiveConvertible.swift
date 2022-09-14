@@ -168,7 +168,8 @@ extension AutomaticDirectiveConvertible {
         
         Semantic.Analyses.HasOnlyKnownDirectives<Self>(
             severityIfFound: .warning,
-            allowedDirectives: reflectedDirective.childDirectives.map(\.name)
+            allowedDirectives: reflectedDirective.childDirectives.map(\.name),
+            allowsStructuredMarkup: reflectedDirective.allowsStructuredMarkup
         )
         .analyze(
             directive,

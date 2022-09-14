@@ -156,9 +156,32 @@ struct SemanticAnalyzer: MarkupVisitor {
             _ = Snippet(from: blockDirective, source: source, for: bundle, in: context, problems: &problems)
             return nil
         default:
-            let diagnostic = Diagnostic(source: source, severity: .warning, range: blockDirective.range, identifier: "org.swift.docc.unknownDirective", summary: "Unknown directive \(blockDirective.name.singleQuoted); this element will be ignored")
-            problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
-            return nil
+            guard let directiveType = DirectiveIndex.shared.indexedDirectives[blockDirective.name]?.type else {
+                let diagnostic = Diagnostic(source: source, severity: .warning, range: blockDirective.range, identifier: "org.swift.docc.unknownDirective", summary: "Unknown directive \(blockDirective.name.singleQuoted); this element will be ignored")
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                
+                return nil
+            }
+            
+            guard let directive = directiveType.init(
+                from: blockDirective,
+                source: source,
+                for: bundle,
+                in: context,
+                problems: &problems
+            ) else {
+                return nil
+            }
+            
+            // Analyze any structured markup directives (like @Row or @Column)
+            // that are contained in the child markup of this directive.
+            if let markupContainingDirective = directive as? MarkupContaining {
+                for markupElement in markupContainingDirective.childMarkup {
+                    _ = visit(markupElement)
+                }
+            }
+            
+            return directive as? Semantic
         }
     }
 

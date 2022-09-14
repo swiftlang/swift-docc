@@ -17,11 +17,24 @@ extension Semantic.Analyses {
         let severityIfFound: DiagnosticSeverity?
         let allowedDirectives: [String]
         let allowsMarkup: Bool
-        public init(severityIfFound: DiagnosticSeverity?, allowedDirectives: [String], allowsMarkup: Bool = true) {
+        public init(
+            severityIfFound: DiagnosticSeverity?,
+            allowedDirectives: [String],
+            allowsMarkup: Bool = true,
+            allowsStructuredMarkup: Bool = false
+        ) {
             self.severityIfFound = severityIfFound
-            self.allowedDirectives = allowedDirectives
+            var allowedDirectives = allowedDirectives
                 /* Comments are always allowed because they are ignored. */
                 + [Comment.directiveName]
+            
+            if allowsStructuredMarkup {
+                allowedDirectives += DirectiveIndex.shared.renderableDirectives.values.map {
+                    return $0.directiveName
+                }
+            }
+            self.allowedDirectives = allowedDirectives
+            
             self.allowsMarkup = allowsMarkup
         }
         

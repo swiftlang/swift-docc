@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import Markdown
 
 extension XCTestCase {
     
@@ -76,4 +77,54 @@ extension XCTestCase {
         return bundles[0]
     }
     
+    func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
+        source: () -> String
+    ) throws -> (renderBlockContent: RenderBlockContent?, problemIdentifiers: [String], directive: Directive?) {
+        let bundle = DocumentationBundle(
+            info: DocumentationBundle.Info(
+                displayName: "Test",
+                identifier: "com.example.test",
+                version: "1.0"
+            ),
+            baseURL: URL(string: "https://example.com/example")!,
+            symbolGraphURLs: [],
+            markupURLs: [],
+            miscResourceURLs: []
+        )
+        let provider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        let workspace = DocumentationWorkspace()
+        try workspace.registerProvider(provider)
+        let context = try DocumentationContext(dataProvider: workspace)
+        
+        let document = Document(parsing: source(), options: .parseBlockDirectives)
+        
+        let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
+        
+        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
+        let result = analyzer.visit(blockDirectiveContainer)
+        
+        let problemIDs = analyzer.problems.map { problem -> String in
+            let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
+            
+            return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
+        }.sorted()
+        
+        guard let directive = result as? Directive else {
+            return (nil, problemIDs, nil)
+        }
+        
+        var contentCompiler = RenderContentCompiler(
+            context: context,
+            bundle: bundle,
+            identifier: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/test-path-123",
+                sourceLanguage: .swift
+            )
+        )
+        
+        let renderedContent = directive.render(with: &contentCompiler).first as? RenderBlockContent
+        return (renderedContent, problemIDs, directive)
+    }
 }

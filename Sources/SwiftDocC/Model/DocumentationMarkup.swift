@@ -142,12 +142,17 @@ struct DocumentationMarkup {
                     abstractSection = AbstractSection(paragraph: firstParagraph)
                     return
                 } else if let directive = child as? BlockDirective {
-                    // Found deprecation notice in the abstract.
                     if directive.name == DeprecationSummary.directiveName {
+                        // Found deprecation notice in the abstract.
                         deprecation = MarkupContainer(directive.children)
+                        return
+                    } else if directive.name == Comment.directiveName || directive.name == Metadata.directiveName {
+                        // These directives don't affect content so they shouldn't break us out of
+                        // the automatic abstract section.
+                        return
+                    } else {
+                        currentSection = .discussion
                     }
-                    // Skip other block like @Comment and so on.
-                    return
                 } else if let _ = child as? HTMLBlock {
                     // Skip HTMLBlock comment.
                     return

@@ -16,6 +16,7 @@ struct DirectiveIndex {
         Redirect.self,
         Snippet.self,
         DeprecationSummary.self,
+        Row.self,
     ]
     
     private static let topLevelTutorialDirectives: [AutomaticDirectiveConvertible.Type] = [
@@ -38,6 +39,8 @@ struct DirectiveIndex {
         + otherTutorialDirectives
     
     let indexedDirectives: [String : DirectiveMirror.ReflectedDirective]
+    
+    let renderableDirectives: [String : AnyRenderableDirectiveConvertibleType]
     
     static let shared = DirectiveIndex()
     
@@ -78,6 +81,14 @@ struct DirectiveIndex {
         }
         
         self.indexedDirectives = indexedDirectives
+        
+        self.renderableDirectives = indexedDirectives.compactMapValues { directive in
+            guard let renderableDirective = directive.type as? RenderableDirectiveConvertible.Type else {
+                return nil
+            }
+            
+            return AnyRenderableDirectiveConvertibleType(underlyingType: renderableDirective)
+        }
     }
     
     func reflection(

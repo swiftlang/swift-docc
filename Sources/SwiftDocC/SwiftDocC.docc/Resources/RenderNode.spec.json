@@ -429,6 +429,9 @@
                         "$ref": "#/components/schemas/Columns"
                     },
                     {
+                        "$ref": "#/components/schemas/Row"
+                    },
+                    {
                         "$ref": "#/components/schemas/Aside"
                     },
                     {
@@ -545,6 +548,47 @@
                         "items": {
                             "$ref": "#/components/schemas/RenderBlockContent"
                         }
+                    }
+                }
+            },
+            "Row": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "columns",
+                    "numberOfColumns"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["row"]
+                    },
+                    "columns": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Column"
+                        }
+                    },
+                    "numberOfColumns": {
+                        "type": "number"
+                    }
+                }
+            },
+            "Column": {
+                "type": "object",
+                "required": [
+                    "content",
+                    "size"
+                ],
+                "properties": {
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "size": {
+                        "type": "number"
                     }
                 }
             },
