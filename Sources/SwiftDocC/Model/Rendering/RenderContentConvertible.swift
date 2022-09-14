@@ -11,6 +11,10 @@
 import Foundation
 import Markdown
 
+/// A directive that can be directly rendered within markup content.
+///
+/// This protocol is used by the `RenderContentCompiler` to render arbitrary directives
+/// that conform to renderable.
 protocol RenderableDirectiveConvertible: AutomaticDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent]
 }

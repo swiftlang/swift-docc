@@ -406,15 +406,24 @@ public enum RenderBlockContent: Equatable {
         public let definition: Definition
     }
     
+    /// A row in a grid-based layout system that describes a collection of columns.
     public struct Row: Codable, Equatable {
+        /// The number of columns that should be rendered in this row.
+        ///
+        /// This may be different then the count of ``columns`` array. For example, there may be
+        /// individual columns that span multiple columns (specified with the column's
+        /// ``Column/size`` property) or the row could be not fully filled with columns.
         public let numberOfColumns: Int
         
+        /// The columns that should be rendered in this row.
         public let columns: [Column]
         
-        
+        /// A column with a row in a grid-based layout system.
         public struct Column: Codable, Equatable {
+            /// The number of columns in the parent row this column should span.
             public let size: Int
             
+            /// The content that should be rendered in this column.
             public let content: [RenderBlockContent]
         }
     }
