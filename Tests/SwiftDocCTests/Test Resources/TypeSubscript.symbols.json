@@ -1,0 +1,201 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "x"
+    },
+    "module": {
+        "name": "ThirdOrder",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 4,
+                    "patch": 0
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.type.subscript",
+                "displayName": "Type Subscript"
+            },
+            "identifier": {
+                "precise": "s:10ThirdOrder10SomeStructVyS2icipZ",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeStruct",
+                "subscript(_:)"
+            ],
+            "names": {
+                "title": "subscript(_:)",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "subscript"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Int",
+                        "preciseIdentifier": "s:Si"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Int",
+                        "preciseIdentifier": "s:Si"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "subscript"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "idx"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Int",
+                    "preciseIdentifier": "s:Si"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Int",
+                    "preciseIdentifier": "s:Si"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " { "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "get"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " }"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///path/to/ThirdOrder.swift",
+                "position": {
+                    "line": 14,
+                    "character": 18
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.struct",
+                "displayName": "Structure"
+            },
+            "identifier": {
+                "precise": "s:10ThirdOrder10SomeStructV",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "SomeStruct"
+            ],
+            "names": {
+                "title": "SomeStruct",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "SomeStruct"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "struct"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "SomeStruct"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "struct"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "SomeStruct"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file:///path/to/ThirdOrder.swift",
+                "position": {
+                    "line": 13,
+                    "character": 14
+                }
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "memberOf",
+            "source": "s:10ThirdOrder10SomeStructVyS2icipZ",
+            "target": "s:10ThirdOrder10SomeStructV"
+        }
+    ]
+}

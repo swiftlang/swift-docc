@@ -502,4 +502,39 @@ class AutomaticCurationTests: XCTestCase {
             ]
         )
     }
+
+    func testTypeSubscriptsAreCuratedProperly() throws {
+        let symbolURL = Bundle.module.url(
+            forResource: "TypeSubscript.symbols", withExtension: "json", subdirectory: "Test Resources")!
+
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            try? FileManager.default.copyItem(at: symbolURL, to: url.appendingPathComponent("TypeSubscript.symbols.json"))
+        }
+        defer {
+            try? FileManager.default.removeItem(at: bundleURL)
+        }
+
+        let containerDocumentationNode = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/ThirdOrder/SomeStruct",
+                sourceLanguages: [.swift]
+            )
+        )
+        let topics = try AutomaticCuration.topics(
+            for: containerDocumentationNode,
+            withTrait: DocumentationDataVariantsTrait(interfaceLanguage: "swift"),
+            context: context
+        )
+
+        XCTAssertEqual(
+            topics.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.references.map(\.path)
+            },
+            [
+                "Type Subscripts",
+                "/documentation/ThirdOrder/SomeStruct/subscript(_:)",
+            ]
+        )
+    }
 }

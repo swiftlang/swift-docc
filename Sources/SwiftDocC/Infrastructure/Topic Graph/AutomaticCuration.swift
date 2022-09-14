@@ -247,6 +247,7 @@ extension AutomaticCuration {
         .`typeProperty`,
         .`typeMethod`,
         .`enum`,
+        .`typeSubscript`,
         
         .extendedModule,
         .extendedClass,
