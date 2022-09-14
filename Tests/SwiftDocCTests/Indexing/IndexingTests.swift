@@ -237,7 +237,7 @@ class IndexingTests: XCTestCase {
                                       title: "MyProtocol",
                                       summary: "An abstract of a protocol using a String id value.",
                                       headings: ["Return Value", "Discussion"],
-                                      rawIndexableTextContent: "An abstract of a protocol using a String id value.  Return Value A String id value. A name of the item to find. Discussion Further discussion. Exercise links to symbols: relative MyClass and absolute MyClass. Exercise unresolved symbols: unresolved MyUnresolvedSymbol. Exercise known unresolvable symbols: know unresolvable NSCodable. Exercise external references: doc://com.test.external/ExternalPage One ordered Two ordered Three ordered One unordered Two unordered Three unordered",
+                                      rawIndexableTextContent: "An abstract of a protocol using a String id value.  A name of the item to find. Return Value A String id value. Discussion Further discussion. Exercise links to symbols: relative MyClass and absolute MyClass. Exercise unresolved symbols: unresolved MyUnresolvedSymbol. Exercise known unresolvable symbols: know unresolvable NSCodable. Exercise external references: doc://com.test.external/ExternalPage One ordered Two ordered Three ordered One unordered Two unordered Three unordered",
                                      platforms: expectedPlatformInformation),
                        indexingRecords[0])
     }
