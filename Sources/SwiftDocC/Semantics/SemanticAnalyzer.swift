@@ -155,6 +155,8 @@ struct SemanticAnalyzer: MarkupVisitor {
             // MarkupReferenceResolver.
             _ = Snippet(from: blockDirective, source: source, for: bundle, in: context, problems: &problems)
             return nil
+        case Options.directiveName:
+            return nil
         default:
             guard let directiveType = DirectiveIndex.shared.indexedDirectives[blockDirective.name]?.type else {
                 let diagnostic = Diagnostic(source: source, severity: .warning, range: blockDirective.range, identifier: "org.swift.docc.unknownDirective", summary: "Unknown directive \(blockDirective.name.singleQuoted); this element will be ignored")

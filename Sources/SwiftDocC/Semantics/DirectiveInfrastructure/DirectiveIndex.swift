@@ -17,6 +17,7 @@ struct DirectiveIndex {
         Snippet.self,
         DeprecationSummary.self,
         Row.self,
+        Options.self,
     ]
     
     private static let topLevelTutorialDirectives: [AutomaticDirectiveConvertible.Type] = [

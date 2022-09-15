@@ -2308,7 +2308,7 @@ let expected = """
         Article Abstract.
         """
         // Assert we can create a documentation node from markup
-        let markupArticle = Article(markup: Document(parsing: source), metadata: nil, redirects: nil)
+        let markupArticle = Article(markup: Document(parsing: source), metadata: nil, redirects: nil, options: [:])
         XCTAssertNoThrow(try DocumentationNode(reference: reference, article: markupArticle))
         
         // Assert we cannot create new nodes from semantic article data

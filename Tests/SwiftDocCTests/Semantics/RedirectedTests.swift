@@ -59,7 +59,7 @@ class RedirectedTests: XCTestCase {
               XCTAssertEqual(problems.first?.diagnostic.identifier, "org.swift.docc.HasArgument.from.ConversionFailed")
               XCTAssertEqual(
                   problems.first?.diagnostic.localizedSummary,
-                  "Can't convert '\(pathWithInvalidCharacter)' to type URL"
+                  "Cannot convert '\(pathWithInvalidCharacter)' to type 'URL'"
               )
           }
       }

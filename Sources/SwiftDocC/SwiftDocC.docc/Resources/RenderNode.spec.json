@@ -1841,6 +1841,16 @@
                             "$ref": "#/components/schemas/RenderInlineContent"
                         }
                     },
+                    "topicSectionsStyle": {
+                        "type": "string",
+                        "enum": [
+                            "list",
+                            "compactGrid",
+                            "detailedGrid",
+                            "hidden"
+                        ],
+                        "default": "list"
+                    },
                     "topicSections": {
                         "type": "array",
                         "items": {
