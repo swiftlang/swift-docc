@@ -185,23 +185,32 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitTable(_ table: Table) -> [RenderContent] {
+        var extendedData = Set<RenderBlockContent.TableCellExtendedData>()
+
         var headerCells = [RenderBlockContent.TableRow.Cell]()
         for cell in table.head.cells {
             let cellContent = cell.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
             headerCells.append([RenderBlockContent.paragraph(.init(inlineContent: cellContent as! [RenderInlineContent]))])
+            if cell.colspan != 1 || cell.rowspan != 1 {
+                extendedData.insert(.init(rowIndex: 0, columnIndex: cell.indexInParent, colspan: cell.colspan, rowspan: cell.rowspan))
+            }
         }
         
         var rows = [RenderBlockContent.TableRow]()
         for row in table.body.rows {
+            let rowIndex = row.indexInParent + 1
             var cells = [RenderBlockContent.TableRow.Cell]()
             for cell in row.cells {
                 let cellContent = cell.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
                 cells.append([RenderBlockContent.paragraph(.init(inlineContent: cellContent as! [RenderInlineContent]))])
+                if cell.colspan != 1 || cell.rowspan != 1 {
+                    extendedData.insert(.init(rowIndex: rowIndex, columnIndex: cell.indexInParent, colspan: cell.colspan, rowspan: cell.rowspan))
+                }
             }
             rows.append(RenderBlockContent.TableRow(cells: cells))
         }
         
-        return [RenderBlockContent.table(.init(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, metadata: nil))]
+        return [RenderBlockContent.table(.init(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, extendedData: extendedData, metadata: nil))]
     }
 
     mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> [RenderContent] {
