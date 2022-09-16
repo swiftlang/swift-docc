@@ -1384,7 +1384,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             }
                         }
                         for (usr, node) in symbolIndex {
-                            guard let kind = node.symbol?.kind.identifier, kind != .module,
+                            guard let kind = node.symbol?.kind.identifier, kind.symbolGeneratesPage(),
                                   !hierarchyBasedReferences.keys.contains(where: { $0.precise == usr })
                             else { continue }
                             linkResolutionMismatches.missingPathsInHierarchyBasedLinkResolver.append(node.reference.path)

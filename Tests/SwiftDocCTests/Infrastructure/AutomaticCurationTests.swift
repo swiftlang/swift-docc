@@ -21,7 +21,7 @@ class AutomaticCurationTests: XCTestCase {
         var availableSymbolKinds = Set(AutomaticCuration.groupKindOrder)
         availableSymbolKinds.formUnion(SymbolGraph.Symbol.KindIdentifier.allCases)
 
-        for kind in availableSymbolKinds where kind != .module {
+        for kind in availableSymbolKinds where kind.symbolGeneratesPage() {
             // TODO: Synthesize appropriate `swift.extension` symbols that get transformed into
             // the respective internal symbol kinds as defined by `ExtendedTypeFormatTransformation`
             // and remove decoder injection logic from `DocumentationContext` and `SymbolGraphLoader`
@@ -43,7 +43,7 @@ class AutomaticCurationTests: XCTestCase {
             
             XCTAssertNotNil(renderNode.topicSections.first(where: { group -> Bool in
                 return group.title == AutomaticCuration.groupTitle(for: kind)
-            }), "\(kind.identifier) was not automatically curated in a \(AutomaticCuration.groupTitle(for: kind).singleQuoted) topic group." )
+            }), "\(kind.identifier) was not automatically curated in a \(AutomaticCuration.groupTitle(for: kind).singleQuoted) topic group. Please add it to either AutomaticCuration.groupKindOrder or KindIdentifier.noPageKinds." )
         }
     }
 

@@ -204,8 +204,6 @@ extension AutomaticCuration {
             case .`method`: return "Instance Methods"
             case .`property`: return "Instance Properties"
             case .`protocol`: return "Protocols"
-            case .snippet: return "Snippets"
-            case .snippetGroup: return "Snippets"
             case .`struct`: return "Structures"
             case .`subscript`: return "Subscripts"
             case .`typeMethod`: return "Type Methods"
@@ -225,9 +223,10 @@ extension AutomaticCuration {
     }
 
     /// The order of symbol kinds when grouped automatically.
+    ///
+    /// Add a symbol kind to `KindIdentifier.noPageKinds` if it should not generate a page in the
+    /// documentation hierarchy.
     static let groupKindOrder: [SymbolGraph.Symbol.KindIdentifier] = [
-        .module,
-
         .`class`,
         .`protocol`,
         .`struct`,
@@ -259,8 +258,5 @@ extension AutomaticCuration {
         .unknownExtendedType,
 
         .extension,
-
-        .snippet,
-        .snippetGroup
     ]
 }
