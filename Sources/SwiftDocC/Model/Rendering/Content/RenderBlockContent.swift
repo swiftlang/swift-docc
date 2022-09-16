@@ -61,6 +61,7 @@ public enum RenderBlockContent: Equatable {
     /// A table that contains a list of row data.
     case table(Table)
     
+    /// A row in a grid-based layout system that describes a collection of columns.
     case row(Row)
 
     // Warning: If you add a new case to this enum, make sure to handle it in the Codable
