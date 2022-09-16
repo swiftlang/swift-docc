@@ -470,7 +470,7 @@
                     "character": 23,
                     "line": 49
                 },
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "names": {
                 "subHeading": [
@@ -1444,7 +1444,7 @@
                     "character": 23,
                     "line": 14
                 },
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "names": {
                 "subHeading": [
@@ -1703,7 +1703,7 @@
                     "character": 23,
                     "line": 35
                 },
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "names": {
                 "subHeading": [
@@ -1962,7 +1962,7 @@
                     "character": 23,
                     "line": 45
                 },
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "names": {
                 "subHeading": [
@@ -2508,7 +2508,7 @@
                     "character": 15,
                     "line": 31
                 },
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "names": {
                 "subHeading": [
@@ -3110,7 +3110,7 @@
                     "character": 23,
                     "line": 39
                 },
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "names": {
                 "subHeading": [
@@ -4080,7 +4080,7 @@
                     }
                 ],
                 "module": "Operators",
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "identifier": {
                 "interfaceLanguage": "swift",
@@ -4095,7 +4095,7 @@
                     "character": 14,
                     "line": 4
                 },
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "names": {
                 "navigator": [
@@ -4390,7 +4390,7 @@
                     "character": 11,
                     "line": 20
                 },
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "names": {
                 "subHeading": [
@@ -4556,7 +4556,7 @@
                     "character": 11,
                     "line": 26
                 },
-                "uri": "file:///Users/droennqvist/Diagram/Operators/Sources/Operators/Operators.swift"
+                "uri": "file:///Users/username/path/to/Operators.swift"
             },
             "names": {
                 "subHeading": [
