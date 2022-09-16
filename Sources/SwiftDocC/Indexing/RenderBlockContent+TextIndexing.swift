@@ -62,6 +62,8 @@ extension RenderBlockContent: TextIndexing {
             return row.columns.map { column in
                 return column.content.rawIndexableTextContent(references: references)
             }.joined(separator: " ")
+        case .small(let small):
+            return small.inlineContent.rawIndexableTextContent(references: references)
         default:
             fatalError("unknown RenderBlockContent case in rawIndexableTextContent")
         }

@@ -1058,4 +1058,37 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(row.columns.last?.size, 5)
         XCTAssertEqual(row.columns.last?.content.count, 3)
     }
+    
+    func testSmall() throws {
+        let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/BestBook/MyArticle",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        
+        let discussion = try XCTUnwrap(
+            renderNode.primaryContentSections.first(
+                where: { $0.kind == .content }
+            ) as? ContentRenderSection
+        )
+        
+        guard case let .small(small) = discussion.content.last else {
+            XCTFail("Expected to find small as last child.")
+            return
+        }
+        
+        XCTAssertEqual(
+            small.inlineContent,
+            [.text("Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved.")]
+        )
+    }
 }
