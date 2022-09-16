@@ -1091,4 +1091,70 @@ class RenderNodeTranslatorTests: XCTestCase {
             [.text("Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved.")]
         )
     }
+    
+    func testCustomPageImage() throws {
+         let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
+         let reference = ResolvedTopicReference(
+             bundleIdentifier: bundle.identifier,
+             path: "/documentation/BestBook/MyArticle",
+             sourceLanguage: .swift
+         )
+         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+         var translator = RenderNodeTranslator(
+             context: context,
+             bundle: bundle,
+             identifier: reference,
+             source: nil
+         )
+         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+    
+         let encodedArticle = try JSONEncoder().encode(renderNode)
+         let roundTrippedArticle = try JSONDecoder().decode(RenderNode.self, from: encodedArticle)
+    
+         XCTAssertEqual(roundTrippedArticle.icon?.identifier, "plus.svg")
+    
+         XCTAssertEqual(
+             roundTrippedArticle.references["figure1.png"] as? ImageReference,
+             ImageReference(
+                 identifier: RenderReferenceIdentifier("figure1.png"),
+                 imageAsset: DataAsset(
+                     variants: [
+                         DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)
+                             : URL(string: "/images/figure1.png")!,
+    
+                         DataTraitCollection(userInterfaceStyle: .dark, displayScale: .standard)
+                             : URL(string: "/images/figure1~dark.png")!,
+                     ],
+                     metadata: [
+                         URL(string: "/images/figure1.png")! : DataAsset.Metadata(),
+                         URL(string: "/images/figure1~dark.png")! : DataAsset.Metadata(),
+                     ]
+                 )
+             )
+         )
+    
+         XCTAssertEqual(
+             roundTrippedArticle.references["plus.svg"] as? ImageReference,
+             ImageReference(
+                 identifier: RenderReferenceIdentifier("plus.svg"),
+                 imageAsset: DataAsset(
+                     variants: [
+                         DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)
+                             : URL(string: "/images/plus.svg")!,
+                     ],
+                     metadata: [
+                         URL(string: "/images/plus.svg")! : DataAsset.Metadata(svgID: "plus-id"),
+                     ]
+                 )
+             )
+         )
+    
+         XCTAssertEqual(
+             Set(roundTrippedArticle.metadata.images),
+             [
+                 TopicImage(type: .icon, identifier: RenderReferenceIdentifier("plus.svg")),
+                 TopicImage(type: .card, identifier: RenderReferenceIdentifier("figure1.png"))
+             ]
+         )
+     }
 }

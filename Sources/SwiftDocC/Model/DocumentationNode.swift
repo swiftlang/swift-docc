@@ -67,6 +67,11 @@ public struct DocumentationNode {
     /// Allows for control of settings such as automatic see also generation.
     public var options: Options?
 
+    /// Authored metadata for the node.
+    ///
+    /// Documentation authors can add metadata to a page using the ``Metadata`` directive.
+    public var metadata: Metadata?
+
     /// A discrete unit of documentation
     struct DocumentationChunk {
         /// The source of a documentation chunk: either a documentation extension file or an in-source documentation comment.
@@ -145,8 +150,10 @@ public struct DocumentationNode {
         
         if let article = semantic as? Article {
             self.options = article.options[.local]
+            self.metadata = article.metadata
         } else {
             self.options = nil
+            self.metadata = nil
         }
         
         updateAnchorSections()
@@ -364,6 +371,7 @@ public struct DocumentationNode {
         }
         
         options = documentationExtension?.options[.local]
+        self.metadata = documentationExtension?.metadata
         
         updateAnchorSections()
     }
@@ -618,6 +626,7 @@ public struct DocumentationNode {
         self.markup = articleMarkup
         self.isVirtual = false
         self.options = article.options[.local]
+        self.metadata = article.metadata
         
         updateAnchorSections()
     }

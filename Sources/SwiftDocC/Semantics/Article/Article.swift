@@ -134,7 +134,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             guard let childDirective = child as? BlockDirective, childDirective.name == Metadata.directiveName else {
                 return nil
             }
-            return Metadata(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+            return Metadata(from: childDirective, source: source, for: bundle, in: context)
         }
         
         for extraMetadata in metadata.dropFirst() {

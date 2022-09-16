@@ -36,10 +36,15 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     @ChildDirective
     var displayName: DisplayName? = nil
     
+    /// The optional, custom image used to represent this page.
+    @ChildDirective(requirements: .zeroOrMore)
+    var pageImages: [PageImage]
+    
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
         "technologyRoot"        : \Metadata._technologyRoot,
         "displayName"           : \Metadata._displayName,
+        "pageImages"            : \Metadata._pageImages,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
@@ -62,7 +67,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
@@ -75,6 +80,46 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 [Solution(summary: "Remove this \(Metadata.directiveName.singleQuoted) directive.", replacements: [Replacement(range: $0, replacement: "")])]
             } ?? []
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
+        }
+        
+        // Check that there is only a single `@PageImage` directive for each supported purpose
+        var categorizedPageImages = [PageImage.Purpose : [PageImage]]()
+        for pageImage in pageImages {
+            categorizedPageImages[pageImage.purpose, default: []].append(pageImage)
+        }
+        
+        for pageImages in categorizedPageImages.values {
+            guard pageImages.count > 1 else {
+                continue
+            }
+            
+            for extraPageImage in pageImages {
+                let diagnostic = Diagnostic(
+                    source: extraPageImage.originalMarkup.nameLocation?.source,
+                    severity: .warning,
+                    range: extraPageImage.originalMarkup.range,
+                    identifier: "org.swift.docc.DuplicatePageImage",
+                    summary: "Duplicate \(PageImage.directiveName.singleQuoted) directive with \(extraPageImage.purpose.rawValue.singleQuoted) purpose",
+                    explanation: """
+                    A documentation page can only contain a single \(PageImage.directiveName.singleQuoted) \
+                    directive for each purpose.
+                    """
+                )
+                
+                guard let range = extraPageImage.originalMarkup.range else {
+                    problems.append(Problem(diagnostic: diagnostic))
+                    continue
+                }
+                
+                let solution = Solution(
+                    summary: "Remove extraneous \(extraPageImage.purpose.rawValue.singleQuoted) \(PageImage.directiveName.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+                
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+            }
         }
         
         return true

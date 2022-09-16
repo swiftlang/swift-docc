@@ -71,10 +71,11 @@ struct DataAssetManager {
         try! NSRegularExpression(pattern: "(?!^)(?<=@)[1|2|3]x(?=\\.\\w*$)")
     }()
     
-    private mutating func referenceMetaInformationForDataURL(_ dataURL: URL, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws -> (reference: String, traits: DataTraitCollection) {
+    private mutating func referenceMetaInformationForDataURL(_ dataURL: URL, dataProvider: DocumentationContextDataProvider? = nil, bundle documentationBundle: DocumentationBundle? = nil) throws -> (reference: String, traits: DataTraitCollection, metadata: DataAsset.Metadata) {
         var dataReference = dataURL.path
         var traitCollection = DataTraitCollection()
         
+        var metadata = DataAsset.Metadata()
         if DocumentationContext.isFileExtension(dataURL.pathExtension, supported: .video) {
             // In case of a video read its traits: dark/light variants.
 
@@ -103,9 +104,13 @@ struct DataAssetManager {
             // Remove the display scale information from the image reference.
             dataReference = dataReference.replacingOccurrences(of: "@\(displayScale.rawValue)", with: "")
             traitCollection = .init(userInterfaceStyle: userInterfaceStyle, displayScale: displayScale)
+            
+            if dataURL.pathExtension.lowercased() == "svg" {
+                metadata.svgID = SVGIDExtractor.extractID(from: dataURL)
+            }
         }
         
-        return (reference: dataReference, traits: traitCollection)
+        return (reference: dataReference, traits: traitCollection, metadata: metadata)
     }
     
     /**
@@ -123,7 +128,7 @@ struct DataAssetManager {
             // Store the image with given scale information and display scale.
             let name = referenceURL.lastPathComponent
             storage[name, default: DataAsset()]
-                .register(dataURL, with: meta.traits)
+                .register(dataURL, with: meta.traits, metadata: meta.metadata)
             
             if name.contains(".") {
                 let nameNoExtension = referenceURL.deletingPathExtension().lastPathComponent
@@ -156,7 +161,7 @@ struct DataAssetManager {
 /// ### Asset Traits
 /// - ``DisplayScale``
 /// - ``UserInterfaceStyle``
-public struct DataAsset: Codable {
+public struct DataAsset: Codable, Equatable {
     /// A context in which you intend clients to use a data asset.
     public enum Context: String, CaseIterable, Codable {
         /// An asset that a user intends to view alongside documentation content.
@@ -172,18 +177,32 @@ public struct DataAsset: Codable {
     /// depending on the system's appearance.
     public var variants = [DataTraitCollection: URL]()
     
+    /// The metadata associated with each variant.
+    public var metadata = [URL : Metadata]()
+    
     /// The context in which you intend to use the data asset.
     public var context = Context.display
     
     /// Creates an empty asset.
     public init() {}
     
+    init(
+        variants: [DataTraitCollection : URL] = [DataTraitCollection: URL](),
+        metadata: [URL : DataAsset.Metadata] = [URL : Metadata](),
+        context: DataAsset.Context = Context.display
+    ) {
+        self.variants = variants
+        self.metadata = metadata
+        self.context = context
+    }
+    
     /// Registers a variant of the asset.
     /// - Parameters:
     ///   - url: The location of the variant.
     ///   - traitCollection: The trait collection associated with the variant.
-    public mutating func register(_ url: URL, with traitCollection: DataTraitCollection) {
+    public mutating func register(_ url: URL, with traitCollection: DataTraitCollection, metadata: Metadata = Metadata()) {
         variants[traitCollection] = url
+        self.metadata[url] = metadata
     }
     
     /// Returns the data that is registered to the data asset that best matches the given trait collection.
@@ -208,6 +227,21 @@ public struct DataAsset: Codable {
         return BundleData(url: variant, traitCollection: traitCollection)
     }
     
+}
+
+extension DataAsset {
+    /// Metadata specific to this data asset.
+    public struct Metadata: Codable, Equatable {
+        /// The first ID found in the SVG asset.
+        ///
+        /// This value is nil if the data asset is not an SVG or if it is an SVG that does not contain an ID.
+        public var svgID: String?
+        
+        /// Create a new data asset metadata with the given SVG ID.
+        public init(svgID: String? = nil) {
+            self.svgID = svgID
+        }
+    }
 }
 
 /// A collection of environment traits for an asset variant.

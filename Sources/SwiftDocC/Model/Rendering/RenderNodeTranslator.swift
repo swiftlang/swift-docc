@@ -418,6 +418,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 linkReferences[link.identifier.identifier] = link
             }
             
+            for imageReference in dependencies.imageReferences {
+                imageReferences[imageReference.identifier.identifier] = imageReference
+            }
+            
             for dependencyReference in dependencies.topicReferences {
                 var dependencyRenderReference: TopicRenderReference
                 if let renderContext = renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
@@ -711,6 +715,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 node.metadata.roleHeading = "Article"
             }
             node.metadata.role = contentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
+        }
+       
+        if let pageImages = documentationNode.metadata?.pageImages {
+            node.metadata.images = pageImages.map { pageImage -> TopicImage in
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                return TopicImage(
+                    pageImagePurpose: pageImage.purpose,
+                    identifier: renderReference
+                )
+            }
         }
 
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
@@ -1145,6 +1159,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.conformance = contentRenderer.conformanceSectionFor(identifier, collectedConstraints: collectedConstraints)
         node.metadata.fragmentsVariants = contentRenderer.subHeadingFragments(for: documentationNode)
         node.metadata.navigatorTitleVariants = contentRenderer.navigatorFragments(for: documentationNode)
+        
+        if let pageImages = documentationNode.metadata?.pageImages {
+            node.metadata.images = pageImages.map { pageImage -> TopicImage in
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                return TopicImage(
+                    pageImagePurpose: pageImage.purpose,
+                    identifier: renderReference
+                )
+            }
+        }
         
         node.variants = variants(for: documentationNode)
         
