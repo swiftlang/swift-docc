@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleVersion</key>
+	<string>0.1.0</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.swift.docc.example</string>
+	<key>CFBundleDisplayName</key>
+	<string>Bundle with Collision Based on Nested-Type Extension</string>
+	<key>CFBundleName</key>
+	<string>BundleWithCollisionBasedOnNestedTypeExtension</string>
+</dict>
+</plist>

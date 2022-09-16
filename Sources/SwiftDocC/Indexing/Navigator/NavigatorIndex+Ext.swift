@@ -76,7 +76,7 @@ public class FileSystemRenderNodeProvider: RenderNodeProvider {
 
 extension RenderNode {
     private static let typesThatShouldNotUseNavigatorTitle: Set<NavigatorIndex.PageType> = [
-        .framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType
+        .framework, .class, .structure, .enumeration, .protocol, .typeAlias, .associatedType, .extension
     ]
     
     /// Returns a navigator title preferring the fragments inside the metadata, if applicable.

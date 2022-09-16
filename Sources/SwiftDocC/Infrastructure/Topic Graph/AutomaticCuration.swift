@@ -212,6 +212,12 @@ extension AutomaticCuration {
             case .`typealias`: return "Type Aliases"
             case .`var`: return "Variables"
             case .module: return "Modules"
+            case .extendedModule: return "Extended Modules"
+            case .extendedClass: return "Extended Classes"
+            case .extendedStructure: return "Extended Structures"
+            case .extendedEnumeration: return "Extended Enumerations"
+            case .extendedProtocol: return "Extended Protocols"
+            case .unknownExtendedType: return "Extended Types"
             default: return "Symbols"
         }
     }
@@ -240,6 +246,13 @@ extension AutomaticCuration {
         .`typealias`,
         .`typeProperty`,
         .`typeMethod`,
-        .`enum`
+        .`enum`,
+        
+        .extendedModule,
+        .extendedClass,
+        .extendedProtocol,
+        .extendedStructure,
+        .extendedEnumeration,
+        .unknownExtendedType,
     ]
 }

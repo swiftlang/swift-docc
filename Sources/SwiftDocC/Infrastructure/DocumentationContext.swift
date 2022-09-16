@@ -277,6 +277,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public var externalMetadata = ExternalMetadata()
     
     
+    /// The decoder used in the `SymbolGraphLoader`
+    var decoder: JSONDecoder = JSONDecoder()
+    
     /// Initializes a documentation context with a given `dataProvider` and registers all the documentation bundles that it provides.
     ///
     /// - Parameter dataProvider: The data provider to register bundles from.
@@ -1035,7 +1038,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     private func parentChildRelationship(from edge: SymbolGraph.Relationship) -> (ResolvedTopicReference, ResolvedTopicReference)? {
         // Filter only parent <-> child edges
         switch edge.kind {
-        case .memberOf, .requirementOf:
+        case .memberOf, .requirementOf, .declaredIn, .inContextOf:
             guard let parentRef = symbolIndex[edge.target]?.reference, let childRef = symbolIndex[edge.source]?.reference else {
             return nil
             }
@@ -1933,7 +1936,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
             symbolGraphLoader = SymbolGraphLoader(bundle: bundle, dataProvider: self.dataProvider)
             do {
-                try symbolGraphLoader.loadAll()
+                try symbolGraphLoader.loadAll(using: decoder)
                 if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
                     let pathHierarchy = PathHierarchy(symbolGraphLoader: symbolGraphLoader, bundleName: urlReadablePath(bundle.displayName), knownDisambiguatedPathComponents: knownDisambiguatedSymbolPathComponents)
                     hierarchyBasedResolver = PathHierarchyBasedLinkResolver(pathHierarchy: pathHierarchy)
