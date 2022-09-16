@@ -2,6 +2,11 @@
 
 This is the abstract of my article. Nice!
 
+@Metadata {
+    @PageImage(source: "plus", alt: "A plus icon.", purpose: icon)
+    @PageImage(source: "figure1", alt: "An example figure.", purpose: card)
+}
+
 @Row(numberOfColumns: 8) {
     @Column(size: 3) {
         ![A great image](figure1)

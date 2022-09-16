@@ -617,6 +617,14 @@ extension NavigatorIndex {
         /// Indicates if the page title should be used instead of the navigator title.
         private let usePageTitle: Bool
         
+        
+        /// Maps the icon render references in the navigator items created by this builder
+        /// to their image references.
+        ///
+        /// Use the `NavigatorItem.icon` render reference to look up the full image reference
+        /// for any custom icons used in this navigator index.
+        var iconReferences = [String : ImageReference]()
+        
         /**
          Initialize a `Builder` with the given data provider and output URL.
          - Parameters:
@@ -753,11 +761,21 @@ extension NavigatorIndex {
                 }
             }
             
-            let navigationItem = NavigatorItem(pageType: renderNode.navigatorPageType().rawValue,
-                                           languageID: language.mask,
-                                           title: title,
-                                           platformMask: platformID,
-                                           availabilityID: UInt64(availabilityID))
+            
+            if let icon = renderNode.icon,
+                let iconRenderReference = renderNode.references[icon.identifier] as? ImageReference
+            {
+                iconReferences[icon.identifier] = iconRenderReference
+            }
+            
+            let navigationItem = NavigatorItem(
+                pageType: renderNode.navigatorPageType().rawValue,
+                languageID: language.mask,
+                title: title,
+                platformMask: platformID,
+                availabilityID: UInt64(availabilityID),
+                icon: renderNode.icon
+            )
             navigationItem.path = identifierPath
             
             // Index the USR for the given identifier

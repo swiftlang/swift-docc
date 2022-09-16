@@ -1386,6 +1386,10 @@
                     "url": {
                         "type": "string"
                     },
+                    "svgID": {
+                        "type": "string",
+                        "description": "The ID attribute for the image that should be rendered in the SVG file represented by this variant."
+                    },
                     "traits": {
                         "type": "array",
                         "items": {
@@ -1587,6 +1591,12 @@
                             "$ref": "#/components/schemas/DeclarationToken"
                         }
                     },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TopicImage"
+                        }
+                    },
                     "navigatorTitle": {
                         "type": "array",
                         "items": {
@@ -1625,6 +1635,23 @@
                         "items": {
                             "$ref": "#/components/schemas/SymbolTag"
                         }
+                    }
+                }
+            },
+            "TopicImage": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["icon", "card"]
+                    },
+                    "reference": {
+                        "type": "string",
+                        "format": "reference(ImageRenderReference)"
                     }
                 }
             },
@@ -2081,6 +2108,12 @@
                     },
                     "role": {
                         "$ref": "#/components/schemas/DocumentationRole"
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TopicImage"
+                        }
                     },
                     "modules": {
                         "type": "array",

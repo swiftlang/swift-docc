@@ -11,7 +11,7 @@
 import Foundation
 
 /// A reference to an image.
-public struct ImageReference: MediaReference, URLReference {
+public struct ImageReference: MediaReference, URLReference, Equatable {
     /// The type of this image reference.
     ///
     /// This value is always `.image`.
@@ -57,7 +57,7 @@ public struct ImageReference: MediaReference, URLReference {
         asset = DataAsset()
         let variants = try values.decode([VariantProxy].self, forKey: .variants)
         variants.forEach { (variant) in
-            asset.register(variant.url, with: DataTraitCollection(from: variant.traits))
+            asset.register(variant.url, with: DataTraitCollection(from: variant.traits), metadata: .init(svgID: variant.svgID))
         }
     }
     
@@ -75,7 +75,7 @@ public struct ImageReference: MediaReference, URLReference {
         // sort assets by URL path for deterministic sorting of images
         asset.variants.sorted(by: \.value.path).forEach { (key, value) in
             let url = value.isAbsoluteWebURL ? value : destinationURL(for: value.lastPathComponent)
-            result.append(VariantProxy(url: url, traits: key))
+            result.append(VariantProxy(url: url, traits: key, svgID: asset.metadata[value]?.svgID))
         }
         try container.encode(result, forKey: .variants)
     }
@@ -87,6 +87,10 @@ public struct ImageReference: MediaReference, URLReference {
         public var url: URL
         /// The traits of this image reference.
         public var traits: [String]
+        /// The ID for the SVG that should be rendered for this variant.
+        ///
+        /// This value is `nil` for variants that are not SVGs and for SVGs that do not include ids.
+        public var svgID: String?
         
         /// Creates a new proxy value with the given information about an image variant.
         /// 
@@ -94,27 +98,31 @@ public struct ImageReference: MediaReference, URLReference {
         ///   - size: The size of the image variant.
         ///   - url: The URL to the file for this image variant.
         ///   - traits: The traits of this image reference.
-        init(url: URL, traits: DataTraitCollection) {
+        init(url: URL, traits: DataTraitCollection, svgID: String?) {
             self.url = url
             self.traits = traits.toArray()
+            self.svgID = svgID
         }
         
         enum CodingKeys: String, CodingKey {
             case size
             case url
             case traits
+            case svgID
         }
         
         public init(from decoder: Decoder) throws {
             let values = try decoder.container(keyedBy: CodingKeys.self)
             url = try values.decode(URL.self, forKey: .url)
             traits = try values.decode([String].self, forKey: .traits)
+            svgID = try values.decodeIfPresent(String.self, forKey: .svgID)
         }
         
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(url, forKey: .url)
             try container.encode(traits, forKey: .traits)
+            try container.encodeIfPresent(svgID, forKey: .svgID)
         }
     }
 }

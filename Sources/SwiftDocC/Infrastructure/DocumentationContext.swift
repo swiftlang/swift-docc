@@ -588,6 +588,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     // We aggressively release used memory, since we're copying all semantic objects
                     // on the line below while rewriting nodes with the resolved content.
                     documentationNode.semantic = autoreleasepool { resolver.visit(documentationNode.semantic) }
+                    
+                    let pageImageProblems = documentationNode.metadata?.pageImages.compactMap { pageImage in
+                        return resolver.resolve(
+                            resource: pageImage.source,
+                            range: pageImage.originalMarkup.range,
+                            severity: .warning
+                        )
+                    } ?? []
+                    
+                    resolver.problems.append(contentsOf: pageImageProblems)
 
                     var problems = resolver.problems
 
@@ -2588,6 +2598,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Returns: The data that's associated with a image asset if it was found, otherwise `nil`.
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference) -> DataAsset? {
         let bundleIdentifier = parent.bundleIdentifier
+        return resolveAsset(named: name, bundleIdentifier: bundleIdentifier)
+    }
+    
+    func resolveAsset(named name: String, bundleIdentifier: String) -> DataAsset? {
         if let localAsset = assetManagers[bundleIdentifier]?.allData(named: name) {
             return localAsset
         }

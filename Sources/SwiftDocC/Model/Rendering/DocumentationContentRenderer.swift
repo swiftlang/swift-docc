@@ -15,28 +15,32 @@ import Markdown
 public struct RenderReferenceDependencies {
     var topicReferences = [ResolvedTopicReference]()
     var linkReferences = [LinkReference]()
+    var imageReferences = [ImageReference]()
     
-    public init(topicReferences: [ResolvedTopicReference] = [], linkReferences: [LinkReference] = []) {
+    public init(topicReferences: [ResolvedTopicReference] = [], linkReferences: [LinkReference] = [], imageReferences: [ImageReference] = []) {
         self.topicReferences = topicReferences
         self.linkReferences = linkReferences
+        self.imageReferences = imageReferences
     }
 }
 
 extension RenderReferenceDependencies: Codable {
     private enum CodingKeys: CodingKey {
-        case topicReferences, linkReferences
+        case topicReferences, linkReferences, imageReferences
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(topicReferences, forKey: .topicReferences)
         try container.encode(linkReferences, forKey: .linkReferences)
+        try container.encodeIfNotEmpty(imageReferences, forKey: .imageReferences)
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         topicReferences = try container.decode([ResolvedTopicReference].self, forKey: .topicReferences)
         linkReferences = try container.decode([LinkReference].self, forKey: .linkReferences)
+        imageReferences = try container.decodeIfPresent([ImageReference].self, forKey: .imageReferences) ?? []
     }
 }
 
@@ -363,6 +367,33 @@ public class DocumentationContentRenderer {
             role: referenceRole,
             estimatedTime: estimatedTime
         )
+        
+        renderReference.images = node?.metadata?.pageImages.compactMap { pageImage -> TopicImage? in
+            guard let image = TopicImage(
+                pageImage: pageImage,
+                with: documentationContext,
+                in: reference
+            ) else {
+                return nil
+            }
+            
+            guard let asset = documentationContext.resolveAsset(
+                named: image.identifier.identifier,
+                in: reference
+            ) else {
+                return nil
+            }
+            
+            dependencies.imageReferences.append(
+                ImageReference(
+                    identifier: image.identifier,
+                    altText: pageImage.alt,
+                    imageAsset: asset
+                )
+            )
+            
+            return image
+        } ?? []
 
         // Store the symbol's display name if present in the render reference
         renderReference.fragmentsVariants = node.flatMap(subHeadingFragments) ?? .init(defaultValue: [])

@@ -72,6 +72,11 @@ public struct RenderMetadata: VariantContainer {
     /// Examples of document roles include "symbol" or "sampleCode".
     public var role: String?
     
+    /// Custom authored images that represent this page.
+    ///
+    /// Authors can use the `@PageImage` metadata directive to provide custom icon and card images for a page.
+    public var images: [TopicImage] = []
+    
     /// The title of the page.
     public var title: String? {
         get { getVariantDefaultValue(keyPath: \.titleVariants) }
@@ -222,6 +227,7 @@ extension RenderMetadata: Codable {
         public static let sourceFileURI = CodingKeys(stringValue: "sourceFileURI")
         public static let remoteSource = CodingKeys(stringValue: "remoteSource")
         public static let tags = CodingKeys(stringValue: "tags")
+        public static let images = CodingKeys(stringValue: "images")
     }
     
     public init(from decoder: Decoder) throws {
@@ -236,6 +242,7 @@ extension RenderMetadata: Codable {
         estimatedTime = try container.decodeIfPresent(String.self, forKey: .estimatedTime)
         requiredVariants = try container.decodeVariantCollectionIfPresent(ofValueType: Bool.self, forKey: .required) ?? .init(defaultValue: false)
         roleHeadingVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .roleHeading)
+        images = try container.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
         let rawRole = try container.decodeIfPresent(String.self, forKey: .role)
         role = rawRole == "tutorial" ? Role.tutorial.rawValue : rawRole
         titleVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .title)
@@ -307,5 +314,7 @@ extension RenderMetadata: Codable {
         for (key, value) in extraMetadata {
             try container.encode(AnyMetadata(value), forKey: key)
         }
+        
+        try container.encodeIfNotEmpty(images, forKey: .images)
     }
 }
