@@ -37,6 +37,8 @@ class DirectiveIndexTests: XCTestCase {
                 "Small",
                 "Snippet",
                 "Stack",
+                "Tab",
+                "TabNavigator",
                 "TechnologyRoot",
                 "TopicsVisualStyle",
                 "Tutorial",
@@ -53,6 +55,7 @@ class DirectiveIndexTests: XCTestCase {
             [
                 "Row",
                 "Small",
+                "TabNavigator",
             ]
         )
     }

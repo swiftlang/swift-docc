@@ -19,6 +19,7 @@ struct DirectiveIndex {
         Row.self,
         Options.self,
         Small.self,
+        TabNavigator.self,
     ]
     
     private static let topLevelTutorialDirectives: [AutomaticDirectiveConvertible.Type] = [
