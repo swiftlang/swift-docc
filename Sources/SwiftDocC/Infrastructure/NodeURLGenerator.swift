@@ -165,7 +165,10 @@ public struct NodeURLGenerator {
     public func urlForReference(_ reference: ResolvedTopicReference, fileSafePath safePath: String) -> URL {
         if safePath.isEmpty {
             // Return the root path for the conversion: /documentation.json
-            return baseURL.appendingPathComponent("documentation", isDirectory: false)
+            return baseURL.appendingPathComponent(
+                NodeURLGenerator.Path.documentationFolderName,
+                isDirectory: false
+            )
         } else {
             let url = baseURL.appendingPathComponent(safePath, isDirectory: false)
             return url.withFragment(reference.url.fragment)
