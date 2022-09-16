@@ -29,8 +29,9 @@ class RowTests: XCTestCase {
             ["1: warning – org.swift.docc.HasAtLeastOne<Row, Column>"]
         )
         
+        XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
-            renderBlockContent,
+            renderBlockContent.first,
             .row(.init(numberOfColumns: 0, columns: []))
         )
     }
@@ -65,8 +66,9 @@ class RowTests: XCTestCase {
                 ]
             )
             
+            XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
-                renderBlockContent,
+                renderBlockContent.first,
                 .row(RenderBlockContent.Row(
                     numberOfColumns: 6,
                     columns: [
@@ -129,8 +131,9 @@ class RowTests: XCTestCase {
                 ]
             )
             
+            XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
-                renderBlockContent,
+                renderBlockContent.first,
                 .row(RenderBlockContent.Row(
                     numberOfColumns: 0,
                     columns: []
@@ -159,8 +162,9 @@ class RowTests: XCTestCase {
                 ]
             )
             
+            XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
-                renderBlockContent,
+                renderBlockContent.first,
                 .row(RenderBlockContent.Row(
                     numberOfColumns: 1,
                     columns: [
@@ -187,8 +191,9 @@ class RowTests: XCTestCase {
                 ]
             )
             
+            XCTAssertEqual(renderBlockContent.count, 1)
             XCTAssertEqual(
-                renderBlockContent,
+                renderBlockContent.first,
                 .row(RenderBlockContent.Row(numberOfColumns: 0, columns: []))
             )
         }
@@ -212,8 +217,9 @@ class RowTests: XCTestCase {
         XCTAssertNotNil(row)
         XCTAssertEqual(problems, [])
         
+        XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
-            renderBlockContent,
+            renderBlockContent.first,
             .row(RenderBlockContent.Row(
                 numberOfColumns: 5,
                 columns: [
@@ -252,8 +258,9 @@ class RowTests: XCTestCase {
         XCTAssertNotNil(row)
         XCTAssertEqual(problems, [])
         
+        XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
-            renderBlockContent,
+            renderBlockContent.first,
             .row(RenderBlockContent.Row(
                 numberOfColumns: 1,
                 columns: [
