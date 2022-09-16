@@ -195,6 +195,7 @@ extension AutomaticCuration {
             case .`deinit`: return "Deinitializers"
             case .`enum`: return "Enumerations"
             case .`case`: return "Enumeration Cases"
+            case .extension: return "Extensions"
             case .`func`: return "Functions"
             case .`operator`: return "Operators"
             case .`init`: return "Initializers"
@@ -204,6 +205,7 @@ extension AutomaticCuration {
             case .`property`: return "Instance Properties"
             case .`protocol`: return "Protocols"
             case .snippet: return "Snippets"
+            case .snippetGroup: return "Snippets"
             case .`struct`: return "Structures"
             case .`subscript`: return "Subscripts"
             case .`typeMethod`: return "Type Methods"
@@ -255,5 +257,10 @@ extension AutomaticCuration {
         .extendedStructure,
         .extendedEnumeration,
         .unknownExtendedType,
+
+        .extension,
+
+        .snippet,
+        .snippetGroup
     ]
 }
