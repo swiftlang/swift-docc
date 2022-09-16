@@ -26,4 +26,8 @@ This is the abstract of my article. Nice!
     }
 }
 
+@Small {
+    Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved.
+}
+
 <!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
