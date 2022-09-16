@@ -17,15 +17,17 @@ class AutomaticCurationTests: XCTestCase {
     func testAutomaticTopics() throws {
         // Create each kind of symbol and verify it gets its own topic group automatically
         let decoder = JSONDecoder()
-        
-        for kind in AutomaticCuration.groupKindOrder where kind != .module {
+
+        var availableSymbolKinds = Set(AutomaticCuration.groupKindOrder)
+        availableSymbolKinds.formUnion(SymbolGraph.Symbol.KindIdentifier.allCases)
+
+        for kind in availableSymbolKinds where kind != .module {
             // TODO: Synthesize appropriate `swift.extension` symbols that get transformed into
             // the respective internal symbol kinds as defined by `ExtendedTypeFormatTransformation`
             // and remove decoder injection logic from `DocumentationContext` and `SymbolGraphLoader`
             if !SymbolGraph.Symbol.KindIdentifier.allCases.contains(kind) {
                 decoder.register(symbolKinds: kind)
             }
-            
             let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
                 let sidekitURL = url.appendingPathComponent("sidekit.symbols.json")
                 let text = try String(contentsOf: sidekitURL)
