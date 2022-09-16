@@ -33,6 +33,7 @@ class DirectiveIndexTests: XCTestCase {
                 "Options",
                 "Redirected",
                 "Row",
+                "Small",
                 "Snippet",
                 "Stack",
                 "TechnologyRoot",
@@ -50,6 +51,7 @@ class DirectiveIndexTests: XCTestCase {
             DirectiveIndex.shared.renderableDirectives.keys.sorted(),
             [
                 "Row",
+                "Small",
             ]
         )
     }

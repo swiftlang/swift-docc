@@ -63,6 +63,9 @@ public enum RenderBlockContent: Equatable {
     
     /// A row in a grid-based layout system that describes a collection of columns.
     case row(Row)
+    
+    /// A paragraph of small print content that should be rendered in a small font.
+    case small(Small)
 
     // Warning: If you add a new case to this enum, make sure to handle it in the Codable
     // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
@@ -428,6 +431,15 @@ public enum RenderBlockContent: Equatable {
             public let content: [RenderBlockContent]
         }
     }
+    
+    /// A paragraph of small print content that should be rendered in a small font.
+    ///
+    /// Small is based on HTML's `<small>` tag and could contain content like legal,
+    /// license, or copyright text.
+    public struct Small: Codable, Equatable {
+        /// The inline content that should be rendered.
+        public let inlineContent: [RenderInlineContent]
+    }
 }
 
 // Codable conformance
@@ -490,11 +502,15 @@ extension RenderBlockContent: Codable {
                     columns: container.decode([Row.Column].self, forKey: .columns)
                 )
             )
+        case .small:
+            self = try .small(
+                Small(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent))
+            )
         }
     }
     
     private enum BlockType: String, Codable {
-        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row
+        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small
     }
     
     private var type: BlockType {
@@ -511,6 +527,7 @@ extension RenderBlockContent: Codable {
         case .table: return .table
         case .termList: return .termList
         case .row: return .row
+        case .small: return .small
         default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
@@ -560,6 +577,8 @@ extension RenderBlockContent: Codable {
         case .row(let row):
             try container.encode(row.numberOfColumns, forKey: .numberOfColumns)
             try container.encode(row.columns, forKey: .columns)
+        case .small(let small):
+            try container.encode(small.inlineContent, forKey: .inlineContent)
         default:
             fatalError("unknown RenderBlockContent case in encode method")
         }
