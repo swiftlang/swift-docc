@@ -128,7 +128,7 @@ extension XCTestCase {
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
         source: () -> String
-    ) throws -> (renderBlockContent: RenderBlockContent?, problemIdentifiers: [String], directive: Directive?) {
+    ) throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
         let (bundle, context) = try testBundleAndContext()
         
         let document = Document(parsing: source(), options: .parseBlockDirectives)
@@ -145,7 +145,7 @@ extension XCTestCase {
         }.sorted()
         
         guard let directive = result as? Directive else {
-            return (nil, problemIDs, nil)
+            return ([], problemIDs, nil)
         }
         
         var contentCompiler = RenderContentCompiler(
@@ -158,7 +158,9 @@ extension XCTestCase {
             )
         )
         
-        let renderedContent = directive.render(with: &contentCompiler).first as? RenderBlockContent
+        let renderedContent = try XCTUnwrap(
+            directive.render(with: &contentCompiler) as? [RenderBlockContent]
+        )
         return (renderedContent, problemIDs, directive)
     }
 }
