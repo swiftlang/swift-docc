@@ -155,6 +155,18 @@ extension DocumentationNode.Kind {
     public static let object = DocumentationNode.Kind(name: "Object", id: "org.swift.docc.kind.dictionary", isSymbol: true)
     /// A snippet.
     public static let snippet = DocumentationNode.Kind(name: "Snippet", id: "org.swift.docc.kind.snippet", isSymbol: true)
+    
+    public static let extendedModule = DocumentationNode.Kind(name: "Extended Module", id: "org.swift.docc.kind.extendedModule", isSymbol: true)
+
+    public static let extendedStructure = DocumentationNode.Kind(name: "Extended Structure", id: "org.swift.docc.kind.extendedStructure", isSymbol: true)
+    
+    public static let extendedClass = DocumentationNode.Kind(name: "Extended Class", id: "org.swift.docc.kind.extendedClass", isSymbol: true)
+    
+    public static let extendedEnumeration = DocumentationNode.Kind(name: "Extended Enumeration", id: "org.swift.docc.kind.extendedEnumeration", isSymbol: true)
+    
+    public static let extendedProtocol = DocumentationNode.Kind(name: "Extended Protocol", id: "org.swift.docc.kind.extendedProtocol", isSymbol: true)
+    
+    public static let unknownExtendedType = DocumentationNode.Kind(name: "Extended Type", id: "org.swift.docc.kind.unknownExtendedType", isSymbol: true)
 
     /// The list of all known kinds of documentation nodes.
     /// - Note: The `unknown` value is not included.
@@ -171,6 +183,8 @@ extension DocumentationNode.Kind {
         .enumerationCase, .initializer, .deinitializer, .instanceMethod, .instanceProperty, .instanceSubscript, .instanceVariable, .typeMethod, .typeProperty, .typeSubscript,
         // Data
         .buildSetting, .propertyListKey,
+        // Extended Symbols
+        .extendedModule, .extendedStructure, .extendedClass, .extendedEnumeration, .extendedProtocol, .unknownExtendedType,
         // Other
         .keyword, .restAPI, .tag, .propertyList, .object
     ]

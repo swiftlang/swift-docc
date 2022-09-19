@@ -26,7 +26,13 @@
                                 "$ref": "#/components/schemas/Node"
                             }
                         }
-                    }
+                    },
+                    "references": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/ImageRenderReference"
+                        }
+                    },
                 }
             },
             "Node": {
@@ -94,6 +100,10 @@
                         "type": "boolean",
                         "default": "false"
                     },
+                    "icon": {
+                        "type": "string",
+                        "format": "reference(ImageRenderReference)"
+                    },
                     "children": {
                         "type": "array",
                         "items": {
@@ -120,6 +130,59 @@
                         "type": "integer"
                     }
                 }
+            },
+            "ImageRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "variants"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["image"]
+                    },
+                    "alt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariant"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariant": {
+                "type": "object",
+                "required": [
+                    "url",
+                    "traits"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "svgID": {
+                        "type": "string",
+                        "description": "The ID attribute for the image that should be rendered in the SVG file represented by this variant."
+                    },
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariantTrait"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariantTrait": {
+                "type": "string",
+                "enum": ["1x", "2x", "3x", "light", "dark"]
             }
         },
         "requestBodies": {},

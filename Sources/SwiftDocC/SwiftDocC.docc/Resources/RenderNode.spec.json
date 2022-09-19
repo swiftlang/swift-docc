@@ -429,7 +429,13 @@
                         "$ref": "#/components/schemas/Columns"
                     },
                     {
+                        "$ref": "#/components/schemas/Row"
+                    },
+                    {
                         "$ref": "#/components/schemas/Aside"
+                    },
+                    {
+                        "$ref": "#/components/schemas/Small"
                     },
                     {
                         "$ref": "#/components/schemas/Heading"
@@ -548,6 +554,47 @@
                     }
                 }
             },
+            "Row": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "columns",
+                    "numberOfColumns"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["row"]
+                    },
+                    "columns": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Column"
+                        }
+                    },
+                    "numberOfColumns": {
+                        "type": "number"
+                    }
+                }
+            },
+            "Column": {
+                "type": "object",
+                "required": [
+                    "content",
+                    "size"
+                ],
+                "properties": {
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    },
+                    "size": {
+                        "type": "number"
+                    }
+                }
+            },
             "Aside": {
                 "type": "object",
                 "required": [
@@ -571,6 +618,25 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/RenderBlockContent"
+                        }
+                    }
+                }
+            },
+            "Small": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "inlineContent"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["small"]
+                    },
+                    "inlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
                         }
                     }
                 }
@@ -1320,6 +1386,10 @@
                     "url": {
                         "type": "string"
                     },
+                    "svgID": {
+                        "type": "string",
+                        "description": "The ID attribute for the image that should be rendered in the SVG file represented by this variant."
+                    },
                     "traits": {
                         "type": "array",
                         "items": {
@@ -1521,6 +1591,12 @@
                             "$ref": "#/components/schemas/DeclarationToken"
                         }
                     },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TopicImage"
+                        }
+                    },
                     "navigatorTitle": {
                         "type": "array",
                         "items": {
@@ -1559,6 +1635,23 @@
                         "items": {
                             "$ref": "#/components/schemas/SymbolTag"
                         }
+                    }
+                }
+            },
+            "TopicImage": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["icon", "card"]
+                    },
+                    "reference": {
+                        "type": "string",
+                        "format": "reference(ImageRenderReference)"
                     }
                 }
             },
@@ -1797,6 +1890,16 @@
                             "$ref": "#/components/schemas/RenderInlineContent"
                         }
                     },
+                    "topicSectionsStyle": {
+                        "type": "string",
+                        "enum": [
+                            "list",
+                            "compactGrid",
+                            "detailedGrid",
+                            "hidden"
+                        ],
+                        "default": "list"
+                    },
                     "topicSections": {
                         "type": "array",
                         "items": {
@@ -2005,6 +2108,12 @@
                     },
                     "role": {
                         "$ref": "#/components/schemas/DocumentationRole"
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TopicImage"
+                        }
                     },
                     "modules": {
                         "type": "array",

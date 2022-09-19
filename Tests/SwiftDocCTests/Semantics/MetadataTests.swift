@@ -240,4 +240,82 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual("org.swift.docc.HasAtMostOne<Article, Metadata>.DuplicateChildren", problems.first?.diagnostic.identifier)
         
     }
+    
+    func testPageImageSupport() throws {
+        let (problems, metadata) = try parseMetadataFromSource(
+            """
+            # Article title
+            
+            @Metadata {
+                @PageImage(source: "plus", purpose: icon)
+                @PageImage(source: "sloth", alt: "A sloth on a branch.", purpose: card)
+            }
+            
+            The abstract of this article.
+            """
+        )
+        
+        XCTAssertEqual(problems, [])
+        XCTAssertEqual(metadata.pageImages.count, 2)
+        
+        let plusImage = metadata.pageImages.first { pageImage in
+            pageImage.source.path == "plus"
+        }
+        XCTAssertEqual(plusImage?.purpose, .icon)
+        XCTAssertEqual(plusImage?.alt, nil)
+        
+        let slothImage = metadata.pageImages.first { pageImage in
+            pageImage.source.path == "sloth"
+        }
+        XCTAssertEqual(slothImage?.purpose, .card)
+        XCTAssertEqual(slothImage?.alt, "A sloth on a branch.")
+    }
+    
+    func testDuplicatePageImage() throws {
+        let (problems, _) = try parseMetadataFromSource(
+            """
+            # Article title
+            
+            @Metadata {
+                @PageImage(source: "plus", purpose: icon)
+                @PageImage(source: "sloth", alt: "A sloth on a branch.", purpose: icon)
+            }
+            
+            The abstract of this article.
+            """
+        )
+        
+        XCTAssertEqual(
+            problems,
+            [
+                "4: warning – org.swift.docc.DuplicatePageImage",
+                "5: warning – org.swift.docc.DuplicatePageImage",
+            ]
+        )
+    }
+    
+    func parseMetadataFromSource(
+        _ source: String,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) throws -> (problems: [String], metadata: Metadata) {
+        let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        
+        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
+        _ = analyzer.visit(document)
+        var problems = analyzer.problems
+        
+        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        
+        let problemIDs = problems.map { problem -> String in
+            let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
+            
+            return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
+        }.sorted()
+        
+        let metadata = try XCTUnwrap(article?.metadata, file: file, line: line)
+        
+        return (problemIDs, metadata)
+    }
 }

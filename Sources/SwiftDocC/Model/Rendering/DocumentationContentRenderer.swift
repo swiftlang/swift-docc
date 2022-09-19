@@ -15,28 +15,32 @@ import Markdown
 public struct RenderReferenceDependencies {
     var topicReferences = [ResolvedTopicReference]()
     var linkReferences = [LinkReference]()
+    var imageReferences = [ImageReference]()
     
-    public init(topicReferences: [ResolvedTopicReference] = [], linkReferences: [LinkReference] = []) {
+    public init(topicReferences: [ResolvedTopicReference] = [], linkReferences: [LinkReference] = [], imageReferences: [ImageReference] = []) {
         self.topicReferences = topicReferences
         self.linkReferences = linkReferences
+        self.imageReferences = imageReferences
     }
 }
 
 extension RenderReferenceDependencies: Codable {
     private enum CodingKeys: CodingKey {
-        case topicReferences, linkReferences
+        case topicReferences, linkReferences, imageReferences
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(topicReferences, forKey: .topicReferences)
         try container.encode(linkReferences, forKey: .linkReferences)
+        try container.encodeIfNotEmpty(imageReferences, forKey: .imageReferences)
     }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         topicReferences = try container.decode([ResolvedTopicReference].self, forKey: .topicReferences)
         linkReferences = try container.decode([LinkReference].self, forKey: .linkReferences)
+        imageReferences = try container.decodeIfPresent([ImageReference].self, forKey: .imageReferences) ?? []
     }
 }
 
@@ -151,7 +155,7 @@ public class DocumentationContentRenderer {
         case .collectionGroup: return .collectionGroup
         case .technology, .technologyOverview: return .overview
         case .landingPage: return .article
-        case .module: return .collection
+        case .module, .extendedModule: return .collection
         case .onPageLandmark: return .pseudoSymbol
         case .root: return .collection
         case .sampleCode: return .sampleCode
@@ -363,6 +367,33 @@ public class DocumentationContentRenderer {
             role: referenceRole,
             estimatedTime: estimatedTime
         )
+        
+        renderReference.images = node?.metadata?.pageImages.compactMap { pageImage -> TopicImage? in
+            guard let image = TopicImage(
+                pageImage: pageImage,
+                with: documentationContext,
+                in: reference
+            ) else {
+                return nil
+            }
+            
+            guard let asset = documentationContext.resolveAsset(
+                named: image.identifier.identifier,
+                in: reference
+            ) else {
+                return nil
+            }
+            
+            dependencies.imageReferences.append(
+                ImageReference(
+                    identifier: image.identifier,
+                    altText: pageImage.alt,
+                    imageAsset: asset
+                )
+            )
+            
+            return image
+        } ?? []
 
         // Store the symbol's display name if present in the render reference
         renderReference.fragmentsVariants = node.flatMap(subHeadingFragments) ?? .init(defaultValue: [])
@@ -484,31 +515,7 @@ extension DocumentationContentRenderer {
         /// Applies Swift symbol navigator titles rules to a title.
         /// Will strip the typeIdentifier's precise identifier.
         static func navigatorTitle(for tokens: [DeclarationRenderSection.Token], symbolTitle: String) -> [DeclarationRenderSection.Token] {
-            guard tokens.count >= 3 else {
-                // Navigator title too short for a type symbol.
-                return tokens
-            }
-            
-            // Replace kind "typeIdentifier" with "identifier" if the title matches the pattern:
-            // [keyword=class,protocol,enum,typealias,etc.][ ][typeIdentifier=Self]
-            
-            if tokens[0].kind == DeclarationRenderSection.Token.Kind.keyword
-                && tokens[1].text == " "
-                && tokens[2].kind == DeclarationRenderSection.Token.Kind.typeIdentifier
-                && tokens[2].text == symbolTitle {
-                
-                // Replace the 2nd token with "identifier" kind.
-                return tokens.enumerated().map { pair -> DeclarationRenderSection.Token in
-                    if pair.offset == 2 {
-                        return DeclarationRenderSection.Token(
-                            text: pair.element.text,
-                            kind: .identifier
-                        )
-                    }
-                    return pair.element
-                }
-            }
-            return tokens
+            return tokens.mapNameFragmentsToIdentifierKind(matching: symbolTitle)
         }
 
         private static let initKeyword = DeclarationRenderSection.Token(text: "init", kind: .keyword)
@@ -519,27 +526,9 @@ extension DocumentationContentRenderer {
         static func subHeading(for tokens: [DeclarationRenderSection.Token], symbolTitle: String, symbolKind: String) -> [DeclarationRenderSection.Token] {
             var tokens = tokens
             
-            // 1. Replace kind "typeIdentifier" with "identifier" if the title matches the pattern:
-            // [keyword=class,protocol,enum,typealias,etc.][ ][typeIdentifier=Self]
-            if tokens.count >= 3 {
-                if tokens[0].kind == DeclarationRenderSection.Token.Kind.keyword
-                    && tokens[1].text == " "
-                    && tokens[2].kind == DeclarationRenderSection.Token.Kind.typeIdentifier
-                    && tokens[2].text == symbolTitle {
-                    
-                    // Replace the 2nd token with "identifier" kind.
-                    tokens = tokens.enumerated().map { pair -> DeclarationRenderSection.Token in
-                        if pair.offset == 2 {
-                            return DeclarationRenderSection.Token(
-                                text: pair.element.text,
-                                kind: .identifier,
-                                preciseIdentifier: pair.element.preciseIdentifier
-                            )
-                        }
-                        return pair.element
-                    }
-                }
-            }
+            // 1. Map typeIdenifier tokens to identifier tokens where applicable
+            tokens = tokens.mapNameFragmentsToIdentifierKind(matching: symbolTitle)
+            
             
             // 2. Map the first found "keyword=init" to an "identifier" kind to enable syntax highlighting.
             let parsedKind = SymbolGraph.Symbol.KindIdentifier(identifier: symbolKind)
@@ -552,4 +541,50 @@ extension DocumentationContentRenderer {
         }
     }
 
+}
+
+private extension Array where Element == DeclarationRenderSection.Token {
+    // Replaces kind "typeIdentifier" with "identifier" if the fragments matches the pattern:
+    // [keyword=_] [text=" "] [(typeIdentifier|identifier)=Name_0] ( [text="."] [typeIdentifier=Name_i] )*
+    // where the Name_i from typeIdentifier tokens joined with separator "." equal the `symbolTitle`
+    func mapNameFragmentsToIdentifierKind(matching symbolTitle: String) -> Self {
+        // Check that the first 3 tokens are: [keyword=_] [text=" "] [(typeIdentifier|identifier)=_]
+        guard count >= 3,
+              self[0].kind == .keyword,
+              self[1].kind == .text, self[1].text == " ",
+              self[2].kind == .typeIdentifier || self[2].kind == .identifier
+        else { return self }
+        
+        // If the first named token belongs to an identifier, this is a module prefix.
+        // We store it for later comparison with the `combinedName`
+        let modulePrefix = self[2].kind == .identifier ? self[2].text + "." : ""
+        
+        var combinedName = self[2].text
+        
+        var finalTypeIdentifierIndex = 2
+        var remainder = self.dropFirst(3)
+        // Continue checking for pairs of "." text tokens and typeIdentifier tokens: ( [text="."] [typeIdentifier=Name_i] )*
+        while remainder.count >= 2 {
+            let separator = remainder.removeFirst()
+            guard separator.kind == .text, separator.text == "." else { break }
+            let next = remainder.removeFirst()
+            guard next.kind == .typeIdentifier else { break }
+            
+            finalTypeIdentifierIndex += 2
+            combinedName += "." + next.text
+        }
+        
+        guard combinedName == modulePrefix + symbolTitle else { return self }
+        
+        var mapped = self
+        for index in stride(from: 2, to: finalTypeIdentifierIndex+1, by: 2) {
+            let token = self[index]
+            mapped[index] = DeclarationRenderSection.Token(
+                text: token.text,
+                kind: .identifier,
+                preciseIdentifier: token.preciseIdentifier
+            )
+        }
+        return mapped
+    }
 }

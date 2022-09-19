@@ -60,6 +60,12 @@ public enum RenderBlockContent: Equatable {
     case termList(TermList)
     /// A table that contains a list of row data.
     case table(Table)
+    
+    /// A row in a grid-based layout system that describes a collection of columns.
+    case row(Row)
+    
+    /// A paragraph of small print content that should be rendered in a small font.
+    case small(Small)
 
     // Warning: If you add a new case to this enum, make sure to handle it in the Codable
     // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
@@ -403,6 +409,37 @@ public enum RenderBlockContent: Equatable {
         /// The definition in the term-list item.
         public let definition: Definition
     }
+    
+    /// A row in a grid-based layout system that describes a collection of columns.
+    public struct Row: Codable, Equatable {
+        /// The number of columns that should be rendered in this row.
+        ///
+        /// This may be different then the count of ``columns`` array. For example, there may be
+        /// individual columns that span multiple columns (specified with the column's
+        /// ``Column/size`` property) or the row could be not fully filled with columns.
+        public let numberOfColumns: Int
+        
+        /// The columns that should be rendered in this row.
+        public let columns: [Column]
+        
+        /// A column with a row in a grid-based layout system.
+        public struct Column: Codable, Equatable {
+            /// The number of columns in the parent row this column should span.
+            public let size: Int
+            
+            /// The content that should be rendered in this column.
+            public let content: [RenderBlockContent]
+        }
+    }
+    
+    /// A paragraph of small print content that should be rendered in a small font.
+    ///
+    /// Small is based on HTML's `<small>` tag and could contain content like legal,
+    /// license, or copyright text.
+    public struct Small: Codable, Equatable {
+        /// The inline content that should be rendered.
+        public let inlineContent: [RenderInlineContent]
+    }
 }
 
 // Codable conformance
@@ -412,6 +449,7 @@ extension RenderBlockContent: Codable {
         case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata
         case request, response
         case header, rows
+        case numberOfColumns, columns
     }
     
     public init(from decoder: Decoder) throws {
@@ -457,11 +495,22 @@ extension RenderBlockContent: Codable {
             ))
         case .termList:
             self = try .termList(.init(items: container.decode([TermListItem].self, forKey: .items)))
+        case .row:
+            self = try .row(
+                Row(
+                    numberOfColumns: container.decode(Int.self, forKey: .numberOfColumns),
+                    columns: container.decode([Row.Column].self, forKey: .columns)
+                )
+            )
+        case .small:
+            self = try .small(
+                Small(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent))
+            )
         }
     }
     
     private enum BlockType: String, Codable {
-        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList
+        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small
     }
     
     private var type: BlockType {
@@ -477,6 +526,8 @@ extension RenderBlockContent: Codable {
         case .dictionaryExample: return .dictionaryExample
         case .table: return .table
         case .termList: return .termList
+        case .row: return .row
+        case .small: return .small
         default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
@@ -523,6 +574,11 @@ extension RenderBlockContent: Codable {
             try container.encodeIfPresent(t.metadata, forKey: .metadata)
         case .termList(items: let l):
             try container.encode(l.items, forKey: .items)
+        case .row(let row):
+            try container.encode(row.numberOfColumns, forKey: .numberOfColumns)
+            try container.encode(row.columns, forKey: .columns)
+        case .small(let small):
+            try container.encode(small.inlineContent, forKey: .inlineContent)
         default:
             fatalError("unknown RenderBlockContent case in encode method")
         }

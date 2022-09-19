@@ -344,6 +344,67 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertEqual(referencingFileDiagnostics.filter({ $0.identifier == "org.swift.docc.unresolvedTopicReference" }).count, 1)
     }
     
+    func testRelativeReferencesToExtensionSymbols() throws {
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
+            // We don't want the external target to be part of the archive as that is not
+            // officially supported yet.
+            try FileManager.default.removeItem(at: root.appendingPathComponent("Dependency.symbols.json"))
+            
+            try """
+            # ``BundleWithRelativePathAmbiguity/Dependency``
+
+            ## Overview
+            
+            ### Module Scope Links
+            
+            - ``BundleWithRelativePathAmbiguity/Dependency``
+            - ``BundleWithRelativePathAmbiguity/Dependency/AmbiguousType``
+            - ``BundleWithRelativePathAmbiguity/Dependency/AmbiguousType/foo()``
+            
+            ### Extended Module Scope Links
+            
+            - ``Dependency``
+            - ``Dependency/AmbiguousType``
+            - ``Dependency/AmbiguousType/foo()``
+            
+            ### Local Scope Links
+            
+            - ``Dependency``
+            - ``AmbiguousType``
+            - ``AmbiguousType/foo()``
+            """.write(to: root.appendingPathComponent("Article.md"), atomically: true, encoding: .utf8)
+        }
+        
+        // Get a translated render node
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+        
+        let content = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection).content
+        
+        let expectedReferences = [
+            "doc://org.swift.docc.example/documentation/BundleWithRelativePathAmbiguity/Dependency",
+            "doc://org.swift.docc.example/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType",
+            "doc://org.swift.docc.example/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType/foo()",
+        ]
+        
+        let sectionContents = [
+            content.contents(of: "Module Scope Links"),
+            content.contents(of: "Extended Module Scope Links"),
+            content.contents(of: "Local Scope Links"),
+        ]
+        
+        let sectionReferences = try sectionContents.map { sectionContent in
+            try sectionContent.listItems().map { item in try XCTUnwrap(item.firstReference(), "found no reference for \(item)") }
+        }
+            
+        for resolvedReferencesOfSection in sectionReferences {
+            zip(resolvedReferencesOfSection, expectedReferences).forEach { resolved, expected in
+                XCTAssertEqual(resolved.identifier, expected)
+            }
+        }
+    }
+    
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
         var bundleIdentifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"
@@ -406,7 +467,7 @@ class ReferenceResolverTests: XCTestCase {
         
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let document = Document(parsing: source, options: [.parseBlockDirectives, .parseSymbolLinks])
-        let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil))
+        let article = try XCTUnwrap(Article(markup: document, metadata: nil, redirects: nil, options: [:]))
         
         var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
         let resolvedArticle = try XCTUnwrap(resolver.visitArticle(article) as? Article)
@@ -564,4 +625,56 @@ class ReferenceResolverTests: XCTestCase {
 
 private extension DocumentationDataVariantsTrait {
     static var objectiveC: DocumentationDataVariantsTrait { .init(interfaceLanguage: "occ") }
+}
+
+private extension Collection where Element == RenderBlockContent {
+    func contents(of heading: String) -> Slice<Self> {
+        var headingLevel: Int = 1
+        
+        guard let headingIndex = self.firstIndex(where: { element in
+            if case let .heading(value) = element {
+                headingLevel = value.level
+                return heading == value.text
+            }
+            return false
+        }) else {
+            return Slice(base: self, bounds: self.startIndex..<self.startIndex)
+        }
+        
+        let contentStart = self.index(after: headingIndex)
+        
+        return Slice(base: self, bounds: contentStart..<(self[contentStart...].firstIndex(where: { element in
+            if case let .heading(value) = element {
+                return value.level <= headingLevel
+            }
+            return false
+        }) ?? self.endIndex))
+    }
+    
+    func listItems() -> [RenderBlockContent.ListItem] {
+        self.compactMap { block -> [RenderBlockContent.ListItem]? in
+            if case let .unorderedList(value) = block {
+                return value.items
+            }
+            return nil
+        }.flatMap({ $0 })
+    }
+}
+
+private extension RenderBlockContent.ListItem {
+    func firstReference() -> RenderReferenceIdentifier? {
+        self.content.compactMap { block in
+            guard case let .paragraph(value) = block else {
+                return nil
+            }
+            
+            return value.inlineContent.compactMap { content in
+                guard case let .reference(identifier, _, _, _) = content else {
+                    return nil
+                }
+                
+                return identifier
+            }.first
+        }.first
+    }
 }

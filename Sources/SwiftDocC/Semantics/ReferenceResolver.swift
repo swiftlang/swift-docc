@@ -72,7 +72,7 @@ struct ReferenceResolver: SemanticVisitor {
     /**
     Returns a ``Problem`` if the resource cannot be found; otherwise `nil`.
     */
-    private func resolve(resource: ResourceReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem? {
+    func resolve(resource: ResourceReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem? {
         if !context.resourceExists(with: resource) {
             return unresolvedResourceProblem(resource: resource, source: source, range: range, severity: severity)
         } else {

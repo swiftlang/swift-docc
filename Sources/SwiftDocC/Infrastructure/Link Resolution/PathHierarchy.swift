@@ -422,8 +422,8 @@ struct PathHierarchy {
     /// - Returns: The node to start the relative search relative to.
     private func findRoot(parentID: ResolvedIdentifier?, remaining: inout ArraySlice<PathComponent>, isAbsolute: Bool, onlyFindSymbols: Bool) throws -> Node {
         // If the first path component is "tutorials" or "documentation" then that
-        let isKnownTutorialPath = remaining.first!.full == "tutorials"
-        let isKnownDocumentationPath = remaining.first!.full == "documentation"
+        let isKnownTutorialPath = remaining.first!.full == NodeURLGenerator.Path.tutorialsFolderName
+        let isKnownDocumentationPath = remaining.first!.full == NodeURLGenerator.Path.documentationFolderName
         if isKnownDocumentationPath || isKnownTutorialPath {
             // Drop that component since it isn't represented in the path hierarchy.
             remaining.removeFirst()
@@ -614,7 +614,9 @@ extension PathHierarchy {
     static func parse(path: String) -> (components: [PathComponent], isAbsolute: Bool) {
         guard !path.isEmpty else { return ([], true) }
         var components = path.split(separator: "/", omittingEmptySubsequences: true)
-        let isAbsolute = path.first == "/" || components.first == "documentation" || components.first == "tutorials"
+        let isAbsolute = path.first == "/"
+            || String(components.first ?? "") == NodeURLGenerator.Path.documentationFolderName
+            || String(components.first ?? "") == NodeURLGenerator.Path.tutorialsFolderName
        
         if let hashIndex = components.last?.firstIndex(of: "#") {
             let last = components.removeLast()

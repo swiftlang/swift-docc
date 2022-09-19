@@ -50,7 +50,7 @@ final class RenderIndexTests: XCTestCase {
                   "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 0
+                    "patch": 1
                   }
                 }
                 """#
@@ -523,7 +523,7 @@ final class RenderIndexTests: XCTestCase {
                   "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 0
+                    "patch": 1
                   }
                 }
                 """#
@@ -635,10 +635,57 @@ final class RenderIndexTests: XCTestCase {
                 "schemaVersion": {
                     "major": 0,
                     "minor": 1,
-                    "patch": 0
+                    "patch": 1
                 }
             }
             """#))
+    }
+    
+    func testRenderIndexGenerationWithCustomIcon() throws {
+        try XCTAssertEqual(
+            generatedRenderIndex(for: "BookLikeContent", with: "org.swift.docc.Book"),
+            RenderIndex.fromString(#"""
+                {
+                  "interfaceLanguages" : {
+                    "swift" : [
+                      {
+                        "title" : "Articles",
+                        "type" : "groupMarker"
+                      },
+                      {
+                        "path" : "\/documentation\/bestbook\/myarticle",
+                        "title" : "My Article",
+                        "icon" : "plus.svg",
+                        "type" : "article"
+                      }
+                    ]
+                  },
+                  "references" : {
+                    "plus.svg" : {
+                      "alt" : null,
+                      "type" : "image",
+                      "identifier" : "plus.svg",
+                      "variants" : [
+                        {
+                          "url" : "\/images\/plus.svg",
+                          "traits" : [
+                            "1x",
+                            "light"
+                          ],
+                          "svgID" : "plus-id"
+                        }
+                      ]
+                    }
+                  },
+                  "schemaVersion" : {
+                    "major" : 0,
+                    "minor" : 1,
+                    "patch" : 1
+                  }
+                }
+                """#
+            )
+        )
     }
     
     func generatedRenderIndex(for testBundleName: String, with bundleIdentifier: String) throws -> RenderIndex {

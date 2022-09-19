@@ -23,7 +23,7 @@ import SymbolKit
 /// `Sources/SwiftDocC/SwiftDocC.docc/Resources/RenderIndex.spec.json`.
 public struct RenderIndex: Codable, Equatable {
     /// The current schema version of the Index JSON spec.
-    public static let currentSchemaVersion = SemanticVersion(major: 0, minor: 1, patch: 0)
+    public static let currentSchemaVersion = SemanticVersion(major: 0, minor: 1, patch: 1)
     
     /// The version of the RenderIndex spec that was followed when creating this index.
     public let schemaVersion: SemanticVersion
@@ -31,12 +31,37 @@ public struct RenderIndex: Codable, Equatable {
     /// A mapping of interface languages to the index nodes they contain.
     public let interfaceLanguages: [String: [Node]]
     
+    /// The values of the image references used in the documentation index.
+    public private(set) var references: [String: ImageReference]
+    
+    enum CodingKeys: CodingKey {
+        case schemaVersion
+        case interfaceLanguages
+        case references
+    }
+    
     /// Creates a new render index with the given interface language to node mapping.
     public init(
-        interfaceLanguages: [String: [Node]]
+        interfaceLanguages: [String: [Node]],
+        references: [String: ImageReference] = [:]
     ) {
         self.schemaVersion = Self.currentSchemaVersion
         self.interfaceLanguages = interfaceLanguages
+        self.references = references
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(self.schemaVersion, forKey: .schemaVersion)
+        try container.encode(self.interfaceLanguages, forKey: .interfaceLanguages)
+        try container.encodeIfNotEmpty(self.references, forKey: .references)
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.schemaVersion = try container.decode(SemanticVersion.self, forKey: .schemaVersion)
+        self.interfaceLanguages = try container.decode([String : [RenderIndex.Node]].self, forKey: .interfaceLanguages)
+        self.references = try container.decodeIfPresent([String : ImageReference].self, forKey: .references) ?? [:]
     }
 }
 
@@ -73,6 +98,9 @@ extension RenderIndex {
         ///
         /// Allows renderers to use a specific design treatment for render index nodes that mark the node as in beta.
         public let isBeta: Bool
+        
+        /// Reference to the image that should be used to represent this node.
+        public let icon: RenderReferenceIdentifier?
 
         enum CodingKeys: String, CodingKey {
             case title
@@ -82,6 +110,7 @@ extension RenderIndex {
             case deprecated
             case external
             case beta
+            case icon
         }
 
         public func encode(to encoder: Encoder) throws {
@@ -107,6 +136,8 @@ extension RenderIndex {
             if isBeta {
                 try container.encode(isBeta, forKey: .beta)
             }
+            
+            try container.encodeIfPresent(icon, forKey: .icon)
         }
         
         public init(from decoder: Decoder) throws {
@@ -126,6 +157,8 @@ extension RenderIndex {
             
             // `isBeta` defaults to false if it's not specified
             isBeta = try values.decodeIfPresent(Bool.self, forKey: .beta) ?? false
+            
+            icon = try values.decodeIfPresent(RenderReferenceIdentifier.self, forKey: .icon)
         }
         
         /// Creates a new node with the given title, path, type, and children.
@@ -146,7 +179,8 @@ extension RenderIndex {
             children: [Node]?,
             isDeprecated: Bool,
             isExternal: Bool,
-            isBeta: Bool
+            isBeta: Bool,
+            icon: RenderReferenceIdentifier? = nil
         ) {
             self.title = title
             self.path = path
@@ -155,6 +189,7 @@ extension RenderIndex {
             self.isDeprecated = isDeprecated
             self.isExternal = isExternal
             self.isBeta = isBeta
+            self.icon = nil
         }
         
         init(
@@ -162,7 +197,8 @@ extension RenderIndex {
             path: String,
             pageType: NavigatorIndex.PageType?,
             isDeprecated: Bool,
-            children: [Node]
+            children: [Node],
+            icon: RenderReferenceIdentifier?
         ) {
             self.title = title
             self.children = children.isEmpty ? nil : children
@@ -174,6 +210,7 @@ extension RenderIndex {
             self.isExternal = false
             
             self.isBeta = false
+            self.icon = icon
             
             guard let pageType = pageType else {
                 self.type = nil
@@ -216,7 +253,8 @@ extension RenderIndex {
                     )
                 },
                 uniquingKeysWith: +
-            )
+            ),
+            references: builder.iconReferences
         )
     }
 }
@@ -242,7 +280,8 @@ extension RenderIndex.Node {
             isDeprecated: isDeprecated,
             children: node.children.map {
                 RenderIndex.Node.fromNavigatorTreeNode($0, in: navigatorIndex, with: builder)
-            }
+            },
+            icon: node.item.icon
         )
     }
 }

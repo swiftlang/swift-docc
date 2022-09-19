@@ -104,6 +104,9 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
     /// An optional list of text-based tags.
     public var tags: [RenderNode.Tag]?
     
+    /// Author provided images that should be used to represent this page.
+    public var images: [TopicImage]
+    
     /// Creates a new topic reference with all its initial values.
     ///
     /// - Parameters:
@@ -143,7 +146,8 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         titleStyle: TitleStyle? = nil,
         name: String? = nil,
         ideTitle: String? = nil,
-        tags: [RenderNode.Tag]? = nil
+        tags: [RenderNode.Tag]? = nil,
+        images: [TopicImage] = []
     ) {
         self.init(
             identifier: identifier,
@@ -163,7 +167,8 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
             titleStyle: titleStyle,
             name: name,
             ideTitle: ideTitle,
-            tags: tags
+            tags: tags,
+            images: images
         )
     }
     
@@ -206,7 +211,8 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         titleStyle: TitleStyle? = nil,
         name: String? = nil,
         ideTitle: String? = nil,
-        tags: [RenderNode.Tag]? = nil
+        tags: [RenderNode.Tag]? = nil,
+        images: [TopicImage] = []
     ) {
         self.identifier = identifier
         self.titleVariants = titleVariants
@@ -226,6 +232,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         self.name = name
         self.ideTitle = ideTitle
         self.tags = tags
+        self.images = images
     }
     
     enum CodingKeys: String, CodingKey {
@@ -248,6 +255,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         case name
         case ideTitle
         case tags
+        case images
     }
     
     public init(from decoder: Decoder) throws {
@@ -273,6 +281,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         name = try values.decodeIfPresent(String.self, forKey: .name)
         ideTitle = try values.decodeIfPresent(String.self, forKey: .ideTitle)
         tags = try values.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
+        images = try values.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -305,5 +314,6 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(ideTitle, forKey: .ideTitle)
         try container.encodeIfPresent(tags, forKey: .tags)
+        try container.encodeIfNotEmpty(images, forKey: .images)
     }
 }

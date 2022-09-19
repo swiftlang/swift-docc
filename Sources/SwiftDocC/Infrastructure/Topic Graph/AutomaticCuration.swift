@@ -123,6 +123,14 @@ public struct AutomaticCuration {
         renderContext: RenderContext?,
         renderer: DocumentationContentRenderer
     ) throws -> TaskGroup? {
+        if let automaticSeeAlsoOption = node.options?.automaticSeeAlsoBehavior
+            ?? context.options?.automaticSeeAlsoBehavior
+        {
+            guard automaticSeeAlsoOption == .siblingPages else {
+                return nil
+            }
+        }
+        
         // First try getting the canonical path from a render context, default to the documentation context
         guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.pathsTo(node.reference).first,
             !canonicalPath.isEmpty else {
@@ -204,6 +212,12 @@ extension AutomaticCuration {
             case .`typealias`: return "Type Aliases"
             case .`var`: return "Variables"
             case .module: return "Modules"
+            case .extendedModule: return "Extended Modules"
+            case .extendedClass: return "Extended Classes"
+            case .extendedStructure: return "Extended Structures"
+            case .extendedEnumeration: return "Extended Enumerations"
+            case .extendedProtocol: return "Extended Protocols"
+            case .unknownExtendedType: return "Extended Types"
             default: return "Symbols"
         }
     }
@@ -232,6 +246,13 @@ extension AutomaticCuration {
         .`typealias`,
         .`typeProperty`,
         .`typeMethod`,
-        .`enum`
+        .`enum`,
+        
+        .extendedModule,
+        .extendedClass,
+        .extendedProtocol,
+        .extendedStructure,
+        .extendedEnumeration,
+        .unknownExtendedType,
     ]
 }

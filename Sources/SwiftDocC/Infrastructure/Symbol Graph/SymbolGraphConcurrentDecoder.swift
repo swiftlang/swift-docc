@@ -54,7 +54,9 @@ enum SymbolGraphConcurrentDecoder {
     /// it made sense to spread the work equally (in other words to decode each N-th symbol per worker)
     /// so that we can get the best performance out of the concurrent work.
     
-    static func decode(_ data: Data, concurrentBatches: Int = 4) throws -> SymbolGraph {
+    static func decode(_ data: Data, concurrentBatches: Int = 4, using decoder: JSONDecoder = JSONDecoder()) throws -> SymbolGraph {
+        
+        
         var symbolGraph: SymbolGraph!
 
         let decodeError = Synchronized<Error?>(nil)
@@ -67,7 +69,7 @@ enum SymbolGraphConcurrentDecoder {
         group.async(queue: queue) {
             do {
                 // Decode the symbol graph bar the symbol list.
-                symbolGraph = try JSONDecoder().decode(SymbolGraphWithoutSymbols.self, from: data).symbolGraph
+                symbolGraph = try JSONDecoder(like: decoder).decode(SymbolGraphWithoutSymbols.self, from: data).symbolGraph
             } catch {
                 decodeError.sync({ $0 = error })
             }
@@ -75,7 +77,7 @@ enum SymbolGraphConcurrentDecoder {
         
         // Concurrently decode each batch of symbols in the graph.
         (0..<concurrentBatches).concurrentPerform { batchIndex in
-            let batchDecoder = JSONDecoder()
+            let batchDecoder = JSONDecoder(like: decoder)
             
             // Configure the decoder to decode the current batch
             batchDecoder.userInfo[CodingUserInfoKey.symbolCounter] = Counter()
@@ -177,5 +179,19 @@ enum SymbolGraphConcurrentDecoder {
             defer { count += 1}
             return count
         }
+    }
+}
+
+private extension JSONDecoder {
+    /// Creates a new decoder with the same configuration as the
+    /// old one.
+    convenience init(like old: JSONDecoder) {
+        self.init()
+        
+        self.userInfo = old.userInfo
+        self.dataDecodingStrategy = old.dataDecodingStrategy
+        self.dateDecodingStrategy = old.dateDecodingStrategy
+        self.keyDecodingStrategy = old.keyDecodingStrategy
+        self.nonConformingFloatDecodingStrategy = old.nonConformingFloatDecodingStrategy
     }
 }

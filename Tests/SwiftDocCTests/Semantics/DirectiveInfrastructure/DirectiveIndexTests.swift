@@ -18,8 +18,11 @@ class DirectiveIndexTests: XCTestCase {
             DirectiveIndex.shared.indexedDirectives.keys.sorted(),
             [
                 "Assessments",
+                "AutomaticSeeAlso",
+                "AutomaticTitleHeading",
                 "Chapter",
                 "Choice",
+                "Column",
                 "DeprecationSummary",
                 "DisplayName",
                 "DocumentationExtension",
@@ -27,14 +30,29 @@ class DirectiveIndexTests: XCTestCase {
                 "Intro",
                 "Justification",
                 "Metadata",
+                "Options",
+                "PageImage",
                 "Redirected",
+                "Row",
+                "Small",
                 "Snippet",
                 "Stack",
                 "TechnologyRoot",
+                "TopicsVisualStyle",
                 "Tutorial",
                 "TutorialReference",
                 "Video",
                 "XcodeRequirement",
+            ]
+        )
+    }
+    
+    func testDirectiveIndexHasExpectedRenderableDirectives() {
+        XCTAssertEqual(
+            DirectiveIndex.shared.renderableDirectives.keys.sorted(),
+            [
+                "Row",
+                "Small",
             ]
         )
     }

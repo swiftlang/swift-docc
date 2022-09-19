@@ -237,7 +237,11 @@ struct RenderContentCompiler: MarkupVisitor {
                 return docCommentContent + [code]
             }
         default:
-            return []
+            guard let renderableDirective = DirectiveIndex.shared.renderableDirectives[blockDirective.name] else {
+                return []
+            }
+            
+            return renderableDirective.render(blockDirective, with: &self)
         }
     }
 
