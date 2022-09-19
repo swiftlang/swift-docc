@@ -760,6 +760,9 @@
                 ],
                 "type": "object",
                 "properties": {
+                    "checked": {
+                        "type": "boolean"
+                    },
                     "content": {
                         "type": "array",
                         "items": {

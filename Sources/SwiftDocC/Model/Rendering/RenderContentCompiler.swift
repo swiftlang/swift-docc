@@ -50,7 +50,13 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitListItem(_ listItem: ListItem) -> [RenderContent] {
         let renderListItems = listItem.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
-        return [RenderBlockContent.ListItem(content: renderListItems as! [RenderBlockContent])]
+        let checked: Bool?
+        switch listItem.checkbox {
+            case .checked: checked = true
+            case .unchecked: checked = false
+            case nil: checked = nil
+        }
+        return [RenderBlockContent.ListItem(content: renderListItems as! [RenderBlockContent], checked: checked)]
     }
     
     mutating func visitOrderedList(_ orderedList: OrderedList) -> [RenderContent] {
