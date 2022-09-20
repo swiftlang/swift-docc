@@ -80,10 +80,10 @@ final class LinkResolutionMismatches {
     }
 
     /// Links that resolved in the cache-based implementation but not the path hierarchy-based implementation
-    var mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve = Set<FailedLinkInfo>()
+    var mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve: Synchronized<Set<FailedLinkInfo>> = .init([])
     
     /// Links that resolved in the path hierarchy-based implementation but not the cache-based implementation.
-    var mismatchedLinksThatCacheBasedLinkResolverFailedToResolve = Set<FailedLinkInfo>()
+    var mismatchedLinksThatCacheBasedLinkResolverFailedToResolve: Synchronized<Set<FailedLinkInfo>> = .init([])
 }
 
 // MARK: Reporting mismatches
@@ -122,8 +122,8 @@ extension LinkResolutionMismatches {
             return
         }
 
-        let mismatchedFailedCacheResults = mismatchedLinksThatCacheBasedLinkResolverFailedToResolve
-        let mismatchedFailedHierarchyResults = mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve
+        let mismatchedFailedCacheResults = mismatchedLinksThatCacheBasedLinkResolverFailedToResolve.sync({ $0 })
+        let mismatchedFailedHierarchyResults = mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve.sync({ $0 })
         
         if mismatchedFailedCacheResults.isEmpty && mismatchedFailedHierarchyResults.isEmpty {
             print("\(prefix) Both link resolver implementations succeeded and failed to resolve the same links.")

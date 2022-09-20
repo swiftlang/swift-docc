@@ -1137,7 +1137,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             // Build references for all symbols in all of this module's symbol graphs.
             let symbolReferences: [SymbolGraph.Symbol.Identifier : [ResolvedTopicReference]]
             if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-                symbolReferences = hierarchyBasedLinkResolver!.referencesForSymbols(in:symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
+                symbolReferences = hierarchyBasedLinkResolver!.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
                     .mapValues({ [$0] }) // The documentation cache implementation uses an array of values to handle multi languages
             } else {
                 symbolReferences = documentationCacheBasedLinkResolver.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
@@ -1275,9 +1275,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             
             try shouldContinueRegistration()
             
-            if let hierarchyBasedLinkResolver = hierarchyBasedLinkResolver {
-                // Map the resolved references with their identifiers
-                hierarchyBasedLinkResolver.addMappingForSymbols(symbolIndex: symbolIndex)
+            // Only add the symbol mapping now if the path hierarchy based resolver is the main implementation.
+            // If it is only used for mismatch checking then we must wait until the documentation cache code path has traversed and updated all the colliding nodes.
+            // Otherwise the mappings will save the unmodified references and the hierarchy based resolver won't find the expected parent nodes when resolving links.
+            if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+                hierarchyBasedLinkResolver!.addMappingForSymbols(symbolIndex: symbolIndex)
             }
             
             if hierarchyBasedLinkResolver == nil || LinkResolutionMigrationConfiguration.shouldReportLinkResolutionMismatches {
@@ -1311,20 +1313,22 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         })
                 }
                 
-                
                 // Only update the nodes and symbol index when using the documentation cache-based link resolver otherwise the context will end up in an inconsistent state.
-                if hierarchyBasedLinkResolver == nil {
+                if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
                     // Update the children of collision URLs. Walk the tree and update any dependents of updated URLs
                     for moduleReference in moduleReferences.values {
                         try symbolsURLHierarchy.traversePreOrder(from: moduleReference) { reference in
                             try self.documentationCacheBasedLinkResolver.updateNodeWithReferenceIfCollisionChild(reference, symbolsURLHierarchy: &symbolsURLHierarchy, symbolIndex: &symbolIndex, context: self)
                         }
                     }
+                    
+                    // Now that the colliding references have been updated, the hierarchy based resolver can save the reference to identifier mapping.
+                    hierarchyBasedLinkResolver?.addMappingForSymbols(symbolIndex: symbolIndex)
                 }
                 
                 if LinkResolutionMigrationConfiguration.shouldReportLinkResolutionPathMismatches {
                     // The way that symbol path mismatches are gathered depend on which link resolution implementation is used to resolve links.
-                    if let hierarchyBasedLinkResolver = hierarchyBasedLinkResolver {
+                    if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
                         // Attempting to use the The documentation cache based link resolver to compute the disambiguated symbol paths when it is not in full control of the symbol index,
                         // topic graph, and documentation cache will result in the wrong behavior. The issues range from incorrectly computed paths to precondition failures.
                         //
@@ -1337,7 +1341,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         // Luckily the path hierarchy describe the hierarchical relationships between the symbols in a way where it's possible to get the `Symbol.Identifier` for each symbol.
                         // By sorting the pairs of `(symbol, parent symbol)` by the symbol's number of path components it's possible to traverse the hierarchy breath first and update the initial disambiguated
                         // paths from the documentation cache based link resolver so that each child path matches the disambiguation from the parent path.
-                        let sortedSymbolAndParentPairs = hierarchyBasedLinkResolver.pathHierarchy.lookup.values.lazy
+                        let sortedSymbolAndParentPairs = hierarchyBasedLinkResolver!.pathHierarchy.lookup.values.lazy
                             .filter { $0.symbol != nil && $0.parent?.symbol != nil }
                             .sorted(by: \.symbol!.pathComponents.count)
                             .map { ($0.symbol!.identifier, $0.parent!.symbol!.identifier) }
@@ -1362,7 +1366,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                 linkResolutionMismatches.pathsWithMismatchedDisambiguation[hierarchyBasedReference.path] = cacheBasedMainReference.path
                             }
                         }
-                        for (id, cacheBasedReference) in cacheBasedReferences where !hierarchyBasedReferences.keys.contains(id) {
+                        for (id, cacheBasedReference) in cacheBasedReferences where !hierarchyBasedReferences.keys.contains(id) && symbolGraphLoader.hasPrimaryURL(moduleName: cacheBasedReference.pathComponents[2]) {
                             linkResolutionMismatches.missingPathsInHierarchyBasedLinkResolver.append(cacheBasedReference.path)
                         }
                     } else {
@@ -2553,15 +2557,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 let cacheBasedResult = documentationCacheBasedLinkResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: self)
                 
                 let inputInfo = LinkResolutionMismatches.FailedLinkInfo(
-                    path: unresolvedReference.topicURL.url.withoutHostAndPortAndScheme().absoluteString,
-                    parent: parent.url.withoutHostAndPortAndScheme().absoluteString,
+                    path: unresolvedReference.topicURL.url.path + (unresolvedReference.topicURL.url.fragment.map { "#" + $0 } ?? ""),
+                    parent: parent.url.path,
                     asSymbolLink: isCurrentlyResolvingSymbolLink
                 )
                 switch (hierarchyBasedResult, cacheBasedResult) {
                 case (.success, .failure):
-                    linkResolutionMismatches.mismatchedLinksThatCacheBasedLinkResolverFailedToResolve.insert(inputInfo)
+                    linkResolutionMismatches.mismatchedLinksThatCacheBasedLinkResolverFailedToResolve.sync { $0.insert(inputInfo) }
                 case (.failure, .success):
-                    linkResolutionMismatches.mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve.insert(inputInfo)
+                    linkResolutionMismatches.mismatchedLinksThatHierarchyBasedLinkResolverFailedToResolve.sync { $0.insert(inputInfo) }
                 default:
                     break // No difference to report
                 }

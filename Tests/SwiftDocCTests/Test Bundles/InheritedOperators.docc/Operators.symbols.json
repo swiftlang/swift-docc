@@ -1,0 +1,5246 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "Apple Swift version 5.7 (swiftlang-5.7.0.127.4 clang-1400.0.29.50)"
+    },
+    "module": {
+        "name": "Operators",
+        "platform": {
+            "architecture": "arm64",
+            "operatingSystem": {
+                "minimumVersion": {
+                    "major": 10,
+                    "minor": 13,
+                    "patch": 0
+                },
+                "name": "macosx"
+            },
+            "vendor": "apple"
+        }
+    },
+    "relationships": [
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "Comparable.<=(_:_:)",
+                "identifier": "s:SLsE2leoiySbx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzloiySnyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "Comparable...<(_:_:)",
+                "identifier": "s:SLsE3zzloiySnyxGx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:9Operators8MyNumberV",
+            "target": "s:Sj",
+            "targetFallback": "Swift.Numeric"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "Comparable....(_:)",
+                "identifier": "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:9Operators8MyNumberV1poiyA2C_ACtFZ",
+            "sourceOrigin": {
+                "displayName": "AdditiveArithmetic.+(_:_:)",
+                "identifier": "s:s18AdditiveArithmeticP1poiyxx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:9Operators8MyNumberV1moiyA2C_ACtFZ",
+            "sourceOrigin": {
+                "displayName": "Numeric.*(_:_:)",
+                "identifier": "s:Sj1moiyxx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:9Operators8MyNumberV1loiySbAC_ACtFZ",
+            "sourceOrigin": {
+                "displayName": "Comparable.<(_:_:)",
+                "identifier": "s:SL1loiySbx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:9Operators8MyNumberV",
+            "target": "s:SQ",
+            "targetFallback": "Swift.Equatable"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:s13SignedNumericPsE6negateyyF::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "SignedNumeric.negate()",
+                "identifier": "s:s13SignedNumericPsE6negateyyF"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:9Operators8MyNumberV9magnitudeSuvp",
+            "sourceOrigin": {
+                "displayName": "Numeric.magnitude",
+                "identifier": "s:Sj9magnitude9MagnitudeQzvp"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "Comparable....(_:)",
+                "identifier": "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:s18AdditiveArithmeticPss27ExpressibleByIntegerLiteralRzrlE4zeroxvpZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "AdditiveArithmetic.zero",
+                "identifier": "s:s18AdditiveArithmeticPss27ExpressibleByIntegerLiteralRzrlE4zeroxvpZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:9Operators8MyNumberV",
+            "target": "s:SL",
+            "targetFallback": "Swift.Comparable"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:9Operators8MyNumberV2meoiyyACz_ACtFZ",
+            "sourceOrigin": {
+                "displayName": "Numeric.*=(_:_:)",
+                "identifier": "s:Sj2meoiyyxz_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzlopys16PartialRangeUpToVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "Comparable...<(_:)",
+                "identifier": "s:SLsE3zzlopys16PartialRangeUpToVyxGxFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:s18AdditiveArithmeticPsE2peoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "AdditiveArithmetic.+=(_:_:)",
+                "identifier": "s:s18AdditiveArithmeticP2peoiyyxz_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "Equatable.!=(_:_:)",
+                "identifier": "s:SQsE2neoiySbx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE3zzzoiySNyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "Comparable....(_:_:)",
+                "identifier": "s:SLsE3zzzoiySNyxGx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:9Operators8MyNumberV",
+            "target": "s:s18AdditiveArithmeticP",
+            "targetFallback": "Swift.AdditiveArithmetic"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:s18AdditiveArithmeticPsE1popyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "AdditiveArithmetic.+(_:)",
+                "identifier": "s:s18AdditiveArithmeticPsE1popyxxFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:9Operators8MyNumberV14integerLiteralACSi_tcfc",
+            "sourceOrigin": {
+                "displayName": "ExpressibleByIntegerLiteral.init(integerLiteral:)",
+                "identifier": "s:s27ExpressibleByIntegerLiteralP07integerD0x0cD4TypeQz_tcfc"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:9Operators8MyNumberV",
+            "target": "s:s13SignedNumericP",
+            "targetFallback": "Swift.SignedNumeric"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "Comparable.>=(_:_:)",
+                "identifier": "s:SLsE2geoiySbx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:9Operators8MyNumberV",
+            "target": "s:SH",
+            "targetFallback": "Swift.Hashable"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "Comparable.>(_:_:)",
+                "identifier": "s:SLsE1goiySbx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:s18AdditiveArithmeticPsE2seoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "AdditiveArithmetic.-=(_:_:)",
+                "identifier": "s:s18AdditiveArithmeticP2seoiyyxz_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:s13SignedNumericPsE1sopyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV",
+            "sourceOrigin": {
+                "displayName": "SignedNumeric.-(_:)",
+                "identifier": "s:s13SignedNumericPsE1sopyxxFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:9Operators8MyNumberV7exactlyACSgx_tcSzRzlufc",
+            "sourceOrigin": {
+                "displayName": "Numeric.init(exactly:)",
+                "identifier": "s:Sj7exactlyxSgqd___tcSzRd__lufc"
+            },
+            "target": "s:9Operators8MyNumberV"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:9Operators8MyNumberV",
+            "target": "s:s27ExpressibleByIntegerLiteralP",
+            "targetFallback": "Swift.ExpressibleByIntegerLiteral"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:9Operators8MyNumberV1soiyA2C_ACtFZ",
+            "sourceOrigin": {
+                "displayName": "AdditiveArithmetic.-(_:_:)",
+                "identifier": "s:s18AdditiveArithmeticP1soiyxx_xtFZ"
+            },
+            "target": "s:9Operators8MyNumberV"
+        }
+    ],
+    "symbols": [
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "-"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Subtracts one value from another and produces their difference."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "The subtraction operator (`-`) calculates the difference of its two"
+                    },
+                    {
+                        "text": "arguments. For example:"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    8 - 3                   // 5"
+                    },
+                    {
+                        "text": "    -10 - 5                 // -15"
+                    },
+                    {
+                        "text": "    100 - -5                // 105"
+                    },
+                    {
+                        "text": "    10.5 - 100.0            // -89.5"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You cannot use `-` with arguments of different types. To subtract values"
+                    },
+                    {
+                        "text": "of different types, convert one of the values to the other value's type."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let x: UInt8 = 21"
+                    },
+                    {
+                        "text": "    let y: UInt = 1000000"
+                    },
+                    {
+                        "text": "    y - UInt(x)             // 999979"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A numeric value."
+                    },
+                    {
+                        "text": "  - rhs: The value to subtract from `lhs`."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9Operators8MyNumberV1soiyA2C_ACtFZ"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "location": {
+                "position": {
+                    "character": 23,
+                    "line": 49
+                },
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "-"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    }
+                ],
+                "title": "-(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "-(_:_:)"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "<="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Sb",
+                    "spelling": "Bool"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a Boolean value indicating whether the value of the first argument"
+                    },
+                    {
+                        "text": "is less than or equal to that of the second argument."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "This is the default implementation of the less-than-or-equal-to"
+                    },
+                    {
+                        "text": "operator (`<=`) for any type that conforms to `Comparable`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A value to compare."
+                    },
+                    {
+                        "text": "  - rhs: Another value to compare."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "<="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ],
+                "title": "<=(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "<=(_:_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..<"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "minimum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "maximum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Sn",
+                    "spelling": "Range"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a half-open range that contains its lower bound but not its upper"
+                    },
+                    {
+                        "text": "bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the half-open range operator (`..<`) to create a range of any type"
+                    },
+                    {
+                        "text": "that conforms to the `Comparable` protocol. This example creates a"
+                    },
+                    {
+                        "text": "`Range<Double>` from zero up to, but not including, 5.0."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let lessThanFive = 0.0..<5.0"
+                    },
+                    {
+                        "text": "    print(lessThanFive.contains(3.14))  // Prints \"true\""
+                    },
+                    {
+                        "text": "    print(lessThanFive.contains(5.0))   // Prints \"false\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - minimum: The lower bound for the range."
+                    },
+                    {
+                        "text": "  - maximum: The upper bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `minimum <= maximum`."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "minimum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "minimum"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "maximum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "maximum"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sn",
+                        "spelling": "Range"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:SLsE3zzloiySnyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..<"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sn",
+                        "spelling": "Range"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ],
+                "title": "..<(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "..<(_:_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "maximum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:s19PartialRangeThroughV",
+                    "spelling": "PartialRangeThrough"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a partial range up to, and including, its upper bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the prefix closed range operator (prefix `...`) to create a partial"
+                    },
+                    {
+                        "text": "range of any type that conforms to the `Comparable` protocol. This"
+                    },
+                    {
+                        "text": "example creates a `PartialRangeThrough<Double>` instance that includes"
+                    },
+                    {
+                        "text": "any value less than or equal to `5.0`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let throughFive = ...5.0"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    throughFive.contains(4.0)     // true"
+                    },
+                    {
+                        "text": "    throughFive.contains(5.0)     // true"
+                    },
+                    {
+                        "text": "    throughFive.contains(6.0)     // false"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You can use this type of partial range of a collection's indices to"
+                    },
+                    {
+                        "text": "represent the range from the start of the collection up to, and"
+                    },
+                    {
+                        "text": "including, the partial range's upper bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let numbers = [10, 20, 30, 40, 50, 60, 70]"
+                    },
+                    {
+                        "text": "    print(numbers[...3])"
+                    },
+                    {
+                        "text": "    // Prints \"[10, 20, 30, 40]\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameter maximum: The upper bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `maximum` must compare equal to itself (i.e. cannot be NaN)."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "maximum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "maximum"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:s19PartialRangeThroughV",
+                        "spelling": "PartialRangeThrough"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:s19PartialRangeThroughV",
+                        "spelling": "PartialRangeThrough"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ],
+                "title": "...(_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "...(_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Sb",
+                    "spelling": "Bool"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a Boolean value indicating whether the value of the first"
+                    },
+                    {
+                        "text": "argument is less than that of the second argument."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "This function is the only requirement of the `Comparable` protocol. The"
+                    },
+                    {
+                        "text": "remainder of the relational operator functions are implemented by the"
+                    },
+                    {
+                        "text": "standard library for any type that conforms to `Comparable`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A value to compare."
+                    },
+                    {
+                        "text": "  - rhs: Another value to compare."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9Operators8MyNumberV1loiySbAC_ACtFZ"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "location": {
+                "position": {
+                    "character": 23,
+                    "line": 14
+                },
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ],
+                "title": "<(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "<(_:_:)"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "*"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Multiplies two values and produces their product."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "The multiplication operator (`*`) calculates the product of its two"
+                    },
+                    {
+                        "text": "arguments. For example:"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    2 * 3                   // 6"
+                    },
+                    {
+                        "text": "    100 * 21                // 2100"
+                    },
+                    {
+                        "text": "    -10 * 15                // -150"
+                    },
+                    {
+                        "text": "    3.5 * 2.25              // 7.875"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You cannot use `*` with arguments of different types. To multiply values"
+                    },
+                    {
+                        "text": "of different types, convert one of the values to the other value's type."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let x: Int8 = 21"
+                    },
+                    {
+                        "text": "    let y: Int = 1000000"
+                    },
+                    {
+                        "text": "    Int(x) * y              // 21000000"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: The first value to multiply."
+                    },
+                    {
+                        "text": "  - rhs: The second value to multiply."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9Operators8MyNumberV1moiyA2C_ACtFZ"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "location": {
+                "position": {
+                    "character": 23,
+                    "line": 35
+                },
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "*"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    }
+                ],
+                "title": "*(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "*(_:_:)"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "+"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Adds two values and produces their sum."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "The addition operator (`+`) calculates the sum of its two arguments. For"
+                    },
+                    {
+                        "text": "example:"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    1 + 2                   // 3"
+                    },
+                    {
+                        "text": "    -10 + 15                // 5"
+                    },
+                    {
+                        "text": "    -15 + -5                // -20"
+                    },
+                    {
+                        "text": "    21.5 + 3.25             // 24.75"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You cannot use `+` with arguments of different types. To add values of"
+                    },
+                    {
+                        "text": "different types, convert one of the values to the other value's type."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let x: Int8 = 21"
+                    },
+                    {
+                        "text": "    let y: Int = 1000000"
+                    },
+                    {
+                        "text": "    Int(x) + y              // 1000021"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: The first value to add."
+                    },
+                    {
+                        "text": "  - rhs: The second value to add."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9Operators8MyNumberV1poiyA2C_ACtFZ"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "location": {
+                "position": {
+                    "character": 23,
+                    "line": 45
+                },
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "+"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    }
+                ],
+                "title": "+(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "+(_:_:)"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "var"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "zero"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " { "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "get"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " }"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "The zero value."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Zero is the identity element for addition. For any value,"
+                    },
+                    {
+                        "text": "`x + .zero == x` and `.zero + x == x`."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:s18AdditiveArithmeticPss27ExpressibleByIntegerLiteralRzrlE4zeroxvpZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Type Property",
+                "identifier": "swift.type.property"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "var"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "zero"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ],
+                "title": "zero"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "zero"
+            ],
+            "swiftExtension": {
+                "constraints": [
+                    {
+                        "kind": "conformance",
+                        "lhs": "Self",
+                        "rhs": "ExpressibleByIntegerLiteral",
+                        "rhsPrecise": "s:s27ExpressibleByIntegerLiteralP"
+                    }
+                ],
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "minimum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:s16PartialRangeFromV",
+                    "spelling": "PartialRangeFrom"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a partial range extending upward from a lower bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the postfix range operator (postfix `...`) to create a partial range"
+                    },
+                    {
+                        "text": "of any type that conforms to the `Comparable` protocol. This example"
+                    },
+                    {
+                        "text": "creates a `PartialRangeFrom<Double>` instance that includes any value"
+                    },
+                    {
+                        "text": "greater than or equal to `5.0`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let atLeastFive = 5.0..."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    atLeastFive.contains(4.0)     // false"
+                    },
+                    {
+                        "text": "    atLeastFive.contains(5.0)     // true"
+                    },
+                    {
+                        "text": "    atLeastFive.contains(6.0)     // true"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You can use this type of partial range of a collection's indices to"
+                    },
+                    {
+                        "text": "represent the range from the partial range's lower bound up to the end"
+                    },
+                    {
+                        "text": "of the collection."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let numbers = [10, 20, 30, 40, 50, 60, 70]"
+                    },
+                    {
+                        "text": "    print(numbers[3...])"
+                    },
+                    {
+                        "text": "    // Prints \"[40, 50, 60, 70]\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameter minimum: The lower bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `minimum` must compare equal to itself (i.e. cannot be NaN)."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "minimum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "minimum"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:s16PartialRangeFromV",
+                        "spelling": "PartialRangeFrom"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:s16PartialRangeFromV",
+                        "spelling": "PartialRangeFrom"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ],
+                "title": "...(_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "...(_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "var"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "magnitude"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Si",
+                    "spelling": "Int"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "."
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Si9Magnitudea",
+                    "spelling": "Magnitude"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " { "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "get"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " }"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "The magnitude of this value."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "For any numeric value `x`, `x.magnitude` is the absolute value of `x`."
+                    },
+                    {
+                        "text": "You can use the `magnitude` property in operations that are simpler to"
+                    },
+                    {
+                        "text": "implement in terms of unsigned values, such as printing the value of an"
+                    },
+                    {
+                        "text": "integer, which is just printing a '-' character in front of an absolute"
+                    },
+                    {
+                        "text": "value."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let x = -200"
+                    },
+                    {
+                        "text": "    // x.magnitude == 200"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "The global `abs(_:)` function provides more familiar syntax when you need"
+                    },
+                    {
+                        "text": "to find an absolute value. In addition, because `abs(_:)` always returns"
+                    },
+                    {
+                        "text": "a value of the same type, even in a generic context, using the function"
+                    },
+                    {
+                        "text": "instead of the `magnitude` property is encouraged."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9Operators8MyNumberV9magnitudeSuvp"
+            },
+            "kind": {
+                "displayName": "Instance Property",
+                "identifier": "swift.property"
+            },
+            "location": {
+                "position": {
+                    "character": 15,
+                    "line": 31
+                },
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "var"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "magnitude"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Si",
+                        "spelling": "Int"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "."
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Si9Magnitudea",
+                        "spelling": "Magnitude"
+                    }
+                ],
+                "title": "magnitude"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "magnitude"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "mutating"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "negate"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "()"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Replaces this value with its additive inverse."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "The following example uses the `negate()` method to negate the value of"
+                    },
+                    {
+                        "text": "an integer `x`:"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    var x = 21"
+                    },
+                    {
+                        "text": "    x.negate()"
+                    },
+                    {
+                        "text": "    // x == -21"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "The resulting value must be representable within the value's type. In"
+                    },
+                    {
+                        "text": "particular, negating a signed, fixed-width integer type's minimum"
+                    },
+                    {
+                        "text": "results in a value that cannot be represented."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    var y = Int8.min"
+                    },
+                    {
+                        "text": "    y.negate()"
+                    },
+                    {
+                        "text": "    // Overflow error"
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:s13SignedNumericPsE6negateyyF::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Instance Method",
+                "identifier": "swift.method"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "negate"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ],
+                "title": "negate()"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "negate()"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..."
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "minimum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "maximum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:SN",
+                    "spelling": "ClosedRange"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a closed range that contains both of its bounds."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the closed range operator (`...`) to create a closed range of any type"
+                    },
+                    {
+                        "text": "that conforms to the `Comparable` protocol. This example creates a"
+                    },
+                    {
+                        "text": "`ClosedRange<Character>` from \"a\" up to, and including, \"z\"."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let lowercase = \"a\"...\"z\""
+                    },
+                    {
+                        "text": "    print(lowercase.contains(\"z\"))"
+                    },
+                    {
+                        "text": "    // Prints \"true\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - minimum: The lower bound for the range."
+                    },
+                    {
+                        "text": "  - maximum: The upper bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `minimum <= maximum`."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "minimum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "minimum"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "maximum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "maximum"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:SN",
+                        "spelling": "ClosedRange"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:SLsE3zzzoiySNyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..."
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:SN",
+                        "spelling": "ClosedRange"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ],
+                "title": "...(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "...(_:_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "*="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "inout"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV",
+                    "spelling": "MyNumber"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ")"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Multiplies two values and stores the result in the left-hand-side"
+                    },
+                    {
+                        "text": "variable."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: The first value to multiply."
+                    },
+                    {
+                        "text": "  - rhs: The second value to multiply."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "keyword",
+                                "spelling": "inout"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": " "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "preciseIdentifier": "s:9Operators8MyNumberV",
+                                "spelling": "MyNumber"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9Operators8MyNumberV2meoiyyACz_ACtFZ"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "location": {
+                "position": {
+                    "character": 23,
+                    "line": 39
+                },
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "*="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "inout"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV",
+                        "spelling": "MyNumber"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ")"
+                    }
+                ],
+                "title": "*=(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "*=(_:_:)"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "!="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Sb",
+                    "spelling": "Bool"
+                }
+            ],
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "!="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ],
+                "title": "!=(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "!=(_:_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "+="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "inout"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ")"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Adds two values and stores the result in the left-hand-side variable."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: The first value to add."
+                    },
+                    {
+                        "text": "  - rhs: The second value to add."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:s18AdditiveArithmeticPsE2peoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "+="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "inout"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ")"
+                    }
+                ],
+                "title": "+=(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "+=(_:_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "..<"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "maximum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:s16PartialRangeUpToV",
+                    "spelling": "PartialRangeUpTo"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "<"
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a partial range up to, but not including, its upper bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Use the prefix half-open range operator (prefix `..<`) to create a"
+                    },
+                    {
+                        "text": "partial range of any type that conforms to the `Comparable` protocol."
+                    },
+                    {
+                        "text": "This example creates a `PartialRangeUpTo<Double>` instance that includes"
+                    },
+                    {
+                        "text": "any value less than `5.0`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let upToFive = ..<5.0"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    upToFive.contains(3.14)       // true"
+                    },
+                    {
+                        "text": "    upToFive.contains(6.28)       // false"
+                    },
+                    {
+                        "text": "    upToFive.contains(5.0)        // false"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You can use this type of partial range of a collection's indices to"
+                    },
+                    {
+                        "text": "represent the range from the start of the collection up to, but not"
+                    },
+                    {
+                        "text": "including, the partial range's upper bound."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let numbers = [10, 20, 30, 40, 50, 60, 70]"
+                    },
+                    {
+                        "text": "    print(numbers[..<3])"
+                    },
+                    {
+                        "text": "    // Prints \"[10, 20, 30]\""
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameter maximum: The upper bound for the range."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Precondition: `maximum` must compare equal to itself (i.e. cannot be NaN)."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "maximum"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "maximum"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:s16PartialRangeUpToV",
+                        "spelling": "PartialRangeUpTo"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:SLsE3zzlopys16PartialRangeUpToVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "..<"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:s16PartialRangeUpToV",
+                        "spelling": "PartialRangeUpTo"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "<"
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">"
+                    }
+                ],
+                "title": "..<(_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "..<(_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": ">="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Sb",
+                    "spelling": "Bool"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a Boolean value indicating whether the value of the first argument"
+                    },
+                    {
+                        "text": "is greater than or equal to that of the second argument."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "This is the default implementation of the greater-than-or-equal-to operator"
+                    },
+                    {
+                        "text": "(`>=`) for any type that conforms to `Comparable`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A value to compare."
+                    },
+                    {
+                        "text": "  - rhs: Another value to compare."
+                    },
+                    {
+                        "text": "- Returns: `true` if `lhs` is greater than or equal to `rhs`; otherwise,"
+                    },
+                    {
+                        "text": "  `false`."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": ">="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ],
+                "title": ">=(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                ">=(_:_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "struct"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "MyNumber"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "range": {
+                            "end": {
+                                "character": 107,
+                                "line": 3
+                            },
+                            "start": {
+                                "character": 4,
+                                "line": 3
+                            }
+                        },
+                        "text": "A type that wraps an integer and conforms to protocols to get many default implementations of operators"
+                    }
+                ],
+                "module": "Operators",
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Structure",
+                "identifier": "swift.struct"
+            },
+            "location": {
+                "position": {
+                    "character": 14,
+                    "line": 4
+                },
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "names": {
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "MyNumber"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "struct"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "MyNumber"
+                    }
+                ],
+                "title": "MyNumber"
+            },
+            "pathComponents": [
+                "MyNumber"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "+"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "x"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns the given number unchanged."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "You can use the unary plus operator (`+`) to provide symmetry in your"
+                    },
+                    {
+                        "text": "code for positive numbers when also using the unary minus operator."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let x = -21"
+                    },
+                    {
+                        "text": "    let y = +21"
+                    },
+                    {
+                        "text": "    // x == -21"
+                    },
+                    {
+                        "text": "    // y == 21"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Returns: The given argument without any changes."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "x"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "x"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:s18AdditiveArithmeticPsE1popyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "+"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ],
+                "title": "+(_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "+(_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "init"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "externalParam",
+                    "spelling": "integerLiteral"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "value"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Si",
+                    "spelling": "Int"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ")"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Creates an instance initialized to the specified integer value."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "Do not call this initializer directly. Instead, initialize a variable or"
+                    },
+                    {
+                        "text": "constant using an integer literal. For example:"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let x = 23"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "In this example, the assignment to the `x` constant calls this integer"
+                    },
+                    {
+                        "text": "literal initializer behind the scenes."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameter value: The value to create."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9Operators8MyNumberV14integerLiteralACSi_tcfc"
+            },
+            "kind": {
+                "displayName": "Initializer",
+                "identifier": "swift.init"
+            },
+            "location": {
+                "position": {
+                    "character": 11,
+                    "line": 20
+                },
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "init"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "externalParam",
+                        "spelling": "integerLiteral"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Si",
+                        "spelling": "Int"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ")"
+                    }
+                ],
+                "title": "init(integerLiteral:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "init(integerLiteral:)"
+            ]
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "init"
+                },
+                {
+                    "kind": "text",
+                    "spelling": "?<"
+                },
+                {
+                    "kind": "genericParameter",
+                    "spelling": "T"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ">("
+                },
+                {
+                    "kind": "externalParam",
+                    "spelling": "exactly"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "source"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:9Operators8MyNumberV7exactlyACSgx_tcSzRzlufc1TL_xmfp",
+                    "spelling": "T"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "where"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "T"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " : "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Sz",
+                    "spelling": "BinaryInteger"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Creates a new instance from the given integer, if it can be represented"
+                    },
+                    {
+                        "text": "exactly."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "If the value passed as `source` is not representable exactly, the result"
+                    },
+                    {
+                        "text": "is `nil`. In the following example, the constant `x` is successfully"
+                    },
+                    {
+                        "text": "created from a value of `100`, while the attempt to initialize the"
+                    },
+                    {
+                        "text": "constant `y` from `1_000` fails because the `Int8` type can represent"
+                    },
+                    {
+                        "text": "`127` at maximum:"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let x = Int8(exactly: 100)"
+                    },
+                    {
+                        "text": "    // x == Optional(100)"
+                    },
+                    {
+                        "text": "    let y = Int8(exactly: 1_000)"
+                    },
+                    {
+                        "text": "    // y == nil"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameter source: A value to convert to this type."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:9Operators8MyNumberV7exactlyACSgx_tcSzRzlufc"
+            },
+            "kind": {
+                "displayName": "Initializer",
+                "identifier": "swift.init"
+            },
+            "location": {
+                "position": {
+                    "character": 11,
+                    "line": 26
+                },
+                "uri": "file:///Users/username/path/to/Operators.swift"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "init"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "?<"
+                    },
+                    {
+                        "kind": "genericParameter",
+                        "spelling": "T"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ">("
+                    },
+                    {
+                        "kind": "externalParam",
+                        "spelling": "exactly"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:9Operators8MyNumberV7exactlyACSgx_tcSzRzlufc1TL_xmfp",
+                        "spelling": "T"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ")"
+                    }
+                ],
+                "title": "init(exactly:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "init(exactly:)"
+            ],
+            "swiftGenerics": {
+                "constraints": [
+                    {
+                        "kind": "conformance",
+                        "lhs": "T",
+                        "rhs": "BinaryInteger",
+                        "rhsPrecise": "s:Sz"
+                    }
+                ],
+                "parameters": [
+                    {
+                        "depth": 0,
+                        "index": 0,
+                        "name": "T"
+                    }
+                ]
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "-"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "operand"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns the additive inverse of the specified value."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "The negation operator (prefix `-`) returns the additive inverse of its"
+                    },
+                    {
+                        "text": "argument."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let x = 21"
+                    },
+                    {
+                        "text": "    let y = -x"
+                    },
+                    {
+                        "text": "    // y == -21"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "The resulting value must be representable in the same type as the"
+                    },
+                    {
+                        "text": "argument. In particular, negating a signed, fixed-width integer type's"
+                    },
+                    {
+                        "text": "minimum results in a value that cannot be represented."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "    let z = -Int8.min"
+                    },
+                    {
+                        "text": "    // Overflow error"
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Returns: The additive inverse of the argument."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "operand"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "operand"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:s13SignedNumericPsE1sopyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "-"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    }
+                ],
+                "title": "-(_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "-(_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "-="
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "inout"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ")"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Subtracts the second value from the first and stores the difference in the"
+                    },
+                    {
+                        "text": "left-hand-side variable."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A numeric value."
+                    },
+                    {
+                        "text": "  - rhs: The value to subtract from `lhs`."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "text",
+                        "spelling": "()"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:s18AdditiveArithmeticPsE2seoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "-="
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "inout"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ")"
+                    }
+                ],
+                "title": "-=(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                "-=(_:_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        },
+        {
+            "accessLevel": "public",
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "static"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "func"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": ">"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "text",
+                    "spelling": "("
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "lhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ", "
+                },
+                {
+                    "kind": "internalParam",
+                    "spelling": "rhs"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Self"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ") -> "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "preciseIdentifier": "s:Sb",
+                    "spelling": "Bool"
+                }
+            ],
+            "docComment": {
+                "lines": [
+                    {
+                        "text": "Returns a Boolean value indicating whether the value of the first argument"
+                    },
+                    {
+                        "text": "is greater than that of the second argument."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "This is the default implementation of the greater-than operator (`>`) for"
+                    },
+                    {
+                        "text": "any type that conforms to `Comparable`."
+                    },
+                    {
+                        "text": ""
+                    },
+                    {
+                        "text": "- Parameters:"
+                    },
+                    {
+                        "text": "  - lhs: A value to compare."
+                    },
+                    {
+                        "text": "  - rhs: Another value to compare."
+                    }
+                ],
+                "module": "Swift"
+            },
+            "functionSignature": {
+                "parameters": [
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "lhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "lhs"
+                    },
+                    {
+                        "declarationFragments": [
+                            {
+                                "kind": "identifier",
+                                "spelling": "rhs"
+                            },
+                            {
+                                "kind": "text",
+                                "spelling": ": "
+                            },
+                            {
+                                "kind": "typeIdentifier",
+                                "spelling": "Self"
+                            }
+                        ],
+                        "name": "rhs"
+                    }
+                ],
+                "returns": [
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ]
+            },
+            "identifier": {
+                "interfaceLanguage": "swift",
+                "precise": "s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"
+            },
+            "kind": {
+                "displayName": "Operator",
+                "identifier": "swift.func.op"
+            },
+            "names": {
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "static"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "keyword",
+                        "spelling": "func"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": ">"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": "("
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ", "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Self"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ") -> "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "preciseIdentifier": "s:Sb",
+                        "spelling": "Bool"
+                    }
+                ],
+                "title": ">(_:_:)"
+            },
+            "pathComponents": [
+                "MyNumber",
+                ">(_:_:)"
+            ],
+            "swiftExtension": {
+                "extendedModule": "Swift"
+            }
+        }
+    ]
+}
