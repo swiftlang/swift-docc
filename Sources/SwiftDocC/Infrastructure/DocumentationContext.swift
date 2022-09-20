@@ -1321,9 +1321,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             try self.documentationCacheBasedLinkResolver.updateNodeWithReferenceIfCollisionChild(reference, symbolsURLHierarchy: &symbolsURLHierarchy, symbolIndex: &symbolIndex, context: self)
                         }
                     }
-                }
-                
-                if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+                    
                     // Now that the colliding references have been updated, the hierarchy based resolver can save the reference to identifier mapping.
                     hierarchyBasedLinkResolver?.addMappingForSymbols(symbolIndex: symbolIndex)
                 }
