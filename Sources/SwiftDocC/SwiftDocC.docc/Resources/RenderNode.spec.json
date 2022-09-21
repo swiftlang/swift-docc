@@ -861,8 +861,26 @@
                             }
                         }
                     },
+                    "extendedData": {
+                        "type": "object",
+                        "description": "Additional data that can be applied per-cell. Property keys have the pattern 'X_Y', where X is the numerical row index and Y is the numerical column index, both starting from zero.",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/TableExtendedData"
+                        }
+                    },
                     "metadata": {
                         "$ref": "#/components/schemas/RenderContentMetadata"
+                    }
+                }
+            },
+            "TableExtendedData": {
+                "type": "object",
+                "properties": {
+                    "colspan": {
+                        "type": "integer"
+                    },
+                    "rowspan": {
+                        "type": "integer"
                     }
                 }
             },

@@ -235,13 +235,16 @@ public enum RenderBlockContent: Equatable {
         public var header: HeaderType
         /// The rows in this table.
         public var rows: [TableRow]
+        /// Any extended information that describes cells in this table.
+        public var extendedData: Set<TableCellExtendedData>
         /// Additional metadata for this table, if present.
         public var metadata: RenderContentMetadata?
 
         /// Creates a new table with the given data.
-        public init(header: HeaderType, rows: [TableRow], metadata: RenderContentMetadata? = nil) {
+        public init(header: HeaderType, rows: [TableRow], extendedData: Set<TableCellExtendedData>, metadata: RenderContentMetadata? = nil) {
             self.header = header
             self.rows = rows
+            self.extendedData = extendedData
             self.metadata = metadata
         }
     }
@@ -382,6 +385,36 @@ public enum RenderBlockContent: Equatable {
             cells = try container.decode([Cell].self)
         }
     }
+
+    /// Extended data that may be applied to a table cell.
+    public struct TableCellExtendedData: Equatable, Hashable {
+        /// The row coordinate for the cell described by this data.
+        public let rowIndex: Int
+        /// The column coordinate for the cell described by this data.
+        public let columnIndex: Int
+
+        /// The number of columns this cell spans over.
+        ///
+        /// A value of 1 is the default. A value of zero means that this cell is being "spanned
+        /// over" by a previous cell in this row. A value of greater than 1 means that this cell
+        /// "spans over" later cells in this row.
+        public let colspan: UInt
+
+        /// The number of rows this cell spans over.
+        ///
+        /// A value of 1 is the default. A value of zero means that this cell is being "spanned
+        /// over" by another cell in a previous row. A value of greater than one means that this
+        /// cell "spans over" other cells in later rows.
+        public let rowspan: UInt
+
+        public init(rowIndex: Int, columnIndex: Int,
+                    colspan: UInt, rowspan: UInt) {
+            self.rowIndex = rowIndex
+            self.columnIndex = columnIndex
+            self.colspan = colspan
+            self.rowspan = rowspan
+        }
+    }
     
     /// A term definition.
     ///
@@ -442,6 +475,83 @@ public enum RenderBlockContent: Equatable {
     }
 }
 
+// Writing a manual Codable implementation for tables because the encoding of `extendedData` does
+// not follow from the struct layout.
+extension RenderBlockContent.Table: Codable {
+    enum CodingKeys: String, CodingKey {
+        case header, rows, extendedData, metadata
+    }
+
+    // TableCellExtendedData encodes the row and column indices as a dynamic key with the format "{row}_{column}".
+    struct DynamicIndexCodingKey: CodingKey, Equatable {
+        let row, column: Int
+        init(row: Int, column: Int) {
+            self.row = row
+            self.column = column
+        }
+
+        var stringValue: String {
+            return "\(row)_\(column)"
+        }
+        init?(stringValue: String) {
+            let coordinates = stringValue.split(separator: "_")
+            guard coordinates.count == 2,
+                  let rowIndex = Int(coordinates.first!),
+                  let columnIndex = Int(coordinates.last!) else {
+                return nil
+            }
+            row = rowIndex
+            column = columnIndex
+        }
+        // The key is only represented by a string value
+        var intValue: Int? { nil }
+        init?(intValue: Int) { nil }
+    }
+
+    enum ExtendedDataCodingKeys: String, CodingKey {
+        case colspan, rowspan
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.header = try container.decode(RenderBlockContent.HeaderType.self, forKey: .header)
+        self.rows = try container.decode([RenderBlockContent.TableRow].self, forKey: .rows)
+        self.metadata = try container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
+
+        var extendedData = Set<RenderBlockContent.TableCellExtendedData>()
+        if container.contains(.extendedData) {
+            let dataContainer = try container.nestedContainer(keyedBy: DynamicIndexCodingKey.self, forKey: .extendedData)
+
+            for index in dataContainer.allKeys {
+                let cellContainer = try dataContainer.nestedContainer(keyedBy: ExtendedDataCodingKeys.self, forKey: index)
+                extendedData.insert(.init(rowIndex: index.row,
+                                          columnIndex: index.column,
+                                          colspan: try cellContainer.decode(UInt.self, forKey: .colspan),
+                                          rowspan: try cellContainer.decode(UInt.self, forKey: .rowspan)))
+            }
+        }
+        self.extendedData = extendedData
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(header, forKey: .header)
+        try container.encode(rows, forKey: .rows)
+        try container.encodeIfPresent(metadata, forKey: .metadata)
+
+        if !extendedData.isEmpty {
+            var dataContainer = container.nestedContainer(keyedBy: DynamicIndexCodingKey.self, forKey: .extendedData)
+            for data in extendedData {
+                var cellContainer = dataContainer.nestedContainer(keyedBy: ExtendedDataCodingKeys.self,
+                                                                  forKey: .init(row: data.rowIndex, column: data.columnIndex))
+                try cellContainer.encode(data.colspan, forKey: .colspan)
+                try cellContainer.encode(data.rowspan, forKey: .rowspan)
+            }
+        }
+    }
+}
+
 // Codable conformance
 extension RenderBlockContent: Codable {
     private enum CodingKeys: CodingKey {
@@ -488,11 +598,8 @@ extension RenderBlockContent: Codable {
         case .dictionaryExample:
             self = try .dictionaryExample(.init(summary: container.decodeIfPresent([RenderBlockContent].self, forKey: .summary), example: container.decode(CodeExample.self, forKey: .example)))
         case .table:
-            self = try .table(.init(
-                header: container.decode(HeaderType.self, forKey: .header),
-                rows: container.decode([TableRow].self, forKey: .rows),
-                metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
-            ))
+            // Defer to Table's own Codable implemenatation to parse `extendedData` properly.
+            self = try .table(.init(from: decoder))
         case .termList:
             self = try .termList(.init(items: container.decode([TermListItem].self, forKey: .items)))
         case .row:
@@ -569,9 +676,8 @@ extension RenderBlockContent: Codable {
             try container.encodeIfPresent(e.summary, forKey: .summary)
             try container.encode(e.example, forKey: .example)
         case .table(let t):
-            try container.encode(t.header, forKey: .header)
-            try container.encode(t.rows, forKey: .rows)
-            try container.encodeIfPresent(t.metadata, forKey: .metadata)
+            // Defer to Table's own Codable implemenatation to format `extendedData` properly.
+            try t.encode(to: encoder)
         case .termList(items: let l):
             try container.encode(l.items, forKey: .items)
         case .row(let row):
