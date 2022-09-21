@@ -57,10 +57,10 @@
       },
       {
         "package": "swift-markdown",
-        "repositoryURL": "https://github.com/QuietMisdreavus/swift-markdown.git",
+        "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
-          "branch": "table-spans",
-          "revision": "9c1ef0b451c3738b5eec311aa9a7b8afbb336f25",
+          "branch": "main",
+          "revision": "395fbf23fc09e76efaecbb731edb2aebf910948b",
           "version": null
         }
       },
