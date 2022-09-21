@@ -478,96 +478,77 @@ public enum RenderBlockContent: Equatable {
 // Writing a manual Codable implementation for tables because the encoding of `extendedData` does
 // not follow from the struct layout.
 extension RenderBlockContent.Table: Codable {
-    // `extendedData` is encoded as a keyed container where the "keys" are the cell index, and
-    // the "values" are the remaining fields in the struct. The key is formatted as a string with
-    // the format "{row}_{column}", which is represented here as the `.index(row:column:)` enum
-    // case. This CodingKey implementation performs that parsing and formatting so that the
-    // Encodable/Decodable implementation can use the plain numbered indices.
-    enum CodingKeys: CodingKey, Equatable {
+    enum CodingKeys: String, CodingKey {
         case header, rows, extendedData, metadata
-        case index(row: Int, column: Int)
-        case colspan, rowspan
+    }
+
+    // TableCellExtendedData encodes the row and column indices as a dynamic key with the format "{row}_{column}".
+    struct DynamicIndexCodingKey: CodingKey, Equatable {
+        let row, column: Int
+        init(row: Int, column: Int) {
+            self.row = row
+            self.column = column
+        }
 
         var stringValue: String {
-            switch self {
-            case .header: return "header"
-            case .rows: return "rows"
-            case .extendedData: return "extendedData"
-            case .metadata: return "metadata"
-            case .colspan: return "colspan"
-            case .rowspan: return "rowspan"
-            case let .index(row, column): return "\(row)_\(column)"
-            }
+            return "\(row)_\(column)"
         }
-
         init?(stringValue: String) {
-            switch stringValue {
-            case "header": self = .header
-            case "rows": self = .rows
-            case "extendedData": self = .extendedData
-            case "metadata": self = .metadata
-            case "colspan": self = .colspan
-            case "rowspan": self = .rowspan
-            default:
-                let coordinates = stringValue.split(separator: "_")
-                guard coordinates.count == 2,
-                      let rowIndex = Int(coordinates.first!),
-                      let columnIndex = Int(coordinates.last!) else {
-                    return nil
-                }
-                self = .index(row: rowIndex, column: columnIndex)
+            let coordinates = stringValue.split(separator: "_")
+            guard coordinates.count == 2,
+                  let rowIndex = Int(coordinates.first!),
+                  let columnIndex = Int(coordinates.last!) else {
+                return nil
             }
+            row = rowIndex
+            column = columnIndex
         }
-
+        // The key is only represented by a string value
         var intValue: Int? { nil }
+        init?(intValue: Int) { nil }
+    }
 
-        init?(intValue: Int) {
-            return nil
-        }
+    enum ExtendedDataCodingKeys: String, CodingKey {
+        case colspan, rowspan
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
+        self.header = try container.decode(RenderBlockContent.HeaderType.self, forKey: .header)
+        self.rows = try container.decode([RenderBlockContent.TableRow].self, forKey: .rows)
+        self.metadata = try container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
+
         var extendedData = Set<RenderBlockContent.TableCellExtendedData>()
-        if container.allKeys.contains(.extendedData) {
-            let dataContainer = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .extendedData)
+        if container.contains(.extendedData) {
+            let dataContainer = try container.nestedContainer(keyedBy: DynamicIndexCodingKey.self, forKey: .extendedData)
 
             for index in dataContainer.allKeys {
-                guard case let .index(row, column) = index else { continue }
-
-                let cellContainer = try dataContainer.nestedContainer(keyedBy: CodingKeys.self, forKey: index)
-                extendedData.insert(.init(rowIndex: row,
-                                          columnIndex: column,
+                let cellContainer = try dataContainer.nestedContainer(keyedBy: ExtendedDataCodingKeys.self, forKey: index)
+                extendedData.insert(.init(rowIndex: index.row,
+                                          columnIndex: index.column,
                                           colspan: try cellContainer.decode(UInt.self, forKey: .colspan),
                                           rowspan: try cellContainer.decode(UInt.self, forKey: .rowspan)))
             }
         }
-
-        self = .init(header: try container.decode(RenderBlockContent.HeaderType.self, forKey: .header),
-                     rows: try container.decode([RenderBlockContent.TableRow].self, forKey: .rows),
-                     extendedData: extendedData,
-                     metadata: try container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata))
+        self.extendedData = extendedData
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-
         try container.encode(header, forKey: .header)
         try container.encode(rows, forKey: .rows)
+        try container.encodeIfPresent(metadata, forKey: .metadata)
 
         if !extendedData.isEmpty {
-            var dataContainer = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .extendedData)
+            var dataContainer = container.nestedContainer(keyedBy: DynamicIndexCodingKey.self, forKey: .extendedData)
             for data in extendedData {
-                var cellContainer = dataContainer.nestedContainer(keyedBy: CodingKeys.self,
-                                                                  forKey: .index(row: data.rowIndex,
-                                                                                 column: data.columnIndex))
+                var cellContainer = dataContainer.nestedContainer(keyedBy: ExtendedDataCodingKeys.self,
+                                                                  forKey: .init(row: data.rowIndex, column: data.columnIndex))
                 try cellContainer.encode(data.colspan, forKey: .colspan)
                 try cellContainer.encode(data.rowspan, forKey: .rowspan)
             }
         }
-
-        try container.encodeIfPresent(metadata, forKey: .metadata)
     }
 }
 
