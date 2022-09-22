@@ -253,10 +253,13 @@ public enum RenderBlockContent: Equatable {
     public struct ListItem: Codable, Equatable {
         /// The item content.
         public var content: [RenderBlockContent]
+        /// If this list item is a task list item, whether the task should be checked off.
+        public var checked: Bool?
         
         /// Creates a new list item with the given content.
-        public init(content: [RenderBlockContent]) {
+        public init(content: [RenderBlockContent], checked: Bool? = nil) {
             self.content = content
+            self.checked = checked
         }
     }
     

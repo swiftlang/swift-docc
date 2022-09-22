@@ -1708,6 +1708,44 @@ Document @1:1-11:19
             ]
         XCTAssertEqual(expectedContent, renderContent)
     }
+
+    func testTaskLists() throws {
+        let source = """
+This is some text.
+
+- [ ] Task one
+- [x] Task two
+"""
+        let markup = Document(parsing: source, options: .parseBlockDirectives)
+
+        XCTAssertEqual("""
+Document
+├─ Paragraph
+│  └─ Text "This is some text."
+└─ UnorderedList
+   ├─ ListItem checkbox: [ ]
+   │  └─ Paragraph
+   │     └─ Text "Task one"
+   └─ ListItem checkbox: [x]
+      └─ Paragraph
+         └─ Text "Task two"
+""",
+                       markup.debugDescription())
+
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var contentTranslator = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/TestTutorial", sourceLanguage: .swift))
+        let renderContent = try XCTUnwrap(markup.children.reduce(into: [], { result, item in result.append(contentsOf: contentTranslator.visit(item))}) as? [RenderBlockContent])
+        let expectedContent: [RenderBlockContent] = [
+                .paragraph(.init(inlineContent: [
+                    .text("This is some text.")
+                ])),
+                .unorderedList(.init(items: [
+                    .init(content: [.paragraph(.init(inlineContent: [.text("Task one")]))], checked: false),
+                    .init(content: [.paragraph(.init(inlineContent: [.text("Task two")]))], checked: true)
+                ]))
+            ]
+        XCTAssertEqual(expectedContent, renderContent)
+    }
     
     func testInlineHTMLDoesNotCrashTranslator() throws {
         let markupSource = """
