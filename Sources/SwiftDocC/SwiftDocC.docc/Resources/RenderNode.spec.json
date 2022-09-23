@@ -949,6 +949,18 @@
                             "none"
                         ]
                     },
+                    "alignments": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "left",
+                                "right",
+                                "center",
+                                "unset"
+                            ]
+                        }
+                    },
                     "rows": {
                         "type": "array",
                         "items": {

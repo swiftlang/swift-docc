@@ -262,8 +262,30 @@ struct RenderContentCompiler: MarkupVisitor {
             }
             rows.append(RenderBlockContent.TableRow(cells: cells))
         }
+
+        var tempAlignments = [RenderBlockContent.ColumnAlignment]()
+        for alignment in table.columnAlignments {
+            switch alignment {
+            case .left: tempAlignments.append(.left)
+            case .right: tempAlignments.append(.right)
+            case .center: tempAlignments.append(.center)
+            case nil: tempAlignments.append(.unset)
+            }
+        }
+        while tempAlignments.count < table.maxColumnCount {
+            tempAlignments.append(.unset)
+        }
+        if tempAlignments.allSatisfy({ $0 == .unset }) {
+            tempAlignments = []
+        }
+        let alignments: [RenderBlockContent.ColumnAlignment]?
+        if tempAlignments.isEmpty {
+            alignments = nil
+        } else {
+            alignments = tempAlignments
+        }
         
-        return [RenderBlockContent.table(.init(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, extendedData: extendedData, metadata: nil))]
+        return [RenderBlockContent.table(.init(header: .row, alignments: alignments, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, extendedData: extendedData, metadata: nil))]
     }
 
     mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> [RenderContent] {

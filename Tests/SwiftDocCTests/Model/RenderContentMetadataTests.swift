@@ -37,7 +37,7 @@ class RenderContentMetadataTests: XCTestCase {
             RenderInlineContent.text("Content"),
         ])
         
-        let table = RenderBlockContent.table(.init(header: .both, rows: [], extendedData: [], metadata: metadata))
+        let table = RenderBlockContent.table(.init(header: .both, alignments: [], rows: [], extendedData: [], metadata: metadata))
         let data = try JSONEncoder().encode(table)
         let roundtrip = try JSONDecoder().decode(RenderBlockContent.self, from: data)
         
@@ -152,6 +152,47 @@ class RenderContentMetadataTests: XCTestCase {
                 for expectedData in expectedExtendedData {
                     XCTAssert(t.extendedData.contains(expectedData))
                 }
+            default: XCTFail("Unexpected element")
+        }
+
+        try assertRoundTripCoding(renderedTable)
+    }
+
+    func testRenderingTableColumnAlignments() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = """
+        | one | two | three | four |
+        | :-- | --: | :---: | ---- |
+        | one | two | three | four |
+        """
+        let document = Document(parsing: source)
+
+        // Verifies that a markdown table renders correctly.
+
+        let result = try XCTUnwrap(renderContentCompiler.visit(document.child(at: 0)!))
+        let renderedTable = try XCTUnwrap(result.first as? RenderBlockContent)
+
+        let renderCell: ([RenderBlockContent]) -> String = { cell in
+            return cell.reduce(into: "") { (result, element) in
+                switch element {
+                    case .paragraph(let p):
+                    guard let para = p.inlineContent.first else { return }
+                        result.append(para.plainText)
+                    default: XCTFail("Unexpected element"); return
+                }
+            }
+        }
+
+        switch renderedTable {
+            case .table(let t):
+                XCTAssertEqual(t.header, .row)
+                XCTAssertEqual(t.rows.count, 2)
+                guard t.rows.count == 2 else { return }
+                XCTAssertEqual(t.rows[0].cells.map(renderCell), ["one", "two", "three", "four"])
+                XCTAssertEqual(t.rows[1].cells.map(renderCell), ["one", "two", "three", "four"])
+                XCTAssertEqual(t.alignments, [.left, .right, .center, .unset])
             default: XCTFail("Unexpected element")
         }
 
