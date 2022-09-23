@@ -29,6 +29,7 @@ DocC syntax — called _documentation markup_ — is a custom variant of Markdow
 ### Distribution
 
 - <doc:distributing-documentation-to-other-developers>
+- <doc:customizing-the-appearance-of-your-documentation-pages>
 
 ### Documentation Types
 
