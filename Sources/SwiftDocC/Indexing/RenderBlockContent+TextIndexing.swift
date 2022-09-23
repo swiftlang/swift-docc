@@ -11,8 +11,8 @@
 extension RenderBlockContent: TextIndexing {
     public var headings: [String] {
         switch self {
-        case .heading(_, let text, _):
-            return [text]
+        case .heading(let h):
+            return [h.text]
         default:
             return []
         }
@@ -20,44 +20,52 @@ extension RenderBlockContent: TextIndexing {
 
     public func rawIndexableTextContent(references: [String : RenderReference]) -> String {
         switch self {
-        case let .aside(_, blocks):
-            return blocks.rawIndexableTextContent(references: references)
-        case let .orderedList(items):
-            return items.map {
+        case let .aside(a):
+            return a.content.rawIndexableTextContent(references: references)
+        case let .orderedList(l):
+            return l.items.map {
                 $0.content.rawIndexableTextContent(references: references)
             }.joined(separator: " ")
-        case let .paragraph(blocks):
-            return blocks.rawIndexableTextContent(references: references)
-        case let .step(blocks, caption, _, _, _):
-            return (blocks + caption).rawIndexableTextContent(references: references)
-        case let .unorderedList(items):
-            return items.map {
+        case let .paragraph(p):
+            return p.inlineContent.rawIndexableTextContent(references: references)
+        case let .step(s):
+            return (s.content + s.caption).rawIndexableTextContent(references: references)
+        case let .unorderedList(l):
+            return l.items.map {
                 $0.content.rawIndexableTextContent(references: references)
             }.joined(separator: " ")
-        case .codeListing(_, _, let metadata):
-            return metadata?.rawIndexableTextContent(references: references) ?? ""
-        case let .heading(_, text, _):
-            return text
+        case let .codeListing(l):
+            return l.metadata?.rawIndexableTextContent(references: references) ?? ""
+        case let .heading(h):
+            return h.text
         case .endpointExample:
             return ""
-        case .dictionaryExample(summary: let summary, example: _):
-            return summary?.rawIndexableTextContent(references: references) ?? ""
-        case .table(_, let rows, let metadata):
-            let content = rows.map {
+        case .dictionaryExample(let e):
+            return e.summary?.rawIndexableTextContent(references: references) ?? ""
+        case .table(let t):
+            let content = t.rows.map {
                 return $0.cells.map {
                     return $0.rawIndexableTextContent(references: references)
                 }.joined(separator: " ")
             }.joined(separator: " ")
             
-            let meta = metadata?.rawIndexableTextContent(references: references) ?? ""
+            let meta = t.metadata?.rawIndexableTextContent(references: references) ?? ""
             
             return content + " " + meta
-        case .termList(let items):
-            return items.map {
+        case .termList(let l):
+            return l.items.map {
                 let definition = $0.definition.content.rawIndexableTextContent(references: references)
                 return $0.term.inlineContent.rawIndexableTextContent(references: references)
                     + ( definition.isEmpty ? "" : " \(definition)" )
             }.joined(separator: " ")
+        case .row(let row):
+            return row.columns.map { column in
+                return column.content.rawIndexableTextContent(references: references)
+            }.joined(separator: " ")
+        case .small(let small):
+            return small.inlineContent.rawIndexableTextContent(references: references)
+        default:
+            fatalError("unknown RenderBlockContent case in rawIndexableTextContent")
         }
     }
 }

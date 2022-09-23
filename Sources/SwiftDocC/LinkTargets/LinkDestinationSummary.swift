@@ -80,14 +80,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
     /// The language of the summarized element.
     public let language: SourceLanguage
     
-    /// The relative path to this element.
-    ///
-    /// > Note: For elements representing on-page elements, this value will include a fragment component.
-    @available(*, deprecated, message: "Use 'relativePresentationURL' instead.")
-    public var path: String {
-        return relativePresentationURL.absoluteString
-    }
-    
     /// The relative presentation URL for this element.
     public let relativePresentationURL: URL
     
@@ -171,12 +163,6 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// The source language of the variant or `nil` if the kind is the same as the summarized element.
         public let language: VariantValue<SourceLanguage>
         
-        /// The relative path of the variant or `nil` if the relative is the same as the summarized element.
-        @available(*, deprecated, message: "Use 'relativePresentationURL' instead.")
-        public var path: VariantValue<String> {
-            return relativePresentationURL?.absoluteString
-        }
-        
         /// The relative presentation URL of the variant or `nil` if the relative is the same as the summarized element.
         public let relativePresentationURL: VariantValue<URL>
         
@@ -256,10 +242,10 @@ extension Abstracted {
     /// - Parameter compiler: The content compiler to render the abstract.
     /// - Returns: The rendered abstract, or `nil` of the element doesn't have an abstract.
     func renderedAbstract(using compiler: inout RenderContentCompiler) -> LinkDestinationSummary.Abstract? {
-        guard let abstract = abstract, case RenderBlockContent.paragraph(let inlineContent)? = compiler.visitParagraph(abstract).first else {
+        guard let abstract = abstract, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(abstract).first else {
             return nil
         }
-        return inlineContent
+        return p.inlineContent
     }
 }
 
@@ -303,10 +289,10 @@ extension LinkDestinationSummary {
         let title = symbol.titleVariants[summaryTrait] ?? symbol.title
         
         func renderSymbolAbstract(_ symbolAbstract: Paragraph?) -> Abstract? {
-            guard let abstractParagraph = symbolAbstract, case RenderBlockContent.paragraph(let inlineContent)? = compiler.visitParagraph(abstractParagraph).first else {
+            guard let abstractParagraph = symbolAbstract, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(abstractParagraph).first else {
                 return nil
             }
-            return inlineContent
+            return p.inlineContent
         }
         
         let abstract = renderSymbolAbstract(symbol.abstractVariants[summaryTrait] ?? symbol.abstract)
@@ -387,8 +373,8 @@ extension LinkDestinationSummary {
         let abstract: Abstract?
         if let abstracted = landmark as? Abstracted {
             abstract = abstracted.renderedAbstract(using: &compiler) ?? []
-        } else if let paragraph = landmark.markup.children.lazy.compactMap({ $0 as? Paragraph }).first, case RenderBlockContent.paragraph(let inlineContent)? = compiler.visitParagraph(paragraph).first {
-            abstract = inlineContent
+        } else if let paragraph = landmark.markup.children.lazy.compactMap({ $0 as? Paragraph }).first, case RenderBlockContent.paragraph(let p)? = compiler.visitParagraph(paragraph).first {
+            abstract = p.inlineContent
         } else {
             abstract = nil
         }

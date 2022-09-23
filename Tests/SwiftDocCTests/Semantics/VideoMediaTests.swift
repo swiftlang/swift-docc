@@ -80,11 +80,16 @@ class VideoMediaTests: XCTestCase {
         var problems = [Problem]()
         let video = VideoMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(video)
-        XCTAssertEqual(1, problems.count)
+        XCTAssertEqual(3, problems.count)
         XCTAssertFalse(problems.containsErrors)
         
-        problems.first.map { problem in
-            XCTAssertEqual("org.swift.docc.HasArgument.source", problem.diagnostic.identifier)
-        }
+        XCTAssertEqual(
+            problems.map(\.diagnostic.identifier),
+            [
+                "org.swift.docc.UnknownArgument",
+                "org.swift.docc.UnknownArgument",
+                "org.swift.docc.HasArgument.source",
+            ]
+        )
     }
 }

@@ -972,6 +972,67 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "/Snippets/Snippets/MySnippet", parent: sliceArticleID).identifier.precise, "$snippet__Test.Snippets.MySnippet")
     }
     
+    func testInheritedOperators() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        let (_, context) = try testBundleAndContext(named: "InheritedOperators")
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        
+        // public struct MyNumber: SignedNumeric, Comparable, Equatable, Hashable {
+        //     ... stub minimal conformance
+        // }
+        let myNumberID = try tree.find(path: "/Operators/MyNumber", onlyFindSymbols: true)
+        
+        XCTAssertEqual(try tree.findSymbol(path: "!=(_:_:)", parent: myNumberID).identifier.precise, "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        
+        XCTAssertEqual(try tree.findSymbol(path: "+(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1poiyA2C_ACtFZ")
+        XCTAssertEqual(try tree.findSymbol(path: "+(_:)", parent: myNumberID).identifier.precise, "s:s18AdditiveArithmeticPsE1popyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "+=(_:_:)", parent: myNumberID).identifier.precise, "s:s18AdditiveArithmeticPsE2peoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        
+        XCTAssertEqual(try tree.findSymbol(path: "-(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1soiyA2C_ACtFZ")
+        XCTAssertEqual(try tree.findSymbol(path: "-(_:)", parent: myNumberID).identifier.precise, "s:s13SignedNumericPsE1sopyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "-=(_:_:)", parent: myNumberID).identifier.precise, "s:s18AdditiveArithmeticPsE2seoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        
+        XCTAssertEqual(try tree.findSymbol(path: "*(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1moiyA2C_ACtFZ")
+        XCTAssertEqual(try tree.findSymbol(path: "*=(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV2meoiyyACz_ACtFZ")
+        
+        XCTAssertEqual(try tree.findSymbol(path: "...(_:)-28faz", parent: myNumberID).identifier.precise, "s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "...(_:)-8ooeh", parent: myNumberID).identifier.precise, "s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "...(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE3zzzoiySNyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "..<(_:)", parent: myNumberID).identifier.precise, "s:SLsE3zzlopys16PartialRangeUpToVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "..<(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE3zzloiySnyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        
+        XCTAssertEqual(try tree.findSymbol(path: "<(_:_:)", parent: myNumberID).identifier.precise, "s:9Operators8MyNumberV1loiySbAC_ACtFZ")
+        XCTAssertEqual(try tree.findSymbol(path: ">(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: "<=(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        XCTAssertEqual(try tree.findSymbol(path: ">=(_:_:)", parent: myNumberID).identifier.precise, "s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV")
+        
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        
+        // Unmodified operator name in URL
+        XCTAssertEqual("/Operators/MyNumber/!=(_:_:)", paths["s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/+(_:_:)", paths["s:9Operators8MyNumberV1poiyA2C_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/+(_:)", paths["s:s18AdditiveArithmeticPsE1popyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/+=(_:_:)", paths["s:s18AdditiveArithmeticPsE2peoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/-(_:_:)", paths["s:9Operators8MyNumberV1soiyA2C_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/-(_:)", paths["s:s13SignedNumericPsE1sopyxxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/-=(_:_:)", paths["s:s18AdditiveArithmeticPsE2seoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/*(_:_:)", paths["s:9Operators8MyNumberV1moiyA2C_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/*=(_:_:)", paths["s:9Operators8MyNumberV2meoiyyACz_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/...(_:)-28faz", paths["s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/...(_:)-8ooeh", paths["s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/...(_:_:)", paths["s:SLsE3zzzoiySNyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        
+        // "<" is replaced with "_" without introducing ambiguity
+        XCTAssertEqual("/Operators/MyNumber/.._(_:)", paths["s:SLsE3zzlopys16PartialRangeUpToVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/.._(_:_:)", paths["s:SLsE3zzloiySnyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        
+        // "<" and ">" are not allowed in paths of URLs resulting in added ambiguity.
+        XCTAssertEqual("/Operators/MyNumber/_(_:_:)-736gk",  /* <(_:_:) */ paths["s:9Operators8MyNumberV1loiySbAC_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/_(_:_:)-21jxf",  /* >(_:_:) */ paths["s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/_=(_:_:)-9uewk", /* <=(_:_:) */ paths["s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/_=(_:_:)-70j0d", /* >=(_:_:) */ paths["s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+    }
+    
     func testOneSymbolPathsWithKnownDisambiguation() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let exampleDocumentation = Folder(name: "MyKit.docc", content: [

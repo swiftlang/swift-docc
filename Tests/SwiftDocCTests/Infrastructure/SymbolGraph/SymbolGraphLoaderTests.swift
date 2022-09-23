@@ -41,16 +41,13 @@ class SymbolGraphLoaderTests: XCTestCase {
         }
         
         var loader = try makeSymbolGraphLoader(symbolGraphURLs: symbolGraphURLs)
-        XCTAssertTrue(loader.symbolGraphs.isEmpty)
+        XCTAssertTrue(loader.unifiedGraphs.isEmpty)
         
         try loader.loadAll()
         var moduleNameFrequency = [String: Int]()
         
-        var isMainSymbolGraph = false
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
-            XCTAssertTrue(isMainSymbolGraph)
-            XCTAssertNotNil(graph)
-            moduleNameFrequency[graph.symbolGraph.module.name, default: 0] += 1
+        for (_, graph) in loader.unifiedGraphs {
+            moduleNameFrequency[graph.moduleName, default: 0] += 1
         }
         
         XCTAssertEqual(moduleNameFrequency, ["One": 1, "Two": 1, "Three": 1])
@@ -61,7 +58,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         
         var symbolGraphURLs = [URL]()
         for moduleName in ["One", "Two", "Three"] {
-            let symbolGraph = makeEmptySymbolGraph(moduleName: moduleName)
+            let symbolGraph = makeSymbolGraph(moduleName: moduleName)
             
             let symbolGraphURL = tempURL.appendingPathComponent("Something@\(moduleName).symbols.json")
             symbolGraphURLs.append(symbolGraphURL)
@@ -73,10 +70,8 @@ class SymbolGraphLoaderTests: XCTestCase {
         try loader.loadAll()
         var moduleNameFrequency = [String: Int]()
         
-        var isMainSymbolGraph = false
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
-            XCTAssertFalse(isMainSymbolGraph)
-            moduleNameFrequency[graph.symbolGraph.module.name, default: 0] += 1
+        for (_, graph) in loader.unifiedGraphs {
+            moduleNameFrequency[graph.moduleName, default: 0] += 1
         }
         
         // The loaded module should have the name of the module that was extended.
@@ -89,7 +84,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         var symbolGraphURLs = [URL]()
         
         // Create a main module
-        let mainSymbolGraph = makeEmptySymbolGraph(moduleName: "Main")
+        let mainSymbolGraph = makeSymbolGraph(moduleName: "Main")
         let mainSymbolGraphURL = tempURL.appendingPathComponent("Main.symbols.json")
         symbolGraphURLs.append(mainSymbolGraphURL)
         
@@ -97,7 +92,7 @@ class SymbolGraphLoaderTests: XCTestCase {
         
         // Create 3 extension from thise module on other modules
         for moduleName in ["One", "Two", "Three"] {
-            let symbolGraph = makeEmptySymbolGraph(moduleName: moduleName)
+            let symbolGraph = makeSymbolGraph(moduleName: moduleName)
             
             let symbolGraphURL = tempURL.appendingPathComponent("Main@\(moduleName).symbols.json")
             symbolGraphURLs.append(symbolGraphURL)
@@ -109,12 +104,8 @@ class SymbolGraphLoaderTests: XCTestCase {
         try loader.loadAll()
         var moduleNameFrequency = [String: Int]()
         
-        var isMainSymbolGraph = false
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
-            XCTAssertNotNil(graph)
-            XCTAssertEqual(isMainSymbolGraph, !graph.url.lastPathComponent.contains("@"))
-            
-            moduleNameFrequency[graph.symbolGraph.module.name, default: 0] += 1
+        for (_, graph) in loader.unifiedGraphs {
+            moduleNameFrequency[graph.moduleName, default: 0] += 1
         }
         
         // All 4 modules should have different names
@@ -141,13 +132,13 @@ class SymbolGraphLoaderTests: XCTestCase {
         try loader.loadAll()
         
         var loadedGraphs = 0
-        var isMainSymbolGraph = false
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
+        
+        for (_, graph) in loader.unifiedGraphs {
             loadedGraphs += 1
-            XCTAssertTrue(isMainSymbolGraph)
-            XCTAssertEqual(graph.symbolGraph.symbols.count, symbolGraph.symbols.count)
-            XCTAssertEqual(graph.symbolGraph.relationships.count, symbolGraph.relationships.count)
+            XCTAssertEqual(graph.symbols.count, symbolGraph.symbols.count)
+            XCTAssertEqual(graph.relationships.count, symbolGraph.relationships.count)
         }
+        
         XCTAssertEqual(loadedGraphs, 1000)
     }
     
@@ -225,23 +216,23 @@ class SymbolGraphLoaderTests: XCTestCase {
                 forResource: "MyKit@Foundation@_MyKit_Foundation.symbols", withExtension: "json", subdirectory: "Test Resources")!
             try FileManager.default.copyItem(at: bystanderSymbolGraphURL, to: url.appendingPathComponent("MyKit@Foundation@_MyKit_Foundation.symbols.json"))
         }
-        
+
         var loader = try makeSymbolGraphLoader(symbolGraphURLs: bundle.symbolGraphURLs)
         try loader.loadAll()
-        
-        var isMainSymbolGraph = false
-        
+
         // Verify both main and bystanders graphs are loaded
-        
+
         var foundMainMyKitGraph = false
         var foundBystanderMyKitGraph = false
-        
-        while let graph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph) {
-            if graph.symbolGraph.module.name == "MyKit" {
-                if graph.symbolGraph.module.bystanders == ["Foundation"] {
-                    foundBystanderMyKitGraph = true
-                } else {
-                    foundMainMyKitGraph = true
+
+        for (_, graph) in loader.unifiedGraphs {
+            for (_, moduleData) in graph.moduleData {
+                if graph.moduleName == "MyKit" {
+                    if moduleData.bystanders == ["Foundation"] {
+                        foundBystanderMyKitGraph = true
+                    } else {
+                        foundMainMyKitGraph = true
+                    }
                 }
             }
         }
@@ -259,14 +250,13 @@ class SymbolGraphLoaderTests: XCTestCase {
             
             XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
             
-            var isMainSymbolGraph = false
-            let symbolGraph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph)!.symbolGraph
+            let symbolGraph = loader.unifiedGraphs.values.first!
             
-            XCTAssertEqual(symbolGraph.module.name, "AsyncMethods")
+            XCTAssertEqual(symbolGraph.moduleName, "AsyncMethods")
             
             XCTAssertEqual(symbolGraph.symbols.count, 1, "Only one of the symbols should be decoded")
             let symbol = try XCTUnwrap(symbolGraph.symbols.values.first)
-            let declaration = try XCTUnwrap(symbol.mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)
+            let declaration = try XCTUnwrap(symbol.mixins.values.first?[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)
 
             XCTAssertEqual(shouldContainAsyncVariant, declaration.declarationFragments.contains(where: { fragment in
                 fragment.kind == .keyword && fragment.spelling == "async"
@@ -294,16 +284,15 @@ class SymbolGraphLoaderTests: XCTestCase {
             XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
             #endif
             
-            var isMainSymbolGraph = false
             var foundMainAsyncMethodsGraph = false
             
-            while let symbolGraph = try loader.next(isMainSymbolGraph: &isMainSymbolGraph)?.symbolGraph {
-                if symbolGraph.module.name == "AsyncMethods" {
+            for symbolGraph in loader.unifiedGraphs.values {
+                if symbolGraph.moduleName == "AsyncMethods" {
                     foundMainAsyncMethodsGraph = true
                     
                     XCTAssertEqual(symbolGraph.symbols.count, 1, "Only one of the symbols should be decoded")
                     let symbol = try XCTUnwrap(symbolGraph.symbols.values.first)
-                    let declaration = try XCTUnwrap(symbol.mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)
+                    let declaration = try XCTUnwrap(symbol.mixins.values.first?[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)
                     
                     XCTAssertEqual(shouldContainAsyncVariant, declaration.declarationFragments.contains(where: { fragment in
                         fragment.kind == .keyword && fragment.spelling == "async"
@@ -318,22 +307,151 @@ class SymbolGraphLoaderTests: XCTestCase {
         }
     }
     
-    // MARK: - Helpers
-    
-    private func makeEmptySymbolGraph(moduleName: String) -> SymbolGraph {
-        return SymbolGraph(
-            metadata: SymbolGraph.Metadata(
-                formatVersion: SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1),
-                generator: "unit-test"
-            ),
-            module: SymbolGraph.Module(
-                name: moduleName,
-                platform: SymbolGraph.Platform(architecture: nil, vendor: nil, operatingSystem: nil)
-            ),
-            symbols: [],
-            relationships: []
-        )
+    func testInputWithMixedGraphFormats() throws {
+        let tempURL = try createTemporaryDirectory()
+        
+        let mainGraph = (url: tempURL.appendingPathComponent("A.symbols.json"),
+                         content: makeSymbolGraphString(moduleName: "A"))
+        
+        let emptyExtensionGraph = (url: tempURL.appendingPathComponent("A@Empty.symbols.json"),
+                                   content: makeSymbolGraphString(moduleName: "A"))
+        
+        let extensionBlockFormatExtensionGraph = (url: tempURL.appendingPathComponent("A@EBF.symbols.json"),
+                                                  content: makeSymbolGraphString(moduleName: "A", symbols: """
+        {
+            "kind": {
+                "identifier": "swift.extension",
+                "displayName": "Extension"
+            },
+            "identifier": {
+                "precise": "s:e:s:EBFfunction",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "EBF"
+            ],
+            "names": {
+                "title": "EBF",
+            },
+            "swiftExtension": {
+                "extendedModule": "A",
+                "typeKind": "struct"
+            },
+            "accessLevel": "public"
+        },
+        {
+            "kind": {
+                "identifier": "swift.func",
+                "displayName": "Function"
+            },
+            "identifier": {
+                "precise": "s:EBFfunction",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "EBF",
+                "function"
+            ],
+            "names": {
+                "title": "function",
+            },
+            "swiftExtension": {
+                "extendedModule": "A",
+                "typeKind": "struct"
+            },
+            "accessLevel": "public"
+        }
+        """, relationships: """
+        {
+            "kind": "memberOf",
+            "source": "s:EBFfunction",
+            "target": "s:e:s:EBFfunction",
+            "targetFallback": "A.EBF"
+        },
+        {
+            "kind": "extensionTo",
+            "source": "s:e:s:EBFfunction",
+            "target": "s:EBF",
+            "targetFallback": "A.EBF"
+        }
+        """))
+        
+        let noExtensionBlockFormatExtensionGraph = (url: tempURL.appendingPathComponent("A@NEBF.symbols.json"),
+                                                    content: makeSymbolGraphString(moduleName: "A", symbols: """
+        {
+            "kind": {
+                "identifier": "swift.func",
+                "displayName": "Function"
+            },
+            "identifier": {
+                "precise": "s:EBFfunction",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "EBF",
+                "function"
+            ],
+            "names": {
+                "title": "function",
+            },
+            "swiftExtension": {
+                "extendedModule": "A",
+                "typeKind": "struct"
+            },
+            "accessLevel": "public"
+        }
+        """, relationships: """
+        {
+            "kind": "memberOf",
+            "source": "s:EBFfunction",
+            "target": "s:EBF",
+            "targetFallback": "A.EBF"
+        }
+        """))
+        
+        let allGraphs = [mainGraph, emptyExtensionGraph, extensionBlockFormatExtensionGraph, noExtensionBlockFormatExtensionGraph]
+        
+        for graph in allGraphs {
+            try XCTUnwrap(graph.content.data(using: .utf8)).write(to: graph.url)
+        }
+        
+        let validUndetermined = [mainGraph, emptyExtensionGraph]
+        var loader = try makeSymbolGraphLoader(symbolGraphURLs: validUndetermined.map(\.url))
+        try loader.loadAll()
+        // by default, extension graphs should be associated with the extended graph
+        XCTAssertEqual(loader.unifiedGraphs.count, 2)
+        
+        let validEBF = [mainGraph, emptyExtensionGraph, extensionBlockFormatExtensionGraph]
+        loader = try makeSymbolGraphLoader(symbolGraphURLs: validEBF.map(\.url))
+        try loader.loadAll()
+        // found extension block symbols; extension graphs should be associated with the extending graph
+        XCTAssertEqual(loader.unifiedGraphs.count, 1)
+        
+        let validNEBF = [mainGraph, emptyExtensionGraph, noExtensionBlockFormatExtensionGraph]
+        loader = try makeSymbolGraphLoader(symbolGraphURLs: validNEBF.map(\.url))
+        try loader.loadAll()
+        // found no extension block symbols; extension graphs should be associated with the extended graph
+        XCTAssertEqual(loader.unifiedGraphs.count, 3)
+        
+        let invalid = allGraphs
+        loader = try makeSymbolGraphLoader(symbolGraphURLs: invalid.map(\.url))
+        // found non-empty extension graphs with and without extension block symbols -> should throw
+        XCTAssertThrowsError(try loader.loadAll(),
+                             "SymbolGraphLoader should throw when encountering a collection of symbol graph files, where some do and some don't use the extension block format") { error in
+            XCTAssertFalse(error.localizedDescription.contains(mainGraph.url.absoluteString))
+            XCTAssertFalse(error.localizedDescription.contains(emptyExtensionGraph.url.absoluteString))
+            XCTAssert(error.localizedDescription.contains("""
+            Symbol graph files with extension declarations:
+            \(extensionBlockFormatExtensionGraph.url.absoluteString)
+            """))
+            XCTAssert(error.localizedDescription.contains("""
+            Symbol graph files without extension declarations:
+            \(noExtensionBlockFormatExtensionGraph.url.absoluteString)
+            """))
+        }
     }
+    
+    // MARK: - Helpers
     
     private func makeSymbolGraphLoader(symbolGraphURLs: [URL]) throws -> SymbolGraphLoader {
         let workspace = DocumentationWorkspace()

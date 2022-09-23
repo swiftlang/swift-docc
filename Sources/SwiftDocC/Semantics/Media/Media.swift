@@ -9,26 +9,7 @@
 */
 
 /// A base class for a piece of media, such as an image or video.
-public class Media: Semantic {
+public protocol Media: Semantic {
     /// A reference to the source file for the media item.
-    public let source: ResourceReference
-    
-    /// Creates a new semantic object that represents a piece of media.
-    /// 
-    /// - Parameter source: A reference to the source file for the media item.
-    init(source: ResourceReference) {
-        self.source = source
-    }
-    
-    enum Semantics {
-        enum Source: DirectiveArgument {
-            public static let argumentName = "source"
-        }
-        enum Poster: DirectiveArgument {
-            public static var argumentName = "poster"
-        }
-        enum Alt: DirectiveArgument {
-            static let argumentName = "alt"
-        }
-    }
+    var source: ResourceReference { get }
 }

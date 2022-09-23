@@ -121,7 +121,7 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1)
         guard let first = problems.first else { return }
-        XCTAssertEqual("error: Block directive 'baz' is unknown or invalid as a child of directive 'dir'.\nThese directives are allowed: 'Comment', 'bar', 'bark', 'foo', 'woof'", first.diagnostic.localizedDescription)
+        XCTAssertEqual("error: 'baz' directive is unsupported as a child of the 'dir' directive\nThese directives are allowed: 'Comment', 'bar', 'bark', 'foo', 'woof'", first.diagnostic.localizedDescription)
     }
 }
 

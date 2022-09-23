@@ -12,34 +12,41 @@ import Foundation
 import Markdown
 
 /// A block filled with a video.
-public final class VideoMedia: Media, DirectiveConvertible {
+public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
     public static let directiveName = "Video"
     
     public let originalMarkup: BlockDirective
     
+    @DirectiveArgumentWrapped(
+        parseArgument: { bundle, argumentValue in
+            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+        }
+    )
+    public private(set) var source: ResourceReference
+    
     /// An image to be shown when the video isn't playing.
-    public let poster: ResourceReference?
+    @DirectiveArgumentWrapped(
+        parseArgument: { bundle, argumentValue in
+            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+        }
+    )
+    public private(set) var poster: ResourceReference? = nil
+    
+    static var keyPaths: [String : AnyKeyPath] = [
+        "source" : \VideoMedia._source,
+        "poster" : \VideoMedia._poster,
+    ]
     
     init(originalMarkup: BlockDirective, source: ResourceReference, poster: ResourceReference?) {
         self.originalMarkup = originalMarkup
+        super.init()
         self.poster = poster
-        super.init(source: source)
+        self.source = source
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        let arguments = directive.arguments(problems: &problems)
-        let requiredSource = Semantic.Analyses.HasArgument<VideoMedia, Media.Semantics.Source>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems).map { argument in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argument)
-        }
-        
-        let optionalPoster = Semantic.Analyses.HasArgument<VideoMedia, Media.Semantics.Poster>(severityIfNotFound: nil).analyze(directive, arguments: arguments, problems: &problems).map { argument in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argument)
-        }
-        
-        guard let source = requiredSource else {
-            return nil
-        }
-        self.init(originalMarkup: directive, source: source, poster: optionalPoster)
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: BlockDirective) {
+        self.originalMarkup = originalMarkup
     }
     
     public override func accept<V>(_ visitor: inout V) -> V.Result where V : SemanticVisitor {

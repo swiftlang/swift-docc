@@ -22,31 +22,76 @@ extension Semantic.Analyses {
         }
         
         public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> (Child?, remainder: MarkupContainer) where Children.Element == Markup {
-            let (candidates, remainder) = children.categorize { child -> BlockDirective? in
-                guard let childDirective = child as? BlockDirective,
-                    Child.canConvertDirective(childDirective) else {
-                        return nil
-                }
-                return childDirective
+            return Semantic.Analyses.extractExactlyOne(
+                childType: Child.self,
+                parentDirective: directive,
+                children: children,
+                source: source,
+                for: bundle,
+                in: context,
+                severityIfNotFound: severityIfNotFound,
+                problems: &problems
+            ) as! (Child?, MarkupContainer)
+        }
+    }
+    
+    static func extractExactlyOne<Children: Sequence>(
+        childType: DirectiveConvertible.Type,
+        parentDirective: BlockDirective,
+        children: Children,
+        source: URL?,
+        for bundle: DocumentationBundle,
+        in context: DocumentationContext,
+        severityIfNotFound: DiagnosticSeverity? = .warning,
+        problems: inout [Problem]
+    ) -> (DirectiveConvertible?, remainder: MarkupContainer) where Children.Element == Markup {
+        let (candidates, remainder) = children.categorize { child -> BlockDirective? in
+            guard let childDirective = child as? BlockDirective,
+                childType.canConvertDirective(childDirective) else {
+                    return nil
             }
-            
-            guard let candidate = candidates.first else {
-                if let severity = severityIfNotFound {
-                    let diagnostic = Diagnostic(source: source, severity: severity, range: directive.range, identifier: "org.swift.docc.HasExactlyOne<\(Parent.self), \(Child.self)>.Missing", summary: "\(Parent.directiveName.singleQuoted) directive requires exactly one \(Child.directiveName.singleQuoted) child directive")
-                    problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
-                }
-                return (nil, MarkupContainer(remainder))
-            }
-            
-            // Even if a single child is optional, having duplicates is thus far always a warning
-            // because it would become ambiguous which child to choose as the one.
-            for candidate in candidates.suffix(from: 1) {
-                let diagnostic = Diagnostic(source: source, severity: .warning, range: candidate.range, identifier: "org.swift.docc.HasExactlyOne<\(Parent.self), \(Child.self)>.DuplicateChildren", summary: "Duplicate \(Child.directiveName.singleQuoted) child directive", explanation: "The \(Parent.directiveName.singleQuoted) directive must have exactly one \(Child.directiveName.singleQuoted) child directive")
+            return childDirective
+        }
+        
+        guard let candidate = candidates.first else {
+            if let severityIfNotFound = severityIfNotFound {
+                let diagnostic = Diagnostic(
+                    source: source,
+                    severity: severityIfNotFound,
+                    range: parentDirective.range,
+                    identifier: "org.swift.docc.HasExactlyOne<\(parentDirective.name), \(childType)>.Missing",
+                    summary: "Missing \(childType.directiveName.singleQuoted) child directive",
+                    explanation: """
+                    The \(parentDirective.name.singleQuoted) directive must have exactly \
+                    one \(childType.directiveName.singleQuoted) child directive
+                    """
+                )
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
             }
-            
-            return (Child(from: candidate, source: source, for: bundle, in: context, problems: &problems), MarkupContainer(remainder))
+            return (nil, MarkupContainer(remainder))
         }
+        
+        // Even if a single child is optional, having duplicates is thus far always a warning
+        // because it would become ambiguous which child to choose as the one.
+        
+        if let severityIfNotFound = severityIfNotFound {
+            for candidate in candidates.suffix(from: 1) {
+                let diagnostic = Diagnostic(
+                    source: source,
+                    severity: severityIfNotFound,
+                    range: candidate.range,
+                    identifier: "org.swift.docc.HasExactlyOne<\(parentDirective.name), \(childType)>.DuplicateChildren",
+                    summary: "Duplicate \(childType.directiveName.singleQuoted) child directive",
+                    explanation: """
+                    The \(parentDirective.name.singleQuoted) directive must have exactly \
+                    one \(childType.directiveName.singleQuoted) child directive
+                    """
+                )
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: []))
+            }
+        }
+        
+        return (childType.init(from: candidate, source: source, for: bundle, in: context, problems: &problems), MarkupContainer(remainder))
     }
     
     /**

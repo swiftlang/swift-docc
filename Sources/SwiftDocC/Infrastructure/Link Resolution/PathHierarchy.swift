@@ -133,18 +133,6 @@ struct PathHierarchy {
                     continue
                 }
             }
-            for relationship in graph.relationships where [.defaultImplementationOf].contains(relationship.kind) {
-                guard let sourceNode = nodes[relationship.source], sourceNode.parent == nil else {
-                    continue
-                }
-                topLevelCandidates.removeValue(forKey: relationship.source)
-                guard let targetParent = nodes[relationship.target]?.parent else {
-                    continue
-                }
-                if targetParent.add(symbolChild: sourceNode) {
-                    nodes[relationship.source] = nil
-                }
-            }
             
             // The hierarchy doesn't contain any non-symbol nodes yet. It's OK to unwrap the `symbol` property.
             for topLevelNode in topLevelCandidates.values where topLevelNode.symbol!.pathComponents.count == 1 {
@@ -434,8 +422,8 @@ struct PathHierarchy {
     /// - Returns: The node to start the relative search relative to.
     private func findRoot(parentID: ResolvedIdentifier?, remaining: inout ArraySlice<PathComponent>, isAbsolute: Bool, onlyFindSymbols: Bool) throws -> Node {
         // If the first path component is "tutorials" or "documentation" then that
-        let isKnownTutorialPath = remaining.first!.full == "tutorials"
-        let isKnownDocumentationPath = remaining.first!.full == "documentation"
+        let isKnownTutorialPath = remaining.first!.full == NodeURLGenerator.Path.tutorialsFolderName
+        let isKnownDocumentationPath = remaining.first!.full == NodeURLGenerator.Path.documentationFolderName
         if isKnownDocumentationPath || isKnownTutorialPath {
             // Drop that component since it isn't represented in the path hierarchy.
             remaining.removeFirst()
@@ -626,7 +614,9 @@ extension PathHierarchy {
     static func parse(path: String) -> (components: [PathComponent], isAbsolute: Bool) {
         guard !path.isEmpty else { return ([], true) }
         var components = path.split(separator: "/", omittingEmptySubsequences: true)
-        let isAbsolute = path.first == "/" || components.first == "documentation" || components.first == "tutorials"
+        let isAbsolute = path.first == "/"
+            || String(components.first ?? "") == NodeURLGenerator.Path.documentationFolderName
+            || String(components.first ?? "") == NodeURLGenerator.Path.tutorialsFolderName
        
         if let hashIndex = components.last?.firstIndex(of: "#") {
             let last = components.removeLast()
@@ -686,6 +676,12 @@ extension PathHierarchy {
 
 // MARK: Determining disambiguated paths
 
+private let nonAllowedPathCharacters = CharacterSet.urlPathAllowed.inverted
+
+private func symbolFileName(_ symbolName: String) -> String {
+    return symbolName.components(separatedBy: nonAllowedPathCharacters).joined(separator: "_")
+}
+
 extension PathHierarchy {
     /// Determines the least disambiguated paths for all symbols in the path hierarchy.
     ///
@@ -699,7 +695,7 @@ extension PathHierarchy {
     ) -> [String: String] {
         func descend(_ node: Node, accumulatedPath: String) -> [(String, (String, Bool))] {
             var results: [(String, (String, Bool))] = []
-            let caseInsensitiveChildren = [String: DisambiguationTree](node.children.map { ($0.key.lowercased(), $0.value) }, uniquingKeysWith: { $0.merge(with: $1) })
+            let caseInsensitiveChildren = [String: DisambiguationTree](node.children.map { (symbolFileName($0.key.lowercased()), $0.value) }, uniquingKeysWith: { $0.merge(with: $1) })
             
             for (_, tree) in caseInsensitiveChildren {
                 let disambiguatedChildren = tree.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: includeLanguage)
@@ -718,9 +714,9 @@ extension PathHierarchy {
                         if hash != "_" {
                             knownDisambiguation += "-\(hash)"
                         }
-                        path = accumulatedPath + "/" + node.name + knownDisambiguation
+                        path = accumulatedPath + "/" + symbolFileName(node.name) + knownDisambiguation
                     } else {
-                        path = accumulatedPath + "/" + node.name
+                        path = accumulatedPath + "/" + symbolFileName(node.name)
                     }
                     if let symbol = node.symbol {
                         results.append(
@@ -747,7 +743,23 @@ extension PathHierarchy {
         }
         
         // If a symbol node exist in multiple languages, prioritize the Swift variant.
-        return [String: (String, Bool)](gathered, uniquingKeysWith: { lhs, rhs in lhs.1 ? lhs : rhs }).mapValues({ $0.0 })
+        let result = [String: (String, Bool)](gathered, uniquingKeysWith: { lhs, rhs in lhs.1 ? lhs : rhs }).mapValues({ $0.0 })
+        
+        assert(
+            Set(result.values).count == result.keys.count,
+            {
+                let collisionDescriptions = result
+                    .reduce(into: [String: [String]](), { $0[$1.value, default: []].append($1.key) })
+                    .filter({ $0.value.count > 1 })
+                    .map { "\($0.key)\n\($0.value.map({ "  " + $0 }).joined(separator: "\n"))" }
+                return """
+                Disambiguated paths contain \(collisionDescriptions.count) collision(s):
+                \(collisionDescriptions.joined(separator: "\n"))
+                """
+            }()
+        )
+        
+        return result
     }
 }
 

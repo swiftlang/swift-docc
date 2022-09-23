@@ -72,7 +72,7 @@ struct ReferenceResolver: SemanticVisitor {
     /**
     Returns a ``Problem`` if the resource cannot be found; otherwise `nil`.
     */
-    private func resolve(resource: ResourceReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem? {
+    func resolve(resource: ResourceReference, range: SourceRange?, severity: DiagnosticSeverity) -> Problem? {
         if !context.resourceExists(with: resource) {
             return unresolvedResourceProblem(resource: resource, source: source, range: range, severity: severity)
         } else {
@@ -269,9 +269,8 @@ struct ReferenceResolver: SemanticVisitor {
         // i.e. doc:/${SOME_TECHNOLOGY}/${PROJECT} or doc://${BUNDLE_ID}/${SOME_TECHNOLOGY}/${PROJECT}
         switch tutorialReference.topic {
         case .unresolved:
-            let arguments = tutorialReference.originalMarkup.arguments()
             let maybeResolved = resolve(tutorialReference.topic, in: bundle.technologyTutorialsRootReference,
-                                        range: arguments[TutorialReference.Semantics.Tutorial.argumentName]?.valueRange,
+                                        range: tutorialReference.originalMarkup.range,
                                         severity: .warning)
             return TutorialReference(originalMarkup: tutorialReference.originalMarkup, tutorial: .resolved(maybeResolved))
         case .resolved:

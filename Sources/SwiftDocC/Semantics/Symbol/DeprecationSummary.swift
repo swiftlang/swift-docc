@@ -12,17 +12,20 @@ import Foundation
 import Markdown
 
 /// A directive to add custom deprecation summary to an already deprecated symbol.
-public final class DeprecationSummary: Semantic, DirectiveConvertible {
-    public static let directiveName = "DeprecationSummary"
-    
+public final class DeprecationSummary: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
 
     /// The contents of the summary.
-    public let content: MarkupContainer
+    @ChildMarkup
+    public private(set) var content: MarkupContainer
     
     override var children: [Semantic] {
         return [content]
     }
+    
+    static var keyPaths: [String : AnyKeyPath] = [
+        "content" : \DeprecationSummary._content
+    ]
     
     /// Creates a new deprecation summary from the content of the given directive.
     /// - Parameters:
@@ -30,13 +33,14 @@ public final class DeprecationSummary: Semantic, DirectiveConvertible {
     ///   - content: The markup content for the summary.
     init(originalMarkup: BlockDirective, content: MarkupContainer) {
         self.originalMarkup = originalMarkup
-        self.content = content
         super.init()
+        self.content = content
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        precondition(directive.name == DeprecationSummary.directiveName)
-        self.init(originalMarkup: directive, content: MarkupContainer(directive.children))
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: BlockDirective) {
+        self.originalMarkup = originalMarkup
+        super.init()
     }
     
     public override func accept<V>(_ visitor: inout V) -> V.Result where V : SemanticVisitor {

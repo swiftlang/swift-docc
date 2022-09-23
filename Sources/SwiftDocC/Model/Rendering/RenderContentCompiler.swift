@@ -35,27 +35,33 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitBlockQuote(_ blockQuote: BlockQuote) -> [RenderContent] {
         let aside = Aside(blockQuote)
-        return [RenderBlockContent.aside(style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
-                                         content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent])]
+        return [RenderBlockContent.aside(.init(style: RenderBlockContent.AsideStyle(asideKind: aside.kind),
+                                               content: aside.content.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderBlockContent]))]
     }
     
     mutating func visitCodeBlock(_ codeBlock: CodeBlock) -> [RenderContent] {
         // Default to the bundle's code listing syntax if one is not explicitly declared in the code block.
-        return [RenderBlockContent.codeListing(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil)]
+        return [RenderBlockContent.codeListing(.init(syntax: codeBlock.language ?? bundle.info.defaultCodeListingLanguage, code: codeBlock.code.splitByNewlines, metadata: nil))]
     }
     
     mutating func visitHeading(_ heading: Heading) -> [RenderContent] {
-        return [RenderBlockContent.heading(level: heading.level, text: heading.plainText, anchor: urlReadableFragment(heading.plainText))]
+        return [RenderBlockContent.heading(.init(level: heading.level, text: heading.plainText, anchor: urlReadableFragment(heading.plainText)))]
     }
     
     mutating func visitListItem(_ listItem: ListItem) -> [RenderContent] {
         let renderListItems = listItem.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
-        return [RenderBlockContent.ListItem(content: renderListItems as! [RenderBlockContent])]
+        let checked: Bool?
+        switch listItem.checkbox {
+            case .checked: checked = true
+            case .unchecked: checked = false
+            case nil: checked = nil
+        }
+        return [RenderBlockContent.ListItem(content: renderListItems as! [RenderBlockContent], checked: checked)]
     }
     
     mutating func visitOrderedList(_ orderedList: OrderedList) -> [RenderContent] {
         let renderListItems = orderedList.listItems.reduce(into: [], { result, item in result.append(contentsOf: visitListItem(item))})
-        return [RenderBlockContent.orderedList(items: renderListItems as! [RenderBlockContent.ListItem])]
+        return [RenderBlockContent.orderedList(.init(items: renderListItems as! [RenderBlockContent.ListItem]))]
     }
     
     mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> [RenderContent] {
@@ -64,7 +70,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitParagraph(_ paragraph: Paragraph) -> [RenderContent] {
-        return [RenderBlockContent.paragraph(inlineContent: paragraph.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent])]
+        return [RenderBlockContent.paragraph(.init(inlineContent: paragraph.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))}) as! [RenderInlineContent]))]
     }
     
     mutating func visitInlineCode(_ inlineCode: InlineCode) -> [RenderContent] {
@@ -185,23 +191,32 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitTable(_ table: Table) -> [RenderContent] {
+        var extendedData = Set<RenderBlockContent.TableCellExtendedData>()
+
         var headerCells = [RenderBlockContent.TableRow.Cell]()
         for cell in table.head.cells {
             let cellContent = cell.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
-            headerCells.append([RenderBlockContent.paragraph(inlineContent: cellContent as! [RenderInlineContent])])
+            headerCells.append([RenderBlockContent.paragraph(.init(inlineContent: cellContent as! [RenderInlineContent]))])
+            if cell.colspan != 1 || cell.rowspan != 1 {
+                extendedData.insert(.init(rowIndex: 0, columnIndex: cell.indexInParent, colspan: cell.colspan, rowspan: cell.rowspan))
+            }
         }
         
         var rows = [RenderBlockContent.TableRow]()
         for row in table.body.rows {
+            let rowIndex = row.indexInParent + 1
             var cells = [RenderBlockContent.TableRow.Cell]()
             for cell in row.cells {
                 let cellContent = cell.children.reduce(into: [], { result, child in result.append(contentsOf: visit(child))})
-                cells.append([RenderBlockContent.paragraph(inlineContent: cellContent as! [RenderInlineContent])])
+                cells.append([RenderBlockContent.paragraph(.init(inlineContent: cellContent as! [RenderInlineContent]))])
+                if cell.colspan != 1 || cell.rowspan != 1 {
+                    extendedData.insert(.init(rowIndex: rowIndex, columnIndex: cell.indexInParent, colspan: cell.colspan, rowspan: cell.rowspan))
+                }
             }
             rows.append(RenderBlockContent.TableRow(cells: cells))
         }
         
-        return [RenderBlockContent.table(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, metadata: nil)]
+        return [RenderBlockContent.table(.init(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, extendedData: extendedData, metadata: nil))]
     }
 
     mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> [RenderContent] {
@@ -211,31 +226,37 @@ struct RenderContentCompiler: MarkupVisitor {
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> [RenderContent] {
         switch blockDirective.name {
         case Snippet.directiveName:
-            let arguments = blockDirective.arguments()
-            guard let snippetURL = arguments[Snippet.Semantics.Path.argumentName],
-                  let snippetReference = resolveSymbolReference(destination: snippetURL.value),
+            guard let snippet = Snippet(from: blockDirective, for: bundle, in: context) else {
+                return []
+            }
+            
+            guard let snippetReference = resolveSymbolReference(destination: snippet.path),
                   let snippetEntity = try? context.entity(with: snippetReference),
                   let snippetSymbol = snippetEntity.symbol,
                   let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
                 return []
             }
             
-            if let requestedSlice = arguments[Snippet.Semantics.Slice.argumentName]?.value,
+            if let requestedSlice = snippet.slice,
                let requestedLineRange = snippetMixin.slices[requestedSlice] {
                 // Render only the slice.
                 let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)
                 let lines = snippetMixin.lines[lineRange]
                 let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
                 let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
-                return [RenderBlockContent.codeListing(syntax: snippetMixin.language, code: trimmedLines, metadata: nil)]
+                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
             } else {
                 // Render the whole snippet with its explanation content.
                 let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
-                let code = RenderBlockContent.codeListing(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil)
+                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
                 return docCommentContent + [code]
             }
         default:
-            return []
+            guard let renderableDirective = DirectiveIndex.shared.renderableDirectives[blockDirective.name] else {
+                return []
+            }
+            
+            return renderableDirective.render(blockDirective, with: &self)
         }
     }
 

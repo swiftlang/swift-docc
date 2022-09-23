@@ -88,7 +88,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             createAndRegisterRenderReference(forMedia: $0.source, altText: ($0 as? ImageMedia)?.altText)
         }
         
-        let result = [RenderBlockContent.step(content: renderBlock, caption: caption, media: mediaReference, code: codeReference, runtimePreview: previewReference)]
+        let result = [RenderBlockContent.step(.init(content: renderBlock, caption: caption, media: mediaReference, code: codeReference, runtimePreview: previewReference))]
         
         return result
     }
@@ -418,6 +418,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 linkReferences[link.identifier.identifier] = link
             }
             
+            for imageReference in dependencies.imageReferences {
+                imageReferences[imageReference.identifier.identifier] = imageReference
+            }
+            
             for dependencyReference in dependencies.topicReferences {
                 var dependencyRenderReference: TopicRenderReference
                 if let renderContext = renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
@@ -703,12 +707,25 @@ public struct RenderNodeTranslator: SemanticVisitor {
             return sections
         } ?? .init(defaultValue: [])
         
-
-        if node.topicSections.isEmpty {
-            // Set an eyebrow for articles
-            node.metadata.roleHeading = "Article"
+        node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
+        
+        if shouldCreateAutomaticRoleHeading(for: documentationNode) {
+            if node.topicSections.isEmpty {
+                // Set an eyebrow for articles
+                node.metadata.roleHeading = "Article"
+            }
+            node.metadata.role = contentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
         }
-        node.metadata.role = contentRenderer.roleForArticle(article, nodeKind: documentationNode.kind).rawValue
+       
+        if let pageImages = documentationNode.metadata?.pageImages {
+            node.metadata.images = pageImages.map { pageImage -> TopicImage in
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                return TopicImage(
+                    pageImagePurpose: pageImage.purpose,
+                    identifier: renderReference
+                )
+            }
+        }
 
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
             from: documentationNode.availableVariantTraits,
@@ -1038,6 +1055,39 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return reference
     }
     
+    private func shouldCreateAutomaticRoleHeading(for node: DocumentationNode) -> Bool {
+        var shouldCreateAutomaticRoleHeading = true
+        if let automaticTitleHeadingOption = node.options?.automaticTitleHeadingBehavior
+            ?? context.options?.automaticTitleHeadingBehavior
+        {
+            shouldCreateAutomaticRoleHeading = automaticTitleHeadingOption == .pageKind
+        }
+        
+        return shouldCreateAutomaticRoleHeading
+    }
+    
+    private func topicsSectionStyle(for node: DocumentationNode) -> RenderNode.TopicsSectionStyle {
+        let topicsVisualStyleOption: TopicsVisualStyle.Style
+        if let topicsSectionStyleOption = node.options?.topicsVisualStyle
+            ?? context.options?.topicsVisualStyle
+        {
+            topicsVisualStyleOption = topicsSectionStyleOption
+        } else {
+            topicsVisualStyleOption = .list
+        }
+        
+        switch topicsVisualStyleOption {
+        case .list:
+            return .list
+        case .compactGrid:
+            return .compactGrid
+        case .detailedGrid:
+            return .detailedGrid
+        case .hidden:
+            return .hidden
+        }
+    }
+    
     public mutating func visitSymbol(_ symbol: Symbol) -> RenderTree? {
         let documentationNode = try! context.entity(with: identifier)
         
@@ -1095,9 +1145,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
         node.metadata.role = contentRenderer.role(for: documentationNode.kind).rawValue
-        node.metadata.roleHeadingVariants = VariantCollection<String?>(from: symbol.roleHeadingVariants)
         node.metadata.titleVariants = VariantCollection<String?>(from: symbol.titleVariants)
         node.metadata.externalIDVariants = VariantCollection<String?>(from: symbol.externalIDVariants)
+        
+        if shouldCreateAutomaticRoleHeading(for: documentationNode) {
+            node.metadata.roleHeadingVariants = VariantCollection<String?>(from: symbol.roleHeadingVariants)
+        }
         
         node.metadata.symbolKindVariants = VariantCollection<String?>(from: symbol.kindVariants) { _, kindVariants in
             kindVariants.identifier.renderingIdentifier
@@ -1106,6 +1159,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.conformance = contentRenderer.conformanceSectionFor(identifier, collectedConstraints: collectedConstraints)
         node.metadata.fragmentsVariants = contentRenderer.subHeadingFragments(for: documentationNode)
         node.metadata.navigatorTitleVariants = contentRenderer.navigatorFragments(for: documentationNode)
+        
+        if let pageImages = documentationNode.metadata?.pageImages {
+            node.metadata.images = pageImages.map { pageImage -> TopicImage in
+                let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
+                return TopicImage(
+                    pageImagePurpose: pageImage.purpose,
+                    identifier: renderReference
+                )
+            }
+        }
         
         node.variants = variants(for: documentationNode)
         
@@ -1145,8 +1208,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 renderNode: &node,
                 translators: [
                     DeclarationsSectionTranslator(),
-                    ReturnsSectionTranslator(),
                     ParametersSectionTranslator(),
+                    ReturnsSectionTranslator(),
                     DiscussionSectionTranslator(),
                 ]
             )
@@ -1307,6 +1370,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             return sections
         } ?? .init(defaultValue: [])
+        
+        node.topicSectionsStyle = topicsSectionStyle(for: documentationNode)
         
         node.defaultImplementationsSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
             from: symbol.defaultImplementationsVariants,

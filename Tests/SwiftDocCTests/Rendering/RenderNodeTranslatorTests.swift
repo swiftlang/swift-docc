@@ -41,7 +41,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         guard let paragraph = discussion.content
             .compactMap({ block -> [RenderInlineContent]? in
                 switch block {
-                case .paragraph(inlineContent: let children): return children
+                case .paragraph(let p): return p.inlineContent
                 default: return nil
                 }
             })
@@ -102,11 +102,11 @@ class RenderNodeTranslatorTests: XCTestCase {
         }
         
         XCTAssert(discussion.content.contains(where: { block in
-            if case .orderedList(items: let items) = block,
-                items.count == 3,
-                case .paragraph([.text("One ordered")])? = items[0].content.first,
-                case .paragraph([.text("Two ordered")])? = items[1].content.first,
-                case .paragraph([.text("Three ordered")])? = items[2].content.first
+            if case .orderedList(let l) = block,
+                l.items.count == 3,
+                l.items[0].content.first == .paragraph(.init(inlineContent: [.text("One ordered")])),
+                l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Two ordered")])),
+                l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Three ordered")]))
             {
                 return true
             } else {
@@ -115,11 +115,11 @@ class RenderNodeTranslatorTests: XCTestCase {
         }))
         
         XCTAssert(discussion.content.contains(where: { block in
-            if case .unorderedList(items: let items) = block,
-                items.count == 3,
-                case .paragraph([.text("One unordered")])? = items[0].content.first,
-                case .paragraph([.text("Two unordered")])? = items[1].content.first,
-                case .paragraph([.text("Three unordered")])? = items[2].content.first
+            if case .unorderedList(let l) = block,
+                l.items.count == 3,
+                l.items[0].content.first == .paragraph(.init(inlineContent: [.text("One unordered")])),
+                l.items[1].content.first == .paragraph(.init(inlineContent: [.text("Two unordered")])),
+                l.items[2].content.first == .paragraph(.init(inlineContent: [.text("Three unordered")]))
             {
                 return true
             } else {
@@ -143,8 +143,8 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             myFunctionDiscussion.content,
             [
-                RenderBlockContent.heading(level: 2, text: "Discussion", anchor: "discussion"),
-                RenderBlockContent.paragraph(inlineContent: [.text("This is the overview for myFunction.")]),
+                RenderBlockContent.heading(.init(level: 2, text: "Discussion", anchor: "discussion")),
+                RenderBlockContent.paragraph(.init(inlineContent: [.text("This is the overview for myFunction.")])),
             ]
         )
         
@@ -165,8 +165,8 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(
             myClassDiscussion.content,
             [
-                RenderBlockContent.heading(level: 2, text: "Overview", anchor: "overview"),
-                RenderBlockContent.paragraph(inlineContent: [.text("This is the overview for MyClass.")]),
+                RenderBlockContent.heading(.init(level: 2, text: "Overview", anchor: "overview")),
+                RenderBlockContent.paragraph(.init(inlineContent: [.text("This is the overview for MyClass.")])),
             ]
         )
     }
@@ -177,7 +177,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let section = ContentRenderSection(kind: .content, content: [], heading: "declaration")
             XCTAssertEqual("declaration", section.content.mapFirst(where: { element -> String? in
                 switch element {
-                case .heading(_, _, let anchor): return anchor
+                case .heading(let h): return h.anchor
                 default: return nil
                 }
             }))
@@ -188,7 +188,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let section = ContentRenderSection(kind: .content, content: [], heading: "DeclaratioN")
             XCTAssertEqual("declaration", section.content.mapFirst(where: { element -> String? in
                 switch element {
-                case .heading(_, _, let anchor): return anchor
+                case .heading(let h): return h.anchor
                 default: return nil
                 }
             }))
@@ -199,7 +199,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let section = ContentRenderSection(kind: .content, content: [], heading: "My Declaration")
             XCTAssertEqual("my-declaration", section.content.mapFirst(where: { element -> String? in
                 switch element {
-                case .heading(_, _, let anchor): return anchor
+                case .heading(let h): return h.anchor
                 default: return nil
                 }
             }))
@@ -208,6 +208,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             
     func testArticleRoles() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
         
         // Verify article's role
         do {
@@ -218,7 +219,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             My conclusion.
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
-            let article = Article(markup: document.root, metadata: nil, redirects: nil)
+            let article = try XCTUnwrap(
+                Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+            )
             let translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/article", fragment: nil, sourceLanguage: .swift), source: nil)
             
             XCTAssertEqual(RenderMetadata.Role.article, translator.contentRenderer.roleForArticle(article, nodeKind: .article))
@@ -239,7 +242,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             let translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/article", fragment: nil, sourceLanguage: .swift), source: nil)
 
             // Verify a collection group
-            let article1 = Article(markup: document.root, metadata: nil, redirects: nil)
+            let article1 = try XCTUnwrap(
+                Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+            )
             XCTAssertEqual(RenderMetadata.Role.collectionGroup, translator.contentRenderer.roleForArticle(article1, nodeKind: .article))
             
             let metadataSource = """
@@ -247,13 +252,15 @@ class RenderNodeTranslatorTests: XCTestCase {
                @TechnologyRoot
             }
             """
-            let metadataDocument = Document(parsing: metadataSource, options: .parseBlockDirectives)
-            let directive = metadataDocument.child(at: 0) as! BlockDirective
-            var problems = [Problem]()
-            let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            let metadataDocument = Document(
+                parsing: source + "\n" + metadataSource,
+                options: .parseBlockDirectives
+            )
 
             // Verify a collection
-            let article2 = Article(markup: document.root, metadata: metadata, redirects: nil)
+            let article2 = try XCTUnwrap(
+                Article(from: metadataDocument.root, source: nil, for: bundle, in: context, problems: &problems)
+            )
             XCTAssertEqual(RenderMetadata.Role.collection, translator.contentRenderer.roleForArticle(article2, nodeKind: .article))
         }
     }
@@ -284,6 +291,7 @@ class RenderNodeTranslatorTests: XCTestCase {
 
     func testEmtpyTaskGroupsNotRendered() throws {
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
         
         let source = """
             # My Article
@@ -317,7 +325,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             
             """
         let document = Document(parsing: source, options: .parseBlockDirectives)
-        let article = Article(markup: document.root, metadata: nil, redirects: nil)
+        let article = try XCTUnwrap(
+            Article(from: document.root, source: nil, for: bundle, in: context, problems: &problems)
+        )
         let reference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/Test-Bundle/taskgroups", fragment: nil, sourceLanguage: .swift)
         context.documentationCache[reference] = try DocumentationNode(reference: reference, article: article)
         let topicGraphNode = TopicGraph.Node(reference: reference, kind: .article, source: .file(url: URL(fileURLWithPath: "/path/to/article.md")), title: "My Article")
@@ -886,12 +896,12 @@ class RenderNodeTranslatorTests: XCTestCase {
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
         let paragraph = try XCTUnwrap(discussion.content.last)
 
-        guard case let RenderBlockContent.paragraph(inlineContent: elements) = paragraph else {
+        guard case let RenderBlockContent.paragraph(p) = paragraph else {
             XCTFail("Unexpected discussion content.")
             return
         }
         
-        XCTAssertEqual(elements, [
+        XCTAssertEqual(p.inlineContent, [
             .text("This is a link to "),
             .text("doc:/documentation/SideKit/SideClass/Element/Protocol-Implementations"),
             .text("."),
@@ -944,15 +954,15 @@ class RenderNodeTranslatorTests: XCTestCase {
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
         
-        if case let .paragraph(elements) = discussion.content.dropFirst(2).first {
-            XCTAssertEqual(elements, [.text("Does a foo.")])
+        if case let .paragraph(p) = discussion.content.dropFirst(2).first {
+            XCTAssertEqual(p.inlineContent, [.text("Does a foo.")])
         } else {
             XCTFail("Unexpected content where snippet explanation should be.")
         }
 
-        if case let .codeListing(syntax, code, _) = discussion.content.dropFirst(3).first {
-            XCTAssertEqual(syntax, "swift")
-            XCTAssertEqual(code.joined(separator: "\n"), """
+        if case let .codeListing(l) = discussion.content.dropFirst(3).first {
+            XCTAssertEqual(l.syntax, "swift")
+            XCTAssertEqual(l.code.joined(separator: "\n"), """
                 func foo() {}
                 
                 do {
@@ -981,13 +991,13 @@ class RenderNodeTranslatorTests: XCTestCase {
             return true
         })
 
-        guard case let .codeListing(syntax, code, _) = discussion.content[lastCodeListingIndex] else {
+        guard case let .codeListing(l) = discussion.content[lastCodeListingIndex] else {
             XCTFail("Missing snippet slice code block")
             return
         }
 
-        XCTAssertEqual(syntax, "swift")
-        XCTAssertEqual(code, ["func foo() {}"])
+        XCTAssertEqual(l.syntax, "swift")
+        XCTAssertEqual(l.code, ["func foo() {}"])
     }
     
     func testSnippetSliceTrimsIndentation() throws {
@@ -1005,13 +1015,146 @@ class RenderNodeTranslatorTests: XCTestCase {
             return true
         })
 
-        guard case let .codeListing(syntax, code, _) = discussion.content[lastCodeListingIndex] else {
+        guard case let .codeListing(l) = discussion.content[lastCodeListingIndex] else {
             XCTFail("Missing snippet slice code block")
             return
         }
 
-        XCTAssertEqual(syntax, "swift")
-        XCTAssertEqual(code, ["middle()"])
+        XCTAssertEqual(l.syntax, "swift")
+        XCTAssertEqual(l.code, ["middle()"])
 
     }
+    
+    func testRowAndColumn() throws {
+        let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/BestBook/MyArticle",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        
+        let discussion = try XCTUnwrap(
+            renderNode.primaryContentSections.first(
+                where: { $0.kind == .content }
+            ) as? ContentRenderSection
+        )
+        
+        guard case let .row(row) = discussion.content.dropFirst().first else {
+            XCTFail("Expected to find row as first child.")
+            return
+        }
+        
+        XCTAssertEqual(row.numberOfColumns, 8)
+        XCTAssertEqual(row.columns.first?.size, 3)
+        XCTAssertEqual(row.columns.first?.content.count, 1)
+        XCTAssertEqual(row.columns.last?.size, 5)
+        XCTAssertEqual(row.columns.last?.content.count, 3)
+    }
+    
+    func testSmall() throws {
+        let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/BestBook/MyArticle",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        
+        let discussion = try XCTUnwrap(
+            renderNode.primaryContentSections.first(
+                where: { $0.kind == .content }
+            ) as? ContentRenderSection
+        )
+        
+        guard case let .small(small) = discussion.content.last else {
+            XCTFail("Expected to find small as last child.")
+            return
+        }
+        
+        XCTAssertEqual(
+            small.inlineContent,
+            [.text("Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved.")]
+        )
+    }
+    
+    func testCustomPageImage() throws {
+         let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
+         let reference = ResolvedTopicReference(
+             bundleIdentifier: bundle.identifier,
+             path: "/documentation/BestBook/MyArticle",
+             sourceLanguage: .swift
+         )
+         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+         var translator = RenderNodeTranslator(
+             context: context,
+             bundle: bundle,
+             identifier: reference,
+             source: nil
+         )
+         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+    
+         let encodedArticle = try JSONEncoder().encode(renderNode)
+         let roundTrippedArticle = try JSONDecoder().decode(RenderNode.self, from: encodedArticle)
+    
+         XCTAssertEqual(roundTrippedArticle.icon?.identifier, "plus.svg")
+    
+         XCTAssertEqual(
+             roundTrippedArticle.references["figure1.png"] as? ImageReference,
+             ImageReference(
+                 identifier: RenderReferenceIdentifier("figure1.png"),
+                 imageAsset: DataAsset(
+                     variants: [
+                         DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)
+                             : URL(string: "/images/figure1.png")!,
+    
+                         DataTraitCollection(userInterfaceStyle: .dark, displayScale: .standard)
+                             : URL(string: "/images/figure1~dark.png")!,
+                     ],
+                     metadata: [
+                         URL(string: "/images/figure1.png")! : DataAsset.Metadata(),
+                         URL(string: "/images/figure1~dark.png")! : DataAsset.Metadata(),
+                     ]
+                 )
+             )
+         )
+    
+         XCTAssertEqual(
+             roundTrippedArticle.references["plus.svg"] as? ImageReference,
+             ImageReference(
+                 identifier: RenderReferenceIdentifier("plus.svg"),
+                 imageAsset: DataAsset(
+                     variants: [
+                         DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)
+                             : URL(string: "/images/plus.svg")!,
+                     ],
+                     metadata: [
+                         URL(string: "/images/plus.svg")! : DataAsset.Metadata(svgID: "plus-id"),
+                     ]
+                 )
+             )
+         )
+    
+         XCTAssertEqual(
+             Set(roundTrippedArticle.metadata.images),
+             [
+                 TopicImage(type: .icon, identifier: RenderReferenceIdentifier("plus.svg")),
+                 TopicImage(type: .card, identifier: RenderReferenceIdentifier("figure1.png"))
+             ]
+         )
+     }
 }

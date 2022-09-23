@@ -37,16 +37,16 @@ class RenderContentMetadataTests: XCTestCase {
             RenderInlineContent.text("Content"),
         ])
         
-        let table = RenderBlockContent.table(header: .both, rows: [], metadata: metadata)
+        let table = RenderBlockContent.table(.init(header: .both, rows: [], extendedData: [], metadata: metadata))
         let data = try JSONEncoder().encode(table)
         let roundtrip = try JSONDecoder().decode(RenderBlockContent.self, from: data)
         
-        guard case RenderBlockContent.table(_, _, let metadataRoundtrip) = roundtrip else {
+        guard case RenderBlockContent.table(let t) = roundtrip else {
             XCTFail("Didn't decode table correctly")
             return
         }
         
-        XCTAssertEqual(metadata, metadataRoundtrip)
+        XCTAssertEqual(metadata, t.metadata)
     }
 
     func testCodeListingMetadata() throws {
@@ -54,16 +54,16 @@ class RenderContentMetadataTests: XCTestCase {
             RenderInlineContent.text("Content"),
         ])
         
-        let code = RenderBlockContent.codeListing(syntax: nil, code: [], metadata: metadata)
+        let code = RenderBlockContent.codeListing(.init(syntax: nil, code: [], metadata: metadata))
         let data = try JSONEncoder().encode(code)
         let roundtrip = try JSONDecoder().decode(RenderBlockContent.self, from: data)
         
-        guard case RenderBlockContent.codeListing(_, _, let metadataRoundtrip) = roundtrip else {
+        guard case RenderBlockContent.codeListing(let roundtripListing) = roundtrip else {
             XCTFail("Didn't decode code listing correctly")
             return
         }
         
-        XCTAssertEqual(metadata, metadataRoundtrip)
+        XCTAssertEqual(metadata, roundtripListing.metadata)
     }
     
     func testRenderingTables() throws {
@@ -86,8 +86,8 @@ class RenderContentMetadataTests: XCTestCase {
         let renderCell: ([RenderBlockContent]) -> String = { cell in
             return cell.reduce(into: "") { (result, element) in
                 switch element {
-                    case .paragraph(inlineContent: let els):
-                        guard let para = els.first else { return }
+                    case .paragraph(let p):
+                    guard let para = p.inlineContent.first else { return }
                         result.append(para.plainText)
                     default: XCTFail("Unexpected element"); return
                 }
@@ -95,15 +95,67 @@ class RenderContentMetadataTests: XCTestCase {
         }
         
         switch renderedTable {
-            case .table(let header, let rows, _):
-                XCTAssertEqual(header, .row)
-                XCTAssertEqual(rows.count, 3)
-                guard rows.count == 3 else { return }
-                XCTAssertEqual(rows[0].cells.map(renderCell), ["Column 1", "Column 2"])
-                XCTAssertEqual(rows[1].cells.map(renderCell), ["Cell 1", "Cell 2"])
-                XCTAssertEqual(rows[2].cells.map(renderCell), ["Cell 3", "Cell 4"])
+            case .table(let t):
+                XCTAssertEqual(t.header, .row)
+                XCTAssertEqual(t.rows.count, 3)
+                guard t.rows.count == 3 else { return }
+                XCTAssertEqual(t.rows[0].cells.map(renderCell), ["Column 1", "Column 2"])
+                XCTAssertEqual(t.rows[1].cells.map(renderCell), ["Cell 1", "Cell 2"])
+                XCTAssertEqual(t.rows[2].cells.map(renderCell), ["Cell 3", "Cell 4"])
             default: XCTFail("Unexpected element")
         }
+    }
+
+    func testRenderingTableSpans() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = """
+        | one | two | three |
+        | --- | --- | ----- |
+        | big      || small |
+        | ^        || small |
+        """
+        let document = Document(parsing: source)
+
+        // Verifies that a markdown table renders correctly.
+
+        let result = try XCTUnwrap(renderContentCompiler.visit(document.child(at: 0)!))
+        let renderedTable = try XCTUnwrap(result.first as? RenderBlockContent)
+
+        let renderCell: ([RenderBlockContent]) -> String = { cell in
+            return cell.reduce(into: "") { (result, element) in
+                switch element {
+                    case .paragraph(let p):
+                    guard let para = p.inlineContent.first else { return }
+                        result.append(para.plainText)
+                    default: XCTFail("Unexpected element"); return
+                }
+            }
+        }
+
+        let expectedExtendedData: [RenderBlockContent.TableCellExtendedData] = [
+            .init(rowIndex: 1, columnIndex: 0, colspan: 2, rowspan: 2),
+            .init(rowIndex: 1, columnIndex: 1, colspan: 0, rowspan: 1),
+            .init(rowIndex: 2, columnIndex: 0, colspan: 2, rowspan: 0),
+            .init(rowIndex: 2, columnIndex: 1, colspan: 0, rowspan: 1)
+        ]
+
+        switch renderedTable {
+            case .table(let t):
+                XCTAssertEqual(t.header, .row)
+                XCTAssertEqual(t.rows.count, 3)
+                guard t.rows.count == 3 else { return }
+                XCTAssertEqual(t.rows[0].cells.map(renderCell), ["one", "two", "three"])
+                XCTAssertEqual(t.rows[1].cells.map(renderCell), ["big", "", "small"])
+                XCTAssertEqual(t.rows[2].cells.map(renderCell), ["", "", "small"])
+                for expectedData in expectedExtendedData {
+                    XCTAssert(t.extendedData.contains(expectedData))
+                }
+            default: XCTFail("Unexpected element")
+        }
+
+        try assertRoundTripCoding(renderedTable)
     }
     
     func testStrikethrough() throws {

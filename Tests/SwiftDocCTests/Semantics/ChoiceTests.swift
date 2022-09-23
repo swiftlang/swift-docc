@@ -28,8 +28,8 @@ class ChoiceTests: XCTestCase {
             XCTAssertNil(choice)
             let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
             XCTAssertEqual(2, problems.count)
-            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(Choice.self).Empty"))
             XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.HasExactlyOne<\(Choice.self), \(Justification.self)>.Missing"))
+            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.HasArgument.isCorrect"))
             XCTAssertTrue(problems.map { $0.diagnostic.severity }.allSatisfy { $0 == .warning })
         }
     }

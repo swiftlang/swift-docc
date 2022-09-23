@@ -31,7 +31,7 @@ class CustomFormattingRenderElementsTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(firstParagraph, [
+        XCTAssertEqual(firstParagraph.inlineContent, [
             .text("Use "),
             .newTerm(inlineContent: [.text("www")]),
             .text(" and "),
@@ -39,20 +39,20 @@ class CustomFormattingRenderElementsTests: XCTestCase {
             .text("."),
         ])
 
-        guard case RenderBlockContent.termList(let items) = discussion.content[2] else {
+        guard case RenderBlockContent.termList(let l) = discussion.content[2] else {
             XCTFail("Didn't find term list")
             return
         }
         
-        XCTAssertEqual(items, [
+        XCTAssertEqual(l.items, [
             RenderBlockContent.TermListItem(
                 term: .init(inlineContent: [
                     .text("This is a term"),
                 ]),
                 definition: .init(content: [
-                    .paragraph(inlineContent: [
+                    .paragraph(.init(inlineContent: [
                         .text("This is a definition"),
-                    ]),
+                    ])),
                 ])),
         ])
     }

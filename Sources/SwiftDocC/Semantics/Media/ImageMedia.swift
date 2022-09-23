@@ -12,13 +12,26 @@ import Foundation
 import Markdown
 
 /// A block filled with an image.
-public final class ImageMedia: Media, DirectiveConvertible {
+public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     public static let directiveName = "Image"
     
     public let originalMarkup: BlockDirective
     
     /// Optional alternate text for an image.
-    public let altText: String?
+    @DirectiveArgumentWrapped(name: .custom("alt"), required: true)
+    public private(set) var altText: String? = nil
+    
+    @DirectiveArgumentWrapped(
+        parseArgument: { bundle, argumentValue in
+            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+        }
+    )
+    public private(set) var source: ResourceReference
+    
+    static var keyPaths: [String : AnyKeyPath] = [
+        "altText" : \ImageMedia._altText,
+        "source"  : \ImageMedia._source,
+    ]
     
     /// Creates a new image with the given parameters.
     ///
@@ -29,20 +42,13 @@ public final class ImageMedia: Media, DirectiveConvertible {
     init(originalMarkup: BlockDirective, source: ResourceReference, altText: String?) {
         self.originalMarkup = originalMarkup
         self.altText = altText
-        super.init(source: source)
+        super.init()
+        self.source = source
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        let arguments = directive.arguments(problems: &problems)
-        let optionalAlt = Semantic.Analyses.HasArgument<ImageMedia, Semantics.Alt>(severityIfNotFound: .warning).analyze(directive, arguments: arguments, problems: &problems)
-        
-        let requiredSource = Semantic.Analyses.HasArgument<ImageMedia, Media.Semantics.Source>(severityIfNotFound: .warning).analyze(directive, arguments:arguments, problems: &problems).map { argument in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argument)
-        }
-        guard let source = requiredSource else {
-            return nil
-        }
-        self.init(originalMarkup: directive, source: source, altText: optionalAlt)
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: BlockDirective) {
+        self.originalMarkup = originalMarkup
     }
     
     public override func accept<V>(_ visitor: inout V) -> V.Result where V : SemanticVisitor {

@@ -21,6 +21,8 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     let markup: Markup?
     /// An optional container for metadata that's unrelated to the article's content.
     private(set) var metadata: Metadata?
+    /// An optional container for options that are unrelated to the article's content.
+    private(set) var options: [Options.Scope : Options]
     /// An optional list of previously known locations for this article.
     private(set) public var redirects: [Redirect]?
     
@@ -30,10 +32,11 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     ///   - markup: The markup that makes up this article's content.
     ///   - metadata: An optional container for metadata that's unrelated to the article's content.
     ///   - redirects: An optional list of previously known locations for this article.
-    init(markup: Markup?, metadata: Metadata?, redirects: [Redirect]?) {
+    init(markup: Markup?, metadata: Metadata?, redirects: [Redirect]?, options: [Options.Scope : Options]) {
         let markupModel = markup.map { DocumentationMarkup(markup: $0) }
 
         self.markup = markup
+        self.options = options
         self.metadata = metadata
         self.redirects = redirects
         self.discussion = markupModel?.discussionSection
@@ -46,7 +49,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
     }
 
     convenience init(title: Heading?, abstractSection: AbstractSection?, discussion: DiscussionSection?, topics: TopicsSection?, seeAlso: SeeAlsoSection?, deprecationSummary: MarkupContainer?, metadata: Metadata?, redirects: [Redirect]?, automaticTaskGroups: [AutomaticTaskGroupSection]? = nil) {
-        self.init(markup: nil, metadata: metadata, redirects: redirects)
+        self.init(markup: nil, metadata: metadata, redirects: redirects, options: [:])
         self.title = title
         self.abstractSection = abstractSection
         self.discussion = discussion
@@ -131,7 +134,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             guard let childDirective = child as? BlockDirective, childDirective.name == Metadata.directiveName else {
                 return nil
             }
-            return Metadata(from: childDirective, source: source, for: bundle, in: context, problems: &problems)
+            return Metadata(from: childDirective, source: source, for: bundle, in: context)
         }
         
         for extraMetadata in metadata.dropFirst() {
@@ -139,7 +142,61 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
         }
         
         var optionalMetadata = metadata.first
+        
+        let options: [Options]
+        (options, remainder) = remainder.categorize { child -> Options? in
+            guard let childDirective = child as? BlockDirective, childDirective.name == Options.directiveName else {
+                return nil
+            }
+            return Options(
+                from: childDirective,
+                source: source,
+                for: bundle,
+                in: context,
+                problems: &problems
+            )
+        }
+        
+        let allCategorizedOptions = Dictionary(grouping: options, by: \.scope)
+        
+        for (scope, options) in allCategorizedOptions {
+            let extraOptions = options.dropFirst()
+            guard !extraOptions.isEmpty else {
+                continue
+            }
+            
+            let extraOptionsProblems = extraOptions.map { extraOptionsDirective -> Problem in
+                let diagnostic = Diagnostic(
+                    source: source,
+                    severity: .warning,
+                    range: extraOptionsDirective.originalMarkup.range,
+                    identifier: "org.swift.docc.HasAtMostOne<\(Article.self), \(Options.self), \(scope)>.DuplicateChildren",
+                    summary: "Duplicate \(scope) \(Options.directiveName.singleQuoted) directive",
+                    explanation: """
+                    An article can only contain a single \(Options.directiveName.singleQuoted) \
+                    directive with the \(scope.rawValue.singleQuoted) scope.
+                    """
+                )
                 
+                guard let range = extraOptionsDirective.originalMarkup.range else {
+                    return Problem(diagnostic: diagnostic)
+                }
+                
+                let solution = Solution(
+                    summary: "Remove extraneous \(scope) \(Options.directiveName.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+                
+                return Problem(diagnostic: diagnostic, possibleSolutions: [solution])
+            }
+            
+            problems.append(contentsOf: extraOptionsProblems)
+        }
+        
+        let relevantCategorizedOptions = allCategorizedOptions.compactMapValues(\.first)
+        
         let isDocumentationExtension = title.child(at: 0) is AnyLink
         if !isDocumentationExtension, let metadata = optionalMetadata, let displayName = metadata.displayName {
             let diagnosticSummary = """
@@ -164,7 +221,12 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             optionalMetadata = Metadata(originalMarkup: metadata.originalMarkup, documentationExtension: metadata.documentationOptions, technologyRoot: metadata.technologyRoot, displayName: nil)
         }
         
-        self.init(markup: markup, metadata: optionalMetadata, redirects: redirects.isEmpty ? nil : redirects)
+        self.init(
+            markup: markup,
+            metadata: optionalMetadata,
+            redirects: redirects.isEmpty ? nil : redirects,
+            options: relevantCategorizedOptions
+        )
     }
     
     /// Visit the article using a semantic visitor and return the result of visiting the article.

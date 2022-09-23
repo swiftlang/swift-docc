@@ -437,7 +437,7 @@ private class LongRunningProcess: ExternalLinkResolving {
         
         try process.run()
         
-        let errorReadSource = DispatchSource.makeReadSource(fileDescriptor: errorOutput.fileHandleForReading.fileDescriptor)
+        let errorReadSource = DispatchSource.makeReadSource(fileDescriptor: errorOutput.fileHandleForReading.fileDescriptor, queue: .main)
         errorReadSource.setEventHandler { [errorOutput] in
             let data = errorOutput.fileHandleForReading.availableData
             let errorMessage = String(data: data, encoding: .utf8)
@@ -462,23 +462,39 @@ private class LongRunningProcess: ExternalLinkResolving {
         
     func sendAndWait<Request: Codable & CustomStringConvertible, Response: Codable>(request: Request?) throws -> Response {
         if let request = request {
-            guard let requestString = String(
-                    data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
+            guard let requestString = String(data: try JSONEncoder().encode(request), encoding: .utf8)?.appending("\n"),
                   let requestData = requestString.data(using: .utf8)
             else {
                 throw OutOfProcessReferenceResolver.Error.unableToEncodeRequestToClient(requestDescription: request.description)
             }
             input.fileHandleForWriting.write(requestData)
         }
-        let response = output.fileHandleForReading.availableData
+        var response = output.fileHandleForReading.availableData
         guard !response.isEmpty else {
             throw OutOfProcessReferenceResolver.Error.processDidExit(code: Int(process.terminationStatus))
         }
         
-        do {
-            return try JSONDecoder().decode(Response.self, from: response)
-        } catch {
-            throw OutOfProcessReferenceResolver.Error.unableToDecodeResponseFromClient(response, error)
+        // It's not guaranteed that the full response will be available all at once.
+        while true {
+            // If a pipe is empty, checking `availableData` will block until there is new data to read.
+            do {
+                // To avoid blocking forever we check if the response can be decoded after each chunk of data.
+                return try JSONDecoder().decode(Response.self, from: response)
+            } catch {
+                if case DecodingError.dataCorrupted = error,     // If the data wasn't valid JSON, read more data and try to decode it again.
+                    response.count.isMultiple(of: Int(PIPE_BUF)) // To reduce the risk of deadlocking, check that bytes so far is a multiple of the pipe buffer size.
+                {
+                    let moreResponseData = output.fileHandleForReading.availableData
+                    guard !moreResponseData.isEmpty else {
+                        throw OutOfProcessReferenceResolver.Error.processDidExit(code: Int(process.terminationStatus))
+                    }
+                    response += moreResponseData
+                    continue
+                }
+            
+                // Other errors are re-thrown as wrapped errors.
+                throw OutOfProcessReferenceResolver.Error.unableToDecodeResponseFromClient(response, error)
+            }
         }
     }
     

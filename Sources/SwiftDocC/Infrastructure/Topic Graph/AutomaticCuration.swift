@@ -123,6 +123,14 @@ public struct AutomaticCuration {
         renderContext: RenderContext?,
         renderer: DocumentationContentRenderer
     ) throws -> TaskGroup? {
+        if let automaticSeeAlsoOption = node.options?.automaticSeeAlsoBehavior
+            ?? context.options?.automaticSeeAlsoBehavior
+        {
+            guard automaticSeeAlsoOption == .siblingPages else {
+                return nil
+            }
+        }
+        
         // First try getting the canonical path from a render context, default to the documentation context
         guard let canonicalPath = renderContext?.store.content(for: node.reference)?.canonicalPath ?? context.pathsTo(node.reference).first,
             !canonicalPath.isEmpty else {
@@ -187,6 +195,7 @@ extension AutomaticCuration {
             case .`deinit`: return "Deinitializers"
             case .`enum`: return "Enumerations"
             case .`case`: return "Enumeration Cases"
+            case .extension: return "Extensions"
             case .`func`: return "Functions"
             case .`operator`: return "Operators"
             case .`init`: return "Initializers"
@@ -195,7 +204,6 @@ extension AutomaticCuration {
             case .`method`: return "Instance Methods"
             case .`property`: return "Instance Properties"
             case .`protocol`: return "Protocols"
-            case .snippet: return "Snippets"
             case .`struct`: return "Structures"
             case .`subscript`: return "Subscripts"
             case .`typeMethod`: return "Type Methods"
@@ -204,14 +212,21 @@ extension AutomaticCuration {
             case .`typealias`: return "Type Aliases"
             case .`var`: return "Variables"
             case .module: return "Modules"
+            case .extendedModule: return "Extended Modules"
+            case .extendedClass: return "Extended Classes"
+            case .extendedStructure: return "Extended Structures"
+            case .extendedEnumeration: return "Extended Enumerations"
+            case .extendedProtocol: return "Extended Protocols"
+            case .unknownExtendedType: return "Extended Types"
             default: return "Symbols"
         }
     }
 
     /// The order of symbol kinds when grouped automatically.
+    ///
+    /// Add a symbol kind to `KindIdentifier.noPageKinds` if it should not generate a page in the
+    /// documentation hierarchy.
     static let groupKindOrder: [SymbolGraph.Symbol.KindIdentifier] = [
-        .module,
-
         .`class`,
         .`protocol`,
         .`struct`,
@@ -232,6 +247,16 @@ extension AutomaticCuration {
         .`typealias`,
         .`typeProperty`,
         .`typeMethod`,
-        .`enum`
+        .`enum`,
+        .`typeSubscript`,
+        
+        .extendedModule,
+        .extendedClass,
+        .extendedProtocol,
+        .extendedStructure,
+        .extendedEnumeration,
+        .unknownExtendedType,
+
+        .extension,
     ]
 }

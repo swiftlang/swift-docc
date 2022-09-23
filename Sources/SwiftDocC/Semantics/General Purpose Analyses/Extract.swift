@@ -19,18 +19,36 @@ extension Semantic.Analyses {
         public init() {}
         
         public func analyze<Children: Sequence>(_ directive: BlockDirective, children: Children, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> ([Child], remainder: MarkupContainer) where Children.Element == Markup {
-            let (candidates, remainder) = children.categorize { child -> BlockDirective? in
-                guard let childDirective = child as? BlockDirective,
-                    Child.canConvertDirective(childDirective) else {
-                        return nil
-                }
-                return childDirective
-            }
-            let converted = candidates.compactMap {
-                Child(from: $0, source: source, for: bundle, in: context, problems: &problems)
-            }
-            return (converted, remainder: MarkupContainer(remainder))
+            return Semantic.Analyses.extractAll(
+                childType: Child.self,
+                children: children,
+                source: source,
+                for: bundle,
+                in: context,
+                problems: &problems
+            ) as! ([Child], MarkupContainer)
         }
+    }
+    
+    static func extractAll<Children: Sequence>(
+        childType: DirectiveConvertible.Type,
+        children: Children,
+        source: URL?,
+        for bundle: DocumentationBundle,
+        in context: DocumentationContext,
+        problems: inout [Problem]
+    ) -> ([DirectiveConvertible], remainder: MarkupContainer) where Children.Element == Markup {
+        let (candidates, remainder) = children.categorize { child -> BlockDirective? in
+            guard let childDirective = child as? BlockDirective,
+                childType.canConvertDirective(childDirective) else {
+                    return nil
+            }
+            return childDirective
+        }
+        let converted = candidates.compactMap {
+            childType.init(from: $0, source: source, for: bundle, in: context, problems: &problems)
+        }
+        return (converted, remainder: MarkupContainer(remainder))
     }
     
     /**

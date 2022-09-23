@@ -16,13 +16,24 @@ import XCTest
 class AutomaticCurationTests: XCTestCase {
     func testAutomaticTopics() throws {
         // Create each kind of symbol and verify it gets its own topic group automatically
-        for kind in AutomaticCuration.groupKindOrder where kind != .module {
+        let decoder = JSONDecoder()
+
+        var availableSymbolKinds = Set(AutomaticCuration.groupKindOrder)
+        availableSymbolKinds.formUnion(SymbolGraph.Symbol.KindIdentifier.allCases)
+
+        for kind in availableSymbolKinds where kind.symbolGeneratesPage() {
+            // TODO: Synthesize appropriate `swift.extension` symbols that get transformed into
+            // the respective internal symbol kinds as defined by `ExtendedTypeFormatTransformation`
+            // and remove decoder injection logic from `DocumentationContext` and `SymbolGraphLoader`
+            if !SymbolGraph.Symbol.KindIdentifier.allCases.contains(kind) {
+                decoder.register(symbolKinds: kind)
+            }
             let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: [], codeListings: [:], configureBundle: { url in
                 let sidekitURL = url.appendingPathComponent("sidekit.symbols.json")
                 let text = try String(contentsOf: sidekitURL)
                     .replacingOccurrences(of: "\"identifier\" : \"swift.enum.case\"", with: "\"identifier\" : \"\(kind.identifier)\"")
                 try text.write(to: sidekitURL, atomically: true, encoding: .utf8)
-            })
+            }, decoder: decoder)
 
             let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass", sourceLanguage: .swift))
             // Compile docs and verify the generated Topics section
@@ -32,7 +43,7 @@ class AutomaticCurationTests: XCTestCase {
             
             XCTAssertNotNil(renderNode.topicSections.first(where: { group -> Bool in
                 return group.title == AutomaticCuration.groupTitle(for: kind)
-            }), "\(kind.identifier) was not automatically curated in a \(AutomaticCuration.groupTitle(for: kind).singleQuoted) topic group." )
+            }), "\(kind.identifier) was not automatically curated in a \(AutomaticCuration.groupTitle(for: kind).singleQuoted) topic group. Please add it to either AutomaticCuration.groupKindOrder or KindIdentifier.noPageKinds." )
         }
     }
 
@@ -490,6 +501,41 @@ class AutomaticCurationTests: XCTestCase {
             [
                 "Instance Variables",
                 "/documentation/Whatsit/Whatsit/Ivar",
+            ]
+        )
+    }
+
+    func testTypeSubscriptsAreCuratedProperly() throws {
+        let symbolURL = Bundle.module.url(
+            forResource: "TypeSubscript.symbols", withExtension: "json", subdirectory: "Test Resources")!
+
+        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            try? FileManager.default.copyItem(at: symbolURL, to: url.appendingPathComponent("TypeSubscript.symbols.json"))
+        }
+        defer {
+            try? FileManager.default.removeItem(at: bundleURL)
+        }
+
+        let containerDocumentationNode = try context.entity(
+            with: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/documentation/ThirdOrder/SomeStruct",
+                sourceLanguages: [.swift]
+            )
+        )
+        let topics = try AutomaticCuration.topics(
+            for: containerDocumentationNode,
+            withTrait: DocumentationDataVariantsTrait(interfaceLanguage: "swift"),
+            context: context
+        )
+
+        XCTAssertEqual(
+            topics.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.references.map(\.path)
+            },
+            [
+                "Type Subscripts",
+                "/documentation/ThirdOrder/SomeStruct/subscript(_:)",
             ]
         )
     }

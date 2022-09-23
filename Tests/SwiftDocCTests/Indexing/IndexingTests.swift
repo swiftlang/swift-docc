@@ -63,11 +63,11 @@ class IndexingTests: XCTestCase {
     
     func testTutorialSection() throws {
         var contentSection = ContentAndMediaSection(layout: .vertical, title: nil, media: RenderReferenceIdentifier("Image"), mediaPosition: .leading)
-        contentSection.content = [.paragraph(inlineContent: [.text("Hello, world!")])]
+        contentSection.content = [.paragraph(.init(inlineContent: [.text("Hello, world!")]))]
         
         let tutorialSectionsSection = TutorialSectionsRenderSection(sections: [
-            .init(title: "Section 1", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(inlineContent: [.text("This is a step.")])], anchor: "section-1"),
-            .init(title: "Section 2", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(inlineContent: [.text("This is a step.")])], anchor: "section-2"),
+            .init(title: "Section 1", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(.init(inlineContent: [.text("This is a step.")]))], anchor: "section-1"),
+            .init(title: "Section 2", contentSection: [.contentAndMedia(content: contentSection)], stepsSection: [.paragraph(.init(inlineContent: [.text("This is a step.")]))], anchor: "section-2"),
         ])
         let tutorialReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/TestTutorial", sourceLanguage: .swift)
         let indexingRecords = try tutorialSectionsSection.indexingRecords(onPage: tutorialReference, references: [:])
@@ -143,45 +143,45 @@ class IndexingTests: XCTestCase {
     // MARK: - Blocks
     
     func testRenderBlockContentUnorderedList() {
-        let list = RenderBlockContent.unorderedList(items: [
+        let list = RenderBlockContent.unorderedList(.init(items: [
             .init(content: [
-            .paragraph(inlineContent: [.text("Hello, ")]),
+            .paragraph(.init(inlineContent: [.text("Hello, ")])),
                 ]),
             .init(content: [
-                .paragraph(inlineContent: [.text("world!")]),
+                .paragraph(.init(inlineContent: [.text("world!")])),
                 ]),
-            ])
+            ]))
         XCTAssertEqual([], list.headings)
         XCTAssertEqual("Hello,  world!", list.rawIndexableTextContent(references: [:]))
     }
     
     func testRenderBlockContentStep() {
-        let step = RenderBlockContent.step(content: [.paragraph(inlineContent: [.text("Hello, world!")])], caption: [.paragraph(inlineContent: [.text("Step caption")])], media: RenderReferenceIdentifier("Media"), code: RenderReferenceIdentifier("Code"), runtimePreview: RenderReferenceIdentifier("Preview"))
+        let step = RenderBlockContent.step(.init(content: [.paragraph(.init(inlineContent: [.text("Hello, world!")]))], caption: [.paragraph(.init(inlineContent: [.text("Step caption")]))], media: RenderReferenceIdentifier("Media"), code: RenderReferenceIdentifier("Code"), runtimePreview: RenderReferenceIdentifier("Preview")))
         XCTAssertEqual([], step.headings)
         XCTAssertEqual("Hello, world! Step caption", step.rawIndexableTextContent(references: [:]))
     }
     
     func testRenderBlockContentParagraph() {
-        let paragraph = RenderBlockContent.paragraph(inlineContent: [.text("Hello, world!")])
+        let paragraph = RenderBlockContent.paragraph(.init(inlineContent: [.text("Hello, world!")]))
         XCTAssertEqual([], paragraph.headings)
         XCTAssertEqual("Hello, world!", paragraph.rawIndexableTextContent(references: [:]))
     }
     
     func testRenderBlockContentOrderedList() {
-        let list = RenderBlockContent.orderedList(items: [
+        let list = RenderBlockContent.orderedList(.init(items: [
             .init(content: [
-                .paragraph(inlineContent: [.text("Hello, ")]),
+                .paragraph(.init(inlineContent: [.text("Hello, ")])),
                 ]),
             .init(content: [
-                .paragraph(inlineContent: [.text("world!")]),
+                .paragraph(.init(inlineContent: [.text("world!")])),
                 ]),
-            ])
+            ]))
         XCTAssertEqual([], list.headings)
         XCTAssertEqual("Hello,  world!", list.rawIndexableTextContent(references: [:]))
     }
     
     func testRenderBlockContentAside() {
-        let aside = RenderBlockContent.aside(style: .init(rawValue: "Experiment"), content: [.paragraph(inlineContent: [.text("Hello, world!")])])
+        let aside = RenderBlockContent.aside(.init(style: .init(rawValue: "Experiment"), content: [.paragraph(.init(inlineContent: [.text("Hello, world!")]))]))
         XCTAssertEqual([], aside.headings)
         XCTAssertEqual("Hello, world!", aside.rawIndexableTextContent(references: [:]))
     }
@@ -237,7 +237,7 @@ class IndexingTests: XCTestCase {
                                       title: "MyProtocol",
                                       summary: "An abstract of a protocol using a String id value.",
                                       headings: ["Return Value", "Discussion"],
-                                      rawIndexableTextContent: "An abstract of a protocol using a String id value.  Return Value A String id value. A name of the item to find. Discussion Further discussion. Exercise links to symbols: relative MyClass and absolute MyClass. Exercise unresolved symbols: unresolved MyUnresolvedSymbol. Exercise known unresolvable symbols: know unresolvable NSCodable. Exercise external references: doc://com.test.external/ExternalPage One ordered Two ordered Three ordered One unordered Two unordered Three unordered",
+                                      rawIndexableTextContent: "An abstract of a protocol using a String id value.  A name of the item to find. Return Value A String id value. Discussion Further discussion. Exercise links to symbols: relative MyClass and absolute MyClass. Exercise unresolved symbols: unresolved MyUnresolvedSymbol. Exercise known unresolvable symbols: know unresolvable NSCodable. Exercise external references: doc://com.test.external/ExternalPage One ordered Two ordered Three ordered One unordered Two unordered Three unordered",
                                      platforms: expectedPlatformInformation),
                        indexingRecords[0])
     }

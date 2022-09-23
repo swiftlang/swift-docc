@@ -11,16 +11,24 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import Markdown
 
 extension XCTestCase {
     
     /// Loads a documentation bundle from the given source URL and creates a documentation context.
-    func loadBundle(from bundleURL: URL, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil, diagnosticFilterLevel: DiagnosticSeverity = .hint, configureContext: ((DocumentationContext) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    func loadBundle(from bundleURL: URL,
+                    codeListings: [String : AttributedCodeListing] = [:],
+                    externalResolvers: [String: ExternalReferenceResolver] = [:],
+                    externalSymbolResolver: ExternalSymbolResolver? = nil,
+                    diagnosticFilterLevel: DiagnosticSeverity = .hint,
+                    configureContext: ((DocumentationContext) throws -> Void)? = nil,
+                    decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let workspace = DocumentationWorkspace()
         let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel))
         context.externalReferenceResolvers = externalResolvers
         context.externalSymbolResolver = externalSymbolResolver
         context.externalMetadata.diagnosticLevel = diagnosticFilterLevel
+        context.decoder = decoder
         try configureContext?(context)
         // Load the bundle using automatic discovery
         let automaticDataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
@@ -32,7 +40,13 @@ extension XCTestCase {
         return (bundleURL, bundle, context)
     }
     
-    func testBundleAndContext(copying name: String, excludingPaths excludedPaths: [String] = [], codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [BundleIdentifier : ExternalReferenceResolver] = [:], externalSymbolResolver: ExternalSymbolResolver? = nil,  configureBundle: ((URL) throws -> Void)? = nil) throws -> (URL, DocumentationBundle, DocumentationContext) {
+    func testBundleAndContext(copying name: String,
+                              excludingPaths excludedPaths: [String] = [],
+                              codeListings: [String : AttributedCodeListing] = [:],
+                              externalResolvers: [BundleIdentifier : ExternalReferenceResolver] = [:],
+                              externalSymbolResolver: ExternalSymbolResolver? = nil,
+                              configureBundle: ((URL) throws -> Void)? = nil,
+                              decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let sourceURL = try XCTUnwrap(Bundle.module.url(
             forResource: name, withExtension: "docc", subdirectory: "Test Bundles"))
         
@@ -52,7 +66,7 @@ extension XCTestCase {
         // Do any additional setup to the custom bundle - adding, modifying files, etc
         try configureBundle?(bundleURL)
         
-        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers, externalSymbolResolver: externalSymbolResolver)
+        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers, externalSymbolResolver: externalSymbolResolver, decoder: decoder)
     }
     
     func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:]) throws -> (DocumentationBundle, DocumentationContext) {
@@ -76,4 +90,90 @@ extension XCTestCase {
         return bundles[0]
     }
     
+    func testBundleAndContext() throws -> (bundle: DocumentationBundle, context: DocumentationContext) {
+        let bundle = DocumentationBundle(
+            info: DocumentationBundle.Info(
+                displayName: "Test",
+                identifier: "com.example.test",
+                version: "1.0"
+            ),
+            baseURL: URL(string: "https://example.com/example")!,
+            symbolGraphURLs: [],
+            markupURLs: [],
+            miscResourceURLs: []
+        )
+        let provider = PrebuiltLocalFileSystemDataProvider(bundles: [bundle])
+        let workspace = DocumentationWorkspace()
+        try workspace.registerProvider(provider)
+        let context = try DocumentationContext(dataProvider: workspace)
+        
+        return (bundle, context)
+    }
+    
+    func parseDirective<Directive: DirectiveConvertible>(
+        _ directive: Directive.Type,
+        source: () -> String
+    ) throws -> (problemIdentifiers: [String], directive: Directive?) {
+        let (bundle, context) = try testBundleAndContext()
+        
+        let document = Document(parsing: source(), options: .parseBlockDirectives)
+        
+        let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
+        
+        var problems = [Problem]()
+        let directive = directive.init(
+            from: blockDirectiveContainer,
+            source: nil,
+            for: bundle,
+            in: context,
+            problems: &problems
+        )
+        
+        let problemIDs = problems.map { problem -> String in
+            let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
+            
+            return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
+        }.sorted()
+        
+        return (problemIDs, directive)
+    }
+    
+    func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
+        source: () -> String
+    ) throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
+        let (bundle, context) = try testBundleAndContext()
+        
+        let document = Document(parsing: source(), options: .parseBlockDirectives)
+        
+        let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
+        
+        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
+        let result = analyzer.visit(blockDirectiveContainer)
+        
+        let problemIDs = analyzer.problems.map { problem -> String in
+            let line = problem.diagnostic.range?.lowerBound.line.description ?? "unknown-line"
+            
+            return "\(line): \(problem.diagnostic.severity) – \(problem.diagnostic.identifier)"
+        }.sorted()
+        
+        guard let directive = result as? Directive else {
+            return ([], problemIDs, nil)
+        }
+        
+        var contentCompiler = RenderContentCompiler(
+            context: context,
+            bundle: bundle,
+            identifier: ResolvedTopicReference(
+                bundleIdentifier: bundle.identifier,
+                path: "/test-path-123",
+                sourceLanguage: .swift
+            )
+        )
+        
+        let renderedContent = try XCTUnwrap(
+            directive.render(with: &contentCompiler) as? [RenderBlockContent]
+        )
+        return (renderedContent, problemIDs, directive)
+    }
 }

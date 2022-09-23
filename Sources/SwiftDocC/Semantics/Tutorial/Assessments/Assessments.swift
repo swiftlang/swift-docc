@@ -12,31 +12,30 @@ import Foundation
 import Markdown
 
 /// A collection of questions about the concepts the documentation presents.
-public final class Assessments: Semantic, DirectiveConvertible {
-    public static let directiveName = "Assessments"
+public final class Assessments: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
     /// The multiple-choice questions that make up the assessment.
-    public let questions: [MultipleChoice]
+    @ChildDirective(requirements: .oneOrMore)
+    public private(set) var questions: [MultipleChoice]
     
     override var children: [Semantic] {
         return questions
     }
     
+    static var keyPaths: [String : AnyKeyPath] = [
+        "questions" : \Assessments._questions
+    ]
+    
     init(originalMarkup: BlockDirective, questions: [MultipleChoice]) {
         self.originalMarkup = originalMarkup
+        super.init()
         self.questions = questions
     }
     
-    public convenience init?(from directive: BlockDirective, source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) {
-        precondition(directive.name == Assessments.directiveName)
-        
-        _ = Semantic.Analyses.HasOnlyKnownArguments<Assessments>(severityIfFound: .warning, allowedArguments: []).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        Semantic.Analyses.HasOnlyKnownDirectives<Assessments>(severityIfFound: .warning, allowedDirectives: [MultipleChoice.directiveName]).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        
-        let (questions, _) = Semantic.Analyses.HasAtLeastOne<Assessments, MultipleChoice>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
-        self.init(originalMarkup: directive, questions: questions)
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: BlockDirective) {
+        self.originalMarkup = originalMarkup
     }
     
     public override func accept<V: SemanticVisitor>(_ visitor: inout V) -> V.Result {

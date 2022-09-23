@@ -24,17 +24,65 @@ Distributing your documentation involves the following steps:
 
 ### Generate a Publishable Archive of Your Documentation
 
-To create a documentation archive, use the `docc` command-line tool.
+To create a documentation archive for a Swift package, use the [SwiftPM DocC
+Plugin](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/)
+or use Xcode's _Build Documentation_ command.
 
-To export the documentation archive from the command line, run `docc` in Terminal. 
-
-For example, to build a documentation archive, use a command similar to the
-following:
+Alternatively, use the `docc` command-line tool directly, for example:
 
 ```shell 
-docc convert MyNewPackage.docc --fallback-display-name MyNewPackage --fallback-bundle-identifier com.example.MyNewPackage --fallback-bundle-version 1 --additional-symbol-graph-dir .build --output-dir MyNewPackage.doccarchive
+docc convert MyNewPackage.docc \
+  --fallback-display-name MyNewPackage \
+  --fallback-bundle-identifier com.example.MyNewPackage \
+  --fallback-bundle-version 1 \
+  --additional-symbol-graph-dir .build \
+  --output-dir MyNewPackage.doccarchive
 ```
 
+#### Include links to your project's sources
+
+When publishing documentation to an audience that has access to your project's
+sources, e.g., for an open-source project hosted on GitHub, consider configuring
+DocC to automatically include links to the declarations of your project's symbols.
+
+For example, in the following screenshot, the "ParsableCommand.swift" link
+below the declaration navigates to the `ParsableCommand` declaration in the
+project's GitHub repository.
+
+![A DocC documentation page showing the title and declaration of a symbol
+called ParsableCommand. Under the declaration, there is a link with a Swift
+icon and the file name ParsableCommand.swift](link-to-source.png)
+
+To configure DocC to generate links to your project's sources, use the source
+service configuration flags like so:
+
+**GitHub**
+```bash
+docc convert […] \
+    --source-service github \
+    --source-service-base-url https://github.com/<org>/<repo>/blob/<branch> \
+    --checkout-path <path to local checkout>
+```
+
+**GitLab**
+```bash
+docc convert […] \
+    --source-service gitlab \
+    --source-service-base-url https://gitlab.com/<org>/<repo>/-/tree/<branch> \
+    --checkout-path <path to local checkout>
+```
+
+**BitBucket**
+```bash
+docc convert […] \
+    --source-service bitbucket \
+    --source-service-base-url https://bitbucket.org/<org>/<repo>/src/<branch> \
+    --checkout-path <path to local checkout>
+```
+
+These arguments can also be provided to `swift package generate-documentation`
+if you're using the SwiftPM DocC Plugin or via the `OTHER_DOCC_FLAGS` build
+setting when building in Xcode.
 
 ### Send a Documentation Archive Directly to Developers
 

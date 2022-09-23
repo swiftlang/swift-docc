@@ -61,6 +61,16 @@ public struct DocumentationNode {
     
     /// If true, the node was created implicitly and should not generally be rendered as a page of documentation.
     public var isVirtual: Bool
+    
+    /// The authored options for this node.
+    ///
+    /// Allows for control of settings such as automatic see also generation.
+    public var options: Options?
+
+    /// Authored metadata for the node.
+    ///
+    /// Documentation authors can add metadata to a page using the ``Metadata`` directive.
+    public var metadata: Metadata?
 
     /// A discrete unit of documentation
     struct DocumentationChunk {
@@ -137,6 +147,15 @@ public struct DocumentationNode {
         self.platformNames = platformNames
         self.docChunks = [DocumentationChunk(source: .sourceCode(location: nil), markup: markup)]
         self.isVirtual = isVirtual
+        
+        if let article = semantic as? Article {
+            self.options = article.options[.local]
+            self.metadata = article.metadata
+        } else {
+            self.options = nil
+            self.metadata = nil
+        }
+        
         updateAnchorSections()
     }
 
@@ -351,6 +370,9 @@ public struct DocumentationNode {
             )
         }
         
+        options = documentationExtension?.options[.local]
+        self.metadata = documentationExtension?.metadata
+        
         updateAnchorSections()
     }
     
@@ -467,8 +489,13 @@ public struct DocumentationNode {
         case .`typeSubscript`: return .typeSubscript
         case .`typealias`: return .typeAlias
         case .`var`: return .globalVariable
-
         case .module: return .module
+        case .extendedModule: return .extendedModule
+        case .extendedStructure: return .extendedStructure
+        case .extendedClass: return .extendedClass
+        case .extendedEnumeration: return .extendedEnumeration
+        case .extendedProtocol: return .extendedProtocol
+        case .unknownExtendedType: return .unknownExtendedType
         default: return .unknown
         }
     }
@@ -603,6 +630,8 @@ public struct DocumentationNode {
         self.docChunks = [DocumentationChunk(source: .documentationExtension, markup: articleMarkup)]
         self.markup = articleMarkup
         self.isVirtual = false
+        self.options = article.options[.local]
+        self.metadata = article.metadata
         
         updateAnchorSections()
     }
