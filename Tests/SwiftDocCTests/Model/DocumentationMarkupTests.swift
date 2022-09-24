@@ -662,4 +662,60 @@ class DocumentationMarkupTests: XCTestCase {
             )
         }
     }
+    
+    func testComments() {
+        let source = """
+        # Title
+        <!--Line a-->
+        
+        Line b
+        
+        @Comment { Line c This is a single-line comment }
+        
+        Line d
+        
+        @Comment{
+            Line e
+        }
+        
+        Line f
+        """
+        let documentation = Document(parsing: source, options: .parseBlockDirectives)
+        let expected = """
+        Document
+        ├─ Heading level: 1
+        │  └─ Text "Title"
+        ├─ HTMLBlock
+        │  <!--Line a-->
+        ├─ Paragraph
+        │  └─ Text "Line b"
+        ├─ BlockDirective name: "Comment"
+        │  └─ Paragraph
+        │     └─ Text "Line c This is a single-line comment"
+        ├─ Paragraph
+        │  └─ Text "Line d"
+        ├─ BlockDirective name: "Comment"
+        │  └─ Paragraph
+        │     └─ Text "Line e"
+        └─ Paragraph
+           └─ Text "Line f"
+        """
+        XCTAssertEqual(expected, documentation.debugDescription())
+        
+        let model = DocumentationMarkup(markup: documentation)
+        let expectedAbstract = """
+        Text \"Line b\"
+        """
+        let expectedDiscussion = """
+        Paragraph
+        └─ Text "Line d"
+        BlockDirective name: "Comment"
+        └─ Paragraph
+           └─ Text "Line e"
+        Paragraph
+        └─ Text "Line f"
+        """
+        XCTAssertEqual(expectedAbstract, model.abstractSection?.content.map{ $0.detachedFromParent.debugDescription() }.joined(separator: "\n"))
+        XCTAssertEqual(expectedDiscussion, model.discussionSection?.content.map{ $0.detachedFromParent.debugDescription() }.joined(separator: "\n"))
+    }
 }
