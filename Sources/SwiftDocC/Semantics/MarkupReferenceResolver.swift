@@ -168,6 +168,8 @@ struct MarkupReferenceResolver: MarkupRewriter {
             } else {
                 return blockDirective
             }
+        case Comment.directiveName:
+            return blockDirective
         default:
             return defaultVisit(blockDirective)
         }
