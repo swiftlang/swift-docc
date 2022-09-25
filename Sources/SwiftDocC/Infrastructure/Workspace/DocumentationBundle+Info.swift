@@ -151,15 +151,20 @@ extension DocumentationBundle {
                 _ expectedType: T.Type, with key: CodingKeys,
                 fallback: T? = nil
             ) throws -> T where T : Decodable {
-                if let bundleDiscoveryOptions = bundleDiscoveryOptions {
-                    return try values?.decodeIfPresent(T.self, forKey: key)
+                do {
+                    if let bundleDiscoveryOptions = bundleDiscoveryOptions {
+                        return try values?.decodeIfPresent(T.self, forKey: key)
                         ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
-                } else if let fallback = fallback {
-                    return try values?.decodeIfPresent(T.self, forKey: key) ?? fallback
-                } else if let values = values {
-                    return try values.decode(T.self, forKey: key)
-                } else {
-                    throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)
+                    } else if let values = values {
+                        return try values.decode(T.self, forKey: key)
+                    } else {
+                        throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)
+                    }
+                } catch {
+                    if let fallback = fallback {
+                        return fallback
+                    }
+                    throw error
                 }
             }
             
