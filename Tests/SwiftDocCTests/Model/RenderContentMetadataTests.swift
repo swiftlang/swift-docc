@@ -102,6 +102,7 @@ class RenderContentMetadataTests: XCTestCase {
                 XCTAssertEqual(t.rows[0].cells.map(renderCell), ["Column 1", "Column 2"])
                 XCTAssertEqual(t.rows[1].cells.map(renderCell), ["Cell 1", "Cell 2"])
                 XCTAssertEqual(t.rows[2].cells.map(renderCell), ["Cell 3", "Cell 4"])
+                XCTAssertNil(t.alignments)
             default: XCTFail("Unexpected element")
         }
     }
@@ -152,6 +153,7 @@ class RenderContentMetadataTests: XCTestCase {
                 for expectedData in expectedExtendedData {
                     XCTAssert(t.extendedData.contains(expectedData))
                 }
+                XCTAssertNil(t.alignments)
             default: XCTFail("Unexpected element")
         }
 
