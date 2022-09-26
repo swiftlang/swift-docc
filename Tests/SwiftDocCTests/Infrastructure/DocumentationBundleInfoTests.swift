@@ -354,4 +354,29 @@ class DocumentationBundleInfoTests: XCTestCase {
             )
         )
     }
+    
+    func testDisplayNameAsIdentifierFallback() {
+        let infoPlistWithoutRequiredKeys = """
+        <plist version="1.0">
+        <dict>
+        <key>CFBundleDisplayName</key>
+        <string>Example</string>
+        </dict>
+        </plist>
+        """
+        
+        let infoPlistWithoutRequiredKeysData = Data(infoPlistWithoutRequiredKeys.utf8)
+        
+        XCTAssertEqual(
+            try DocumentationBundle.Info(
+                from: infoPlistWithoutRequiredKeysData,
+                bundleDiscoveryOptions: nil
+            ),
+            DocumentationBundle.Info(
+                displayName: "Example",
+                identifier: "Example",
+                version: nil
+            )
+        )
+    }
 }

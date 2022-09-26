@@ -180,6 +180,12 @@ extension DocumentationBundle {
                 } ?? []
             )
             
+            // If present, we can use `Info.displayName` as a fallback
+            // for `Info.identifier`.
+            if givenKeys.contains(.displayName) {
+                givenKeys.insert(.identifier)
+            }
+            
             // If present, we can use the `derivedDisplayName`
             // as a fallback for the `Info.displayName` and `Info.identifier`.
             if derivedDisplayName != nil {
@@ -197,7 +203,7 @@ extension DocumentationBundle {
             // decode them for some reason.
             
             self.displayName = try decodeOrFallback(String.self, with: .displayName, fallback: derivedDisplayName)
-            self.identifier = try decodeOrFallback(String.self, with: .identifier, fallback: derivedDisplayName)
+            self.identifier = try decodeOrFallback(String.self, with: .identifier, fallback: self.displayName)
             self.version = try decodeOrFallbackIfPresent(String.self, with: .version)
             
             // Finally, decode the optional keys if they're present.
