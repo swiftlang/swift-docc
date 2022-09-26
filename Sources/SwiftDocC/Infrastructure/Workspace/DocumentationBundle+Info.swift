@@ -146,7 +146,7 @@ extension DocumentationBundle {
             }
             
             /// Helper function that decodes a value of the given type for the given key
-            /// in either the Codable container or Info.plist fallbacks or an optional fallback value.
+            /// in either the Codable container, Info.plist fallbacks or an optional fallback value.
             func decodeOrFallback<T>(
                 _ expectedType: T.Type, with key: CodingKeys,
                 fallback: T? = nil
