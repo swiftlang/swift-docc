@@ -37,7 +37,7 @@ class RenderContentMetadataTests: XCTestCase {
             RenderInlineContent.text("Content"),
         ])
         
-        let table = RenderBlockContent.table(.init(header: .both, alignments: [], rows: [], extendedData: [], metadata: metadata))
+        let table = RenderBlockContent.table(.init(header: .both, rows: [], extendedData: [], metadata: metadata))
         let data = try JSONEncoder().encode(table)
         let roundtrip = try JSONDecoder().decode(RenderBlockContent.self, from: data)
         

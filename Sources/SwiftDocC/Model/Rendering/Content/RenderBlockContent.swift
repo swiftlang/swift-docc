@@ -253,7 +253,7 @@ public enum RenderBlockContent: Equatable {
         public var metadata: RenderContentMetadata?
 
         /// Creates a new table with the given data.
-        public init(header: HeaderType, alignments: [ColumnAlignment]?, rows: [TableRow], extendedData: Set<TableCellExtendedData>, metadata: RenderContentMetadata? = nil) {
+        public init(header: HeaderType, alignments: [ColumnAlignment]? = nil, rows: [TableRow], extendedData: Set<TableCellExtendedData>, metadata: RenderContentMetadata? = nil) {
             self.header = header
             self.rows = rows
             self.extendedData = extendedData
