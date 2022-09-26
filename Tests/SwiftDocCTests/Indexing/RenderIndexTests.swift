@@ -657,6 +657,11 @@ final class RenderIndexTests: XCTestCase {
                         "title" : "My Article",
                         "icon" : "plus.svg",
                         "type" : "article"
+                      },
+                      {
+                        "path" : "\/documentation\/bestbook\/tabnavigatorarticle",
+                        "title" : "Tab Navigator Article",
+                        "type" : "article"
                       }
                     ]
                   },

@@ -432,6 +432,9 @@
                         "$ref": "#/components/schemas/Row"
                     },
                     {
+                        "$ref": "#/components/schemas/TabNavigator"
+                    },
+                    {
                         "$ref": "#/components/schemas/Aside"
                     },
                     {
@@ -592,6 +595,43 @@
                     },
                     "size": {
                         "type": "number"
+                    }
+                }
+            },
+            "TabNavigator": {
+                "type": "object",
+                "required": [
+                    "kind",
+                    "tabs"
+                ],
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["tabNavigator"]
+                    },
+                    "tabs": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tab"
+                        }
+                    }
+                }
+            },
+            "Tab": {
+                "type": "object",
+                "required": [
+                    "content",
+                    "title"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderBlockContent"
+                        }
                     }
                 }
             },

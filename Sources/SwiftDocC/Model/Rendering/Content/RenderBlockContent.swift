@@ -66,6 +66,9 @@ public enum RenderBlockContent: Equatable {
     
     /// A paragraph of small print content that should be rendered in a small font.
     case small(Small)
+    
+    /// A collection of content that should be rendered in a tab-based layout.
+    case tabNavigator(TabNavigator)
 
     // Warning: If you add a new case to this enum, make sure to handle it in the Codable
     // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
@@ -476,6 +479,21 @@ public enum RenderBlockContent: Equatable {
         /// The inline content that should be rendered.
         public let inlineContent: [RenderInlineContent]
     }
+    
+    /// A collection of content that should be rendered in a tab-based layout.
+    public struct TabNavigator: Codable, Equatable {
+        /// The tabs that make up this tab navigator.
+        public let tabs: [Tab]
+        
+        /// A titled tab inside a tab-based layout container.
+        public struct Tab: Codable, Equatable {
+            /// The title that should be used to identify this tab.
+            public let title: String
+            
+            /// The content that should be rendered in this tab.
+            public let content: [RenderBlockContent]
+        }
+    }
 }
 
 // Writing a manual Codable implementation for tables because the encoding of `extendedData` does
@@ -563,6 +581,7 @@ extension RenderBlockContent: Codable {
         case request, response
         case header, rows
         case numberOfColumns, columns
+        case tabs
     }
     
     public init(from decoder: Decoder) throws {
@@ -616,11 +635,17 @@ extension RenderBlockContent: Codable {
             self = try .small(
                 Small(inlineContent: container.decode([RenderInlineContent].self, forKey: .inlineContent))
             )
+        case .tabNavigator:
+            self = try .tabNavigator(
+                TabNavigator(
+                    tabs: container.decode([TabNavigator.Tab].self, forKey: .tabs)
+                )
+            )
         }
     }
     
     private enum BlockType: String, Codable {
-        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small
+        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator
     }
     
     private var type: BlockType {
@@ -638,6 +663,7 @@ extension RenderBlockContent: Codable {
         case .termList: return .termList
         case .row: return .row
         case .small: return .small
+        case .tabNavigator: return .tabNavigator
         default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
@@ -688,6 +714,8 @@ extension RenderBlockContent: Codable {
             try container.encode(row.columns, forKey: .columns)
         case .small(let small):
             try container.encode(small.inlineContent, forKey: .inlineContent)
+        case .tabNavigator(let tabNavigator):
+            try container.encode(tabNavigator.tabs, forKey: .tabs)
         default:
             fatalError("unknown RenderBlockContent case in encode method")
         }

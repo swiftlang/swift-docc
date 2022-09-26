@@ -1092,6 +1092,48 @@ class RenderNodeTranslatorTests: XCTestCase {
         )
     }
     
+    func testTabNavigator() throws {
+        let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/BestBook/TabNavigatorArticle",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        
+        let discussion = try XCTUnwrap(
+            renderNode.primaryContentSections.first(
+                where: { $0.kind == .content }
+            ) as? ContentRenderSection
+        )
+        
+        guard case let .tabNavigator(tabNavigator) = discussion.content.dropFirst().first else {
+            XCTFail("Expected to find tab as first child.")
+            return
+        }
+        
+
+        guard tabNavigator.tabs.count == 3 else {
+            XCTFail("Expected to find a tab navigator with '3' tabs")
+            return
+        }
+        
+        XCTAssertEqual(tabNavigator.tabs[0].title, "Powers")
+        XCTAssertEqual(tabNavigator.tabs[1].title, "Exercise routines")
+        XCTAssertEqual(tabNavigator.tabs[2].title, "Hats")
+        
+        XCTAssertEqual(tabNavigator.tabs[0].content.count, 1)
+        XCTAssertEqual(tabNavigator.tabs[1].content.count, 2)
+        XCTAssertEqual(tabNavigator.tabs[2].content.count, 1)
+    }
+    
     func testCustomPageImage() throws {
          let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
          let reference = ResolvedTopicReference(
