@@ -433,20 +433,6 @@ class DocumentationMarkupTests: XCTestCase {
             let model = DocumentationMarkup(markup: Document(parsing: source))
             XCTAssertNil(model.topicsSection)
         }
-
-        // Missing task group heading
-        do {
-            let source = """
-            # Title
-            My abstract __content__.
-            ## Topics
-             - <doc:link>
-            ## See Also
-             - <doc:link>
-            """
-            let model = DocumentationMarkup(markup: Document(parsing: source))
-            XCTAssertNil(model.topicsSection)
-        }
     }
     
     func testSeeAlso() throws {
