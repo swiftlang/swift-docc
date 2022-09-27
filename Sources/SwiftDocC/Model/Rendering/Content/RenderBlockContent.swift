@@ -618,7 +618,14 @@ extension RenderBlockContent.Table: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.header = try container.decode(RenderBlockContent.HeaderType.self, forKey: .header)
-        self.alignments = try container.decodeIfPresent([RenderBlockContent.ColumnAlignment].self, forKey: .alignments)
+
+        let rawAlignments = try container.decodeIfPresent([RenderBlockContent.ColumnAlignment].self, forKey: .alignments)
+        if let alignments = rawAlignments, !alignments.allSatisfy({ $0 == .unset }) {
+            self.alignments = alignments
+        } else {
+            self.alignments = nil
+        }
+
         self.rows = try container.decode([RenderBlockContent.TableRow].self, forKey: .rows)
         self.metadata = try container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
 
