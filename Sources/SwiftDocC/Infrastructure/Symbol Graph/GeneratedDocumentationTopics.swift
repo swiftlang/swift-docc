@@ -189,7 +189,14 @@ enum GeneratedDocumentationTopics {
         )
         
         let collectionTaskGroups = try AutomaticCuration.topics(for: temporaryCollectionNode, withTrait: nil, context: context)
-            .map({ AutomaticTaskGroupSection(title: $0.title, references: $0.references, renderPositionPreference: .bottom) })
+            .map { taskGroup in
+                AutomaticTaskGroupSection(
+                    // Force-unwrapping the title since automatically-generated task groups always have a title.
+                    title: taskGroup.title!,
+                    references: taskGroup.references,
+                    renderPositionPreference: .bottom
+                )
+            }
 
         // Add the curation task groups to the article
         collectionArticle.automaticTaskGroups = collectionTaskGroups

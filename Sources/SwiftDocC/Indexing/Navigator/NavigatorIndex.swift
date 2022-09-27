@@ -790,30 +790,37 @@ extension NavigatorIndex {
             // Process the children
             var children = [Identifier]()
             for (index, child) in childrenRelationship.enumerated() {
-                guard let title = child.name else {
-                     throw Error.missingTitle(description: "\(renderNode.identifier.absoluteString.singleQuoted) has an empty title for a task group.")
+                let groupIdentifier: Identifier?
+                
+                if let title = child.name {
+                    let fragment = "\(title)#\(index)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
+                    
+                    let identifier = Identifier(
+                        bundleIdentifier: normalizedIdentifier.bundleIdentifier,
+                        path: identifierPath,
+                        fragment: fragment,
+                        languageIdentifier: language.mask
+                    )
+                    
+                    let groupItem = NavigatorItem(
+                        pageType: UInt8(PageType.groupMarker.rawValue),
+                        languageID: language.mask,
+                        title: title,
+                        platformMask: platformID,
+                        availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities)
+                    )
+                    
+                    groupItem.path = identifier.path + "#" + fragment
+                    
+                    let navigatorGroup = NavigatorTree.Node(item: groupItem, bundleIdentifier: bundleIdentifier)
+                    
+                    identifierToNode[identifier] = navigatorGroup
+                    children.append(identifier)
+                    
+                    groupIdentifier = identifier
+                } else {
+                    groupIdentifier = nil
                 }
-                
-                let fragment = "\(title)#\(index)".addingPercentEncoding(withAllowedCharacters: .urlPathAllowed)!
-                
-                let groupIdentifier = Identifier(
-                    bundleIdentifier: normalizedIdentifier.bundleIdentifier,
-                    path: identifierPath,
-                    fragment: fragment,
-                    languageIdentifier: language.mask
-                )
-                
-                let groupItem = NavigatorItem(pageType: UInt8(PageType.groupMarker.rawValue),
-                                              languageID: language.mask,
-                                              title: title,
-                                              platformMask: platformID,
-                                              availabilityID: UInt64(Self.availabilityIDWithNoAvailabilities))
-                groupItem.path = groupIdentifier.path + "#" + fragment
-
-                let navigatorGroup = NavigatorTree.Node(item: groupItem, bundleIdentifier: bundleIdentifier)
-                
-                identifierToNode[groupIdentifier] = navigatorGroup
-                children.append(groupIdentifier)
                 
                 let identifiers = child.references.map { reference in
                     return Identifier(
@@ -841,7 +848,7 @@ extension NavigatorIndex {
                     }
                 }
                 
-                if !nestedChildren.isEmpty {
+                if let groupIdentifier = groupIdentifier, !nestedChildren.isEmpty {
                     identifierToChildren[groupIdentifier] = nestedChildren
                 }
             }

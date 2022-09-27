@@ -446,7 +446,7 @@ public class DocumentationContentRenderer {
     
     /// A value type to store an automatically curated task group and its sorting index.
     public struct ReferenceGroup: Codable {
-        public let title: String
+        public let title: String?
         public let references: [ResolvedTopicReference]
     }
 
@@ -499,7 +499,7 @@ public class DocumentationContentRenderer {
             }
             
             resolvedTaskGroups.append(
-                ReferenceGroup(title: group.heading!.plainText, references: resolvedReferences)
+                ReferenceGroup(title: group.heading?.plainText, references: resolvedReferences)
             )
         }
         
