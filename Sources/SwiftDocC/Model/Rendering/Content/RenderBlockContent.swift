@@ -244,6 +244,9 @@ public enum RenderBlockContent: Equatable {
         /// The style of header in this table.
         public var header: HeaderType
         /// The text alignment of each column in this table.
+        ///
+        /// A `nil` value for this property is the same as all the columns being
+        /// ``RenderBlockContent/ColumnAlignment/unset``.
         public var alignments: [ColumnAlignment]?
         /// The rows in this table.
         public var rows: [TableRow]
@@ -253,12 +256,21 @@ public enum RenderBlockContent: Equatable {
         public var metadata: RenderContentMetadata?
 
         /// Creates a new table with the given data.
-        public init(header: HeaderType, alignments: [ColumnAlignment]? = nil, rows: [TableRow], extendedData: Set<TableCellExtendedData>, metadata: RenderContentMetadata? = nil) {
+        ///
+        /// - Parameters:
+        ///   - header: The style of header in this table.
+        ///   - rawAlignments: The text alignment for each column in this table. If all the
+        ///     alignments are ``RenderBlockContent/ColumnAlignment/unset``, the ``alignments``
+        ///     property will be set to `nil`.
+        ///   - rows: The cell data for this table.
+        ///   - extendedData: Any extended information that describes cells in this table.
+        ///   - metadata: Additional metadata for this table, if necessary.
+        public init(header: HeaderType, rawAlignments: [ColumnAlignment]? = nil, rows: [TableRow], extendedData: Set<TableCellExtendedData>, metadata: RenderContentMetadata? = nil) {
             self.header = header
             self.rows = rows
             self.extendedData = extendedData
             self.metadata = metadata
-            if let alignments = alignments, !alignments.allSatisfy({ $0 == .unset }) {
+            if let alignments = rawAlignments, !alignments.allSatisfy({ $0 == .unset }) {
                 self.alignments = alignments
             }
         }

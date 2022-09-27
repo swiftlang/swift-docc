@@ -285,7 +285,7 @@ struct RenderContentCompiler: MarkupVisitor {
             alignments = tempAlignments
         }
         
-        return [RenderBlockContent.table(.init(header: .row, alignments: alignments, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, extendedData: extendedData, metadata: nil))]
+        return [RenderBlockContent.table(.init(header: .row, rawAlignments: alignments, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, extendedData: extendedData, metadata: nil))]
     }
 
     mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> [RenderContent] {
