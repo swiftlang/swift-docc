@@ -2547,7 +2547,6 @@
             },
             "TasksGroupSection": {
                 "required": [
-                    "title",
                     "identifiers"
                 ],
                 "type": "object",
