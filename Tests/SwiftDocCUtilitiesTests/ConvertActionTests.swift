@@ -2594,7 +2594,7 @@ class ConvertActionTests: XCTestCase {
 
     }
 
-    func testConvertWithoutBundlesDerivesDisplayNameAndIdentifierFromSingleModuleSymbolGraph() throws {
+    func testConvertWithoutBundleDerivesDisplayNameAndIdentifierFromSingleModuleSymbolGraph() throws {
         let myKitSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
             .appendingPathComponent("mykit-iOS.symbols.json")
         
