@@ -61,7 +61,7 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
         let info = try DocumentationBundle.Info(
             from: infoPlistData,
             bundleDiscoveryOptions: options,
-            derivedDisplayName: directory.url.lastPathComponent
+            derivedDisplayName: directory.url.deletingPathExtension().lastPathComponent
         )
         
         let markupFiles = findMarkupFiles(bundleChildren, recursive: true).map { $0.url }
