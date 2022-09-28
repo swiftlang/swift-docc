@@ -355,6 +355,32 @@ class DocumentationBundleInfoTests: XCTestCase {
         )
     }
     
+    func testDerivedDisplayNameAsFallbackWithIdentifier() {
+        let infoPlistWithoutRequiredKeys = """
+        <plist version="1.0">
+        <dict>
+        <key>CFBundleIdentifier</key>
+        <string>org.swift.docc.example</string>
+        </dict>
+        </plist>
+        """
+        
+        let infoPlistWithoutRequiredKeysData = Data(infoPlistWithoutRequiredKeys.utf8)
+        
+        XCTAssertEqual(
+            try DocumentationBundle.Info(
+                from: infoPlistWithoutRequiredKeysData,
+                bundleDiscoveryOptions: nil,
+                derivedDisplayName: "Derived Display Name"
+            ),
+            DocumentationBundle.Info(
+                displayName: "Derived Display Name",
+                identifier: "org.swift.docc.example",
+                version: nil
+            )
+        )
+    }
+    
     func testDisplayNameAsIdentifierFallback() {
         let infoPlistWithoutRequiredKeys = """
         <plist version="1.0">

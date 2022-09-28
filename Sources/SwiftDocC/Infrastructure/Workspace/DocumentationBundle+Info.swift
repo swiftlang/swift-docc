@@ -146,25 +146,18 @@ extension DocumentationBundle {
             }
             
             /// Helper function that decodes a value of the given type for the given key
-            /// in either the Codable container, Info.plist fallbacks or an optional fallback value.
+            /// in either the Codable container or Info.plist fallbacks.
             func decodeOrFallback<T>(
-                _ expectedType: T.Type, with key: CodingKeys,
-                fallback: T? = nil
+                _ expectedType: T.Type,
+                with key: CodingKeys
             ) throws -> T where T : Decodable {
-                do {
-                    if let bundleDiscoveryOptions = bundleDiscoveryOptions {
-                        return try values?.decodeIfPresent(T.self, forKey: key)
-                        ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
-                    } else if let values = values {
-                        return try values.decode(T.self, forKey: key)
-                    } else {
-                        throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)
-                    }
-                } catch {
-                    if let fallback = fallback {
-                        return fallback
-                    }
-                    throw error
+                if let bundleDiscoveryOptions = bundleDiscoveryOptions {
+                    return try values?.decodeIfPresent(T.self, forKey: key)
+                    ?? bundleDiscoveryOptions.infoPlistFallbacks.decode(T.self, forKey: key.rawValue)
+                } else if let values = values {
+                    return try values.decode(T.self, forKey: key)
+                } else {
+                    throw DocumentationBundle.PropertyListError.keyNotFound(key.rawValue)
                 }
             }
             
@@ -202,8 +195,10 @@ extension DocumentationBundle {
             // by decoding the required keys, throwing an error if we fail to
             // decode them for some reason.
             
-            self.displayName = try decodeOrFallback(String.self, with: .displayName, fallback: derivedDisplayName)
-            self.identifier = try decodeOrFallback(String.self, with: .identifier, fallback: self.displayName)
+            // It's safe to unwrap `derivedDisplayName` because it will only be accessed if neither the decoding container nor the bundle discovery options
+            // contain a display name. If they do but that value fails to decode, that error would be raised before accessing `derivedDisplayName`.
+            self.displayName = try decodeOrFallbackIfPresent(String.self, with: .displayName) ?? derivedDisplayName!
+            self.identifier = try decodeOrFallbackIfPresent(String.self, with: .identifier) ?? self.displayName
             self.version = try decodeOrFallbackIfPresent(String.self, with: .version)
             
             // Finally, decode the optional keys if they're present.
