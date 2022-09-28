@@ -240,7 +240,7 @@ public enum RenderBlockContent: Equatable {
     }
 
     /// A table that contains a list of row data.
-    public struct Table: Equatable {
+    public struct Table {
         /// The style of header in this table.
         public var header: HeaderType
         /// The text alignment of each column in this table.
@@ -574,6 +574,30 @@ public enum RenderBlockContent: Equatable {
             self.identifier = identifier
             self.metadata = metadata
         }
+    }
+}
+
+extension RenderBlockContent.Table: Equatable {
+    public static func == (lhs: RenderBlockContent.Table, rhs: RenderBlockContent.Table) -> Bool {
+        guard lhs.header == rhs.header
+                && lhs.extendedData == rhs.extendedData
+                && lhs.metadata == rhs.metadata
+                && lhs.rows == rhs.rows
+        else {
+            return false
+        }
+
+        var lhsAlignments = lhs.alignments
+        if let align = lhsAlignments, align.allSatisfy({ $0 == .unset }) {
+            lhsAlignments = nil
+        }
+
+        var rhsAlignments = rhs.alignments
+        if let align = rhsAlignments, align.allSatisfy({ $0 == .unset }) {
+            rhsAlignments = nil
+        }
+
+        return lhsAlignments == rhsAlignments
     }
 }
 
