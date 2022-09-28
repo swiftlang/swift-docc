@@ -14,17 +14,74 @@ import Markdown
 /**
  A rewriter that extracts topic links for unordered list items.
  */
-fileprivate struct ExtractLinks: MarkupRewriter {
+struct ExtractLinks: MarkupRewriter {
+    enum Mode {
+        case linksDirective
+        case taskGroup
+    }
+    
     var links = [AnyLink]()
     var problems = [Problem]()
-    
+    var mode = Mode.taskGroup
+        
     /// Creates a warning with a suggestion to remove all paragraph elements but the first.
     private func problemForTrailingContent(_ paragraph: Paragraph) -> Problem {
         // An unexpected non-link list item found, suggest to remove it
         let trailingContent = Document(Paragraph(paragraph.inlineChildren.dropFirst()))
         let replacements = trailingContent.children.range.map({ [Replacement(range: $0, replacement: "")] }) ?? []
-        return .init(diagnostic: Diagnostic(source: nil, severity: .warning, range: paragraph.range, identifier: "org.swift.docc.ExtraneousTaskGroupItemContent", summary: "Extraneous content found after a link in task group list item"), possibleSolutions: [
+        
+        let diagnostic: Diagnostic
+        switch mode {
+        case .taskGroup:
+            diagnostic = Diagnostic(
+                source: nil,
+                severity: .warning,
+                range: paragraph.range,
+                identifier: "org.swift.docc.ExtraneousTaskGroupItemContent",
+                summary: "Extraneous content found after a link in task group list item"
+            )
+        case .linksDirective:
+            diagnostic = Diagnostic(
+                source: nil,
+                severity: .warning,
+                range: paragraph.range,
+                identifier: "org.swift.docc.ExtraneousLinksDirectiveItemContent",
+                summary: "Extraneous content found after a link",
+                explanation: "\(Links.directiveName.singleQuoted) can only contain a bulleted list of documentation links"
+            )
+        }
+        
+        return .init(diagnostic: diagnostic, possibleSolutions: [
             Solution(summary: "Remove extraneous content", replacements: replacements)
+        ])
+    }
+    
+    private func problemForNonLinkContent(_ item: ListItem) -> Problem {
+        let range = item.range ?? item.firstChildRange()
+        let replacements = range.map({ [Replacement(range: $0, replacement: "")] }) ?? []
+        
+        let diagnostic: Diagnostic
+        switch mode {
+        case .taskGroup:
+            diagnostic = Diagnostic(
+                source: nil,
+                severity: .warning,
+                range: range,
+                identifier: "org.swift.docc.UnexpectedTaskGroupItem",
+                summary: "Only links are allowed in task group list items"
+            )
+        case .linksDirective:
+            diagnostic = Diagnostic(
+                source: nil,
+                severity: .warning,
+                range: range,
+                identifier: "org.swift.docc.UnexpectedLinksDirectiveListItem",
+                summary: "Only documentation links are allowed in \(Links.directiveName.singleQuoted) list items"
+            )
+        }
+        
+        return .init(diagnostic: diagnostic, possibleSolutions: [
+            Solution(summary: "Remove non-link item", replacements: replacements)
         ])
     }
     
@@ -39,9 +96,21 @@ fileprivate struct ExtractLinks: MarkupRewriter {
                 switch paragraph.child(at: 0) {
                     case let link as Link:
                         // Topic link
-                        guard let url = link.destination.flatMap(URL.init(string:)),
-                            let scheme = url.scheme,
-                            TaskGroup.allowedSchemes.contains(scheme) else { return true }
+                        guard let url = link.destination.flatMap(URL.init(string:)) else {
+                            return true
+                        }
+                    
+                        switch mode {
+                        case .linksDirective:
+                            // The 'Links' directive only supports `doc:` links.
+                            guard ResolvedTopicReference.urlHasResolvedTopicScheme(url) else {
+                                problems.append(problemForNonLinkContent(item))
+                                return true
+                            }
+                        case .taskGroup:
+                            guard let scheme = url.scheme,
+                                  TaskGroup.allowedSchemes.contains(scheme) else { return true }
+                        }
                         links.append(link)
                         
                         // Warn if there is a trailing content after the link
@@ -59,12 +128,7 @@ fileprivate struct ExtractLinks: MarkupRewriter {
                         }
                         return false
                     default:
-                        // An unexpected non-link list item found, suggest to remove it
-                        let range = item.range ?? item.firstChildRange()
-                        let replacements = range.map({ [Replacement(range: $0, replacement: "")] }) ?? []
-                        problems.append(.init(diagnostic: Diagnostic(source: nil, severity: .warning, range: paragraph.range, identifier: "org.swift.docc.UnexpectedTaskGroupItem", summary: "Only links are allowed in task group list items"), possibleSolutions: [
-                            Solution(summary: "Remove non-link item", replacements: replacements)
-                        ]))
+                        problems.append(problemForNonLinkContent(item))
                         return true
                 }
         }

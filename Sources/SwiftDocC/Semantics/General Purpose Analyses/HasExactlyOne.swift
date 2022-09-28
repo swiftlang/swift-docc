@@ -219,7 +219,7 @@ extension Semantic.Analyses {
         }
     }
 
-    public struct HasExactlyOneUnorderedList<Parent: Semantic & DirectiveConvertible, ListElement: Markup>: SemanticAnalysis {
+    public struct HasExactlyOneUnorderedList<Parent: Semantic & DirectiveConvertible, ListElement>: SemanticAnalysis {
         let severityIfNotFound: DiagnosticSeverity?
 
         init(severityIfNotFound: DiagnosticSeverity?) {
@@ -276,7 +276,7 @@ extension Semantic.Analyses {
                 range: range,
                 identifier: "org.swift.docc.HasExactlyOneUnorderedList<\(Parent.self), \(ListElement.self)>.ExtraneousContent",
                 summary: "Extraneous content in \(Parent.directiveName.singleQuoted)",
-                explanation: "The \(Parent.directiveName.singleQuoted) directive must contain a single unordered list, where each item is of type \(ListElement.self)"
+                explanation: "The \(Parent.directiveName.singleQuoted) directive must contain a single unordered list of links"
             )
         }
 
@@ -287,7 +287,7 @@ extension Semantic.Analyses {
                 range: range,
                 identifier: "org.swift.docc.HasExactlyOneUnorderedList<\(Parent.self), \(ListElement.self)>.InvalidContent",
                 summary: "Missing unordered list",
-                explanation: "The \(Parent.directiveName.singleQuoted) directive must contain a single unordered list, where each item is of type \(ListElement.self)"
+                explanation: "The \(Parent.directiveName.singleQuoted) directive must contain a single unordered list of links"
             )
         }
 
@@ -298,7 +298,7 @@ extension Semantic.Analyses {
                 range: range,
                 identifier: "org.swift.docc.HasExactlyOneUnorderedList<\(Parent.self), \(ListElement.self)>.InvalidListContent",
                 summary: "Invalid content in list item",
-                explanation: "The list in \(Parent.directiveName.singleQuoted) must contain \(ListElement.self) elements only"
+                explanation: "The list in \(Parent.directiveName.singleQuoted) must only contain links"
             )
         }
     }
