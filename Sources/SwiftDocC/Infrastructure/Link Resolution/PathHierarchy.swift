@@ -838,7 +838,7 @@ extension PathHierarchy.Error {
             return "Symbol links can only resolve symbols."
             
         case .lookupCollision(let partialResult, let collisions):
-            let collisionDescription = collisions.map { "Add \($0.disambiguation.singleQuoted) to refer to \($0.node.fullNameOfValue(context: context).singleQuoted)"}.sorted()
+            let collisionDescription = collisions.map { "Append '-\($0.disambiguation)' to refer to \($0.node.fullNameOfValue(context: context).singleQuoted)"}.sorted()
             return "Reference is ambiguous after \(partialResult.pathWithoutDisambiguation().singleQuoted): \(collisionDescription.joined(separator: ". "))."
         }
     }

@@ -296,8 +296,8 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something", in: tree, context: context, expectedErrorMessage: """
         Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentKinds': \
-        Add 'enum.case' to refer to 'case something'. \
-        Add 'property' to refer to 'var something: String { get }'.
+        Append '-enum.case' to refer to 'case something'. \
+        Append '-property' to refer to 'var something: String { get }'.
         """)
         
         // public final class CollisionsWithEscapedKeywords {
@@ -316,9 +316,9 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, context: context, expectedErrorMessage: """
         Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords': \
-        Add 'init' to refer to 'init()'. \
-        Add 'method' to refer to 'func `init`()'. \
-        Add 'type.method' to refer to 'static func `init`()'.
+        Append '-init' to refer to 'init()'. \
+        Append '-method' to refer to 'func `init`()'. \
+        Append '-type.method' to refer to 'static func `init`()'.
         """)
         
         try assertPathCollision("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, collisions: [
@@ -328,9 +328,9 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, context: context, expectedErrorMessage: """
         Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords': \
-        Add 'method' to refer to 'func `subscript`()'. \
-        Add 'subscript' to refer to 'subscript() -> Int { get }'. \
-        Add 'type.method' to refer to 'static func `subscript`()'.
+        Append '-method' to refer to 'func `subscript`()'. \
+        Append '-subscript' to refer to 'subscript() -> Int { get }'. \
+        Append '-type.method' to refer to 'static func `subscript`()'.
         """)
         
         // public enum CollisionsWithDifferentFunctionArguments {
@@ -343,8 +343,8 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, context: context, expectedErrorMessage: """
         Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments': \
-        Add '1cyvp' to refer to 'func something(argument: Int) -> Int'. \
-        Add '2vke2' to refer to 'func something(argument: String) -> Int'.
+        Append '-1cyvp' to refer to 'func something(argument: Int) -> Int'. \
+        Append '-2vke2' to refer to 'func something(argument: String) -> Int'.
         """)
         
         // public enum CollisionsWithDifferentSubscriptArguments {
@@ -357,8 +357,8 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, context: context, expectedErrorMessage: """
         Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments': \
-        Add '4fd0l' to refer to 'subscript(something: Int) -> Int { get }'. \
-        Add '757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'.
+        Append '-4fd0l' to refer to 'subscript(something: Int) -> Int { get }'. \
+        Append '-757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'.
         """)
         
         // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
@@ -867,8 +867,8 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/SideKit/SideProtocol/func()", in: tree, context: context, expectedErrorMessage: """
         Reference is ambiguous after '/SideKit/SideProtocol': \
-        Add '2dxqn' to refer to 'func1()'. \
-        Add '6ijsi' to refer to 'func1()'.
+        Append '-2dxqn' to refer to 'func1()'. \
+        Append '-6ijsi' to refer to 'func1()'.
         """) // This test data have the same declaration for both symbols.
         
         try assertFindsPath("/FillIntroduced/iOSOnlyDeprecated()", in: tree, asSymbolID: "s:14FillIntroduced17iOSOnlyDeprecatedyyF")
@@ -912,9 +912,9 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("MixedLanguageFramework/Foo", in: tree, context: context, expectedErrorMessage: """
         Reference is ambiguous after '/MixedLanguageFramework': \
-        Add 'enum' to refer to 'typedef enum Foo : NSString { ... } Foo;'. \
-        Add 'struct' to refer to 'struct Foo'. \
-        Add 'typealias' to refer to 'typedef enum Foo : NSString { ... } Foo;'.
+        Append '-enum' to refer to 'typedef enum Foo : NSString { ... } Foo;'. \
+        Append '-struct' to refer to 'struct Foo'. \
+        Append '-typealias' to refer to 'typedef enum Foo : NSString { ... } Foo;'.
         """) // The 'enum' and 'typealias' symbols have multi-line declarations that are presented on a single line
         
         try assertFindsPath("MixedLanguageFramework/Foo/first", in: tree, asSymbolID: "c:@E@Foo@first")
