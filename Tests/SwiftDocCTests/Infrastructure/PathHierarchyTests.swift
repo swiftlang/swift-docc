@@ -75,8 +75,7 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MixedFramework/MyObjectiveCCompatibleProtocol/myProtocolMethod", in: tree, asSymbolID: "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(im)myProtocolMethod")
         try assertFindsPath("/MixedFramework/MyObjectiveCCompatibleProtocol/myProtocolMethod()", in: tree, asSymbolID: "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(im)myProtocolMethod")
         try assertFindsPath("/MixedFramework/MyObjectiveCCompatibleProtocol/myProtocolProperty", in: tree, asSymbolID: "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(py)myProtocolProperty")
-        // Objective-C class properties have a "property" kind instead of a "type.property" kind (rdar://92927788)
-        try assertFindsPath("/MixedFramework/MyObjectiveCCompatibleProtocol/myProtocolTypeProperty-type.property", in: tree, asSymbolID: "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(cpy)myProtocolTypeProperty")
+        try assertFindsPath("/MixedFramework/MyObjectiveCCompatibleProtocol/myProtocolTypeProperty", in: tree, asSymbolID: "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(cpy)myProtocolTypeProperty")
         try assertFindsPath("/MixedFramework/MyObjectiveCCompatibleProtocol/myPropertyOptionalMethod", in: tree, asSymbolID: "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(im)myPropertyOptionalMethod")
         try assertFindsPath("/MixedFramework/MyObjectiveCCompatibleProtocol/myPropertyOptionalMethod()", in: tree, asSymbolID: "c:@M@MixedFramework@objc(pl)MyObjectiveCCompatibleProtocol(im)myPropertyOptionalMethod")
         
