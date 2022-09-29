@@ -336,49 +336,6 @@ class ConvertActionTests: XCTestCase {
         let myProtocolNode = try JSONDecoder().decode(RenderNode.self, from: myProtocolNodeData)
         XCTAssertNil(myProtocolNode.abstract)
     }
-    
-    func testConvertWithoutBundleErrorMessage() throws {
-        let myKitSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
-            .appendingPathComponent("mykit-iOS.symbols.json")
-        
-        XCTAssert(FileManager.default.fileExists(atPath: myKitSymbolGraph.path))
-        let symbolGraphFiles = Folder(name: "Not-a-doc-bundle", content: [
-            CopyOfFile(original: myKitSymbolGraph, newName: "MyKit.symbols.json"),
-        ])
-        
-        let outputLocation = Folder(name: "output", content: [])
-        
-        let testDataProvider = try TestFileSystem(folders: [Folder.emptyHTMLTemplateDirectory, symbolGraphFiles, outputLocation])
-        
-        var infoPlistFallbacks = [String: Any]()
-        infoPlistFallbacks["CFBundleIdentifier"] = "com.example.test"
-        
-        var action = try ConvertAction(
-            documentationBundleURL: nil,
-            outOfProcessResolver: nil,
-            analyze: false,
-            targetDirectory: outputLocation.absoluteURL,
-            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
-            emitDigest: false,
-            currentPlatforms: nil,
-            fileManager: testDataProvider,
-                temporaryDirectory: createTemporaryDirectory(),
-            bundleDiscoveryOptions: BundleDiscoveryOptions(
-                infoPlistFallbacks: infoPlistFallbacks,
-                additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
-            )
-        )
-        let logStorage = LogHandle.LogStorage()
-        XCTAssertThrowsError(try action.perform(logHandle: .memory(logStorage))) { error in
-            XCTAssertEqual(error.localizedDescription, """
-            The information provided as command line arguments is not enough to generate a documentation bundle:
-            
-            Missing value for 'CFBundleDisplayName'.
-            Use the '--fallback-display-name' argument or add 'CFBundleDisplayName' to the bundle Info.plist.
-            
-            """)
-        }
-    }
 
     func testMoveOutputCreatesTargetFolderParent() throws {
         // Source folder to test moving
@@ -2637,7 +2594,127 @@ class ConvertActionTests: XCTestCase {
 
     }
 
+    func testConvertWithoutBundleDerivesDisplayNameAndIdentifierFromSingleModuleSymbolGraph() throws {
+        let myKitSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+            .appendingPathComponent("mykit-iOS.symbols.json")
+        
+        XCTAssert(FileManager.default.fileExists(atPath: myKitSymbolGraph.path))
+        let symbolGraphFiles = Folder(name: "Not-a-doc-bundle", content: [
+            CopyOfFile(original: myKitSymbolGraph, newName: "MyKit.symbols.json"),
+        ])
+        
+        let outputLocation = Folder(name: "output", content: [])
+        
+        let testDataProvider = try TestFileSystem(folders: [Folder.emptyHTMLTemplateDirectory, symbolGraphFiles, outputLocation])
+        
+        var action = try ConvertAction(
+            documentationBundleURL: nil,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: outputLocation.absoluteURL,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
+            bundleDiscoveryOptions: BundleDiscoveryOptions(
+                additionalSymbolGraphFiles: [URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json")]
+            )
+        )
+        
+        XCTAssert(action.context.registeredBundles.isEmpty)
+        XCTAssertNoThrow(try action.perform(logHandle: .standardOutput))
+
+        XCTAssertEqual(action.context.registeredBundles.count, 1)
+        let bundle = try XCTUnwrap(action.context.registeredBundles.first, "Should have registered the generated test bundle.")
+        XCTAssertEqual(bundle.displayName, "MyKit")
+        XCTAssertEqual(bundle.identifier, "MyKit")
+    }
     
+    func testConvertWithoutBundleErrorsForMultipleModulesSymbolGraph() throws {
+        let testBundle = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        let myKitSymbolGraph = testBundle
+            .appendingPathComponent("mykit-iOS.symbols.json")
+        let sideKitSymbolGraph = testBundle
+            .appendingPathComponent("sidekit.symbols.json")
+        
+        XCTAssert(FileManager.default.fileExists(atPath: myKitSymbolGraph.path))
+        XCTAssert(FileManager.default.fileExists(atPath: sideKitSymbolGraph.path))
+        let symbolGraphFiles = Folder(name: "Not-a-doc-bundle", content: [
+            CopyOfFile(original: myKitSymbolGraph, newName: "MyKit.symbols.json"),
+            CopyOfFile(original: sideKitSymbolGraph, newName: "SideKit.symbols.json")
+        ])
+        
+        let outputLocation = Folder(name: "output", content: [])
+        
+        let testDataProvider = try TestFileSystem(
+            folders: [Folder.emptyHTMLTemplateDirectory, symbolGraphFiles, outputLocation]
+        )
+        
+        var infoPlistFallbacks = [String: Any]()
+        infoPlistFallbacks["CFBundleIdentifier"] = "com.example.test"
+        
+        var action = try ConvertAction(
+            documentationBundleURL: nil,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: outputLocation.absoluteURL,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            fileManager: testDataProvider,
+                temporaryDirectory: createTemporaryDirectory(),
+            bundleDiscoveryOptions: BundleDiscoveryOptions(
+                infoPlistFallbacks: infoPlistFallbacks,
+                additionalSymbolGraphFiles: [
+                    URL(fileURLWithPath: "/Not-a-doc-bundle/MyKit.symbols.json"),
+                    URL(fileURLWithPath: "/Not-a-doc-bundle/SideKit.symbols.json")
+                ]
+            )
+        )
+        
+        let logStorage = LogHandle.LogStorage()
+        XCTAssertThrowsError(try action.perform(logHandle: .memory(logStorage))) { error in
+            XCTAssertEqual(error.localizedDescription, """
+            The information provided as command line arguments is not enough to generate a documentation bundle:
+            
+            Missing value for 'CFBundleDisplayName'.
+            Use the '--fallback-display-name' argument or add 'CFBundleDisplayName' to the bundle Info.plist.
+            
+            """)
+        }
+    }
+    
+    func testConvertWithBundleDerivesDisplayNameFromBundle() throws {
+        let emptyDoccCatalog = try createTemporaryDirectory(named: "Something.docc")
+        let outputLocation = try createTemporaryDirectory(named: "output")
+
+        var infoPlistFallbacks = [String: Any]()
+        infoPlistFallbacks["CFBundleIdentifier"] = "com.example.test"
+
+        var action = try ConvertAction(
+            documentationBundleURL: emptyDoccCatalog,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: outputLocation.absoluteURL,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.write(inside: createTemporaryDirectory(named: "template")),
+            emitDigest: false,
+            currentPlatforms: nil,
+            temporaryDirectory: createTemporaryDirectory(),
+            bundleDiscoveryOptions: BundleDiscoveryOptions(
+                infoPlistFallbacks: infoPlistFallbacks,
+                additionalSymbolGraphFiles: []
+            )
+        )
+        XCTAssert(action.context.registeredBundles.isEmpty)
+        XCTAssertNoThrow(try action.perform(logHandle: .standardOutput))
+
+        XCTAssertEqual(action.context.registeredBundles.count, 1)
+        let bundle = try XCTUnwrap(action.context.registeredBundles.first, "Should have registered the generated test bundle.")
+        XCTAssertEqual(bundle.displayName, "Something")
+        XCTAssertEqual(bundle.identifier, "com.example.test")
+    }
+
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {
         return problems.sorted(by: { (lhs, rhs) -> Bool in
             guard lhs.diagnostic.identifier != rhs.diagnostic.identifier else {
