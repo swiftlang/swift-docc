@@ -295,6 +295,11 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingyA2CmF", disambiguation: "enum.case"),
             (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingSSvp", disambiguation: "property"),
         ])
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentKinds': \
+        Add 'enum.case' to refer to 'case something'. \
+        Add 'property' to refer to 'var something: String { get }'.
+        """)
         
         // public final class CollisionsWithEscapedKeywords {
         //     public subscript() -> Int { 0 }
@@ -310,12 +315,24 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyF", disambiguation: "method"),
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyFZ", disambiguation: "type.method"),
         ])
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords': \
+        Add 'init' to refer to 'init()'. \
+        Add 'method' to refer to 'func `init`()'. \
+        Add 'type.method' to refer to 'static func `init`()'.
+        """)
         
         try assertPathCollision("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, collisions: [
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyF", disambiguation: "method"),
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCSiycip", disambiguation: "subscript"),
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyFZ", disambiguation: "type.method"),
         ])
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords': \
+        Add 'method' to refer to 'func `subscript`()'. \
+        Add 'subscript' to refer to 'subscript() -> Int { get }'. \
+        Add 'type.method' to refer to 'static func `subscript`()'.
+        """)
         
         // public enum CollisionsWithDifferentFunctionArguments {
         //     public func something(argument: Int) -> Int { 0 }
@@ -325,6 +342,11 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF", disambiguation: "1cyvp"),
             (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF", disambiguation: "2vke2"),
         ])
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments': \
+        Add '1cyvp' to refer to 'func something(argument: Int) -> Int'. \
+        Add '2vke2' to refer to 'func something(argument: String) -> Int'.
+        """)
         
         // public enum CollisionsWithDifferentSubscriptArguments {
         //     public subscript(something: Int) -> Int { 0 }
@@ -334,6 +356,11 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip", disambiguation: "4fd0l"),
             (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "757cj"),
         ])
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments': \
+        Add '4fd0l' to refer to 'subscript(something: Int) -> Int { get }'. \
+        Add '757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'.
+        """)
         
         // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
         //     MyObjectiveCOptionNone                                      = 0,
@@ -839,6 +866,11 @@ class PathHierarchyTests: XCTestCase {
             ("s:5MyKit0A5MyProtocol0Afunc()DefaultImp", "2dxqn"),
             ("s:5MyKit0A5MyProtocol0Afunc()", "6ijsi"),
         ])
+        try assertPathRaisesErrorMessage("/SideKit/SideProtocol/func()", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/SideKit/SideProtocol': \
+        Add '2dxqn' to refer to 'func1()'. \
+        Add '6ijsi' to refer to 'func1()'.
+        """) // This test data have the same declaration for both symbols.
         
         try assertFindsPath("/FillIntroduced/iOSOnlyDeprecated()", in: tree, asSymbolID: "s:14FillIntroduced17iOSOnlyDeprecatedyyF")
         try assertFindsPath("/FillIntroduced/macCatalystOnlyIntroduced()", in: tree, asSymbolID: "s:14FillIntroduced015macCatalystOnlyB0yyF")
@@ -879,6 +911,12 @@ class PathHierarchyTests: XCTestCase {
             ("c:@E@Foo", "struct"),
             ("c:MixedLanguageFramework.h@T@Foo", "typealias"),
         ])
+        try assertPathRaisesErrorMessage("MixedLanguageFramework/Foo", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedLanguageFramework': \
+        Add 'enum' to refer to 'typedef enum Foo : NSString { ... } Foo;'. \
+        Add 'struct' to refer to 'struct Foo'. \
+        Add 'typealias' to refer to 'typedef enum Foo : NSString { ... } Foo;'.
+        """) // The 'enum' and 'typealias' symbols have multi-line declarations that are presented on a single line
         
         try assertFindsPath("MixedLanguageFramework/Foo/first", in: tree, asSymbolID: "c:@E@Foo@first")
         
@@ -1230,6 +1268,14 @@ class PathHierarchyTests: XCTestCase {
                 XCTAssertEqual(actual.node.symbol?.identifier.precise, expected.symbolID, file: file, line: line)
                 XCTAssertEqual(actual.disambiguation, expected.disambiguation, file: file, line: line)
             }
+        }
+    }
+    
+    private func assertPathRaisesErrorMessage(_ path: String, in tree: PathHierarchy, context: DocumentationContext, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line) throws {
+        XCTAssertThrowsError(try tree.findSymbol(path: path), "Finding path \(path) didn't raise an error.",file: file,line: line) { untypedError in
+            let error = untypedError as! PathHierarchy.Error
+            let errorMessage = error.errorMessage(context: context)
+            XCTAssertEqual(errorMessage, expectedErrorMessage, file: file, line: line)
         }
     }
     
