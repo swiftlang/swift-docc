@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -286,7 +286,7 @@ class DocumentationBundleInfoTests: XCTestCase {
     }
     
     func testDataCorruptedPlist() throws {
-        let valueMissingInvaildPlist = """
+        let valueMissingInvalidPlist = """
         <plist version="1.0">
         <dict>
           <key>CDDefaultCodeListingLanguage</key>
@@ -314,9 +314,9 @@ class DocumentationBundleInfoTests: XCTestCase {
         </plist>
         """
         
-        let valueMissingInvaildPlistData = Data(valueMissingInvaildPlist.utf8)
+        let valueMissingInvalidPlistData = Data(valueMissingInvalidPlist.utf8)
         XCTAssertThrowsError(
-            try DocumentationBundle.Info(from: valueMissingInvaildPlistData),
+            try DocumentationBundle.Info(from: valueMissingInvalidPlistData),
             "Info.plist decode didn't throw as expected"
         ) { error in
             XCTAssertTrue(error is DocumentationBundle.Info.Error)
@@ -329,5 +329,80 @@ class DocumentationBundleInfoTests: XCTestCase {
             XCTAssertTrue(errorTypeChecking)
             XCTAssertEqual(error.localizedDescription, "Unable to decode Info.plist file. Verify that it is correctly formed. Value missing for key inside <dict> at line 24")
         }
+    }
+    
+    func testDerivedDisplayNameAsFallback() {
+        let infoPlistWithoutRequiredKeys = """
+        <plist version="1.0">
+        <dict>
+        </dict>
+        </plist>
+        """
+        
+        let infoPlistWithoutRequiredKeysData = Data(infoPlistWithoutRequiredKeys.utf8)
+        
+        XCTAssertEqual(
+            try DocumentationBundle.Info(
+                from: infoPlistWithoutRequiredKeysData,
+                bundleDiscoveryOptions: nil,
+                derivedDisplayName: "Derived Display Name"
+            ),
+            DocumentationBundle.Info(
+                displayName: "Derived Display Name",
+                identifier: "Derived Display Name",
+                version: nil
+            )
+        )
+    }
+    
+    func testDerivedDisplayNameAsFallbackWithIdentifier() {
+        let infoPlistWithoutRequiredKeys = """
+        <plist version="1.0">
+        <dict>
+        <key>CFBundleIdentifier</key>
+        <string>org.swift.docc.example</string>
+        </dict>
+        </plist>
+        """
+        
+        let infoPlistWithoutRequiredKeysData = Data(infoPlistWithoutRequiredKeys.utf8)
+        
+        XCTAssertEqual(
+            try DocumentationBundle.Info(
+                from: infoPlistWithoutRequiredKeysData,
+                bundleDiscoveryOptions: nil,
+                derivedDisplayName: "Derived Display Name"
+            ),
+            DocumentationBundle.Info(
+                displayName: "Derived Display Name",
+                identifier: "org.swift.docc.example",
+                version: nil
+            )
+        )
+    }
+    
+    func testDisplayNameAsIdentifierFallback() {
+        let infoPlistWithoutRequiredKeys = """
+        <plist version="1.0">
+        <dict>
+        <key>CFBundleDisplayName</key>
+        <string>Example</string>
+        </dict>
+        </plist>
+        """
+        
+        let infoPlistWithoutRequiredKeysData = Data(infoPlistWithoutRequiredKeys.utf8)
+        
+        XCTAssertEqual(
+            try DocumentationBundle.Info(
+                from: infoPlistWithoutRequiredKeysData,
+                bundleDiscoveryOptions: nil
+            ),
+            DocumentationBundle.Info(
+                displayName: "Example",
+                identifier: "Example",
+                version: nil
+            )
+        )
     }
 }
