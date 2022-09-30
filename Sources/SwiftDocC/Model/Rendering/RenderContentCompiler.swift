@@ -119,24 +119,36 @@ struct RenderContentCompiler: MarkupVisitor {
             }
         }
         
-        guard let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAuthoredLink:))
-            .map({ UnresolvedTopicReference(topicURL: $0) }),
-            // Try to resolve in the local context
-            case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier) else {
-                    // As this was a doc: URL, we render the link inactive by converting it to plain text,
-                    // as it may break routing or other downstream uses of the URL.
-                    return [RenderInlineContent.text(link.plainText)]
+        guard let destination = link.destination, let resolved = resolveTopicReference(destination) else {
+            // As this was a doc: URL, we render the link inactive by converting it to plain text,
+            // as it may break routing or other downstream uses of the URL.
+            return [RenderInlineContent.text(link.plainText)]
+        }
+        
+        return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
+    }
+    
+    mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
+        guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
+            return nil
+        }
+        
+        let unresolved = UnresolvedTopicReference(topicURL: validatedURL)
+        
+        // Try to resolve in the local context
+        guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier) else {
+            return nil
         }
         
         // We resolved the reference, check if it's a node that can be linked to.
         if let node = context.topicGraph.nodeWithReference(resolved) {
             guard context.topicGraph.isLinkable(node.reference) else {
-                return [RenderInlineContent.text(link.plainText)]
+                return nil
             }
         }
         
         collectedTopicReferences.append(resolved)
-        return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
+        return resolved
     }
 
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
