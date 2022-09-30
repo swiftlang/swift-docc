@@ -68,6 +68,13 @@ extension RenderBlockContent: TextIndexing {
             return tabNavigator.tabs.map { tab in
                 return tab.content.rawIndexableTextContent(references: references)
             }.joined(separator: " ")
+        case .links(let links):
+            // Matches the behavior in `RenderInlineContent+TextIndexing` for a
+            // `RenderInlineContent.reference`
+            return links.items
+                .compactMap { references[$0] as? TopicRenderReference }
+                .map(\.title)
+                .joined(separator: " ")
         default:
             fatalError("unknown RenderBlockContent case in rawIndexableTextContent")
         }

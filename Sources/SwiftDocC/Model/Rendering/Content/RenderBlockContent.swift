@@ -69,6 +69,10 @@ public enum RenderBlockContent: Equatable {
     
     /// A collection of content that should be rendered in a tab-based layout.
     case tabNavigator(TabNavigator)
+    
+    /// A collection of authored links that should be rendered in a similar style
+    /// to links in an on-page Topics section.
+    case links(Links)
 
     // Warning: If you add a new case to this enum, make sure to handle it in the Codable
     // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
@@ -494,6 +498,36 @@ public enum RenderBlockContent: Equatable {
             public let content: [RenderBlockContent]
         }
     }
+    
+    /// A collection of authored links that should be rendered in a similar style
+    /// to links in an on-page Topics section.
+    public struct Links: Codable, Equatable {
+        /// A visual style for the links.
+        public enum Style: String, Codable, Equatable {
+            /// A list of the linked pages, including their full declaration and abstract.
+            case list
+            
+            /// A grid of items based on the card image for the linked pages.
+            case compactGrid
+            
+            /// A grid of items based on the card image for the linked pages.
+            ///
+            /// Unlike ``compactGrid``, this style includes the abstract for each page.
+            case detailedGrid
+        }
+        
+        /// The style that should be used when rendering the link items.
+        public let style: Style
+        
+        /// The topic render references for the pages that should be rendered in this links block.
+        public let items: [String]
+        
+        /// Create a new links block with the given style and topic render references.
+        public init(style: RenderBlockContent.Links.Style, items: [String]) {
+            self.style = style
+            self.items = items
+        }
+    }
 }
 
 // Writing a manual Codable implementation for tables because the encoding of `extendedData` does
@@ -641,11 +675,18 @@ extension RenderBlockContent: Codable {
                     tabs: container.decode([TabNavigator.Tab].self, forKey: .tabs)
                 )
             )
+        case .links:
+            self = try .links(
+                Links(
+                    style: container.decode(Links.Style.self, forKey: .style),
+                    items: container.decode([String].self, forKey: .items)
+                )
+            )
         }
     }
     
     private enum BlockType: String, Codable {
-        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator
+        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator, links
     }
     
     private var type: BlockType {
@@ -664,6 +705,7 @@ extension RenderBlockContent: Codable {
         case .row: return .row
         case .small: return .small
         case .tabNavigator: return .tabNavigator
+        case .links: return .links
         default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
@@ -716,6 +758,9 @@ extension RenderBlockContent: Codable {
             try container.encode(small.inlineContent, forKey: .inlineContent)
         case .tabNavigator(let tabNavigator):
             try container.encode(tabNavigator.tabs, forKey: .tabs)
+        case .links(let links):
+            try container.encode(links.style, forKey: .style)
+            try container.encode(links.items, forKey: .items)
         default:
             fatalError("unknown RenderBlockContent case in encode method")
         }
