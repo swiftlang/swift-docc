@@ -90,7 +90,9 @@ struct RenderContentCompiler: MarkupVisitor {
         altText: String?,
         caption: [RenderInlineContent]?
     ) -> [RenderContent] {
-        let imageIdentifier = resolveImage(source: source, altText: altText)
+        guard let imageIdentifier = resolveImage(source: source, altText: altText) else {
+            return []
+        }
         
         var metadata: RenderContentMetadata?
         if let caption = caption {
@@ -100,20 +102,22 @@ struct RenderContentCompiler: MarkupVisitor {
         return [RenderInlineContent.image(identifier: imageIdentifier, metadata: metadata)]
     }
     
-    mutating func resolveImage(source: String, altText: String? = nil) -> RenderReferenceIdentifier {
+    mutating func resolveImage(source: String, altText: String? = nil) -> RenderReferenceIdentifier? {
         let unescapedSource = source.removingPercentEncoding ?? source
         let imageIdentifier: RenderReferenceIdentifier = .init(unescapedSource)
-        if let resolvedImages = context.resolveAsset(
+        guard let resolvedImages = context.resolveAsset(
             named: unescapedSource,
             in: identifier,
             withType: .image
-        ) {
-            imageReferences[unescapedSource] = ImageReference(
-                identifier: imageIdentifier,
-                altText: altText,
-                imageAsset: resolvedImages
-            )
+        ) else {
+            return nil
         }
+        
+        imageReferences[unescapedSource] = ImageReference(
+            identifier: imageIdentifier,
+            altText: altText,
+            imageAsset: resolvedImages
+        )
         
         return imageIdentifier
     }
