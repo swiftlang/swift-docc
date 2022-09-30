@@ -2692,7 +2692,6 @@ Document
                 RenderBlockContent.heading(.init(level: 2, text: "Discussion", anchor: "discussion")),
                 .paragraph(.init(inlineContent: [
                     .text("Doc extension discussion. Missing: "),
-                    .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),
                     .text("."),
                 ]))
             ])
@@ -2867,7 +2866,6 @@ Document
                 RenderBlockContent.heading(.init(level: 2, text: "Discussion", anchor: "discussion")),
                 .paragraph(.init(inlineContent: [
                     .text("Inherited discussion. Missing: "),
-                    .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),
                     .text("."),
                 ])),
             ])
