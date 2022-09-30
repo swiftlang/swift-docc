@@ -77,7 +77,7 @@ public final class Volume: Semantic, DirectiveConvertible, Abstracted, Redirecte
         (image, remainder) = Semantic.Analyses.HasExactlyOne<Volume, ImageMedia>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
         
         let chapters: [Chapter]
-        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<Volume, Chapter>(severityIfNotFound: .warning).analyze(directive, children: directive.children, source: source, for: bundle, in: context, problems: &problems)
+        (chapters, remainder) = Semantic.Analyses.HasAtLeastOne<Volume, Chapter>(severityIfNotFound: .warning).analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
         _ = Semantic.Analyses.HasContent<Volume>(additionalContext: "A \(Volume.directiveName.singleQuoted) directive should at least have a sentence summarizing what the reader will learn").analyze(directive, children: remainder, source: source, for: bundle, in: context, problems: &problems)
         
         let redirects: [Redirect]
