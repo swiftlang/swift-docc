@@ -23,10 +23,9 @@ class ImageMediaTests: XCTestCase {
         var problems = [Problem]()
         let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(image)
-        XCTAssertEqual(2, problems.count)
+        XCTAssertEqual(1, problems.count)
         XCTAssertFalse(problems.containsErrors)
         XCTAssertEqual([
-            "org.swift.docc.HasArgument.alt",
             "org.swift.docc.HasArgument.source",
         ], problems.map { $0.diagnostic.identifier })
     }
@@ -80,12 +79,11 @@ class ImageMediaTests: XCTestCase {
         var problems = [Problem]()
         let image = ImageMedia(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNil(image)
-        XCTAssertEqual(4, problems.count)
+        XCTAssertEqual(3, problems.count)
         XCTAssertFalse(problems.containsErrors)
         
         let expectedIds = [
             "org.swift.docc.UnknownArgument",
-            "org.swift.docc.HasArgument.alt",
             "org.swift.docc.HasArgument.source",
         ]
         
@@ -94,5 +92,94 @@ class ImageMediaTests: XCTestCase {
         for id in expectedIds {
             XCTAssertTrue(problemIds.contains(id))
         }
+    }
+    
+    func testRenderImageDirectiveInReferenceMarkup() throws {
+        do {
+            let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+                """
+                @Image(source: "figure1")
+                """
+            }
+            
+            XCTAssertNotNil(image)
+            
+            XCTAssertEqual(problems, [])
+            
+            XCTAssertEqual(
+                renderedContent,
+                [
+                    RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                        inlineContent: [.image(
+                            identifier: RenderReferenceIdentifier("figure1"),
+                            metadata: nil
+                        )]
+                    ))
+                ]
+            )
+        }
+        
+        do {
+            let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+                """
+                @Image(source: "unknown-image")
+                """
+            }
+            
+            XCTAssertNotNil(image)
+            
+            XCTAssertEqual(problems, ["1: warning – org.swift.docc.unresolvedResource.Image"])
+            XCTAssertEqual(renderedContent, [])
+        }
+    }
+    
+    func testRenderImageDirectiveWithCaption() throws {
+        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+            """
+            @Image(source: "figure1") {
+                This is my caption.
+            }
+            """
+        }
+        
+        XCTAssertNotNil(image)
+        
+        XCTAssertEqual(problems, [])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                    inlineContent: [.image(
+                        identifier: RenderReferenceIdentifier("figure1"),
+                        metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
+                    )]
+                ))
+            ]
+        )
+    }
+    
+    func testImageDirectiveDoesNotResolveVideoReference() throws {
+        // First check that the Video exists
+        let (_, videoProblems, _) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+            """
+            @Video(source: "introvideo")
+            """
+        }
+        
+        XCTAssertEqual(videoProblems, [])
+        
+        // Then check that it doesn't resolve as an image
+        let (renderedContent, imageProblems, image) = try parseDirective(ImageMedia.self, in: "TestBundle") {
+            """
+            @Image(source: "introvideo")
+            """
+        }
+        
+        XCTAssertNotNil(image)
+        
+        XCTAssertEqual(imageProblems, ["1: warning – org.swift.docc.unresolvedResource.Image"])
+        
+        XCTAssertEqual(renderedContent, [])
     }
 }

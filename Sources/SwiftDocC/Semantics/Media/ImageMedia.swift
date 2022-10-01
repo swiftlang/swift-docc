@@ -18,8 +18,12 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
     /// Optional alternate text for an image.
-    @DirectiveArgumentWrapped(name: .custom("alt"), required: true)
+    @DirectiveArgumentWrapped(name: .custom("alt"))
     public private(set) var altText: String? = nil
+    
+    /// An optional caption that should be rendered alongside the image.
+    @ChildMarkup(numberOfParagraphs: .zeroOrOne)
+    public private(set) var caption: MarkupContainer
     
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
@@ -31,6 +35,7 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     static var keyPaths: [String : AnyKeyPath] = [
         "altText" : \ImageMedia._altText,
         "source"  : \ImageMedia._source,
+        "caption" : \ImageMedia._caption,
     ]
     
     /// Creates a new image with the given parameters.
@@ -53,5 +58,27 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     
     public override func accept<V>(_ visitor: inout V) -> V.Result where V : SemanticVisitor {
         return visitor.visitImageMedia(self)
+    }
+}
+
+extension ImageMedia: RenderableDirectiveConvertible {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+        var renderedCaption: [RenderInlineContent]?
+        if let caption = caption.first {
+            let blockContent = contentCompiler.visit(caption)
+            if case let .paragraph(paragraph) = blockContent.first as? RenderBlockContent {
+                renderedCaption = paragraph.inlineContent
+            }
+        }
+
+        guard let renderedImage = contentCompiler.visitImage(
+            source: source.path,
+            altText: altText,
+            caption: renderedCaption
+        ).first as? RenderInlineContent else {
+            return []
+        }
+
+        return [RenderBlockContent.paragraph(.init(inlineContent: [renderedImage]))]
     }
 }

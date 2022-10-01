@@ -92,4 +92,143 @@ class VideoMediaTests: XCTestCase {
             ]
         )
     }
+    
+    func testRenderVideoDirectiveInReferenceMarkup() throws {
+        do {
+            let (renderedContent, problems, video) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+                """
+                @Video(source: "introvideo")
+                """
+            }
+            
+            XCTAssertNotNil(video)
+            
+            XCTAssertEqual(problems, [])
+            
+            XCTAssertEqual(
+                renderedContent,
+                [
+                    RenderBlockContent.video(RenderBlockContent.Video(
+                        identifier: RenderReferenceIdentifier("introvideo"),
+                        metadata: nil
+                    ))
+                ]
+            )
+        }
+        
+        do {
+            let (renderedContent, problems, video) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+                """
+                @Video(source: "unknown-video")
+                """
+            }
+            
+            XCTAssertNotNil(video)
+            
+            XCTAssertEqual(problems, ["1: warning – org.swift.docc.unresolvedResource.Video"])
+            
+            XCTAssertEqual(renderedContent, [])
+        }
+        
+        do {
+            let (renderedContent, problems, video) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+                """
+                @Video(source: "introvideo", poster: "unknown-poster")
+                """
+            }
+            
+            XCTAssertNotNil(video)
+            
+            XCTAssertEqual(problems, ["1: warning – org.swift.docc.unresolvedResource.Image"])
+            
+            XCTAssertEqual(
+                renderedContent,
+                [
+                    RenderBlockContent.video(RenderBlockContent.Video(
+                        identifier: RenderReferenceIdentifier("introvideo"),
+                        metadata: nil
+                    ))
+                ]
+            )
+        }
+    }
+    
+    func testRenderVideoDirectiveWithCaption() throws {
+        let (renderedContent, problems, video) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+            """
+            @Video(source: "introvideo") {
+                This is my caption.
+            }
+            """
+        }
+        
+        XCTAssertNotNil(video)
+        
+        XCTAssertEqual(problems, [])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.video(RenderBlockContent.Video(
+                    identifier: RenderReferenceIdentifier("introvideo"),
+                    metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
+                ))
+            ]
+        )
+    }
+    
+    func testRenderVideoDirectiveWithCaptionAndPosterImage() throws {
+        let (renderedContent, problems, video, references) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+            """
+            @Video(source: "introvideo", alt: "An introductory video", poster: "introposter") {
+                This is my caption.
+            }
+            """
+        }
+        
+        XCTAssertNotNil(video)
+        
+        XCTAssertEqual(problems, [])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.video(RenderBlockContent.Video(
+                    identifier: RenderReferenceIdentifier("introvideo"),
+                    metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
+                ))
+            ]
+        )
+        
+        XCTAssertEqual(references.count, 2)
+        
+        let videoReference = try XCTUnwrap(references["introvideo"] as? VideoReference)
+        XCTAssertEqual(videoReference.poster, RenderReferenceIdentifier("introposter"))
+        XCTAssertEqual(videoReference.altText, "An introductory video")
+        
+        XCTAssertTrue(references.keys.contains("introposter"))
+    }
+    
+    func testVideoDirectiveDoesNotResolveImageMedia() throws {
+        // The rest of the test in this file will fail if 'introposter' and 'introvideo'
+        // do not exist. We just reverse them here to make sure the reference resolving is
+        // media-type specific.
+        let (renderedContent, problems, video) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+            """
+            @Video(source: "introposter", poster: "introvideo")
+            """
+        }
+        
+        XCTAssertNotNil(video)
+        
+        XCTAssertEqual(
+            problems,
+            [
+                "1: warning – org.swift.docc.unresolvedResource.Image",
+                "1: warning – org.swift.docc.unresolvedResource.Video"
+            ]
+        )
+        
+        XCTAssertEqual(renderedContent, [])
+    }
 }
