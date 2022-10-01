@@ -73,6 +73,9 @@ public enum RenderBlockContent: Equatable {
     /// A collection of authored links that should be rendered in a similar style
     /// to links in an on-page Topics section.
     case links(Links)
+    
+    /// A video with an optional caption.
+    case video(Video)
 
     // Warning: If you add a new case to this enum, make sure to handle it in the Codable
     // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
@@ -528,6 +531,21 @@ public enum RenderBlockContent: Equatable {
             self.items = items
         }
     }
+    
+    /// A video with an optional caption.
+    public struct Video: Codable, Equatable {
+        /// A reference to the video media that should be rendered in this block.
+        public let identifier: RenderReferenceIdentifier
+        
+        /// Any metadata associated with this video, like a caption.
+        public let metadata: RenderContentMetadata?
+        
+        /// Create a new video with the given identifier and metadata.
+        public init(identifier: RenderReferenceIdentifier, metadata: RenderContentMetadata? = nil) {
+            self.identifier = identifier
+            self.metadata = metadata
+        }
+    }
 }
 
 // Writing a manual Codable implementation for tables because the encoding of `extendedData` does
@@ -616,6 +634,7 @@ extension RenderBlockContent: Codable {
         case header, rows
         case numberOfColumns, columns
         case tabs
+        case identifier
     }
     
     public init(from decoder: Decoder) throws {
@@ -682,11 +701,18 @@ extension RenderBlockContent: Codable {
                     items: container.decode([String].self, forKey: .items)
                 )
             )
+        case .video:
+            self = try .video(
+                Video(
+                    identifier: container.decode(RenderReferenceIdentifier.self, forKey: .identifier),
+                    metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
+                )
+            )
         }
     }
     
     private enum BlockType: String, Codable {
-        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator, links
+        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator, links, video
     }
     
     private var type: BlockType {
@@ -706,6 +732,7 @@ extension RenderBlockContent: Codable {
         case .small: return .small
         case .tabNavigator: return .tabNavigator
         case .links: return .links
+        case .video: return .video
         default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
@@ -761,6 +788,9 @@ extension RenderBlockContent: Codable {
         case .links(let links):
             try container.encode(links.style, forKey: .style)
             try container.encode(links.items, forKey: .items)
+        case .video(let video):
+            try container.encode(video.identifier, forKey: .identifier)
+            try container.encodeIfPresent(video.metadata, forKey: .metadata)
         default:
             fatalError("unknown RenderBlockContent case in encode method")
         }

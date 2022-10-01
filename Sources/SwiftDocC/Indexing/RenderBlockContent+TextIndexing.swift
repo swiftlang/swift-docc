@@ -75,6 +75,8 @@ extension RenderBlockContent: TextIndexing {
                 .compactMap { references[$0] as? TopicRenderReference }
                 .map(\.title)
                 .joined(separator: " ")
+        case .video(let video):
+            return video.metadata?.rawIndexableTextContent(references: references) ?? ""
         default:
             fatalError("unknown RenderBlockContent case in rawIndexableTextContent")
         }

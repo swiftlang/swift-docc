@@ -1644,11 +1644,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     // TODO: Move this functionality to ``DocumentationBundleFileTypes`` (rdar://68156425).
     
     /// A type of asset.
-    public enum AssetType {
+    public enum AssetType: CustomStringConvertible {
         /// An image asset.
         case image
         /// A video asset.
         case video
+        
+        public var description: String {
+            switch self {
+            case .image:
+                return "Image"
+            case .video:
+                return "Video"
+            }
+        }
     }
 
     /// Checks if a given `fileExtension` is supported as a `type` of asset.
@@ -2388,12 +2397,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// Returns true if a resource with the given identifier exists in the registered bundle.
-    public func resourceExists(with identifier: ResourceReference) -> Bool{
+    public func resourceExists(with identifier: ResourceReference, ofType expectedAssetType: AssetType? = nil) -> Bool {
         guard let assetManager = assetManagers[identifier.bundleIdentifier] else {
             return false
         }
         
-        return assetManager.bestKey(forAssetName: identifier.path) != nil
+        guard let key = assetManager.bestKey(forAssetName: identifier.path) else {
+            return false
+        }
+        
+        guard let expectedAssetType = expectedAssetType, let asset = assetManager.storage[key] else {
+            return true
+        }
+        
+        return asset.hasVariant(withAssetType: expectedAssetType)
     }
     
     /**
@@ -2603,13 +2620,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///   - name: The name of the asset.
     ///   - parent: The topic where the asset is referenced.
     /// - Returns: The data that's associated with a image asset if it was found, otherwise `nil`.
-    public func resolveAsset(named name: String, in parent: ResolvedTopicReference) -> DataAsset? {
+    public func resolveAsset(named name: String, in parent: ResolvedTopicReference, withType type: AssetType? = nil) -> DataAsset? {
         let bundleIdentifier = parent.bundleIdentifier
-        return resolveAsset(named: name, bundleIdentifier: bundleIdentifier)
+        return resolveAsset(named: name, bundleIdentifier: bundleIdentifier, withType: type)
     }
     
-    func resolveAsset(named name: String, bundleIdentifier: String) -> DataAsset? {
+    func resolveAsset(named name: String, bundleIdentifier: String, withType expectedType: AssetType?) -> DataAsset? {
         if let localAsset = assetManagers[bundleIdentifier]?.allData(named: name) {
+            if let expectedType = expectedType {
+                guard localAsset.hasVariant(withAssetType: expectedType) else {
+                    return nil
+                }
+            }
+            
             return localAsset
         }
         
@@ -2800,5 +2823,13 @@ extension SymbolGraphLoader {
                 return false
             }
         })
+    }
+}
+
+extension DataAsset {
+    fileprivate func hasVariant(withAssetType assetType: DocumentationContext.AssetType) -> Bool {
+        return variants.values.map(\.pathExtension).contains { pathExtension in
+            return DocumentationContext.isFileExtension(pathExtension, supported: assetType)
+        }
     }
 }
