@@ -78,14 +78,44 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitImage(_ image: Image) -> [RenderContent] {
-        let source = image.source ?? ""
-        let unescapedSource = source.removingPercentEncoding ?? source
-        let imageIdentifier: RenderReferenceIdentifier = .init(unescapedSource)
-        if let resolvedImages = context.resolveAsset(named: unescapedSource, in: identifier) {
-            imageReferences[unescapedSource] = ImageReference(identifier: imageIdentifier, altText: image.altText, imageAsset: resolvedImages)
+        return visitImage(
+            source: image.source ?? "",
+            altText: image.altText,
+            caption: nil
+        )
+    }
+    
+    mutating func visitImage(
+        source: String,
+        altText: String?,
+        caption: [RenderInlineContent]?
+    ) -> [RenderContent] {
+        let imageIdentifier = resolveImage(source: source, altText: altText)
+        
+        var metadata: RenderContentMetadata?
+        if let caption = caption {
+            metadata = RenderContentMetadata(abstract: caption)
         }
         
-        return [RenderInlineContent.image(identifier: imageIdentifier, metadata: nil)]
+        return [RenderInlineContent.image(identifier: imageIdentifier, metadata: metadata)]
+    }
+    
+    mutating func resolveImage(source: String, altText: String? = nil) -> RenderReferenceIdentifier {
+        let unescapedSource = source.removingPercentEncoding ?? source
+        let imageIdentifier: RenderReferenceIdentifier = .init(unescapedSource)
+        if let resolvedImages = context.resolveAsset(
+            named: unescapedSource,
+            in: identifier,
+            withType: .image
+        ) {
+            imageReferences[unescapedSource] = ImageReference(
+                identifier: imageIdentifier,
+                altText: altText,
+                imageAsset: resolvedImages
+            )
+        }
+        
+        return imageIdentifier
     }
     
     mutating func visitLink(_ link: Link) -> [RenderContent] {
