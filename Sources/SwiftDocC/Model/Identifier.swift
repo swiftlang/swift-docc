@@ -518,7 +518,15 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
     }
     
     public var description: String {
-        return topicURL.components.string!
+        var result = topicURL.components.string!
+        // Replace that path and fragment parts of the description with the unescaped path and fragment values.
+        if let rangeOfFragment = topicURL.components.rangeOfFragment, let fragment = topicURL.components.fragment {
+            result.replaceSubrange(rangeOfFragment, with: fragment)
+        }
+        if let rangeOfPath = topicURL.components.rangeOfPath {
+            result.replaceSubrange(rangeOfPath, with: topicURL.components.path)
+        }
+        return result
     }
 }
 
