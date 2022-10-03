@@ -2692,7 +2692,6 @@ Document
                 RenderBlockContent.heading(.init(level: 2, text: "Discussion", anchor: "discussion")),
                 .paragraph(.init(inlineContent: [
                     .text("Doc extension discussion. Missing: "),
-                    .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),
                     .text("."),
                 ]))
             ])
@@ -2867,7 +2866,6 @@ Document
                 RenderBlockContent.heading(.init(level: 2, text: "Discussion", anchor: "discussion")),
                 .paragraph(.init(inlineContent: [
                     .text("Inherited discussion. Missing: "),
-                    .image(identifier: RenderReferenceIdentifier("my-inherited-image.png"), metadata: nil),
                     .text("."),
                 ])),
             ])
@@ -3129,5 +3127,51 @@ Document
         XCTAssertNil(renderNode.references["introvideo"] as? VideoReference)
         XCTAssertNil(renderNode.references["intro"] as? ImageReference)
         XCTAssertNil(renderNode.references["introposter"] as? ImageReference)
+    }
+    
+    func testTopicsSectionWithAnonymousTopicGroup() throws {
+        let (_, bundle, context) = try testBundleAndContext(
+            copying: "TestBundle",
+            configureBundle: { url in
+                try """
+                # Article
+                
+                Abstract.
+                
+                ## Topics
+                
+                - ``MyKit/MyProtocol``
+                
+                ### Named topic group
+                
+                - ``MyKit/MyClass``
+                
+                """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+            }
+        )
+         
+        let moduleReference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/Test-Bundle/article",
+            sourceLanguage: .swift
+        )
+        
+        let moduleNode = try context.entity(with: moduleReference)
+        
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleNode.reference, source: nil)
+        let moduleRenderNode = try XCTUnwrap(translator.visit(moduleNode.semantic) as? RenderNode)
+        
+        XCTAssertEqual(
+            moduleRenderNode.topicSections.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.identifiers
+            },
+            [
+                nil,
+                "doc://org.swift.docc.example/documentation/MyKit/MyProtocol",
+                
+                "Named topic group",
+                "doc://org.swift.docc.example/documentation/MyKit/MyClass",
+            ]
+        )
     }
 }

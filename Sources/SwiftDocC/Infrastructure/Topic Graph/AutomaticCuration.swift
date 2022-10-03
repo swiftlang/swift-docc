@@ -38,7 +38,7 @@ public struct AutomaticCuration {
     }
     
     /// Automatic curation task group.
-    typealias TaskGroup = (title: String, references: [ResolvedTopicReference])
+    typealias TaskGroup = (title: String?, references: [ResolvedTopicReference])
     
     /// Returns a list of automatically curated Topics task groups for the given documentation node.
     /// - Parameters:

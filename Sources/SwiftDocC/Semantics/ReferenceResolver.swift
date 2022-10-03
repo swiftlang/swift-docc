@@ -20,8 +20,30 @@ func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: 
     return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
-func unresolvedResourceProblem(resource: ResourceReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
-    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedResource", summary: "Resource \(resource.path.singleQuoted) couldn't be found")
+func unresolvedResourceProblem(
+    resource: ResourceReference,
+    expectedType: DocumentationContext.AssetType? = nil,
+    source: URL?,
+    range: SourceRange?,
+    severity: DiagnosticSeverity
+) -> Problem {
+    let summary: String
+    let identifier: String
+    if let expectedType = expectedType {
+        identifier = "org.swift.docc.unresolvedResource.\(expectedType)"
+        summary = "\(expectedType) resource \(resource.path.singleQuoted) couldn't be found"
+    } else {
+        identifier = "org.swift.docc.unresolvedResource"
+        summary = "Resource \(resource.path.singleQuoted) couldn't be found"
+    }
+    
+    let diagnostic = Diagnostic(
+        source: source,
+        severity: severity,
+        range: range,
+        identifier: identifier,
+        summary: summary
+    )
     return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 

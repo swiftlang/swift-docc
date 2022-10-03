@@ -435,6 +435,9 @@
                         "$ref": "#/components/schemas/TabNavigator"
                     },
                     {
+                        "$ref": "#/components/schemas/Video"
+                    },
+                    {
                         "$ref": "#/components/schemas/Aside"
                     },
                     {
@@ -669,6 +672,26 @@
                      }
                  }
              },
+            "Video": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["video"]
+                    },
+                    "identifier": {
+                        "type": "string",
+                        "format": "reference(VideoRenderReference)"
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/RenderContentMetadata"
+                    }
+                }
+            },
             "Aside": {
                 "type": "object",
                 "required": [
@@ -2547,7 +2570,6 @@
             },
             "TasksGroupSection": {
                 "required": [
-                    "title",
                     "identifiers"
                 ],
                 "type": "object",

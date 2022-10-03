@@ -143,6 +143,25 @@ extension XCTestCase {
         in bundleName: String? = nil,
         source: () -> String
     ) throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
+        let (renderedContent, problems, directive, _) = try parseDirective(
+            directive,
+            in: bundleName,
+            source: source
+        )
+        
+        return (renderedContent, problems, directive)
+    }
+    
+    func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
+        in bundleName: String? = nil,
+        source: () -> String
+    ) throws -> (
+        renderBlockContent: [RenderBlockContent],
+        problemIdentifiers: [String],
+        directive: Directive?,
+        collectedReferences: [String : RenderReference]
+    ) {
         let bundle: DocumentationBundle
         let context: DocumentationContext
         
@@ -192,7 +211,7 @@ extension XCTestCase {
         }
         
         guard let directive = result as? Directive else {
-            return ([], try problemIDs(), nil)
+            return ([], try problemIDs(), nil, [:])
         }
         
         var contentCompiler = RenderContentCompiler(
@@ -208,6 +227,17 @@ extension XCTestCase {
         let renderedContent = try XCTUnwrap(
             directive.render(with: &contentCompiler) as? [RenderBlockContent]
         )
-        return (renderedContent, try problemIDs(), directive)
+        
+        let collectedReferences = contentCompiler.videoReferences
+            .mapValues { $0 as RenderReference }
+            .merging(
+                contentCompiler.imageReferences,
+                uniquingKeysWith: { videoReference, _ in
+                    XCTFail("Non-unique references.")
+                    return videoReference
+                }
+            )
+        
+        return (renderedContent, try problemIDs(), directive, collectedReferences)
     }
 }

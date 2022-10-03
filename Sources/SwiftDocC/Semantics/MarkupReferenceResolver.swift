@@ -168,6 +168,56 @@ struct MarkupReferenceResolver: MarkupRewriter {
             } else {
                 return blockDirective
             }
+        case ImageMedia.directiveName:
+            guard let imageMedia = ImageMedia(from: blockDirective, source: source, for: bundle, in: context) else {
+                return blockDirective
+            }
+            
+            if !context.resourceExists(with: imageMedia.source, ofType: .image) {
+                problems.append(
+                    unresolvedResourceProblem(
+                        resource: imageMedia.source,
+                        expectedType: .image,
+                        source: source,
+                        range: imageMedia.originalMarkup.range,
+                        severity: .warning
+                    )
+                )
+            }
+            
+            return blockDirective
+        case VideoMedia.directiveName:
+            guard let videoMedia = VideoMedia(from: blockDirective, source: source, for: bundle, in: context) else {
+                return blockDirective
+            }
+            
+            if !context.resourceExists(with: videoMedia.source, ofType: .video) {
+                problems.append(
+                    unresolvedResourceProblem(
+                        resource: videoMedia.source,
+                        expectedType: .video,
+                        source: source,
+                        range: videoMedia.originalMarkup.range,
+                        severity: .warning
+                    )
+                )
+            }
+            
+            if let posterReference = videoMedia.poster,
+                !context.resourceExists(with: posterReference, ofType: .image)
+            {
+                problems.append(
+                    unresolvedResourceProblem(
+                        resource: posterReference,
+                        expectedType: .image,
+                        source: source,
+                        range: videoMedia.originalMarkup.range,
+                        severity: .warning
+                    )
+                )
+            }
+            
+            return blockDirective
         case Comment.directiveName:
             return blockDirective
         default:

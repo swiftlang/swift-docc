@@ -23,6 +23,7 @@ struct RenderContentCompiler: MarkupVisitor {
     var bundle: DocumentationBundle
     var identifier: ResolvedTopicReference
     var imageReferences: [String: ImageReference] = [:]
+    var videoReferences: [String: VideoReference] = [:]
     /// Resolved topic references that were seen by the visitor. These should be used to populate the references dictionary.
     var collectedTopicReferences = GroupedSequence<String, ResolvedTopicReference> { $0.absoluteString }
     var linkReferences: [String: LinkReference] = [:]
@@ -78,14 +79,48 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitImage(_ image: Image) -> [RenderContent] {
-        let source = image.source ?? ""
-        let unescapedSource = source.removingPercentEncoding ?? source
-        let imageIdentifier: RenderReferenceIdentifier = .init(unescapedSource)
-        if let resolvedImages = context.resolveAsset(named: unescapedSource, in: identifier) {
-            imageReferences[unescapedSource] = ImageReference(identifier: imageIdentifier, altText: image.altText, imageAsset: resolvedImages)
+        return visitImage(
+            source: image.source ?? "",
+            altText: image.altText,
+            caption: nil
+        )
+    }
+    
+    mutating func visitImage(
+        source: String,
+        altText: String?,
+        caption: [RenderInlineContent]?
+    ) -> [RenderContent] {
+        guard let imageIdentifier = resolveImage(source: source, altText: altText) else {
+            return []
         }
         
-        return [RenderInlineContent.image(identifier: imageIdentifier, metadata: nil)]
+        var metadata: RenderContentMetadata?
+        if let caption = caption {
+            metadata = RenderContentMetadata(abstract: caption)
+        }
+        
+        return [RenderInlineContent.image(identifier: imageIdentifier, metadata: metadata)]
+    }
+    
+    mutating func resolveImage(source: String, altText: String? = nil) -> RenderReferenceIdentifier? {
+        let unescapedSource = source.removingPercentEncoding ?? source
+        let imageIdentifier: RenderReferenceIdentifier = .init(unescapedSource)
+        guard let resolvedImages = context.resolveAsset(
+            named: unescapedSource,
+            in: identifier,
+            withType: .image
+        ) else {
+            return nil
+        }
+        
+        imageReferences[unescapedSource] = ImageReference(
+            identifier: imageIdentifier,
+            altText: altText,
+            imageAsset: resolvedImages
+        )
+        
+        return imageIdentifier
     }
     
     mutating func visitLink(_ link: Link) -> [RenderContent] {
