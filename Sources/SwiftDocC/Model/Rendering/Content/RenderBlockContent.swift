@@ -240,9 +240,14 @@ public enum RenderBlockContent: Equatable {
     }
 
     /// A table that contains a list of row data.
-    public struct Table: Equatable {
+    public struct Table {
         /// The style of header in this table.
         public var header: HeaderType
+        /// The text alignment of each column in this table.
+        ///
+        /// A `nil` value for this property is the same as all the columns being
+        /// ``RenderBlockContent/ColumnAlignment/unset``.
+        public var alignments: [ColumnAlignment]?
         /// The rows in this table.
         public var rows: [TableRow]
         /// Any extended information that describes cells in this table.
@@ -251,11 +256,23 @@ public enum RenderBlockContent: Equatable {
         public var metadata: RenderContentMetadata?
 
         /// Creates a new table with the given data.
-        public init(header: HeaderType, rows: [TableRow], extendedData: Set<TableCellExtendedData>, metadata: RenderContentMetadata? = nil) {
+        ///
+        /// - Parameters:
+        ///   - header: The style of header in this table.
+        ///   - rawAlignments: The text alignment for each column in this table. If all the
+        ///     alignments are ``RenderBlockContent/ColumnAlignment/unset``, the ``alignments``
+        ///     property will be set to `nil`.
+        ///   - rows: The cell data for this table.
+        ///   - extendedData: Any extended information that describes cells in this table.
+        ///   - metadata: Additional metadata for this table, if necessary.
+        public init(header: HeaderType, rawAlignments: [ColumnAlignment]? = nil, rows: [TableRow], extendedData: Set<TableCellExtendedData>, metadata: RenderContentMetadata? = nil) {
             self.header = header
             self.rows = rows
             self.extendedData = extendedData
             self.metadata = metadata
+            if let alignments = rawAlignments, !alignments.allSatisfy({ $0 == .unset }) {
+                self.alignments = alignments
+            }
         }
     }
     
@@ -373,6 +390,18 @@ public enum RenderBlockContent: Equatable {
         case both
         /// The table doesn't contain headers.
         case none
+    }
+
+    /// The methods by which a table column can have its text aligned.
+    public enum ColumnAlignment: String, Codable, Equatable {
+        /// Force text alignment to be left-justified.
+        case left
+        /// Force text alignment to be right-justified.
+        case right
+        /// Force text alignment to be centered.
+        case center
+        /// Leave text alignment to the default.
+        case unset
     }
     
     /// A table row that contains a list of row cells.
@@ -548,11 +577,35 @@ public enum RenderBlockContent: Equatable {
     }
 }
 
+extension RenderBlockContent.Table: Equatable {
+    public static func == (lhs: RenderBlockContent.Table, rhs: RenderBlockContent.Table) -> Bool {
+        guard lhs.header == rhs.header
+                && lhs.extendedData == rhs.extendedData
+                && lhs.metadata == rhs.metadata
+                && lhs.rows == rhs.rows
+        else {
+            return false
+        }
+
+        var lhsAlignments = lhs.alignments
+        if let align = lhsAlignments, align.allSatisfy({ $0 == .unset }) {
+            lhsAlignments = nil
+        }
+
+        var rhsAlignments = rhs.alignments
+        if let align = rhsAlignments, align.allSatisfy({ $0 == .unset }) {
+            rhsAlignments = nil
+        }
+
+        return lhsAlignments == rhsAlignments
+    }
+}
+
 // Writing a manual Codable implementation for tables because the encoding of `extendedData` does
 // not follow from the struct layout.
 extension RenderBlockContent.Table: Codable {
     enum CodingKeys: String, CodingKey {
-        case header, rows, extendedData, metadata
+        case header, alignments, rows, extendedData, metadata
     }
 
     // TableCellExtendedData encodes the row and column indices as a dynamic key with the format "{row}_{column}".
@@ -589,6 +642,14 @@ extension RenderBlockContent.Table: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.header = try container.decode(RenderBlockContent.HeaderType.self, forKey: .header)
+
+        let rawAlignments = try container.decodeIfPresent([RenderBlockContent.ColumnAlignment].self, forKey: .alignments)
+        if let alignments = rawAlignments, !alignments.allSatisfy({ $0 == .unset }) {
+            self.alignments = alignments
+        } else {
+            self.alignments = nil
+        }
+
         self.rows = try container.decode([RenderBlockContent.TableRow].self, forKey: .rows)
         self.metadata = try container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
 
@@ -610,6 +671,9 @@ extension RenderBlockContent.Table: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(header, forKey: .header)
+        if let alignments = alignments, !alignments.isEmpty, !alignments.allSatisfy({ $0 == .unset }) {
+            try container.encode(alignments, forKey: .alignments)
+        }
         try container.encode(rows, forKey: .rows)
         try container.encodeIfPresent(metadata, forKey: .metadata)
 
