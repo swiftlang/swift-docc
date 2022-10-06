@@ -271,6 +271,22 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(slothImage?.alt, "A sloth on a branch.")
     }
     
+    func testCustomMetadataSupport() throws {
+        let (problems, metadata) = try parseMetadataFromSource(
+            """
+            # Article title
+            
+            @Metadata {
+                @CustomMetadata(key: "supported-platforms", value: "iphone,ipados,macos")
+            }
+            
+            The abstract of this article.
+            """
+        )
+        
+        XCTAssertEqual(metadata.customMetadata.count, 1)
+    }
+    
     func testDuplicatePageImage() throws {
         let (problems, _) = try parseMetadataFromSource(
             """
@@ -305,6 +321,8 @@ class MetadataTests: XCTestCase {
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
         var problems = analyzer.problems
+        print ("problems")
+        print (problems)
         
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         
