@@ -165,7 +165,18 @@ struct RenderContentCompiler: MarkupVisitor {
             return [RenderInlineContent.text(link.plainText)]
         }
         
-        return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
+        let linkTitleInlineContent = link.children.flatMap { visit($0) } as! [RenderInlineContent]
+        let plainTextLinkTitle = linkTitleInlineContent.plainText
+        let overridingTitle = plainTextLinkTitle.isEmpty ? nil : plainTextLinkTitle
+        let overridingTitleInlineContent = linkTitleInlineContent.isEmpty ? nil : linkTitleInlineContent
+        return [
+            RenderInlineContent.reference(
+                identifier: .init(resolved.absoluteString),
+                isActive: true,
+                overridingTitle: link.isAutolink ? nil : overridingTitle,
+                overridingTitleInlineContent: link.isAutolink ? nil : overridingTitleInlineContent
+            )
+        ]
     }
     
     mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
@@ -194,7 +205,7 @@ struct RenderContentCompiler: MarkupVisitor {
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
         if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
             return cached
-        } 
+        }
 
         // The symbol link may be written with a scheme and bundle identifier.
         let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)
