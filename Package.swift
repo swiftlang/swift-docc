@@ -90,13 +90,6 @@ let package = Package(
                 "SwiftDocCUtilities",
             ]),
 
-        // Empty target that builds the documentation catalog at /DocCDocumentation/DocCDocumentation.docc.
-        // The DocCDocumentation catalog includes high-level, user-facing documentation about using
-        // DocC as a documentation tool.
-        .target(
-            name: "DocC",
-            path: "Sources/DocCDocumentation"),
-        
         // Test app for SwiftDocCUtilities
         .executableTarget(
             name: "signal-test-app",
