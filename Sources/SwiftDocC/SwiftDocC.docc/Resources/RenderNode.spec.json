@@ -2176,6 +2176,10 @@
                             "$ref": "#/components/schemas/TopicImage"
                         }
                     },
+                    "customMetadata": {
+                       "key" : "string",
+                       "value" : "string"
+                    }
                     "modules": {
                         "type": "array",
                         "items": {

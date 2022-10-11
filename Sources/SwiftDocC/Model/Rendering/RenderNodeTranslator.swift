@@ -422,6 +422,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 imageReferences[imageReference.identifier.identifier] = imageReference
             }
             
+            
             for dependencyReference in dependencies.topicReferences {
                 var dependencyRenderReference: TopicRenderReference
                 if let renderContext = renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
@@ -1168,6 +1169,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     identifier: renderReference
                 )
             }
+        }
+        
+        print ("documentationNode")
+        print (documentationNode)
+        if let customMetadata = documentationNode.metadata?.customMetadata {
+            //node.metadata.customMetadata =  // need to set
         }
         
         node.variants = variants(for: documentationNode)

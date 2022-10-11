@@ -21,7 +21,7 @@ import Markdown
 /// This directive is only valid within a ``Metadata`` directive:
 /// ```
 /// @Metadata {
-///    @CustomMetadata(key: "supported-platforms", value: "iphone,ipados,macos")
+///    @CustomMetadata(key: "country", value: "Belgium")
 /// }
 /// ```
 public final class CustomMetadata: Semantic, AutomaticDirectiveConvertible {

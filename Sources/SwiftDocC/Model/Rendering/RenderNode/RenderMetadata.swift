@@ -77,6 +77,8 @@ public struct RenderMetadata: VariantContainer {
     /// Authors can use the `@PageImage` metadata directive to provide custom icon and card images for a page.
     public var images: [TopicImage] = []
     
+    public var customMetadata: [String: String] = [:]
+    
     /// The title of the page.
     public var title: String? {
         get { getVariantDefaultValue(keyPath: \.titleVariants) }
@@ -228,6 +230,7 @@ extension RenderMetadata: Codable {
         public static let remoteSource = CodingKeys(stringValue: "remoteSource")
         public static let tags = CodingKeys(stringValue: "tags")
         public static let images = CodingKeys(stringValue: "images")
+        public static let customMetadata = CodingKeys(stringValue: "customMetadata")
     }
     
     public init(from decoder: Decoder) throws {
@@ -243,6 +246,7 @@ extension RenderMetadata: Codable {
         requiredVariants = try container.decodeVariantCollectionIfPresent(ofValueType: Bool.self, forKey: .required) ?? .init(defaultValue: false)
         roleHeadingVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .roleHeading)
         images = try container.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
+        customMetadata = try container.decodeIfPresent([String: String].self, forKey: .customMetadata) ?? [:]
         let rawRole = try container.decodeIfPresent(String.self, forKey: .role)
         role = rawRole == "tutorial" ? Role.tutorial.rawValue : rawRole
         titleVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .title)

@@ -131,6 +131,20 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(metadata?.displayName?.name, "Custom Name")
     }
     
+    func testCustomMetadataSupport() throws {
+        let source = """
+        @Metadata {
+           @CustomMetadata(key: "country", value: "Belgium")
+        }
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let directive = document.child(at: 0)! as! BlockDirective
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(metadata)
+    }
+    
     // MARK: - Metadata Support
     
     func testArticleSupportsMetadata() throws {
@@ -269,22 +283,6 @@ class MetadataTests: XCTestCase {
         }
         XCTAssertEqual(slothImage?.purpose, .card)
         XCTAssertEqual(slothImage?.alt, "A sloth on a branch.")
-    }
-    
-    func testCustomMetadataSupport() throws {
-        let (problems, metadata) = try parseMetadataFromSource(
-            """
-            # Article title
-            
-            @Metadata {
-                @CustomMetadata(key: "supported-platforms", value: "iphone,ipados,macos")
-            }
-            
-            The abstract of this article.
-            """
-        )
-        
-        XCTAssertEqual(metadata.customMetadata.count, 1)
     }
     
     func testDuplicatePageImage() throws {
