@@ -28,7 +28,7 @@ public final class CustomMetadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
     /// A key to identify a piece of metadata
-    @DirectiveArgumentWrapped(name: .unnamed)
+    @DirectiveArgumentWrapped
     public var key: String
     
     /// value of the metadata

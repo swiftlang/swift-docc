@@ -135,6 +135,7 @@ class MetadataTests: XCTestCase {
         let source = """
         @Metadata {
            @CustomMetadata(key: "country", value: "Belgium")
+           @CustomMetadata(key: "continent", value: "Europe")
         }
         """
         let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -143,6 +144,8 @@ class MetadataTests: XCTestCase {
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
+        XCTAssertEqual(metadata?.customMetadata.count, 2)
+        XCTAssertEqual(problems.count, 0)
     }
     
     // MARK: - Metadata Support
