@@ -779,6 +779,31 @@ public struct RenderNodeTranslator: SemanticVisitor {
             
             return seeAlsoSections
         } ?? .init(defaultValue: [])
+
+        if let callToAction = article.metadata?.callToAction {
+            if let url = callToAction.url {
+                let downloadIdentifier = RenderReferenceIdentifier(url.description)
+                node.sampleDownload = .init(
+                    action: .reference(
+                        identifier: downloadIdentifier,
+                        isActive: true,
+                        overridingTitle: callToAction.buttonLabel(),
+                        overridingTitleInlineContent: nil))
+                downloadReferences[url.description] = DownloadReference(
+                    identifier: downloadIdentifier,
+                    renderURL: url,
+                    sha512Checksum: ""
+                )
+            } else if let fileReference = callToAction.file {
+                let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
+                node.sampleDownload = .init(action: .reference(
+                    identifier: downloadIdentifier,
+                    isActive: true,
+                    overridingTitle: callToAction.buttonLabel(),
+                    overridingTitleInlineContent: nil
+                ))
+            }
+        }
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
@@ -786,6 +811,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(imageReferences, to: &node)
         addReferences(videoReferences, to: &node)
         addReferences(linkReferences, to: &node)
+        addReferences(downloadReferences, to: &node)
         // See Also can contain external links, we need to separately transfer
         // link references from the content compiler
         addReferences(contentCompiler.linkReferences, to: &node)

@@ -1,0 +1,169 @@
+/*
+ This source file is part of the Swift.org open source project
+
+ Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Licensed under Apache License v2.0 with Runtime Library Exception
+
+ See https://swift.org/LICENSE.txt for license information
+ See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+*/
+
+import Foundation
+import Markdown
+
+/// A directive that adds a prominent button or link to a page's header.
+///
+/// A "Call to Action" has two main components: a link or file path, and the link text to display.
+///
+/// The link path can be specified in one of two ways:
+/// - The `url` parameter specifies a URL that will be used verbatim. Use this when you're linking
+///   to an external page or externally-hosted file.
+/// - The `path` parameter specifies the path to a file hosted within your documentation catalog.
+///   Use this if you're linking to a downloadable file that you're managing alongside your
+///   articles and tutorials.
+///
+/// The link text can also be specified in one of two ways:
+/// - The `purpose` parameter can be used to use a default button label. There are two valid values:
+///   - `download` indicates that the link is to a downloadable file. The button will be labeled "Download".
+///   - `link` indicates that the link is to an external webpage. The button will be labeled "Visit".
+/// - The `label` parameter specifies the literal text to use as the button label.
+///
+/// `@CallToAction` requires one of `url` or `path`, and one of `purpose` or `label`. Specifying both
+/// `purpose` and `label` is allowed, but the `label` will override the default label provided by
+/// `purpose`.
+///
+/// This directive is only valid within a ``Metadata`` directive:
+///
+/// ```markdown
+/// @Metadata {
+///     @CallToAction(url: "https://example.com/sample.zip", purpose: download)
+/// }
+/// ```
+public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
+    /// The kind of action the link is referencing.
+    public enum Purpose: String, CaseIterable, DirectiveArgumentValueConvertible {
+        /// References a link to download an associated asset, like a sample project.
+        case download
+
+        /// References a link to view external content, like a source code repository.
+        case link
+    }
+
+    /// The location of the associated download.
+    @DirectiveArgumentWrapped
+    public var url: URL? = nil
+
+    @DirectiveArgumentWrapped(
+        parseArgument: { bundle, argumentValue in
+            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+        }
+    )
+    public var file: ResourceReference? = nil
+
+    @DirectiveArgumentWrapped
+    public var purpose: Purpose? = nil
+
+    @DirectiveArgumentWrapped
+    public var label: String? = nil
+
+    static var keyPaths: [String : AnyKeyPath] = [
+        "url"      : \CallToAction._url,
+        "file"     : \CallToAction._file,
+        "purpose"  : \CallToAction._purpose,
+        "label"    : \CallToAction._label,
+    ]
+
+    public func buttonLabel() -> String {
+        if let label = label {
+            return label
+        } else if let purpose = purpose {
+            return purpose.defaultLabel()
+        } else {
+            fatalError("A valid CallToAction should have either a purpose or label")
+        }
+    }
+
+    func validate(
+        source: URL?,
+        for bundle: DocumentationBundle,
+        in context: DocumentationContext,
+        problems: inout [Problem]
+    ) -> Bool {
+        var isValid = true
+
+        if self.url == nil && self.file == nil {
+            problems.append(.init(diagnostic: .init(
+                source: source,
+                severity: .error,
+                range: originalMarkup.range,
+                identifier: "org.swift.docc.\(CallToAction.self).missingLink",
+                summary: "\(CallToAction.directiveName.singleQuoted) directive requires `url` or `file` argument",
+                explanation: "The Call to Action requires a link to direct the user to."
+            )))
+
+            isValid = false
+        } else if self.url != nil && self.file != nil {
+            problems.append(.init(diagnostic: .init(
+                source: source,
+                severity: .error,
+                range: originalMarkup.range,
+                identifier: "org.swift.docc.\(CallToAction.self).tooManyLinks",
+                summary: "\(CallToAction.directiveName.singleQuoted) directive requires only one of `url` or `file`",
+                explanation: "Both the `url` and `file` arguments specify the link in the heading; specifying both of them creates ambiguity in where the call should link."
+            )))
+
+            isValid = false
+        }
+
+        if self.purpose == nil && self.label == nil {
+            problems.append(.init(diagnostic: .init(
+                source: source,
+                severity: .error,
+                range: originalMarkup.range,
+                identifier: "org.swift.docc.\(CallToAction.self).missingLabel",
+                summary: "\(CallToAction.directiveName.singleQuoted) directive requires `purpose` or `label` argument",
+                explanation: "Without a `purpose` or `label`, the Call to Action has no label to apply to the link."
+            )))
+
+            isValid = false
+        }
+
+        if let file = self.file {
+            if context.resolveAsset(named: file.url.lastPathComponent, in: bundle.rootReference) == nil {
+                problems.append(.init(
+                    diagnostic: Diagnostic(
+                        source: url,
+                        severity: .warning,
+                        range: originalMarkup.range,
+                        identifier: "org.swift.docc.Project.ProjectFilesNotFound",
+                        summary: "\(file.path) file reference not found in \(CallToAction.directiveName.singleQuoted) directive"),
+                    possibleSolutions: [
+                        Solution(summary: "Copy the referenced file into the documentation bundle directory", replacements: [])
+                    ]
+                ))
+            } else {
+                self.file = ResourceReference(bundleIdentifier: file.bundleIdentifier, path: file.url.lastPathComponent)
+            }
+        }
+
+        return isValid
+    }
+
+    public let originalMarkup: Markdown.BlockDirective
+
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: Markdown.BlockDirective) {
+        self.originalMarkup = originalMarkup
+    }
+}
+
+extension CallToAction.Purpose {
+    public func defaultLabel() -> String {
+        switch self {
+        case .download:
+            return "Download"
+        case .link:
+            return "Visit"
+        }
+    }
+}
