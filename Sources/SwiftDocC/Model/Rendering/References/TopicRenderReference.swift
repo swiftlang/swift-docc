@@ -106,6 +106,9 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
     
     /// Author provided images that should be used to represent this page.
     public var images: [TopicImage]
+
+    /// Author provided customMetadata
+    public var customMetadata: [CustomMetadataDictionary]
     
     /// Creates a new topic reference with all its initial values.
     ///
@@ -147,7 +150,8 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         name: String? = nil,
         ideTitle: String? = nil,
         tags: [RenderNode.Tag]? = nil,
-        images: [TopicImage] = []
+        images: [TopicImage] = [],
+        customMetadata: [CustomMetadataDictionary] = []
     ) {
         self.init(
             identifier: identifier,
@@ -168,7 +172,8 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
             name: name,
             ideTitle: ideTitle,
             tags: tags,
-            images: images
+            images: images,
+            customMetadata: customMetadata
         )
     }
     
@@ -212,7 +217,8 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         name: String? = nil,
         ideTitle: String? = nil,
         tags: [RenderNode.Tag]? = nil,
-        images: [TopicImage] = []
+        images: [TopicImage] = [],
+        customMetadata: [CustomMetadataDictionary] = []
     ) {
         self.identifier = identifier
         self.titleVariants = titleVariants
@@ -233,6 +239,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         self.ideTitle = ideTitle
         self.tags = tags
         self.images = images
+        self.customMetadata = customMetadata
     }
     
     enum CodingKeys: String, CodingKey {
@@ -256,6 +263,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         case ideTitle
         case tags
         case images
+        case customMetadata
     }
     
     public init(from decoder: Decoder) throws {
@@ -282,6 +290,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         ideTitle = try values.decodeIfPresent(String.self, forKey: .ideTitle)
         tags = try values.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
         images = try values.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
+        customMetadata = try values.decodeIfPresent([CustomMetadataDictionary].self, forKey: .customMetadata) ?? []
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -315,5 +324,6 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         try container.encodeIfPresent(ideTitle, forKey: .ideTitle)
         try container.encodeIfPresent(tags, forKey: .tags)
         try container.encodeIfNotEmpty(images, forKey: .images)
+        try container.encodeIfNotEmpty(customMetadata, forKey: .customMetadata)
     }
 }

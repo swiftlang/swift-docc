@@ -337,5 +337,6 @@ extension RenderMetadata: Codable {
         }
         
         try container.encodeIfNotEmpty(images, forKey: .images)
+        try container.encodeIfNotEmpty(customMetadata, forKey: .customMetadata)
     }
 }

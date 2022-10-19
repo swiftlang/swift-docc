@@ -1199,5 +1199,9 @@ class RenderNodeTranslatorTests: XCTestCase {
                  TopicImage(type: .card, identifier: RenderReferenceIdentifier("figure1.png"))
              ]
          )
+
+        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.count, 1)
+        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata[0].key, "country")
+        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata[1].value, "Belgium")
      }
 }
