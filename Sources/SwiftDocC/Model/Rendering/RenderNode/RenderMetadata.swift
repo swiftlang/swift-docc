@@ -10,6 +10,23 @@
 
 import Foundation
 
+/// A custom Metadata to provide arbitary key, value
+///
+/// Allows an author to provide a custom key and value within metadata
+public struct CustomMetadataDictionary: Codable, Hashable {
+    /// The key to the customMetadata
+    public let key: String
+
+    /// The value to the customMetadata
+    public let value: String
+
+    /// Create a new customMetadata dictionary
+    public init(key: String, value: String) {
+        self.key = key
+        self.value = value
+    }
+}
+
 /// Arbitrary metadata for a render node.
 public struct RenderMetadata: VariantContainer {
     // MARK: Tutorials metadata
@@ -77,7 +94,7 @@ public struct RenderMetadata: VariantContainer {
     /// Authors can use the `@PageImage` metadata directive to provide custom icon and card images for a page.
     public var images: [TopicImage] = []
     
-    public var customMetadata: [String: String] = [:]
+    public var customMetadata: [CustomMetadataDictionary] = []
     
     /// The title of the page.
     public var title: String? {
@@ -246,7 +263,7 @@ extension RenderMetadata: Codable {
         requiredVariants = try container.decodeVariantCollectionIfPresent(ofValueType: Bool.self, forKey: .required) ?? .init(defaultValue: false)
         roleHeadingVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .roleHeading)
         images = try container.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
-        customMetadata = try container.decodeIfPresent([String: String].self, forKey: .customMetadata) ?? [:]
+        customMetadata = try container.decodeIfPresent([CustomMetadataDictionary].self, forKey: .customMetadata) ?? []
         let rawRole = try container.decodeIfPresent(String.self, forKey: .role)
         role = rawRole == "tutorial" ? Role.tutorial.rawValue : rawRole
         titleVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .title)

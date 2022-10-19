@@ -728,6 +728,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
 
+        if let customMetadatas = documentationNode.metadata?.customMetadata {
+            node.metadata.customMetadata = customMetadatas.map { customMetadata -> CustomMetadataDictionary in
+                let key = customMetadata.key
+                let value = customMetadata.value
+                return CustomMetadataDictionary(key: key, value: value!)
+            }
+        }
+
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
@@ -1170,11 +1178,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 )
             }
         }
-        
-        print ("documentationNode")
-        print (documentationNode)
-        if let customMetadata = documentationNode.metadata?.customMetadata {
-            //node.metadata.customMetadata =  // need to set
+
+        if let customMetadatas = documentationNode.metadata?.customMetadata {
+            node.metadata.customMetadata = customMetadatas.map { customMetadata -> CustomMetadataDictionary in
+                let key = customMetadata.key
+                let value = customMetadata.value
+                return CustomMetadataDictionary(key: key, value: value!)
+            }
         }
         
         node.variants = variants(for: documentationNode)
