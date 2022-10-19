@@ -2456,6 +2456,91 @@ class ConvertActionTests: XCTestCase {
         expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
     }
 
+    // Tests that custom templates are injected into the extra index.html files generated for static hosting.
+    func testConvertWithCustomTemplatesForStaticHosting() throws {
+        let info = InfoPlist(displayName: "TestConvertWithCustomTemplatesForStaticHosting", identifier: "com.test.example")
+        let index = TextFile(name: "index.html", utf8Content: """
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <title>Test</title>
+            </head>
+            <body data-color-scheme="auto"><p>test for custom templates in static hosting</p></body>
+        </html>
+        """)
+        let template = Folder(name: "template", content: [index])
+        let header = TextFile(name: "header.html", utf8Content: """
+        <header>custom text for header</header>
+        """)
+        let footer = TextFile(name: "footer.html", utf8Content: """
+        <footer>custom text for footer</footer>
+        """)
+
+        // Adding this page will generate a file named:
+        // /documentation/testconvertwithcustomtemplatesforstatichosting/index.html
+        // ...which should have the custom header/footer if they're propagated correctly.
+        let technologyPage = TextFile(name: "TestConvertWithCustomTemplatesForStaticHosting.md", utf8Content: """
+        # TestConvertWithCustomTemplatesForStaticHosting
+
+        @Metadata {
+            @TechnologyRoot
+        }
+
+        An abstract.
+
+        ## Overview
+
+        Text for a paragraph.
+        """)
+        let bundle = Folder(name: "TestConvertWithCustomTemplatesForStaticHosting.docc", content: [
+            info,
+            header,
+            footer,
+            technologyPage
+        ])
+
+        let tempURL = try createTemporaryDirectory()
+        let targetURL = tempURL.appendingPathComponent("target", isDirectory: true)
+
+        let bundleURL = try bundle.write(inside: tempURL)
+        let templateURL = try template.write(inside: tempURL)
+
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: bundleURL)
+
+        var action = try ConvertAction(
+            documentationBundleURL: bundleURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetURL,
+            htmlTemplateDirectory: templateURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: dataProvider,
+            fileManager: FileManager.default,
+            temporaryDirectory: createTemporaryDirectory(),
+            experimentalEnableCustomTemplates: true,
+            transformForStaticHosting: true
+        )
+        let result = try action.perform(logHandle: .standardOutput)
+
+        // The custom template contents should be wrapped in <template> tags and
+        // prepended to the <body>
+        let expectedIndex = TextFile(name: "index.html", utf8Content: """
+        <!DOCTYPE html>
+        <html lang="en">
+            <head>
+                <title>Test</title>
+            </head>
+            <body data-color-scheme="auto"><template id="custom-footer">\(footer.utf8Content)</template><template id="custom-header">\(header.utf8Content)</template><p>test for custom templates in static hosting</p></body>
+        </html>
+        """)
+        
+        let expectedTechnologyFolder = Folder(name: "TestConvertWithCustomTemplatesForStaticHosting", content: [expectedIndex])
+        let expectedDocsFolder = Folder(name: "documentation", content: [expectedTechnologyFolder])
+        let expectedOutput = Folder(name: ".docc-build", content: [expectedDocsFolder])
+        expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
+    }
+
     func testConvertWithThemeSettings() throws {
         let info = InfoPlist(displayName: "TestConvertWithThemeSettings", identifier: "com.test.example")
         let index = TextFile(name: "index.html", utf8Content: """
