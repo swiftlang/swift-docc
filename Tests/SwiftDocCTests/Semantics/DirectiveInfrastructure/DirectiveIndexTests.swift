@@ -29,6 +29,7 @@ class DirectiveIndexTests: XCTestCase {
                 "Image",
                 "Intro",
                 "Justification",
+                "Links",
                 "Metadata",
                 "Options",
                 "PageImage",
@@ -53,9 +54,12 @@ class DirectiveIndexTests: XCTestCase {
         XCTAssertEqual(
             DirectiveIndex.shared.renderableDirectives.keys.sorted(),
             [
+                "Image",
+                "Links",
                 "Row",
                 "Small",
                 "TabNavigator",
+                "Video",
             ]
         )
     }

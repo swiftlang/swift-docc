@@ -1586,6 +1586,27 @@ Root
             )
         )
     }
+    
+    func testAnonymousTopicGroups() throws {
+        let navigatorIndex = try generatedNavigatorIndex(
+            for: "AnonymousTopicGroups",
+            bundleIdentifier: "org.swift.docc.example"
+        )
+        
+        // The root page curates 'My Article' once without a topic group heading, and once with.
+        
+        XCTAssertEqual(
+            navigatorIndex.navigatorTree.root.dumpTree(),
+            """
+            [Root]
+            ┗╸Swift
+              ┗╸AnonymousTopicGroups
+                ┣╸My Article
+                ┣╸My Topic Group
+                ┗╸My Article
+            """
+        )
+    }
 
     func generatedNavigatorIndex(for testBundleName: String, bundleIdentifier: String) throws -> NavigatorIndex {
         let (bundle, context) = try testBundleAndContext(named: testBundleName)

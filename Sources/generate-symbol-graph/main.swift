@@ -233,7 +233,7 @@ let symbolGraph = SymbolGraph(
         generator: "docc-generate-symbol-graph"
     ),
     module: SymbolGraph.Module(
-        name: "DocC",
+        name: "docc",
         platform: .init(architecture: nil, vendor: nil, operatingSystem: nil, environment: nil),
         version: .init(major: 1, minor: 0, patch: 0, prerelease: nil, buildMetadata: nil),
         bystanders: []
@@ -245,7 +245,7 @@ let symbolGraph = SymbolGraph(
 let output = URL(fileURLWithPath: #file)
     .deletingLastPathComponent()
     .deletingLastPathComponent()
-    .appendingPathComponent("DocCDocumentation/DocCDocumentation.docc/DocC.symbols.json")
+    .appendingPathComponent("docc/DocCDocumentation.docc/docc.symbols.json")
 var encoder = JSONEncoder()
 encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
 let data = try! encoder.encode(symbolGraph)

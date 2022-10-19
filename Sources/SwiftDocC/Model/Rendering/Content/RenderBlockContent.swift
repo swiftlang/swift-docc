@@ -69,6 +69,13 @@ public enum RenderBlockContent: Equatable {
     
     /// A collection of content that should be rendered in a tab-based layout.
     case tabNavigator(TabNavigator)
+    
+    /// A collection of authored links that should be rendered in a similar style
+    /// to links in an on-page Topics section.
+    case links(Links)
+    
+    /// A video with an optional caption.
+    case video(Video)
 
     // Warning: If you add a new case to this enum, make sure to handle it in the Codable
     // conformance at the bottom of this file, and in the `rawIndexableTextContent` method in
@@ -149,10 +156,13 @@ public enum RenderBlockContent: Equatable {
     public struct OrderedList: Equatable {
         /// The items in this list.
         public var items: [ListItem]
+        /// The starting index for items in this list.
+        public var startIndex: UInt
 
         /// Creates a new ordered list with the given items.
-        public init(items: [ListItem]) {
+        public init(items: [ListItem], startIndex: UInt = 1) {
             self.items = items
+            self.startIndex = startIndex
         }
     }
 
@@ -233,9 +243,14 @@ public enum RenderBlockContent: Equatable {
     }
 
     /// A table that contains a list of row data.
-    public struct Table: Equatable {
+    public struct Table {
         /// The style of header in this table.
         public var header: HeaderType
+        /// The text alignment of each column in this table.
+        ///
+        /// A `nil` value for this property is the same as all the columns being
+        /// ``RenderBlockContent/ColumnAlignment/unset``.
+        public var alignments: [ColumnAlignment]?
         /// The rows in this table.
         public var rows: [TableRow]
         /// Any extended information that describes cells in this table.
@@ -244,11 +259,23 @@ public enum RenderBlockContent: Equatable {
         public var metadata: RenderContentMetadata?
 
         /// Creates a new table with the given data.
-        public init(header: HeaderType, rows: [TableRow], extendedData: Set<TableCellExtendedData>, metadata: RenderContentMetadata? = nil) {
+        ///
+        /// - Parameters:
+        ///   - header: The style of header in this table.
+        ///   - rawAlignments: The text alignment for each column in this table. If all the
+        ///     alignments are ``RenderBlockContent/ColumnAlignment/unset``, the ``alignments``
+        ///     property will be set to `nil`.
+        ///   - rows: The cell data for this table.
+        ///   - extendedData: Any extended information that describes cells in this table.
+        ///   - metadata: Additional metadata for this table, if necessary.
+        public init(header: HeaderType, rawAlignments: [ColumnAlignment]? = nil, rows: [TableRow], extendedData: Set<TableCellExtendedData>, metadata: RenderContentMetadata? = nil) {
             self.header = header
             self.rows = rows
             self.extendedData = extendedData
             self.metadata = metadata
+            if let alignments = rawAlignments, !alignments.allSatisfy({ $0 == .unset }) {
+                self.alignments = alignments
+            }
         }
     }
     
@@ -366,6 +393,18 @@ public enum RenderBlockContent: Equatable {
         case both
         /// The table doesn't contain headers.
         case none
+    }
+
+    /// The methods by which a table column can have its text aligned.
+    public enum ColumnAlignment: String, Codable, Equatable {
+        /// Force text alignment to be left-justified.
+        case left
+        /// Force text alignment to be right-justified.
+        case right
+        /// Force text alignment to be centered.
+        case center
+        /// Leave text alignment to the default.
+        case unset
     }
     
     /// A table row that contains a list of row cells.
@@ -494,13 +533,82 @@ public enum RenderBlockContent: Equatable {
             public let content: [RenderBlockContent]
         }
     }
+    
+    /// A collection of authored links that should be rendered in a similar style
+    /// to links in an on-page Topics section.
+    public struct Links: Codable, Equatable {
+        /// A visual style for the links.
+        public enum Style: String, Codable, Equatable {
+            /// A list of the linked pages, including their full declaration and abstract.
+            case list
+            
+            /// A grid of items based on the card image for the linked pages.
+            case compactGrid
+            
+            /// A grid of items based on the card image for the linked pages.
+            ///
+            /// Unlike ``compactGrid``, this style includes the abstract for each page.
+            case detailedGrid
+        }
+        
+        /// The style that should be used when rendering the link items.
+        public let style: Style
+        
+        /// The topic render references for the pages that should be rendered in this links block.
+        public let items: [String]
+        
+        /// Create a new links block with the given style and topic render references.
+        public init(style: RenderBlockContent.Links.Style, items: [String]) {
+            self.style = style
+            self.items = items
+        }
+    }
+    
+    /// A video with an optional caption.
+    public struct Video: Codable, Equatable {
+        /// A reference to the video media that should be rendered in this block.
+        public let identifier: RenderReferenceIdentifier
+        
+        /// Any metadata associated with this video, like a caption.
+        public let metadata: RenderContentMetadata?
+        
+        /// Create a new video with the given identifier and metadata.
+        public init(identifier: RenderReferenceIdentifier, metadata: RenderContentMetadata? = nil) {
+            self.identifier = identifier
+            self.metadata = metadata
+        }
+    }
+}
+
+extension RenderBlockContent.Table: Equatable {
+    public static func == (lhs: RenderBlockContent.Table, rhs: RenderBlockContent.Table) -> Bool {
+        guard lhs.header == rhs.header
+                && lhs.extendedData == rhs.extendedData
+                && lhs.metadata == rhs.metadata
+                && lhs.rows == rhs.rows
+        else {
+            return false
+        }
+
+        var lhsAlignments = lhs.alignments
+        if let align = lhsAlignments, align.allSatisfy({ $0 == .unset }) {
+            lhsAlignments = nil
+        }
+
+        var rhsAlignments = rhs.alignments
+        if let align = rhsAlignments, align.allSatisfy({ $0 == .unset }) {
+            rhsAlignments = nil
+        }
+
+        return lhsAlignments == rhsAlignments
+    }
 }
 
 // Writing a manual Codable implementation for tables because the encoding of `extendedData` does
 // not follow from the struct layout.
 extension RenderBlockContent.Table: Codable {
     enum CodingKeys: String, CodingKey {
-        case header, rows, extendedData, metadata
+        case header, alignments, rows, extendedData, metadata
     }
 
     // TableCellExtendedData encodes the row and column indices as a dynamic key with the format "{row}_{column}".
@@ -537,6 +645,14 @@ extension RenderBlockContent.Table: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.header = try container.decode(RenderBlockContent.HeaderType.self, forKey: .header)
+
+        let rawAlignments = try container.decodeIfPresent([RenderBlockContent.ColumnAlignment].self, forKey: .alignments)
+        if let alignments = rawAlignments, !alignments.allSatisfy({ $0 == .unset }) {
+            self.alignments = alignments
+        } else {
+            self.alignments = nil
+        }
+
         self.rows = try container.decode([RenderBlockContent.TableRow].self, forKey: .rows)
         self.metadata = try container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
 
@@ -558,6 +674,9 @@ extension RenderBlockContent.Table: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(header, forKey: .header)
+        if let alignments = alignments, !alignments.isEmpty, !alignments.allSatisfy({ $0 == .unset }) {
+            try container.encode(alignments, forKey: .alignments)
+        }
         try container.encode(rows, forKey: .rows)
         try container.encodeIfPresent(metadata, forKey: .metadata)
 
@@ -577,11 +696,12 @@ extension RenderBlockContent.Table: Codable {
 extension RenderBlockContent: Codable {
     private enum CodingKeys: CodingKey {
         case type
-        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata
+        case inlineContent, content, caption, style, name, syntax, code, level, text, items, media, runtimePreview, anchor, summary, example, metadata, start
         case request, response
         case header, rows
         case numberOfColumns, columns
         case tabs
+        case identifier
     }
     
     public init(from decoder: Decoder) throws {
@@ -606,7 +726,10 @@ extension RenderBlockContent: Codable {
         case .heading:
             self = try .heading(.init(level: container.decode(Int.self, forKey: .level), text: container.decode(String.self, forKey: .text), anchor: container.decodeIfPresent(String.self, forKey: .anchor)))
         case .orderedList:
-            self = try .orderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
+            self = try .orderedList(.init(
+                items: container.decode([ListItem].self, forKey: .items),
+                startIndex: container.decodeIfPresent(UInt.self, forKey: .start) ?? 1
+            ))
         case .unorderedList:
             self = try .unorderedList(.init(items: container.decode([ListItem].self, forKey: .items)))
         case .step:
@@ -641,11 +764,25 @@ extension RenderBlockContent: Codable {
                     tabs: container.decode([TabNavigator.Tab].self, forKey: .tabs)
                 )
             )
+        case .links:
+            self = try .links(
+                Links(
+                    style: container.decode(Links.Style.self, forKey: .style),
+                    items: container.decode([String].self, forKey: .items)
+                )
+            )
+        case .video:
+            self = try .video(
+                Video(
+                    identifier: container.decode(RenderReferenceIdentifier.self, forKey: .identifier),
+                    metadata: container.decodeIfPresent(RenderContentMetadata.self, forKey: .metadata)
+                )
+            )
         }
     }
     
     private enum BlockType: String, Codable {
-        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator
+        case paragraph, aside, codeListing, heading, orderedList, unorderedList, step, endpointExample, dictionaryExample, table, termList, row, small, tabNavigator, links, video
     }
     
     private var type: BlockType {
@@ -664,6 +801,8 @@ extension RenderBlockContent: Codable {
         case .row: return .row
         case .small: return .small
         case .tabNavigator: return .tabNavigator
+        case .links: return .links
+        case .video: return .video
         default: fatalError("unknown RenderBlockContent case in type property")
         }
     }
@@ -688,6 +827,9 @@ extension RenderBlockContent: Codable {
             try container.encode(h.text, forKey: .text)
             try container.encode(h.anchor, forKey: .anchor)
         case .orderedList(let l):
+            if l.startIndex != 1 {
+                try container.encode(l.startIndex, forKey: .start)
+            }
             try container.encode(l.items, forKey: .items)
         case .unorderedList(let l):
             try container.encode(l.items, forKey: .items)
@@ -716,6 +858,12 @@ extension RenderBlockContent: Codable {
             try container.encode(small.inlineContent, forKey: .inlineContent)
         case .tabNavigator(let tabNavigator):
             try container.encode(tabNavigator.tabs, forKey: .tabs)
+        case .links(let links):
+            try container.encode(links.style, forKey: .style)
+            try container.encode(links.items, forKey: .items)
+        case .video(let video):
+            try container.encode(video.identifier, forKey: .identifier)
+            try container.encodeIfPresent(video.metadata, forKey: .metadata)
         default:
             fatalError("unknown RenderBlockContent case in encode method")
         }

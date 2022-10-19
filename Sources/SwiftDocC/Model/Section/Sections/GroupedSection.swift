@@ -19,7 +19,7 @@ extension GroupedSection {
     /// This section's content split into groups by third-level headings.
     public var taskGroups: [TaskGroup] {
         // Get the child indices of any level-3 headings
-        let h3Indices = content.indices.compactMap { index -> Int? in
+        var h3Indices = content.indices.compactMap { index -> Int? in
             guard let heading = content[index] as? Heading,
                 heading.level == 3 else {
                     return nil
@@ -27,9 +27,13 @@ extension GroupedSection {
             return index
         }
         
-        // Task groups are delimited by headings with level 3 so, if there are none, there can be no task groups, despite otherwise matching expected structure.
-        guard !h3Indices.isEmpty else {
-            return []
+        // An index to support topics that aren't organized in topic groups.
+        let phantomH3Index = -1
+        
+        // If there's no level 3 heading at the beginning of the Topics section to demarcate a topic group, insert
+        // a phantom heading at the start.
+        if !((content.first as? Heading)?.level == 3) {
+            h3Indices.insert(phantomH3Index, at: h3Indices.startIndex)
         }
         
         // Get the ranges of each task group in terms of child indices of the containing document.
@@ -39,8 +43,21 @@ extension GroupedSection {
         
         // Create a `TaskGroup` for each range. If a task group doesn't have any content underneath it, drop it.
         return ranges.compactMap { range in
-            let heading = self.content[range.startIndex] as! Heading
-            let content = self.content[range.dropFirst()]
+            
+            let heading: Heading?
+            let content: ArraySlice<Markup>
+            
+            if range.startIndex == phantomH3Index {
+                // If we're processing a range of topic links that isn't preceded by a topic group heading, create
+                // an anonymous task group.
+                
+                heading = nil
+                content = self.content[..<range.endIndex]
+            } else {
+                heading = self.content[range.startIndex] as? Heading
+                content = self.content[range.dropFirst()]
+            }
+            
             guard !content.isEmpty else {
                 return nil
             }

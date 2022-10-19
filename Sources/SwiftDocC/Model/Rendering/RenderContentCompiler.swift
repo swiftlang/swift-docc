@@ -23,6 +23,7 @@ struct RenderContentCompiler: MarkupVisitor {
     var bundle: DocumentationBundle
     var identifier: ResolvedTopicReference
     var imageReferences: [String: ImageReference] = [:]
+    var videoReferences: [String: VideoReference] = [:]
     /// Resolved topic references that were seen by the visitor. These should be used to populate the references dictionary.
     var collectedTopicReferences = GroupedSequence<String, ResolvedTopicReference> { $0.absoluteString }
     var linkReferences: [String: LinkReference] = [:]
@@ -61,7 +62,10 @@ struct RenderContentCompiler: MarkupVisitor {
     
     mutating func visitOrderedList(_ orderedList: OrderedList) -> [RenderContent] {
         let renderListItems = orderedList.listItems.reduce(into: [], { result, item in result.append(contentsOf: visitListItem(item))})
-        return [RenderBlockContent.orderedList(.init(items: renderListItems as! [RenderBlockContent.ListItem]))]
+        return [RenderBlockContent.orderedList(.init(
+            items: renderListItems as! [RenderBlockContent.ListItem],
+            startIndex: orderedList.startIndex
+        ))]
     }
     
     mutating func visitUnorderedList(_ unorderedList: UnorderedList) -> [RenderContent] {
@@ -78,14 +82,48 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitImage(_ image: Image) -> [RenderContent] {
-        let source = image.source ?? ""
-        let unescapedSource = source.removingPercentEncoding ?? source
-        let imageIdentifier: RenderReferenceIdentifier = .init(unescapedSource)
-        if let resolvedImages = context.resolveAsset(named: unescapedSource, in: identifier) {
-            imageReferences[unescapedSource] = ImageReference(identifier: imageIdentifier, altText: image.altText, imageAsset: resolvedImages)
+        return visitImage(
+            source: image.source ?? "",
+            altText: image.altText,
+            caption: nil
+        )
+    }
+    
+    mutating func visitImage(
+        source: String,
+        altText: String?,
+        caption: [RenderInlineContent]?
+    ) -> [RenderContent] {
+        guard let imageIdentifier = resolveImage(source: source, altText: altText) else {
+            return []
         }
         
-        return [RenderInlineContent.image(identifier: imageIdentifier, metadata: nil)]
+        var metadata: RenderContentMetadata?
+        if let caption = caption {
+            metadata = RenderContentMetadata(abstract: caption)
+        }
+        
+        return [RenderInlineContent.image(identifier: imageIdentifier, metadata: metadata)]
+    }
+    
+    mutating func resolveImage(source: String, altText: String? = nil) -> RenderReferenceIdentifier? {
+        let unescapedSource = source.removingPercentEncoding ?? source
+        let imageIdentifier: RenderReferenceIdentifier = .init(unescapedSource)
+        guard let resolvedImages = context.resolveAsset(
+            named: unescapedSource,
+            in: identifier,
+            withType: .image
+        ) else {
+            return nil
+        }
+        
+        imageReferences[unescapedSource] = ImageReference(
+            identifier: imageIdentifier,
+            altText: altText,
+            imageAsset: resolvedImages
+        )
+        
+        return imageIdentifier
     }
     
     mutating func visitLink(_ link: Link) -> [RenderContent] {
@@ -119,24 +157,36 @@ struct RenderContentCompiler: MarkupVisitor {
             }
         }
         
-        guard let unresolved = link.destination.flatMap(ValidatedURL.init(parsingAuthoredLink:))
-            .map({ UnresolvedTopicReference(topicURL: $0) }),
-            // Try to resolve in the local context
-            case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier) else {
-                    // As this was a doc: URL, we render the link inactive by converting it to plain text,
-                    // as it may break routing or other downstream uses of the URL.
-                    return [RenderInlineContent.text(link.plainText)]
+        guard let destination = link.destination, let resolved = resolveTopicReference(destination) else {
+            // As this was a doc: URL, we render the link inactive by converting it to plain text,
+            // as it may break routing or other downstream uses of the URL.
+            return [RenderInlineContent.text(link.plainText)]
+        }
+        
+        return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
+    }
+    
+    mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
+        guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
+            return nil
+        }
+        
+        let unresolved = UnresolvedTopicReference(topicURL: validatedURL)
+        
+        // Try to resolve in the local context
+        guard case let .success(resolved) = context.resolve(.unresolved(unresolved), in: identifier) else {
+            return nil
         }
         
         // We resolved the reference, check if it's a node that can be linked to.
         if let node = context.topicGraph.nodeWithReference(resolved) {
             guard context.topicGraph.isLinkable(node.reference) else {
-                return [RenderInlineContent.text(link.plainText)]
+                return nil
             }
         }
         
         collectedTopicReferences.append(resolved)
-        return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
+        return resolved
     }
 
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
@@ -215,8 +265,30 @@ struct RenderContentCompiler: MarkupVisitor {
             }
             rows.append(RenderBlockContent.TableRow(cells: cells))
         }
+
+        var tempAlignments = [RenderBlockContent.ColumnAlignment]()
+        for alignment in table.columnAlignments {
+            switch alignment {
+            case .left: tempAlignments.append(.left)
+            case .right: tempAlignments.append(.right)
+            case .center: tempAlignments.append(.center)
+            case nil: tempAlignments.append(.unset)
+            }
+        }
+        while tempAlignments.count < table.maxColumnCount {
+            tempAlignments.append(.unset)
+        }
+        if tempAlignments.allSatisfy({ $0 == .unset }) {
+            tempAlignments = []
+        }
+        let alignments: [RenderBlockContent.ColumnAlignment]?
+        if tempAlignments.isEmpty {
+            alignments = nil
+        } else {
+            alignments = tempAlignments
+        }
         
-        return [RenderBlockContent.table(.init(header: .row, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, extendedData: extendedData, metadata: nil))]
+        return [RenderBlockContent.table(.init(header: .row, rawAlignments: alignments, rows: [RenderBlockContent.TableRow(cells: headerCells)] + rows, extendedData: extendedData, metadata: nil))]
     }
 
     mutating func visitStrikethrough(_ strikethrough: Strikethrough) -> [RenderContent] {

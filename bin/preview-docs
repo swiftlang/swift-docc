@@ -111,7 +111,7 @@ case $FRAMEWORK in
     "DocC")
 
     # Compile the documentation
-    swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/DocCDocumentation/DocCDocumentation.docc" \
+    swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/docc/DocCDocumentation.docc" \
       --experimental-enable-custom-templates \
       --diagnostic-level error \
       --output-path $DOCS_BUILD_DIR
