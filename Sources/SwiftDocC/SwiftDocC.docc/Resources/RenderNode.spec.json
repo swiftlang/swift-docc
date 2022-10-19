@@ -2176,7 +2176,7 @@
                             "$ref": "#/components/schemas/TopicImage"
                         }
                     },
-                    "customMetadata": {
+                    "custom": {
                        "key" : "string",
                        "value" : "string"
                     }

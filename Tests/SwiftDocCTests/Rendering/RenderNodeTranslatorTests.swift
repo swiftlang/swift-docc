@@ -1154,7 +1154,8 @@ class RenderNodeTranslatorTests: XCTestCase {
          let roundTrippedArticle = try JSONDecoder().decode(RenderNode.self, from: encodedArticle)
     
          XCTAssertEqual(roundTrippedArticle.icon?.identifier, "plus.svg")
-    
+
+         XCTAssertEqual(renderNode.metadata.customMetadata.count, 1)
          XCTAssertEqual(
              roundTrippedArticle.references["figure1.png"] as? ImageReference,
              ImageReference(
