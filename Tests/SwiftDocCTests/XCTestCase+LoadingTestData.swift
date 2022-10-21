@@ -140,37 +140,78 @@ extension XCTestCase {
     
     func parseDirective<Directive: RenderableDirectiveConvertible>(
         _ directive: Directive.Type,
+        in bundleName: String? = nil,
         source: () -> String
     ) throws -> (renderBlockContent: [RenderBlockContent], problemIdentifiers: [String], directive: Directive?) {
-        let (bundle, context) = try testBundleAndContext()
+        let (renderedContent, problems, directive, _) = try parseDirective(
+            directive,
+            in: bundleName,
+            source: source
+        )
         
-        let document = Document(parsing: source(), options: .parseBlockDirectives)
+        return (renderedContent, problems, directive)
+    }
+    
+    func parseDirective<Directive: RenderableDirectiveConvertible>(
+        _ directive: Directive.Type,
+        in bundleName: String? = nil,
+        source: () -> String
+    ) throws -> (
+        renderBlockContent: [RenderBlockContent],
+        problemIdentifiers: [String],
+        directive: Directive?,
+        collectedReferences: [String : RenderReference]
+    ) {
+        let bundle: DocumentationBundle
+        let context: DocumentationContext
+        
+        if let bundleName = bundleName {
+            (bundle, context) = try testBundleAndContext(named: bundleName)
+        } else {
+            (bundle, context) = try testBundleAndContext()
+        }
+        context.diagnosticEngine.clearDiagnostics()
+        
+        let document = Document(parsing: source(), options: [.parseBlockDirectives, .parseSymbolLinks])
         
         let blockDirectiveContainer = try XCTUnwrap(document.child(at: 0) as? BlockDirective)
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         let result = analyzer.visit(blockDirectiveContainer)
+        context.diagnosticEngine.emit(analyzer.problems)
         
-        let problemIDs = try analyzer.problems.map { problem -> (line: Int, severity: String, id: String) in
-            let line = try XCTUnwrap(problem.diagnostic.range).lowerBound.line
-            return (line, problem.diagnostic.severity.description, problem.diagnostic.identifier)
-        }
-        .sorted { lhs, rhs in
-            let (lhsLine, _, lhsID) = lhs
-            let (rhsLine, _, rhsID) = rhs
-            
-            if lhsLine != rhsLine {
-                return lhsLine < rhsLine
-            } else {
-                return lhsID < rhsID
+        var referenceResolver = MarkupReferenceResolver(
+            context: context,
+            bundle: bundle,
+            source: nil,
+            rootReference: bundle.rootReference
+        )
+        
+        _ = referenceResolver.visit(blockDirectiveContainer)
+        context.diagnosticEngine.emit(referenceResolver.problems)
+        
+        func problemIDs() throws -> [String] {
+            try context.problems.map { problem -> (line: Int, severity: String, id: String) in
+                let line = try XCTUnwrap(problem.diagnostic.range).lowerBound.line
+                return (line, problem.diagnostic.severity.description, problem.diagnostic.identifier)
             }
-        }
-        .map { (line, severity, id) in
-            return "\(line): \(severity) – \(id)"
+            .sorted { lhs, rhs in
+                let (lhsLine, _, lhsID) = lhs
+                let (rhsLine, _, rhsID) = rhs
+                
+                if lhsLine != rhsLine {
+                    return lhsLine < rhsLine
+                } else {
+                    return lhsID < rhsID
+                }
+            }
+            .map { (line, severity, id) in
+                return "\(line): \(severity) – \(id)"
+            }
         }
         
         guard let directive = result as? Directive else {
-            return ([], problemIDs, nil)
+            return ([], try problemIDs(), nil, [:])
         }
         
         var contentCompiler = RenderContentCompiler(
@@ -186,6 +227,17 @@ extension XCTestCase {
         let renderedContent = try XCTUnwrap(
             directive.render(with: &contentCompiler) as? [RenderBlockContent]
         )
-        return (renderedContent, problemIDs, directive)
+        
+        let collectedReferences = contentCompiler.videoReferences
+            .mapValues { $0 as RenderReference }
+            .merging(
+                contentCompiler.imageReferences,
+                uniquingKeysWith: { videoReference, _ in
+                    XCTFail("Non-unique references.")
+                    return videoReference
+                }
+            )
+        
+        return (renderedContent, try problemIDs(), directive, collectedReferences)
     }
 }

@@ -305,6 +305,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references found in the markup container.
         imageReferences.merge(contentCompiler.imageReferences) { (_, new) in new }
+        videoReferences.merge(contentCompiler.videoReferences) { (_, new) in new }
         linkReferences.merge(contentCompiler.linkReferences) { (_, new) in new }
         return content
     }
@@ -316,6 +317,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         // Copy all the image references.
         imageReferences.merge(contentCompiler.imageReferences) { (_, new) in new }
+        videoReferences.merge(contentCompiler.videoReferences) { (_, new) in new }
         return content
     }
 
@@ -1485,6 +1487,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.references = createTopicRenderReferences()
         
         addReferences(imageReferences, to: &node)
+        addReferences(videoReferences, to: &node)
         // See Also can contain external links, we need to separately transfer
         // link references from the content compiler
         addReferences(contentCompiler.linkReferences, to: &node)

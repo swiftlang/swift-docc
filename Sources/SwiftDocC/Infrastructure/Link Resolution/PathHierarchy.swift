@@ -838,7 +838,7 @@ extension PathHierarchy.Error {
             return "Symbol links can only resolve symbols."
             
         case .lookupCollision(let partialResult, let collisions):
-            let collisionDescription = collisions.map { "Add \($0.disambiguation.singleQuoted) to refer to \($0.node.fullNameOfValue(context: context).singleQuoted)"}.sorted()
+            let collisionDescription = collisions.map { "Append '-\($0.disambiguation)' to refer to \($0.node.fullNameOfValue(context: context).singleQuoted)" }.sorted()
             return "Reference is ambiguous after \(partialResult.pathWithoutDisambiguation().singleQuoted): \(collisionDescription.joined(separator: ". "))."
         }
     }
@@ -864,6 +864,9 @@ private extension PathHierarchy.Node {
     func fullNameOfValue(context: DocumentationContext) -> String {
         guard let identifier = identifier else { return name }
         if let symbol = symbol {
+            if let fragments = symbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments {
+                return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
+            }
             return context.symbolIndex[symbol.identifier.precise]!.name.description
         }
         // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.

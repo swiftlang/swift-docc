@@ -345,7 +345,7 @@ class ReferenceResolverTests: XCTestCase {
     }
     
     func testRelativeReferencesToExtensionSymbols() throws {
-        let (bundleURL, bundle, context) = try testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
+        let (_, bundle, context) = try testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
             // We don't want the external target to be part of the archive as that is not
             // officially supported yet.
             try FileManager.default.removeItem(at: root.appendingPathComponent("Dependency.symbols.json"))

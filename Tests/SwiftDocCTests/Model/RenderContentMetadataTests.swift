@@ -102,6 +102,7 @@ class RenderContentMetadataTests: XCTestCase {
                 XCTAssertEqual(t.rows[0].cells.map(renderCell), ["Column 1", "Column 2"])
                 XCTAssertEqual(t.rows[1].cells.map(renderCell), ["Cell 1", "Cell 2"])
                 XCTAssertEqual(t.rows[2].cells.map(renderCell), ["Cell 3", "Cell 4"])
+                XCTAssertNil(t.alignments)
             default: XCTFail("Unexpected element")
         }
     }
@@ -152,10 +153,126 @@ class RenderContentMetadataTests: XCTestCase {
                 for expectedData in expectedExtendedData {
                     XCTAssert(t.extendedData.contains(expectedData))
                 }
+                XCTAssertNil(t.alignments)
             default: XCTFail("Unexpected element")
         }
 
         try assertRoundTripCoding(renderedTable)
+    }
+
+    func testRenderingTableColumnAlignments() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = """
+        | one | two | three | four |
+        | :-- | --: | :---: | ---- |
+        | one | two | three | four |
+        """
+        let document = Document(parsing: source)
+
+        // Verifies that a markdown table renders correctly.
+
+        let result = try XCTUnwrap(renderContentCompiler.visit(document.child(at: 0)!))
+        let renderedTable = try XCTUnwrap(result.first as? RenderBlockContent)
+
+        let renderCell: ([RenderBlockContent]) -> String = { cell in
+            return cell.reduce(into: "") { (result, element) in
+                switch element {
+                    case .paragraph(let p):
+                    guard let para = p.inlineContent.first else { return }
+                        result.append(para.plainText)
+                    default: XCTFail("Unexpected element"); return
+                }
+            }
+        }
+
+        switch renderedTable {
+            case .table(let t):
+                XCTAssertEqual(t.header, .row)
+                XCTAssertEqual(t.rows.count, 2)
+                guard t.rows.count == 2 else { return }
+                XCTAssertEqual(t.rows[0].cells.map(renderCell), ["one", "two", "three", "four"])
+                XCTAssertEqual(t.rows[1].cells.map(renderCell), ["one", "two", "three", "four"])
+                XCTAssertEqual(t.alignments, [.left, .right, .center, .unset])
+            default: XCTFail("Unexpected element")
+        }
+
+        try assertRoundTripCoding(renderedTable)
+    }
+
+    /// Verifies that a table with `nil` alignments and a table with all-unset alignments still compare as equal.
+    func testRenderedTableEquality() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = """
+        | Column 1  | Column 2 |
+        | ------------- | ------------- |
+        | Cell 1 | Cell 2 |
+        | Cell 3 | Cell 4 |
+        """
+        let document = Document(parsing: source)
+
+        let result = try XCTUnwrap(renderContentCompiler.visit(document.child(at: 0)!))
+        let renderedTable = try XCTUnwrap(result.first as? RenderBlockContent)
+        guard case let .table(decodedTable) = renderedTable else {
+            XCTFail("Unexpected RenderBlockContent element")
+            return
+        }
+        XCTAssertNil(decodedTable.alignments)
+        var modifiedTable = decodedTable
+        modifiedTable.alignments = [.unset, .unset]
+
+        XCTAssertEqual(decodedTable, modifiedTable)
+    }
+
+    /// Verifies that two tables with otherwise-identical contents but different column alignments compare as unequal.
+    func testRenderedTableInequality() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var renderContentCompiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let decodedTableWithUnsetColumns: RenderBlockContent.Table
+        do {
+            let source = """
+            | Column 1  | Column 2 |
+            | ------------- | ------------- |
+            | Cell 1 | Cell 2 |
+            | Cell 3 | Cell 4 |
+            """
+            let document = Document(parsing: source)
+
+            let result = try XCTUnwrap(renderContentCompiler.visit(document.child(at: 0)!))
+            let renderedTable = try XCTUnwrap(result.first as? RenderBlockContent)
+            guard case let .table(decodedTable) = renderedTable else {
+                XCTFail("Unexpected RenderBlockContent element")
+                return
+            }
+            decodedTableWithUnsetColumns = decodedTable
+        }
+
+        let decodedTableWithLeftColumns: RenderBlockContent.Table
+        do {
+            let source = """
+            | Column 1  | Column 2 |
+            | :------------ | :------------ |
+            | Cell 1 | Cell 2 |
+            | Cell 3 | Cell 4 |
+            """
+            let document = Document(parsing: source)
+
+            // Verifies that a markdown table renders correctly.
+
+            let result = try XCTUnwrap(renderContentCompiler.visit(document.child(at: 0)!))
+            let renderedTable = try XCTUnwrap(result.first as? RenderBlockContent)
+            guard case let .table(decodedTable) = renderedTable else {
+                XCTFail("Unexpected RenderBlockContent element")
+                return
+            }
+            decodedTableWithLeftColumns = decodedTable
+        }
+
+        XCTAssertNotEqual(decodedTableWithUnsetColumns, decodedTableWithLeftColumns)
     }
     
     func testStrikethrough() throws {
