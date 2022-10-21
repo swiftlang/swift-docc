@@ -1202,6 +1202,6 @@ class RenderNodeTranslatorTests: XCTestCase {
 
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.count, 1)
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata[0].key, "country")
-        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata[1].value, "Belgium")
+        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata[0].value, "Belgium")
      }
 }
