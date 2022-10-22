@@ -2535,7 +2535,7 @@ class ConvertActionTests: XCTestCase {
         </html>
         """)
         
-        let expectedTechnologyFolder = Folder(name: "TestConvertWithCustomTemplatesForStaticHosting", content: [expectedIndex])
+        let expectedTechnologyFolder = Folder(name: "TestConvertWithCustomTemplatesForStaticHosting".lowercased(), content: [expectedIndex])
         let expectedDocsFolder = Folder(name: "documentation", content: [expectedTechnologyFolder])
         let expectedOutput = Folder(name: ".docc-build", content: [expectedDocsFolder])
         expectedOutput.assertExist(at: result.outputs[0], fileManager: FileManager.default)
