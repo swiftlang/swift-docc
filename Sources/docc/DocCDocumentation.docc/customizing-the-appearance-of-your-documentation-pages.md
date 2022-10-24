@@ -218,9 +218,7 @@ that can be enabled or disabled using `theme-settings.json`.
 
 **Example**
 
-As of the time of writing this, there is only one available "quick navigation"
-feature that is disabled by default and can be enabled with the following
-configuration. Note that this flag may be dropped in the future and new ones may
+Note that these flags may be dropped in the future and new ones may
 be added as necessary for other features.
 
 ```json
@@ -228,6 +226,9 @@ be added as necessary for other features.
   "features": {
     "docs": {
       "quickNavigation": {
+        "enable": true
+      }, 
+      "onThisPageNavigator": {
         "enable": true
       }
     }
