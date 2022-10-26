@@ -2248,7 +2248,7 @@
                             "$ref": "#/components/schemas/TopicImage"
                         }
                     },
-                    "custom": {
+                    "customMetadata": {
                         "type": "object",
                         "description" : "A dictionary containing arbitrary, user-provided metadata key/value pairs.\n\nThese values are authored using the `@CustomMetadata(key:value:)` directive.",
                         "additionalProperties": {
