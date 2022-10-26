@@ -94,7 +94,7 @@ public struct RenderMetadata: VariantContainer {
     /// Authors can use the `@PageImage` metadata directive to provide custom icon and card images for a page.
     public var images: [TopicImage] = []
     
-    public var customMetadata: [CustomMetadataDictionary] = []
+    public var customMetadata: [String: String] = [:]
     
     /// The title of the page.
     public var title: String? {
@@ -263,7 +263,7 @@ extension RenderMetadata: Codable {
         requiredVariants = try container.decodeVariantCollectionIfPresent(ofValueType: Bool.self, forKey: .required) ?? .init(defaultValue: false)
         roleHeadingVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .roleHeading)
         images = try container.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
-        customMetadata = try container.decodeIfPresent([CustomMetadataDictionary].self, forKey: .customMetadata) ?? []
+        customMetadata = try container.decodeIfPresent([String: String].self, forKey: .customMetadata) ?? [:]
         let rawRole = try container.decodeIfPresent(String.self, forKey: .role)
         role = rawRole == "tutorial" ? Role.tutorial.rawValue : rawRole
         titleVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .title)

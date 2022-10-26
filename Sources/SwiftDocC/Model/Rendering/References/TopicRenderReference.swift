@@ -108,7 +108,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
     public var images: [TopicImage]
 
     /// Author provided customMetadata
-    public var customMetadata: [CustomMetadataDictionary]
+    public var customMetadata: [String: String] = [:]
     
     /// Creates a new topic reference with all its initial values.
     ///
@@ -151,7 +151,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         ideTitle: String? = nil,
         tags: [RenderNode.Tag]? = nil,
         images: [TopicImage] = [],
-        customMetadata: [CustomMetadataDictionary] = []
+        customMetadata: [String: String] = [:]
     ) {
         self.init(
             identifier: identifier,
@@ -218,7 +218,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         ideTitle: String? = nil,
         tags: [RenderNode.Tag]? = nil,
         images: [TopicImage] = [],
-        customMetadata: [CustomMetadataDictionary] = []
+        customMetadata: [String: String] = [:]
     ) {
         self.identifier = identifier
         self.titleVariants = titleVariants
@@ -290,7 +290,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         ideTitle = try values.decodeIfPresent(String.self, forKey: .ideTitle)
         tags = try values.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
         images = try values.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
-        customMetadata = try values.decodeIfPresent([CustomMetadataDictionary].self, forKey: .customMetadata) ?? []
+        customMetadata = try values.decodeIfPresent([String: String].self, forKey: .customMetadata) ?? [:]
     }
     
     public func encode(to encoder: Encoder) throws {

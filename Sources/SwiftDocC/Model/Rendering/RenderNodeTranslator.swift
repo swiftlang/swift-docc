@@ -730,14 +730,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
 
+        var metadataCustomDictionary : [String: String] = [:]
         if let customMetadatas = documentationNode.metadata?.customMetadata {
-            node.metadata.customMetadata = customMetadatas.map { customMetadata -> CustomMetadataDictionary in
-                let key = customMetadata.key
-                let value = customMetadata.value
-                return CustomMetadataDictionary(key: key, value: value!)
+            for elem in customMetadatas {
+                metadataCustomDictionary[elem.key] = elem.value
             }
         }
 
+        node.metadata.customMetadata = metadataCustomDictionary
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
@@ -1181,14 +1181,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
 
+        var metadataCustomDictionary : [String: String] = [:]
         if let customMetadatas = documentationNode.metadata?.customMetadata {
-            node.metadata.customMetadata = customMetadatas.map { customMetadata -> CustomMetadataDictionary in
-                let key = customMetadata.key
-                let value = customMetadata.value
-                return CustomMetadataDictionary(key: key, value: value!)
+            for elem in customMetadatas {
+                metadataCustomDictionary[elem.key] = elem.value
             }
         }
-        
+
+        node.metadata.customMetadata = metadataCustomDictionary
         node.variants = variants(for: documentationNode)
         
         collectedTopicReferences.append(identifier)

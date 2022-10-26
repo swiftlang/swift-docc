@@ -33,7 +33,7 @@ public final class CustomMetadata: Semantic, AutomaticDirectiveConvertible {
     
     /// value of the metadata
     @DirectiveArgumentWrapped
-    public var value: String? = nil
+    public var value: String
     
     static var keyPaths: [String : AnyKeyPath] = [
         "key" : \CustomMetadata._key,
