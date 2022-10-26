@@ -77,6 +77,7 @@ public struct RenderMetadata: VariantContainer {
     /// Authors can use the `@PageImage` metadata directive to provide custom icon and card images for a page.
     public var images: [TopicImage] = []
     
+    /// Author provided custom metadata describing the page.
     public var customMetadata: [String: String] = [:]
     
     /// The title of the page.

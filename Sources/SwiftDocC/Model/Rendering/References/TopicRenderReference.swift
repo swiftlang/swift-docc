@@ -147,8 +147,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         name: String? = nil,
         ideTitle: String? = nil,
         tags: [RenderNode.Tag]? = nil,
-        images: [TopicImage] = [],
-        customMetadata: [String: String] = [:]
+        images: [TopicImage] = []
     ) {
         self.init(
             identifier: identifier,
@@ -257,7 +256,6 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
         case ideTitle
         case tags
         case images
-        case customMetadata
     }
     
     public init(from decoder: Decoder) throws {
