@@ -11,12 +11,12 @@
 import Foundation
 import Markdown
 
-/// A directive that accepts an arbitary key/valye pair and emits it into the metadata of a created RenderJSON descibing the page.
+/// A directive that accepts an arbitary key/valye pair and emits it into the metadata of the page
 ///
 /// It accepts following parameters:
 ///
 /// key- a key to identify a piece of metadata
-/// value- the value for the metadataa
+/// value- the value for the metadata
 ///
 /// This directive is only valid within a ``Metadata`` directive:
 /// ```

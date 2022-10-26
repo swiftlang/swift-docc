@@ -107,7 +107,7 @@ public struct TopicRenderReference: RenderReference, VariantContainer {
     /// Author provided images that should be used to represent this page.
     public var images: [TopicImage]
 
-    /// Author provided customMetadata
+    /// Author provided custom metadata describing this page.
     public var customMetadata: [String: String] = [:]
     
     /// Creates a new topic reference with all its initial values.

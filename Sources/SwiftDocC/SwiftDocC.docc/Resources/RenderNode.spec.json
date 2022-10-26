@@ -2249,9 +2249,12 @@
                         }
                     },
                     "custom": {
-                       "key" : "string",
-                       "value" : "string"
-                    }
+                        "type": "object",
+                        "description" : "A dictionary containing arbitrary, user-provided metadata key/value pairs.\n\nThese values are authored using the `@CustomMetadata(key:value:)` directive.",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    },
                     "modules": {
                         "type": "array",
                         "items": {

@@ -322,8 +322,6 @@ class MetadataTests: XCTestCase {
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
         var problems = analyzer.problems
-        print ("problems")
-        print (problems)
         
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         

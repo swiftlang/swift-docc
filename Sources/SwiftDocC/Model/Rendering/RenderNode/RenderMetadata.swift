@@ -10,23 +10,6 @@
 
 import Foundation
 
-/// A custom Metadata to provide arbitary key, value
-///
-/// Allows an author to provide a custom key and value within metadata
-public struct CustomMetadataDictionary: Codable, Hashable {
-    /// The key to the customMetadata
-    public let key: String
-
-    /// The value to the customMetadata
-    public let value: String
-
-    /// Create a new customMetadata dictionary
-    public init(key: String, value: String) {
-        self.key = key
-        self.value = value
-    }
-}
-
 /// Arbitrary metadata for a render node.
 public struct RenderMetadata: VariantContainer {
     // MARK: Tutorials metadata
