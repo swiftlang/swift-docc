@@ -821,8 +821,11 @@
                                 "type": "object",
                                 "description": "flags for enabling or disabling `/documentation` page features.",
                                 "properties": {
-                                    "quicknavigation": {
+                                    "quickNavigation": {
                                         "$ref": "#/components/schemas/FeatureFlagEnable"
+                                    },
+                                    "onThisPageNavigator": {
+                                        "$ref": "#/components/schemas/FeatureFlagDisable"
                                     }
                                 }
                             }
@@ -879,6 +882,18 @@
                 ],
                 "properties": {
                     "enable": {
+                        "type": "boolean"
+                    }
+                }
+            },
+            "FeatureFlagDisable": {
+                "type": "object",
+                "description": "Disables a feature if `disable` is `true`.",
+                "required": [
+                    "disable"
+                ],
+                "properties": {
+                    "disable": {
                         "type": "boolean"
                     }
                 }
