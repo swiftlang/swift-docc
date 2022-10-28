@@ -424,6 +424,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 imageReferences[imageReference.identifier.identifier] = imageReference
             }
             
+            
             for dependencyReference in dependencies.topicReferences {
                 var dependencyRenderReference: TopicRenderReference
                 if let renderContext = renderContext, let prerendered = renderContext.store.content(for: dependencyReference)?.renderReference as? TopicRenderReference {
@@ -729,6 +730,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
         }
 
+        var metadataCustomDictionary : [String: String] = [:]
+        if let customMetadatas = documentationNode.metadata?.customMetadata {
+            for elem in customMetadatas {
+                metadataCustomDictionary[elem.key] = elem.value
+            }
+        }
+
+        node.metadata.customMetadata = metadataCustomDictionary
         node.seeAlsoSectionsVariants = VariantCollection<[TaskGroupRenderSection]>(
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
@@ -1171,7 +1180,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 )
             }
         }
-        
+
+        var metadataCustomDictionary : [String: String] = [:]
+        if let customMetadatas = documentationNode.metadata?.customMetadata {
+            for elem in customMetadatas {
+                metadataCustomDictionary[elem.key] = elem.value
+            }
+        }
+
+        node.metadata.customMetadata = metadataCustomDictionary
         node.variants = variants(for: documentationNode)
         
         collectedTopicReferences.append(identifier)

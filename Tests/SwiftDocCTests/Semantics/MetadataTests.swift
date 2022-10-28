@@ -131,6 +131,23 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(metadata?.displayName?.name, "Custom Name")
     }
     
+    func testCustomMetadataSupport() throws {
+        let source = """
+        @Metadata {
+           @CustomMetadata(key: "country", value: "Belgium")
+           @CustomMetadata(key: "continent", value: "Europe")
+        }
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let directive = document.child(at: 0)! as! BlockDirective
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(metadata)
+        XCTAssertEqual(metadata?.customMetadata.count, 2)
+        XCTAssertEqual(problems.count, 0)
+    }
+    
     // MARK: - Metadata Support
     
     func testArticleSupportsMetadata() throws {
@@ -319,3 +336,4 @@ class MetadataTests: XCTestCase {
         return (problemIDs, metadata)
     }
 }
+ 

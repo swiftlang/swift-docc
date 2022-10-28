@@ -40,11 +40,15 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     @ChildDirective(requirements: .zeroOrMore)
     var pageImages: [PageImage]
     
+    @ChildDirective(requirements: .zeroOrMore)
+    var customMetadata: [CustomMetadata]
+    
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
         "technologyRoot"        : \Metadata._technologyRoot,
         "displayName"           : \Metadata._displayName,
         "pageImages"            : \Metadata._pageImages,
+        "customMetadata"        : \Metadata._customMetadata,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
@@ -67,7 +71,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
