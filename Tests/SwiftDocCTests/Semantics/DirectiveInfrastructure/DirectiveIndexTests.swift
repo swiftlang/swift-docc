@@ -23,6 +23,7 @@ class DirectiveIndexTests: XCTestCase {
                 "Chapter",
                 "Choice",
                 "Column",
+                "CustomMetadata",
                 "DeprecationSummary",
                 "DisplayName",
                 "DocumentationExtension",

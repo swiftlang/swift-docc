@@ -1169,7 +1169,8 @@ class RenderNodeTranslatorTests: XCTestCase {
          let roundTrippedArticle = try JSONDecoder().decode(RenderNode.self, from: encodedArticle)
     
          XCTAssertEqual(roundTrippedArticle.icon?.identifier, "plus.svg")
-    
+
+         XCTAssertEqual(renderNode.metadata.customMetadata.count, 1)
          XCTAssertEqual(
              roundTrippedArticle.references["figure1.png"] as? ImageReference,
              ImageReference(
@@ -1213,5 +1214,11 @@ class RenderNodeTranslatorTests: XCTestCase {
                  TopicImage(type: .card, identifier: RenderReferenceIdentifier("figure1.png"))
              ]
          )
+
+        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.count, 1)
+        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.keys.count, 1)
+        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.keys.first, "country")
+        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.values.count, 1)
+        XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.values.first, "Belgium")
      }
 }
