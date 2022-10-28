@@ -246,6 +246,9 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         let renderContext = RenderContext(documentationContext: context, bundle: bundle)
         
         try outputConsumer.consume(renderReferenceStore: renderContext.store)
+
+        // Copy images, sample files, and other static assets.
+        try outputConsumer.consume(assetsInBundle: bundle)
         
         let converter = DocumentationContextConverter(
             bundle: bundle,
@@ -327,13 +330,6 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         
         // If cancelled, return before producing outputs.
         guard !isConversionCancelled() else { return ([], []) }
-        
-        // Copy images, sample files, and other static assets.
-        do {
-            try outputConsumer.consume(assetsInBundle: bundle)
-        } catch {
-            recordProblem(from: error, in: &conversionProblems, withIdentifier: "assets")
-        }
         
         // Write various metadata
         if emitDigest {
