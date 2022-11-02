@@ -142,13 +142,13 @@ def should_run_action(action_name, selected_actions):
     return False
 
 def update_swiftpm_dependencies(package_path, swift_exec, build_path, env, verbose):
-  args = [swift_exec, 'package', '--package-path', package_path, '--build-path', build_path, 'update']
+  args = [swift_exec, 'package', '--package-path', package_path, '--scratch-path', build_path, 'update']
   check_call(args, env=env, verbose=verbose)
   
 def get_swiftpm_options(action, args):
   swiftpm_args = [
     '--package-path', args.package_path,
-    '--build-path', args.build_dir,
+    '--scratch-path', args.build_dir,
     '--configuration', args.configuration,
   ]
 
@@ -252,7 +252,7 @@ def docc_bin_path(swift_exec, args, env, verbose):
     'build',
     '--show-bin-path',
     '--package-path', args.package_path,
-    '--build-path', args.build_dir,
+    '--scratch-path', args.build_dir,
     '--configuration', args.configuration,
     '--product', 'docc'
   ]
