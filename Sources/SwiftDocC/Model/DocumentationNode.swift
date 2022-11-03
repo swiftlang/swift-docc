@@ -112,10 +112,10 @@ public struct DocumentationNode {
         
         for discussion in discussionSections {
             for child in discussion.content {
-                // For any H2/H3 sections found in the topic's discussion
+                // For any non-H1 Heading sections found in the topic's discussion
                 // create an `AnchorSection` and add it to `anchorSections`
                 // so we can index all anchors found in the bundle for link resolution.
-                if let heading = child as? Heading, heading.level > 1, heading.level < 4 {
+                if let heading = child as? Heading, heading.level > 1 {
                     anchorSections.append(
                         AnchorSection(reference: reference.withFragment(heading.plainText), title: heading.plainText)
                     )
