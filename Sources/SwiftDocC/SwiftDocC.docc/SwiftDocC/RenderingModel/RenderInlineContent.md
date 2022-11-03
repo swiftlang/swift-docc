@@ -2,10 +2,6 @@
 
 ## Topics
 
-### Getting a plain text representation
-
-- ``plainText``
-
 ### Inline content types
 
 - ``codeVoice(code:)``
@@ -19,3 +15,7 @@
 - ``subscript(inlineContent:)``
 - ``superscript(inlineContent:)``
 - ``text(_:)``
+
+### Getting a plain text representation
+
+- ``plainText``
