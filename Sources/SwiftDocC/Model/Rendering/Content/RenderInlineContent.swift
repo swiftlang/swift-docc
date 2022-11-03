@@ -176,7 +176,7 @@ extension RenderInlineContent {
     /// more sense to use the `rawIndexableTextContent` function that does use `RenderReference`
     /// for a more accurate textual representation of `RenderInlineContent.image` and
     /// `RenderInlineContent.reference`.
-    var plainText: String {
+    public var plainText: String {
         switch self {
         case let .codeVoice(code):
             return code
@@ -213,7 +213,7 @@ extension Sequence where Element == RenderInlineContent {
     /// more sense to use the `rawIndexableTextContent` function that does use `RenderReference`
     /// for a more accurate textual representation of `RenderInlineContent.image` and
     /// `RenderInlineContent.reference`.
-    var plainText: String {
+    public var plainText: String {
         return map { $0.plainText }.joined()
     }
 }
