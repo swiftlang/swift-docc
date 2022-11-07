@@ -32,6 +32,9 @@ let package = Package(
             targets: ["docc"]
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/swift-server/swift-backtrace", .upToNextMinor(from: "1.3.3")),
+    ],
     targets: [
         // SwiftDocC library
         .target(
@@ -88,6 +91,7 @@ let package = Package(
             name: "docc",
             dependencies: [
                 "SwiftDocCUtilities",
+                .product(name: "Backtrace", package: "swift-backtrace", condition: .when(platforms: [.linux, .android])),
             ]),
 
         // Test app for SwiftDocCUtilities

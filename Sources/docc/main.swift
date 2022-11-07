@@ -10,7 +10,10 @@
 
 #if os(macOS) || os(Linux) || os(Android)
 import SwiftDocCUtilities
-
+#if !os(macOS)
+import Backtrace
+Backtrace.install()
+#endif
 Docc.main()
 #else
 fatalError("Command line interface supported only on macOS and Linux platforms.") 
