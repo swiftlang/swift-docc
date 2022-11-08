@@ -27,6 +27,9 @@ public class Options: Semantic, AutomaticDirectiveConvertible {
     public private(set) var _automaticTitleHeading: AutomaticTitleHeading? = nil
     
     @ChildDirective
+    public private(set) var _automaticArticleSubheading: AutomaticArticleSubheading? = nil
+    
+    @ChildDirective
     public private(set) var _topicsVisualStyle: TopicsVisualStyle? = nil
     
     /// If given, the authored behavior for automatic See Also section generation.
@@ -37,6 +40,11 @@ public class Options: Semantic, AutomaticDirectiveConvertible {
     /// If given, the authored behavior for automatic Title Heading generation.
     public var automaticTitleHeadingBehavior: AutomaticTitleHeading.Behavior? {
         return _automaticTitleHeading?.behavior
+    }
+    
+    /// If given, the authored behavior for automatic article subheading generation.
+    public var automaticArticleSubheadingBehavior: AutomaticArticleSubheading.Behavior? {
+        return _automaticArticleSubheading?.behavior
     }
     
     /// If given, the authored style for a page's Topics section.
@@ -58,6 +66,7 @@ public class Options: Semantic, AutomaticDirectiveConvertible {
         "_automaticSeeAlso"      : \Options.__automaticSeeAlso,
         "_automaticTitleHeading" : \Options.__automaticTitleHeading,
         "_topicsVisualStyle"     : \Options.__topicsVisualStyle,
+        "_automaticArticleSubheading"   : \Options.__automaticArticleSubheading,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")

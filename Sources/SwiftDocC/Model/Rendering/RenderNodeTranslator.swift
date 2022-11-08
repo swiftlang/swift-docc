@@ -630,8 +630,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
             var title: String?
             if let first = discussionContent.first, case RenderBlockContent.heading = first {
                 title = nil
-            } else {
-                // For articles hardcode an overview title
+            } else if shouldCreateAutomaticArticleSubheading(for: documentationNode) {
+                // For articles hardcode an overview title unless the user explicitly
+                // opts-out with the `@AutomaticArticleSubheading` directive.
                 title = "Overview"
             }
             node.primaryContentSections.append(ContentRenderSection(kind: .content, content: discussionContent, heading: title))
@@ -1075,6 +1076,19 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         return shouldCreateAutomaticRoleHeading
+    }
+    
+    private func shouldCreateAutomaticArticleSubheading(for node: DocumentationNode) -> Bool {
+        let shouldCreateAutomaticArticleSubheading: Bool
+        if let automaticSubheadingOption = node.options?.automaticArticleSubheadingBehavior
+            ?? context.options?.automaticArticleSubheadingBehavior
+        {
+            shouldCreateAutomaticArticleSubheading = !(automaticSubheadingOption == .disabled)
+        } else {
+            shouldCreateAutomaticArticleSubheading = true
+        }
+        
+        return shouldCreateAutomaticArticleSubheading
     }
     
     private func topicsSectionStyle(for node: DocumentationNode) -> RenderNode.TopicsSectionStyle {
