@@ -833,7 +833,7 @@ extension PathHierarchy.Error {
             let suggestion: String
             switch nearMisses.count {
             case 0:
-                suggestion = "No similar symbols. Available children: \(available.joined(separator: ", "))."
+                suggestion = "No similar pages. Available children: \(available.joined(separator: ", "))."
             case 1:
                 suggestion = "Did you mean: \(nearMisses[0])?"
             default:
