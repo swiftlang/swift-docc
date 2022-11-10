@@ -1102,7 +1102,7 @@ struct TextDiffSegmentsTestWrapper {
                 fromIndex += segment.count
             case .insert:
                 let spaceToAdd: Int
-                if let previousSegment, previousSegment.kind == .remove {
+                if let previousSegment = previousSegment, previousSegment.kind == .remove {
                     spaceToAdd = segment.count - previousSegment.count
                     // Left align with the previous removed segment
                     insertRow.removeLast(previousSegment.count)
