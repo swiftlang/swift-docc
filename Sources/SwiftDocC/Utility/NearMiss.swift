@@ -71,14 +71,16 @@ enum NearMiss {
         
         // This implementation is built around a few basic ideas:
         //
-        //  - Common segments _add t_o a change collection's score,
+        //  - Common segments _add_ to a change collection's score,
         //  - Inserted and removed segments _subtract from_ a change collection's score.
         //  - Short "common segments" occur in differences that are very different ("orange" and "lemon" both contain a "e").
         //  - A long sequence of common elements should contribute more than an equal length sequence of different characters.
         //    In other words; a 50% match is still "good".
         //  - The longer a common segment is, the more "similar" to two strings are.
+        //  - A removed segment contribute more than an inserted segment (since the author had written those characters).
         
-        if segment.kind == .common {
+        switch segment.kind {
+        case .common:
             if segment.count < 3 {
                 // 1, or 2 common characters are too few to be what a person would consider a similarity.
                 return 0.0
@@ -87,12 +89,17 @@ enum NearMiss {
                 // and adds an arbitrary constant factor.
                 return Double((1...segment.count).reduce(0, +)) + 3
             }
-        } else {
-            // No matter the length, difference segments (insertions or removals) contribute to the score.
-            //
-            // The score is linear to the length with a scale factor that's tweaked to provide "best match" results that are
-            // close to what a person would expect. See ``NearMissTests``.
+            
+        // Segments of removed or inserted characters contribute to the score no matter the segment length.
+        //
+        // The score is linear to the length with scale factors that are tweaked to provide "best match" results that are close
+        // to what a person would expect. See ``NearMissTests``.
+        case .insert:
             return -Double(segment.count) * 1.5
+        case .remove:
+            // Removed characters contribute more than inserted characters since they represent something that the author wrote
+            // that is missing in this match.
+            return -Double(segment.count) * 3.0
         }
     }
 }
