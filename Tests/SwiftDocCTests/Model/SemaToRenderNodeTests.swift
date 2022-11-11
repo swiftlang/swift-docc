@@ -3174,4 +3174,45 @@ Document
             ]
         )
     }
+    
+    func testTopicsSectionWithSingleAnonymousTopicGroup() throws {
+        let (_, bundle, context) = try testBundleAndContext(
+            copying: "TestBundle",
+            configureBundle: { url in
+                try """
+                # Article
+                
+                Abstract.
+                
+                ## Topics
+                
+                - ``MyKit/MyProtocol``
+                - ``MyKit/MyClass``
+                
+                """.write(to: url.appendingPathComponent("article.md"), atomically: true, encoding: .utf8)
+            }
+        )
+         
+        let articleReference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/Test-Bundle/article",
+            sourceLanguage: .swift
+        )
+        
+        let articleNode = try context.entity(with: articleReference)
+        
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: articleNode.reference, source: nil)
+        let articleRenderNode = try XCTUnwrap(translator.visit(articleNode.semantic) as? RenderNode)
+        
+        XCTAssertEqual(
+            articleRenderNode.topicSections.flatMap { taskGroup in
+                [taskGroup.title] + taskGroup.identifiers
+            },
+            [
+                nil,
+                "doc://org.swift.docc.example/documentation/MyKit/MyProtocol",
+                "doc://org.swift.docc.example/documentation/MyKit/MyClass",
+            ]
+        )
+    }
 }

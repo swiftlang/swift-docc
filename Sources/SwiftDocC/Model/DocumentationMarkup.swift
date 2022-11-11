@@ -247,6 +247,14 @@ struct DocumentationMarkup {
                         topicsFirstTaskGroupIndex = index
                     }
                 }
+                // The first topic group in a topic section is allowed to be "anonymous", or without
+                // an H3 heading. We account for this by treating both UnorderedLists and Paragraphs as
+                // valid children indicating the start of a task group.
+                else if child is UnorderedList {
+                    topicsFirstTaskGroupIndex = index
+                } else if child is Paragraph {
+                    topicsFirstTaskGroupIndex = index
+                }
                 
                 if topicsIndex == nil { topicsIndex = index }
                 
