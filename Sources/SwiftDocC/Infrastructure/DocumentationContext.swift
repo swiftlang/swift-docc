@@ -400,7 +400,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             MissingAbstract(sourceFile: source).any(),
             NonOverviewHeadingChecker(sourceFile: source).any(),
             SeeAlsoInTopicsHeadingChecker(sourceFile: source).any(),
-            TopicsSectionWithoutSubheading(sourceFile: source).any(),
         ])
         checker.visit(document)
         diagnosticEngine.emit(checker.problems)
