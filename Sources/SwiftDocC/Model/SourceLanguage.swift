@@ -149,4 +149,31 @@ public struct SourceLanguage: Hashable, Codable {
     
     /// The list of programming languages that are known to DocC.
     public static var knownLanguages: [SourceLanguage] = [.swift, .objectiveC, .javaScript, .data, .metal]
+    
+    enum CodingKeys: CodingKey {
+        case name
+        case id
+        case idAliases
+        case linkDisambiguationID
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: SourceLanguage.CodingKeys.self)
+        
+        let name = try container.decode(String.self, forKey: SourceLanguage.CodingKeys.name)
+        let id = try container.decode(String.self, forKey: SourceLanguage.CodingKeys.id)
+        let idAliases = try container.decodeIfPresent([String].self, forKey: SourceLanguage.CodingKeys.idAliases) ?? []
+        let linkDisambiguationID = try container.decodeIfPresent(String.self, forKey: SourceLanguage.CodingKeys.linkDisambiguationID)
+        
+        self.init(name: name, id: id, idAliases: idAliases, linkDisambiguationID: linkDisambiguationID)
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: SourceLanguage.CodingKeys.self)
+        
+        try container.encode(self.name, forKey: SourceLanguage.CodingKeys.name)
+        try container.encode(self.id, forKey: SourceLanguage.CodingKeys.id)
+        try container.encodeIfNotEmpty(self.idAliases, forKey: SourceLanguage.CodingKeys.idAliases)
+        try container.encode(self.linkDisambiguationID, forKey: SourceLanguage.CodingKeys.linkDisambiguationID)
+    }
 }
