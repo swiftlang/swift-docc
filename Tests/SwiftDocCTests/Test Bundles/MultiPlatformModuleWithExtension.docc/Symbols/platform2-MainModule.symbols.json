@@ -1,0 +1,69 @@
+{
+  "metadata" : {
+    "formatVersion" : {
+      "major" : 0,
+      "minor" : 5,
+      "patch" : 3
+    },
+    "generator" : "tests"
+  },
+  "module" : {
+    "name" : "MainModule",
+    "platform" : {
+      "architecture" : "armv7k",
+      "operatingSystem" : {
+        "minimumVersion" : {
+          "major" : 9,
+          "minor" : 0,
+          "patch" : 0
+        },
+        "name" : "watchos"
+      },
+      "vendor" : "apple"
+    }
+  },
+  "relationships" : [
+    {
+      "kind" : "memberOf",
+      "source" : "InnerStruct",
+      "target" : "TopLevelProtocolP"
+    }
+  ],
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "TopLevelProtocolP"
+      },
+      "kind" : {
+        "displayName" : "Protocol",
+        "identifier" : "swift.protocol"
+      },
+      "names" : {
+        "title" : "TopLevelProtocol"
+      },
+      "pathComponents" : [
+        "TopLevelProtocol"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "InnerStruct"
+      },
+      "kind" : {
+        "displayName" : "Struct",
+        "identifier" : "swift.struct"
+      },
+      "names" : {
+        "title" : "InnerStruct"
+      },
+      "pathComponents" : [
+        "TopLevelProtocol",
+        "InnerStruct"
+      ]
+    }
+  ]
+}
