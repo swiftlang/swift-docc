@@ -102,9 +102,13 @@ struct PathHierarchy {
             var nodes: [String: Node] = [:]
             nodes.reserveCapacity(graph.symbols.count)
             for (id, symbol) in graph.symbols {
-                let node = Node(symbol: symbol)
-                nodes[id] = node
-                allNodes[id, default: []].append(node)
+                if let existingNode = allNodes[id]?.first(where: { $0.symbol!.identifier == symbol.identifier }) {
+                    nodes[id] = existingNode
+                } else {
+                    let node = Node(symbol: symbol)
+                    nodes[id] = node
+                    allNodes[id, default: []].append(node)
+                }
             }
             
             var topLevelCandidates = nodes
@@ -113,15 +117,11 @@ struct PathHierarchy {
                     continue
                 }
                 if let targetNode = nodes[relationship.target] {
-                    if targetNode.add(symbolChild: sourceNode) {
-                        nodes[relationship.source] = nil
-                    }
+                    targetNode.add(symbolChild: sourceNode)
                     topLevelCandidates.removeValue(forKey: relationship.source)
                 } else if let targetNodes = allNodes[relationship.target] {
                     for targetNode in targetNodes {
-                        if targetNode.add(symbolChild: sourceNode) {
-                            nodes[relationship.source] = nil
-                        }
+                        targetNode.add(symbolChild: sourceNode)
                     }
                     topLevelCandidates.removeValue(forKey: relationship.source)
                 } else {
@@ -136,7 +136,7 @@ struct PathHierarchy {
             
             // The hierarchy doesn't contain any non-symbol nodes yet. It's OK to unwrap the `symbol` property.
             for topLevelNode in topLevelCandidates.values where topLevelNode.symbol!.pathComponents.count == 1 {
-                _ = moduleNode.add(symbolChild: topLevelNode)
+                moduleNode.add(symbolChild: topLevelNode)
             }
             
             for node in topLevelCandidates.values where node.symbol!.pathComponents.count > 1 {
@@ -156,10 +156,10 @@ struct PathHierarchy {
                 for component in components {
                     let component = Self.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: component.name)
-                    _ = parent.add(child: nodeWithoutSymbol, kind: component.kind, hash: component.hash)
+                    parent.add(child: nodeWithoutSymbol, kind: component.kind, hash: component.hash)
                     parent = nodeWithoutSymbol
                 }
-                _ = parent.add(symbolChild: node)
+                parent.add(symbolChild: node)
             }
         }
         
@@ -240,7 +240,7 @@ struct PathHierarchy {
         let newNode = Node(name: name)
         newNode.identifier = newReference
         self.lookup[newReference] = newNode
-        _ = parent.add(child: newNode, kind: kind, hash: nil)
+        parent.add(child: newNode, kind: kind, hash: nil)
         
         return newReference
     }
@@ -554,9 +554,9 @@ extension PathHierarchy {
         }
         
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
-        fileprivate func add(symbolChild: Node) -> Bool {
+        fileprivate func add(symbolChild: Node) {
             precondition(symbolChild.symbol != nil)
-            return add(
+            add(
                 child: symbolChild,
                 kind: symbolChild.symbol!.kind.identifier.identifier,
                 hash: symbolChild.symbol!.identifier.precise.stableHashString
@@ -564,9 +564,9 @@ extension PathHierarchy {
         }
         
         /// Adds a descendant of this node.
-        fileprivate func add(child: Node, kind: String?, hash: String?) -> Bool {
+        fileprivate func add(child: Node, kind: String?, hash: String?) {
             child.parent = self
-            return children[child.name, default: .init()].add(kind ?? "_", hash ?? "_", child)
+            children[child.name, default: .init()].add(kind ?? "_", hash ?? "_", child)
         }
         
         /// Combines this node with another node.
@@ -980,20 +980,16 @@ private struct DisambiguationTree {
     ///   - hash: The hash disambiguation for this value.
     ///   - value: The new value
     /// - Returns: If a value already exist with the same pair of kind and hash disambiguations.
-    @discardableResult
-    mutating func add(_ kind: String, _ hash: String, _ value: PathHierarchy.Node) -> Bool {
+    mutating func add(_ kind: String, _ hash: String, _ value: PathHierarchy.Node) {
         if let existing = storage[kind]?[hash] {
             existing.merge(with: value)
-            return true
         } else if storage.count == 1, let existing = storage["_"]?["_"] {
             // It is possible for articles and other non-symbols to collide with unfindable symbol placeholder nodes.
             // When this happens, remove the placeholder node and move its children to the real (non-symbol) node.
             value.merge(with: existing)
             storage = [kind: [hash: value]]
-            return true
         } else {
             storage[kind, default: [:]][hash] = value
-            return false
         }
     }
     
