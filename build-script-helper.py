@@ -16,8 +16,10 @@
 from __future__ import print_function
 
 import argparse
+import json
 import sys
 import os, platform
+import re
 import subprocess
 
 def printerr(message):
@@ -43,6 +45,7 @@ def parse_args(args):
   parser.add_argument('--install-dir', default=None, help='The location to install the docc executable to.')
   parser.add_argument('--copy-doccrender-from', default=None, help='The location to copy an existing Swift-DocC-Render template from.')
   parser.add_argument('--copy-doccrender-to', default=None, help='The location to install an existing Swift-DocC-Render template to.')
+  parser.add_argument("--cross-compile-hosts", dest="cross_compile_hosts", help="List of cross compile hosts targets.", default=[])
   
   parsed = parser.parse_args(args)
 
@@ -167,6 +170,14 @@ def get_swiftpm_options(action, args):
       # Library rpath for swift, dispatch, Foundation, etc. when installing
       '-Xlinker', '-rpath', '-Xlinker', '$ORIGIN/../lib/swift/linux',
     ]
+  
+  build_target = get_build_target(args)
+  cross_compile_hosts = args.cross_compile_hosts
+  if cross_compile_hosts:
+    if re.search('-apple-macosx', build_target) and re.match('macosx-', cross_compile_hosts):
+      swiftpm_args += ["--arch", "x86_64", "--arch", "arm64"]
+    else:
+      printerr("cannot cross-compile for %s" % cross_compile_hosts)
 
   if action == 'install':
     # When tests are run on the host machine, `docc` is located in the build directory; to find
@@ -245,6 +256,23 @@ def install(args, env):
       install_path=copy_render_to,
       verbose=verbose
     )
+    
+def get_build_target(args):
+  """Returns the target-triple of the current machine or for cross-compilation."""
+  # Adapted from https://github.com/apple/swift-package-manager/blob/fde9916d/Utilities/bootstrap#L296
+  try:
+    command = [args.swiftc_path, '-print-target-info']
+    target_info_json = subprocess.check_output(command, stderr=subprocess.PIPE, universal_newlines=True).strip()
+    args.target_info = json.loads(target_info_json)
+    if platform.system() == 'Darwin':
+      return args.target_info["target"]["unversionedTriple"]
+    return args.target_info["target"]["triple"]
+  except Exception as e:
+    # Temporary fallback for Darwin.
+    if platform.system() == 'Darwin':
+      return 'x86_64-apple-macosx'
+    else:
+      fatal_error(str(e))
 
 def docc_bin_path(swift_exec, args, env, verbose):
   cmd = [
