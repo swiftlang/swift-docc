@@ -259,6 +259,7 @@ class OptionsTests: XCTestCase {
                 @AutomaticTitleHeading(pageKind)
                 @AutomaticSeeAlso(disabled)
                 @TopicsVisualStyle(detailedGrid)
+                @AutomaticArticleSubheading(enabled)
             }
             """
         }
@@ -267,6 +268,7 @@ class OptionsTests: XCTestCase {
         XCTAssertEqual(options?.automaticTitleHeadingBehavior, .pageKind)
         XCTAssertEqual(options?.automaticSeeAlsoBehavior, .disabled)
         XCTAssertEqual(options?.topicsVisualStyle, .detailedGrid)
+        XCTAssertEqual(options?.automaticArticleSubheadingBehavior, .enabled)
     }
     
     func testUnsupportedChild() throws {
@@ -291,5 +293,62 @@ class OptionsTests: XCTestCase {
                 "3: warning – org.swift.docc.HasOnlyKnownDirectives",
             ]
         )
+    }
+    
+    func testAutomaticArticleSubheading() throws {
+        do {
+            let (problems, options) = try parseDirective(Options.self) {
+                """
+                @Options {
+                }
+                """
+            }
+            
+            XCTAssertTrue(problems.isEmpty)
+            let unwrappedOptions = try XCTUnwrap(options)
+            XCTAssertNil(unwrappedOptions.automaticArticleSubheadingBehavior)
+        }
+        
+        do {
+            let (problems, options) = try parseDirective(Options.self) {
+                """
+                @Options {
+                    @AutomaticArticleSubheading(randomArgument)
+                }
+                """
+            }
+            
+            XCTAssertEqual(problems, ["2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed"])
+            let unwrappedOptions = try XCTUnwrap(options)
+            XCTAssertNil(unwrappedOptions.automaticArticleSubheadingBehavior)
+        }
+        
+        do {
+            let (problems, options) = try parseDirective(Options.self) {
+                """
+                @Options {
+                    @AutomaticArticleSubheading(disabled)
+                }
+                """
+            }
+            
+            XCTAssertTrue(problems.isEmpty)
+            let unwrappedOptions = try XCTUnwrap(options)
+            XCTAssertEqual(unwrappedOptions.automaticArticleSubheadingBehavior, .disabled)
+        }
+        
+        do {
+            let (problems, options) = try parseDirective(Options.self) {
+                """
+                @Options {
+                    @AutomaticArticleSubheading(enabled)
+                }
+                """
+            }
+            
+            XCTAssertTrue(problems.isEmpty)
+            let unwrappedOptions = try XCTUnwrap(options)
+            XCTAssertEqual(unwrappedOptions.automaticArticleSubheadingBehavior, .enabled)
+        }
     }
 }

@@ -18,6 +18,7 @@ class DirectiveIndexTests: XCTestCase {
             DirectiveIndex.shared.indexedDirectives.keys.sorted(),
             [
                 "Assessments",
+                "AutomaticArticleSubheading",
                 "AutomaticSeeAlso",
                 "AutomaticTitleHeading",
                 "Chapter",
