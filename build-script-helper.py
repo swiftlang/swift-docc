@@ -272,19 +272,13 @@ def install(args, env):
 def get_build_target(args):
   """Returns the target-triple of the current machine or for cross-compilation."""
   # Adapted from https://github.com/apple/swift-package-manager/blob/fde9916d/Utilities/bootstrap#L296
-  try:
-    command = [args.swiftc_path, '-print-target-info']
-    target_info_json = subprocess.check_output(command, stderr=subprocess.PIPE, universal_newlines=True).strip()
-    args.target_info = json.loads(target_info_json)
-    if platform.system() == 'Darwin':
-      return args.target_info["target"]["unversionedTriple"]
-    return args.target_info["target"]["triple"]
-  except Exception as e:
-    # Temporary fallback for Darwin.
-    if platform.system() == 'Darwin':
-      return 'x86_64-apple-macosx'
-    else:
-      fatal_error(str(e))
+  command = [args.swift_exec, '-print-target-info']
+  target_info_json = subprocess.check_output(command, stderr=subprocess.PIPE, universal_newlines=True).strip()
+  args.target_info = json.loads(target_info_json)
+  if platform.system() == 'Darwin':
+    return args.target_info["target"]["unversionedTriple"]
+  
+  return args.target_info["target"]["triple"]
 
 def docc_bin_path(args, env, verbose):
   cmd = get_call_to_invoke_swift_single_product(
