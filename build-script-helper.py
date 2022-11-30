@@ -179,7 +179,7 @@ def get_swiftpm_options(action, args):
     else:
       printerr("cannot cross-compile for %s" % cross_compile_hosts)
 
-  if action == 'install':
+  if action == 'install' or action == 'show-bin-path':
     # When tests are run on the host machine, `docc` is located in the build directory; to find
     # its linked libraries (Swift runtime dependencies), `docc` needs to link against the host
     # machine's toolchain libraries. When installing docc on the target machine, the `docc`
@@ -189,6 +189,9 @@ def get_swiftpm_options(action, args):
   if action == 'test':
     swiftpm_args += ['--parallel']
   
+  if action == 'show-bin-path':
+    swiftpm_args += ['--show-bin-path']
+  
   return swiftpm_args
 
 def invoke_swift(action, products, env, args, swiftpm_args):
@@ -197,7 +200,7 @@ def invoke_swift(action, products, env, args, swiftpm_args):
   for product in products:
     invoke_swift_single_product(action, product, env, args, swiftpm_args)
 
-def invoke_swift_single_product(action, product, env, args, swiftpm_args):
+def get_call_to_invoke_swift_single_product(action, product, args, swiftpm_args):
   call = [args.swift_exec, action] + swiftpm_args
   
   if platform.system() != 'Darwin':
@@ -208,6 +211,16 @@ def invoke_swift_single_product(action, product, env, args, swiftpm_args):
     call.extend(['--test-product', product])
   else:
     call.extend(['--product', product])
+    
+  return call
+
+def invoke_swift_single_product(action, product, env, args, swiftpm_args):
+  call = get_call_to_invoke_swift_single_product(
+    action=action, 
+    product=product, 
+    args=args, 
+    swiftpm_args=swiftpm_args
+  )
 
   # Tell Swift-DocC that we are building in a build-script environment so that
   # it does not need to be rebuilt if it has already been built before.
@@ -228,7 +241,6 @@ def install(args, env):
   verbose=args.verbose
   # Find the docc executable location
   docc_path = docc_bin_path(
-    swift_exec=os.path.join(os.path.join(args.toolchain, 'bin'), 'swift'),
     args=args,
     env=env,
     verbose=verbose
@@ -274,16 +286,17 @@ def get_build_target(args):
     else:
       fatal_error(str(e))
 
-def docc_bin_path(swift_exec, args, env, verbose):
-  cmd = [
-    swift_exec,
-    'build',
-    '--show-bin-path',
-    '--package-path', args.package_path,
-    '--scratch-path', args.build_dir,
-    '--configuration', args.configuration,
-    '--product', 'docc'
-  ]
+def docc_bin_path(args, env, verbose):
+  cmd = get_call_to_invoke_swift_single_product(
+    action='build',
+    product='docc',
+    args=args,
+    swiftpm_args=get_swiftpm_options(
+      action='show-bin-path', 
+      args=args
+    )
+  )
+
   if verbose:
     print(' '.join([escape_cmd_arg(arg) for arg in cmd]))
   return os.path.join(
