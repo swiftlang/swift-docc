@@ -16,8 +16,10 @@
 from __future__ import print_function
 
 import argparse
+import json
 import sys
 import os, platform
+import re
 import subprocess
 
 def printerr(message):
@@ -43,6 +45,7 @@ def parse_args(args):
   parser.add_argument('--install-dir', default=None, help='The location to install the docc executable to.')
   parser.add_argument('--copy-doccrender-from', default=None, help='The location to copy an existing Swift-DocC-Render template from.')
   parser.add_argument('--copy-doccrender-to', default=None, help='The location to install an existing Swift-DocC-Render template to.')
+  parser.add_argument("--cross-compile-hosts", dest="cross_compile_hosts", help="List of cross compile hosts targets.", default=[])
   
   parsed = parser.parse_args(args)
 
@@ -167,8 +170,16 @@ def get_swiftpm_options(action, args):
       # Library rpath for swift, dispatch, Foundation, etc. when installing
       '-Xlinker', '-rpath', '-Xlinker', '$ORIGIN/../lib/swift/linux',
     ]
+  
+  build_target = get_build_target(args)
+  cross_compile_hosts = args.cross_compile_hosts
+  if cross_compile_hosts:
+    if re.search('-apple-macosx', build_target) and re.match('macosx-', cross_compile_hosts):
+      swiftpm_args += ["--arch", "x86_64", "--arch", "arm64"]
+    else:
+      printerr("cannot cross-compile for %s" % cross_compile_hosts)
 
-  if action == 'install':
+  if action == 'install' or action == 'show-bin-path':
     # When tests are run on the host machine, `docc` is located in the build directory; to find
     # its linked libraries (Swift runtime dependencies), `docc` needs to link against the host
     # machine's toolchain libraries. When installing docc on the target machine, the `docc`
@@ -178,6 +189,9 @@ def get_swiftpm_options(action, args):
   if action == 'test':
     swiftpm_args += ['--parallel']
   
+  if action == 'show-bin-path':
+    swiftpm_args += ['--show-bin-path']
+  
   return swiftpm_args
 
 def invoke_swift(action, products, env, args, swiftpm_args):
@@ -186,7 +200,7 @@ def invoke_swift(action, products, env, args, swiftpm_args):
   for product in products:
     invoke_swift_single_product(action, product, env, args, swiftpm_args)
 
-def invoke_swift_single_product(action, product, env, args, swiftpm_args):
+def get_call_to_invoke_swift_single_product(action, product, args, swiftpm_args):
   call = [args.swift_exec, action] + swiftpm_args
   
   if platform.system() != 'Darwin':
@@ -197,6 +211,16 @@ def invoke_swift_single_product(action, product, env, args, swiftpm_args):
     call.extend(['--test-product', product])
   else:
     call.extend(['--product', product])
+    
+  return call
+
+def invoke_swift_single_product(action, product, env, args, swiftpm_args):
+  call = get_call_to_invoke_swift_single_product(
+    action=action, 
+    product=product, 
+    args=args, 
+    swiftpm_args=swiftpm_args
+  )
 
   # Tell Swift-DocC that we are building in a build-script environment so that
   # it does not need to be rebuilt if it has already been built before.
@@ -217,7 +241,6 @@ def install(args, env):
   verbose=args.verbose
   # Find the docc executable location
   docc_path = docc_bin_path(
-    swift_exec=os.path.join(os.path.join(args.toolchain, 'bin'), 'swift'),
     args=args,
     env=env,
     verbose=verbose
@@ -245,17 +268,29 @@ def install(args, env):
       install_path=copy_render_to,
       verbose=verbose
     )
+    
+def get_build_target(args):
+  """Returns the target-triple of the current machine or for cross-compilation."""
+  # Adapted from https://github.com/apple/swift-package-manager/blob/fde9916d/Utilities/bootstrap#L296
+  command = [args.swift_exec, '-print-target-info']
+  target_info_json = subprocess.check_output(command, stderr=subprocess.PIPE, universal_newlines=True).strip()
+  args.target_info = json.loads(target_info_json)
+  if platform.system() == 'Darwin':
+    return args.target_info["target"]["unversionedTriple"]
+  
+  return args.target_info["target"]["triple"]
 
-def docc_bin_path(swift_exec, args, env, verbose):
-  cmd = [
-    swift_exec,
-    'build',
-    '--show-bin-path',
-    '--package-path', args.package_path,
-    '--scratch-path', args.build_dir,
-    '--configuration', args.configuration,
-    '--product', 'docc'
-  ]
+def docc_bin_path(args, env, verbose):
+  cmd = get_call_to_invoke_swift_single_product(
+    action='build',
+    product='docc',
+    args=args,
+    swiftpm_args=get_swiftpm_options(
+      action='show-bin-path', 
+      args=args
+    )
+  )
+
   if verbose:
     print(' '.join([escape_cmd_arg(arg) for arg in cmd]))
   return os.path.join(
