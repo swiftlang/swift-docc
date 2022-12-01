@@ -1,0 +1,96 @@
+{
+  "metadata" : {
+    "formatVersion" : {
+      "major" : 0,
+      "minor" : 5,
+      "patch" : 3
+    },
+    "generator" : "tests"
+  },
+  "module" : {
+    "name" : "ExtensionModule",
+    "platform" : {
+      "architecture" : "armv7k",
+      "operatingSystem" : {
+        "minimumVersion" : {
+          "major" : 9,
+          "minor" : 0,
+          "patch" : 0
+        },
+        "name" : "watchos"
+      },
+      "vendor" : "apple"
+    }
+  },
+  "relationships" : [
+    {
+      "kind" : "memberOf",
+      "source" : "extensionMember1",
+      "target" : "TopLevelProtocolP"
+    },
+    {
+      "kind" : "memberOf",
+      "source" : "extensionMember2",
+      "target" : "InnerStruct"
+    }
+  ],
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "extensionMember1"
+      },
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "``extensionMember(:_)``"
+          }
+        ]
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "swift.method"
+      },
+      "names" : {
+        "title" : "extensionMember(_:)"
+      },
+      "pathComponents" : [
+        "TopLevelProtocol",
+        "extensionMember(_:)"
+      ],
+      "swiftExtension" : {
+        "extendedModule" : "MainModule"
+      }
+    },
+    {
+      "accessLevel" : "public",
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "extensionMember2"
+      },
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "``extensionMember(:_)``"
+          }
+        ]
+      },
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "swift.method"
+      },
+      "names" : {
+        "title" : "extensionMember(_:)"
+      },
+      "pathComponents" : [
+        "TopLevelProtocol",
+        "InnerStruct",
+        "extensionMember(_:)"
+      ],
+      "swiftExtension" : {
+        "extendedModule" : "MainModule"
+      }
+    }
+  ]
+}
