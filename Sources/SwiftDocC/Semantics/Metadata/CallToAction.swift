@@ -101,7 +101,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         if self.url == nil && self.file == nil {
             problems.append(.init(diagnostic: .init(
                 source: source,
-                severity: .error,
+                severity: .warning,
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(CallToAction.self).missingLink",
                 summary: "\(CallToAction.directiveName.singleQuoted) directive requires `url` or `file` argument",
@@ -112,7 +112,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         } else if self.url != nil && self.file != nil {
             problems.append(.init(diagnostic: .init(
                 source: source,
-                severity: .error,
+                severity: .warning,
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(CallToAction.self).tooManyLinks",
                 summary: "\(CallToAction.directiveName.singleQuoted) directive requires only one of `url` or `file`",
@@ -125,7 +125,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         if self.purpose == nil && self.label == nil {
             problems.append(.init(diagnostic: .init(
                 source: source,
-                severity: .error,
+                severity: .warning,
                 range: originalMarkup.range,
                 identifier: "org.swift.docc.\(CallToAction.self).missingLabel",
                 summary: "\(CallToAction.directiveName.singleQuoted) directive requires `purpose` or `label` argument",
