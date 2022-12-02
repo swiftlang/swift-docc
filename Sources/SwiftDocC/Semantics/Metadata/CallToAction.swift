@@ -73,11 +73,11 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         "label"    : \CallToAction._label,
     ]
 
-    public func buttonLabel() -> String {
+    public var buttonLabel: String {
         if let label = label {
             return label
         } else if let purpose = purpose {
-            return purpose.defaultLabel()
+            return purpose.defaultLabel
         } else {
             fatalError("A valid CallToAction should have either a purpose or label")
         }
@@ -158,7 +158,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
 }
 
 extension CallToAction.Purpose {
-    public func defaultLabel() -> String {
+    public var defaultLabel: String {
         switch self {
         case .download:
             return "Download"

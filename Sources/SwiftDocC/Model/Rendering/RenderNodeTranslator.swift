@@ -787,7 +787,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     action: .reference(
                         identifier: downloadIdentifier,
                         isActive: true,
-                        overridingTitle: callToAction.buttonLabel(),
+                        overridingTitle: callToAction.buttonLabel,
                         overridingTitleInlineContent: nil))
                 downloadReferences[url.description] = DownloadReference(
                     identifier: downloadIdentifier,
@@ -799,7 +799,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 node.sampleDownload = .init(action: .reference(
                     identifier: downloadIdentifier,
                     isActive: true,
-                    overridingTitle: callToAction.buttonLabel(),
+                    overridingTitle: callToAction.buttonLabel,
                     overridingTitleInlineContent: nil
                 ))
             }
