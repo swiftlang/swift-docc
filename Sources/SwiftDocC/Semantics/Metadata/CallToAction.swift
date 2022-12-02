@@ -49,10 +49,11 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         case link
     }
 
-    /// The location of the associated download.
+    /// The location of the associated link, as a fixed URL.
     @DirectiveArgumentWrapped
     public var url: URL? = nil
 
+    /// The location of the associated link, as a reference to a file in this documentation bundle.
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
             ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
@@ -60,9 +61,11 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     )
     public var file: ResourceReference? = nil
 
+    /// The purpose of this Call to Action, which provides a default button label.
     @DirectiveArgumentWrapped
     public var purpose: Purpose? = nil
 
+    /// Text to use as the button label, which may override ``purpose-swift.property``.
     @DirectiveArgumentWrapped
     public var label: String? = nil
 
@@ -73,12 +76,16 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
         "label"    : \CallToAction._label,
     ]
 
+    /// The computed label for this Call to Action, whether provided directly via ``label`` or
+    /// indirectly via ``purpose-swift.property``.
     public var buttonLabel: String {
         if let label = label {
             return label
         } else if let purpose = purpose {
             return purpose.defaultLabel
         } else {
+            // The `validate()` method ensures that this type should never be constructed without
+            // one of the above.
             fatalError("A valid CallToAction should have either a purpose or label")
         }
     }
@@ -158,6 +165,8 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
 }
 
 extension CallToAction.Purpose {
+    /// The label that will be applied to a Call to Action with this purpose if it doesn't provide
+    /// a separate label.
     public var defaultLabel: String {
         switch self {
         case .download:
