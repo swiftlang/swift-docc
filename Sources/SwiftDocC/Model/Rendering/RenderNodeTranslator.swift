@@ -792,7 +792,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 downloadReferences[url.description] = DownloadReference(
                     identifier: downloadIdentifier,
                     renderURL: url,
-                    sha512Checksum: ""
+                    sha512Checksum: nil
                 )
             } else if let fileReference = callToAction.file {
                 let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
