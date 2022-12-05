@@ -23,10 +23,6 @@ extension PreviewAction {
     {
         // Initialize the `PreviewAction` from the options provided by the `Preview` command
         try self.init(
-            tlsCertificateKey: previewOptions.externalConnectionOptions.tlsCertificateKeyURL,
-            tlsCertificateChain: previewOptions.externalConnectionOptions.tlsCertificateChainURL,
-            serverUsername: previewOptions.externalConnectionOptions.username,
-            serverPassword: previewOptions.externalConnectionOptions.password,
             port: previewOptions.port,
             createConvertAction: {
                 try ConvertAction(

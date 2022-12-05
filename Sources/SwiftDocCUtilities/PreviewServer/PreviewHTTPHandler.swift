@@ -18,7 +18,6 @@ import NIOHTTP1
 /// via a web server bound to a port on the local machine or a socket.
 ///
 /// ### Features
-/// - HTTP Basic Authentication when serving content to local network over SSL
 /// - Serving static files from pre-defined assets directory paths
 /// - A catch-all default GET response handler for all non-asset requests
 /// - Ignores unknown requests
@@ -54,17 +53,13 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
     private var handlerFuture: EventLoopFuture<Void>?
     private let fileIO: NonBlockingFileIO
 
-    // When serving content on local network over SSL we authorize users via these credentials
-    private let credentials: (user: String, pass: String)?
-    
     /// - Parameters:
     ///   - fileIO: Async file I/O.
     ///   - rootURL: The root of the content directory to serve.
     ///   - credentials: Optional user credentials to authorize incoming requests.
-    public init(fileIO: NonBlockingFileIO, rootURL: URL, credentials: (user: String, pass: String)? = nil) {
+    init(fileIO: NonBlockingFileIO, rootURL: URL) {
         self.rootURL = rootURL
         self.fileIO = fileIO
-        self.credentials = credentials
     }
     
     /// Handles incoming data on a channel.
@@ -72,8 +67,6 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
     /// When receiving a request's head this method prepares the correct handler
     /// for the requested resource.
     ///
-    /// When receiving a request's tail this method sends content back to the
-    /// client and if neccessary verifies user-provided credentials when serving content over SSL.
     /// - Parameters:
     ///   - context: A channel context.
     ///   - data: The current inbound request data.
@@ -93,26 +86,6 @@ final class PreviewHTTPHandler: ChannelInboundHandler {
             state = .requestInProgress(requestHead: head, handler: handler.create(channelHandler: self))
             
         case (.end, .requestInProgress(let head, let handler)):
-            // In case the handler was initialized with user credentials,
-            // do verify they match the sent "Authorization" header
-            if let credentials = credentials {
-                
-                // Verify the user sent credentials over via the HTTP headers
-                let authorizationHeaders = head.headers["Authorization"]
-                guard !authorizationHeaders.isEmpty else {
-                    error(context: context, requestPart: requestPart, head: head, status: .unauthorized, headers: [("WWW-Authenticate", "Basic realm=\"Preview server\"")])
-                    return
-                }
-                
-                let credentialsToken = [credentials.user, credentials.pass].joined(separator: ":")
-                    .data(using: .utf8)!.base64EncodedString()
-                
-                guard authorizationHeaders[0] == "Basic \(credentialsToken)" else {
-                    error(context: context, requestPart: requestPart, head: head, status: .forbidden)
-                    return
-                }
-            }
-            
             defer {
                 // Complete the response to the client, reset ``state``
                 completeResponse(context, trailers: nil, promise: nil)

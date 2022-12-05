@@ -13,13 +13,11 @@ import SwiftDocC
 
 import NIO
 import NIOHTTP1
-import NIOSSL
 
 /// A preview server that delivers documentation from a directory on disk.
 ///
 /// Call ``start()`` to bind the server to the given localhost port or socket, and
-/// respond to HTTP requests. To serve the preview over SSL on the local network,
-/// provide a credentials chain when initializing the server.
+/// respond to HTTP requests.
 ///
 /// ### Design
 /// The server responds to two types of requests and ignores all others:
@@ -34,7 +32,7 @@ import NIOSSL
 /// backlog of more than 16 pending client connections.
 /// ## Topics
 /// ### Serving Documentation
-/// - ``init(contentURL:bindTo:username:password:tlsCertificateChainURL:tlsCertificateKeyURL:logHandle:)``
+/// - ``init(contentURL:bindTo:logHandle:)``
 /// - ``Bind``
 /// - ``start(onReady:)``
 /// - ``stop()``
@@ -69,10 +67,6 @@ final class PreviewServer {
     internal var channel: Channel!
     
     private let contentURL: URL
-    private let username: String?
-    private let password: String?
-    private let tlsCertificateChainURL: URL?
-    private let tlsCertificateKeyURL: URL?
     
     /// A list of server-bind destinations.
     public enum Bind: CustomStringConvertible {
@@ -100,23 +94,11 @@ final class PreviewServer {
     
     /// Creates a new preview server with the given content directory, bind destination, and credentials.
     ///
-    /// If you want to serve content over SSL provide a `username`, `password`, `tlsCertificateChainURL`, and `tlsCertificateKeyURL`.
-    /// DocC requires you to provide the two certificates in order to create an encrypted communication channel, and
-    /// additionally a username and password to authenticate users when serving documentation over a local network.
-    ///
-    /// If you use a self-signed SSL certificate to serve content from a local machine,
-    /// web browsers might warn visitors that the connection is not secure.
-    /// - Note: When you start the preview server with SSL enabled on macOS, you will be required to approve
-    ///   network access via the standard system dialogue.
     /// - Parameters:
     ///   - contentURL: The root URL on disk from which to serve content.
     ///   - bindTo: Bind destination such as a localhost port or a file socket.
-    ///   - username: A username to require, if serving secure content.
-    ///   - password: A password to require, if serving secure content.
-    ///   - tlsCertificateChainURL: A certificate chain to use for SSL, if serving secure content.
-    ///   - tlsCertificateKeyURL: A certificate key to use for SSL, if serving secure content.
     ///   - logHandle: A file handle to write logs to.
-    init(contentURL: URL, bindTo: Bind, username: String?, password: String?, tlsCertificateChainURL: URL? = nil, tlsCertificateKeyURL: URL? = nil, logHandle: inout LogHandle) throws {
+    init(contentURL: URL, bindTo: Bind, logHandle: inout LogHandle) throws {
         var isDirectory = ObjCBool(booleanLiteral: false)
         let contentPathExists = FileManager.default.fileExists(atPath: contentURL.path, isDirectory: &isDirectory)
         guard contentPathExists && isDirectory.boolValue else {
@@ -125,10 +107,6 @@ final class PreviewServer {
         
         self.contentURL = contentURL
         self.bindTo = bindTo
-        self.username = username
-        self.password = password
-        self.tlsCertificateChainURL = tlsCertificateChainURL
-        self.tlsCertificateKeyURL = tlsCertificateKeyURL
         self.logHandle = logHandle
     }
 
@@ -138,28 +116,6 @@ final class PreviewServer {
     /// - Parameter onReady: A closure that's executed after the server is bound successfully
     ///   to its destination but before it has started serving content.
     func start(onReady: (() -> Void)? = nil) throws {
-        // An optional SSL context if required
-        let sslContext: NIOSSL.NIOSSLContext?
-        
-        if let tlsCertificateChainURL = tlsCertificateChainURL,
-            let tlsCertificateKeyURL = tlsCertificateKeyURL {
-            
-            print("SSL certificate chain: \(tlsCertificateChainURL.path)", to: &logHandle)
-            
-            // Will throw if cannot parse the provided PEM file
-            let certificateChain = try NIOSSLCertificate.fromPEMFile(tlsCertificateChainURL.path)
-                .map(NIOSSLCertificateSource.certificate)
-
-            sslContext = try NIOSSLContext(
-                configuration: TLSConfiguration.makeServerConfiguration(
-                    certificateChain: certificateChain,
-                    privateKey: .file(tlsCertificateKeyURL.path)
-                )
-            )
-        } else {
-            sslContext = nil
-        }
-        
         // Create a server bootstrap
         let fileIO = NonBlockingFileIO(threadPool: threadPool)
         bootstrap = ServerBootstrap(group: group)
@@ -169,27 +125,11 @@ final class PreviewServer {
             // Enable SO_REUSEADDR for the server itself
             .serverChannelOption(ChannelOptions.socket(SocketOptionLevel(SOL_SOCKET), SO_REUSEADDR), value: 1)
 
-            // Configure the channel handler - it either handles plain HTTP requests or HTTPS over SSL
+            // Configure the channel handler - it handles plain HTTP requests
             .childChannelInitializer { channel in
-                if let sslContext = sslContext {
-                    let sslHandler = NIOSSLServerHandler(context: sslContext)
-                    
-                    var credentials: (user: String, pass: String)?
-                    if let username = self.username, let password = self.password {
-                        credentials = (username, password)
-                    }
-                    
-                    // HTTPS pipeline
-                    return channel.pipeline.addHandler(sslHandler).flatMap {
-                        channel.pipeline.configureHTTPServerPipeline(withServerUpgrade: nil, withErrorHandling: true).flatMap {
-                            channel.pipeline.addHandler(PreviewHTTPHandler(fileIO: fileIO, rootURL: self.contentURL, credentials: credentials))
-                        }
-                    }
-                } else {
-                    // HTTP pipeline
-                    return channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                        channel.pipeline.addHandler(PreviewHTTPHandler(fileIO: fileIO, rootURL: self.contentURL))
-                    }
+                // HTTP pipeline
+                return channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
+                    channel.pipeline.addHandler(PreviewHTTPHandler(fileIO: fileIO, rootURL: self.contentURL))
                 }
             }
             
@@ -206,15 +146,7 @@ final class PreviewServer {
             // Bind to the given destination
             switch bindTo {
             case .localhost(let port):
-                if sslContext != nil {
-                    // If SSL is enabled, we bind to address `0.0.0.0` explicitly which
-                    // will cause docc to request access to incoming network connections
-                    // and allow users to connect to the preview server with external devices.
-                    channel = try bootstrap.bind(to: SocketAddress(ipAddress: "0.0.0.0", port: port)).wait()
-                } else {
-                    // Otherwise we bind to `localhost` which will not trigger this request.
-                    channel = try bootstrap.bind(host: "localhost", port: port).wait()
-                }
+                channel = try bootstrap.bind(host: "localhost", port: port).wait()
             case .socket(let path):
                 channel = try bootstrap.bind(unixDomainSocketPath: path).wait()
             }

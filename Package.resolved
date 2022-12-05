@@ -72,15 +72,6 @@
           "revision": "1d425b0851ffa2695d488cce1d68df2539f42500",
           "version": "2.31.2"
         }
-      },
-      {
-        "package": "swift-nio-ssl",
-        "repositoryURL": "https://github.com/apple/swift-nio-ssl.git",
-        "state": {
-          "branch": null,
-          "revision": "2e74773972bd6254c41ceeda827f229bccbf1c0f",
-          "version": "2.15.0"
-        }
       }
     ]
   },

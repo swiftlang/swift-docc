@@ -46,7 +46,7 @@ class PreviewServerTests {
         
         // Run test server
         var log = LogHandle.none
-        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
+        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), logHandle: &log)
 
         // Assert server starts
         let expectationStarted = AsynchronousExpectation(description: "Server before start")
@@ -126,7 +126,7 @@ class PreviewServerTests {
         
         // Create the server
         var log = LogHandle.none
-        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
+        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), logHandle: &log)
 
         // Start the server
         let expectationStarted = AsynchronousExpectation(description: "Server before start")
@@ -173,7 +173,7 @@ class PreviewServerTests {
         
         // Create the server
         var log = LogHandle.none
-        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), username: "username", password: "password", logHandle: &log)
+        let server = try PreviewServer(contentURL: tempFolderURL, bindTo: .socket(path: socketURL.path), logHandle: &log)
 
         // Start the server
         let expectationStarted = AsynchronousExpectation(description: "Server before start")

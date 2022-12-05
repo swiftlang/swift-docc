@@ -35,18 +35,6 @@ public struct PreviewOptions: ParsableArguments {
             valueName: "port-number"))
     public var port: Int = 8080
 
-    /// The options used when configuring the preview server for external connections.
-    ///
-    /// This group of options is only considered valid if either none of
-    /// the ``PreviewExternalConnectionOptions/username``, ``PreviewExternalConnectionOptions/password``,
-    /// ``PreviewExternalConnectionOptions/tlsCertificateChainURL``, ``PreviewExternalConnectionOptions/tlsCertificateKeyURL``
-    /// values were provided **or** if they all were.
-    ///
-    /// If the ``PreviewExternalConnectionOptions/externalConnectionsAreEnabled`` Boolean value
-    /// is true, then **all** four values were provided and validated.
-    @OptionGroup()
-    public var externalConnectionOptions: PreviewExternalConnectionOptions
-    
     public mutating func validate() throws {
         // Check that a valid port has been provided
         guard port > 1023 else {
