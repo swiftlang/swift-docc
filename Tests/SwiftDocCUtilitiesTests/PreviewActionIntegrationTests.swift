@@ -303,10 +303,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         }
         
         guard let preview = try? PreviewAction(
-                tlsCertificateKey: nil,
-                tlsCertificateChain: nil,
-                serverUsername: nil,
-                serverPassword: nil,
                 port: bindPort,
                 createConvertAction: createConvertAction) else {
             XCTFail("Could not create preview action from parameters", file: file, line: line)
@@ -374,10 +370,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         }
         
         guard let preview = try? PreviewAction(
-                tlsCertificateKey: nil,
-                tlsCertificateChain: nil,
-                serverUsername: nil,
-                serverPassword: nil,
                 port: 0, // Use port 0 to pick a random free port number
                 createConvertAction: createConvertAction) else {
             XCTFail("Could not create preview action from parameters")
@@ -452,10 +444,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         }
         
         guard let preview = try? PreviewAction(
-                tlsCertificateKey: nil,
-                tlsCertificateChain: nil,
-                serverUsername: nil,
-                serverPassword: nil,
                 port: 8080, // We ignore this value when we set the `bindServerToSocketPath` property below.
                 createConvertAction: createConvertAction) else {
             XCTFail("Could not create preview action from parameters")

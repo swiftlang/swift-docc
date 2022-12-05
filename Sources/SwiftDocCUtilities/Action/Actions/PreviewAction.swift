@@ -52,19 +52,12 @@ public final class PreviewAction: Action, RecreatingContext {
 
     var logHandle = LogHandle.standardOutput
     
-    let tlsCertificateKey: URL?
-    let tlsCertificateChain: URL?
-    let serverUsername: String?
-    let serverPassword: String?
     let port: Int
     
     var convertAction: ConvertAction
     
     public var setupContext: ((inout DocumentationContext) -> Void)?
     private var previewPaths: [String] = []
-    private var runSecure: Bool {
-        return tlsCertificateKey != nil && tlsCertificateChain != nil
-    }
     
     // Use for testing to override binding to a system port
     var bindServerToSocketPath: String?
@@ -80,15 +73,7 @@ public final class PreviewAction: Action, RecreatingContext {
     
     /// Creates a new preview action from the given parameters.
     ///
-    /// The `tlsCertificateKey`, `tlsCertificateChain`, `serverUsername`,  and `serverPassword`
-    /// parameters are optional, but if you provide one, all four are expected. They are used by the preview server
-    /// to serve content on the local network over SSL.
-    ///
     /// - Parameters:
-    ///   - tlsCertificateKey: The path to the TLS certificate key used by the preview server for SSL configuration.
-    ///   - tlsCertificateChain: The path to the TLS certificate chain used by the preview server for SSL configuration.
-    ///   - serverUsername: The username used by the preview server for HTTP authentication.
-    ///   - serverPassword: The password used by the preview server for HTTP authentication.
     ///   - port: The port number used by the preview server.
     ///   - convertAction: The action used to convert the documentation bundle before preview.
     ///   On macOS, this action will be reused to convert documentation each time the source is modified.
@@ -98,8 +83,7 @@ public final class PreviewAction: Action, RecreatingContext {
     ///     is performed.
     /// - Throws: If an error is encountered while initializing the documentation context.
     public init(
-        tlsCertificateKey: URL?, tlsCertificateChain: URL?, serverUsername: String?,
-        serverPassword: String?, port: Int,
+        port: Int,
         createConvertAction: @escaping () throws -> ConvertAction,
         workspace: DocumentationWorkspace = DocumentationWorkspace(),
         context: DocumentationContext? = nil,
@@ -110,10 +94,6 @@ public final class PreviewAction: Action, RecreatingContext {
         }
         
         // Initialize the action context.
-        self.tlsCertificateKey = tlsCertificateKey
-        self.tlsCertificateChain = tlsCertificateChain
-        self.serverUsername = serverUsername
-        self.serverPassword = serverPassword
         self.port = port
         self.createConvertAction = createConvertAction
         self.convertAction = try createConvertAction()
@@ -122,6 +102,24 @@ public final class PreviewAction: Action, RecreatingContext {
         self.diagnosticEngine = engine
         self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine)
         self.printHTMLTemplatePath = printTemplatePath
+    }
+    
+    @available(*, deprecated, message: "TLS support has been removed.")
+    public convenience init(
+        tlsCertificateKey: URL?, tlsCertificateChain: URL?, serverUsername: String?,
+        serverPassword: String?, port: Int,
+        createConvertAction: @escaping () throws -> ConvertAction,
+        workspace: DocumentationWorkspace = DocumentationWorkspace(),
+        context: DocumentationContext? = nil,
+        printTemplatePath: Bool = true) throws
+    {
+        try self.init(
+            port: port,
+            createConvertAction: createConvertAction,
+            workspace: workspace,
+            context: context,
+            printTemplatePath: printTemplatePath
+        )
     }
 
     /// Converts a documentation bundle and starts a preview server to render the result of that conversion.
@@ -164,20 +162,12 @@ public final class PreviewAction: Action, RecreatingContext {
         // Preview the output and monitor the source bundle for changes.
         do {
             print(String(repeating: "=", count: 40), to: &logHandle)
-            if runSecure, let serverUsername = serverUsername, let serverPassword = serverPassword {
-                print("Starting TLS-Enabled Web Server", to: &logHandle)
-                printPreviewAddresses(base: URL(string: "https://\(ProcessInfo.processInfo.hostName):\(port)")!)
-                print("\tUsername: \(serverUsername)", to: &logHandle)
-                print("\tPassword: \(serverPassword)", to: &logHandle)
-                
-            } else {
-                print("Starting Local Preview Server", to: &logHandle)
-                printPreviewAddresses(base: URL(string: "http://localhost:\(port)")!)
-            }
+            print("Starting Local Preview Server", to: &logHandle)
+            printPreviewAddresses(base: URL(string: "http://localhost:\(port)")!)
             print(String(repeating: "=", count: 40), to: &logHandle)
 
             let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
-            servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, username: serverUsername, password: serverPassword, tlsCertificateChainURL: tlsCertificateChain, tlsCertificateKeyURL: tlsCertificateKey, logHandle: &logHandle)
+            servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandle)
             
             // When the user stops docc - stop the preview server first before exiting.
             trapSignals()
