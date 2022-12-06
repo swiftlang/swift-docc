@@ -135,4 +135,35 @@ class CallToActionTests: XCTestCase {
             }
         }
     }
+
+    func testDefaultLabel() throws {
+        func assertExpectedLabel(source: String, expectedLabel: String) throws {
+            let document = Document(parsing: source, options: .parseBlockDirectives)
+            let directive = document.child(at: 0) as? BlockDirective
+            XCTAssertNotNil(directive)
+
+            let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+
+            directive.map { directive in
+                var problems = [Problem]()
+                XCTAssertEqual(CallToAction.directiveName, directive.name)
+                let callToAction = CallToAction(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+                XCTAssertNotNil(callToAction)
+                XCTAssert(problems.isEmpty)
+                XCTAssertEqual(callToAction?.buttonLabel, expectedLabel)
+            }
+        }
+
+        var validLabels: [(arg: String, label: String)] = []
+        for buttonKind in CallToAction.Purpose.allCases {
+            validLabels.append(("purpose: \(buttonKind)", buttonKind.defaultLabel))
+            // Ensure that adding a label argument overrides the kind's default label
+            validLabels.append(("purpose: \(buttonKind), label: \"Button\"", "Button"))
+        }
+
+        for (arg, label) in validLabels {
+            let directive = "@CallToAction(file: \"Downloads/plus.svg\", \(arg))"
+            try assertExpectedLabel(source: directive, expectedLabel: label)
+        }
+    }
 }
