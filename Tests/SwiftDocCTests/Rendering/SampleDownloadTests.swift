@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -72,6 +72,94 @@ class SampleDownloadTests: XCTestCase {
         
         let text = contentParagraph.inlineContent.rawIndexableTextContent(references: symbol.references)
         XCTAssertEqual(text, "You can experiment with the code. Just use WiFi Access on your Mac to download WiFi access sample code.")
+    }
+
+    func testParseSampleDownload() throws {
+        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/SampleBundle/MySample",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
+        guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
+            XCTFail("Unexpected action in callToAction")
+            return
+        }
+        XCTAssertEqual(ident.identifier, "https://example.com/sample.zip")
+    }
+
+    func testParseSampleLocalDownload() throws {
+        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/SampleBundle/MyLocalSample",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
+        guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
+            XCTFail("Unexpected action in callToAction")
+            return
+        }
+        XCTAssertEqual(ident.identifier, "plus.svg")
+    }
+
+    func testSampleDownloadRoundtrip() throws {
+        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/SampleBundle/MySample",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+
+        let encodedNode = try encoder.encode(renderNode)
+        let decodedNode = try decoder.decode(RenderNode.self, from: encodedNode)
+
+        guard case let .reference(
+                identifier: origIdent,
+                isActive: _,
+                overridingTitle: _,
+                overridingTitleInlineContent: _
+            ) = renderNode.sampleDownload?.action,
+            case let .reference(
+                identifier: decodedIdent,
+                isActive: _,
+                overridingTitle: _,
+                overridingTitleInlineContent: _
+            ) = decodedNode.sampleDownload?.action
+        else {
+            XCTFail("RenderNode should have callToAction both before and after roundtrip")
+            return
+        }
+
+        XCTAssertEqual(origIdent, decodedIdent)
     }
     
 }

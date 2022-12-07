@@ -21,6 +21,9 @@ import Markdown
 ///
 /// - ``DocumentationExtension``
 /// - ``TechnologyRoot``
+/// - ``DisplayName``
+/// - ``PageImage``
+/// - ``CallToAction``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
@@ -42,6 +45,9 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     @ChildDirective(requirements: .zeroOrMore)
     var customMetadata: [CustomMetadata]
+
+    @ChildDirective
+    var callToAction: CallToAction? = nil
     
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
@@ -49,6 +55,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "displayName"           : \Metadata._displayName,
         "pageImages"            : \Metadata._pageImages,
         "customMetadata"        : \Metadata._customMetadata,
+        "callToAction"          : \Metadata._callToAction,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.

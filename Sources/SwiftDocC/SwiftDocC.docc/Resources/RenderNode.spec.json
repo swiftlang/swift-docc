@@ -1808,8 +1808,7 @@
                 "required": [
                     "type",
                     "identifier",
-                    "url",
-                    "checksum"
+                    "url"
                 ],
                 "properties": {
                     "type": {

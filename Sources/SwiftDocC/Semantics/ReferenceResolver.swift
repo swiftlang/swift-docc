@@ -344,6 +344,12 @@ struct ReferenceResolver: SemanticVisitor {
         let newDeprecationSummary = article.deprecationSummary.flatMap {
             visitMarkupContainer($0) as? MarkupContainer
         }
+        // If there's a call to action with a local-file reference, change its context to `download`
+        if let downloadFile = article.metadata?.callToAction?.file,
+            var resolvedDownload = context.resolveAsset(named: downloadFile.path, in: bundle.rootReference) {
+            resolvedDownload.context = .download
+            context.updateAsset(named: downloadFile.path, asset: resolvedDownload, in: bundle.rootReference)
+        }
 
         return Article(
             title: article.title,
