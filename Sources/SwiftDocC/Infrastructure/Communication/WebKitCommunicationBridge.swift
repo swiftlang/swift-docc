@@ -49,10 +49,8 @@ public struct WebKitCommunicationBridge: CommunicationBridge {
         do {
             let encodedMessage = try JSONEncoder().encode(message)
             let messageJSON = String(data: encodedMessage, encoding: .utf8)!
-                // Escape backticks to avoid conflicting with JavaScript's template string syntax.
-                .replacingOccurrences(of: "`", with: "\\`")
             
-            evaluateJavaScript("window.bridge.receive(JSON.parse(`\(messageJSON)`))") { _, _ in }
+            evaluateJavaScript("window.bridge.receive(JSON.parse(JSON.stringify(\(messageJSON))))") { _, _ in }
         } catch let error {
             throw CommunicationBridgeError.unableToEncodeMessage(message, underlyingError: error)
         }
