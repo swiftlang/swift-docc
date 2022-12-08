@@ -49,7 +49,7 @@ class WebKitCommunicationBridgeTests: XCTestCase {
         let messageJSON = String(data: encodedMessage, encoding: .utf8)!
         
         let evaluateJavaScript: (String, ((Any?, Error?) -> ())?) -> () = { string, _ in
-            XCTAssertEqual(string, "window.bridge.receive(JSON.parse(JSON.stringify(\(messageJSON))))")
+            XCTAssertEqual(string, "window.bridge.receive(\(messageJSON))")
         }
         
         let bridge = WebKitCommunicationBridge()
