@@ -28,7 +28,7 @@ public struct DownloadReference: RenderReference, URLReference {
     public var url: URL
     
     /// The SHA512 hash value for the resource.
-    public var sha512Checksum: String
+    public var sha512Checksum: String?
     
     /// Creates a new reference to a downloadable resource.
     ///
@@ -36,7 +36,7 @@ public struct DownloadReference: RenderReference, URLReference {
     ///   - identifier: An identifier for the resource's reference.
     ///   - url: The path to the resource.
     ///   - sha512Checksum: The SHA512 hash value for the resource.
-    public init(identifier: RenderReferenceIdentifier, renderURL url: URL, sha512Checksum: String) {
+    public init(identifier: RenderReferenceIdentifier, renderURL url: URL, sha512Checksum: String?) {
         self.identifier = identifier
         self.url = url
         self.sha512Checksum = sha512Checksum
@@ -53,7 +53,7 @@ public struct DownloadReference: RenderReference, URLReference {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
-        try container.encode(sha512Checksum, forKey: .sha512Checksum)
+        try container.encodeIfPresent(sha512Checksum, forKey: .sha512Checksum)
         
         // Render URL
         try container.encode(renderURL(for: url), forKey: .url)
