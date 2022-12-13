@@ -84,9 +84,7 @@ struct ReferenceResolver: SemanticVisitor {
             return .success(resolved)
             
         case let .failure(unresolved, errorMessage):
-            // FIXME: Provide near-miss suggestion here. The user is likely to make mistakes with capitalization because of character input.
-            // The `PathHierarchyBasedLinkResolver` has near miss-suggestions in some of its error messages. However, this issue is still not fully resolved
-            // since `DocumentationContext.resolve(_:in:fromSymbolLink:)` doesn't create `Problem` values with `Solution` values.
+            // FIXME: Structure the `PathHierarchyBasedLinkResolver` near-miss suggestions as fixits. https://github.com/apple/swift-docc/issues/438 (rdar://103279313)
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
             problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
             return .failure(unresolved, errorMessage: errorMessage)
