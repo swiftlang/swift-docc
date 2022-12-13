@@ -47,6 +47,8 @@ struct CollectionChanges {
         }
         
         var changes = ChangeSegmentBuilder(originalCount: from.count)
+        // The `CollectionDifference` enumeration order is documented; first removals in descending order then insertions in ascending order.
+        // https://github.com/apple/swift/blob/main/stdlib/public/core/CollectionDifference.swift#L216-L235
         for change in to.difference(from: from, by: areEquivalent) {
             switch change {
             case .remove(let offset, _, _):
