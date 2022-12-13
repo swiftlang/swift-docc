@@ -175,7 +175,6 @@ let supportedDirectives: [Directive] = [
 
 let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
     var extraDeclarationFragments = [SymbolGraph.Symbol.DeclarationFragments.Fragment]()
-
     /*
         If the directive accepts arguments, then
         render the parentheses which make it look like it can accept arguments.
@@ -183,7 +182,6 @@ let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
     if directive.acceptsArguments {
         extraDeclarationFragments.append(.init(kind: .text, spelling: "(...)", preciseIdentifier: nil))
     }
-
     /*
         If the directive is not a leaf (aka it has child directives or body content), then
         render the curly braces which make it look like it can have children.
@@ -246,7 +244,9 @@ let output = URL(fileURLWithPath: #file)
     .deletingLastPathComponent()
     .deletingLastPathComponent()
     .appendingPathComponent("docc/DocCDocumentation.docc/docc.symbols.json")
+
 var encoder = JSONEncoder()
 encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+
 let data = try! encoder.encode(symbolGraph)
 try! data.write(to: output)
