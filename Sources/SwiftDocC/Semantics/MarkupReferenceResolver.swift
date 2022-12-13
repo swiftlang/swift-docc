@@ -70,7 +70,7 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 return nil
             }
             
-            // FIXME: Provide near-miss suggestion here. The user is likely to make mistakes with capitalization because of character input (rdar://59660520).
+            // FIXME: Structure the `PathHierarchyBasedLinkResolver` near-miss suggestions as fixits. https://github.com/apple/swift-docc/issues/438 (rdar://103279313)
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
             problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
             return nil

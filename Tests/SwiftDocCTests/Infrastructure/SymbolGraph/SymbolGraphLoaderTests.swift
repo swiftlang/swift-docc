@@ -112,6 +112,9 @@ class SymbolGraphLoaderTests: XCTestCase {
         XCTAssertEqual(moduleNameFrequency, ["Main": 1, "One": 1, "Two": 1, "Three": 1])
     }
     
+    // This test calls ``SymbolGraph.relationships`` which is deprecated.
+    // Deprecating the test silences the deprecation warning when running the tests. It doesn't skip the test.
+    @available(*, deprecated)
     func testLoadingHighNumberOfModulesConcurrently() throws {
         let tempURL = try createTemporaryDirectory()
 

@@ -829,8 +829,17 @@ extension PathHierarchy.Error {
     func errorMessage(context: DocumentationContext) -> String {
         switch self {
         case .partialResult(let partialResult, let remaining, let available):
-            return "Reference at \(partialResult.pathWithoutDisambiguation().singleQuoted) can't resolve \(remaining.singleQuoted). Available children: \(available.joined(separator: ", "))."
-            
+            let nearMisses = NearMiss.bestMatches(for: available, against: remaining)
+            let suggestion: String
+            switch nearMisses.count {
+            case 0:
+                suggestion = "No similar pages. Available children: \(available.joined(separator: ", "))."
+            case 1:
+                suggestion = "Did you mean: \(nearMisses[0])?"
+            default:
+                suggestion = "Did you mean one of: \(nearMisses.joined(separator: ", "))?"
+            }
+            return "Reference at \(partialResult.pathWithoutDisambiguation().singleQuoted) can't resolve \(remaining.singleQuoted). \(suggestion)"
         case .notFound, .unfindableMatch:
             return "No local documentation matches this reference."
             
