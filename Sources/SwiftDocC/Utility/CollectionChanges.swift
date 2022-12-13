@@ -102,38 +102,33 @@ private struct ChangeSegmentBuilder {
                 segments[0].count -= 1
             }
             
-            if segments.isEmpty || segments[0].kind != .remove {
-                segments.insert(Segment(kind: .remove, count: 1), at: 0)
-            } else {
+            if segments.first?.kind == .remove {
                 segments[0].count += 1
-                assert(segments[0].kind == .remove)
+            } else {
+                segments.insert(Segment(kind: .remove, count: 1), at: 0)
             }
         }
         else if removalIndex == segment.count - 1 {
             // Removing at end of segment
             segments[0].count -= 1
-            assert(segments[0].count > 0, """
-                The segment should never become empty when removing at the start of a segment.
-                If it is, then that's an indication that the remove operations wasn't performed in reverse order.
-                """)
 
-            if segments.count == 1 {
-                segments.append(Segment(kind: .remove, count: 1))
-            } else if segments[1].kind != .remove {
-                segments.insert(Segment(kind: .remove, count: 1), at: 1)
-            } else {
+            if segments.count > 1, segments[1].kind == .remove {
                 segments[1].count += 1
-                assert(segments[1].kind == .remove)
+            } else {
+                // Insert at `endIndex` is equivalent to `append()`
+                segments.insert(Segment(kind: .remove, count: 1), at: 1)
             }
         } else {
             // Removal within segment
-            // Split the segment in two with a new removal segment in-between.
-            let lowerSegmentCount = removalIndex
-            let higherSegmentCount  = segment.count - lowerSegmentCount - 1 // the 1 is for the removed element
+            let lowerSegmentCount  = removalIndex
+            let higherSegmentCount = segment.count - lowerSegmentCount - 1 // the 1 is for the removed element
             
-            segments[0].count = higherSegmentCount
-            segments.insert( Segment(kind: .remove, count: 1), at: 0)
-            segments.insert( Segment(kind: .common, count: lowerSegmentCount), at: 0)
+            // Split the segment in two with a new removal segment in-between.
+            segments[0...0] = [
+                Segment(kind: .common, count: lowerSegmentCount),
+                Segment(kind: .remove, count: 1),
+                Segment(kind: .common, count: higherSegmentCount),
+            ]
         }
     }
     
@@ -180,10 +175,10 @@ private struct ChangeSegmentBuilder {
             segments.insert(Segment(kind: .insert, count: 1), at: segmentIndex)
         } else if insertIndex == startOffset + segment.count {
             // Insert at end of segment
-            var insertSegmentIndex = segmentIndex + 1
+            let insertSegmentIndex = segmentIndex + 1
             
             // If this is the last segment, append a new 'insert' segment
-            if insertSegmentIndex == segments.count {
+            guard insertSegmentIndex < segments.count else {
                 segments.append(Segment(kind: .insert, count: 1))
                 return
             }
@@ -199,23 +194,22 @@ private struct ChangeSegmentBuilder {
                 
             case .remove:
                 // If the next segment is a 'remove' segment, skip over it so that insertions are always after removals.
-                insertSegmentIndex += 1
-                if insertSegmentIndex == segments.count {
-                    segments.append(Segment(kind: .insert, count: 1))
-                } else {
-                    assert(segments[insertSegmentIndex].kind == .common)
-                    segments.insert(Segment(kind: .insert, count: 1), at: insertSegmentIndex)
-                }
+                segments.insert(Segment(kind: .insert, count: 1), at: insertSegmentIndex + 1)
+                
+                assert(insertSegmentIndex + 2 == segments.count || segments[insertSegmentIndex + 2].kind == .common,
+                       "If there's a segment after the remove segment, that is a segment of common characters.")
             }
         } else {
             // Insert within segment
-            // Split the segment in two with a new insertion segment in-between.
-            let lowerSegmentCount = insertIndex - startOffset
-            let higherSegmentCount  = segment.count - lowerSegmentCount // nothing to add
+            let lowerSegmentCount  = insertIndex - startOffset
+            let higherSegmentCount = segment.count - lowerSegmentCount // nothing to add
             
-            segments[segmentIndex].count = higherSegmentCount
-            segments.insert( Segment(kind: .insert, count: 1), at: segmentIndex)
-            segments.insert( Segment(kind: .common, count: lowerSegmentCount), at: segmentIndex)
+            // Split the segment in two with a new insertion segment in-between.
+            segments[segmentIndex...segmentIndex] = [
+                Segment(kind: .common, count: lowerSegmentCount),
+                Segment(kind: .insert, count: 1),
+                Segment(kind: .common, count: higherSegmentCount),
+            ]
         }
     }
 }
