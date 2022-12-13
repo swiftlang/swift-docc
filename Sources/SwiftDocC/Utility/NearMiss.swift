@@ -87,7 +87,7 @@ enum NearMiss {
             } else {
                 // To produce higher contributions for longer common sequences, this implementation sums the sequence (1...length)
                 // and adds an arbitrary constant factor.
-                return Double((1...segment.count).reduce(0, +)) + 3
+                return Double((1...segment.count).sum()) + 3
             }
             
         // Segments of removed or inserted characters contribute to the score no matter the segment length.
@@ -101,5 +101,11 @@ enum NearMiss {
             // that is missing in this match.
             return -Double(segment.count) * 3.0
         }
+    }
+}
+
+private extension ClosedRange where Bound == Int {
+    func sum() -> Int {
+        return (lowerBound + upperBound) * count / 2
     }
 }
