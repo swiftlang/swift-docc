@@ -78,19 +78,19 @@ private struct ChangeSegmentBuilder {
     }
     
     mutating func remove(at removalIndex: Int) {
-        // Removals are applied in reverse order. When the first removal is applied, the only segment is the 'original' count.
+        // Removals are applied in reverse order. When the first removal is applied, the only segment is the 'common' count.
         //
         // Each removal can be either be at the start of the segment, middle of the segment, or end of the segment.
         // - After removing from the start of the segment there can be no more removals (since those indices would be in ascending order).
-        // - After removing from the middle, the 'original' segment is split in two with a 'remove' segment in between.
+        // - After removing from the middle, the 'common' segment is split in two with a 'remove' segment in between.
         //   Since the removal has to be at a lower index, it can only be applied to the split 'original' segment.
-        // - After removing from the end, the 'original' segment is made shorter and a new 'remove' segment is added after it.
-        //   Since the removal has to be at a lower index, it can only be applied to the shortened 'original' segment.
+        // - After removing from the end, the 'common' segment is made shorter and a new 'remove' segment is added after it.
+        //   Since the removal has to be at a lower index, it can only be applied to the shortened 'common' segment.
         //
         // This process repeats, meaning that every removal is always applied to the first segment.
         let segment = segments[0]
         precondition(segment.kind == .common && removalIndex < segment.count, """
-            The first segment should always be an 'original' segment (was \(segment.kind)) and (0 ..< \(segment.count)) should always contain the removal index (\(removalIndex)).
+            The first segment should always be a 'common' segment (was \(segment.kind)) and (0 ..< \(segment.count)) should always contain the removal index (\(removalIndex)).
             If it's not, then that's means that the remove operations wasn't performed in reverse order.
             """)
         
@@ -153,7 +153,7 @@ private struct ChangeSegmentBuilder {
         guard let (segment, startOffset, segmentIndex) = findSegment(toInsertAt: insertIndex) else {
             assert(segments.count == 1 && segments[0].kind == .remove, """
                 The only case when a segment can't be found in the loop is if the only segment is a 'remove' segment.
-                This happens when all the 'original' elements are removed (meaning that the 'from' and 'to' values have nothing in common.
+                This happens when all the 'common' elements are removed (meaning that the 'from' and 'to' values have nothing in common.
                 """)
             
             segments.append(Segment(kind: .insert, count: 1))
@@ -189,7 +189,7 @@ private struct ChangeSegmentBuilder {
                 segments[insertSegmentIndex].count += 1
                 
             case .common:
-                // If the next segment is an 'original' segment, insert a new 'insert' segment before it
+                // If the next segment is a 'common' segment, insert a new 'insert' segment before it
                 segments.insert(Segment(kind: .insert, count: 1), at: insertSegmentIndex)
                 
             case .remove:
@@ -197,7 +197,7 @@ private struct ChangeSegmentBuilder {
                 segments.insert(Segment(kind: .insert, count: 1), at: insertSegmentIndex + 1)
                 
                 assert(insertSegmentIndex + 2 == segments.count || segments[insertSegmentIndex + 2].kind == .common,
-                       "If there's a segment after the remove segment, that is a segment of common characters.")
+                       "If there's a segment after the remove segment, that is a segment of 'common' characters.")
             }
         } else {
             // Insert within segment
