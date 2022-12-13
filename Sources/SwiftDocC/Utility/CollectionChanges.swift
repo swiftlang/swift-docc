@@ -89,7 +89,7 @@ private struct ChangeSegmentBuilder {
         //
         // This process repeats, meaning that every removal is always applied to the first segment.
         let segment = segments[0]
-        precondition(segment.kind == .common && removalIndex < segment.count, """
+        assert(segment.kind == .common && removalIndex < segment.count, """
             The first segment should always be a 'common' segment (was \(segment.kind)) and (0 ..< \(segment.count)) should always contain the removal index (\(removalIndex)).
             If it's not, then that's means that the remove operations wasn't performed in reverse order.
             """)
@@ -185,8 +185,7 @@ private struct ChangeSegmentBuilder {
             
             switch segments[insertSegmentIndex].kind {
             case .insert:
-                // If the next segment is an 'insert' segment, simply increment it
-                segments[insertSegmentIndex].count += 1
+                assertionFailure("Inserts are processed from low to high. There shouldn't be another 'insert' segment after 'segmentIndex'.")
                 
             case .common:
                 // If the next segment is a 'common' segment, insert a new 'insert' segment before it
