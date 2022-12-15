@@ -89,7 +89,7 @@ class MetadataAvailabilityTests: XCTestCase {
     }
 
     func testInvalidDuplicateBeta() throws {
-        throw XCTSkip("FIXME: isBeta is unused (issue link forthcoming)")
+        throw XCTSkip("FIXME: isBeta is unused (https://github.com/apple/swift-docc/issues/441)")
 
 //        func assertInvalidDirective(source: String) throws {
 //            let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -129,7 +129,7 @@ class MetadataAvailabilityTests: XCTestCase {
     }
 
     func testInvalidDuplicateDeprecated() throws {
-        throw XCTSkip("FIXME: isDeprecated is unused (issue link forthcoming)")
+        throw XCTSkip("FIXME: isDeprecated is unused (https://github.com/apple/swift-docc/issues/441)")
 
 //        func assertInvalidDirective(source: String) throws {
 //            let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -171,7 +171,7 @@ class MetadataAvailabilityTests: XCTestCase {
     func testValidDirective() throws {
         // assemble all the combinations of arguments you could give
         let validArguments: [String] = [
-            // FIXME: isBeta and isDeprecated are unused (issue link forthcoming)
+            // FIXME: isBeta and isDeprecated are unused (https://github.com/apple/swift-docc/issues/441)
 //            "isBeta: true",
 //            "isDeprecated: true",
 //            "isBeta: true, isDeprecated: true",
@@ -200,7 +200,7 @@ class MetadataAvailabilityTests: XCTestCase {
         }
 
         // basic validity test for giving several directives
-        // FIXME: re-add isBeta after that is implemented (issue link forthcoming)
+        // FIXME: re-add isBeta after that is implemented (https://github.com/apple/swift-docc/issues/441)
         let source = """
         @Metadata {
             @Available(macOS, introduced: "11.0")
