@@ -804,6 +804,23 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 ))
             }
         }
+
+        if let availability = article.metadata?.availability, !availability.isEmpty {
+            let renderAvailability = availability.compactMap({
+                let currentPlatform: PlatformVersion?
+                if let name = PlatformName(metadataPlatform: $0.platform),
+                   let contextPlatform = context.externalMetadata.currentPlatforms?[name.displayName] {
+                    currentPlatform = contextPlatform
+                } else {
+                    currentPlatform = nil
+                }
+                return .init($0, current: currentPlatform)
+            }).sorted(by: AvailabilityRenderOrder.compare)
+
+            if !renderAvailability.isEmpty {
+                node.metadata.platformsVariants = .init(defaultValue: renderAvailability)
+            }
+        }
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
@@ -1193,6 +1210,23 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 .filter({ !($0.unconditionallyUnavailable == true) })
                 .sorted(by: AvailabilityRenderOrder.compare)
         )
+
+        if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
+            let renderAvailability = availability.compactMap({
+                let currentPlatform: PlatformVersion?
+                if let name = PlatformName(metadataPlatform: $0.platform),
+                   let contextPlatform = context.externalMetadata.currentPlatforms?[name.displayName] {
+                    currentPlatform = contextPlatform
+                } else {
+                    currentPlatform = nil
+                }
+                return .init($0, current: currentPlatform)
+            }).sorted(by: AvailabilityRenderOrder.compare)
+
+            if !renderAvailability.isEmpty {
+                node.metadata.platformsVariants.defaultValue = renderAvailability
+            }
+        }
         
         node.metadata.requiredVariants = VariantCollection<Bool>(from: symbol.isRequiredVariants) ?? .init(defaultValue: false)
         node.metadata.role = contentRenderer.role(for: documentationNode.kind).rawValue

@@ -139,6 +139,23 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
             isBeta = false
         }
     }
+
+    init?(_ availability: MetadataAvailability, current: PlatformVersion?) {
+        if availability.introduced == nil {
+            // FIXME: Deprecated/Beta markings need platform versions to display properly in Swift-DocC-Render (rdar://56897597)
+            // Fill in the appropriate values here when that's fixed (issue link forthcoming)
+            return nil
+        }
+
+        let platformName: PlatformName?
+        if availability.platform == .any {
+            platformName = nil
+        } else {
+            platformName = PlatformName(operatingSystemName: availability.platform.rawValue)
+        }
+        name = platformName?.displayName
+        introduced = availability.introduced
+    }
     
     /// Creates a new item with the given platform name and version string.
     /// - Parameters:

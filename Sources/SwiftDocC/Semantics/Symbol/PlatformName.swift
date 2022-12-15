@@ -101,4 +101,15 @@ public struct PlatformName: Codable, Hashable, Equatable {
         }
         self = knowDomain
     }
+
+    /// Creates a new platform name from the given metadata availability attribute platform.
+    ///
+    /// Returns `nil` if the given platform was ``MetadataAvailability/Platform-swift.enum/any``.
+    init?(metadataPlatform platform: MetadataAvailability.Platform) {
+        if platform == .any {
+            return nil
+        } else {
+            self = .init(operatingSystemName: platform.rawValue)
+        }
+    }
 }
