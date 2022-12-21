@@ -56,13 +56,6 @@ public struct DownloadReference: RenderReference, URLReference {
         self.checksum = sha512Checksum
     }
     
-    enum CodingKeys: String, CodingKey {
-        case type
-        case identifier
-        case url
-        case checksum
-    }
-    
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
@@ -71,20 +64,6 @@ public struct DownloadReference: RenderReference, URLReference {
         
         // Render URL
         try container.encode(renderURL(for: url), forKey: .url)
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
-        self.url = try container.decode(URL.self, forKey: .url)
-        self.checksum = try container.decodeIfPresent(String.self, forKey: .checksum)
-
-        let rawType = try container.decode(String.self, forKey: .type)
-        guard let decodedType = RenderReferenceType(rawValue: rawType) else {
-            throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown type")
-        }
-        self.type = decodedType
     }
 }
 
