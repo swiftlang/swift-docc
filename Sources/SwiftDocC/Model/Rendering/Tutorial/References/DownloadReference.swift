@@ -32,7 +32,16 @@ public struct DownloadReference: RenderReference, URLReference {
 
     @available(*, deprecated, renamed: "checksum")
     public var sha512Checksum: String {
-        return checksum ?? ""
+        get {
+            return checksum ?? ""
+        }
+        set {
+            if newValue.isEmpty {
+                self.checksum = nil
+            } else {
+                self.checksum = newValue
+            }
+        }
     }
     
     /// Creates a new reference to a downloadable resource.
