@@ -28,7 +28,12 @@ public struct DownloadReference: RenderReference, URLReference {
     public var url: URL
     
     /// The SHA512 hash value for the resource.
-    public var sha512Checksum: String?
+    public var checksum: String?
+
+    @available(*, deprecated, renamed: "checksum")
+    public var sha512Checksum: String {
+        return checksum ?? ""
+    }
     
     /// Creates a new reference to a downloadable resource.
     ///
@@ -39,7 +44,7 @@ public struct DownloadReference: RenderReference, URLReference {
     public init(identifier: RenderReferenceIdentifier, renderURL url: URL, sha512Checksum: String?) {
         self.identifier = identifier
         self.url = url
-        self.sha512Checksum = sha512Checksum
+        self.checksum = sha512Checksum
     }
     
     enum CodingKeys: String, CodingKey {
@@ -53,10 +58,24 @@ public struct DownloadReference: RenderReference, URLReference {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
-        try container.encodeIfPresent(sha512Checksum, forKey: .sha512Checksum)
+        try container.encodeIfPresent(checksum, forKey: .sha512Checksum)
         
         // Render URL
         try container.encode(renderURL(for: url), forKey: .url)
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
+        self.url = try container.decode(URL.self, forKey: .url)
+        self.checksum = try container.decodeIfPresent(String.self, forKey: .sha512Checksum)
+
+        let rawType = try container.decode(String.self, forKey: .type)
+        guard let decodedType = RenderReferenceType(rawValue: rawType) else {
+            throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown type")
+        }
+        self.type = decodedType
     }
 }
 
