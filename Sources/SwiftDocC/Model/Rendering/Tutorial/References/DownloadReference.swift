@@ -50,10 +50,15 @@ public struct DownloadReference: RenderReference, URLReference {
     ///   - identifier: An identifier for the resource's reference.
     ///   - url: The path to the resource.
     ///   - sha512Checksum: The SHA512 hash value for the resource.
-    public init(identifier: RenderReferenceIdentifier, renderURL url: URL, sha512Checksum: String?) {
+    public init(identifier: RenderReferenceIdentifier, renderURL url: URL, checksum: String?) {
         self.identifier = identifier
         self.url = url
-        self.checksum = sha512Checksum
+        self.checksum = checksum
+    }
+
+    @available(*, deprecated, message: "Use 'init(identifier:renderURL:checksum:)' instead")
+    public init(identifier: RenderReferenceIdentifier, renderURL url: URL, sha512Checksum: String) {
+        self.init(identifier: identifier, renderURL: url, checksum: sha512Checksum)
     }
     
     public func encode(to encoder: Encoder) throws {
