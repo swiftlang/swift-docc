@@ -60,14 +60,14 @@ public struct DownloadReference: RenderReference, URLReference {
         case type
         case identifier
         case url
-        case sha512Checksum = "checksum"
+        case checksum
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
-        try container.encodeIfPresent(checksum, forKey: .sha512Checksum)
+        try container.encodeIfPresent(checksum, forKey: .checksum)
         
         // Render URL
         try container.encode(renderURL(for: url), forKey: .url)
@@ -78,7 +78,7 @@ public struct DownloadReference: RenderReference, URLReference {
 
         self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
         self.url = try container.decode(URL.self, forKey: .url)
-        self.checksum = try container.decodeIfPresent(String.self, forKey: .sha512Checksum)
+        self.checksum = try container.decodeIfPresent(String.self, forKey: .checksum)
 
         let rawType = try container.decode(String.self, forKey: .type)
         guard let decodedType = RenderReferenceType(rawValue: rawType) else {
