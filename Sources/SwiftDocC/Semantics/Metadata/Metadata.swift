@@ -156,9 +156,9 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                         severity: .warning,
                         range: avail.originalMarkup.range,
                         identifier: "org.swift.docc.\(MetadataAvailability.self).DuplicateIntroduced",
-                        summary: "Duplicate \(MetadataAvailability.directiveName.singleQuoted) directive with `introduced` argument",
+                        summary: "Duplicate \(MetadataAvailability.directiveName.singleQuoted) directive with 'introduced' argument",
                         explanation: """
-                        A documentation page can only contain a single `introduced` version for each platform.
+                        A documentation page can only contain a single 'introduced' version for each platform.
                         """
                     )
 
