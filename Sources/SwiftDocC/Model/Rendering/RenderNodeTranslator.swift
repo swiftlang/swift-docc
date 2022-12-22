@@ -807,12 +807,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         if let availability = article.metadata?.availability, !availability.isEmpty {
             let renderAvailability = availability.compactMap({
-                let currentPlatform: PlatformVersion?
-                if let name = PlatformName(metadataPlatform: $0.platform),
-                   let contextPlatform = context.externalMetadata.currentPlatforms?[name.displayName] {
-                    currentPlatform = contextPlatform
-                } else {
-                    currentPlatform = nil
+                let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
+                    context.externalMetadata.currentPlatforms?[name.displayName]
                 }
                 return .init($0, current: currentPlatform)
             }).sorted(by: AvailabilityRenderOrder.compare)
@@ -1213,12 +1209,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         if let availability = documentationNode.metadata?.availability, !availability.isEmpty {
             let renderAvailability = availability.compactMap({
-                let currentPlatform: PlatformVersion?
-                if let name = PlatformName(metadataPlatform: $0.platform),
-                   let contextPlatform = context.externalMetadata.currentPlatforms?[name.displayName] {
-                    currentPlatform = contextPlatform
-                } else {
-                    currentPlatform = nil
+                let currentPlatform = PlatformName(metadataPlatform: $0.platform).flatMap { name in
+                    context.externalMetadata.currentPlatforms?[name.displayName]
                 }
                 return .init($0, current: currentPlatform)
             }).sorted(by: AvailabilityRenderOrder.compare)
