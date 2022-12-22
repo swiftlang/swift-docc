@@ -138,10 +138,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
             }
         }
 
-        var categorizedAvailability = [MetadataAvailability.Platform : [MetadataAvailability]]()
-        for availability in availability {
-            categorizedAvailability[availability.platform, default: []].append(availability)
-        }
+        let categorizedAvailability = Dictionary(grouping: availability, by: \.platform)
 
         for availabilityAttrs in categorizedAvailability.values {
             guard availabilityAttrs.count > 1 else {
