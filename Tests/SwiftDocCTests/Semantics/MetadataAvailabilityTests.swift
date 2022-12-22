@@ -28,33 +28,7 @@ class MetadataAvailabilityTests: XCTestCase {
             XCTAssertEqual(MetadataAvailability.directiveName, directive.name)
             let availability = MetadataAvailability(from: directive, source: nil, for: bundle, in: context, problems: &problems)
             XCTAssertNil(availability)
-            XCTAssertEqual(1, problems.count)
-            let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-            XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(MetadataAvailability.self).emptyAttribute"))
         }
-    }
-
-    func testInvalidIntroducedForAllPlatforms() throws {
-        func assertInvalidDirective(source: String) throws {
-            let document = Document(parsing: source, options: .parseBlockDirectives)
-            let directive = document.child(at: 0) as? BlockDirective
-            XCTAssertNotNil(directive)
-
-            let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
-
-            directive.map { directive in
-                var problems = [Problem]()
-                XCTAssertEqual(MetadataAvailability.directiveName, directive.name)
-                let availability = MetadataAvailability(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-                XCTAssertNil(availability)
-                XCTAssertEqual(1, problems.count)
-                let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-                XCTAssertTrue(diagnosticIdentifiers.contains("org.swift.docc.\(MetadataAvailability.self).introducedVersionForAllPlatforms"))
-            }
-        }
-
-        try assertInvalidDirective(source: "@Available(introduced: \"1.0\")")
-        try assertInvalidDirective(source: "@Available(*, introduced: \"1.0\")")
     }
 
     func testInvalidDuplicateIntroduced() throws {
@@ -76,8 +50,6 @@ class MetadataAvailabilityTests: XCTestCase {
         }
 
         for platform in MetadataAvailability.Platform.allCases {
-            guard platform != .any else { continue }
-
             let source = """
             @Metadata {
                 @Available(\(platform.rawValue), introduced: \"1.0\")
@@ -86,86 +58,6 @@ class MetadataAvailabilityTests: XCTestCase {
             """
             try assertInvalidDirective(source: source)
         }
-    }
-
-    func testInvalidDuplicateBeta() throws {
-        throw XCTSkip("FIXME: isBeta is unused (https://github.com/apple/swift-docc/issues/441)")
-
-//        func assertInvalidDirective(source: String) throws {
-//            let document = Document(parsing: source, options: .parseBlockDirectives)
-//            let directive = document.child(at: 0) as? BlockDirective
-//            XCTAssertNotNil(directive)
-//
-//            let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
-//
-//            directive.map { directive in
-//                var problems = [Problem]()
-//                XCTAssertEqual(Metadata.directiveName, directive.name)
-//                let _ = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-//                XCTAssertEqual(2, problems.count)
-//                let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-//                XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.\(MetadataAvailability.self).DuplicateBeta"])
-//            }
-//        }
-//
-//        for platform in MetadataAvailability.Platform.allCases {
-//            let source = """
-//            @Metadata {
-//                @Available(\(platform.rawValue), isBeta: true)
-//                @Available(\(platform.rawValue), isBeta: true)
-//            }
-//            """
-//            try assertInvalidDirective(source: source)
-//        }
-//
-//        // also test for giving no platform
-//        let source = """
-//        @Metadata {
-//            @Available(isBeta: true)
-//            @Available(isBeta: true)
-//        }
-//        """
-//        try assertInvalidDirective(source: source)
-    }
-
-    func testInvalidDuplicateDeprecated() throws {
-        throw XCTSkip("FIXME: isDeprecated is unused (https://github.com/apple/swift-docc/issues/441)")
-
-//        func assertInvalidDirective(source: String) throws {
-//            let document = Document(parsing: source, options: .parseBlockDirectives)
-//            let directive = document.child(at: 0) as? BlockDirective
-//            XCTAssertNotNil(directive)
-//
-//            let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
-//
-//            directive.map { directive in
-//                var problems = [Problem]()
-//                XCTAssertEqual(Metadata.directiveName, directive.name)
-//                let _ = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-//                XCTAssertEqual(2, problems.count)
-//                let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-//                XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.\(MetadataAvailability.self).DuplicateDeprecated"])
-//            }
-//        }
-//
-//        for platform in MetadataAvailability.Platform.allCases {
-//            let source = """
-//            @Metadata {
-//                @Available(\(platform.rawValue), isDeprecated: true)
-//                @Available(\(platform.rawValue), isDeprecated: true)
-//            }
-//            """
-//            try assertInvalidDirective(source: source)
-//        }
-//
-//        // also test for giving no platform
-//        let source = """
-//        @Metadata {
-//            @Available(isDeprecated: true)
-//            @Available(isDeprecated: true)
-//        }
-//        """
-//        try assertInvalidDirective(source: source)
     }
 
     func testValidDirective() throws {
@@ -183,14 +75,10 @@ class MetadataAvailabilityTests: XCTestCase {
         }
 
         for platform in MetadataAvailability.Platform.allCases {
-            if platform != .any {
-                for args in validArgumentsWithVersion {
-                    try assertValidAvailability(source: "@Available(\(platform.rawValue), \(args))")
-                }
-            } else {
-                for args in validArguments {
-                    try assertValidAvailability(source: "@Available(\(platform.rawValue), \(args))")
-                }
+            // FIXME: Test validArguments with the `*` platform once that's introduced
+            // cf. https://github.com/apple/swift-docc/issues/441
+            for args in validArgumentsWithVersion {
+                try assertValidAvailability(source: "@Available(\(platform.rawValue), \(args))")
             }
         }
 

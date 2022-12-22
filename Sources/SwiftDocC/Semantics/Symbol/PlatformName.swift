@@ -106,10 +106,9 @@ public struct PlatformName: Codable, Hashable, Equatable {
     ///
     /// Returns `nil` if the given platform was ``MetadataAvailability/Platform-swift.enum/any``.
     init?(metadataPlatform platform: MetadataAvailability.Platform) {
-        if platform == .any {
-            return nil
-        } else {
-            self = .init(operatingSystemName: platform.rawValue)
-        }
+        // Note: This is still an optional initializer to prevent source breakage when
+        // `MetadataAvailability.Platform` re-introduces the `.any` case
+        // cf. https://github.com/apple/swift-docc/issues/441
+        self = .init(operatingSystemName: platform.rawValue)
     }
 }

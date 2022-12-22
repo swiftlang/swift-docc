@@ -147,12 +147,7 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
             return nil
         }
 
-        let platformName: PlatformName?
-        if availability.platform == .any {
-            platformName = nil
-        } else {
-            platformName = PlatformName(operatingSystemName: availability.platform.rawValue)
-        }
+        let platformName = PlatformName(metadataPlatform: availability.platform)
         name = platformName?.displayName
         introduced = availability.introduced
     }

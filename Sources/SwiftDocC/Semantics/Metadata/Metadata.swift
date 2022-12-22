@@ -149,8 +149,6 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
             }
 
             let duplicateIntroduced = availabilityAttrs.filter({ $0.introduced != nil })
-            let duplicateBeta = availabilityAttrs.filter({ $0.isBeta })
-            let duplicateDeprecated = availabilityAttrs.filter({ $0.isDeprecated })
             if duplicateIntroduced.count > 1 {
                 for avail in duplicateIntroduced {
                     let diagnostic = Diagnostic(
@@ -161,64 +159,6 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                         summary: "Duplicate \(MetadataAvailability.directiveName.singleQuoted) directive with `introduced` argument",
                         explanation: """
                         A documentation page can only contain a single `introduced` version for each platform.
-                        """
-                    )
-
-                    guard let range = avail.originalMarkup.range else {
-                        problems.append(Problem(diagnostic: diagnostic))
-                        continue
-                    }
-
-                    let solution = Solution(
-                        summary: "Remove extraneous \(MetadataAvailability.directiveName.singleQuoted) directive",
-                        replacements: [
-                            Replacement(range: range, replacement: "")
-                        ]
-                    )
-
-                    problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
-                }
-            }
-
-            if duplicateBeta.count > 1 {
-                for avail in duplicateBeta {
-                    let diagnostic = Diagnostic(
-                        source: avail.originalMarkup.nameLocation?.source,
-                        severity: .warning,
-                        range: avail.originalMarkup.range,
-                        identifier: "org.swift.docc.\(MetadataAvailability.self).DuplicateBeta",
-                        summary: "Duplicate \(MetadataAvailability.directiveName.singleQuoted) directive with `isBeta` argument",
-                        explanation: """
-                        A documentation page can only be declared `isBeta` once per platform.
-                        """
-                    )
-
-                    guard let range = avail.originalMarkup.range else {
-                        problems.append(Problem(diagnostic: diagnostic))
-                        continue
-                    }
-
-                    let solution = Solution(
-                        summary: "Remove extraneous \(MetadataAvailability.directiveName.singleQuoted) directive",
-                        replacements: [
-                            Replacement(range: range, replacement: "")
-                        ]
-                    )
-
-                    problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
-                }
-            }
-
-            if duplicateDeprecated.count > 1 {
-                for avail in duplicateDeprecated {
-                    let diagnostic = Diagnostic(
-                        source: avail.originalMarkup.nameLocation?.source,
-                        severity: .warning,
-                        range: avail.originalMarkup.range,
-                        identifier: "org.swift.docc.\(MetadataAvailability.self).DuplicateDeprecated",
-                        summary: "Duplicate \(MetadataAvailability.directiveName.singleQuoted) directive with `isDeprecated` argument",
-                        explanation: """
-                        A documentation page can only be declared `isDeprecated` once per platform.
                         """
                     )
 

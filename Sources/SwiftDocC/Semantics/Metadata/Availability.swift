@@ -37,7 +37,8 @@ public final class MetadataAvailability: Semantic, AutomaticDirectiveConvertible
     static public let directiveName: String = "Available"
 
     public enum Platform: String, RawRepresentable, CaseIterable, DirectiveArgumentValueConvertible {
-        case any = "*"
+        // FIXME: re-add `case any = "*"` when `isBeta` and `isDeprecated` are implemented
+        // cf. https://github.com/apple/swift-docc/issues/441
         case macOS, iOS, watchOS, tvOS
 
         public init?(rawValue: String) {
@@ -53,81 +54,19 @@ public final class MetadataAvailability: Semantic, AutomaticDirectiveConvertible
 
     /// The platform that this argument's information applies to.
     @DirectiveArgumentWrapped(name: .unnamed)
-    public var platform: Platform = .any
+    public var platform: Platform
 
     /// The platform version that this page applies to.
     @DirectiveArgumentWrapped
-    public var introduced: String? = nil
+    public var introduced: String
 
-    /// Whether to mark this page as "Deprecated".
-    @DirectiveArgumentWrapped
-    public var isDeprecated: Bool = false
-
-    /// Whether to mark this page as "Beta".
-    @DirectiveArgumentWrapped
-    public var isBeta: Bool = false
+    // FIXME: `isBeta` and `isDeprecated` properties/arguments
+    // cf. https://github.com/apple/swift-docc/issues/441
 
     static var keyPaths: [String : AnyKeyPath] = [
         "platform"     : \MetadataAvailability._platform,
         "introduced"   : \MetadataAvailability._introduced,
-        "isDeprecated" : \MetadataAvailability._isDeprecated,
-        "isBeta"       : \MetadataAvailability._isBeta,
     ]
-
-    func validate(
-        source: URL?,
-        for bundle: DocumentationBundle,
-        in context: DocumentationContext,
-        problems: inout [Problem]
-    ) -> Bool {
-        var isValid = true
-
-        if platform == .any && introduced != nil {
-            problems.append(.init(diagnostic: .init(
-                source: source,
-                severity: .warning,
-                range: originalMarkup.range,
-                identifier: "org.swift.docc.\(MetadataAvailability.self).introducedVersionForAllPlatforms",
-                summary: "\(MetadataAvailability.directiveName.singleQuoted) directive requires a platform with the `introduced` argument"
-            )))
-
-            isValid = false
-        }
-
-        if platform == .any && introduced == nil && isDeprecated == false && isBeta == false {
-            problems.append(.init(diagnostic: .init(
-                source: source,
-                severity: .warning,
-                range: originalMarkup.range,
-                identifier: "org.swift.docc.\(MetadataAvailability.self).emptyAttribute",
-                summary: "\(MetadataAvailability.directiveName.singleQuoted) directive requires a platform and `introduced` argument, or an `isDeprecated` or `isBeta` argument"
-            )))
-
-            isValid = false
-        }
-
-        if isDeprecated {
-            problems.append(.init(diagnostic: .init(
-                source: source,
-                severity: .information,
-                range: originalMarkup.range,
-                identifier: "org.swift.docc.\(MetadataAvailability.self).unusedDeprecated",
-                summary: "\(MetadataAvailability.directiveName.singleQuoted) `isDeprecated` argument is currently unused"
-            )))
-        }
-
-        if isBeta {
-            problems.append(.init(diagnostic: .init(
-                source: source,
-                severity: .information,
-                range: originalMarkup.range,
-                identifier: "org.swift.docc.\(MetadataAvailability.self).unusedBeta",
-                summary: "\(MetadataAvailability.directiveName.singleQuoted) `isBeta` argument is currently unused"
-            )))
-        }
-
-        return isValid
-    }
 
     public let originalMarkup: Markdown.BlockDirective
 
