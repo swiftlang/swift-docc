@@ -792,7 +792,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 downloadReferences[url.description] = DownloadReference(
                     identifier: downloadIdentifier,
                     renderURL: url,
-                    sha512Checksum: nil
+                    checksum: nil
                 )
             } else if let fileReference = callToAction.file {
                 let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
@@ -1583,7 +1583,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 let downloadData = try context.dataProvider.contentsOfURL(downloadURL, in: bundle)
                 downloadReference = DownloadReference(identifier: mediaReference,
                     renderURL: downloadURL,
-                    sha512Checksum: Checksum.sha512(of: downloadData))
+                    checksum: Checksum.sha512(of: downloadData))
             } catch {
                 // It seems this is the way to error out of here.
                 return mediaReference
