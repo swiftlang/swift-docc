@@ -168,12 +168,12 @@ struct RenderHierarchyTranslator {
             renderHierarchyTutorial.landmarks.append(RenderHierarchyLandmark(reference: RenderReferenceIdentifier(assessmentReference.absoluteString), kind: .assessment))
             
             let urlGenerator = PresentationURLGenerator(context: context, baseURL: bundle.baseURL)
-            let assesmentLinkReference = LinkReference(
+            let assessmentLinkReference = LinkReference(
                 identifier: RenderReferenceIdentifier(assessmentReference.absoluteString),
                 title: "Check Your Understanding",
                 url: urlGenerator.presentationURLForReference(assessmentReference).relativeString
             )
-            linkReferences[assessmentReference.absoluteString] = assesmentLinkReference
+            linkReferences[assessmentReference.absoluteString] = assessmentLinkReference
         }
 
         return renderHierarchyTutorial

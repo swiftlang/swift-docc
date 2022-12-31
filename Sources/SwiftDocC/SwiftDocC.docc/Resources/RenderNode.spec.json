@@ -1936,7 +1936,7 @@
                     },
                     "sections": {
                         "type": "string",
-                        "enum": ["task", "assesment", "heading"]
+                        "enum": ["task", "assessment", "heading"]
                     }
                 }
             },
