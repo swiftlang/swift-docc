@@ -30,8 +30,10 @@ import NIOHTTP1
 /// load files from disk and it does *not* implement performance optimizations like an in-memory cache
 /// (i.e. it hits the disk for each file it sends to the client). Also it will not maintain a
 /// backlog of more than 16 pending client connections.
+///
 /// ## Topics
 /// ### Serving Documentation
+///
 /// - ``init(contentURL:bindTo:logHandle:)``
 /// - ``Bind``
 /// - ``start(onReady:)``
@@ -141,8 +143,7 @@ final class PreviewServer {
         
         // Start the server
         threadPool.start()
-        
-        do {
+      do {
             // Bind to the given destination
             switch bindTo {
             case .localhost(let port):
