@@ -15,19 +15,6 @@ import Markdown
 ///
 /// A "Call to Action" has two main components: a link or file path, and the link text to display.
 ///
-/// The link path can be specified in one of two ways:
-/// - The `url` parameter specifies a URL that will be used verbatim. Use this when you're linking
-///   to an external page or externally-hosted file.
-/// - The `path` parameter specifies the path to a file hosted within your documentation catalog.
-///   Use this if you're linking to a downloadable file that you're managing alongside your
-///   articles and tutorials.
-///
-/// The link text can also be specified in one of two ways:
-/// - The `purpose` parameter can be used to use a default button label. There are two valid values:
-///   - `download` indicates that the link is to a downloadable file. The button will be labeled "Download".
-///   - `link` indicates that the link is to an external webpage. The button will be labeled "Visit".
-/// - The `label` parameter specifies the literal text to use as the button label.
-///
 /// `@CallToAction` requires one of `url` or `path`, and one of `purpose` or `label`. Specifying both
 /// `purpose` and `label` is allowed, but the `label` will override the default label provided by
 /// `purpose`.
@@ -65,7 +52,8 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public var purpose: Purpose? = nil
 
-    /// Text to use as the button label, which may override ``purpose-swift.property``.
+    /// Text to use as the button label, which may override the default provided by a
+    /// given `purpose`.
     @DirectiveArgumentWrapped
     public var label: String? = nil
 

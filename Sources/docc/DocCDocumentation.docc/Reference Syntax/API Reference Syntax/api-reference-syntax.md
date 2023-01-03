@@ -10,11 +10,16 @@ Use documentation markup, a custom variant of Markdown, to add in-source documen
 
 ## Topics
 
-### Essentials
-
-
 ### Configuring Documentation Behavior
 
+- ``Options``
 - ``Metadata``
+
+### Creating Custom Page Layouts
+
+- ``Row``
+- ``TabNavigator``
+- ``Links``
+- ``Small``
 
 <!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->

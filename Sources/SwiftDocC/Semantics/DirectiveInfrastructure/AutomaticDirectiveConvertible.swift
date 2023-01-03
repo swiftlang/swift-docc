@@ -70,6 +70,9 @@ protocol AutomaticDirectiveConvertible: DirectiveConvertible, Semantic {
     ///         }
     ///     }
     static var keyPaths: [String : AnyKeyPath] { get }
+    
+    /// A Boolean value that is true if this directive should be hidden from documentation.
+    static var hiddenFromDocumentation: Bool { get }
 }
 
 extension AutomaticDirectiveConvertible {
@@ -85,6 +88,8 @@ extension AutomaticDirectiveConvertible {
     ) -> Bool {
         return true
     }
+    
+    public static var hiddenFromDocumentation: Bool { false }
 }
 
 extension AutomaticDirectiveConvertible {
