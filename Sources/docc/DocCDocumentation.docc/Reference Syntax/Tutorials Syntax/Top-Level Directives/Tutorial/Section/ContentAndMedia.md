@@ -2,6 +2,10 @@
 
 Displays a grouping that contains text and an image or a video in a section on a tutorial page.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 ## Overview
 
 Use a `ContentAndMedia` directive within a ``Section`` or ``Stack`` directive to display a grouping that contains text and an image or a video. Set the `layout` parameter's value to `"horizontal"`. Then, provide one or more paragraphs of text, followed by an ``Image`` or ``Video`` directive.

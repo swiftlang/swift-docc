@@ -2,6 +2,10 @@
 
 Defines an individual task the reader performs within a set of steps on a tutorial page.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 ## Overview
 
 Use the `Step` directive to define a single task the reader performs within a set of steps  on a tutorial page. Provide text that explains what to do, and provide a code listing , an image, or a video that illustrates the step.

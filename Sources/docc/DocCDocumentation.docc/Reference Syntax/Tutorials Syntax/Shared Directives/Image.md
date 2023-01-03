@@ -2,6 +2,10 @@
 
 Displays an image in a tutorial.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 - Parameters:
     - source: The name and file extension of an image in your Swift framework or package project. **(required)**
     - alt: Alternative text that describes the image to screen readers. **(required)**

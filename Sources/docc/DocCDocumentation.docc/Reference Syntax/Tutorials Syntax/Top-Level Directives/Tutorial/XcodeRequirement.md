@@ -2,6 +2,10 @@
 
 Lists the Xcode version required by a tutorial, and provides a link to download it.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 - Parameters:
     - title: The Xcode name and version required by the tutorial. For example: "Xcode 13". **(required)**
     - destination: A URL to download the required version of Xcode. **(required)**

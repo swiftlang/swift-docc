@@ -2,6 +2,10 @@
 
 Configures a documentation page that's not associated with a particular framework so it appears as a top-level page.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 ## Overview
 
 Place the `TechnologyRoot` directive within a `Metadata` directive to configure a documentation page that's not associated with a particular framework so it appears as a top-level page. Make sure the page includes a title, a summary line, an overview section, and a topics section with at least one topic group.

@@ -2,6 +2,10 @@
 
 Displays an introduction section at the top of a table of contents or tutorial page.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 - Parameters:
     - title: A title to show at the top of the introduction. **(required)**
 

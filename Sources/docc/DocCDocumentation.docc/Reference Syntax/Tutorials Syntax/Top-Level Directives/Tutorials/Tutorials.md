@@ -2,6 +2,10 @@
 
 Displays a table of contents page for readers to navigate the pages of an interactive tutorial.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 - Parameters:
     - name: The name of your tutorial. This typically matches the name of the Swift framework or package you're documenting. **(required)**
 

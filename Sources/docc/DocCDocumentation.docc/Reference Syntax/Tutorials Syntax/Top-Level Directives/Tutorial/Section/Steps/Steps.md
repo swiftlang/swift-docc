@@ -2,6 +2,10 @@
 
 Defines a set of tasks the reader performs on a tutorial page.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 ## Overview
 
 Use the `Steps` directive to define a set of tasks the reader performs on a tutorial page.

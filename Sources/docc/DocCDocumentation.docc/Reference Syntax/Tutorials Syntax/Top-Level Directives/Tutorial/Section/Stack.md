@@ -2,6 +2,10 @@
 
 Displays set of horizontally arranged groupings that contain text and media in a section on a tutorial page.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 ## Overview
 
 Use the Stack directive to horizontally arrange between one and three groupings of text and media (images or videos) in a section on a tutorial page.

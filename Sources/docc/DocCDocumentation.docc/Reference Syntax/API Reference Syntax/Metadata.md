@@ -2,6 +2,10 @@
 
 Use metadata directives to instruct DocC how to build certain documentation files.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 ## Overview
 
 Use the `Metadata` directive with other directives to configure how certain documentation files build. Place the directive after the documentation page's title. Use it with the ``DocumentationExtension`` directive to indicate whether content in a documentation extension file amends or replaces in-source documentation.

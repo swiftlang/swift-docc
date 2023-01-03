@@ -2,6 +2,10 @@
 
 Displays a video in a tutorial.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 - Parameters:
     - source: The name and file extension of a video in your Swift framework or package project. **(required)**
     - poster: The name and file extension of an image in your Swift framework or package project. This image serves as a poster image for the video and shows when the video isn't playing. **(required)**
