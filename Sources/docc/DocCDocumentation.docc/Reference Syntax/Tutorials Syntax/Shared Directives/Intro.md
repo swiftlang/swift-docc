@@ -1,4 +1,4 @@
-# ``DocC/Intro``
+# ``docc/Intro``
 
 Displays an introduction section at the top of a table of contents or tutorial page.
 

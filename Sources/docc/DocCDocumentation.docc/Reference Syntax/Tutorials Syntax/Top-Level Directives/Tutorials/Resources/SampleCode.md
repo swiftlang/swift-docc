@@ -1,4 +1,4 @@
-# ``DocC/SampleCode``
+# ``docc/SampleCode``
 
 Displays a set of sample code links in the resources section of a tutorial's table of contents page.
 

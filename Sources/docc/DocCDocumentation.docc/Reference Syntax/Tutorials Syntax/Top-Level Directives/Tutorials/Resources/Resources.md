@@ -1,4 +1,4 @@
-# ``DocC/Resources``
+# ``docc/Resources``
 
 Displays a set of links to related resources, like downloads, sample code, and videos.
 

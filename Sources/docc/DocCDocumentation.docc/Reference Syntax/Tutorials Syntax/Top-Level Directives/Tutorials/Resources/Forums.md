@@ -1,4 +1,4 @@
-# ``DocC/Forums``
+# ``docc/Forums``
 
 Displays a set of forum links in the resources section of a tutorial's table of contents page.
 

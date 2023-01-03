@@ -1,4 +1,4 @@
-# ``DocC/Video``
+# ``docc/Video``
 
 Displays a video in a tutorial.
 

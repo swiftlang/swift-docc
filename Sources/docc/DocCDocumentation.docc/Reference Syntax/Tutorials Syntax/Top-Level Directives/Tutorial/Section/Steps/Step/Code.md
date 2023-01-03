@@ -1,4 +1,4 @@
-# ``DocC/Code``
+# ``docc/Code``
 
 Defines the code for an individual step on a tutorial page.
 

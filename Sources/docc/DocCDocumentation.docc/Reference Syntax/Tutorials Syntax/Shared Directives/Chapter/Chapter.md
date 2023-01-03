@@ -1,4 +1,4 @@
-# ``DocC/Chapter``
+# ``docc/Chapter``
 
 Organizes related tutorial pages into a chapter on a table of contents page.
 

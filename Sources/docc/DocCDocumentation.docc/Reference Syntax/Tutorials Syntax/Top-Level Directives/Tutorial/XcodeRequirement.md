@@ -1,4 +1,4 @@
-# ``DocC/XcodeRequirement``
+# ``docc/XcodeRequirement``
 
 Lists the Xcode version required by a tutorial, and provides a link to download it.
 

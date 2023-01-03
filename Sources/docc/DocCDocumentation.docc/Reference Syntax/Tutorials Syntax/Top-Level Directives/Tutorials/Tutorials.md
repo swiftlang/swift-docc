@@ -1,4 +1,4 @@
-# ``DocC/Tutorials``
+# ``docc/Tutorials``
 
 Displays a table of contents page for readers to navigate the pages of an interactive tutorial.
 

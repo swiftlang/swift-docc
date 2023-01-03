@@ -1,4 +1,4 @@
-# ``DocC/MultipleChoice``
+# ``docc/MultipleChoice``
 
 Defines a single question and multiple possible answers to include in the Assessments section of a tutorial page.
 

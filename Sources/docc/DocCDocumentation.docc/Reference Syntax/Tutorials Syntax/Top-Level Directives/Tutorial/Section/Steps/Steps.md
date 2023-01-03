@@ -1,4 +1,4 @@
-# ``DocC/Steps``
+# ``docc/Steps``
 
 Defines a set of tasks the reader performs on a tutorial page.
 

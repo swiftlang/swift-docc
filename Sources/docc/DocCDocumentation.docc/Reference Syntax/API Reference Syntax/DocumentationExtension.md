@@ -1,4 +1,4 @@
-# ``DocC/DocumentationExtension``
+# ``docc/DocumentationExtension``
 
 Defines whether the content in a documentation extension file amends or replaces in-source documentation.
 

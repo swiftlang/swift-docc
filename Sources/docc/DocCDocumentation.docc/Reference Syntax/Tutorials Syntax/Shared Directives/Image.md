@@ -1,4 +1,4 @@
-# ``DocC/Image``
+# ``docc/Image``
 
 Displays an image in a tutorial.
 

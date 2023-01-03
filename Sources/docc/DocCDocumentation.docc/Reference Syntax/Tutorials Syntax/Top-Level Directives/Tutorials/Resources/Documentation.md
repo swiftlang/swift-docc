@@ -1,4 +1,4 @@
-# ``DocC/Documentation``
+# ``docc/Documentation``
 
 Displays a set of documentation links in the resources section of a tutorial's table of contents page.
 

@@ -1,4 +1,4 @@
-# ``DocC/Metadata``
+# ``docc/Metadata``
 
 Use metadata directives to instruct DocC how to build certain documentation files.
 

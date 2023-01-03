@@ -1,4 +1,4 @@
-# ``DocC/Assessments``
+# ``docc/Assessments``
 
 Tests the reader's knowledge at the end of a tutorial page.
 

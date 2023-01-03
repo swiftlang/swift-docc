@@ -1,4 +1,4 @@
-# ``DocC/DisplayName``
+# ``docc/DisplayName``
 
 Configures a symbol's documentation page and any references to that page to show a custom name instead of the symbol name.
 

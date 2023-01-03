@@ -1,4 +1,4 @@
-# ``DocC/Section``
+# ``docc/Section``
 
 Displays a grouping of text, images, and tasks on a tutorial page.
 

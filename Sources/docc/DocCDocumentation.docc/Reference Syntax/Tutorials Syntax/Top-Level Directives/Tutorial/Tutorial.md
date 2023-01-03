@@ -1,4 +1,4 @@
-# ``DocC/Tutorial``
+# ``docc/Tutorial``
 
 Displays a tutorial page that teaches your Swift framework or package APIs through interactive coding exercises.
 

@@ -1,4 +1,4 @@
-# ``DocC/Downloads``
+# ``docc/Downloads``
 
 Displays a set of related download links in the resources section of a tutorial's table of contents page.
 

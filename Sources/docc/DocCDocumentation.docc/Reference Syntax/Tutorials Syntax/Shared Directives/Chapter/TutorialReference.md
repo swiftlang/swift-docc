@@ -1,4 +1,4 @@
-# ``DocC/TutorialReference``
+# ``docc/TutorialReference``
 
 Adds an individual tutorial page link to a chapter on a table of contents page.
 
