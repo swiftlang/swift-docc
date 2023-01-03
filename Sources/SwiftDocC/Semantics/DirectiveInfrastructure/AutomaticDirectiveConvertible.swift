@@ -239,7 +239,7 @@ extension AutomaticDirectiveConvertible {
                 
                 guard let parsedDirective = parsedDirective else {
                     if childDirective.storedAsArray && !childDirective.storedAsOptional {
-                        childDirective.setValue(on: self, to: [])
+                        childDirective.setValue(on: self, to: [parsedDirective].compactMap { $0 })
                     }
                     
                     continue
