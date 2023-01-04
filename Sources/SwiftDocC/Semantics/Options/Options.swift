@@ -34,17 +34,17 @@ public class Options: Semantic, AutomaticDirectiveConvertible {
     
     /// If given, whether or not automatic See Also section generation is enabled.
     public var automaticSeeAlsoEnabled: Bool? {
-        return _automaticSeeAlso.map { $0.enabledness == .enabled }
+        return _automaticSeeAlso?.enabled
     }
     
     /// If given, whether or not automatic Title Heading generation is enabled.
     public var automaticTitleHeadingEnabled: Bool? {
-        return _automaticTitleHeading.map { $0.enabledness == .enabled }
+        return _automaticTitleHeading?.enabled
     }
     
     /// If given, whether or not automatic article subheading generation is enabled.
     public var automaticArticleSubheadingEnabled: Bool? {
-        return _automaticArticleSubheading.map { $0.enabledness == .enabled }
+        return _automaticArticleSubheading?.enabled
     }
     
     /// If given, the authored style for a page's Topics section.
