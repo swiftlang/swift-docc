@@ -1094,27 +1094,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     private func shouldCreateAutomaticRoleHeading(for node: DocumentationNode) -> Bool {
-        var shouldCreateAutomaticRoleHeading = true
-        if let automaticTitleHeadingOption = node.options?.automaticTitleHeadingBehavior
-            ?? context.options?.automaticTitleHeadingBehavior
-        {
-            shouldCreateAutomaticRoleHeading = automaticTitleHeadingOption == .pageKind
-        }
-        
-        return shouldCreateAutomaticRoleHeading
+        return node.options?.automaticTitleHeadingEnabled
+            ?? context.options?.automaticTitleHeadingEnabled
+            ?? true
     }
     
     private func shouldCreateAutomaticArticleSubheading(for node: DocumentationNode) -> Bool {
-        let shouldCreateAutomaticArticleSubheading: Bool
-        if let automaticSubheadingOption = node.options?.automaticArticleSubheadingBehavior
-            ?? context.options?.automaticArticleSubheadingBehavior
-        {
-            shouldCreateAutomaticArticleSubheading = !(automaticSubheadingOption == .disabled)
-        } else {
-            shouldCreateAutomaticArticleSubheading = true
-        }
-        
-        return shouldCreateAutomaticArticleSubheading
+        return node.options?.automaticArticleSubheadingEnabled
+            ?? context.options?.automaticArticleSubheadingEnabled
+            ?? true
     }
     
     private func topicsSectionStyle(for node: DocumentationNode) -> RenderNode.TopicsSectionStyle {

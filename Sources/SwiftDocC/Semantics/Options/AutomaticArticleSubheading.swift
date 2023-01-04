@@ -19,22 +19,21 @@ import Markdown
 public class AutomaticArticleSubheading: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
-    /// The specified behavior for automatic subheading generation.
+    /// Whether or not DocC generates automatic second-level "Overview" subheadings. By default it does.
     @DirectiveArgumentWrapped(name: .unnamed)
-    public private(set) var behavior: Behavior
+    public private(set) var enabledness: Enabledness
     
-    /// A behavior for automatic subheading generation.
-    public enum Behavior: String, CaseIterable, DirectiveArgumentValueConvertible {
-        /// No subheading should be created for the article.
-        case disabled
-        
-        /// An overview subheading should be created containing the article's
-        /// first paragraph of content.
+    /// A value that represent whether automatic subheading generation is enabled or disabled.
+    public enum Enabledness: String, CaseIterable, DirectiveArgumentValueConvertible {
+        /// An overview subheading should be automatically created for the article (the default).
         case enabled
+        
+        /// No automatic overview subheading should be created for the article.
+        case disabled
     }
     
     static var keyPaths: [String : AnyKeyPath] = [
-        "behavior"  : \AutomaticArticleSubheading._behavior,
+        "enabledness"  : \AutomaticArticleSubheading._enabledness,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")

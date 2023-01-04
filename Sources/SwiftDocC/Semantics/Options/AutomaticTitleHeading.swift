@@ -18,21 +18,21 @@ import Markdown
 public class AutomaticTitleHeading: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
-    /// The specified behavior for automatic title heading generation.
+    /// Whether or not DocC generates automatic title headings.  By default it does.
     @DirectiveArgumentWrapped(name: .unnamed)
-    public private(set) var behavior: Behavior
+    public private(set) var enabledness: Enabledness
     
-    /// A behavior for automatic title heading generation.
-    public enum Behavior: String, CaseIterable, DirectiveArgumentValueConvertible {
-        /// No title heading should be created for the page.
-        case disabled
+    /// A value that represent whether automatic title heading generation is enabled or disabled.
+    public enum Enabledness: String, CaseIterable, DirectiveArgumentValueConvertible {
+        /// A title heading should be automatically created for the page (the default).
+        case enabled
         
-        /// A title heading based on the page's kind should be automatically created.
-        case pageKind
+        /// No automatic title heading should be created for the page.
+        case disabled
     }
     
     static var keyPaths: [String : AnyKeyPath] = [
-        "behavior"  : \AutomaticTitleHeading._behavior,
+        "enabledness"  : \AutomaticTitleHeading._enabledness,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")

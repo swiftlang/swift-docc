@@ -179,7 +179,7 @@ class ArticleTests: XCTestCase {
         This is an abstract.
         
         @Options {
-            @AutomaticSeeAlso(siblingPages)
+            @AutomaticSeeAlso(enabled)
         }
 
         Here's an overview.
@@ -206,6 +206,6 @@ class ArticleTests: XCTestCase {
             9
         )
         
-        XCTAssertEqual(article?.options[.local]?.automaticSeeAlsoBehavior, .disabled)
+        XCTAssertEqual(article?.options[.local]?.automaticSeeAlsoEnabled, false)
     }
 }
