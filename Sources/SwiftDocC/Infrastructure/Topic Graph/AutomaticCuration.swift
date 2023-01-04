@@ -123,7 +123,7 @@ public struct AutomaticCuration {
         renderContext: RenderContext?,
         renderer: DocumentationContentRenderer
     ) throws -> TaskGroup? {
-        if node.options?.automaticSeeAlsoEnabled ?? context.options?.automaticSeeAlsoEnabled == false
+        if (node.options?.automaticSeeAlsoEnabled ?? context.options?.automaticSeeAlsoEnabled) == false
         {
             return nil
         }
