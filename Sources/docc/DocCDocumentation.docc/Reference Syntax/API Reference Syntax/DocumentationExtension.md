@@ -1,6 +1,10 @@
-# ``DocC/DocumentationExtension``
+# ``docc/DocumentationExtension``
 
 Defines whether the content in a documentation extension file amends or replaces in-source documentation.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - mergeBehavior: A value of `append` or `override`, denoting whether an extension file's content amends or replaces the in-source documentation. **(required)**

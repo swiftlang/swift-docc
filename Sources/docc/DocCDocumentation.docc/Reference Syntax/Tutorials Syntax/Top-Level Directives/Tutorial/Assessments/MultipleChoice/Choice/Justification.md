@@ -1,6 +1,10 @@
-# ``DocC/Justification``
+# ``docc/Justification``
 
 Displays text that explains why a chosen multiple-choice answer is either correct or incorrect. 
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - reaction: Text that clearly and succinctly indicates whether the answer is correct or incorrect, for example "Correct!" or "Sorry, try again." **(required)**

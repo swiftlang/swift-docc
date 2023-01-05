@@ -1,6 +1,10 @@
-# ``DocC/Video``
+# ``docc/Video``
 
 Displays a video in a tutorial.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - source: The name and file extension of a video in your Swift framework or package project. **(required)**

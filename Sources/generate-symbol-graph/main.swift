@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+@testable import SwiftDocC
 
 struct Directive {
     var name: String
@@ -21,34 +22,35 @@ struct Directive {
     var isLeaf: Bool
 
     var usr: String {
-        return "__docc_universal_symbol_reference_$\(name)"
+        return directiveUSR(name)
+    }
+}
+
+func directiveUSR(_ directiveName: String) -> String {
+    "__docc_universal_symbol_reference_$\(directiveName)"
+}
+
+extension SymbolGraph.Symbol.DeclarationFragments.Fragment: ExpressibleByStringInterpolation {
+    public init(stringLiteral value: String) {
+        self.init(kind: .text, spelling: value, preciseIdentifier: nil)
+    }
+    
+    init<S: StringProtocol>(
+        _ value: S,
+        kind: SymbolGraph.Symbol.DeclarationFragments.Fragment.Kind = .text,
+        preciseIdentifier: String? = nil
+    ) {
+        self.init(kind: kind, spelling: String(value), preciseIdentifier: preciseIdentifier)
+    }
+}
+
+extension SymbolGraph.LineList.Line: ExpressibleByStringInterpolation {
+    public init(stringLiteral value: String) {
+        self.init(text: value, range: nil)
     }
 }
 
 let supportedDirectives: [Directive] = [
-    // MARK: Reference
-
-    .init(
-        name: "Metadata",
-        acceptsArguments: false,
-        isLeaf: false
-    ),
-    .init(
-        name: "DocumentationExtension",
-        isLeaf: true
-    ),
-    .init(
-        name: "DisplayName",
-        isLeaf: true
-    ),
-
-    // MARK: Technology Root
-
-    .init(
-        name: "TechnologyRoot",
-        acceptsArguments: false,
-        isLeaf: true
-    ),
 
     // MARK: Tutorial Table of Contents
 
@@ -59,14 +61,6 @@ let supportedDirectives: [Directive] = [
     .init(
         name: "Volume",
         isLeaf: false
-    ),
-    .init(
-        name: "Chapter",
-        isLeaf: false
-    ),
-    .init(
-        name: "TutorialReference",
-        isLeaf: true
     ),
     .init(
         name: "Resources",
@@ -94,19 +88,6 @@ let supportedDirectives: [Directive] = [
         isLeaf: false
     ),
     .init(
-        name: "Tutorial",
-        isLeaf: false
-    ),
-    .init(
-        name: "Intro",
-        isLeaf: false
-    ),
-    .init(
-        name: "XcodeRequirement",
-        acceptsArguments: true,
-        isLeaf: true
-    ),
-    .init(
         name: "Section",
         isLeaf: false
     ),
@@ -130,28 +111,7 @@ let supportedDirectives: [Directive] = [
         isLeaf: false
     ),
     .init(
-        name: "Assessments",
-        acceptsArguments: false,
-        isLeaf: false
-    ),
-    .init(
         name: "MultipleChoice",
-        acceptsArguments: false,
-        isLeaf: false
-    ),
-    .init(
-        name: "Choice",
-        isLeaf: false
-    ),
-    .init(
-        name: "Justification",
-        isLeaf: false
-    ),
-
-    // MARK: Tutorial Articles
-
-    .init(
-        name: "Stack",
         acceptsArguments: false,
         isLeaf: false
     ),
@@ -163,35 +123,397 @@ let supportedDirectives: [Directive] = [
         acceptsArguments: false,
         isLeaf: false
     ),
-    .init(
-        name: "Image",
-        isLeaf: true
-    ),
-    .init(
-        name: "Video",
-        isLeaf: true
+] + DirectiveIndex.shared.indexedDirectives.values.filter { directive in
+        !directive.hiddenFromDocumentation
+    }
+    .map { directive in
+        return Directive(
+            name: directive.name,
+            acceptsArguments: !directive.arguments.isEmpty,
+            isLeaf: !directive.allowsMarkup && directive.childDirectives.isEmpty
+        )
+    }
+
+func generateSwiftDocCFrameworkSymbolGraph() throws -> SymbolGraph {
+    let packagePath = URL(fileURLWithPath: #file)
+        .deletingLastPathComponent() // generate-symbol-graph
+        .deletingLastPathComponent() // Sources
+        .deletingLastPathComponent() // swift-docc
+    
+    let buildDirectory = Bundle.main.executableURL!
+        .deletingLastPathComponent()
+        .appendingPathComponent(".swift-docc-symbol-graph-build", isDirectory: true)
+    
+    let symbolGraphOutputDirectory = buildDirectory.appendingPathComponent(
+        "symbol-graphs",
+        isDirectory: true
     )
-]
+    
+    try FileManager.default.createDirectory(
+        at: symbolGraphOutputDirectory,
+        withIntermediateDirectories: true
+    )
+    
+    let process = Process()
+    process.executableURL = URL(fileURLWithPath: ProcessInfo.processInfo.environment["SHELL"]!)
+    process.arguments = [
+        "-c",
+        """
+        swift build --package-path \(packagePath.path) \
+          --scratch-path \(buildDirectory.path) \
+          --target SwiftDocC \
+          -Xswiftc -emit-symbol-graph \
+          -Xswiftc -emit-symbol-graph-dir -Xswiftc \(symbolGraphOutputDirectory.path) \
+          -Xswiftc -symbol-graph-minimum-access-level -Xswiftc internal
+        """
+    ]
+    
+    try process.run()
+    process.waitUntilExit()
+    
+    let symbolGraphURL = symbolGraphOutputDirectory.appendingPathComponent(
+        "SwiftDocC.symbols.json",
+        isDirectory: false
+    )
+    
+    let symbolGraphData = try Data(contentsOf: symbolGraphURL)
+    return try JSONDecoder().decode(SymbolGraph.self, from: symbolGraphData)
+}
+
+func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph.LineList] {
+    let swiftDocCFrameworkSymbolGraph = try generateSwiftDocCFrameworkSymbolGraph()
+    
+    let directiveSymbols = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
+        guard relationship.kind == .conformsTo
+            && relationship.target == "s:9SwiftDocC29AutomaticDirectiveConvertibleP"
+        else {
+            return nil
+        }
+    
+        return relationship.source
+    }
+    .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
+    .map { (String($0.title.split(separator: ".").last ?? $0.title[...]), $0) }
+    
+    let directiveDocComments: [(String, SymbolGraph.LineList)] = directiveSymbols.compactMap {
+        let (directiveName, directiveSymbol) = $0
+        
+        guard let indexedDirective = DirectiveIndex.shared.indexedDirectives[directiveName] else {
+            if let docComment = directiveSymbol.docComment {
+                return (directiveName, docComment)
+            } else {
+                return nil
+            }
+        }
+        
+        let directiveSymbolMembers = swiftDocCFrameworkSymbolGraph.relationships.filter {
+            return $0.kind == .memberOf && $0.target == directiveSymbol.preciseIdentifier!
+        }
+        .map(\.source)
+        .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
+        
+        var parametersDocumentation = [SymbolGraph.LineList.Line]()
+        var createdParametersSection = false
+        for argument in indexedDirective.arguments {
+            let argumentDisplayName: String
+            if argument.name.isEmpty {
+                argumentDisplayName = argument.propertyLabel
+            } else {
+                argumentDisplayName = argument.name
+            }
+            
+            let argumentSymbol = directiveSymbolMembers.first { member in
+                member.title == argument.propertyLabel && member.docComment != nil
+            } ?? directiveSymbolMembers.first { member in
+                member.title == argument.name && member.docComment != nil
+            }
+            
+            guard let argumentDocComment = argumentSymbol?.docComment else {
+                continue
+            }
+            
+            guard !argumentDocComment.lines.isEmpty else {
+                continue
+            }
+            
+            if !createdParametersSection {
+                parametersDocumentation.append("- Parameters:")
+                createdParametersSection = true
+            }
+            
+            var insertedRequirementText = false
+            for (index, line) in argumentDocComment.lines.map(\.text).enumerated() {
+                if index == 0 {
+                    parametersDocumentation.append("  - \(argumentDisplayName): \(line)")
+                } else {
+                    parametersDocumentation.append("     \(line)")
+                }
+                
+                guard !insertedRequirementText else {
+                    continue
+                }
+                
+                // If we're at the end of the comment or the end of the first paragraph,
+                // insert in the required/optional disclaimer.
+                if index == argumentDocComment.lines.count - 1
+                    || argumentDocComment.lines[index + 1].text.trimmingCharacters(
+                           in: .whitespacesAndNewlines
+                       ).isEmpty
+                {
+                    if argument.required {
+                        parametersDocumentation.append("     **(required)**")
+                    } else {
+                        parametersDocumentation.append("     **(optional)**")
+                    }
+                    
+                    insertedRequirementText = true
+                }
+            }
+            
+            guard let allowedValues = argument.allowedValues, !allowedValues.isEmpty else {
+                continue
+            }
+            
+            let argumentType = argument.typeDisplayName.components(
+                separatedBy: CharacterSet(charactersIn: "? ")
+            ).first!
+            
+            let allowedValueType = directiveSymbolMembers.first { member in
+                member.title.split(separator: ".").last == argumentType[...]
+            }
+            
+            guard let allowedValueType = allowedValueType?.preciseIdentifier else {
+                continue
+            }
+            
+            let childrenOfAllowedValueType = swiftDocCFrameworkSymbolGraph.relationships.filter { relationship in
+                return relationship.kind == .memberOf && relationship.target == allowedValueType
+            }
+            .map(\.source)
+            .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
+            
+            for allowedValue in allowedValues {
+                guard let allowedValueDocComment = childrenOfAllowedValueType.first(where: {
+                    $0.title.contains(allowedValue)
+                })?.docComment else { continue }
+                
+                for (index, line) in allowedValueDocComment.lines.map(\.text).enumerated() {
+                    if index == 0 {
+                        parametersDocumentation.append("     - term `\(allowedValue)`: \(line)")
+                    } else {
+                        parametersDocumentation.append("        \(line)")
+                    }
+                }
+            }
+        }
+        
+        var docComment = directiveSymbol.docComment ?? SymbolGraph.LineList([])
+        docComment.lines = docComment.lines.map { line in
+            var line = line
+            line.range = nil
+            return line
+        }
+        docComment.moduleName = nil
+        docComment.uri = nil
+        
+        if let topicsSectionIndex = docComment.lines.firstIndex(where: { line in
+            line.text.replacingOccurrences(of: " ", with: "").hasPrefix("##Topics")
+        }) {
+            parametersDocumentation.append("")
+            docComment.lines.insert(contentsOf: parametersDocumentation, at: topicsSectionIndex)
+        } else {
+            docComment.lines.append(contentsOf: parametersDocumentation)
+        }
+        
+        if docComment.lines.isEmpty {
+            return nil
+        } else {
+            return (directiveName, docComment)
+        }
+    }
+    
+    return Dictionary(uniqueKeysWithValues: directiveDocComments)
+}
+
+let documentationComments = try extractDocumentationCommentsForDirectives()
+
+func declarationFragments(
+    for directiveName: String,
+    primaryReference: Bool,
+    includeFullChildren: Bool,
+    includeMinimalChildren: Bool
+) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+    guard DirectiveIndex.shared.indexedDirectives[directiveName] == nil else {
+        return declarationFragments(
+            for: DirectiveIndex.shared.indexedDirectives[directiveName]!,
+            primaryReference: primaryReference,
+            includeFullChildren: includeFullChildren,
+            includeMinimalChildren: includeMinimalChildren
+        )
+    }
+    
+    let shouldUseTypeIdentifiers = includeFullChildren || includeMinimalChildren
+    
+    let directive = supportedDirectives.first { directive in
+        directive.name == directiveName
+    }!
+    
+    var fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+        .init("@", kind: shouldUseTypeIdentifiers ? .typeIdentifier : .identifier),
+        .init(
+            directive.name,
+            kind: shouldUseTypeIdentifiers ? .typeIdentifier : .identifier,
+            preciseIdentifier: primaryReference ? nil : directiveUSR(directive.name)
+        ),
+    ]
+    
+    if directive.acceptsArguments {
+        fragments.append("(...)")
+    }
+    
+    guard !directive.isLeaf else {
+        return fragments
+    }
+    
+    if includeFullChildren {
+        fragments.append(" {\n    ...\n}")
+    } else if includeMinimalChildren {
+        fragments.append(" { ... }")
+    }
+    
+    return fragments
+}
+
+func declarationFragments(
+    for directive: DirectiveMirror.ReflectedDirective,
+    primaryReference: Bool,
+    includeFullChildren: Bool,
+    includeMinimalChildren: Bool
+) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+    var fragments = [SymbolGraph.Symbol.DeclarationFragments.Fragment]()
+    
+    let shouldUseTypeIdentifiers = includeFullChildren || includeMinimalChildren
+    
+    fragments.append(
+        contentsOf: [
+            .init("@", kind: shouldUseTypeIdentifiers ? .typeIdentifier : .identifier),
+            .init(
+                directive.name,
+                kind: shouldUseTypeIdentifiers ? .typeIdentifier : .identifier,
+                preciseIdentifier: primaryReference ? nil : directiveUSR(directive.name)
+            ),
+        ]
+    )
+    
+    if !directive.arguments.isEmpty {
+        fragments.append("(")
+    }
+    
+    for (index, argument) in directive.arguments.enumerated() {
+        if argument.labelDisplayName.hasPrefix("_ ") {
+            fragments.append("_ ")
+            let adjustedLabel = argument.labelDisplayName.trimmingCharacters(in: CharacterSet(charactersIn: " _"))
+            fragments.append(.init(adjustedLabel, kind: .identifier))
+        } else {
+            fragments.append(.init(argument.labelDisplayName, kind: .identifier))
+        }
+        
+        fragments.append(": ")
+        
+        let splitLocation = argument.typeDisplayName.firstIndex {
+            $0 == " " || $0 == "?"
+        }
+        
+        if let splitLocation = splitLocation {
+            fragments.append(
+                .init(
+                    argument.typeDisplayName.prefix(upTo: splitLocation),
+                    kind: .typeIdentifier
+                )
+            )
+            
+            if includeFullChildren || includeMinimalChildren {
+                fragments.append(.init(argument.typeDisplayName.suffix(from: splitLocation)))
+            }
+        } else {
+            fragments.append(.init(argument.typeDisplayName, kind: .typeIdentifier))
+        }
+        
+        if index < directive.arguments.count - 1 {
+            fragments.append(", ")
+        } else {
+            fragments.append(")")
+        }
+    }
+    
+    let requiredChildDirectives = directive.childDirectives.filter(\.required)
+    
+    if (includeMinimalChildren && !includeFullChildren)
+        && (!requiredChildDirectives.isEmpty || directive.allowsMarkup)
+    {
+        fragments.append(" { ... }")
+    }
+    
+    guard includeFullChildren else {
+        return fragments
+    }
+    
+    if !requiredChildDirectives.isEmpty {
+        fragments.append(" {\n")
+        
+        if directive.allowsMarkup {
+            fragments.append("    ...\n\n")
+        }
+        
+        for childDirective in requiredChildDirectives {
+            guard childDirective.required else {
+                continue
+            }
+            
+            let childDeclarationFragments = declarationFragments(
+                for: childDirective.name,
+                primaryReference: false,
+                includeFullChildren: false,
+                includeMinimalChildren: true
+            )
+            
+            fragments.append("    ")
+            
+            for var childDeclarationFragment in childDeclarationFragments {
+                childDeclarationFragment.spelling = childDeclarationFragment.spelling.replacingOccurrences(
+                    of: "\n",
+                    with: "\n    "
+                )
+                
+                fragments.append(childDeclarationFragment)
+            }
+            
+            fragments.append("\n")
+        }
+        
+        fragments.append("}")
+    } else if directive.allowsMarkup || !directive.childDirectives.isEmpty {
+        fragments.append(" {\n    ...\n}")
+    }
+    
+    return fragments
+}
 
 let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
-    var extraDeclarationFragments = [SymbolGraph.Symbol.DeclarationFragments.Fragment]()
-
-    /*
-        If the directive accepts arguments, then
-        render the parentheses which make it look like it can accept arguments.
-    */
-    if directive.acceptsArguments {
-        extraDeclarationFragments.append(.init(kind: .text, spelling: "(...)", preciseIdentifier: nil))
-    }
-
-    /*
-        If the directive is not a leaf (aka it has child directives or body content), then
-        render the curly braces which make it look like it can have children.
-    */
-    if !directive.isLeaf {
-        extraDeclarationFragments.append(.init(kind: .text, spelling: " {\n  ...\n}", preciseIdentifier: nil))
-    }
-
+    let fragments = declarationFragments(
+        for: directive.name,
+        primaryReference: true,
+        includeFullChildren: true,
+        includeMinimalChildren: false
+    )
+    
+    let navigatorFragments = declarationFragments(
+        for: directive.name,
+        primaryReference: true,
+        includeFullChildren: false,
+        includeMinimalChildren: false
+    )
+    
     return SymbolGraph.Symbol(
         identifier: SymbolGraph.Symbol.Identifier(
             precise: directive.usr,
@@ -203,24 +525,18 @@ let symbols: [SymbolGraph.Symbol] = supportedDirectives.map { directive in
                 .init(kind: .attribute, spelling: "@", preciseIdentifier: nil),
                 .init(kind: .identifier, spelling: directive.name, preciseIdentifier: directive.usr)
             ],
-            subHeading: [
-                .init(kind: .attribute, spelling: "@", preciseIdentifier: nil),
-                .init(kind: .identifier, spelling: directive.name, preciseIdentifier: directive.usr)
-            ],
+            subHeading: navigatorFragments,
             prose: nil
         ),
         pathComponents: [
             directive.name
         ],
-        docComment: nil,
+        docComment: documentationComments[directive.name],
         accessLevel: .init(rawValue: "public"),
         kind: .init(parsedIdentifier: .class, displayName: "Directive"),
         mixins: [
             SymbolGraph.Symbol.DeclarationFragments.mixinKey: SymbolGraph.Symbol.DeclarationFragments(
-                declarationFragments: [
-                    .init(kind: .typeIdentifier, spelling: "@", preciseIdentifier: nil),
-                    .init(kind: .typeIdentifier, spelling: directive.name, preciseIdentifier: nil),
-                ] + extraDeclarationFragments
+                declarationFragments: fragments
             )
         ]
     )

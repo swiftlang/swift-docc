@@ -1,6 +1,10 @@
-# ``DocC/Stack``
+# ``docc/Stack``
 
 Displays set of horizontally arranged groupings that contain text and media in a section on a tutorial page.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 ## Overview
 
