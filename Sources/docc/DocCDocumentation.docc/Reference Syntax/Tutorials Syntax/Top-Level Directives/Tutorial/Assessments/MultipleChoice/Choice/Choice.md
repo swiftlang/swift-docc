@@ -1,6 +1,10 @@
-# ``DocC/Choice``
+# ``docc/Choice``
 
 Defines a single choice for a multiple-choice question in the assessments section of a tutorial page.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - isCorrect: A Boolean `true` or `false` value that denotes whether this choice is a correct or incorrect answer. **(required)**

@@ -100,6 +100,7 @@ let package = Package(
         .executableTarget(
             name: "generate-symbol-graph",
             dependencies: [
+                "SwiftDocC",
                 "SymbolKit",
             ]
         ),

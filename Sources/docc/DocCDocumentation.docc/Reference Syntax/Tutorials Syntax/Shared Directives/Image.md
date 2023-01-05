@@ -1,6 +1,10 @@
-# ``DocC/Image``
+# ``docc/Image``
 
 Displays an image in a tutorial.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - source: The name and file extension of an image in your Swift framework or package project. **(required)**

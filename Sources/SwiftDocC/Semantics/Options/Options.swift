@@ -11,7 +11,19 @@
 import Foundation
 import Markdown
 
-/// A directive that specifies various options for the page.
+/// Use Option directives to adjust DocC's default behaviors when rendering a page.
+///
+/// ## Topics
+///
+/// ### Adjusting Automatic Behaviors
+///
+/// - ``AutomaticSeeAlso``
+/// - ``AutomaticTitleHeading``
+/// - ``AutomaticArticleSubheading``
+///
+/// ### Adjusting Visual Style
+///
+/// - ``TopicsVisualStyle``
 public class Options: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     

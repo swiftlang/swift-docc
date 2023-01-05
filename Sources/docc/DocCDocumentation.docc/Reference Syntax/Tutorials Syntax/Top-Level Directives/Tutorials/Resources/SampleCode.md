@@ -1,7 +1,10 @@
-# ``DocC/SampleCode``
+# ``docc/SampleCode``
 
 Displays a set of sample code links in the resources section of a tutorial's table of contents page.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - destination: A URL to a page of related sample code. **(required)**
