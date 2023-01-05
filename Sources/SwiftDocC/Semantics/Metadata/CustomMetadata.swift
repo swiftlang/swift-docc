@@ -35,6 +35,8 @@ public final class CustomMetadata: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public var value: String
     
+    static var hiddenFromDocumentation = true
+    
     static var keyPaths: [String : AnyKeyPath] = [
         "key" : \CustomMetadata._key,
         "value"  : \CustomMetadata._value,

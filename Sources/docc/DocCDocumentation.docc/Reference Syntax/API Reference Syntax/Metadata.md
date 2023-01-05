@@ -1,6 +1,10 @@
-# ``DocC/Metadata``
+# ``docc/Metadata``
 
 Use metadata directives to instruct DocC how to build certain documentation files.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 ## Overview
 
@@ -44,8 +48,10 @@ A metadata element must contain one of the following items:
 
 - ``TechnologyRoot``
 
-### Customizing the Presentation of a Symbol Page
+### Customizing the Presentation of a Page
 
 - ``DisplayName``
+- ``PageImage``
+- ``CallToAction``
 
 <!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->

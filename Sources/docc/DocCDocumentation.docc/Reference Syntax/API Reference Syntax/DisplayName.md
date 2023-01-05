@@ -1,8 +1,13 @@
-# ``DocC/DisplayName``
+# ``docc/DisplayName``
 
 Configures a symbol's documentation page and any references to that page to show a custom name instead of the symbol name.
 
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
+
 - Parameters:
+    - name: The custom display name.
     - style: The text style used to format the symbol's display name. A value of `conceptual` (the default) denotes a plain text style that's not monospaced. A value of `symbol` denotes a monospaced text style. **(optional)**
 
 ## Overview

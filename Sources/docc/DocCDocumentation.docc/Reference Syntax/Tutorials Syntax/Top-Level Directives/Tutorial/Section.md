@@ -1,6 +1,10 @@
-# ``DocC/Section``
+# ``docc/Section``
 
 Displays a grouping of text, images, and tasks on a tutorial page.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - title: The name of the section. **(required)**

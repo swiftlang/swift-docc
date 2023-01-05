@@ -1,6 +1,10 @@
-# ``DocC/ContentAndMedia``
+# ``docc/ContentAndMedia``
 
 Displays a grouping that contains text and an image or a video in a section on a tutorial page.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 ## Overview
 

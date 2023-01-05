@@ -11,7 +11,7 @@
 import Foundation
 
 struct DirectiveIndex {
-    private static let topLevelReferenceDirectives: [AutomaticDirectiveConvertible.Type] = [
+    static let topLevelReferenceDirectives: [AutomaticDirectiveConvertible.Type] = [
         Metadata.self,
         Redirect.self,
         Snippet.self,
@@ -25,7 +25,7 @@ struct DirectiveIndex {
         VideoMedia.self,
     ]
     
-    private static let topLevelTutorialDirectives: [AutomaticDirectiveConvertible.Type] = [
+    static let topLevelTutorialDirectives: [AutomaticDirectiveConvertible.Type] = [
         Tutorial.self,
     ]
     
