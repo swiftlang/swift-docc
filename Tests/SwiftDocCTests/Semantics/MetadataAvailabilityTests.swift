@@ -25,8 +25,8 @@ class MetadataAvailabilityTests: XCTestCase {
 
         directive.map { directive in
             var problems = [Problem]()
-            XCTAssertEqual(MetadataAvailability.directiveName, directive.name)
-            let availability = MetadataAvailability(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+            XCTAssertEqual(Metadata.Availability.directiveName, directive.name)
+            let availability = Metadata.Availability(from: directive, source: nil, for: bundle, in: context, problems: &problems)
             XCTAssertNil(availability)
         }
     }
@@ -45,11 +45,11 @@ class MetadataAvailabilityTests: XCTestCase {
                 let _ = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
                 XCTAssertEqual(2, problems.count)
                 let diagnosticIdentifiers = Set(problems.map { $0.diagnostic.identifier })
-                XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.\(MetadataAvailability.self).DuplicateIntroduced"])
+                XCTAssertEqual(diagnosticIdentifiers, ["org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced"])
             }
         }
 
-        for platform in MetadataAvailability.Platform.allCases {
+        for platform in Metadata.Availability.Platform.allCases {
             let source = """
             @Metadata {
                 @Available(\(platform.rawValue), introduced: \"1.0\")
@@ -74,7 +74,7 @@ class MetadataAvailabilityTests: XCTestCase {
             validArgumentsWithVersion.append("introduced: \"1.0\", \(arg)")
         }
 
-        for platform in MetadataAvailability.Platform.allCases {
+        for platform in Metadata.Availability.Platform.allCases {
             // FIXME: Test validArguments with the `*` platform once that's introduced
             // cf. https://github.com/apple/swift-docc/issues/441
             for args in validArgumentsWithVersion {
@@ -115,7 +115,7 @@ class MetadataAvailabilityTests: XCTestCase {
     }
 
     func assertValidAvailability(source: String) throws {
-        try assertValidDirective(MetadataAvailability.self, source: source)
+        try assertValidDirective(Metadata.Availability.self, source: source)
     }
 
     func assertValidMetadata(source: String) throws {

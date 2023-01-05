@@ -24,7 +24,7 @@ import Markdown
 /// - ``DisplayName``
 /// - ``PageImage``
 /// - ``CallToAction``
-/// - ``MetadataAvailability``
+/// - ``Availability``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
@@ -51,7 +51,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     var callToAction: CallToAction? = nil
 
     @ChildDirective(requirements: .zeroOrMore)
-    var availability: [MetadataAvailability]
+    var availability: [Availability]
     
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
@@ -152,8 +152,8 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                         source: avail.originalMarkup.nameLocation?.source,
                         severity: .warning,
                         range: avail.originalMarkup.range,
-                        identifier: "org.swift.docc.\(MetadataAvailability.self).DuplicateIntroduced",
-                        summary: "Duplicate \(MetadataAvailability.directiveName.singleQuoted) directive with 'introduced' argument",
+                        identifier: "org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced",
+                        summary: "Duplicate \(Metadata.Availability.directiveName.singleQuoted) directive with 'introduced' argument",
                         explanation: """
                         A documentation page can only contain a single 'introduced' version for each platform.
                         """
@@ -165,7 +165,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                     }
 
                     let solution = Solution(
-                        summary: "Remove extraneous \(MetadataAvailability.directiveName.singleQuoted) directive",
+                        summary: "Remove extraneous \(Metadata.Availability.directiveName.singleQuoted) directive",
                         replacements: [
                             Replacement(range: range, replacement: "")
                         ]
