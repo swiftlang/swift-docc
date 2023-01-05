@@ -77,4 +77,33 @@ class PlatformAvailabilityTests: XCTestCase {
         XCTAssertEqual(iosAvailability.name, "iOS")
         XCTAssertEqual(iosAvailability.introduced, "16.0")
     }
+
+    func testMultiplePlatformAvailabilityFromArticle() throws {
+        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/AvailabilityBundle/ComplexAvailable",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        XCTAssertEqual(availability.count, 3)
+
+        XCTAssert(availability.contains(where: { item in
+            item.name == "iOS" && item.introduced == "15.0"
+        }))
+        XCTAssert(availability.contains(where: { item in
+            item.name == "macOS" && item.introduced == "12.0"
+        }))
+        XCTAssert(availability.contains(where: { item in
+            item.name == "watchOS" && item.introduced == "7.0"
+        }))
+    }
 }
