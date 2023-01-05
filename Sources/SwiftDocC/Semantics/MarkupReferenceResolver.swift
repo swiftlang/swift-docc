@@ -70,9 +70,8 @@ struct MarkupReferenceResolver: MarkupRewriter {
                 return nil
             }
             
-            // FIXME: Structure the `PathHierarchyBasedLinkResolver` near-miss suggestions as fixits. https://github.com/apple/swift-docc/issues/438 (rdar://103279313)
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage, candidates: unresolved.canidates))
             return nil
         }
     }

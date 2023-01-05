@@ -11,13 +11,20 @@
 import Foundation
 import Markdown
 
-func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, underlyingErrorMessage: String) -> Problem {
+func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, underlyingErrorMessage: String, candidates: [String]) -> Problem {
     let notes = uncuratedArticleMatch.map {
         [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
     
+    var solutions: [Solution] = []
+    if let range = range {
+        solutions.append(contentsOf: candidates.map { candidate in
+            Solution(summary: "Replace reference", replacements: [Replacement(range: range, replacement: "``\(candidate)``")])
+        })
+    }
+    
     let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(underlyingErrorMessage)", notes: notes)
-    return Problem(diagnostic: diagnostic, possibleSolutions: [])
+    return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 
 func unresolvedResourceProblem(
@@ -84,9 +91,8 @@ struct ReferenceResolver: SemanticVisitor {
             return .success(resolved)
             
         case let .failure(unresolved, errorMessage):
-            // FIXME: Structure the `PathHierarchyBasedLinkResolver` near-miss suggestions as fixits. https://github.com/apple/swift-docc/issues/438 (rdar://103279313)
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage, candidates: unresolved.canidates))
             return .failure(unresolved, errorMessage: errorMessage)
         }
     }
@@ -188,20 +194,9 @@ struct ReferenceResolver: SemanticVisitor {
         markupResolver.problemForUnresolvedReference = { unresolved, source, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
             // Verify we have all the information about the location of the source comment
             // and the symbol that the comment is inherited from.
-            if let parent = parent, let range = range,
-                let symbol = try? context.entity(with: parent).symbol,
-                let docLines = symbol.docComment,
-                let docStartLine = docLines.lines.first?.range?.start.line,
-                let docStartColumn = docLines.lines.first?.range?.start.character {
-                
+            if let parent = parent, let range = range {
                 switch context.resolve(.unresolved(unresolved), in: parent, fromSymbolLink: fromSymbolLink) {
                     case .success(let resolved):
-                        
-                        // Make the range for the suggested replacement.
-                        let start = SourceLocation(line: docStartLine + range.lowerBound.line, column: docStartColumn + range.lowerBound.column, source: range.lowerBound.source)
-                        let end = SourceLocation(line: docStartLine + range.upperBound.line, column: docStartColumn + range.upperBound.column, source: range.upperBound.source)
-                        let replacementRange = SourceRange(uncheckedBounds: (lower: start, upper: end))
-                        
                         // Return a warning with a suggested change that replaces the relative link with an absolute one.
                         return Problem(diagnostic: Diagnostic(source: source,
                             severity: .warning, range: range,
@@ -209,7 +204,7 @@ struct ReferenceResolver: SemanticVisitor {
                             summary: "This documentation block is inherited by other symbols where \(unresolved.topicURL.absoluteString.singleQuoted) fails to resolve."),
                             possibleSolutions: [
                                 Solution(summary: "Use an absolute link path.", replacements: [
-                                    Replacement(range: replacementRange, replacement: "<doc:\(resolved.path)>")
+                                    Replacement(range: range, replacement: "<doc:\(resolved.path)>")
                                 ])
                             ])
                     default: break

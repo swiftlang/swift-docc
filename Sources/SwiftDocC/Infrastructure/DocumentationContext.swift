@@ -613,8 +613,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         // source comment in the context of the complete file.
                         problems = problems.compactMap { problem -> Problem? in
                             guard let docRange = docs.lines.first?.range else { return nil }
-                            return Problem(diagnostic: problem.diagnostic.offsetedWithRange(docRange),
-                                           possibleSolutions: problem.possibleSolutions)
+                            return problem.offsetedWithRange(docRange)
                         }
                     }
 

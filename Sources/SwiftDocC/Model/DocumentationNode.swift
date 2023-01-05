@@ -417,7 +417,7 @@ public struct DocumentationNode {
                         continue
                     }
 
-                    var diagnostic = Diagnostic(
+                    let diagnostic = Diagnostic(
                         source: location,
                         severity: .warning,
                         range: range,
@@ -426,11 +426,13 @@ public struct DocumentationNode {
                         explanation: "Found \(comment.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
                     )
                     
+                    var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
+                    
                     if let offset = docComment.lines.first?.range {
-                        diagnostic = diagnostic.offsetedWithRange(offset)
+                        problem = problem.offsetedWithRange(offset)
                     }
                     
-                    engine.emit(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                    engine.emit(problem)
                 }
             }
 

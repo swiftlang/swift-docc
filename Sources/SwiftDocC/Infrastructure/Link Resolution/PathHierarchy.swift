@@ -321,7 +321,9 @@ struct PathHierarchy {
                 }
             } catch DisambiguationTree.Error.lookupCollision(let collisions) {
                 func wrappedCollisionError() -> Error {
-                    Error.lookupCollision(partialResult: node, collisions: collisions)
+                    Error.lookupCollision(partialResult: node,
+                                          remainingSubpath: remaining.map(\.full).joined(separator: "/"),
+                                          collisions: collisions)
                 }
                 
                 // See if the collision can be resolved by looking ahead on level deeper.
@@ -365,6 +367,7 @@ struct PathHierarchy {
                 // Couldn't resolve the collision by look ahead.
                 throw Error.lookupCollision(
                     partialResult: node,
+                    remainingSubpath: remaining.map(\.full).joined(separator: "/"),
                     collisions: collisions.map { ($0.node, $0.disambiguation) }
                 )
             }
@@ -814,8 +817,9 @@ extension PathHierarchy {
         ///
         /// Includes information about:
         /// - The partial result for as much of the path that could be found unambiguously.
+        /// - The remaining portion of the path.
         /// - A list of possible matches paired with the disambiguation suffixes needed to distinguish them.
-        case lookupCollision(partialResult: Node, collisions: [(node: Node, disambiguation: String)])
+        case lookupCollision(partialResult: Node, remainingSubpath: String, collisions: [(node: Node, disambiguation: String)])
     }
 }
     
@@ -846,9 +850,42 @@ extension PathHierarchy.Error {
         case .nonSymbolMatchForSymbolLink:
             return "Symbol links can only resolve symbols."
             
-        case .lookupCollision(let partialResult, let collisions):
+        case .lookupCollision(let partialResult, _, let collisions):
             let collisionDescription = collisions.map { "Append '-\($0.disambiguation)' to refer to \($0.node.fullNameOfValue(context: context).singleQuoted)" }.sorted()
             return "Reference is ambiguous after \(partialResult.pathWithoutDisambiguation().singleQuoted): \(collisionDescription.joined(separator: ". "))."
+        }
+    }
+    
+    /// Generates replacements for a faulty `originalPath` that fix the first unresolvable path segment
+    /// by adding disambiguation suffixes or provding near-miss alternatives.
+    ///
+    /// The replacement options only fix the first faulty segment in a reference. They do not alter the valid prefix and keep
+    /// the unchecked suffix in place.
+    func replacements(for originalPath: String) -> [String] {
+        switch self {
+        case .partialResult(_, let remaining, let available):
+            var validPrefix = originalPath
+            validPrefix.removeLast(remaining.count)
+            
+            let unprocessedSuffix = remaining.suffix(from: remaining.firstIndex(of: "/") ?? remaining.endIndex)
+            
+            // We don't provide all available children as fixits here if we have no near miss. This
+            // is different from the `errorMessage(context:)`, but we shouldn't suggest a fix that in
+            // no way resembles the user's faulty input.
+            return NearMiss.bestMatches(for: available, against: remaining).map { suggestionSuffix in
+                validPrefix + suggestionSuffix + unprocessedSuffix
+            }
+        case .lookupCollision(_, let remaining, let collisions):
+            var validPrefix = originalPath
+            validPrefix.removeLast(remaining.count)
+            
+            let unprocessedSuffix = remaining.suffix(from: remaining.firstIndex(of: "/") ?? remaining.endIndex)
+            
+            return collisions.map { collision in
+                validPrefix + collision.node.name + "-\(collision.disambiguation)" + unprocessedSuffix
+            }
+        case .notFound, .unfindableMatch, .nonSymbolMatchForSymbolLink:
+            return []
         }
     }
 }

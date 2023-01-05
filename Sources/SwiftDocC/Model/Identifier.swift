@@ -489,6 +489,12 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
     /// An optional title.
     public var title: String? = nil
     
+    /// Optional candidates in case the reference couldn't be resolved.
+    ///
+    /// A resolution algorithm may attach possible candidates for an unresolvable reference to this field
+    /// for usage in diagnostics and fixits.
+    var canidates: [String] = []
+    
     /// Creates a new unresolved reference from another unresolved reference with a resolved parent reference.
     /// - Parameters:
     ///   - parent: The resolved parent reference of the unresolved reference.
@@ -527,6 +533,15 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
             result.replaceSubrange(rangeOfPath, with: topicURL.components.path)
         }
         return result
+    }
+}
+
+extension UnresolvedTopicReference {
+    /// Create a copy of this reference that stores the given `candidates`.
+    func with<C: Sequence>(canidates: C) -> Self where C.Element == String {
+        var copy = self
+        copy.canidates.append(contentsOf: canidates)
+        return copy
     }
 }
 

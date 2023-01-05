@@ -94,13 +94,9 @@ public extension Diagnostic {
             // No location information in the source diagnostic, might be removed for safety reasons.
             return self
         }
-
-        let start = SourceLocation(line: diagnosticRange.lowerBound.line + docRange.start.line, column: diagnosticRange.lowerBound.column + docRange.start.character, source: nil)
-        let end = SourceLocation(line: diagnosticRange.upperBound.line + docRange.start.line, column: diagnosticRange.upperBound.column + docRange.start.character, source: nil)
-
-        // Use the updated source range.
+        
         var result = self
-        result.range = start..<end
+        result.range = diagnosticRange.offsetedWithRange(docRange)
         return result
     }
 

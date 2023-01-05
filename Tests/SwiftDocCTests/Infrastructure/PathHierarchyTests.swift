@@ -1241,7 +1241,7 @@ class PathHierarchyTests: XCTestCase {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
         } catch PathHierarchy.Error.partialResult {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
-        } catch PathHierarchy.Error.lookupCollision(_, let collisions) {
+        } catch PathHierarchy.Error.lookupCollision(_, _, let collisions) {
             let symbols = collisions.map { $0.node.symbol! }
             XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.names.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
         }
@@ -1255,7 +1255,7 @@ class PathHierarchyTests: XCTestCase {
             // This specific error is expected.
         } catch PathHierarchy.Error.partialResult {
             // For the purpose of this assertion, this also counts as "not found".
-        } catch PathHierarchy.Error.lookupCollision(_, let collisions) {
+        } catch PathHierarchy.Error.lookupCollision(_, _, let collisions) {
             let symbols = collisions.map { $0.node.symbol! }
             XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.names.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
         }
@@ -1269,7 +1269,7 @@ class PathHierarchyTests: XCTestCase {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
         } catch PathHierarchy.Error.partialResult {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
-        } catch PathHierarchy.Error.lookupCollision(_, let collisions) {
+        } catch PathHierarchy.Error.lookupCollision(_, _, let collisions) {
             let sortedCollisions = collisions.sorted(by: \.disambiguation)
             XCTAssertEqual(sortedCollisions.count, expectedCollisions.count, file: file, line: line)
             for (actual, expected) in zip(sortedCollisions, expectedCollisions) {

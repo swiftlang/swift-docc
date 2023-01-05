@@ -9,6 +9,7 @@
 */
 
 import Markdown
+import SymbolKit
 
 /**
  A textual replacement.
@@ -23,5 +24,26 @@ public struct Replacement {
     public init(range: SourceRange, replacement: String) {
         self.range = range
         self.replacement = replacement
+    }
+}
+
+extension Replacement {
+    
+    /// Returns a copy of the replacement but offset using a certain `SourceRange`.
+    /// Useful when validating a doc comment that needs to be projected in its containing file "space".
+    func offsetedWithRange(_ docRange: SymbolGraph.LineList.SourceRange) -> Replacement {
+        var result = self
+        result.range = range.offsetedWithRange(docRange)
+        return result
+    }
+}
+
+extension SourceRange {
+    /// Returns a copy of the `SourceRange` offset using a certain  SymbolKit `SourceRange`.
+    func offsetedWithRange(_ docRange: SymbolGraph.LineList.SourceRange) -> SourceRange {
+        let start = SourceLocation(line: lowerBound.line + docRange.start.line, column: lowerBound.column + docRange.start.character, source: nil)
+        let end = SourceLocation(line: upperBound.line + docRange.start.line, column: upperBound.column + docRange.start.character, source: nil)
+        
+        return start..<end
     }
 }

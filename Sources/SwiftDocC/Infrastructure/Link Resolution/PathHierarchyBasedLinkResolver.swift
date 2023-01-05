@@ -222,7 +222,12 @@ final class PathHierarchyBasedLinkResolver {
             if let resolvedFallbackReference = fallbackResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context) {
                 return .success(resolvedFallbackReference)
             } else {
-                return .failure(unresolvedReference, errorMessage: error.errorMessage(context: context))
+                var originalReferenceString = unresolvedReference.path
+                if let fragment = unresolvedReference.topicURL.components.fragment {
+                    originalReferenceString += "#" + fragment
+                }
+                
+                return .failure(unresolvedReference.with(canidates: error.replacements(for: originalReferenceString)), errorMessage: error.errorMessage(context: context))
             }
         } catch {
             fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
