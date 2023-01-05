@@ -432,6 +432,10 @@ class ExternalLinkableTests: XCTestCase {
                     )
                 ]
             )
+            
+            let encoded = try JSONEncoder().encode(summary)
+            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+            XCTAssertEqual(decoded, summary)
         }
     }
     
