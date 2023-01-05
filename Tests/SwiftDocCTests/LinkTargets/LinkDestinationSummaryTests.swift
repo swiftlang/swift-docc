@@ -191,6 +191,10 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "MyClass", kind: .identifier, identifier: nil),
             ])
+            
+            let encoded = try JSONEncoder().encode(summary)
+            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+            XCTAssertEqual(decoded, summary)
         }
         
         do {
@@ -226,6 +230,10 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " : ", kind: .text, identifier: nil),
                 .init(text: "Hashable", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "p:hPP"),
             ])
+            
+            let encoded = try JSONEncoder().encode(summary)
+            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+            XCTAssertEqual(decoded, summary)
         }
         
         do {
@@ -245,6 +253,10 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
             XCTAssertEqual(summary.declarationFragments, nil) // This symbol doesn't have a `subHeading` in the symbol graph
+            
+            let encoded = try JSONEncoder().encode(summary)
+            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+            XCTAssertEqual(decoded, summary)
         }
         
         do {
@@ -276,6 +288,10 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: ")", kind: .text, identifier: nil),
                 .init(text: "\n", kind: .text, identifier: nil),
             ])
+            
+            let encoded = try JSONEncoder().encode(summary)
+            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+            XCTAssertEqual(decoded, summary)
         }
     }
     
@@ -333,6 +349,10 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(variant.usr, nil)
             XCTAssertEqual(variant.kind, nil)
             XCTAssertEqual(variant.taskGroups, nil)
+            
+            let encoded = try JSONEncoder().encode(summary)
+            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+            XCTAssertEqual(decoded, summary)
         }
         
         // Check the Swift version of a symbol that's represented differently in different languages
@@ -412,6 +432,10 @@ class ExternalLinkableTests: XCTestCase {
                     )
                 ]
             )
+            
+            let encoded = try JSONEncoder().encode(summary)
+            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+            XCTAssertEqual(decoded, summary)
         }
     }
     
