@@ -1,4 +1,8 @@
-# ``DocC``
+# ``docc``
+
+@Metadata {
+    @DisplayName("DocC")
+}
 
 Produce rich API reference documentation and interactive tutorials for your Swift framework or package.
 

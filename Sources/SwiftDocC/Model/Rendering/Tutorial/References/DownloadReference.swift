@@ -28,7 +28,21 @@ public struct DownloadReference: RenderReference, URLReference {
     public var url: URL
     
     /// The SHA512 hash value for the resource.
-    public var sha512Checksum: String?
+    public var checksum: String?
+
+    @available(*, deprecated, renamed: "checksum")
+    public var sha512Checksum: String {
+        get {
+            return checksum ?? ""
+        }
+        set {
+            if newValue.isEmpty {
+                self.checksum = nil
+            } else {
+                self.checksum = newValue
+            }
+        }
+    }
     
     /// Creates a new reference to a downloadable resource.
     ///
@@ -36,24 +50,22 @@ public struct DownloadReference: RenderReference, URLReference {
     ///   - identifier: An identifier for the resource's reference.
     ///   - url: The path to the resource.
     ///   - sha512Checksum: The SHA512 hash value for the resource.
-    public init(identifier: RenderReferenceIdentifier, renderURL url: URL, sha512Checksum: String?) {
+    public init(identifier: RenderReferenceIdentifier, renderURL url: URL, checksum: String?) {
         self.identifier = identifier
         self.url = url
-        self.sha512Checksum = sha512Checksum
+        self.checksum = checksum
     }
-    
-    enum CodingKeys: String, CodingKey {
-        case type
-        case identifier
-        case url
-        case sha512Checksum = "checksum"
+
+    @available(*, deprecated, message: "Use 'init(identifier:renderURL:checksum:)' instead")
+    public init(identifier: RenderReferenceIdentifier, renderURL url: URL, sha512Checksum: String) {
+        self.init(identifier: identifier, renderURL: url, checksum: sha512Checksum)
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
-        try container.encodeIfPresent(sha512Checksum, forKey: .sha512Checksum)
+        try container.encodeIfPresent(checksum, forKey: .checksum)
         
         // Render URL
         try container.encode(renderURL(for: url), forKey: .url)
