@@ -200,6 +200,10 @@ extension DirectiveMirror {
             return type.directiveName
         }
         
+        var required: Bool {
+            return requirements == .one || requirements == .oneOrMore
+        }
+        
         let propertyLabel: String
         let childDirective: _ChildDirectiveProtocol
         
@@ -256,6 +260,10 @@ extension DirectiveMirror {
             case .disallowsMarkup:
                 return false
             }
+        }
+        
+        var hiddenFromDocumentation: Bool {
+            (type as? AutomaticDirectiveConvertible.Type)?.hiddenFromDocumentation ?? false
         }
         
         let type: DirectiveConvertible.Type

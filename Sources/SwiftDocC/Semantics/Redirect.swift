@@ -30,6 +30,8 @@ public final class Redirect: Semantic, AutomaticDirectiveConvertible {
         "oldPath" : \Redirect._oldPath,
     ]
     
+    static var hiddenFromDocumentation = true
+    
     init(originalMarkup: BlockDirective, oldPath: URL) {
         self.originalMarkup = originalMarkup
         super.init()

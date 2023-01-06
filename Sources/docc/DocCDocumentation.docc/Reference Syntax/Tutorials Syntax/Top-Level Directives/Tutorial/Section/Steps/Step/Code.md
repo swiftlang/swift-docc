@@ -1,6 +1,10 @@
-# ``DocC/Code``
+# ``docc/Code``
 
 Defines the code for an individual step on a tutorial page.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - name: The file name and extension of the Swift code file that the reader edits in their project when performing the step. This name appears above the code of the step. **(required)**

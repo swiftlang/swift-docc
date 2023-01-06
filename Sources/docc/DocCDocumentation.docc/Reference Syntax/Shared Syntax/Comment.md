@@ -1,6 +1,10 @@
-# ``DocC/Comment``
+# ``docc/Comment``
 
 Captures a writer comment that's not visible in the rendered documentation.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 ## Overview
 

@@ -1,6 +1,10 @@
-# ``DocC/Volume``
+# ``docc/Volume``
 
 Organizes related chapters into a volume on a tutorial's table of contents page.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - name: The name of the volume. **(required)**
