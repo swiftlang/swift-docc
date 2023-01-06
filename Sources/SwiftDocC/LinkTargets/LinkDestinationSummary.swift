@@ -474,7 +474,7 @@ extension LinkDestinationSummary.Variant {
         try container.encodeIfPresent(relativePresentationURL, forKey: .relativePresentationURL)
         try container.encodeIfPresent(title, forKey: .title)
         try container.encodeIfPresent(abstract, forKey: .abstract)
-        try container.encodeIfPresent(language, forKey: .language)
+        try container.encodeIfPresent(language?.id, forKey: .language)
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
@@ -513,7 +513,7 @@ extension LinkDestinationSummary.Variant {
         relativePresentationURL = try container.decodeIfPresent(URL.self, forKey: .relativePresentationURL)
         title = try container.decodeIfPresent(String?.self, forKey: .title)
         abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
-        usr = try container.decodeIfPresent(String?.self, forKey: .title)
+        usr = try container.decodeIfPresent(String?.self, forKey: .usr)
         declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
         taskGroups = try container.decodeIfPresent([LinkDestinationSummary.TaskGroup]?.self, forKey: .taskGroups)
     }
