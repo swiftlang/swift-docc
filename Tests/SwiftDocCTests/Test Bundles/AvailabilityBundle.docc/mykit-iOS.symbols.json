@@ -1,0 +1,562 @@
+{
+  "metadata": {
+      "formatVersion" : {
+          "major" : 1
+      },
+      "generator" : "app/1.0"
+  },
+  "module" : {
+    "name" : "MyKit",
+    "platform" : {
+      "architecture" : "x86_64",
+      "vendor" : "apple",
+      "operatingSystem" : {
+        "name" : "ios",
+        "minimumVersion" : {
+          "major" : 13,
+          "minor" : 0,
+          "patch" : 0
+        }
+      }
+    }
+  },
+  "symbols" : [
+    {
+      "accessLevel" : "public",
+      "kind" : {
+        "identifier" : "swift.class",
+        "displayName" : "Class"
+      },
+      "names" : {
+        "title" : "MyClass",
+        "subHeading" : [
+            {
+              "kind" : "keyword",
+              "spelling" : "class"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " "
+            },
+            {
+              "kind" : "identifier",
+              "spelling" : "MyClass"
+            }
+        ],
+        "navigator" : [
+            {
+              "kind" : "identifier",
+              "spelling" : "MyClassNavigator"
+            }
+        ]
+      },
+      "availability" : [
+        {
+          "domain": "macOS",
+          "introduced": {
+            "major": 10,
+            "minor": 15
+          }
+        },
+        {
+          "domain": "watchOS",
+          "introduced": {
+            "major": 6,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "tvOS",
+          "introduced": {
+            "major": 13,
+            "minor": 0
+          }
+        },
+        {
+          "domain": "iOS",
+          "deprecated": {
+            "major": 13,
+            "minor": 0
+          }
+        }
+      ],
+      "pathComponents" : [
+        "MyClass"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5ClassC",
+        "interfaceLanguage": "swift"
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "class"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyClass"
+        }
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "kind" : {
+        "identifier" : "swift.method",
+        "displayName" : "Instance Method"
+      },
+      "names" : {
+        "title" : "myFunction()"
+      },
+      "pathComponents" : [
+        "MyClass",
+        "myFunction()"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5ClassC10myFunctionyyF",
+        "interfaceLanguage": "swift"
+      },
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A cool API to call."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - name: A parameter"
+          },
+          {
+            "text" : "- Returns: Return value"
+          }
+        ]
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "func"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "myFunction"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "externalParam",
+          "spelling" : "for"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "internalParam",
+          "spelling" : "name"
+        },
+        {
+          "kind" : "unhandledTokenKind",
+          "spelling" : "..."
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "swiftExtension" : {
+        "extendedModule": "MyKit",
+        "constraints" : [
+          {
+            "kind" : "sameType",
+            "lhs" : "Label",
+            "rhs" : "Text"
+          },
+          {
+            "kind" : "superclass",
+            "lhs" : "Observer",
+            "rhs" : "NSObject"
+          },
+          {
+            "kind" : "conformance",
+            "lhs" : "S",
+            "rhs" : "StringProtocol"
+          }
+        ]
+      }
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "func"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "globalFunction"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "_"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "s:10Foundation4DataV",
+          "spelling" : "Data"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "considering"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "s:Si",
+          "spelling" : "Int"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+
+        ]
+      },
+      "functionSignature" : {
+        "parameters" : [
+          {
+            "declarationFragments" : [
+              {
+                "kind" : "identifier",
+                "spelling" : "data"
+              },
+              {
+                "kind" : "text",
+                "spelling" : ": "
+              },
+              {
+                "kind" : "typeIdentifier",
+                "preciseIdentifier" : "s:10Foundation4DataV",
+                "spelling" : "Data"
+              }
+            ],
+            "name" : "data"
+          },
+          {
+            "declarationFragments" : [
+              {
+                "kind" : "identifier",
+                "spelling" : "considering"
+              },
+              {
+                "kind" : "text",
+                "spelling" : ": "
+              },
+              {
+                "kind" : "typeIdentifier",
+                "preciseIdentifier" : "s:Si",
+                "spelling" : "Int"
+              }
+            ],
+            "name" : "considering"
+          }
+        ],
+        "returns" : [
+          {
+            "kind" : "text",
+            "spelling" : "()"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "s:5MyKit14globalFunction_11consideringy10Foundation4DataV_SitF"
+      },
+      "kind" : {
+        "displayName" : "Function",
+        "identifier" : "swift.func"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "func"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "globalFunction"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:10Foundation4DataV",
+            "spelling" : "Data"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "considering"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:Si",
+            "spelling" : "Int"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "\n"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "func"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "globalFunction"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:10Foundation4DataV",
+            "spelling" : "Data"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "considering"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:Si",
+            "spelling" : "Int"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "\n"
+          }
+        ],
+        "title" : "globalFunction(_:considering:)"
+      },
+      "pathComponents" : [
+        "globalFunction(_:considering:)"
+      ]
+    },
+    {
+      "accessLevel" : "internal",
+      "kind" : {
+        "identifier" : "swift.init",
+        "displayName" : "Initializer"
+      },
+      "names" : {
+        "title" : "init()"
+      },
+      "pathComponents" : [
+        "MyClass",
+        "init()"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5ClassCACycfc",
+        "interfaceLanguage": "swift"
+      }
+    },
+    {
+      "accessLevel" : "internal",
+      "kind" : {
+        "identifier" : "swift.init",
+        "displayName" : "Initializer"
+      },
+      "names" : {
+        "title" : "init()"
+      },
+      "pathComponents" : [
+        "MyClass",
+        "init()"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5ClassCACycfcDUPLICATE",
+        "interfaceLanguage" : "swift"
+      }
+    },
+    {
+      "accessLevel" : "public",
+      "kind" : {
+        "identifier" : "swift.protocol",
+        "displayName" : "Protocol"
+      },
+      "names" : {
+        "title" : "MyProtocol",
+        "navigator": [
+          {
+            "kind" : "identifier",
+            "spelling" : "MyProtocol"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind" : "keyword",
+            "spelling" : "protocol"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "MyProtocol"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " : "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Hashable",
+            "preciseIdentifier" : "p:hPP"
+          }
+        ]
+      },
+      "pathComponents" : [
+        "MyProtocol"
+      ],
+      "identifier" : {
+        "precise" : "s:5MyKit0A5ProtocolP",
+        "interfaceLanguage": "swift"
+      },
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "protocol"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "MyProtocol"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " : "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Hashable",
+          "preciseIdentifier" : "p:hPP"
+        }
+      ]
+    }
+  ],
+  "relationships" : [
+    {
+      "source" : "s:5MyKit0A5ProtocolP",
+      "target" : "s:5Foundation0A5NSCodableP",
+      "kind" : "conformsTo",
+      "targetFallback": "Foundation.NSCodable"
+    },
+    {
+      "source" : "s:5MyKit0A5ProtocolP",
+      "target" : "s:5Foundation0A5EarhartP",
+      "kind" : "conformsTo"
+    },
+    {
+      "source" : "s:5MyKit0A5ClassC",
+      "target" : "s:5MyKit0A5ProtocolP",
+      "kind" : "conformsTo",
+      "swiftConstraints" : [
+        {
+            "kind" : "conformance",
+            "lhs" : "Element",
+            "rhs" : "Equatable"
+        }
+      ]
+    },
+    {
+      "source" : "s:5MyKit0A5ClassC10myFunctionyyF",
+      "target" : "s:5MyKit0A5ClassC",
+      "kind" : "memberOf"
+    },
+    {
+      "source" : "s:5MyKit0A5ClassCACycfc",
+      "target" : "s:5MyKit0A5ClassC",
+      "kind" : "memberOf"
+    },
+    {
+      "source" : "s:5MyKit0A5ClassCACycfcDUPLICATE",
+      "target" : "s:5MyKit0A5ClassC",
+      "kind" : "memberOf"
+    }
+  ]
+}
