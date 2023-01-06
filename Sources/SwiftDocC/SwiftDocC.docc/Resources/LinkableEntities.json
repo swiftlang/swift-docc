@@ -88,30 +88,6 @@
                     }
                 }
             },
-            "SourceLanguage": {
-                "type": "object",
-                "required": [
-                    "name",
-                    "id"
-                ],
-                "properties": {
-                    "name": {
-                        "type": "string"
-                    },
-                    "id": {
-                        "type": "string"
-                    },
-                    "idAliases": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    },
-                    "linkDisambiguationID": {
-                        "type": "string"
-                    }
-                }
-            },
             "RenderNodeVariantTrait": {
                 "oneOf": [
                     {
@@ -148,7 +124,7 @@
                         "nullable": true
                     },
                     "language": {
-                        "$ref": "#/components/schemas/SourceLanguage",
+                        "type": "string",
                         "nullable": true
                     },
                     "path": {
