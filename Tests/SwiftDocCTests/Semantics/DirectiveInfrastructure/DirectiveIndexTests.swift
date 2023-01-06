@@ -21,6 +21,7 @@ class DirectiveIndexTests: XCTestCase {
                 "AutomaticArticleSubheading",
                 "AutomaticSeeAlso",
                 "AutomaticTitleHeading",
+                "Available",
                 "CallToAction",
                 "Chapter",
                 "Choice",
