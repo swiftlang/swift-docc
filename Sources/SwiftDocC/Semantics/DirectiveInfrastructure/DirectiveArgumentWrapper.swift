@@ -89,45 +89,21 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         fatalError()
     }
     
-    private init(
-        value: Value?,
-        name: _DirectiveArgumentName,
-        transform: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
-        allowedValues: [String]?,
-        required: Bool?
-    ) {
-        self.name = name
-        self.defaultValue = value
-        if let optionallyWrappedValue = Value.self as? OptionallyWrapped.Type {
-            self.typeDisplayName = String(describing: optionallyWrappedValue.baseType()) + "?"
-        } else {
-            self.typeDisplayName = String(describing: Value.self)
-        }
-        
-        if let required = required {
-            self.required = required
-        } else {
-            self.required = defaultValue == nil
-        }
-        
-        self.parseArgument = transform
-        self.allowedValues = allowedValues
-    }
+    // Expected argument configurations
     
     @_disfavoredOverload
     init(
         wrappedValue: Value,
         name: _DirectiveArgumentName = .inferredFromPropertyName,
         parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
-        allowedValues: [String]? = nil,
-        required: Bool? = nil
+        allowedValues: [String]? = nil
     ) {
         self.init(
             value: wrappedValue,
             name: name,
             transform: parseArgument,
             allowedValues: allowedValues,
-            required: required
+            providedRequired: nil
         )
     }
     
@@ -135,16 +111,32 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     init(
         name: _DirectiveArgumentName = .inferredFromPropertyName,
         parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
-        allowedValues: [String]? = nil,
-        required: Bool? = nil
+        allowedValues: [String]? = nil
     ) {
         self.init(
             value: nil,
             name: name,
             transform: parseArgument,
             allowedValues: allowedValues,
-            required: required
+            providedRequired: nil
         )
+    }
+    
+    private init(
+        value: Value?,
+        name: _DirectiveArgumentName,
+        transform: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        allowedValues: [String]?,
+        providedRequired: Bool?
+    ) {
+        let required = providedRequired ?? (value == nil)
+        
+        self.name = name
+        self.defaultValue = value
+        self.typeDisplayName = typeDisplayNameDescription(defaultValue: value, required: required)
+        self.parseArgument = transform
+        self.allowedValues = allowedValues
+        self.required = required
     }
     
     func setProperty<T>(
@@ -156,63 +148,199 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
         let wrappedValuePath = path.appending(path: \Self.parsedValue)
         containingDirective[keyPath: wrappedValuePath] = any as! Value?
     }
+    
+    // Warnings and errors for unexpected argument configurations
+    
+    @_disfavoredOverload
+    @available(*, deprecated, message: "Use an optional type or a default value to control whether or not a directive argument is required.")
+    init(
+        wrappedValue: Value,
+        name: _DirectiveArgumentName = .inferredFromPropertyName,
+        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        allowedValues: [String]? = nil,
+        required: Bool
+    ) {
+        self.init(
+            value: wrappedValue,
+            name: name,
+            transform: parseArgument,
+            allowedValues: allowedValues,
+            providedRequired: required
+        )
+    }
+    
+    @_disfavoredOverload
+    @available(*, deprecated, message: "Use an optional type or a default value to control whether or not a directive argument is required.")
+    init(
+        name: _DirectiveArgumentName = .inferredFromPropertyName,
+        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        allowedValues: [String]? = nil,
+        required: Bool
+    ) {
+        self.init(
+            value: nil,
+            name: name,
+            transform: parseArgument,
+            allowedValues: allowedValues,
+            providedRequired: required
+        )
+    }
 }
 
 extension DirectiveArgumentWrapped where Value: DirectiveArgumentValueConvertible {
+    // Expected argument configurations
+    
+    @_disfavoredOverload
     init(name: _DirectiveArgumentName = .inferredFromPropertyName) {
         self.init(value: nil, name: name)
     }
     
-    init(
-        wrappedValue: Value,
-        name: _DirectiveArgumentName = .inferredFromPropertyName
-    ) {
+    @_disfavoredOverload
+    init(wrappedValue: Value, name: _DirectiveArgumentName = .inferredFromPropertyName) {
         self.init(value: wrappedValue, name: name)
     }
     
-    private init(
-        value: Value?,
-        name: _DirectiveArgumentName
-    ) {
+    private init(value: Value?, name: _DirectiveArgumentName) {
         self.name = name
         self.defaultValue = value
         
-        if let value = value {
-            self.typeDisplayName = String(describing: Value.self) + " = " + String(describing: value)
-        } else {
-            self.typeDisplayName = String(describing: Value.self)
-        }
-        
+        let required = value == nil
+        self.typeDisplayName = typeDisplayNameDescription(defaultValue: value, required: required)
         self.parseArgument = { _, argument in
             Value.init(rawDirectiveArgumentValue: argument)
         }
         self.allowedValues = Value.allowedValues()
-        self.required = value == nil
+        self.required = required
+    }
+    
+    // Warnings and errors for unexpected argument configurations
+    
+    @_disfavoredOverload
+    @available(*, unavailable, message: "Directive argument of non-optional types without default value need to be required. Use an optional type or provide a default value to make this argument non-required.")
+    init(name: _DirectiveArgumentName = .inferredFromPropertyName, required: Bool) {
+        fatalError()
     }
 }
 
-protocol OptionallyWrappedDirectiveArgumentValueConvertible: OptionallyWrapped {}
-extension Optional: OptionallyWrappedDirectiveArgumentValueConvertible where Wrapped: DirectiveArgumentValueConvertible {}
-extension DirectiveArgumentWrapped where Value: OptionallyWrappedDirectiveArgumentValueConvertible {
+protocol _OptionalDirectiveArgument {
+    associatedtype WrappedArgument: DirectiveArgumentValueConvertible
+    var wrapped: WrappedArgument? { get }
+    init(wrapping: WrappedArgument?)
+}
+extension Optional: _OptionalDirectiveArgument where Wrapped: DirectiveArgumentValueConvertible {
+    typealias WrappedArgument = Wrapped
+    var wrapped: WrappedArgument? {
+        switch self {
+        case .some(let value):
+            return value
+        case .none: return
+            nil
+        }
+    }
+    init(wrapping: WrappedArgument?) {
+        if let wrapped = wrapping {
+            self = .some(wrapped)
+        } else {
+            self = .none
+        }
+    }
+}
+
+extension DirectiveArgumentWrapped where Value: _OptionalDirectiveArgument {
+    // Expected argument configurations
+    
+    init(name: _DirectiveArgumentName = .inferredFromPropertyName) {
+        self = .init(value: nil, name: name)
+    }
+    
+    @_disfavoredOverload
+    init(
+        wrappedValue: Value,
+        name: _DirectiveArgumentName = .inferredFromPropertyName
+    ) {
+        self = .init(value: wrappedValue, name: name)
+    }
+    
+    @_disfavoredOverload
+    init(
+        name: _DirectiveArgumentName = .inferredFromPropertyName,
+        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        allowedValues: [String]? = nil
+    ) {
+        self = .init(value: nil, name: name, parseArgument: parseArgument, allowedValues: allowedValues)
+    }
+    
+    @_disfavoredOverload
     init(
         wrappedValue: Value,
         name: _DirectiveArgumentName = .inferredFromPropertyName,
-        required: Bool = false
+        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        allowedValues: [String]? = nil
     ) {
-        let argumentValueType = Value.baseType() as! DirectiveArgumentValueConvertible.Type
-        
-        self.name = name
-        self.defaultValue = wrappedValue
-        if required {
-            self.typeDisplayName = String(describing: argumentValueType)
-        } else {
-            self.typeDisplayName = String(describing: argumentValueType) + "?"
-        }
-        
-        self.parseArgument = { _, argument in
-            argumentValueType.init(rawDirectiveArgumentValue: argument)
-        }
-        self.allowedValues = argumentValueType.allowedValues()
-        self.required = required
+        self = .init(value: wrappedValue, name: name, parseArgument: parseArgument, allowedValues: allowedValues)
     }
+    
+    private init(value: Value?, name: _DirectiveArgumentName) {
+        let argumentValueType = Value.WrappedArgument.self
+        
+        self = .init(
+            value: value,
+            name: name,
+            parseArgument: { _, argument in
+                Value(wrapping: argumentValueType.init(rawDirectiveArgumentValue: argument))
+            },
+            allowedValues: argumentValueType.allowedValues()
+        )
+    }
+    
+    private init(
+        value: Value?,
+        name: _DirectiveArgumentName,
+        parseArgument: @escaping (_ bundle: DocumentationBundle, _ argumentValue: String) -> (Value?),
+        allowedValues: [String]? = nil
+    ) {
+        self.name = name
+        self.defaultValue = value
+        self.typeDisplayName = typeDisplayNameDescription(optionalDefaultValue: value, required: false)
+        self.parseArgument = parseArgument
+        self.allowedValues = allowedValues
+        self.required = false
+    }
+    
+    // Warnings and errors for unexpected argument configurations
+    
+    @_disfavoredOverload
+    @available(*, unavailable, message: "Directive arguments with an Optional type shouldn't be required.")
+    init(
+        name: _DirectiveArgumentName = .inferredFromPropertyName,
+        required: Bool
+    ) {
+        fatalError()
+    }
+    
+    @_disfavoredOverload
+    @available(*, unavailable, message: "Directive arguments with an Optional type shouldn't be required.")
+    init(
+        wrappedValue: Value,
+        name: _DirectiveArgumentName = .inferredFromPropertyName,
+        required: Bool
+    ) {
+        fatalError()
+    }
+}
+
+private func typeDisplayNameDescription<Value>(defaultValue: Value?, required: Bool) -> String {
+    var name = "\(Value.self)"
+    
+    if let defaultValue = defaultValue {
+        name += " = \(defaultValue)"
+    } else if !required {
+        name += "?"
+    }
+    
+    return name
+}
+
+private func typeDisplayNameDescription<Value: _OptionalDirectiveArgument>(optionalDefaultValue: Value?, required: Bool) -> String {
+    return typeDisplayNameDescription(defaultValue: optionalDefaultValue?.wrapped, required: required)
 }
