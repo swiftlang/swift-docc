@@ -817,6 +817,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 node.metadata.platformsVariants = .init(defaultValue: renderAvailability)
             }
         }
+
+        if let pageKind = article.metadata?.pageKind {
+            node.metadata.role = pageKind.kind.renderRole.rawValue
+            node.metadata.roleHeading = pageKind.kind.titleHeading
+        }
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
