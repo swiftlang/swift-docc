@@ -26,21 +26,29 @@ struct AvailabilityParser {
     /// - Parameter platform: The platform to check. Pass `nil` to check if the symbol is deprecated on all platforms.
     /// - Returns: Whether or not the symbol is deprecated.
     func isDeprecated(platform: String? = nil) -> Bool {
+        // Check if a availability items is empty
         guard !availability.availability.isEmpty else { return false }
         
+        guard let platform = platform else {
+            // Check if there's a "universal deprecation" in the listing
+            let universalCondition = availability.availability.contains { item in
+                (item.domain == nil || item.domain?.rawValue == "swift") && item.isDeprecated
+            }
+            // Check if all darwinOS varients is deprecated
+            // See all supported domains on https://docs.swift.org/swift-book/ReferenceManual/Attributes.html
+            let domains: Set<String> = ["iOS", "iOSApplicationExtension",
+                                        "macOS", "macOSApplicationExtension",
+                                        "macCatalyst", "macCatalystApplicationExtension",
+                                        "watchOS", "watchOSApplicationExtension",
+                                        "tvOS", "tvOSApplicationExtension"]
+            
+            let allCondition = availability.availability.allSatisfy(\.isDeprecated)
+            return universalCondition || (allCondition && Set(availability.availability.compactMap(\.domain?.rawValue)).isSuperset(of: domains))
+        }
         // Check if a specific platform is deprecated
-        if let platform = platform {
-            return availability.availability.contains(where: { return $0.domain?.rawValue == platform && ( $0.isUnconditionallyDeprecated || $0.deprecatedVersion != nil ) })
+        return availability.availability.contains { item in
+            item.domain?.rawValue == platform && item.isDeprecated
         }
-        
-        // Check if there's a "universal deprecation" in the listing
-        if availability.availability.contains(where: { $0.domain == nil && ($0.isUnconditionallyDeprecated || $0.isUnconditionallyUnavailable) }) {
-            return true
-        }
-        
-        // Check if the symbol is unconditionally deprecated
-        return availability.availability
-            .allSatisfy { $0.isUnconditionallyDeprecated || $0.isUnconditionallyUnavailable || $0.deprecatedVersion != nil }
     }
     
     /// Determines a symbol's deprecation message that either applies to a given platform or that applies to all platforms.
@@ -75,5 +83,12 @@ struct AvailabilityParser {
         }
         
         return nil
+    }
+}
+
+extension SymbolGraph.Symbol.Availability.AvailabilityItem {
+    // Check if a AvailabilityItem is deprecated
+    var isDeprecated: Bool {
+        isUnconditionallyDeprecated || isUnconditionallyUnavailable || deprecatedVersion != nil
     }
 }

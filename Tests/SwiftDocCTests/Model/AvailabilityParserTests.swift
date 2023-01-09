@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -91,7 +91,7 @@ class AvailabilityParserTests: XCTestCase {
         
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
-        XCTAssertTrue(compiler.isDeprecated())
+        XCTAssertFalse(compiler.isDeprecated())
         XCTAssertEqual(compiler.deprecationMessage(), "deprecated")
     }
 
@@ -99,6 +99,24 @@ class AvailabilityParserTests: XCTestCase {
         let json = """
         [
             {
+                "message": "deprecated",
+                "isUnconditionallyDeprecated" : true
+            }
+        ]
+        """
+        let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
+        
+        /// Test all platforms
+        let compiler = AvailabilityParser(availability)
+        XCTAssertTrue(compiler.isDeprecated())
+        XCTAssertEqual(compiler.deprecationMessage(), "deprecated")
+    }
+    
+    func testDeprecatedLanguage() throws {
+        let json = """
+        [
+            {
+                "domain": "swift",
                 "message": "deprecated",
                 "isUnconditionallyDeprecated" : true
             }
@@ -129,7 +147,7 @@ class AvailabilityParserTests: XCTestCase {
         
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
-        XCTAssertTrue(compiler.isDeprecated())
+        XCTAssertFalse(compiler.isDeprecated())
         XCTAssertNil(compiler.deprecationMessage())
     }
 
@@ -151,7 +169,59 @@ class AvailabilityParserTests: XCTestCase {
         
         /// Test all platforms
         let compiler = AvailabilityParser(availability)
-        XCTAssertTrue(compiler.isDeprecated())
+        XCTAssertFalse(compiler.isDeprecated())
         XCTAssertEqual(compiler.deprecationMessage(), "deprecated")
+    }
+    
+    func testDeprecatedAllPlatforms() throws {
+        let json = """
+        [
+            {
+                "domain": "iOS",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "iOSApplicationExtension",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "macOS",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "macOSApplicationExtension",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "macCatalyst",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "macCatalystApplicationExtension",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "watchOS",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "watchOSApplicationExtension",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "tvOS",
+                "isUnconditionallyUnavailable" : true
+            },
+            {
+                "domain": "tvOSApplicationExtension",
+                "isUnconditionallyUnavailable" : true
+            }
+        ]
+        """
+        let availability = try JSONDecoder().decode(Availability.self, from: json.data(using: .utf8)!)
+        
+        /// Test all platforms
+        let compiler = AvailabilityParser(availability)
+        XCTAssertTrue(compiler.isDeprecated())
     }
 }

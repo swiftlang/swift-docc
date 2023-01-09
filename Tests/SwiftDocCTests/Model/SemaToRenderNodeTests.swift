@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -2109,7 +2109,7 @@ Document
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         // The reference is deprecated on all platforms
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"] as? TopicRenderReference)?.isDeprecated, true)
+        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"] as? TopicRenderReference)?.isDeprecated, false)
     }
 
     func testDoesNotRenderDeprecatedViolator() throws {
@@ -2157,7 +2157,7 @@ Document
         let renderNode = translator.visitSymbol(symbol) as! RenderNode
         
         // Verify that the reference is deprecated on all platforms
-        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"] as? TopicRenderReference)?.isDeprecated, true)
+        XCTAssertEqual((renderNode.references["doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()"] as? TopicRenderReference)?.isDeprecated, false)
     }
     
     func testRenderMetadataFragments() throws {
