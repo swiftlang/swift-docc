@@ -25,6 +25,7 @@ import Markdown
 /// - ``PageImage``
 /// - ``CallToAction``
 /// - ``Availability``
+/// - ``PageKind``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
@@ -52,6 +53,9 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
 
     @ChildDirective(requirements: .zeroOrMore)
     var availability: [Availability]
+
+    @ChildDirective
+    var pageKind: PageKind? = nil
     
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
@@ -61,6 +65,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "customMetadata"        : \Metadata._customMetadata,
         "callToAction"          : \Metadata._callToAction,
         "availability"          : \Metadata._availability,
+        "pageKind"              : \Metadata._pageKind,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
@@ -83,7 +88,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
