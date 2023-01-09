@@ -37,6 +37,7 @@ class DirectiveIndexTests: XCTestCase {
                 "Metadata",
                 "Options",
                 "PageImage",
+                "PageKind",
                 "Redirected",
                 "Row",
                 "Small",
