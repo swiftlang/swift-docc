@@ -11,43 +11,6 @@
 import Markdown
 import Foundation
 
-/// The list of tags that can appear at the start of a list item to indicate
-/// some meaning in the markup, taken from Swift documentation comments. These
-/// are maintained for backward compatibility but their use should be
-/// discouraged.
-let simpleListItemTags = [
-    "attention",
-    "author",
-    "authors",
-    "bug",
-    "complexity",
-    "copyright",
-    "date",
-    "experiment",
-    "important",
-    "invariant",
-    "localizationkey",
-    "mutatingvariant",
-    "nonmutatingvariant",
-    "note",
-    "postcondition",
-    "precondition",
-    "remark",
-    "remarks",
-    "returns",
-    "throws",
-    "requires",
-    "seealso",
-    "since",
-    "tag",
-    "todo",
-    "version",
-    "warning",
-    "keyword",
-    "recommended",
-    "recommendedover",
-]
-
 extension Collection where Element == InlineMarkup {
     func extractParameter() -> Parameter? {
         guard let initialTextNode = first as? Text else {
@@ -99,26 +62,6 @@ extension ListItem {
             return [Text(newText)] + Array(firstParagraph.inlineChildren.dropFirst(1))
         }
 
-        return nil
-    }
-
-    /**
-     Extract a "simple tag" from the list of known list item tags.
-
-     Expected form:
-
-     ```markdown
-     - todo: ...
-     - seeAlso: ...
-     ```
-     ...etc.
-     */
-    func extractSimpleTag() -> SimpleTag? {
-        for tag in simpleListItemTags {
-            if let contents = extractTag(tag + ":") {
-                return SimpleTag(tag: tag, contents: contents)
-            }
-        }
         return nil
     }
 
@@ -224,7 +167,6 @@ struct TaggedListItemExtractor: MarkupRewriter {
     var parameters = [Parameter]()
     var returns = [Return]()
     var `throws` = [Throw]()
-    var otherTags = [SimpleTag]()
 
     init() {}
     
@@ -310,11 +252,6 @@ struct TaggedListItemExtractor: MarkupRewriter {
         } else if let parameterDescription = listItem.extractStandaloneParameter() {
             // - parameter x: ...
             parameters.append(parameterDescription)
-            return nil
-        } else if let simpleTag = listItem.extractSimpleTag() {
-            // - todo: ...
-            // etc.
-            otherTags.append(simpleTag)
             return nil
         }
 
