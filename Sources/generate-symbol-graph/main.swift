@@ -26,6 +26,12 @@ struct Directive {
     }
 }
 
+extension DirectiveMirror.ReflectedDirective {
+    var documentableArguments: [DirectiveMirror.ReflectedArgument] {
+        arguments.filter { !$0.hiddenFromDocumentation }
+    }
+}
+
 func directiveUSR(_ directiveName: String) -> String {
     "__docc_universal_symbol_reference_$\(directiveName)"
 }
@@ -129,7 +135,7 @@ let supportedDirectives: [Directive] = [
     .map { directive in
         return Directive(
             name: directive.name,
-            acceptsArguments: !directive.arguments.isEmpty,
+            acceptsArguments: !directive.documentableArguments.isEmpty,
             isLeaf: !directive.allowsMarkup && directive.childDirectives.isEmpty
         )
     }
@@ -214,7 +220,7 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
         
         var parametersDocumentation = [SymbolGraph.LineList.Line]()
         var createdParametersSection = false
-        for argument in indexedDirective.arguments {
+        for argument in indexedDirective.documentableArguments {
             let argumentDisplayName: String
             if argument.name.isEmpty {
                 argumentDisplayName = argument.propertyLabel
@@ -405,11 +411,11 @@ func declarationFragments(
         ]
     )
     
-    if !directive.arguments.isEmpty {
+    if !directive.documentableArguments.isEmpty {
         fragments.append("(")
     }
     
-    for (index, argument) in directive.arguments.enumerated() {
+    for (index, argument) in directive.documentableArguments.enumerated() {
         if argument.labelDisplayName.hasPrefix("_ ") {
             fragments.append("_ ")
             let adjustedLabel = argument.labelDisplayName.trimmingCharacters(in: CharacterSet(charactersIn: " _"))
@@ -439,7 +445,7 @@ func declarationFragments(
             fragments.append(.init(argument.typeDisplayName, kind: .typeIdentifier))
         }
         
-        if index < directive.arguments.count - 1 {
+        if index < directive.documentableArguments.count - 1 {
             fragments.append(", ")
         } else {
             fragments.append(")")
