@@ -2454,6 +2454,8 @@ Document
         .aside(.init(style: .init(rawValue: "Since"), content: [.paragraph(.init(inlineContent: [.text("The beginning of time.")]))])),
         .aside(.init(style: .init(rawValue: "Todo"), content: [.paragraph(.init(inlineContent: [.text("This needs work.")]))])),
         .aside(.init(style: .init(rawValue: "Version"), content: [.paragraph(.init(inlineContent: [.text("3.1.4")]))])),
+        .aside(.init(style: .init(rawValue: "SeeAlso"), content: [.paragraph(.init(inlineContent: [.text("This other thing.")]))])),
+        .aside(.init(style: .init(rawValue: "SeeAlso"), content: [.paragraph(.init(inlineContent: [.text("And this other thing.")]))])),
         .aside(.init(style: .init(rawValue: "Throws"), content: [.paragraph(.init(inlineContent: [.text("A serious error.")]))])),
     ]
     
@@ -2996,6 +2998,10 @@ Document
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This needs work."}]}]},
             {"type":"aside", "style":"note", "name":"Version",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"3.1.4"}]}]},
+            {"type":"aside", "style":"note", "name":"See Also",
+                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This other thing."}]}]},
+            {"type":"aside", "style":"note", "name":"See Also",
+                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"And this other thing."}]}]},
             {"type":"aside", "style":"note", "name":"Throws",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"A serious error."}]}]}
             ]
