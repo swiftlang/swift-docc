@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -196,6 +196,60 @@ class VideoMediaTests: XCTestCase {
                 RenderBlockContent.video(RenderBlockContent.Video(
                     identifier: RenderReferenceIdentifier("introvideo"),
                     metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
+                ))
+            ]
+        )
+        
+        XCTAssertEqual(references.count, 2)
+        
+        let videoReference = try XCTUnwrap(references["introvideo"] as? VideoReference)
+        XCTAssertEqual(videoReference.poster, RenderReferenceIdentifier("introposter"))
+        XCTAssertEqual(videoReference.altText, "An introductory video")
+        
+        XCTAssertTrue(references.keys.contains("introposter"))
+    }
+    
+    func testRenderVideoDirectiveWithDeviceFrame() throws {
+        let (renderedContent, problems, video) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+            """
+            @Video(source: "introvideo", deviceFrame: watch)
+            """
+        }
+        
+        XCTAssertNotNil(video)
+        
+        XCTAssertEqual(problems, [])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.video(RenderBlockContent.Video(
+                    identifier: RenderReferenceIdentifier("introvideo"),
+                    metadata: RenderContentMetadata(deviceFrame: "watch")
+                ))
+            ]
+        )
+    }
+    
+    func testRenderVideoDirectiveWithCaptionAndDeviceFrame() throws {
+        let (renderedContent, problems, video, references) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+            """
+            @Video(source: "introvideo", alt: "An introductory video", poster: "introposter", deviceFrame: laptop) {
+                This is my caption.
+            }
+            """
+        }
+        
+        XCTAssertNotNil(video)
+        
+        XCTAssertEqual(problems, [])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.video(RenderBlockContent.Video(
+                    identifier: RenderReferenceIdentifier("introvideo"),
+                    metadata: RenderContentMetadata(abstract: [.text("This is my caption.")], deviceFrame: "laptop")
                 ))
             ]
         )

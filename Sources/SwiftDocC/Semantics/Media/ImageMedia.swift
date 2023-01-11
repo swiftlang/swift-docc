@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -28,6 +28,14 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped(name: .custom("alt"))
     public private(set) var altText: String? = nil
     
+    
+    /// The name of a device frame that should wrap this image.
+    ///
+    /// This is an experimental feature – any device frame specified here
+    /// must be defined in the `theme-settings.json` file of the containing DocC catalog.
+    @DirectiveArgumentWrapped(hiddenFromDocumentation: true)
+    public private(set) var deviceFrame: String? = nil
+    
     /// An optional caption that should be rendered alongside the image.
     @ChildMarkup(numberOfParagraphs: .zeroOrOne)
     public private(set) var caption: MarkupContainer
@@ -36,6 +44,7 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
         "altText" : \ImageMedia._altText,
         "source"  : \ImageMedia._source,
         "caption" : \ImageMedia._caption,
+        "deviceFrame" : \ImageMedia._deviceFrame,
     ]
     
     /// Creates a new image with the given parameters.
@@ -74,7 +83,8 @@ extension ImageMedia: RenderableDirectiveConvertible {
         guard let renderedImage = contentCompiler.visitImage(
             source: source.path,
             altText: altText,
-            caption: renderedCaption
+            caption: renderedCaption,
+            deviceFrame: deviceFrame
         ).first as? RenderInlineContent else {
             return []
         }
