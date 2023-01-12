@@ -65,7 +65,8 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped
     public var purpose: Purpose? = nil
 
-    /// Text to use as the button label, which may override ``purpose-swift.property``.
+    /// Text to use as the button label, which may override the default provided by a
+    /// given `purpose`.
     @DirectiveArgumentWrapped
     public var label: String? = nil
 

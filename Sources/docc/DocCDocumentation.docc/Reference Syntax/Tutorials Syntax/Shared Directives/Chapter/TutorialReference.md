@@ -1,6 +1,10 @@
-# ``DocC/TutorialReference``
+# ``docc/TutorialReference``
 
 Adds an individual tutorial page link to a chapter on a table of contents page.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - tutorial: A link to a tutorial page, in the format *`<doc:[TutorialPageFileName]>`*. For example, *`<doc:Creating-Custom-Sloths>`*.  **(required)**

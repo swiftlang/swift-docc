@@ -17,6 +17,13 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     
     public let originalMarkup: BlockDirective
     
+    @DirectiveArgumentWrapped(
+        parseArgument: { bundle, argumentValue in
+            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
+        }
+    )
+    public private(set) var source: ResourceReference
+    
     /// Optional alternate text for an image.
     @DirectiveArgumentWrapped(name: .custom("alt"))
     public private(set) var altText: String? = nil
@@ -24,13 +31,6 @@ public final class ImageMedia: Semantic, Media, AutomaticDirectiveConvertible {
     /// An optional caption that should be rendered alongside the image.
     @ChildMarkup(numberOfParagraphs: .zeroOrOne)
     public private(set) var caption: MarkupContainer
-    
-    @DirectiveArgumentWrapped(
-        parseArgument: { bundle, argumentValue in
-            ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
-        }
-    )
-    public private(set) var source: ResourceReference
     
     static var keyPaths: [String : AnyKeyPath] = [
         "altText" : \ImageMedia._altText,

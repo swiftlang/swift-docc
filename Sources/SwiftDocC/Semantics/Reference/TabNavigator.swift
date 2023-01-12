@@ -31,6 +31,10 @@ import Markdown
 ///    }
 /// }
 /// ```
+///
+/// ## Topics
+///
+/// - ``Tab``
 public final class TabNavigator: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
     public let originalMarkup: BlockDirective
     

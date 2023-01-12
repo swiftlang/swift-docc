@@ -43,6 +43,10 @@ import Markdown
 ///    }
 /// }
 /// ```
+///
+/// ## Topics
+///
+/// - ``Column``
 public final class Row: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
     public let originalMarkup: BlockDirective
     
@@ -59,11 +63,10 @@ public final class Row: Semantic, AutomaticDirectiveConvertible, MarkupContainin
     ]
     
     /// The number of columns in this row.
-    ///
-    /// This may be different then the count of ``columns`` array. For example, there may be
-    /// individual columns that span multiple columns (specified with the column's
-    /// ``Column/size`` argument) or the row could be not fully filled with columns.
     public var numberOfColumns: Int {
+        // This may be different then the count of `columns` array. For example, there may be
+        // individual columns that span multiple columns (specified with the column's
+        // `size` argument) or the row could be not fully filled with columns.
         return _numberOfColumns ?? columns.map(\.size).reduce(0, +)
     }
     

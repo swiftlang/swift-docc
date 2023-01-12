@@ -98,8 +98,8 @@ public struct DirectiveArgumentWrapped<Value>: _DirectiveArgumentProtocol {
     ) {
         self.name = name
         self.defaultValue = value
-        if let optionallyWrappedValue = Value.self as? OptionallyWrapped {
-            self.typeDisplayName = String(describing: optionallyWrappedValue.baseType())
+        if let optionallyWrappedValue = Value.self as? OptionallyWrapped.Type {
+            self.typeDisplayName = String(describing: optionallyWrappedValue.baseType()) + "?"
         } else {
             self.typeDisplayName = String(describing: Value.self)
         }
@@ -176,7 +176,13 @@ extension DirectiveArgumentWrapped where Value: DirectiveArgumentValueConvertibl
     ) {
         self.name = name
         self.defaultValue = value
-        self.typeDisplayName = String(describing: Value.self)
+        
+        if let value = value {
+            self.typeDisplayName = String(describing: Value.self) + " = " + String(describing: value)
+        } else {
+            self.typeDisplayName = String(describing: Value.self)
+        }
+        
         self.parseArgument = { _, argument in
             Value.init(rawDirectiveArgumentValue: argument)
         }
@@ -197,7 +203,12 @@ extension DirectiveArgumentWrapped where Value: OptionallyWrappedDirectiveArgume
         
         self.name = name
         self.defaultValue = wrappedValue
-        self.typeDisplayName = String(describing: argumentValueType)
+        if required {
+            self.typeDisplayName = String(describing: argumentValueType)
+        } else {
+            self.typeDisplayName = String(describing: argumentValueType) + "?"
+        }
+        
         self.parseArgument = { _, argument in
             argumentValueType.init(rawDirectiveArgumentValue: argument)
         }

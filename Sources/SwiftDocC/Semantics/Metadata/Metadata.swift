@@ -24,6 +24,8 @@ import Markdown
 /// - ``DisplayName``
 /// - ``PageImage``
 /// - ``CallToAction``
+/// - ``Availability``
+/// - ``PageKind``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
@@ -48,6 +50,12 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
 
     @ChildDirective
     var callToAction: CallToAction? = nil
+
+    @ChildDirective(requirements: .zeroOrMore)
+    var availability: [Availability]
+
+    @ChildDirective
+    var pageKind: PageKind? = nil
     
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
@@ -56,6 +64,8 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "pageImages"            : \Metadata._pageImages,
         "customMetadata"        : \Metadata._customMetadata,
         "callToAction"          : \Metadata._callToAction,
+        "availability"          : \Metadata._availability,
+        "pageKind"              : \Metadata._pageKind,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
@@ -78,7 +88,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
@@ -130,6 +140,44 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                 )
                 
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+            }
+        }
+
+        let categorizedAvailability = Dictionary(grouping: availability, by: \.platform)
+
+        for availabilityAttrs in categorizedAvailability.values {
+            guard availabilityAttrs.count > 1 else {
+                continue
+            }
+
+            let duplicateIntroduced = availabilityAttrs.filter({ $0.introduced != nil })
+            if duplicateIntroduced.count > 1 {
+                for avail in duplicateIntroduced {
+                    let diagnostic = Diagnostic(
+                        source: avail.originalMarkup.nameLocation?.source,
+                        severity: .warning,
+                        range: avail.originalMarkup.range,
+                        identifier: "org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced",
+                        summary: "Duplicate \(Metadata.Availability.directiveName.singleQuoted) directive with 'introduced' argument",
+                        explanation: """
+                        A documentation page can only contain a single 'introduced' version for each platform.
+                        """
+                    )
+
+                    guard let range = avail.originalMarkup.range else {
+                        problems.append(Problem(diagnostic: diagnostic))
+                        continue
+                    }
+
+                    let solution = Solution(
+                        summary: "Remove extraneous \(Metadata.Availability.directiveName.singleQuoted) directive",
+                        replacements: [
+                            Replacement(range: range, replacement: "")
+                        ]
+                    )
+
+                    problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+                }
             }
         }
         

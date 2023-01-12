@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>DocC</string>
+	<string>docc</string>
 	<key>CFBundleDisplayName</key>
-	<string>DocC</string>
+	<string>docc</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.swift.docc</string>
 	<key>CDDefaultCodeListingLanguage</key>

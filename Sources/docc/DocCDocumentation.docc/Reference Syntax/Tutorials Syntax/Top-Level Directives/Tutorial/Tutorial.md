@@ -1,6 +1,10 @@
-# ``DocC/Tutorial``
+# ``docc/Tutorial``
 
 Displays a tutorial page that teaches your Swift framework or package APIs through interactive coding exercises.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 - Parameters:
     - time: An integer value that represents the estimated time it takes to complete the tutorial, in minutes. **(optional)**
