@@ -27,6 +27,8 @@ public final class DeprecationSummary: Semantic, AutomaticDirectiveConvertible {
         "content" : \DeprecationSummary._content
     ]
     
+    static var hiddenFromDocumentation = true
+    
     /// Creates a new deprecation summary from the content of the given directive.
     /// - Parameters:
     ///   - originalMarkup: The source markup as a directive.

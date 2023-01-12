@@ -1,6 +1,10 @@
-# ``DocC/TechnologyRoot``
+# ``docc/TechnologyRoot``
 
 Configures a documentation page that's not associated with a particular framework so it appears as a top-level page.
+
+@Metadata {
+    @DocumentationExtension(mergeBehavior: override)
+}
 
 ## Overview
 
