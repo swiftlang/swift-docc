@@ -62,6 +62,23 @@ public final class VideoMedia: Semantic, Media, AutomaticDirectiveConvertible {
         self.source = source
     }
     
+    func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
+        if !FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled && deviceFrame != nil {
+            let diagnostic = Diagnostic(
+                source: source,
+                severity: .warning, range: originalMarkup.range,
+                identifier: "org.swift.docc.UnknownArgument",
+                summary: "Unknown argument 'deviceFrame' in \(Self.directiveName)."
+            )
+            
+            problems.append(.init(diagnostic: diagnostic))
+            
+            deviceFrame = nil
+        }
+        
+        return true
+    }
+    
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
     init(originalMarkup: BlockDirective) {
         self.originalMarkup = originalMarkup

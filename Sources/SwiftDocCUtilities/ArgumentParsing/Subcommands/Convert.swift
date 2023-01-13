@@ -131,6 +131,11 @@ extension Docc {
         @Flag(help: .hidden)
         @available(*, deprecated, message: "Render Index JSON is now emitted by default.")
         public var enableExperimentalJSONIndex = false
+        
+        /// A user-provided value that is true if the user enables experimental support for
+        /// device frames.
+        @Flag(help: .hidden)
+        public var enableExperimentalDeviceFrameSupport = false
 
         /// A user-provided value that is true if experimental documentation inheritance is to be enabled.
         ///

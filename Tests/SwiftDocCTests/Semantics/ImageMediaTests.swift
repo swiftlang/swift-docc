@@ -159,7 +159,33 @@ class ImageMediaTests: XCTestCase {
         )
     }
     
+    func testImageDirectiveDiagnosesDeviceFrameByDefault() throws {
+        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+            """
+            @Image(source: "figure1", deviceFrame: phone)
+            """
+        }
+        
+        XCTAssertNotNil(image)
+        
+        XCTAssertEqual(problems, ["1: warning – org.swift.docc.UnknownArgument"])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                    inlineContent: [.image(
+                        identifier: RenderReferenceIdentifier("figure1"),
+                        metadata: nil
+                    )]
+                ))
+            ]
+        )
+    }
+    
     func testRenderImageDirectiveWithDeviceFrame() throws {
+        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        
         let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
             """
             @Image(source: "figure1", deviceFrame: phone)
@@ -184,6 +210,8 @@ class ImageMediaTests: XCTestCase {
     }
     
     func testRenderImageDirectiveWithDeviceFrameAndCaption() throws {
+        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        
         let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
             """
             @Image(source: "figure1", deviceFrame: laptop) {

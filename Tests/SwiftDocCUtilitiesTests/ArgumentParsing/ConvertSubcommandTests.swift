@@ -370,6 +370,27 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(actionWithFlag.experimentalEnableCustomTemplates)
     }
     
+    func testExperimentalEnableDeviceFrameSupportFlag() throws {
+        let originalFeatureFlagsState = FeatureFlags.current
+        
+        defer {
+            FeatureFlags.current = originalFeatureFlagsState
+        }
+        
+        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
+        let actionWithoutFlag = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        XCTAssertFalse(commandWithoutFlag.enableExperimentalDeviceFrameSupport)
+        XCTAssertFalse(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
+
+        let commandWithFlag = try Docc.Convert.parse([
+            "--enable-experimental-device-frame-support",
+            testBundleURL.path,
+        ])
+        let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
+        XCTAssertTrue(commandWithFlag.enableExperimentalDeviceFrameSupport)
+        XCTAssertTrue(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
+    }
+    
     func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
         unsetenv(TemplateOption.environmentVariableKey)
         

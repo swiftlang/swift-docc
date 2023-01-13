@@ -209,7 +209,31 @@ class VideoMediaTests: XCTestCase {
         XCTAssertTrue(references.keys.contains("introposter"))
     }
     
+    func testVideoMediaDiagnosesDeviceFrameByDefault() throws {
+        let (renderedContent, problems, video) = try parseDirective(VideoMedia.self, in: "TestBundle") {
+            """
+            @Video(source: "introvideo", deviceFrame: watch)
+            """
+        }
+        
+        XCTAssertNotNil(video)
+        
+        XCTAssertEqual(problems, ["1: warning – org.swift.docc.UnknownArgument"])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.video(RenderBlockContent.Video(
+                    identifier: RenderReferenceIdentifier("introvideo"),
+                    metadata: nil
+                ))
+            ]
+        )
+    }
+    
     func testRenderVideoDirectiveWithDeviceFrame() throws {
+        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        
         let (renderedContent, problems, video) = try parseDirective(VideoMedia.self, in: "TestBundle") {
             """
             @Video(source: "introvideo", deviceFrame: watch)
@@ -232,6 +256,8 @@ class VideoMediaTests: XCTestCase {
     }
     
     func testRenderVideoDirectiveWithCaptionAndDeviceFrame() throws {
+        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        
         let (renderedContent, problems, video, references) = try parseDirective(VideoMedia.self, in: "TestBundle") {
             """
             @Video(source: "introvideo", alt: "An introductory video", poster: "introposter", deviceFrame: laptop) {
