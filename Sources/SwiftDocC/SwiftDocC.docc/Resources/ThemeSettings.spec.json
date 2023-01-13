@@ -810,6 +810,15 @@
                                         "description": "The CSS font-family value to be used for monospaced code-voice text in documentation."
                                     }
                                 }
+                            },
+                            "device-frames": {
+                                "type": "object",
+                                "description": "Adds new DeviceFrames. The keys are used as names for the frames.",
+                                "allOf": [
+                                    {
+                                        "$ref": "#/components/schemas/DeviceFrameAttributes"
+                                    }
+                                ]
                             }
                         }
                     },
@@ -902,6 +911,36 @@
                 "type": "string",
                 "description": "An absolute URL or relative path.",
                 "format": "uri"
+            },
+            "DeviceFrameAttributes": {
+                "type": "object",
+                "description": "A definition for a device frame",
+                "properties": {
+                    "screenTop": {
+                        "type": "number"
+                    },
+                    "screenWidth": {
+                        "type": "number"
+                    },
+                    "screenHeight": {
+                        "type": "number"
+                    },
+                    "screenLeft": {
+                        "type": "number"
+                    },
+                    "frameWidth": {
+                        "type": "number"
+                    },
+                    "frameHeight": {
+                        "type": "number"
+                    },
+                    "lightUrl": {
+                        "$ref": "#/components/schemas/URL"
+                    },
+                    "darkUrl": {
+                        "$ref": "#/components/schemas/URL"
+                    }
+                }
             }
         },
         "requestBodies": {},
