@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,6 +23,10 @@ enum AvailabilityRenderOrder {
     /// Sort two availability render items based on their platform name.
     static func compare(lhs: AvailabilityRenderItem, rhs: AvailabilityRenderItem) -> Bool {
         guard let lhsName = lhs.name, let rhsName = rhs.name else { return false }
-        return platformsOrder[lhsName, default: Int.max] < platformsOrder[rhsName, default: Int.max]
+        if platformsOrder.keys.contains(lhsName) || platformsOrder.keys.contains(rhsName) {
+            return platformsOrder[lhsName, default: Int.max] < platformsOrder[rhsName, default: Int.max]
+        } else {
+            return lhsName < rhsName
+        }
     }
 }
