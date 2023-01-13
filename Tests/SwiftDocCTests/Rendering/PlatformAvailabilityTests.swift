@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -104,6 +104,32 @@ class PlatformAvailabilityTests: XCTestCase {
         }))
         XCTAssert(availability.contains(where: { item in
             item.name == "watchOS" && item.introduced == "7.0"
+        }))
+    }
+
+    func testArbitraryPlatformAvailability() throws {
+        let (bundle, context) = try testBundleAndContext(named: "AvailabilityBundle")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/AvailabilityBundle/ArbitraryPlatforms",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let availability = try XCTUnwrap(renderNode.metadata.platformsVariants.defaultValue)
+        XCTAssertEqual(availability.count, 2)
+
+        XCTAssert(availability.contains(where: { item in
+            item.name == "SomePackage" && item.introduced == "1.0"
+        }))
+        XCTAssert(availability.contains(where: { item in
+            item.name == "My Package" && item.introduced == "2.0"
         }))
     }
 }

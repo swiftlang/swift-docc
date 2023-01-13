@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -109,6 +109,11 @@ public struct PlatformName: Codable, Hashable, Equatable {
         // Note: This is still an optional initializer to prevent source breakage when
         // `Availability.Platform` re-introduces the `.any` case
         // cf. https://github.com/apple/swift-docc/issues/441
-        self = .init(operatingSystemName: platform.rawValue)
+        if let knowDomain = Self.platformNamesIndex[platform.rawValue.lowercased()] {
+            self = knowDomain
+        } else {
+            let identifier = platform.rawValue.lowercased().replacingOccurrences(of: " ", with: "")
+            self.init(rawValue: identifier, displayName: platform.rawValue)
+        }
     }
 }
