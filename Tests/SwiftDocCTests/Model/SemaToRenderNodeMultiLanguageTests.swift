@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -850,6 +850,44 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
         XCTAssert(objectiveCSymbol.relationshipSections.isEmpty)
     }
     
+    func testArticlesWithSupportedLanguagesDirective() throws {
+        let outputConsumer = try renderNodeConsumer(
+            for: "MixedLanguageFrameworkWithArticlesUsingSupportedLanguages"
+        )
+        
+        assertIsAvailableInLanguages(
+            try outputConsumer.renderNode(
+                withTitle: "ArticleWithoutSupportedLanguages"
+            ),
+            languages: ["swift", "occ"],
+            defaultLanguage: .swift
+        )
+        
+        assertIsAvailableInLanguages(
+            try outputConsumer.renderNode(
+                withTitle: "SwiftArticle"
+            ),
+            languages: ["swift"],
+            defaultLanguage: .swift
+        )
+        
+        assertIsAvailableInLanguages(
+            try outputConsumer.renderNode(
+                withTitle: "ObjCArticle"
+            ),
+            languages: ["occ"],
+            defaultLanguage: .objectiveC
+        )
+        
+        assertIsAvailableInLanguages(
+            try outputConsumer.renderNode(
+                withTitle: "SwiftAndObjCArticle"
+            ),
+            languages: ["swift", "occ"],
+            defaultLanguage: .swift
+        )
+    }
+    
     func assertExpectedContent(
         _ renderNode: RenderNode,
         sourceLanguage expectedSourceLanguage: String,
@@ -975,5 +1013,27 @@ class SemaToRenderNodeMixedLanguageTests: XCTestCase {
             RenderNode.self,
             from: objectiveCVariantData
         )
+    }
+    
+    func assertIsAvailableInLanguages(
+        _ renderNode: RenderNode,
+        languages: Set<String>,
+        defaultLanguage: SourceLanguage
+    ) {
+        XCTAssertEqual(
+            Set(
+                (renderNode.variants ?? [])
+                    .compactMap { variant in
+                        guard case .interfaceLanguage(let language) = variant.traits.first else {
+                            return nil
+                        }
+                        
+                        return language
+                    }
+            ),
+            languages
+        )
+        
+        XCTAssertEqual(renderNode.identifier.sourceLanguage, defaultLanguage)
     }
 }
