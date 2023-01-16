@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -370,7 +370,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(xcodeRequirementReference.url.absoluteString, "https://www.example.com/download")
         
         XCTAssertEqual(downloadReference.identifier.identifier, "project.zip")
-        XCTAssertEqual(downloadReference.sha512Checksum, "2521bb27db3f8b72f8f2bb9e3a33698b9c5c72a5d7862f5b209794099e1cf0acaab7d8a47760b001cb508b5c4f3d7cf7f8ce1c32679b3fde223e63b5a1e7e509")
+        XCTAssertEqual(downloadReference.checksum, "2521bb27db3f8b72f8f2bb9e3a33698b9c5c72a5d7862f5b209794099e1cf0acaab7d8a47760b001cb508b5c4f3d7cf7f8ce1c32679b3fde223e63b5a1e7e509")
         
         // This topic link didn't resolve, so it should not be in the references dictionary.
         // Additionally, the link should've been rendered inactive, i.e. a text element instead of a link.
