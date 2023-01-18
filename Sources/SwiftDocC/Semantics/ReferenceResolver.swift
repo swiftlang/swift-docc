@@ -11,19 +11,29 @@
 import Foundation
 import Markdown
 
-func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, underlyingErrorMessage: String, candidates: [String]) -> Problem {
-    let notes = uncuratedArticleMatch.map {
+func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, underlyingError: TopicReferenceResolutionError, fromSymbolLink: Bool) -> Problem {
+    var notes = uncuratedArticleMatch.map {
         [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
     
-    var solutions: [Solution] = []
-    if let range = range {
-        solutions.append(contentsOf: candidates.map { candidate in
-            Solution(summary: "Replace reference", replacements: [Replacement(range: range, replacement: "``\(candidate)``")])
-        })
+    if let source = source,
+       let range = range,
+       let note = underlyingError.note {
+        notes.append(DiagnosticNote(source: source, range: range, message: note))
     }
     
-    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(underlyingErrorMessage)", notes: notes)
+    var solutions: [Solution] = []
+    
+    if let range = range {
+        let innerRange = fromSymbolLink
+            // ``my/reference``
+            ? SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+2, source: range.lowerBound.source)..<SourceLocation(line: range.upperBound.line, column: range.upperBound.column-2, source: range.upperBound.source)
+            // <doc:my/reference>
+            : SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+5, source: range.lowerBound.source)..<SourceLocation(line: range.upperBound.line, column: range.upperBound.column-1, source: range.upperBound.source)
+        solutions.append(contentsOf: underlyingError.solutions(referenceSourceRange: innerRange))
+    }
+    
+    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(underlyingError.localizedDescription)", notes: notes)
     return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 
@@ -90,10 +100,10 @@ struct ReferenceResolver: SemanticVisitor {
         case .success(let resolved):
             return .success(resolved)
             
-        case let .failure(unresolved, errorMessage):
+        case let .failure(unresolved, error):
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage, candidates: unresolved.canidates))
-            return .failure(unresolved, errorMessage: errorMessage)
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingError: error, fromSymbolLink: false))
+            return .failure(unresolved, error)
         }
     }
     

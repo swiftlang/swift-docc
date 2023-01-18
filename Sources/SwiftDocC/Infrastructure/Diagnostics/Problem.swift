@@ -52,22 +52,17 @@ extension Problem {
 }
 
 extension Problem {
-    
-    /// Returns a copy of the problem but offset using a certain `SourceRange`.
+    /// Offsets the problem using a certain SymbolKit `SourceRange`.
+    ///
     /// Useful when validating a doc comment that needs to be projected in its containing file "space".
-    func offsetedWithRange(_ docRange: SymbolGraph.LineList.SourceRange) -> Problem {
-        var result = self
-        result.diagnostic = diagnostic.offsetedWithRange(docRange)
+    mutating func offsetWithRange(_ docRange: SymbolGraph.LineList.SourceRange) {
+        diagnostic.offsetWithRange(docRange)
         
-        result.possibleSolutions = possibleSolutions.map {
-            var solution = $0
-            solution.replacements = solution.replacements.map { replacement in
-                replacement.offsetedWithRange(docRange)
+        for i in possibleSolutions.indices {
+            for j in possibleSolutions[i].replacements.indices {
+                possibleSolutions[i].replacements[j].offsetWithRange(docRange)
             }
-            return solution
         }
-        
-        return result
     }
 }
 

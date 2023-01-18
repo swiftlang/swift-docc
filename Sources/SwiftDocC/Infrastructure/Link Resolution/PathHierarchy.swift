@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import Markdown
 
 /// An opaque identifier that uniquely identifies a resolved entry in the path hierarchy,
 ///
@@ -829,63 +830,100 @@ private func availableChildNameIsBefore(_ lhs: String, _ rhs: String) -> Bool {
 }
 
 extension PathHierarchy.Error {
-    /// Formats the error into an error message suitable for presentation
-    func errorMessage(context: DocumentationContext) -> String {
+    /// Generate a ``TopicReferenceResolutionError`` from this error using the given `context` and `originalReference`.
+    ///
+    /// The resulting ``TopicReferenceResolutionError`` is human-readable and provides helpful solutions.
+    ///
+    /// - Parameters:
+    ///     - context: The ``DocumentationContext`` the `originalReference` was resolved in.
+    ///     - originalReference: The raw input string that represents the body of the reference that failed to resolve.
+    ///
+    /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the `originalReference`, i.e. the beginning
+    /// of the _body_ of the original reference.
+    func asTopicReferenceResolutionError(context: DocumentationContext, originalReference: String) -> TopicReferenceResolutionError {
         switch self {
-        case .partialResult(let partialResult, let remaining, let available):
-            let nearMisses = NearMiss.bestMatches(for: available, against: remaining)
-            let suggestion: String
-            switch nearMisses.count {
-            case 0:
-                suggestion = "No similar pages. Available children: \(available.joined(separator: ", "))."
-            case 1:
-                suggestion = "Did you mean: \(nearMisses[0])?"
-            default:
-                suggestion = "Did you mean one of: \(nearMisses.joined(separator: ", "))?"
-            }
-            return "Reference at \(partialResult.pathWithoutDisambiguation().singleQuoted) can't resolve \(remaining.singleQuoted). \(suggestion)"
-        case .notFound, .unfindableMatch:
-            return "No local documentation matches this reference."
-            
+        case .notFound(availableChildren: let availableChildren):
+            return TopicReferenceResolutionError("No local documentation matches this reference.", note: availabilityNote(category: "top-level elements", candidates: availableChildren))
+        case .unfindableMatch:
+            return TopicReferenceResolutionError("No local documentation matches this reference.")
         case .nonSymbolMatchForSymbolLink:
-            return "Symbol links can only resolve symbols."
+            return TopicReferenceResolutionError("Symbol links can only resolve symbols.", solutions: [
+                Solution(summary: "Use a '<doc:>' style reference.", replacements: [
+                    // the SourceRange points to the opening double-backtick
+                    Replacement(range: SourceLocation(line: 0, column: -2, source: nil)..<SourceLocation(line: 0, column: 0, source: nil), replacement: "<doc:"),
+                    // the SourceRange points to the closing double-backtick
+                    Replacement(range: SourceLocation(line: 0, column: originalReference.count, source: nil)..<SourceLocation(line: 0, column: originalReference.count+2, source: nil), replacement: ">"),
+                ])
+            ])
+        case .partialResult(partialResult: let partialResult, remainingSubpath: let remainingSubpath, availableChildren: let availableChildren):
+            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: remainingSubpath)
             
-        case .lookupCollision(let partialResult, _, let collisions):
-            let collisionDescription = collisions.map { "Append '-\($0.disambiguation)' to refer to \($0.node.fullNameOfValue(context: context).singleQuoted)" }.sorted()
-            return "Reference is ambiguous after \(partialResult.pathWithoutDisambiguation().singleQuoted): \(collisionDescription.joined(separator: ". "))."
+            let validPrefix = originalReference.dropLast(remainingSubpath.count)
+            
+            let unprocessedSuffix = remainingSubpath.suffix(from: remainingSubpath.firstIndex(of: "/") ?? remainingSubpath.endIndex)
+            
+            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: originalReference.count-unprocessedSuffix.count, source: nil)
+            
+            // we don't want to provide an endless amount of unrelated fixits, but if there are only three
+            // or less valid options, we still suggest them as fixits
+            let fixitCandidates = nearMisses.isEmpty && availableChildren.count <= 3 ? availableChildren : nearMisses
+            
+            let solutions = fixitCandidates.map { candidate in
+                Solution(summary: "Correct reference to \(validPrefix + candidate + unprocessedSuffix).", replacements: [
+                    Replacement(range: replacementRange, replacement: candidate)
+                ])
+            }
+            
+            
+            var message: String {
+                var suggestion: String {
+                    switch nearMisses.count {
+                    case 0:
+                        return "No similar pages."
+                    case 1:
+                        return "Did you mean \(nearMisses[0])?"
+                    default:
+                        return "Did you mean one of: \(nearMisses.joined(separator: ", "))?"
+                    }
+                }
+                
+                return "Reference at \(partialResult.pathWithoutDisambiguation().singleQuoted) can't resolve \(remainingSubpath.singleQuoted). \(suggestion)"
+            }
+            
+            return TopicReferenceResolutionError(message, note: availabilityNote(category: "children", candidates: availableChildren), solutions: solutions)
+            
+        case .lookupCollision(partialResult: let partialResult, remainingSubpath: let remainingSubpath, collisions: let collisions):
+            let unprocessedSuffix = remainingSubpath.suffix(from: remainingSubpath.firstIndex(of: "/") ?? remainingSubpath.endIndex)
+            
+            let prefixPotentiallyIncludingInvalidDisambiguation = originalReference.dropLast(unprocessedSuffix.count)
+            let lowerBoundOfLastSegment = prefixPotentiallyIncludingInvalidDisambiguation.lastIndex(of: "/")
+                ?? prefixPotentiallyIncludingInvalidDisambiguation.startIndex
+            let lowerBoundOfLastDisambiguation = prefixPotentiallyIncludingInvalidDisambiguation.lastIndex(of: "-")
+                ?? prefixPotentiallyIncludingInvalidDisambiguation.startIndex
+            let lowerBoundOfInvalidDisambiguation = lowerBoundOfLastDisambiguation > lowerBoundOfLastSegment ? lowerBoundOfLastDisambiguation : nil
+            let validPrefix = prefixPotentiallyIncludingInvalidDisambiguation[..<(lowerBoundOfInvalidDisambiguation ?? prefixPotentiallyIncludingInvalidDisambiguation.endIndex)]
+            
+            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: originalReference.count-unprocessedSuffix.count, source: nil)
+            
+            let solutions = collisions.sorted(by: {
+                $0.node.fullNameOfValue(context: context) + $0.disambiguation
+                    < $1.node.fullNameOfValue(context: context) + $1.disambiguation
+            }).map { collision in
+                Solution(summary: "Insert disambiguation suffix for \(collision.node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                    Replacement(range: replacementRange, replacement: "-" + collision.disambiguation)
+                ])
+            }
+            
+            return TopicReferenceResolutionError("Reference is ambiguous after \(partialResult.pathWithoutDisambiguation().singleQuoted).", solutions: solutions)
         }
     }
     
-    /// Generates replacements for a faulty `originalPath` that fix the first unresolvable path segment
-    /// by adding disambiguation suffixes or provding near-miss alternatives.
-    ///
-    /// The replacement options only fix the first faulty segment in a reference. They do not alter the valid prefix and keep
-    /// the unchecked suffix in place.
-    func replacements(for originalPath: String) -> [String] {
-        switch self {
-        case .partialResult(_, let remaining, let available):
-            var validPrefix = originalPath
-            validPrefix.removeLast(remaining.count)
-            
-            let unprocessedSuffix = remaining.suffix(from: remaining.firstIndex(of: "/") ?? remaining.endIndex)
-            
-            // We don't provide all available children as fixits here if we have no near miss. This
-            // is different from the `errorMessage(context:)`, but we shouldn't suggest a fix that in
-            // no way resembles the user's faulty input.
-            return NearMiss.bestMatches(for: available, against: remaining).map { suggestionSuffix in
-                validPrefix + suggestionSuffix + unprocessedSuffix
-            }
-        case .lookupCollision(_, let remaining, let collisions):
-            var validPrefix = originalPath
-            validPrefix.removeLast(remaining.count)
-            
-            let unprocessedSuffix = remaining.suffix(from: remaining.firstIndex(of: "/") ?? remaining.endIndex)
-            
-            return collisions.map { collision in
-                validPrefix + collision.node.name + "-\(collision.disambiguation)" + unprocessedSuffix
-            }
-        case .notFound, .unfindableMatch, .nonSymbolMatchForSymbolLink:
-            return []
+    private func availabilityNote(category: String, candidates: [String]) -> String {
+        switch candidates.count {
+        case 0:
+            return "No \(category) available."
+        default:
+            return "Available \(category): \(candidates.joined(separator: ", "))."
         }
     }
 }

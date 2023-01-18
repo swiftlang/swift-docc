@@ -611,9 +611,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                        let docs = documentationNode.symbol?.docComment {
                         // Offset all problem ranges by the start location of the
                         // source comment in the context of the complete file.
-                        problems = problems.compactMap { problem -> Problem? in
-                            guard let docRange = docs.lines.first?.range else { return nil }
-                            return problem.offsetedWithRange(docRange)
+                        if let docRange = docs.lines.first?.range {
+                            for i in problems.indices {
+                                problems[i].offsetWithRange(docRange)
+                            }
+                        } else {
+                            problems.removeAll()
                         }
                     }
 

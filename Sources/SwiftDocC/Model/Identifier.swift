@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import Markdown
 
 /// A resolved or unresolved reference to a piece of documentation.
 ///
@@ -54,7 +55,7 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
     /// A topic reference that has successfully been resolved to known documentation.
     case success(ResolvedTopicReference)
     /// A topic reference that has failed to resolve to known documentation and an error message with information about why the reference failed to resolve.
-    case failure(UnresolvedTopicReference, errorMessage: String)
+    case failure(UnresolvedTopicReference, TopicReferenceResolutionError)
     
     public var description: String {
         switch self {
@@ -63,6 +64,78 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
         case .failure(let unresolved, _):
             return unresolved.description
         }
+    }
+}
+
+/// The error causing the failure in the resolution of a ``TopicReference``.
+public struct TopicReferenceResolutionError: Error {
+    // we store the base as an `Error` so that
+    // we can potentailly pass through a `DescribedError`
+    // conformance in the future
+    private let base: Error
+    private let solutions: [Solution]
+    
+    init(_ error: Error, solutions: [Solution] = []) {
+        self.base = error
+        self.solutions = solutions
+    }
+    
+    var localizedDescription: String {
+        base.localizedDescription
+    }
+    
+    public var note: String? {
+        (base as? GenericBaseError)?.note
+    }
+}
+
+extension TopicReferenceResolutionError {
+    init(_ message: String, note: String? = nil, solutions: [Solution] = []) {
+        self.base = GenericBaseError(message: message, note: note)
+        self.solutions = solutions
+    }
+    
+    private struct GenericBaseError: DescribedError {
+        let message: String
+        let note: String?
+        
+        var errorDescription: String {
+            message
+        }
+        
+        var recoverySuggestion: String? {
+            note
+        }
+    }
+}
+
+extension TopicReferenceResolutionError: Hashable {
+    public static func == (lhs: TopicReferenceResolutionError, rhs: TopicReferenceResolutionError) -> Bool {
+        (lhs.base as CustomStringConvertible).description == (rhs.base as CustomStringConvertible).description
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        (base as CustomStringConvertible).description.hash(into: &hasher)
+    }
+}
+
+extension TopicReferenceResolutionError {
+    /// Extracts any `Solution`s from this error, if available.
+    ///
+    /// The error can provide `Solution`s if appropriate. Since the absolute location of
+    /// the faulty reference is not known at the error's origin, the `Replacement`s
+    /// will use `SourceLocation`s relative to the reference text. Provide range of the
+    /// reference **body** to obtain correctly placed `Replacement`s.
+    func solutions(referenceSourceRange: SourceRange) -> [Solution] {
+        var solutions = self.solutions
+        
+        for i in solutions.indices {
+            for j in solutions[i].replacements.indices {
+                solutions[i].replacements[j].offsetWithRange(referenceSourceRange)
+            }
+        }
+        
+        return solutions
     }
 }
 
@@ -489,12 +562,6 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
     /// An optional title.
     public var title: String? = nil
     
-    /// Optional candidates in case the reference couldn't be resolved.
-    ///
-    /// A resolution algorithm may attach possible candidates for an unresolvable reference to this field
-    /// for usage in diagnostics and fixits.
-    var canidates: [String] = []
-    
     /// Creates a new unresolved reference from another unresolved reference with a resolved parent reference.
     /// - Parameters:
     ///   - parent: The resolved parent reference of the unresolved reference.
@@ -533,15 +600,6 @@ public struct UnresolvedTopicReference: Hashable, CustomStringConvertible {
             result.replaceSubrange(rangeOfPath, with: topicURL.components.path)
         }
         return result
-    }
-}
-
-extension UnresolvedTopicReference {
-    /// Create a copy of this reference that stores the given `candidates`.
-    func with<C: Sequence>(canidates: C) -> Self where C.Element == String {
-        var copy = self
-        copy.canidates.append(contentsOf: canidates)
-        return copy
     }
 }
 

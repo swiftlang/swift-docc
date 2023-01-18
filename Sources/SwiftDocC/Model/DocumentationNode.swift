@@ -429,7 +429,7 @@ public struct DocumentationNode {
                     var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
                     
                     if let offset = docComment.lines.first?.range {
-                        problem = problem.offsetedWithRange(offset)
+                        problem.offsetWithRange(offset)
                     }
                     
                     engine.emit(problem)

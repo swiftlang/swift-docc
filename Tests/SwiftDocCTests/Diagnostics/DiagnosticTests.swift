@@ -93,7 +93,10 @@ class DiagnosticTests: XCTestCase {
         
         let offset = SymbolGraph.LineList.SourceRange(start: .init(line: 10, character: 10), end: .init(line: 10, character: 20))
         
-        XCTAssertEqual((resolver.problems.first)?.offsetedWithRange(offset).diagnostic.range, SourceLocation(line: 11, column: 18, source: nil)..<SourceLocation(line: 11, column: 31, source: nil))
+        var problem = try XCTUnwrap(resolver.problems.first)
+        problem.offsetWithRange(offset)
+        
+        XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 18, source: nil)..<SourceLocation(line: 11, column: 31, source: nil))
     }
 
     func testLocalizedDescription() {

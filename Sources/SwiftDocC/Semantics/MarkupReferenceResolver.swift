@@ -63,15 +63,15 @@ struct MarkupReferenceResolver: MarkupRewriter {
             }
             return resolved
             
-        case .failure(let unresolved, let errorMessage):
+        case .failure(let unresolved, let error):
             if let callback = problemForUnresolvedReference,
-                let problem = callback(unresolved, source, range, fromSymbolLink, errorMessage) {
+               let problem = callback(unresolved, source, range, fromSymbolLink, error.localizedDescription) {
                 problems.append(problem)
                 return nil
             }
             
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage, candidates: unresolved.canidates))
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingError: error, fromSymbolLink: fromSymbolLink))
             return nil
         }
     }

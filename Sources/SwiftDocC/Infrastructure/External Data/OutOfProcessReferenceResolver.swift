@@ -123,7 +123,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             do {
                 guard let unresolvedTopicURL = unresolvedReference.topicURL.components.url else {
                     // Return the unresolved reference if the underlying URL is not valid
-                    return .failure(unresolvedReference, errorMessage: "URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid.")
+                    return .failure(unresolvedReference, TopicReferenceResolutionError("URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid."))
                 }
                 let metadata = try resolveInformationForTopicURL(unresolvedTopicURL)
                 // Don't do anything with this URL. The external URL will be resolved during conversion to render nodes
@@ -136,7 +136,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
                     )
                 )
             } catch let error {
-                return .failure(unresolvedReference, errorMessage: error.localizedDescription)
+                return .failure(unresolvedReference, TopicReferenceResolutionError(error))
             }
         }
     }
