@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -141,11 +141,8 @@ public struct AvailabilityRenderItem: Codable, Hashable, Equatable {
     }
 
     init?(_ availability: Metadata.Availability, current: PlatformVersion?) {
-        if availability.introduced == nil {
-            // FIXME: Deprecated/Beta markings need platform versions to display properly in Swift-DocC-Render (rdar://56897597)
-            // Fill in the appropriate values here when that's fixed (https://github.com/apple/swift-docc/issues/441)
-            return nil
-        }
+        // FIXME: Deprecated/Beta markings need platform versions to display properly in Swift-DocC-Render (rdar://56897597)
+        // Fill in the appropriate values here when that's fixed (https://github.com/apple/swift-docc/issues/441)
 
         let platformName = PlatformName(metadataPlatform: availability.platform)
         name = platformName?.displayName
