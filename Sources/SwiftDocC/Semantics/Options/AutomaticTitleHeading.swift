@@ -18,15 +18,29 @@ import Markdown
 public class AutomaticTitleHeading: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
+    // This property exist so that the generated directive documentation makes it
+    // clear that "enabled" and "disabled" are then two possible values.
+    
     /// Whether or not DocC generates automatic title headings.
-    @DirectiveArgumentWrapped(
-        name: .unnamed,
-        trueSpelling: "enabled",
-        falseSpelling: "disabled")
-    public private(set) var enabled: Bool
+    @DirectiveArgumentWrapped(name: .unnamed)
+    public private(set) var enabledness: Enabledness
+    
+    /// A value that represent whether automatic title heading generation is enabled or disabled.
+    public enum Enabledness: String, CaseIterable, DirectiveArgumentValueConvertible {
+        /// A title heading should be automatically created for the page (the default).
+        case enabled
+        
+        /// No automatic title heading should be created for the page.
+        case disabled
+    }
+    
+    /// Whether or not DocC generates automatic title headings.
+    public var enabled: Bool {
+        return enabledness == .enabled
+    }
     
     static var keyPaths: [String : AnyKeyPath] = [
-        "enabled"  : \AutomaticTitleHeading._enabled,
+        "enabledness"  : \AutomaticTitleHeading._enabledness,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
