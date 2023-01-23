@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1789,9 +1789,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         articles.map { article in
             guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(
                 for: article,
-                
-                // Articles are available in the same languages the only root module is available in. If there is more
-                // than one module, we cannot determine what languages it's available in and default to Swift.
+                // By default, articles are available in the languages the module that's being documented
+                // is available in. It's possible to override that behavior using the `@SupportedLanguage`
+                // directive though; see its documentation for more details.
                 availableSourceLanguages: soleRootModuleReference.map { sourceLanguages(for: $0) },
                 kind: .article,
                 in: bundle
@@ -1838,6 +1838,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, bundle: bundle)
+        
+        // Use the languages specified by the `@SupportedLanguage` directives if present.
+        let availableSourceLanguages = article.value
+            .metadata
+            .flatMap { metadata in
+                let languages = Set(
+                    metadata.supportedLanguages
+                        .map(\.language)
+                )
+                
+                return languages.isEmpty ? nil : languages
+            }
+        ?? availableSourceLanguages
         
         // If available source languages are provided and it contains Swift, use Swift as the default language of
         // the article.
