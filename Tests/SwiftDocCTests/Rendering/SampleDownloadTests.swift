@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -43,7 +43,7 @@ class SampleDownloadTests: XCTestCase {
         XCTAssertTrue(section.headings.isEmpty)
         XCTAssertTrue(section.rawIndexableTextContent(references: [:]).isEmpty)
         XCTAssertEqual(symbol.projectFiles()?.url.absoluteString, "/downloads/project.zip")
-        XCTAssertEqual(symbol.projectFiles()?.sha512Checksum, "ad4adacc8ad53230b59d")
+        XCTAssertEqual(symbol.projectFiles()?.checksum, "ad4adacc8ad53230b59d")
     }
     
     func testDecodeSampleDownloadUnavailableSymbol() throws {
