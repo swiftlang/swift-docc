@@ -27,8 +27,8 @@ class OptionsTests: XCTestCase {
         XCTAssertTrue(problems.isEmpty)
         let unwrappedOptions = try XCTUnwrap(options)
         
-        XCTAssertNil(unwrappedOptions.automaticTitleHeadingBehavior)
-        XCTAssertNil(unwrappedOptions.automaticSeeAlsoBehavior)
+        XCTAssertNil(unwrappedOptions.automaticTitleHeadingEnabled)
+        XCTAssertNil(unwrappedOptions.automaticSeeAlsoEnabled)
         XCTAssertNil(unwrappedOptions.topicsVisualStyle)
         XCTAssertEqual(unwrappedOptions.scope, .local)
     }
@@ -90,20 +90,20 @@ class OptionsTests: XCTestCase {
             }
             
             XCTAssertTrue(problems.isEmpty)
-            XCTAssertEqual(options?.automaticSeeAlsoBehavior, .disabled)
+            XCTAssertEqual(options?.automaticSeeAlsoEnabled, false)
         }
         
         do {
             let (problems, options) = try parseDirective(Options.self) {
                 """
                 @Options {
-                    @AutomaticSeeAlso(siblingPages)
+                    @AutomaticSeeAlso(enabled)
                 }
                 """
             }
             
             XCTAssertTrue(problems.isEmpty)
-            XCTAssertEqual(options?.automaticSeeAlsoBehavior, .siblingPages)
+            XCTAssertEqual(options?.automaticSeeAlsoEnabled, true)
         }
         
         do {
@@ -117,7 +117,7 @@ class OptionsTests: XCTestCase {
             
             
             XCTAssertNotNil(options)
-            XCTAssertNil(options?.automaticSeeAlsoBehavior)
+            XCTAssertNil(options?.automaticSeeAlsoEnabled)
             
             XCTAssertEqual(
                 problems,
@@ -214,20 +214,20 @@ class OptionsTests: XCTestCase {
             }
             
             XCTAssertTrue(problems.isEmpty)
-            XCTAssertEqual(options?.automaticTitleHeadingBehavior, .disabled)
+            XCTAssertEqual(options?.automaticTitleHeadingEnabled, false)
         }
         
         do {
             let (problems, options) = try parseDirective(Options.self) {
                 """
                 @Options {
-                    @AutomaticTitleHeading(pageKind)
+                    @AutomaticTitleHeading(enabled)
                 }
                 """
             }
             
             XCTAssertTrue(problems.isEmpty)
-            XCTAssertEqual(options?.automaticTitleHeadingBehavior, .pageKind)
+            XCTAssertEqual(options?.automaticTitleHeadingEnabled, true)
         }
         
         do {
@@ -241,7 +241,7 @@ class OptionsTests: XCTestCase {
             
             
             XCTAssertNotNil(options)
-            XCTAssertNil(options?.automaticTitleHeadingBehavior)
+            XCTAssertNil(options?.automaticTitleHeadingEnabled)
             
             XCTAssertEqual(
                 problems,
@@ -256,7 +256,7 @@ class OptionsTests: XCTestCase {
         let (problems, options) = try parseDirective(Options.self) {
             """
             @Options {
-                @AutomaticTitleHeading(pageKind)
+                @AutomaticTitleHeading(enabled)
                 @AutomaticSeeAlso(disabled)
                 @TopicsVisualStyle(detailedGrid)
                 @AutomaticArticleSubheading(enabled)
@@ -265,17 +265,17 @@ class OptionsTests: XCTestCase {
         }
         
         XCTAssertTrue(problems.isEmpty)
-        XCTAssertEqual(options?.automaticTitleHeadingBehavior, .pageKind)
-        XCTAssertEqual(options?.automaticSeeAlsoBehavior, .disabled)
+        XCTAssertEqual(options?.automaticTitleHeadingEnabled, true)
+        XCTAssertEqual(options?.automaticSeeAlsoEnabled, false)
         XCTAssertEqual(options?.topicsVisualStyle, .detailedGrid)
-        XCTAssertEqual(options?.automaticArticleSubheadingBehavior, .enabled)
+        XCTAssertEqual(options?.automaticArticleSubheadingEnabled, true)
     }
     
     func testUnsupportedChild() throws {
         let (problems, options) = try parseDirective(Options.self) {
             """
             @Options {
-                @AutomaticTitleHeading(pageKind)
+                @AutomaticTitleHeading(enabled)
                 @Row {
                     @Column {
                         Hi!
@@ -285,7 +285,7 @@ class OptionsTests: XCTestCase {
             """
         }
         
-        XCTAssertEqual(options?.automaticTitleHeadingBehavior, .pageKind)
+        XCTAssertEqual(options?.automaticTitleHeadingEnabled, true)
         XCTAssertEqual(
             problems,
             [
@@ -306,7 +306,7 @@ class OptionsTests: XCTestCase {
             
             XCTAssertTrue(problems.isEmpty)
             let unwrappedOptions = try XCTUnwrap(options)
-            XCTAssertNil(unwrappedOptions.automaticArticleSubheadingBehavior)
+            XCTAssertNil(unwrappedOptions.automaticArticleSubheadingEnabled)
         }
         
         do {
@@ -320,7 +320,7 @@ class OptionsTests: XCTestCase {
             
             XCTAssertEqual(problems, ["2: warning – org.swift.docc.HasArgument.unlabeled.ConversionFailed"])
             let unwrappedOptions = try XCTUnwrap(options)
-            XCTAssertNil(unwrappedOptions.automaticArticleSubheadingBehavior)
+            XCTAssertNil(unwrappedOptions.automaticArticleSubheadingEnabled)
         }
         
         do {
@@ -334,7 +334,7 @@ class OptionsTests: XCTestCase {
             
             XCTAssertTrue(problems.isEmpty)
             let unwrappedOptions = try XCTUnwrap(options)
-            XCTAssertEqual(unwrappedOptions.automaticArticleSubheadingBehavior, .disabled)
+            XCTAssertEqual(unwrappedOptions.automaticArticleSubheadingEnabled, false)
         }
         
         do {
@@ -348,7 +348,7 @@ class OptionsTests: XCTestCase {
             
             XCTAssertTrue(problems.isEmpty)
             let unwrappedOptions = try XCTUnwrap(options)
-            XCTAssertEqual(unwrappedOptions.automaticArticleSubheadingBehavior, .enabled)
+            XCTAssertEqual(unwrappedOptions.automaticArticleSubheadingEnabled, true)
         }
     }
 }
