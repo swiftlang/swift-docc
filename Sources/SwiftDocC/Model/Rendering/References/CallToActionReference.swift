@@ -1,0 +1,53 @@
+/*
+ This source file is part of the Swift.org open source project
+
+ Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Licensed under Apache License v2.0 with Runtime Library Exception
+
+ See https://swift.org/LICENSE.txt for license information
+ See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+*/
+
+import Foundation
+
+/// A specialized ``DownloadReference`` used for ``CallToAction`` directives.
+///
+/// `@CallToAction` directives can link either to a local file or to a URL, whether relative or
+/// absolute. Directives that use the `file` argument will create a ``DownloadReference`` and copy
+/// the file from the catalog into the resulting archive.
+///
+/// A `CallToActionReference` is intended to encode to Render JSON compatible with a
+/// ``DownloadReference``, but with the `url` set to the text given in the `@CallToAction`'s `url`
+/// argument.
+public struct CallToActionReference: RenderReference, URLReference {
+    public static var baseURL: URL = .init(string: "/\(DownloadReference.locationName)/")!
+
+    public var type: RenderReferenceType = .download
+
+    public var identifier: RenderReferenceIdentifier
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case identifier
+        case url
+    }
+
+    public init(identifier: RenderReferenceIdentifier) {
+        self.identifier = identifier
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(type.rawValue, forKey: .type)
+        try container.encode(identifier, forKey: .identifier)
+
+        // Enter the given URL verbatim into the Render JSON
+        try container.encode(identifier.identifier, forKey: .url)
+    }
+}
