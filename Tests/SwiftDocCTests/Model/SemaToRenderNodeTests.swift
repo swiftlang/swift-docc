@@ -1839,7 +1839,7 @@ Document
             # Article 2
             
             @Options {
-                @AutomaticTitleHeading(pageKind)
+                @AutomaticTitleHeading(enabled)
             }
 
             This is article 2.
