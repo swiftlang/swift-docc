@@ -185,7 +185,7 @@ class SampleDownloadTests: XCTestCase {
         XCTAssertEqual(ident.identifier, "files/ExternalSample.zip")
 
         // Ensure that the encoded URL still references the entered URL
-        let downloadReference = try XCTUnwrap(renderNode.references[ident.identifier] as? CallToActionReference)
+        let downloadReference = try XCTUnwrap(renderNode.references[ident.identifier] as? ExternalLocationReference)
 
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()

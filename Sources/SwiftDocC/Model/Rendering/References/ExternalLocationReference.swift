@@ -16,10 +16,10 @@ import Foundation
 /// absolute. Directives that use the `file` argument will create a ``DownloadReference`` and copy
 /// the file from the catalog into the resulting archive.
 ///
-/// A `CallToActionReference` is intended to encode to Render JSON compatible with a
+/// An `ExternalLocationReference` is intended to encode to Render JSON compatible with a
 /// ``DownloadReference``, but with the `url` set to the text given in the `@CallToAction`'s `url`
 /// argument.
-public struct CallToActionReference: RenderReference, URLReference {
+public struct ExternalLocationReference: RenderReference, URLReference {
     public static var baseURL: URL = .init(string: "/\(DownloadReference.locationName)/")!
 
     public var type: RenderReferenceType = .download

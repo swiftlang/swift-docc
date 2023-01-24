@@ -789,7 +789,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         isActive: true,
                         overridingTitle: callToAction.buttonLabel,
                         overridingTitleInlineContent: nil))
-                callToActionReferences[url.description] = CallToActionReference(identifier: downloadIdentifier)
+                callToActionReferences[url.description] = ExternalLocationReference(identifier: downloadIdentifier)
             } else if let fileReference = callToAction.file {
                 let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
                 node.sampleDownload = .init(action: .reference(
@@ -1623,7 +1623,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var linkReferences: [String: LinkReference] = [:]
     var requirementReferences: [String: XcodeRequirementReference] = [:]
     var downloadReferences: [String: DownloadReference] = [:]
-    var callToActionReferences: [String: CallToActionReference] = [:]
+    var callToActionReferences: [String: ExternalLocationReference] = [:]
     
     private var bundleAvailability: [BundleModuleIdentifier: [AvailabilityRenderItem]] = [:]
     
