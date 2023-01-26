@@ -54,4 +54,8 @@ A metadata element must contain one of the following items:
 - ``PageImage``
 - ``CallToAction``
 
-<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+### Customizing the Languages of an Article
+
+- ``SupportedLanguage``
+
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

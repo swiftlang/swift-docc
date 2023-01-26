@@ -44,19 +44,19 @@ public class Options: Semantic, AutomaticDirectiveConvertible {
     @ChildDirective
     public private(set) var _topicsVisualStyle: TopicsVisualStyle? = nil
     
-    /// If given, the authored behavior for automatic See Also section generation.
-    public var automaticSeeAlsoBehavior: AutomaticSeeAlso.Behavior? {
-        return _automaticSeeAlso?.behavior
+    /// If given, whether or not automatic See Also section generation is enabled.
+    public var automaticSeeAlsoEnabled: Bool? {
+        return _automaticSeeAlso?.enabled
     }
     
-    /// If given, the authored behavior for automatic Title Heading generation.
-    public var automaticTitleHeadingBehavior: AutomaticTitleHeading.Behavior? {
-        return _automaticTitleHeading?.behavior
+    /// If given, whether or not automatic Title Heading generation is enabled.
+    public var automaticTitleHeadingEnabled: Bool? {
+        return _automaticTitleHeading?.enabled
     }
     
-    /// If given, the authored behavior for automatic article subheading generation.
-    public var automaticArticleSubheadingBehavior: AutomaticArticleSubheading.Behavior? {
-        return _automaticArticleSubheading?.behavior
+    /// If given, whether or not automatic article subheading generation is enabled.
+    public var automaticArticleSubheadingEnabled: Bool? {
+        return _automaticArticleSubheading?.enabled
     }
     
     /// If given, the authored style for a page's Topics section.
