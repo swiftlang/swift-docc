@@ -2,6 +2,7 @@
 
 @Metadata {
     @CallToAction(file: "Downloads/plus.svg", purpose: download)
+    @PageKind(sampleCode)
 }
 
 Here's a taste of what you can do with my cool framework.

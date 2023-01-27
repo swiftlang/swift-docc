@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -49,7 +49,7 @@ class MetadataAvailabilityTests: XCTestCase {
             }
         }
 
-        for platform in Metadata.Availability.Platform.allCases {
+        for platform in Metadata.Availability.Platform.defaultCases {
             let source = """
             @Metadata {
                 @Available(\(platform.rawValue), introduced: \"1.0\")
@@ -74,12 +74,20 @@ class MetadataAvailabilityTests: XCTestCase {
             validArgumentsWithVersion.append("introduced: \"1.0\", \(arg)")
         }
 
-        for platform in Metadata.Availability.Platform.allCases {
+        var checkPlatforms = Metadata.Availability.Platform.defaultCases.map({ $0.rawValue })
+        checkPlatforms.append("Package")
+
+        for platform in checkPlatforms {
             // FIXME: Test validArguments with the `*` platform once that's introduced
             // cf. https://github.com/apple/swift-docc/issues/441
             for args in validArgumentsWithVersion {
-                try assertValidAvailability(source: "@Available(\(platform.rawValue), \(args))")
+                try assertValidAvailability(source: "@Available(\(platform), \(args))")
             }
+        }
+
+        // also check a platform with spaces in the name
+        for args in validArgumentsWithVersion {
+            try assertValidAvailability(source: "@Available(\"My Package\", \(args))")
         }
 
         // also test for giving no platform

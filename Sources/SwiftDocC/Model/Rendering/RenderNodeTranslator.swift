@@ -817,6 +817,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 node.metadata.platformsVariants = .init(defaultValue: renderAvailability)
             }
         }
+
+        if let pageKind = article.metadata?.pageKind {
+            node.metadata.role = pageKind.kind.renderRole.rawValue
+            node.metadata.roleHeading = pageKind.kind.titleHeading
+        }
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
@@ -1107,27 +1112,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
     
     private func shouldCreateAutomaticRoleHeading(for node: DocumentationNode) -> Bool {
-        var shouldCreateAutomaticRoleHeading = true
-        if let automaticTitleHeadingOption = node.options?.automaticTitleHeadingBehavior
-            ?? context.options?.automaticTitleHeadingBehavior
-        {
-            shouldCreateAutomaticRoleHeading = automaticTitleHeadingOption == .pageKind
-        }
-        
-        return shouldCreateAutomaticRoleHeading
+        return node.options?.automaticTitleHeadingEnabled
+            ?? context.options?.automaticTitleHeadingEnabled
+            ?? true
     }
     
     private func shouldCreateAutomaticArticleSubheading(for node: DocumentationNode) -> Bool {
-        let shouldCreateAutomaticArticleSubheading: Bool
-        if let automaticSubheadingOption = node.options?.automaticArticleSubheadingBehavior
-            ?? context.options?.automaticArticleSubheadingBehavior
-        {
-            shouldCreateAutomaticArticleSubheading = !(automaticSubheadingOption == .disabled)
-        } else {
-            shouldCreateAutomaticArticleSubheading = true
-        }
-        
-        return shouldCreateAutomaticArticleSubheading
+        return node.options?.automaticArticleSubheadingEnabled
+            ?? context.options?.automaticArticleSubheadingEnabled
+            ?? true
     }
     
     private func topicsSectionStyle(for node: DocumentationNode) -> RenderNode.TopicsSectionStyle {

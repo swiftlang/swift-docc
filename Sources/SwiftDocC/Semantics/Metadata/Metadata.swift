@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -25,6 +25,8 @@ import Markdown
 /// - ``PageImage``
 /// - ``CallToAction``
 /// - ``Availability``
+/// - ``PageKind``
+/// - ``SupportedLanguage``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
@@ -52,6 +54,12 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
 
     @ChildDirective(requirements: .zeroOrMore)
     var availability: [Availability]
+
+    @ChildDirective
+    var pageKind: PageKind? = nil
+    
+    @ChildDirective(requirements: .zeroOrMore)
+    var supportedLanguages: [SupportedLanguage]
     
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
@@ -61,6 +69,8 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "customMetadata"        : \Metadata._customMetadata,
         "callToAction"          : \Metadata._callToAction,
         "availability"          : \Metadata._availability,
+        "pageKind"              : \Metadata._pageKind,
+        "supportedLanguages"    : \Metadata._supportedLanguages,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
@@ -83,7 +93,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
