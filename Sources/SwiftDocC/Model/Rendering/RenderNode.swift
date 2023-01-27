@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -121,7 +121,9 @@ public struct RenderNode: VariantContainer {
     /// The kind of this documentation node.
     public var kind: Kind
         
-    /// The values of the references used in documentation node. These can be references to other nodes, media, and more.
+    /// The references used in the render node. These can be references to other nodes, media, and more.
+    ///
+    /// The key for each reference is the ``RenderReferenceIdentifier/identifier`` of the reference's ``RenderReference/identifier``.
     public var references: [String: RenderReference] = [:]
         
     /// Hierarchy information about the context in which this documentation node is placed.

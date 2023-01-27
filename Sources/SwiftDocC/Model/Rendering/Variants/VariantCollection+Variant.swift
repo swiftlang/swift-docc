@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -12,7 +12,7 @@ import Foundation
 
 public extension VariantCollection {
     /// A variant for a render node value.
-    struct Variant<Value: Codable> {
+    struct Variant {
         /// The traits associated with the override.
         public var traits: [RenderNode.Variant.Trait]
         
@@ -32,11 +32,20 @@ public extension VariantCollection {
         /// Returns a new variant collection containing the traits of this variant collection with the values transformed by the given closure.
         public func mapPatch<TransformedValue>(
             _ transform: (Value) -> TransformedValue
-        ) -> VariantCollection<TransformedValue>.Variant<TransformedValue> {
-            VariantCollection<TransformedValue>.Variant<TransformedValue>(
+        ) -> VariantCollection<TransformedValue>.Variant {
+            VariantCollection<TransformedValue>.Variant(
                 traits: traits,
                 patch: patch.map { patchOperation in patchOperation.map(transform) }
             )
         }
+    }
+}
+
+extension VariantCollection.Variant: Equatable where Value: Equatable {
+    public static func == (lhs: VariantCollection<Value>.Variant, rhs: VariantCollection<Value>.Variant) -> Bool {
+        guard lhs.traits == rhs.traits else { return false }
+        guard lhs.patch == rhs.patch else { return false }
+        
+        return true
     }
 }

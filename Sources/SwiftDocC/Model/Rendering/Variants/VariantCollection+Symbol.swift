@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -56,7 +56,7 @@ public extension VariantCollection {
 
         let defaultValue = documentationDataVariants.removeDefaultValueForRendering().flatMap(transform)
 
-        let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant<Value>? in
+        let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant? in
             Self.createVariant(trait: trait, value: transform(trait, value))
         }
 
@@ -77,7 +77,7 @@ public extension VariantCollection {
         
         let defaultValue = transform(documentationDataVariants.removeDefaultValueForRendering())
         
-        let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant<Value>? in
+        let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant? in
             Self.createVariant(trait: trait, value: transform((trait, value)))
         }
         
@@ -147,7 +147,7 @@ public extension VariantCollection {
         let defaultValue = transform(trait1, defaultValue1, defaultValue2.map(\.variant))
         
         let variants = zipPairsByKey(documentationDataVariants1.allValues, optionalPairs2: documentationDataVariants2.allValues)
-            .compactMap { (trait, values) -> Variant<Value>? in
+            .compactMap { (trait, values) -> Variant? in
                 let (value1, value2) = values
                 return Self.createVariant(trait: trait, value: transform(trait, value1, value2))
             }
@@ -179,7 +179,7 @@ public extension VariantCollection {
         let defaultValue = transform(trait1, defaultValue1, defaultValue2.map(\.variant))
         
         let variants = zipPairsByKey(documentationDataVariants1.allValues, optionalPairs2: documentationDataVariants2.allValues)
-            .compactMap { (trait, values) -> Variant<Value>? in
+            .compactMap { (trait, values) -> Variant? in
                 let (value1, value2) = values
                 guard let patchValue = transform(trait, value1, value2) else { return nil }
                 return Self.createVariant(trait: trait, value: patchValue)
@@ -211,7 +211,7 @@ public extension VariantCollection {
         let defaultValue = transform(trait1, defaultValue1, defaultValue2)
         
         let variants = zipPairsByKey(documentationDataVariants1.allValues, documentationDataVariants2.allValues)
-            .compactMap { (trait, values) -> Variant<Value>? in
+            .compactMap { (trait, values) -> Variant? in
                 let (value1, value2) = values
                 return Self.createVariant(trait: trait, value: transform(trait, value1, value2))
             }
@@ -248,7 +248,7 @@ public extension VariantCollection {
             documentationDataVariants1.allValues,
             documentationDataVariants2.allValues,
             documentationDataVariants3.allValues
-        ).compactMap { (trait, values) -> Variant<Value>? in
+        ).compactMap { (trait, values) -> Variant? in
             let (value1, value2, value3) = values
             return Self.createVariant(trait: trait, value: transform(trait, value1, value2, value3))
         }
@@ -272,7 +272,7 @@ public extension VariantCollection {
            return nil
         }
         
-        let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant<Value>? in
+        let variants = documentationDataVariants.allValues.compactMap { trait, value -> Variant? in
             Self.createVariant(trait: trait, value: transform(trait, value))
         }
         
@@ -285,7 +285,7 @@ public extension VariantCollection {
     private static func createVariant(
         trait: DocumentationDataVariantsTrait,
         value: Value
-    ) -> Variant<Value>? {
+    ) -> Variant? {
         guard let interfaceLanguage = trait.interfaceLanguage else { return nil }
         
         return Variant(traits: [.interfaceLanguage(interfaceLanguage)], patch: [

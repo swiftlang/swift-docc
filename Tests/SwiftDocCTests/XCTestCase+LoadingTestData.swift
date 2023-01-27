@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,6 +20,8 @@ extension XCTestCase {
                     codeListings: [String : AttributedCodeListing] = [:],
                     externalResolvers: [String: ExternalReferenceResolver] = [:],
                     externalSymbolResolver: ExternalSymbolResolver? = nil,
+                    fallbackAssetResolvers: [String: FallbackAssetResolver] = [:],
+                    _externalAssetResolvers: [String: _ExternalAssetResolver] = [:],
                     diagnosticFilterLevel: DiagnosticSeverity = .hint,
                     configureContext: ((DocumentationContext) throws -> Void)? = nil,
                     decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
@@ -27,6 +29,8 @@ extension XCTestCase {
         let context = try DocumentationContext(dataProvider: workspace, diagnosticEngine: DiagnosticEngine(filterLevel: diagnosticFilterLevel))
         context.externalReferenceResolvers = externalResolvers
         context.externalSymbolResolver = externalSymbolResolver
+        context.fallbackAssetResolvers = fallbackAssetResolvers
+        context._externalAssetResolvers = _externalAssetResolvers
         context.externalMetadata.diagnosticLevel = diagnosticFilterLevel
         context.decoder = decoder
         try configureContext?(context)
@@ -45,6 +49,8 @@ extension XCTestCase {
                               codeListings: [String : AttributedCodeListing] = [:],
                               externalResolvers: [BundleIdentifier : ExternalReferenceResolver] = [:],
                               externalSymbolResolver: ExternalSymbolResolver? = nil,
+                              fallbackAssetResolvers: [BundleIdentifier : FallbackAssetResolver] = [:],
+                              _externalAssetResolvers: [BundleIdentifier : _ExternalAssetResolver] = [:],
                               configureBundle: ((URL) throws -> Void)? = nil,
                               decoder: JSONDecoder = JSONDecoder()) throws -> (URL, DocumentationBundle, DocumentationContext) {
         let sourceURL = try XCTUnwrap(Bundle.module.url(
@@ -66,7 +72,15 @@ extension XCTestCase {
         // Do any additional setup to the custom bundle - adding, modifying files, etc
         try configureBundle?(bundleURL)
         
-        return try loadBundle(from: bundleURL, codeListings: codeListings, externalResolvers: externalResolvers, externalSymbolResolver: externalSymbolResolver, decoder: decoder)
+        return try loadBundle(
+            from: bundleURL,
+            codeListings: codeListings,
+            externalResolvers: externalResolvers,
+            externalSymbolResolver: externalSymbolResolver,
+            fallbackAssetResolvers: fallbackAssetResolvers,
+            _externalAssetResolvers: _externalAssetResolvers,
+            decoder: decoder
+        )
     }
     
     func testBundleAndContext(named name: String, codeListings: [String : AttributedCodeListing] = [:], externalResolvers: [String: ExternalReferenceResolver] = [:]) throws -> (DocumentationBundle, DocumentationContext) {

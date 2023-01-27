@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import Markdown
 import SymbolKit
 
 class ExternalReferenceResolverTests: XCTestCase {
-    class TestExternalReferenceResolver: ExternalReferenceResolver, FallbackReferenceResolver {
+    class TestExternalReferenceResolver: ExternalReferenceResolver, FallbackReferenceResolver, FallbackAssetResolver, _ExternalAssetResolver {
         var bundleIdentifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"
         var expectedFragment: String? = nil
@@ -22,6 +22,8 @@ class ExternalReferenceResolverTests: XCTestCase {
         var resolvedEntityKind = DocumentationNode.Kind.article
         var resolvedEntityLanguage = SourceLanguage.swift
         var resolvedEntityDeclarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
+        var resolvedTopicImages: [(TopicImage, alt: String)]? = nil
+        var resolvedAssets: [String: DataAsset] = [:]
         
         enum Error: Swift.Error {
             case testErrorRaisedForWrongBundleIdentifier
@@ -68,7 +70,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                 semantic = nil
             }
             
-            return DocumentationNode(
+            var node = DocumentationNode(
                 reference: reference,
                 kind: resolvedEntityKind,
                 sourceLanguage: resolvedEntityLanguage,
@@ -76,6 +78,30 @@ class ExternalReferenceResolverTests: XCTestCase {
                 markup: Document(parsing: "Externally Resolved Markup Content", options: [.parseBlockDirectives, .parseSymbolLinks]),
                 semantic: semantic
             )
+            
+            // This is a workaround for how external content is processed. See details in OutOfProcessReferenceResolver.addImagesAndCacheMediaReferences(to:from:)
+            
+            if let topicImages = resolvedTopicImages {
+                let metadata = node.metadata ?? Metadata(originalMarkup: BlockDirective(name: "Metadata", children: []), documentationExtension: nil, technologyRoot: nil, displayName: nil)
+                
+                metadata.pageImages = topicImages.map { topicImage, alt in
+                    let purpose: PageImage.Purpose
+                    switch topicImage.type {
+                    case .card: purpose = .card
+                    case .icon: purpose = .icon
+                    }
+                    return PageImage._make(
+                        originalMarkup: BlockDirective(name: "PageImage", children: []),
+                        purpose: purpose,
+                        source: ResourceReference(bundleIdentifier: reference.bundleIdentifier, path: topicImage.identifier.identifier),
+                        alt: alt
+                    )
+                }
+                
+                node.metadata = metadata
+            }
+              
+            return node
         }
         
         let testBaseURL: String = "https://example.com/example"
@@ -94,6 +120,14 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         func hasResolvedReference(_ reference: ResolvedTopicReference) -> Bool {
             true
+        }
+        
+        public func resolve(assetNamed assetName: String, bundleIdentifier: String) -> DataAsset? {
+            return resolvedAssets[assetName]
+        }
+        
+        public func resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset? {
+            return resolvedAssets[assetName]
         }
     }
     
@@ -436,6 +470,101 @@ Document @1:1-1:35
         XCTAssertEqual(sampleRenderReference.kind, .article) // there's no sample code _kind_, only a _role_.
         
         XCTAssertEqual(sampleRenderReference.role, RenderMetadata.Role.sampleCode.rawValue)
+    }
+    
+    func testExternalTopicWithTopicImage() throws {
+        let externalResolver = TestExternalReferenceResolver()
+        externalResolver.bundleIdentifier = "com.test.external"
+        externalResolver.expectedReferencePath = "/path/to/external-page-with-topic-image"
+        externalResolver.resolvedEntityTitle = "Name of Page"
+        externalResolver.resolvedTopicImages = [
+            (TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card")), "External card alt text"),
+            (TopicImage(type: .icon, identifier: RenderReferenceIdentifier("external-icon")), "External icon alt text"),
+        ]
+        
+        let lightCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name.jpg"))
+        let darkCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name-dark.jpg"))
+        
+        externalResolver.resolvedAssets = [
+            "external-card": DataAsset(
+                variants: [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightCardImageURL,
+                    DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
+                ],
+                metadata: [
+                    lightCardImageURL : DataAsset.Metadata(svgID: nil),
+                    darkCardImageURL : DataAsset.Metadata(svgID: nil),
+                ],
+                context: .display
+            ),
+        ]
+        
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleIdentifier: externalResolver], _externalAssetResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
+            try """
+            # SomeSample
+
+            @Metadata {
+              @TechnologyRoot
+            }
+
+            This is a great framework, I tell you what. More text
+
+            @Options {
+              @TopicsVisualStyle(compactGrid)
+            }
+
+            ## Topics
+
+            ### Examples
+
+            - <doc://com.test.external/path/to/external-page-with-topic-image>
+
+            <!-- Copyright (c) 2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+            """.write(to: url.appendingPathComponent("SomeSample.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SomeSample", sourceLanguage: .swift))
+        
+        guard let fileURL = context.documentURL(for: node.reference) else {
+            XCTFail("Unable to find the file for \(node.reference.path)")
+            return
+        }
+        
+        let renderNode = try converter.convert(node, at: fileURL)
+        
+        let externalRenderReference = try XCTUnwrap(renderNode.references["doc://com.test.external/path/to/external-page-with-topic-image"] as? TopicRenderReference)
+        
+        XCTAssertEqual(externalRenderReference.identifier.identifier, "doc://com.test.external/path/to/external-page-with-topic-image")
+        XCTAssertEqual(externalRenderReference.title, "Name of Page")
+        XCTAssertEqual(externalRenderReference.url, "/example/path/to/external-page-with-topic-image")
+        XCTAssertEqual(externalRenderReference.kind, .article)
+        
+        XCTAssertEqual(externalRenderReference.images, [
+            TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card")),
+        ])
+        
+        let imageReferences = renderNode.assetReferences[.image]?.compactMap{ $0 as? ImageReference } ?? []
+        
+        XCTAssertEqual(imageReferences, [
+            ImageReference(
+                identifier: RenderReferenceIdentifier("external-card"),
+                altText: "External card alt text",
+                imageAsset:
+                    DataAsset(
+                        variants: [
+                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightCardImageURL,
+                            DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
+                        ],
+                        metadata: [
+                            lightCardImageURL : DataAsset.Metadata(svgID: nil),
+                            darkCardImageURL : DataAsset.Metadata(svgID: nil),
+                        ],
+                        context: .display
+                    )
+            )
+        ])
     }
     
     // Tests that external references are included in task groups, rdar://72119391
