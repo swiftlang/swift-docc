@@ -2693,9 +2693,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         if let assetManager = assetManagers[bundleIdentifier] {
             return assetManager.bestKey(forAssetName: name)
         } else {
-            return nil != _externalAssetResolvers[bundleIdentifier]?.resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier)
-                ? name
-                : nil
+            if _externalAssetResolvers[bundleIdentifier]?.resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier) != nil {
+                return name
+            } else {
+                return nil
+            }
         }
     }
 
