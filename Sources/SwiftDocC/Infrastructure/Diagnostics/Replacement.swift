@@ -31,6 +31,9 @@ extension Replacement {
     /// Offsets the replacement using a certain `SourceRange`.
     ///
     /// Useful when validating a doc comment that needs to be projected in its containing file "space".
+    ///
+    /// - Warning: Absolute `SourceRange`s index line and column from 1. Thus, at least one
+    /// of `self` or `range` must be a relative range indexed from 0.
     mutating func offsetWithRange(_ range: SourceRange) {
         self.range.offsetWithRange(range)
     }

@@ -587,7 +587,7 @@ class SymbolTests: XCTestCase {
                 ["Insert disambiguation suffix for 'init()'", "-33vaw"],
                 ["Insert disambiguation suffix for 'init()'", "-3743d"],
             ])
-            XCTAssertEqual(try problem.possibleSolutions.first!.apply(to: url.appendingPathComponent("documentation/myclass.md")), """
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
 
             @Metadata {
@@ -633,7 +633,7 @@ class SymbolTests: XCTestCase {
                 ["Insert disambiguation suffix for 'init()'", "-33vaw"],
                 ["Insert disambiguation suffix for 'init()'", "-3743d"],
             ])
-            XCTAssertEqual(try problem.possibleSolutions.first!.apply(to: url.appendingPathComponent("documentation/myclass.md")), """
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
 
             @Metadata {
@@ -679,7 +679,7 @@ class SymbolTests: XCTestCase {
                 ["Insert disambiguation suffix for 'init()'", "-33vaw"],
                 ["Insert disambiguation suffix for 'init()'", "-3743d"],
             ])
-            XCTAssertEqual(try problem.possibleSolutions.first!.apply(to: url.appendingPathComponent("documentation/myclass.md")), """
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
 
             @Metadata {
@@ -724,7 +724,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
                 ["Correct reference to myFunction().", "myFunction()"],
             ])
-            XCTAssertEqual(try problem.possibleSolutions.first!.apply(to: url.appendingPathComponent("documentation/myclass.md")), """
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
 
             @Metadata {
@@ -769,7 +769,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
                 ["Correct reference to /MyKit/MyClass.", "MyClass"],
             ])
-            XCTAssertEqual(try problem.possibleSolutions.first!.apply(to: url.appendingPathComponent("documentation/myclass.md")), """
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
 
             @Metadata {
@@ -814,7 +814,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
                 ["Correct reference to MyKit/MyClass/myFunction().", "MyClass"],
             ])
-            XCTAssertEqual(try problem.possibleSolutions.first!.apply(to: url.appendingPathComponent("documentation/myclass.md")), """
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
 
             @Metadata {
@@ -859,7 +859,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
                 ["Correct reference to MyKit/MyClass/myFunction().", "MyClass"],
             ])
-            XCTAssertEqual(try problem.possibleSolutions.first!.apply(to: url.appendingPathComponent("documentation/myclass.md")), """
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
 
             @Metadata {
@@ -904,7 +904,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
                 ["Correct reference to MyKit/MyClass/myFunction().", "MyClass"],
             ])
-            XCTAssertEqual(try problem.possibleSolutions.first!.apply(to: url.appendingPathComponent("documentation/myclass.md")), """
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
 
             @Metadata {
@@ -950,11 +950,104 @@ class SymbolTests: XCTestCase {
     }
     
     func testUnresolvedReferenceWarningsInDocComment() throws {
+        let docComment = """
+        A cool API to call.
+
+        This overview has an ``UnresolvableSymbolLinkInMyClassOverview``.
+
+        - Parameters:
+          - name: A parameter
+        - Returns: Return value
+
+        # Topics
+
+        ## Unresolvable curation
+
+        - ``UnresolvableClassInMyClassTopicCuration``
+        - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
+        - <doc://com.test.external/ExternalPage>
+        """
+        
         let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             var graph = try JSONDecoder().decode(SymbolGraph.self, from: Data(contentsOf: url.appendingPathComponent("mykit-iOS.symbols.json")))
             let myFunctionUSR = "s:5MyKit0A5ClassC10myFunctionyyF"
+
+            // SymbolKit.SymbolGraph.LineList.SourceRange.Position is indexed from 0, whereas
+            // (absolute) Markdown.SourceLocations are indexed from 1
+            let newDocComment = SymbolGraph.LineList(docComment.components(separatedBy: .newlines).enumerated().map { lineNumber, lineText in
+                .init(text: lineText, range: .init(start: .init(line: lineNumber, character: 0), end: .init(line: lineNumber, character: lineText.count)))
+            })
+            graph.symbols[myFunctionUSR]?.docComment = newDocComment
             
-            let docComment = """
+            let newGraphData = try JSONEncoder().encode(graph)
+            try newGraphData.write(to: url.appendingPathComponent("mykit-iOS.symbols.json"))
+        }
+        
+        let unresolvedTopicProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }
+        
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            var problem: Problem
+            
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableSymbolLinkInMyClassOverview' couldn't be resolved. Reference at '/MyKit/MyClass/myFunction()' can't resolve 'UnresolvableSymbolLinkInMyClassOverview'. Did you mean Unresolvable-curation?" }))
+            XCTAssert(problem.diagnostic.notes.isEmpty)
+            XCTAssertEqual(problem.possibleSolutions.count, 1)
+            XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+            XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+                ["Correct reference to Unresolvable-curation.", "Unresolvable-curation"],
+            ])
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(docComment), """
+            A cool API to call.
+
+            This overview has an ``Unresolvable-curation``.
+
+            - Parameters:
+              - name: A parameter
+            - Returns: Return value
+
+            # Topics
+
+            ## Unresolvable curation
+
+            - ``UnresolvableClassInMyClassTopicCuration``
+            - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
+            - <doc://com.test.external/ExternalPage>
+            """)
+            
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableClassInMyClassTopicCuration' couldn't be resolved. Reference at '/MyKit/MyClass/myFunction()' can't resolve 'UnresolvableClassInMyClassTopicCuration'. Did you mean Unresolvable-curation?" }))
+            XCTAssert(problem.diagnostic.notes.isEmpty)
+            XCTAssertEqual(problem.possibleSolutions.count, 1)
+            XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+            XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+                ["Correct reference to Unresolvable-curation.", "Unresolvable-curation"],
+            ])
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(docComment), """
+            A cool API to call.
+
+            This overview has an ``UnresolvableSymbolLinkInMyClassOverview``.
+
+            - Parameters:
+              - name: A parameter
+            - Returns: Return value
+
+            # Topics
+
+            ## Unresolvable curation
+
+            - ``Unresolvable-curation``
+            - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
+            - <doc://com.test.external/ExternalPage>
+            """)
+            
+            
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.localizedSummary == "Topic reference 'MyClass/unresolvablePropertyInMyClassTopicCuration' couldn't be resolved. Reference at '/MyKit/MyClass' can't resolve 'unresolvablePropertyInMyClassTopicCuration'. No similar pages." }))
+            XCTAssert(problem.diagnostic.notes.isEmpty)
+            XCTAssertEqual(problem.possibleSolutions.count, 2)
+            XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+            XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
+                ["Correct reference to MyClass/init().", "init()"],
+                ["Correct reference to MyClass/myFunction().", "myFunction()"],
+            ])
+            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(docComment), """
             A cool API to call.
 
             This overview has an ``UnresolvableSymbolLinkInMyClassOverview``.
@@ -968,24 +1061,9 @@ class SymbolTests: XCTestCase {
             ## Unresolvable curation
 
             - ``UnresolvableClassInMyClassTopicCuration``
-            - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
+            - ``MyClass/init()``
             - <doc://com.test.external/ExternalPage>
-            """
-
-            let position: SymbolGraph.LineList.SourceRange.Position = .init(line: 1, character: 1)
-            let newDocComment = SymbolGraph.LineList(docComment.components(separatedBy: .newlines).map { .init(text: $0, range: .init(start: position, end: position)) })
-            graph.symbols[myFunctionUSR]?.docComment = newDocComment
-            
-            let newGraphData = try JSONEncoder().encode(graph)
-            try newGraphData.write(to: url.appendingPathComponent("mykit-iOS.symbols.json"))
-        }
-        
-        let unresolvedTopicProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }
-        
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableSymbolLinkInMyClassOverview' couldn't be resolved. Reference at '/MyKit/MyClass/myFunction()' can't resolve 'UnresolvableSymbolLinkInMyClassOverview'. Did you mean Unresolvable-curation?" }))
-            XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableClassInMyClassTopicCuration' couldn't be resolved. Reference at '/MyKit/MyClass/myFunction()' can't resolve 'UnresolvableClassInMyClassTopicCuration'. Did you mean Unresolvable-curation?" }))
-            XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'MyClass/unresolvablePropertyInMyClassTopicCuration' couldn't be resolved. Reference at '/MyKit/MyClass' can't resolve 'unresolvablePropertyInMyClassTopicCuration'. No similar pages." }))
+            """)
         } else {
             XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableSymbolLinkInMyClassOverview' couldn't be resolved. No local documentation matches this reference." }))
             XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableClassInMyClassTopicCuration' couldn't be resolved. No local documentation matches this reference." }))
@@ -1117,8 +1195,13 @@ class SymbolTests: XCTestCase {
 
 
 extension Solution {
-    func apply(to url: URL) throws -> String {
-        var content = String(data: try Data(contentsOf: url), encoding: .utf8)!
+    func applyTo(contentsOf url: URL) throws -> String {
+        let content = String(data: try Data(contentsOf: url), encoding: .utf8)!
+        return try self.applyTo(content)
+    }
+    
+    func applyTo(_ content: String) throws -> String {
+        var content = content
         
         // We have to make sure we don't change the indices for later replacements while applying
         // earlier ones. As long as replacement ranges don't overlap it's enough to apply
@@ -1138,7 +1221,7 @@ extension SourceLocation {
         for index in string.indices {
             let character = string[index]
             
-            if line == self.line && column == self.column {
+            if line == self.line && column == self.column || line > self.line {
                 return index
             }
             

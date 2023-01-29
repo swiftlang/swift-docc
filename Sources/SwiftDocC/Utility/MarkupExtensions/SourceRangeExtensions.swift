@@ -29,6 +29,9 @@ extension SourceRange {
 
 extension SourceRange {
     /// Offsets the `SourceRange` using another `SourceRange`.
+    ///
+    /// - Warning: Absolute `SourceRange`s index line and column from 1. Thus, at least one
+    /// of `self` or `range` must be a relative range indexed from 0.
     mutating func offsetWithRange(_ range: SourceRange) {
         let start = SourceLocation(line: lowerBound.line + range.lowerBound.line, column: lowerBound.column + range.lowerBound.column, source: nil)
         let end = SourceLocation(line: upperBound.line + range.lowerBound.line, column: upperBound.column + range.lowerBound.column, source: nil)
