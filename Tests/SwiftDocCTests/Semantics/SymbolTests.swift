@@ -564,8 +564,6 @@ class SymbolTests: XCTestCase {
         if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             var problem: Problem
             
-            print(unresolvedTopicProblems.map(\.diagnostic.localizedSummary))
-            
             problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.localizedSummary == "Topic reference 'UnresolvableSymbolLinkInMyClassOverview<>(_:))' couldn't be resolved. Reference at '/MyKit/MyClass' can't resolve 'UnresolvableSymbolLinkInMyClassOverview<>(_:))'. No similar pages." }))
             XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Available children: init(), myFunction()."])
             XCTAssertEqual(problem.possibleSolutions.count, 2)

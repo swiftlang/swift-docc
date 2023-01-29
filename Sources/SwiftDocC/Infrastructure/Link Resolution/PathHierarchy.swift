@@ -836,7 +836,8 @@ extension PathHierarchy.Error {
     ///
     /// - Parameters:
     ///     - context: The ``DocumentationContext`` the `originalReference` was resolved in.
-    ///     - originalReference: The raw input string that represents the body of the reference that failed to resolve.
+    ///     - originalReference: The raw input string that represents the body of the reference that failed to resolve. This string is
+    ///     used to calculate the proper replacment-ranges for fixits.
     ///
     /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the `originalReference`, i.e. the beginning
     /// of the _body_ of the original reference.

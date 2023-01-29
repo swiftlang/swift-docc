@@ -68,54 +68,36 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
 }
 
 /// The error causing the failure in the resolution of a ``TopicReference``.
-public struct TopicReferenceResolutionError: Error {
-    // we store the base as an `Error` so that
-    // we can potentailly pass through a `DescribedError`
-    // conformance in the future
-    private let base: Error
+public struct TopicReferenceResolutionError: DescribedError, Hashable {
+    public let errorDescription: String
+    public let recoverySuggestion: String?
+    public let failureReason: String?
+    public let helpAnchor: String?
     private let solutions: [Solution]
     
-    init(_ error: Error, solutions: [Solution] = []) {
-        self.base = error
+    init(_ message: String, note: String? = nil, solutions: [Solution] = []) {
+        self.errorDescription = message
+        self.recoverySuggestion = note
+        self.failureReason = nil
+        self.helpAnchor = nil
         self.solutions = solutions
-    }
-    
-    var localizedDescription: String {
-        base.localizedDescription
-    }
-    
-    public var note: String? {
-        (base as? GenericBaseError)?.note
     }
 }
 
 extension TopicReferenceResolutionError {
-    init(_ message: String, note: String? = nil, solutions: [Solution] = []) {
-        self.base = GenericBaseError(message: message, note: note)
+    init(_ error: Error, solutions: [Solution] = []) {
+        if let describedError = error as? DescribedError {
+            self.errorDescription = describedError.errorDescription
+            self.recoverySuggestion = describedError.recoverySuggestion
+            self.failureReason = describedError.failureReason
+            self.helpAnchor = describedError.helpAnchor
+        } else {
+            self.errorDescription = error.localizedDescription
+            self.recoverySuggestion = nil
+            self.failureReason = nil
+            self.helpAnchor = nil
+        }
         self.solutions = solutions
-    }
-    
-    private struct GenericBaseError: DescribedError {
-        let message: String
-        let note: String?
-        
-        var errorDescription: String {
-            message
-        }
-        
-        var recoverySuggestion: String? {
-            note
-        }
-    }
-}
-
-extension TopicReferenceResolutionError: Hashable {
-    public static func == (lhs: TopicReferenceResolutionError, rhs: TopicReferenceResolutionError) -> Bool {
-        (lhs.base as CustomStringConvertible).description == (rhs.base as CustomStringConvertible).description
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        (base as CustomStringConvertible).description.hash(into: &hasher)
     }
 }
 

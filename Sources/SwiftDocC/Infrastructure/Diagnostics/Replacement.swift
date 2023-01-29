@@ -14,7 +14,7 @@ import SymbolKit
 /**
  A textual replacement.
  */
-public struct Replacement {
+public struct Replacement: Hashable {
     /// The range to replace.
     public var range: SourceRange
     

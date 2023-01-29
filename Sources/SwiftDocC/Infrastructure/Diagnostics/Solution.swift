@@ -11,7 +11,7 @@
 /**
  A solution to a `Problem`.
  */
-public struct Solution {
+public struct Solution: Hashable {
     /// A *brief* description of what the solution is.
     public var summary: String
     

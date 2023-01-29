@@ -18,13 +18,17 @@ func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: 
     
     if let source = source,
        let range = range,
-       let note = underlyingError.note {
+       let note = underlyingError.recoverySuggestion ?? underlyingError.failureReason ?? underlyingError.helpAnchor {
         notes.append(DiagnosticNote(source: source, range: range, message: note))
     }
     
     var solutions: [Solution] = []
     
     if let range = range {
+        // FIXME: The replacements currently only support DocC's predomentantly used custom link formats.
+        // We should also support the regular markdown link syntax ([doc:my/reference](doc:my/reference), or
+        // [custom title](doc:my/reference)), however don't have the necessary information yet.
+        // https://github.com/apple/swift-docc/issues/470
         let innerRange = fromSymbolLink
             // ``my/reference``
             ? SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+2, source: range.lowerBound.source)..<SourceLocation(line: range.upperBound.line, column: range.upperBound.column-2, source: range.upperBound.source)
