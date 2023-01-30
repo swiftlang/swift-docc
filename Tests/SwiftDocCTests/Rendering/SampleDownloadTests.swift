@@ -222,6 +222,7 @@ class SampleDownloadTests: XCTestCase {
         let downloadReference = try XCTUnwrap(renderNode.references[ident.identifier] as? ExternalLocationReference)
 
         let encoder = JSONEncoder()
+        encoder.outputFormatting.insert(.sortedKeys)
         let decoder = JSONDecoder()
 
         let encodedReference = try encoder.encode(downloadReference)
