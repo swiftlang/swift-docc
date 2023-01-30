@@ -286,7 +286,6 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
                 }
                 
                 return PageImage._make(
-                    originalMarkup: BlockDirective(name: "PageImage", children: []),
                     purpose: purpose,
                     source: ResourceReference(bundleIdentifier: node.reference.bundleIdentifier, path: topicImage.identifier.identifier),
                     alt: (resolvedInformation.references?.first(where: { $0.identifier == topicImage.identifier }) as? ImageReference)?.altText
@@ -449,7 +448,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
 }
 
 extension OutOfProcessReferenceResolver: _ExternalAssetResolver {
-    public func resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset? {
+    public func _resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset? {
         // We don't want to make additional requests for these external assets.
         // If they were already resolved, return them from the cache.
         return assetCache[AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)]

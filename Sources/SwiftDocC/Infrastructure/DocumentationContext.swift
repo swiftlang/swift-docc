@@ -2660,7 +2660,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         if let externalAssetResolver = _externalAssetResolvers[bundleIdentifier],
-           let externallyResolvedAsset = externalAssetResolver.resolveExternalAsset(named: name, bundleIdentifier: bundleIdentifier) {
+           let externallyResolvedAsset = externalAssetResolver._resolveExternalAsset(named: name, bundleIdentifier: bundleIdentifier) {
             assetManagers[bundleIdentifier, default: DataAssetManager()]
                 .register(dataAsset: externallyResolvedAsset, forName: name)
             return externallyResolvedAsset
@@ -2693,7 +2693,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         if let assetManager = assetManagers[bundleIdentifier] {
             return assetManager.bestKey(forAssetName: name)
         } else {
-            if _externalAssetResolvers[bundleIdentifier]?.resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier) != nil {
+            if _externalAssetResolvers[bundleIdentifier]?._resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier) != nil {
                 return name
             } else {
                 return nil

@@ -91,7 +91,6 @@ class ExternalReferenceResolverTests: XCTestCase {
                     case .icon: purpose = .icon
                     }
                     return PageImage._make(
-                        originalMarkup: BlockDirective(name: "PageImage", children: []),
                         purpose: purpose,
                         source: ResourceReference(bundleIdentifier: reference.bundleIdentifier, path: topicImage.identifier.identifier),
                         alt: alt
@@ -126,7 +125,7 @@ class ExternalReferenceResolverTests: XCTestCase {
             return resolvedAssets[assetName]
         }
         
-        public func resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset? {
+        public func _resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset? {
             return resolvedAssets[assetName]
         }
     }

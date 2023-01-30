@@ -18,5 +18,5 @@ public protocol _ExternalAssetResolver {
     // FIXME: https://github.com/apple/swift-docc/issues/468
     
     /// Attempts to resolve an asset that couldn't be resolved externally given its name and the bundle it's apart of.
-    func resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset?
+    func _resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset?
 }

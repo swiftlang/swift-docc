@@ -52,10 +52,10 @@ public final class PageImage: Semantic, AutomaticDirectiveConvertible {
     /// https://github.com/apple/swift-docc/issues/468
     ///
     /// This is intentionally defined as an underscore prefixed static function instead of an initializer to make it less likely that it's used in other places.
-    static func _make(originalMarkup: BlockDirective, purpose: Purpose, source: ResourceReference, alt: String?) -> PageImage {
+    static func _make(purpose: Purpose, source: ResourceReference, alt: String?) -> PageImage {
         // FIXME: https://github.com/apple/swift-docc/issues/468
         return PageImage(
-            originalMarkup:  originalMarkup,
+            originalMarkup: BlockDirective(name: "PageImage", children: []),
             purpose: purpose,
             source: source,
             alt: alt
