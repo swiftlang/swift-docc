@@ -10,7 +10,7 @@
 
 import Foundation
 
-/// A specialized ``DownloadReference`` used for ``CallToAction`` directives.
+/// A specialized ``DownloadReference`` used for references to external links.
 ///
 /// `@CallToAction` directives can link either to a local file or to a URL, whether relative or
 /// absolute. Directives that use the `file` argument will create a ``DownloadReference`` and copy
