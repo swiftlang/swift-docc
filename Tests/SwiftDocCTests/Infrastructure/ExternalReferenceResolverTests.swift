@@ -533,6 +533,9 @@ Document @1:1-1:35
         
         let renderNode = try converter.convert(node, at: fileURL)
         
+        XCTAssertEqual(context.assetManagers.keys.sorted(), ["org.swift.docc.sample"],
+                       "The external bundle for the external asset shouldn't have it's own asset manager")
+        
         let externalRenderReference = try XCTUnwrap(renderNode.references["doc://com.test.external/path/to/external-page-with-topic-image"] as? TopicRenderReference)
         
         XCTAssertEqual(externalRenderReference.identifier.identifier, "doc://com.test.external/path/to/external-page-with-topic-image")

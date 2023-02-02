@@ -2661,8 +2661,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         if let externalAssetResolver = _externalAssetResolvers[bundleIdentifier],
            let externallyResolvedAsset = externalAssetResolver._resolveExternalAsset(named: name, bundleIdentifier: bundleIdentifier) {
-            assetManagers[bundleIdentifier, default: DataAssetManager()]
-                .register(dataAsset: externallyResolvedAsset, forName: name)
+            // Don't create a new DataAssetManager for the external bundle.
             return externallyResolvedAsset
         }
         
