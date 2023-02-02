@@ -14,7 +14,7 @@ import Markdown
 import SymbolKit
 
 class ExternalReferenceResolverTests: XCTestCase {
-    class TestExternalReferenceResolver: ExternalReferenceResolver, FallbackReferenceResolver, FallbackAssetResolver, _ExternalAssetResolver {
+    class TestExternalReferenceResolver: ExternalReferenceResolver, FallbackReferenceResolver {
         var bundleIdentifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"
         var expectedFragment: String? = nil
@@ -22,8 +22,6 @@ class ExternalReferenceResolverTests: XCTestCase {
         var resolvedEntityKind = DocumentationNode.Kind.article
         var resolvedEntityLanguage = SourceLanguage.swift
         var resolvedEntityDeclarationFragments: SymbolGraph.Symbol.DeclarationFragments? = nil
-        var resolvedTopicImages: [(TopicImage, alt: String)]? = nil
-        var resolvedAssets: [String: DataAsset] = [:]
         
         enum Error: Swift.Error {
             case testErrorRaisedForWrongBundleIdentifier
@@ -70,7 +68,7 @@ class ExternalReferenceResolverTests: XCTestCase {
                 semantic = nil
             }
             
-            var node = DocumentationNode(
+            return DocumentationNode(
                 reference: reference,
                 kind: resolvedEntityKind,
                 sourceLanguage: resolvedEntityLanguage,
@@ -78,29 +76,6 @@ class ExternalReferenceResolverTests: XCTestCase {
                 markup: Document(parsing: "Externally Resolved Markup Content", options: [.parseBlockDirectives, .parseSymbolLinks]),
                 semantic: semantic
             )
-            
-            // This is a workaround for how external content is processed. See details in OutOfProcessReferenceResolver.addImagesAndCacheMediaReferences(to:from:)
-            
-            if let topicImages = resolvedTopicImages {
-                let metadata = node.metadata ?? Metadata(originalMarkup: BlockDirective(name: "Metadata", children: []), documentationExtension: nil, technologyRoot: nil, displayName: nil)
-                
-                metadata.pageImages = topicImages.map { topicImage, alt in
-                    let purpose: PageImage.Purpose
-                    switch topicImage.type {
-                    case .card: purpose = .card
-                    case .icon: purpose = .icon
-                    }
-                    return PageImage._make(
-                        purpose: purpose,
-                        source: ResourceReference(bundleIdentifier: reference.bundleIdentifier, path: topicImage.identifier.identifier),
-                        alt: alt
-                    )
-                }
-                
-                node.metadata = metadata
-            }
-              
-            return node
         }
         
         let testBaseURL: String = "https://example.com/example"
@@ -119,14 +94,6 @@ class ExternalReferenceResolverTests: XCTestCase {
         
         func hasResolvedReference(_ reference: ResolvedTopicReference) -> Bool {
             true
-        }
-        
-        public func resolve(assetNamed assetName: String, bundleIdentifier: String) -> DataAsset? {
-            return resolvedAssets[assetName]
-        }
-        
-        public func _resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset? {
-            return resolvedAssets[assetName]
         }
     }
     
@@ -472,32 +439,60 @@ Document @1:1-1:35
     }
     
     func testExternalTopicWithTopicImage() throws {
-        let externalResolver = TestExternalReferenceResolver()
+        let externalResolver = TestMultiResultExternalReferenceResolver()
         externalResolver.bundleIdentifier = "com.test.external"
-        externalResolver.expectedReferencePath = "/path/to/external-page-with-topic-image"
-        externalResolver.resolvedEntityTitle = "Name of Page"
-        externalResolver.resolvedTopicImages = [
-            (TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card")), "External card alt text"),
-            (TopicImage(type: .icon, identifier: RenderReferenceIdentifier("external-icon")), "External icon alt text"),
-        ]
         
-        let lightCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name.jpg"))
-        let darkCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name-dark.jpg"))
+        externalResolver.entitiesToReturn["/path/to/external-page-with-topic-image-1"] = .success(.init(
+            referencePath: "/path/to/external-page-with-topic-image-1",
+            title: "First external page with topic image",
+            topicImages: [
+                (TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card-1")), "First external card alt text"),
+                (TopicImage(type: .icon, identifier: RenderReferenceIdentifier("external-icon-1")), "First external icon alt text"),
+            ]
+        ))
+        externalResolver.entitiesToReturn["/path/to/external-page-with-topic-image-2"] = .success(.init(
+            referencePath: "/path/to/external-page-with-topic-image-2",
+            title: "Second external page with topic image",
+            topicImages: [
+                (TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card-2")), "Second external card alt text"),
+                (TopicImage(type: .icon, identifier: RenderReferenceIdentifier("external-icon-2")), "Second external icon alt text"),
+            ]
+        ))
         
-        externalResolver.resolvedAssets = [
-            "external-card": DataAsset(
+        let firstCardImageLightURL = try XCTUnwrap(URL(string: "https://com.test.example/first-image-name-light.jpg"))
+        let firstCardImageDarkURL = try XCTUnwrap(URL(string: "https://com.test.example/first-image-name-dark.jpg"))
+        
+        let secondCardImageStandardURL = try XCTUnwrap(URL(string: "https://com.test.example/second-image-name-1x.jpg"))
+        let secondCardImageDoubleURL = try XCTUnwrap(URL(string: "https://com.test.example/second-image-name-2x.jpg"))
+        let secondCardImageTripleURL = try XCTUnwrap(URL(string: "https://com.test.example/second-image-name-3x.jpg"))
+        
+        externalResolver.assetsToReturn = [
+            "external-card-1": DataAsset(
                 variants: [
-                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightCardImageURL,
-                    DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): firstCardImageLightURL,
+                    DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): firstCardImageDarkURL,
                 ],
                 metadata: [
-                    lightCardImageURL : DataAsset.Metadata(svgID: nil),
-                    darkCardImageURL : DataAsset.Metadata(svgID: nil),
+                    firstCardImageLightURL: DataAsset.Metadata(svgID: nil),
+                    firstCardImageDarkURL: DataAsset.Metadata(svgID: nil),
+                ],
+                context: .display
+            ),
+            
+            "external-card-2": DataAsset(
+                variants: [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): secondCardImageStandardURL,
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): secondCardImageDoubleURL,
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .triple): secondCardImageTripleURL,
+                ],
+                metadata: [
+                    secondCardImageStandardURL: DataAsset.Metadata(svgID: nil),
+                    secondCardImageDoubleURL: DataAsset.Metadata(svgID: nil),
+                    secondCardImageTripleURL: DataAsset.Metadata(svgID: nil),
                 ],
                 context: .display
             ),
         ]
-        
         
         let (_, bundle, context) = try testBundleAndContext(copying: "SampleBundle", excludingPaths: ["MySample.md", "MyLocalSample.md"], externalResolvers: [externalResolver.bundleIdentifier: externalResolver], _externalAssetResolvers: [externalResolver.bundleIdentifier: externalResolver]) { url in
             try """
@@ -517,7 +512,8 @@ Document @1:1-1:35
 
             ### Examples
 
-            - <doc://com.test.external/path/to/external-page-with-topic-image>
+            - <doc://com.test.external/path/to/external-page-with-topic-image-1>
+            - <doc://com.test.external/path/to/external-page-with-topic-image-2>
 
             <!-- Copyright (c) 2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
             """.write(to: url.appendingPathComponent("SomeSample.md"), atomically: true, encoding: .utf8)
@@ -536,32 +532,65 @@ Document @1:1-1:35
         XCTAssertEqual(context.assetManagers.keys.sorted(), ["org.swift.docc.sample"],
                        "The external bundle for the external asset shouldn't have it's own asset manager")
         
-        let externalRenderReference = try XCTUnwrap(renderNode.references["doc://com.test.external/path/to/external-page-with-topic-image"] as? TopicRenderReference)
+        let firstExternalRenderReference = try XCTUnwrap(renderNode.references["doc://com.test.external/path/to/external-page-with-topic-image-1"] as? TopicRenderReference)
         
-        XCTAssertEqual(externalRenderReference.identifier.identifier, "doc://com.test.external/path/to/external-page-with-topic-image")
-        XCTAssertEqual(externalRenderReference.title, "Name of Page")
-        XCTAssertEqual(externalRenderReference.url, "/example/path/to/external-page-with-topic-image")
-        XCTAssertEqual(externalRenderReference.kind, .article)
+        XCTAssertEqual(firstExternalRenderReference.identifier.identifier, "doc://com.test.external/path/to/external-page-with-topic-image-1")
+        XCTAssertEqual(firstExternalRenderReference.title, "First external page with topic image")
+        XCTAssertEqual(firstExternalRenderReference.url, "/example/path/to/external-page-with-topic-image-1")
+        XCTAssertEqual(firstExternalRenderReference.kind, .article)
         
-        XCTAssertEqual(externalRenderReference.images, [
-            TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card")),
+        XCTAssertEqual(firstExternalRenderReference.images, [
+            TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card-1")),
         ])
         
-        let imageReferences = renderNode.assetReferences[.image]?.compactMap{ $0 as? ImageReference } ?? []
+        let secondExternalRenderReference = try XCTUnwrap(renderNode.references["doc://com.test.external/path/to/external-page-with-topic-image-2"] as? TopicRenderReference)
         
+        XCTAssertEqual(secondExternalRenderReference.identifier.identifier, "doc://com.test.external/path/to/external-page-with-topic-image-2")
+        XCTAssertEqual(secondExternalRenderReference.title, "Second external page with topic image")
+        XCTAssertEqual(secondExternalRenderReference.url, "/example/path/to/external-page-with-topic-image-2")
+        XCTAssertEqual(secondExternalRenderReference.kind, .article)
+        
+        XCTAssertEqual(secondExternalRenderReference.images, [
+            TopicImage(type: .card, identifier: RenderReferenceIdentifier("external-card-2")),
+        ])
+        
+        let imageReferences = (renderNode.assetReferences[.image] ?? [])
+            .compactMap { $0 as? ImageReference }
+            .sorted(by: \.identifier.identifier)
+        
+        XCTAssertEqual(imageReferences.map(\.identifier.identifier), ["external-card-1", "external-card-2"])
         XCTAssertEqual(imageReferences, [
             ImageReference(
-                identifier: RenderReferenceIdentifier("external-card"),
-                altText: "External card alt text",
+                identifier: RenderReferenceIdentifier("external-card-1"),
+                altText: "First external card alt text",
                 imageAsset:
                     DataAsset(
                         variants: [
-                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightCardImageURL,
-                            DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
+                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): firstCardImageLightURL,
+                            DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): firstCardImageDarkURL,
                         ],
                         metadata: [
-                            lightCardImageURL : DataAsset.Metadata(svgID: nil),
-                            darkCardImageURL : DataAsset.Metadata(svgID: nil),
+                            firstCardImageLightURL: DataAsset.Metadata(svgID: nil),
+                            firstCardImageDarkURL: DataAsset.Metadata(svgID: nil),
+                        ],
+                        context: .display
+                    )
+            ),
+            
+            ImageReference(
+                identifier: RenderReferenceIdentifier("external-card-2"),
+                altText: "Second external card alt text",
+                imageAsset:
+                    DataAsset(
+                        variants: [
+                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard): secondCardImageStandardURL,
+                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): secondCardImageDoubleURL,
+                            DataTraitCollection(userInterfaceStyle: .light, displayScale: .triple): secondCardImageTripleURL,
+                        ],
+                        metadata: [
+                            secondCardImageStandardURL: DataAsset.Metadata(svgID: nil),
+                            secondCardImageDoubleURL: DataAsset.Metadata(svgID: nil),
+                            secondCardImageTripleURL: DataAsset.Metadata(svgID: nil),
                         ],
                         context: .display
                     )
