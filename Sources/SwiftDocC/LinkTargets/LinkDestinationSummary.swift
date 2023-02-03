@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -144,7 +144,16 @@ public struct LinkDestinationSummary: Codable, Equatable {
     ///
     /// A web server can use this list of URLs to redirect to the current URL.
     public let redirects: [URL]?
-     
+        
+    /// Images that are used to represent the summarized element.
+    public let topicImages: [TopicImage]?
+    
+    /// References used in the content of the summarized element.
+    ///
+    /// This includes the element's ``topicImages`` or references from the element's ``abstract-swift.property``.
+    /// This also includes any references for all variants' content.
+    public var references: [RenderReference]?
+    
     /// A variant of content for a summarized element.
     ///
     /// - Note: All properties except for ``traits`` are optional. If a property is `nil` it means that the value is the same as the summarized element's value.
@@ -188,6 +197,11 @@ public struct LinkDestinationSummary: Codable, Equatable {
         ///
         /// If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let declarationFragments: VariantValue<DeclarationFragments?>
+        
+        /// Images that are used to represent the summarized element.
+        ///
+        /// If the summarized element has an image but the variant doesn't, this property will be `Optional.some(nil)`.
+        public let topicImages: VariantValue<[TopicImage]?>
     }
     
     /// The variants of content (kind, title, abstract, path, urs, declaration, and task groups) for this summarized element.
@@ -230,7 +244,17 @@ public extension DocumentationNode {
                 taskGroupVariants[variant.traits] = variant.applyingPatchTo(renderNode.topicSections).map { group in .init(title: group.title, identifiers: group.identifiers) }
             }
         }
-        return [LinkDestinationSummary(documentationNode: self, relativePresentationURL: relativePresentationURL, taskGroups: taskGroups, taskGroupVariants: taskGroupVariants, platforms: platforms, compiler: &compiler)] + landmarkSummaries
+        return [
+            LinkDestinationSummary(
+                documentationNode: self,
+                renderNode: renderNode,
+                relativePresentationURL: relativePresentationURL,
+                taskGroups: taskGroups,
+                taskGroupVariants: taskGroupVariants,
+                platforms: platforms,
+                compiler: &compiler
+            )
+        ] + landmarkSummaries
     }
 }
 
@@ -258,12 +282,27 @@ extension LinkDestinationSummary {
     ///   - relativePresentationURL: The relative presentation URL for this page.
     ///   - taskGroups: The task groups that lists the children of this page.
     ///   - compiler: The content compiler that's used to render the node's abstract.
-    init(documentationNode: DocumentationNode, relativePresentationURL: URL, taskGroups: [TaskGroup], taskGroupVariants: [[RenderNode.Variant.Trait]: [TaskGroup]], platforms: [PlatformAvailability]?, compiler: inout RenderContentCompiler) {
+    init(
+        documentationNode: DocumentationNode,
+        renderNode: RenderNode,
+        relativePresentationURL: URL,
+        taskGroups: [TaskGroup],
+        taskGroupVariants: [[RenderNode.Variant.Trait]: [TaskGroup]],
+        platforms: [PlatformAvailability]?,
+        compiler: inout RenderContentCompiler
+    ) {
         let redirects = (documentationNode.semantic as? Redirected)?.redirects?.map { $0.oldPath }
         let referenceURL = documentationNode.reference.url
         
+        let topicImages = renderNode.metadata.images
+        let referenceIdentifiers = topicImages.map(\.identifier)
+        
         guard let symbol = documentationNode.semantic as? Symbol, let summaryTrait = documentationNode.availableVariantTraits.first(where: { $0.interfaceLanguage == documentationNode.sourceLanguage.id }) else {
             // Only symbol documentation currently support multi-language variants (rdar://86580915)
+            let references = referenceIdentifiers
+                .compactMap { renderNode.references[$0.identifier] }
+                .sorted(by: \.identifier.identifier)
+            
             self.init(
                 kind: documentationNode.kind,
                 language: documentationNode.sourceLanguage,
@@ -277,6 +316,8 @@ extension LinkDestinationSummary {
                 usr: nil,
                 declarationFragments: nil,
                 redirects: redirects,
+                topicImages: topicImages.nilIfEmpty,
+                references: references.nilIfEmpty,
                 variants: []
             )
             return
@@ -328,9 +369,14 @@ extension LinkDestinationSummary {
                 abstract: nilIfEqual(main: abstract, variant: abstractVariant),
                 taskGroups: nilIfEqual(main: taskGroups, variant: taskGroupVariants[variantTraits]),
                 usr: nil, // The symbol variant uses the same USR
-                declarationFragments: nilIfEqual(main: declaration, variant: declarationVariant)
+                declarationFragments: nilIfEqual(main: declaration, variant: declarationVariant),
+                topicImages: nil // The symbol variant doesn't currently have their own images
             )
         }
+        
+        let references = referenceIdentifiers
+            .compactMap { renderNode.references[$0.identifier] }
+            .sorted(by: \.identifier.identifier)
         
         self.init(
             kind: kind,
@@ -345,6 +391,8 @@ extension LinkDestinationSummary {
             usr: usr,
             declarationFragments: declaration,
             redirects: redirects,
+            topicImages: topicImages.nilIfEmpty,
+            references: references.nilIfEmpty,
             variants: variants
         )
     }
@@ -392,6 +440,8 @@ extension LinkDestinationSummary {
             usr: nil, // Only symbols have a USR
             declarationFragments: nil, // Only symbols have declarations
             redirects: (landmark as? Redirected)?.redirects?.map { $0.oldPath },
+            topicImages: nil, // Landmarks doesn't have topic images
+            references: nil, // Landmarks have no references, since only topic image references is currently supported
             variants: []
         )
     }
@@ -402,7 +452,7 @@ extension LinkDestinationSummary {
 // Add Codable methods—which include an initializer—in an extension so that it doesn't override the member-wise initializer.
 extension LinkDestinationSummary {
     enum CodingKeys: String, CodingKey {
-        case kind, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects, variants
+        case kind, referenceURL, title, abstract, language, taskGroups, usr, availableLanguages, platforms, redirects, topicImages, references, variants
         case relativePresentationURL = "path"
         case declarationFragments = "fragments"
     }
@@ -421,6 +471,9 @@ extension LinkDestinationSummary {
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(redirects, forKey: .redirects)
+        try container.encodeIfPresent(topicImages, forKey: .topicImages)
+        try container.encodeIfPresent(references?.map { CodableRenderReference($0) }, forKey: .references)
+        
         if !variants.isEmpty {
             try container.encode(variants, forKey: .variants)
         }
@@ -455,6 +508,10 @@ extension LinkDestinationSummary {
         usr = try container.decodeIfPresent(String.self, forKey: .usr)
         declarationFragments = try container.decodeIfPresent(DeclarationFragments.self, forKey: .declarationFragments)
         redirects = try container.decodeIfPresent([URL].self, forKey: .redirects)
+        topicImages = try container.decodeIfPresent([TopicImage].self, forKey: .topicImages)
+        references = try container.decodeIfPresent([CodableRenderReference].self, forKey: .references).map { decodedReferences in
+            decodedReferences.map(\.reference)
+        }
         
         variants = try container.decodeIfPresent([Variant].self, forKey: .variants) ?? []
     }
@@ -462,7 +519,7 @@ extension LinkDestinationSummary {
 
 extension LinkDestinationSummary.Variant {
     enum CodingKeys: String, CodingKey {
-        case traits, kind, title, abstract, language, usr, taskGroups
+        case traits, kind, title, abstract, language, usr, taskGroups, topicImages
         case relativePresentationURL = "path"
         case declarationFragments = "fragments"
     }
@@ -478,6 +535,7 @@ extension LinkDestinationSummary.Variant {
         try container.encodeIfPresent(usr, forKey: .usr)
         try container.encodeIfPresent(declarationFragments, forKey: .declarationFragments)
         try container.encodeIfPresent(taskGroups, forKey: .taskGroups)
+        try container.encodeIfPresent(topicImages, forKey: .topicImages)
     }
     
     public init(from decoder: Decoder) throws {
@@ -516,5 +574,90 @@ extension LinkDestinationSummary.Variant {
         usr = try container.decodeIfPresent(String?.self, forKey: .usr)
         declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
         taskGroups = try container.decodeIfPresent([LinkDestinationSummary.TaskGroup]?.self, forKey: .taskGroups)
+        topicImages = try container.decodeIfPresent([TopicImage]?.self, forKey: .topicImages)
+    }
+}
+
+// MARK: - Equatable conformance
+
+// Manually implement `==(_:_:)` since ``RenderReference`` doesn't conform to Equatable.
+// (Adding that conformance would add a Self requirement that would add the need for type erasure in other places)
+extension LinkDestinationSummary {
+    public static func == (lhs: LinkDestinationSummary, rhs: LinkDestinationSummary) -> Bool {
+        // The reference URL and usr have identity-like qualities.
+        // If those are different the other data-like properties would also be different.
+        guard lhs.referenceURL == rhs.referenceURL else { return false }
+        guard lhs.usr == rhs.usr else { return false }
+        
+        // Compare the data-like properties in the order that they are declared (above).
+        guard lhs.kind == rhs.kind else { return false }
+        guard lhs.language == rhs.language else { return false }
+        guard lhs.relativePresentationURL == rhs.relativePresentationURL else { return false }
+        guard lhs.title == rhs.title else { return false }
+        guard lhs.abstract == rhs.abstract else { return false }
+        guard lhs.availableLanguages == rhs.availableLanguages else { return false }
+        guard lhs.platforms == rhs.platforms else { return false }
+        guard lhs.taskGroups == rhs.taskGroups else { return false }
+        guard lhs.declarationFragments == rhs.declarationFragments else { return false }
+        guard lhs.redirects == rhs.redirects else { return false }
+        guard lhs.topicImages == rhs.topicImages else { return false }
+        guard lhs.variants == rhs.variants else { return false }
+        
+        // Since `RenderReference` doesn't conform to Equatable, the `references` need to be compared manually.
+        // There's a known number of render references types for the various `RenderReferenceType` cases.
+        guard lhs.references?.count == rhs.references?.count else { return false }
+        for (lhsRef, rhsRef) in zip(lhs.references ?? [], rhs.references ?? []) {
+            switch (lhsRef, rhsRef) {
+            case let (lhsImageRef, rhsImageRef) as (ImageReference, ImageReference):
+                guard lhsImageRef == rhsImageRef else { return false }
+                continue
+                
+            case let (lhsVideoRef, rhsVideoRef) as (VideoReference, VideoReference):
+                guard lhsVideoRef == rhsVideoRef else { return false }
+                continue
+                
+            case let (lhsFileRef, rhsFileRef) as (FileReference, FileReference):
+                guard lhsFileRef == rhsFileRef else { return false }
+                continue
+                
+            case let (lhsFileTypeRef, rhsFileTypeRef) as (FileTypeReference, FileTypeReference):
+                guard lhsFileTypeRef == rhsFileTypeRef else { return false }
+                continue
+                
+            case let (lhsXcodeRequirementRef, rhsXcodeRequirementRef) as (XcodeRequirementReference, XcodeRequirementReference):
+                guard lhsXcodeRequirementRef == rhsXcodeRequirementRef else { return false }
+                continue
+                
+            // This case covers both `topic` and `section` render references. See CodableRenderReference.
+            case let (lhsTopicRef, rhsTopicRef) as (TopicRenderReference, TopicRenderReference):
+                guard lhsTopicRef == rhsTopicRef else { return false }
+                continue
+                
+            case let (lhsDownloadRef, rhsDownloadRef) as (DownloadReference, DownloadReference):
+                guard lhsDownloadRef == rhsDownloadRef else { return false }
+                continue
+                    
+            case let (lhsLinkRef, rhsLinkRef) as (LinkReference, LinkReference):
+                guard lhsLinkRef == rhsLinkRef else { return false }
+                continue
+                
+            case let (lhsUnresolvedRef, rhsUnresolvedRef) as (UnresolvedRenderReference, UnresolvedRenderReference):
+                guard lhsUnresolvedRef == rhsUnresolvedRef else { return false }
+                continue
+                
+            default:
+                return false
+            }
+        }
+        
+        return true
+    }
+}
+
+// MARK: - Private helpers
+
+private extension Collection {
+    var nilIfEmpty: Self? {
+        isEmpty ? nil : self
     }
 }

@@ -223,6 +223,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// unresolvable asset references using a fallback resolver (if one is set for the reference's bundle identifier.)
     public var fallbackAssetResolvers = [BundleIdentifier: FallbackAssetResolver]()
     
+    // This protocol only exist to workaround a limitation. It should be removed when it's no longer needed.
+    // FIXME: https://github.com/apple/swift-docc/issues/468
+    public var _externalAssetResolvers = [BundleIdentifier: _ExternalAssetResolver]()
+    
     /// All the symbol references that have been resolved from external sources.
     ///
     /// This is tracked to exclude external symbols from the build output. Information about external references is still included for the local pages that makes the external reference.
@@ -2655,6 +2659,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             return externallyResolvedAsset
         }
         
+        if let externalAssetResolver = _externalAssetResolvers[bundleIdentifier],
+           let externallyResolvedAsset = externalAssetResolver._resolveExternalAsset(named: name, bundleIdentifier: bundleIdentifier) {
+            // Don't create a new DataAssetManager for the external bundle.
+            return externallyResolvedAsset
+        }
+        
         // If no fallbackAssetResolver is set, try to treat it as external media link
         if let externalMediaLink = URL(string: name),
            externalMediaLink.isAbsoluteWebURL {
@@ -2679,7 +2689,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Returns: The best matching storage key if it was found, otherwise `nil`.
     public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
         let bundleIdentifier = parent.bundleIdentifier
-        return assetManagers[bundleIdentifier]?.bestKey(forAssetName: name)
+        if let assetManager = assetManagers[bundleIdentifier] {
+            return assetManager.bestKey(forAssetName: name)
+        } else {
+            if _externalAssetResolvers[bundleIdentifier]?._resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier) != nil {
+                return name
+            } else {
+                return nil
+            }
+        }
     }
 
     /// Attempt to resolve an unresolved code listing.

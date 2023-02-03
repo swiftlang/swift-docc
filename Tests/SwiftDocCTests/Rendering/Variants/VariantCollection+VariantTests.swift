@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -13,7 +13,7 @@ import XCTest
 @testable import SwiftDocC
 
 class VariantCollection_VariantTests: XCTestCase {
-    let testVariant = VariantCollection<String>.Variant<String>(
+    let testVariant = VariantCollection<String>.Variant(
         traits: [.interfaceLanguage("a")],
         patch: [
             .replace(value: "replace"),

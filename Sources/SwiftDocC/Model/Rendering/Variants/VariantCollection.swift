@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -27,14 +27,14 @@ public struct VariantCollection<Value: Codable>: Codable {
     /// Trait-specific overrides for the default value.
     ///
     /// Clients should decide whether the `defaultValue` or a value in ``variants`` is appropriate in their context.
-    public var variants: [Variant<Value>]
+    public var variants: [Variant]
     
     /// Creates a variant collection given a default value and an array of trait-specific overrides.
     ///
     /// - Parameters:
     ///   - defaultValue: The default value of the variant.
     ///   - variantOverrides: The trait-specific overrides for the value.
-    public init(defaultValue: Value, variants: [Variant<Value>] = []) {
+    public init(defaultValue: Value, variants: [Variant] = []) {
         self.defaultValue = defaultValue
         self.variants = variants
     }
@@ -102,5 +102,14 @@ public struct VariantCollection<Value: Codable>: Codable {
                 variant.mapPatch(transform)
             }
         )
+    }
+}
+
+extension VariantCollection: Equatable where Value: Equatable {
+    public static func == (lhs: VariantCollection<Value>, rhs: VariantCollection<Value>) -> Bool {
+        guard lhs.defaultValue == rhs.defaultValue else { return false }
+        guard lhs.variants == rhs.variants else { return false }
+        
+        return true
     }
 }
