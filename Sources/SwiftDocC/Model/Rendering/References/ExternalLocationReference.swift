@@ -22,7 +22,7 @@ import Foundation
 public struct ExternalLocationReference: RenderReference, URLReference {
     public static var baseURL: URL = .init(string: "/\(DownloadReference.locationName)/")!
 
-    public var type: RenderReferenceType = .download
+    public private(set) var type: RenderReferenceType = .download
 
     public var identifier: RenderReferenceIdentifier
 
@@ -40,6 +40,7 @@ public struct ExternalLocationReference: RenderReference, URLReference {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
+        self.type = try container.decode(RenderReferenceType.self, forKey: .type)
     }
 
     public func encode(to encoder: Encoder) throws {
