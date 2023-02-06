@@ -20,7 +20,7 @@ import Foundation
 /// ``DownloadReference``, but with the `url` set to the text given in the `@CallToAction`'s `url`
 /// argument.
 public struct ExternalLocationReference: RenderReference, URLReference {
-    public static var baseURL: URL = .init(string: "/\(DownloadReference.locationName)/")!
+    public static var baseURL: URL = DownloadReference.baseURL
 
     public private(set) var type: RenderReferenceType = .download
 
