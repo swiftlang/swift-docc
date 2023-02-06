@@ -62,6 +62,38 @@ RESPONSE='{
         "name" : "Platform Name"
       }
     ],
+    "topicImages": [
+      {
+        "type": "card",
+        "identifier": "some-external-card-image-identifier"
+      }
+    ],
+    "references": [
+      {
+        "type": "image",
+        "identifier": "some-external-card-image-identifier",
+        "variants": [
+          {
+            "url": "http:\/\/example.com\/some-image-1x.jpg",
+            "traits": [
+              "1x"
+            ]
+          },
+          {
+            "url": "http:\/\/example.com\/some-image-1x-dark.jpg",
+            "traits": [
+              "1x", "dark"
+            ]
+          },
+          {
+            "url": "http:\/\/example.com\/some-image-2x.jpg",
+            "traits": [
+              "2x"
+            ]
+          }
+        ]
+      }
+    ],
     "title" : "Resolved Title",
     "url" : "doc:\/\/com.test.bundle\/resolved/path\/",
     "variants" : [

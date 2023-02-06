@@ -1,0 +1,45 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 5,
+            "patch": 3
+        },
+        "generator": "clang"
+    },
+    "module": {
+        "name": "MixedLanguageFramework",
+        "platform": {
+            "architecture": "x86_64",
+            "operatingSystem": {
+                "minimumVersion": {
+                    "major": 11,
+                    "minor": 0,
+                    "patch": 0
+                },
+                "name": "macos"
+            },
+            "vendor": "apple"
+        }
+    },
+    "relationships": [],
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "class",
+                "displayName": "Class"
+            },
+            "identifier": {
+                "precise": "c:@E@MyClass",
+                "interfaceLanguage": "occ"
+            },
+            "pathComponents": [
+                "MyClass"
+            ],
+            "names": {
+                "title": "MyClass"
+            },
+            "accessLevel": "public"
+        }
+    ]
+}

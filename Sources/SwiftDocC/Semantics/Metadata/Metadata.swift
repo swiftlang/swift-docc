@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -26,6 +26,7 @@ import Markdown
 /// - ``CallToAction``
 /// - ``Availability``
 /// - ``PageKind``
+/// - ``SupportedLanguage``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
@@ -57,6 +58,9 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     @ChildDirective
     var pageKind: PageKind? = nil
     
+    @ChildDirective(requirements: .zeroOrMore)
+    var supportedLanguages: [SupportedLanguage]
+    
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
         "technologyRoot"        : \Metadata._technologyRoot,
@@ -66,6 +70,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "callToAction"          : \Metadata._callToAction,
         "availability"          : \Metadata._availability,
         "pageKind"              : \Metadata._pageKind,
+        "supportedLanguages"    : \Metadata._supportedLanguages,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
@@ -145,39 +150,36 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
 
         let categorizedAvailability = Dictionary(grouping: availability, by: \.platform)
 
-        for availabilityAttrs in categorizedAvailability.values {
-            guard availabilityAttrs.count > 1 else {
+        for duplicateIntroduced in categorizedAvailability.values {
+            guard duplicateIntroduced.count > 1 else {
                 continue
             }
+            
+            for availability in duplicateIntroduced {
+                let diagnostic = Diagnostic(
+                    source: availability.originalMarkup.nameLocation?.source,
+                    severity: .warning,
+                    range: availability.originalMarkup.range,
+                    identifier: "org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced",
+                    summary: "Duplicate \(Metadata.Availability.directiveName.singleQuoted) directive with 'introduced' argument",
+                    explanation: """
+                    A documentation page can only contain a single 'introduced' version for each platform.
+                    """
+                )
 
-            let duplicateIntroduced = availabilityAttrs.filter({ $0.introduced != nil })
-            if duplicateIntroduced.count > 1 {
-                for avail in duplicateIntroduced {
-                    let diagnostic = Diagnostic(
-                        source: avail.originalMarkup.nameLocation?.source,
-                        severity: .warning,
-                        range: avail.originalMarkup.range,
-                        identifier: "org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced",
-                        summary: "Duplicate \(Metadata.Availability.directiveName.singleQuoted) directive with 'introduced' argument",
-                        explanation: """
-                        A documentation page can only contain a single 'introduced' version for each platform.
-                        """
-                    )
-
-                    guard let range = avail.originalMarkup.range else {
-                        problems.append(Problem(diagnostic: diagnostic))
-                        continue
-                    }
-
-                    let solution = Solution(
-                        summary: "Remove extraneous \(Metadata.Availability.directiveName.singleQuoted) directive",
-                        replacements: [
-                            Replacement(range: range, replacement: "")
-                        ]
-                    )
-
-                    problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+                guard let range = availability.originalMarkup.range else {
+                    problems.append(Problem(diagnostic: diagnostic))
+                    continue
                 }
+
+                let solution = Solution(
+                    summary: "Remove extraneous \(Metadata.Availability.directiveName.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
             }
         }
         

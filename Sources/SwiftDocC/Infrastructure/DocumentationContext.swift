@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -222,6 +222,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// using a ``ConvertService`` that contains partial contents of a bundle—the documentation context will look up locally
     /// unresolvable asset references using a fallback resolver (if one is set for the reference's bundle identifier.)
     public var fallbackAssetResolvers = [BundleIdentifier: FallbackAssetResolver]()
+    
+    // This protocol only exist to workaround a limitation. It should be removed when it's no longer needed.
+    // FIXME: https://github.com/apple/swift-docc/issues/468
+    public var _externalAssetResolvers = [BundleIdentifier: _ExternalAssetResolver]()
     
     /// All the symbol references that have been resolved from external sources.
     ///
@@ -1789,9 +1793,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         articles.map { article in
             guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(
                 for: article,
-                
-                // Articles are available in the same languages the only root module is available in. If there is more
-                // than one module, we cannot determine what languages it's available in and default to Swift.
+                // By default, articles are available in the languages the module that's being documented
+                // is available in. It's possible to override that behavior using the `@SupportedLanguage`
+                // directive though; see its documentation for more details.
                 availableSourceLanguages: soleRootModuleReference.map { sourceLanguages(for: $0) },
                 kind: .article,
                 in: bundle
@@ -1838,6 +1842,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         let path = NodeURLGenerator.pathForSemantic(article.value, source: article.source, bundle: bundle)
+        
+        // Use the languages specified by the `@SupportedLanguage` directives if present.
+        let availableSourceLanguages = article.value
+            .metadata
+            .flatMap { metadata in
+                let languages = Set(
+                    metadata.supportedLanguages
+                        .map(\.language)
+                )
+                
+                return languages.isEmpty ? nil : languages
+            }
+        ?? availableSourceLanguages
         
         // If available source languages are provided and it contains Swift, use Swift as the default language of
         // the article.
@@ -2642,6 +2659,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             return externallyResolvedAsset
         }
         
+        if let externalAssetResolver = _externalAssetResolvers[bundleIdentifier],
+           let externallyResolvedAsset = externalAssetResolver._resolveExternalAsset(named: name, bundleIdentifier: bundleIdentifier) {
+            // Don't create a new DataAssetManager for the external bundle.
+            return externallyResolvedAsset
+        }
+        
         // If no fallbackAssetResolver is set, try to treat it as external media link
         if let externalMediaLink = URL(string: name),
            externalMediaLink.isAbsoluteWebURL {
@@ -2666,7 +2689,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Returns: The best matching storage key if it was found, otherwise `nil`.
     public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
         let bundleIdentifier = parent.bundleIdentifier
-        return assetManagers[bundleIdentifier]?.bestKey(forAssetName: name)
+        if let assetManager = assetManagers[bundleIdentifier] {
+            return assetManager.bestKey(forAssetName: name)
+        } else {
+            if _externalAssetResolvers[bundleIdentifier]?._resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier) != nil {
+                return name
+            } else {
+                return nil
+            }
+        }
     }
 
     /// Attempt to resolve an unresolved code listing.

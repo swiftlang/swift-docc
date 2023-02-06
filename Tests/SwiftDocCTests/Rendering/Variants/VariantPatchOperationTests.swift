@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -20,7 +20,7 @@ class VariantPatchOperationTests: XCTestCase {
         ])
         XCTAssertEqual(addVariant.applyingPatchTo(original), [1, 2, 3, 4, 5, 6])
         
-        let removeVariant = VariantCollection<[Int]>.Variant<[Int]>(traits: [], patch: [
+        let removeVariant = VariantCollection<[Int]>.Variant(traits: [], patch: [
             .remove
         ])
         XCTAssertEqual(removeVariant.applyingPatchTo(original), [])
@@ -62,7 +62,7 @@ class VariantPatchOperationTests: XCTestCase {
             "MNOPQR",
         ]
         for (index, expectedValue) in expectedValues.enumerated() {
-            let stringVariant = VariantCollection<String>.Variant<String>(traits: [], patch: Array(stringPatches.prefix(index)))
+            let stringVariant = VariantCollection<String>.Variant(traits: [], patch: Array(stringPatches.prefix(index)))
             XCTAssertEqual(stringVariant.applyingPatchTo("A"), expectedValue)
         }
     }

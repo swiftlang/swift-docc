@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "description": "Specification of the DocC linkable-entities.json digest file.",
-        "version": "0.2.0",
+        "version": "0.3.0",
         "title": "Linkable Entities"
     },
     "paths": { },
@@ -72,6 +72,18 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "topicImages": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TopicImage"
+                        }
+                    },
+                    "references": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "$ref": "#/components/schemas/RenderReference"
                         }
                     },
                     "redirects": {
@@ -524,6 +536,481 @@
                     },
                     "preciseIdentifier": {
                         "type": "string"
+                    }
+                }
+            },
+            "TopicImage": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["icon", "card"]
+                    },
+                    "reference": {
+                        "type": "string",
+                        "format": "reference(ImageRenderReference)"
+                    }
+                }
+            },
+            "RenderReference": {
+                "oneOf": [
+                    {
+                        "$ref": "#/components/schemas/ImageRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/VideoRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/FileRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/FileTypeRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/XcodeRequirementRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/TopicRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/DownloadRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/UnresolvableRenderReference"
+                    },
+                    {
+                        "$ref": "#/components/schemas/LinkRenderReference"
+                    }
+                ]
+            },
+            "LinkRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "url"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["link"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "titleInlineContent": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ImageRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "variants"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["image"]
+                    },
+                    "alt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariant"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariant": {
+                "type": "object",
+                "required": [
+                    "url",
+                    "traits"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string"
+                    },
+                    "svgID": {
+                        "type": "string",
+                        "description": "The ID attribute for the image that should be rendered in the SVG file represented by this variant."
+                    },
+                    "traits": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariantTrait"
+                        }
+                    }
+                }
+            },
+            "RenderReferenceVariantTrait": {
+                "type": "string",
+                "enum": ["1x", "2x", "3x", "light", "dark"]
+            },
+            "VideoRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "variants"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["video"]
+                    },
+                    "alt": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "poster": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderReferenceVariant"
+                        }
+                    }
+                }
+            },
+            "FileRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "fileName",
+                    "fileType",
+                    "syntax",
+                    "content"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["file"]
+                    },
+                    "fileName": {
+                        "type": "string"
+                    },
+                    "fileType": {
+                        "type": "string"
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "syntax": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "highlights": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FileRenderReferenceHighlight"
+                        }
+                    }
+                }
+            },
+            "FileRenderReferenceHighlight": {
+                "type": "object",
+                "required": [
+                    "line"
+                ],
+                "properties": {
+                    "line": {
+                        "type": "integer"
+                    },
+                    "start": {
+                        "type": "integer"
+                    },
+                    "length": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "FileTypeRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "displayName",
+                    "iconBase64"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["fileType"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "displayName": {
+                        "type": "string"
+                    },
+                    "iconBase64": {
+                        "type": "string"
+                    }
+                }
+            },
+            "XcodeRequirementRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "title",
+                    "url"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["xcodeRequirement"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "TopicRenderReference": {
+                "type": "object",
+                "required": [
+                    "title",
+                    "type",
+                    "kind",
+                    "identifier",
+                    "url"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "abstract": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": ["topic", "section"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "kind": {
+                        "type": "string",
+                        "enum": [
+                            "article",
+                            "project",
+                            "section",
+                            "overview",
+                            "symbol",
+                            "root"
+                        ]
+                    },
+                    "required": {
+                        "type": "boolean"
+                    },
+                    "defaultImplementations": {
+                        "type": "number"
+                    },
+                    "fragments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "images": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TopicImage"
+                        }
+                    },
+                    "navigatorTitle": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DeclarationToken"
+                        }
+                    },
+                    "role": {
+                        "$ref": "#/components/schemas/DocumentationRole"
+                    },
+                    "conformance": {
+                        "$ref" : "#/components/schemas/ConformanceSection"
+                    },
+                    "estimatedTime": {
+                        "type": "string"
+                    },
+                    "beta": {
+                        "type": "boolean",
+                        "format": "true"
+                    },
+                    "deprecated": {
+                        "type": "boolean",
+                        "format": "true"
+                    },
+                    "titleStyle": {
+                        "type": "string",
+                        "enum": ["title", "symbol"]
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "ideTitle": {
+                        "type": "string"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/SymbolTag"
+                        }
+                    }
+                }
+            },
+            "DownloadRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "identifier",
+                    "url"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["download"]
+                    },
+                    "identifier": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    },
+                    "checksum": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UnresolvableRenderReference": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "title",
+                    "identifier"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["unresolvable"]
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "identifier": {
+                        "type": "string"
+                    }
+                }
+            },
+            "SymbolTag": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "text"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "text": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DocumentationRole": {
+                "type": "string",
+                "enum" : [
+                    "symbol",
+                    "containerSymbol",
+                    "restRequestSymbol",
+                    "dictionarySymbol",
+                    "pseudoSymbol",
+                    "pseudoCollection",
+                    "collection",
+                    "collectionGroup",
+                    "article",
+                    "sampleCode",
+                    "overview",
+                    "table",
+                    "codeListing",
+                    "link",
+                    "project",
+                    "subsection",
+                    "task"
+                ]
+            },
+            "ConformanceSection": {
+                "type": "object",
+                "required": [
+                    "constraints",
+                    "availabilityPrefix",
+                    "conformancePrefix"
+                ],
+                "properties": {
+                    "constraints": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "availabilityPrefix": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
+                    },
+                    "conformancePrefix": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RenderInlineContent"
+                        }
                     }
                 }
             },

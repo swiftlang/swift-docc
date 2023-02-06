@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1065,6 +1065,8 @@ class ConvertActionTests: XCTestCase {
                         usr: "TestBed",
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                 ]
@@ -1081,6 +1083,8 @@ class ConvertActionTests: XCTestCase {
                         usr: "s:7TestBed1AV",
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                 ]
@@ -1096,6 +1100,8 @@ class ConvertActionTests: XCTestCase {
                         taskGroups: [],
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                 ]
@@ -1262,6 +1268,8 @@ class ConvertActionTests: XCTestCase {
                         taskGroups: [.init(title: nil, identifiers: [reference.withFragment("Section-Name").absoluteString])],
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                     LinkDestinationSummary(
@@ -1274,6 +1282,8 @@ class ConvertActionTests: XCTestCase {
                         taskGroups: [],
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                 ]
@@ -1289,6 +1299,8 @@ class ConvertActionTests: XCTestCase {
                         taskGroups: [.init(title: nil, identifiers: [reference.appendingPath("Volume-1").absoluteString])],
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                 ]
@@ -2825,6 +2837,8 @@ private extension LinkDestinationSummary {
         usr: String? = nil,
         availableLanguages: Set<SourceLanguage>,
         platforms: [PlatformAvailability]?,
+        topicImages: [TopicImage]?,
+        references: [RenderReference]?,
         redirects: [URL]?
     ) {
         self.init(
@@ -2840,6 +2854,8 @@ private extension LinkDestinationSummary {
             usr: usr,
             declarationFragments: nil,
             redirects: redirects,
+            topicImages: topicImages,
+            references: references,
             variants: []
         )
     }

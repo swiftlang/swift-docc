@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -370,7 +370,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertEqual(xcodeRequirementReference.url.absoluteString, "https://www.example.com/download")
         
         XCTAssertEqual(downloadReference.identifier.identifier, "project.zip")
-        XCTAssertEqual(downloadReference.sha512Checksum, "2521bb27db3f8b72f8f2bb9e3a33698b9c5c72a5d7862f5b209794099e1cf0acaab7d8a47760b001cb508b5c4f3d7cf7f8ce1c32679b3fde223e63b5a1e7e509")
+        XCTAssertEqual(downloadReference.checksum, "2521bb27db3f8b72f8f2bb9e3a33698b9c5c72a5d7862f5b209794099e1cf0acaab7d8a47760b001cb508b5c4f3d7cf7f8ce1c32679b3fde223e63b5a1e7e509")
         
         // This topic link didn't resolve, so it should not be in the references dictionary.
         // Additionally, the link should've been rendered inactive, i.e. a text element instead of a link.
@@ -1839,7 +1839,7 @@ Document
             # Article 2
             
             @Options {
-                @AutomaticTitleHeading(pageKind)
+                @AutomaticTitleHeading(enabled)
             }
 
             This is article 2.
@@ -2454,6 +2454,8 @@ Document
         .aside(.init(style: .init(rawValue: "Since"), content: [.paragraph(.init(inlineContent: [.text("The beginning of time.")]))])),
         .aside(.init(style: .init(rawValue: "Todo"), content: [.paragraph(.init(inlineContent: [.text("This needs work.")]))])),
         .aside(.init(style: .init(rawValue: "Version"), content: [.paragraph(.init(inlineContent: [.text("3.1.4")]))])),
+        .aside(.init(style: .init(rawValue: "SeeAlso"), content: [.paragraph(.init(inlineContent: [.text("This other thing.")]))])),
+        .aside(.init(style: .init(rawValue: "SeeAlso"), content: [.paragraph(.init(inlineContent: [.text("And this other thing.")]))])),
         .aside(.init(style: .init(rawValue: "Throws"), content: [.paragraph(.init(inlineContent: [.text("A serious error.")]))])),
     ]
     
@@ -2996,6 +2998,10 @@ Document
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This needs work."}]}]},
             {"type":"aside", "style":"note", "name":"Version",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"3.1.4"}]}]},
+            {"type":"aside", "style":"note", "name":"See Also",
+                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"This other thing."}]}]},
+            {"type":"aside", "style":"note", "name":"See Also",
+                "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"And this other thing."}]}]},
             {"type":"aside", "style":"note", "name":"Throws",
                 "content": [{"type":"paragraph", "inlineContent":[{"type":"text", "text":"A serious error."}]}]}
             ]
