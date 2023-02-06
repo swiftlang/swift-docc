@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -125,7 +125,9 @@ class ExternalLinkableTests: XCTestCase {
         XCTAssertNil(pageSummary.usr, "Only symbols have USRs")
         XCTAssertNil(pageSummary.declarationFragments, "Only symbols have declaration fragments")
         XCTAssertNil(pageSummary.abstract, "There is no text to use as an abstract for the tutorial page")
-
+        XCTAssertNil(pageSummary.topicImages, "The tutorial page doesn't have any topic images")
+        XCTAssertNil(pageSummary.references, "Since the tutorial page doesn't have any topic images it also doesn't have any references")
+        
         let sectionSummary = summaries[1]
         XCTAssertEqual(sectionSummary.title, "Create a New AR Project 💻")
         XCTAssertEqual(sectionSummary.relativePresentationURL.absoluteString, "/tutorials/testbundle/tutorial#Create-a-New-AR-Project-%F0%9F%92%BB")
@@ -145,6 +147,8 @@ class ExternalLinkableTests: XCTestCase {
             .text(" "),
             .text("ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium."),
         ])
+        XCTAssertNil(sectionSummary.topicImages, "Sections don't have any topic images")
+        XCTAssertNil(sectionSummary.references, "Since sections don't have any topic images it also doesn't have any references")
         
         // Test that the summaries can be decoded from the encoded data
         let encoded = try JSONEncoder().encode(summaries)
@@ -191,6 +195,8 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "MyClass", kind: .identifier, identifier: nil),
             ])
+            XCTAssertNil(summary.topicImages)
+            XCTAssertNil(summary.references)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -230,6 +236,8 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " : ", kind: .text, identifier: nil),
                 .init(text: "Hashable", kind: .typeIdentifier, identifier: nil, preciseIdentifier: "p:hPP"),
             ])
+            XCTAssertNil(summary.topicImages)
+            XCTAssertNil(summary.references)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -253,6 +261,8 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
             XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
             XCTAssertEqual(summary.declarationFragments, nil) // This symbol doesn't have a `subHeading` in the symbol graph
+            XCTAssertNil(summary.topicImages)
+            XCTAssertNil(summary.references)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -288,6 +298,116 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: ")", kind: .text, identifier: nil),
                 .init(text: "\n", kind: .text, identifier: nil),
             ])
+            XCTAssertNil(summary.topicImages)
+            XCTAssertNil(summary.references)
+            
+            let encoded = try JSONEncoder().encode(summary)
+            let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
+            XCTAssertEqual(decoded, summary)
+        }
+    }
+    
+    func testTopicImageReferences() throws {
+        let (url, bundle, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            let extensionFile = """
+            # ``MyKit/MyClass/myFunction()``
+
+            myFunction abstract
+            
+            @Metadata {
+              @PageImage(purpose: card, source: figure1.png, alt: "Card image alt text")
+            
+              @PageImage(purpose: icon, source: something, alt: "Icon image alt text")
+            }
+            """
+            let fileURL = url.appendingPathComponent("documentation").appendingPathComponent("myFunction.md")
+            try extensionFile.write(to: fileURL, atomically: true, encoding: .utf8)
+        }
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        
+        do {
+            let symbolReference = ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift)
+            let node = try context.entity(with: symbolReference)
+            let renderNode = try converter.convert(node, at: nil)
+            var summary = node.externallyLinkableElementSummaries(context: context, renderNode: renderNode)[0]
+            
+            XCTAssertEqual(summary.title, "myFunction()")
+            XCTAssertEqual(summary.relativePresentationURL.absoluteString, "/documentation/mykit/myclass/myfunction()")
+            XCTAssertEqual(summary.referenceURL.absoluteString, "doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()")
+            XCTAssertEqual(summary.language, .swift)
+            XCTAssertEqual(summary.kind, .instanceMethod)
+            XCTAssertEqual(summary.abstract, [.text("A cool API to call.")])
+            XCTAssertEqual(summary.taskGroups, [])
+            XCTAssertEqual(summary.availableLanguages, [.swift])
+            XCTAssertEqual(summary.platforms, renderNode.metadata.platforms)
+            XCTAssertEqual(summary.usr, "s:5MyKit0A5ClassC10myFunctionyyF")
+            XCTAssertEqual(summary.declarationFragments, nil) // This symbol doesn't have a `subHeading` in the symbol graph
+            
+            XCTAssertEqual(summary.topicImages, [
+                TopicImage(
+                    type: .card,
+                    identifier: RenderReferenceIdentifier("figure1.png")
+                ),
+                TopicImage(
+                    type: .icon,
+                    identifier: RenderReferenceIdentifier("something.png")
+                ),
+            ])
+            
+            XCTAssertEqual(summary.references?.count, 2)
+            
+            // The order of the references is expected to be stable.
+            do {
+                let imageReference = try XCTUnwrap(summary.references?.first as? ImageReference)
+                XCTAssertEqual(imageReference.identifier.identifier, "figure1.png")
+                XCTAssertEqual(imageReference.altText, "Card image alt text")
+                XCTAssertEqual(imageReference.asset.context, .display)
+                
+                XCTAssertEqual(Set(imageReference.asset.variants.keys), [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard),
+                    DataTraitCollection(userInterfaceStyle: .dark, displayScale: .standard),
+                ])
+                let lightImageURL = try XCTUnwrap(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle: .light, displayScale: .standard)])
+                XCTAssertEqual(lightImageURL, url.appendingPathComponent("figure1.png"))
+                let darkImageURL = try XCTUnwrap(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle: .dark, displayScale: .standard)])
+                XCTAssertEqual(darkImageURL, url.appendingPathComponent("figure1~dark.png"))
+                
+                XCTAssertEqual(Set(imageReference.asset.metadata.keys), [lightImageURL, darkImageURL])
+                let lightImageMetadata = try XCTUnwrap(imageReference.asset.metadata[lightImageURL])
+                XCTAssertEqual(lightImageMetadata.svgID, nil)
+                let darkImageMetadata = try XCTUnwrap(imageReference.asset.metadata[darkImageURL])
+                XCTAssertEqual(darkImageMetadata.svgID, nil)
+            }
+            
+            do {
+                let imageReference = try XCTUnwrap(summary.references?.last as? ImageReference)
+                XCTAssertEqual(imageReference.identifier.identifier, "something.png")
+                XCTAssertEqual(imageReference.altText, "Icon image alt text")
+                XCTAssertEqual(imageReference.asset.context, .display)
+                
+                XCTAssertEqual(Set(imageReference.asset.variants.keys), [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double),
+                ])
+                let lightImageURL = try XCTUnwrap(imageReference.asset.variants[DataTraitCollection(userInterfaceStyle: .light, displayScale: .double)])
+                XCTAssertEqual(lightImageURL, url.appendingPathComponent("something@2x.png"))
+                
+                XCTAssertEqual(Set(imageReference.asset.metadata.keys), [lightImageURL])
+                let lightImageMetadata = try XCTUnwrap(imageReference.asset.metadata[lightImageURL])
+                XCTAssertEqual(lightImageMetadata.svgID, nil)
+            }
+            
+            // TODO: DataAsset doesn't round-trip encode/decode
+            summary.references = summary.references?.compactMap {
+                guard var imageRef = $0 as? ImageReference else { return nil }
+                imageRef.asset.variants = imageRef.asset.variants.mapValues { variant in
+                    return imageRef.destinationURL(for: variant.lastPathComponent)
+                }
+                imageRef.asset.metadata = .init(uniqueKeysWithValues: imageRef.asset.metadata.map { key, value in
+                    return (imageRef.destinationURL(for: key.lastPathComponent), value)
+                })
+                return imageRef as RenderReference
+            }
+            
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -329,6 +449,8 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " ", kind: .text, identifier: nil),
                 .init(text: "Bar", kind: .identifier, identifier: nil)
             ])
+            XCTAssertNil(summary.topicImages)
+            XCTAssertNil(summary.references)
             
             XCTAssertEqual(summary.variants.count, 1)
             let variant = try XCTUnwrap(summary.variants.first)
@@ -349,6 +471,7 @@ class ExternalLinkableTests: XCTestCase {
             XCTAssertEqual(variant.usr, nil)
             XCTAssertEqual(variant.kind, nil)
             XCTAssertEqual(variant.taskGroups, nil)
+            XCTAssertEqual(variant.topicImages, nil)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -394,6 +517,8 @@ class ExternalLinkableTests: XCTestCase {
                 .init(text: " -> ", kind: .text, identifier: nil),
                 .init(text: "String", kind: .typeIdentifier, identifier: nil, preciseIdentifier: Optional("s:SS"))
             ])
+            XCTAssertNil(summary.topicImages)
+            XCTAssertNil(summary.references)
             
             XCTAssertEqual(summary.variants.count, 1)
             let variant = try XCTUnwrap(summary.variants.first)
@@ -432,6 +557,7 @@ class ExternalLinkableTests: XCTestCase {
                     )
                 ]
             )
+            XCTAssertEqual(variant.topicImages, nil)
             
             let encoded = try JSONEncoder().encode(summary)
             let decoded = try JSONDecoder().decode(LinkDestinationSummary.self, from: encoded)
@@ -494,6 +620,8 @@ class ExternalLinkableTests: XCTestCase {
             .init(text: " ", kind: .text, identifier: nil),
             .init(text: "ClassName", kind: .identifier, identifier: nil),
         ])
+        XCTAssertNil(decoded.topicImages)
+        XCTAssertNil(decoded.references)
         
         XCTAssert(decoded.variants.isEmpty)
     }

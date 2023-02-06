@@ -203,6 +203,18 @@
             "text": ""
           },
           {
+            "text": "> seealso: This other thing."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "> SeeAlso: And this other thing."
+          },
+          {
+            "text": ""
+          },
+          {
             "text": "> Throws: A serious error."
           }
         ]
@@ -417,6 +429,18 @@
           },
           {
             "text": "- Version: 3.1.4"
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- SeeAlso: This other thing."
+          },
+          {
+            "text": ""
+          },
+          {
+            "text": "- seealso: And this other thing."
           },
           {
             "text": ""
