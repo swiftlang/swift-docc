@@ -14,8 +14,8 @@
         "package": "cmark-gfm",
         "repositoryURL": "https://github.com/apple/swift-cmark.git",
         "state": {
-          "branch": "gfm",
-          "revision": "eb9a6a357b6816c68f4b194eaa5b67f3cd1fa5c3",
+          "branch": "release/5.8-02062023",
+          "revision": "29d9c97e6310b87c4799268eaa2fc76164b2dbd8",
           "version": null
         }
       },
@@ -41,7 +41,7 @@
         "package": "SymbolKit",
         "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
         "state": {
-          "branch": "main",
+          "branch": "release/5.8-02062023",
           "revision": "b45d1f2ed151d057b54504d653e0da5552844e34",
           "version": null
         }
@@ -59,8 +59,8 @@
         "package": "swift-markdown",
         "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
-          "branch": "main",
-          "revision": "d491147940587dbadfb3472354f4d0c6e063e061",
+          "branch": "release/5.8-02062023",
+          "revision": "94a4413ebf387321946aa31978486f5e9cbb85be",
           "version": null
         }
       },
