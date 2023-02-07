@@ -161,5 +161,103 @@ class SampleDownloadTests: XCTestCase {
 
         XCTAssertEqual(origIdent, decodedIdent)
     }
-    
+
+    func testSampleDownloadRelativeURL() throws {
+        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/SampleBundle/RelativeURLSample",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
+        guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
+            XCTFail("Unexpected action in callToAction")
+            return
+        }
+        XCTAssertEqual(ident.identifier, "files/ExternalSample.zip")
+
+        // Ensure that the encoded URL still references the entered URL
+        let downloadReference = try XCTUnwrap(renderNode.references[ident.identifier] as? ExternalLocationReference)
+
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+
+        let encodedReference = try encoder.encode(downloadReference)
+        let decodedReference = try decoder.decode(DownloadReference.self, from: encodedReference)
+
+        XCTAssertEqual(decodedReference.url.description, "files/ExternalSample.zip")
+    }
+
+    func testExternalLocationRoundtrip() throws {
+        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/SampleBundle/RelativeURLSample",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
+        guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
+            XCTFail("Unexpected action in callToAction")
+            return
+        }
+        XCTAssertEqual(ident.identifier, "files/ExternalSample.zip")
+
+        // Make sure that the ExternalLocationReference we get can round-trip as itself as well as through a DownloadReference
+        let downloadReference = try XCTUnwrap(renderNode.references[ident.identifier] as? ExternalLocationReference)
+
+        let encoder = JSONEncoder()
+        encoder.outputFormatting.insert(.sortedKeys)
+        let decoder = JSONDecoder()
+
+        let encodedReference = try encoder.encode(downloadReference)
+
+        // ExternalLocationReference -> ExternalLocationReference
+        // The encoded JSON should be the same before and after re-encoding.
+        do {
+            let decodedReference = try decoder.decode(ExternalLocationReference.self, from: encodedReference)
+            let reEncodedReference = try encoder.encode(decodedReference)
+
+            let firstJson = String(data: encodedReference, encoding: .utf8)
+            let finalJson = String(data: reEncodedReference, encoding: .utf8)
+
+            XCTAssertEqual(firstJson, finalJson)
+        }
+
+        // ExternalLocationReference -> DownloadReference -> ExternalLocationReference
+        // The reference identifier should be the same all throughout, and the final ExternalLocationReference
+        // should encode to the same JSON as the initial reference.
+        do {
+            let decodedReference = try decoder.decode(DownloadReference.self, from: encodedReference)
+
+            XCTAssertEqual(decodedReference.identifier, downloadReference.identifier)
+
+            let encodedDownload = try encoder.encode(decodedReference)
+            let reDecodedReference = try decoder.decode(ExternalLocationReference.self, from: encodedDownload)
+
+            XCTAssertEqual(reDecodedReference.identifier, downloadReference.identifier)
+
+            let reEncodedReference = try encoder.encode(reDecodedReference)
+
+            let firstJson = String(data: encodedReference, encoding: .utf8)
+            let finalJson = String(data: reEncodedReference, encoding: .utf8)
+
+            XCTAssertEqual(firstJson, finalJson)
+        }
+    }
 }
