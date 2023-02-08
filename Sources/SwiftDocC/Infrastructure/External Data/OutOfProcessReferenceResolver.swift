@@ -806,10 +806,10 @@ extension OutOfProcessReferenceResolver {
             abstract: String,
             language: SourceLanguage,
             availableLanguages: Set<SourceLanguage>,
-            platforms: [PlatformAvailability]?,
-            declarationFragments: DeclarationFragments?,
-            topicImages: [TopicImage]?,
-            references: [RenderReference]?,
+            platforms: [PlatformAvailability]? = nil,
+            declarationFragments: DeclarationFragments? = nil,
+            topicImages: [TopicImage]? = nil,
+            references: [RenderReference]? = nil,
             variants: [Variant]? = nil
         ) {
             self.kind = kind
