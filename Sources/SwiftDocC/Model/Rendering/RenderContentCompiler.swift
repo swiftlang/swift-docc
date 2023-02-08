@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -85,22 +85,24 @@ struct RenderContentCompiler: MarkupVisitor {
         return visitImage(
             source: image.source ?? "",
             altText: image.altText,
-            caption: nil
+            caption: nil,
+            deviceFrame: nil
         )
     }
     
     mutating func visitImage(
         source: String,
         altText: String?,
-        caption: [RenderInlineContent]?
+        caption: [RenderInlineContent]?,
+        deviceFrame: String?
     ) -> [RenderContent] {
         guard let imageIdentifier = resolveImage(source: source, altText: altText) else {
             return []
         }
         
         var metadata: RenderContentMetadata?
-        if let caption = caption {
-            metadata = RenderContentMetadata(abstract: caption)
+        if caption != nil || deviceFrame != nil {
+            metadata = RenderContentMetadata(abstract: caption, deviceFrame: deviceFrame)
         }
         
         return [RenderInlineContent.image(identifier: imageIdentifier, metadata: metadata)]

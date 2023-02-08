@@ -1028,6 +1028,9 @@
                         "items": {
                             "$ref": "#/components/schemas/RenderInlineContent"
                         }
+                    },
+                    "deviceFrame": {
+                        "type": "string"
                     }
                 }
             }
