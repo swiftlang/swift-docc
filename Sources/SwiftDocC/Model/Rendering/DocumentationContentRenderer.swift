@@ -134,6 +134,10 @@ public class DocumentationContentRenderer {
         case .collectionGroup: return role(for: nodeKind)
         default: break
         }
+
+        if let pageKind = article.metadata?.pageKind {
+            return pageKind.kind.renderRole
+        }
         
         if article.topics?.taskGroups.isEmpty == false {
             // The documentation includes a "Topics" section, it's a collection or a group
