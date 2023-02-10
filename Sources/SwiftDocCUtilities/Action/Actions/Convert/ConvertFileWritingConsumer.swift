@@ -155,7 +155,7 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         let digest = Digest.Assets(
             images: (uniqueAssets[.image] as? [ImageReference]) ?? [],
             videos: (uniqueAssets[.video] as? [VideoReference]) ?? [],
-            downloads: (uniqueAssets[.download] as? [DownloadReference]) ?? []
+            downloads: uniqueAssets[.download, default: []].compactMap({ Digest.DownloadAsset($0) })
         )
 
         let assetsURL = targetFolder.appendingPathComponent("assets.json", isDirectory: false)
@@ -212,10 +212,55 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
 }
 
 enum Digest {
+    enum DownloadAsset: Codable {
+        case download(DownloadReference)
+        case external(ExternalLocationReference)
+
+        init?(_ reference: RenderReference) {
+            if let download = reference as? DownloadReference {
+                self = .download(download)
+            } else if let externalLocation = reference as? ExternalLocationReference {
+                self = .external(externalLocation)
+            } else {
+                return nil
+            }
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            switch self {
+            case .download(let download):
+                try container.encode(download)
+            case .external(let externalLocation):
+                try container.encode(externalLocation)
+            }
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+
+            // DownloadReference and ExternalLocationReference are supposed to encode to compatible
+            // JSON, so this will always decode a `.download` if it's valid. However, cover our bases
+            // anyway, in case we add a type decorator or the like.
+            if let download = try? container.decode(DownloadReference.self) {
+                self = .download(download)
+            } else if let externalLocation = try? container.decode(ExternalLocationReference.self) {
+                self = .external(externalLocation)
+            } else {
+                throw DecodingError.typeMismatch(
+                    DownloadAsset.self,
+                    .init(
+                        codingPath: decoder.codingPath,
+                        debugDescription: "Invalid JSON for a DownloadReference"
+                    ))
+            }
+        }
+    }
+
     struct Assets: Codable {
         let images: [ImageReference]
         let videos: [VideoReference]
-        let downloads: [DownloadReference]
+        let downloads: [DownloadAsset]
     }
     
     struct Diagnostic: Codable {
