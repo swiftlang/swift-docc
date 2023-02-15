@@ -127,6 +127,12 @@ public class DocumentationContentRenderer {
 
     /// Returns a metadata role for an article, depending if it's a collection, technology, or a free form article.
     func roleForArticle(_ article: Article, nodeKind: DocumentationNode.Kind) -> RenderMetadata.Role {
+        // If the article has a `@PageKind` directive, use the kind from there
+        // before checking anything else.
+        if let pageKind = article.metadata?.pageKind {
+            return pageKind.kind.renderRole
+        }
+
         // We create generated nodes with a semantic Article because they
         // can have doc extensions and the only way to tell them apart from
         // api collections or other articles is by their node kind.
@@ -135,10 +141,6 @@ public class DocumentationContentRenderer {
         default: break
         }
 
-        if let pageKind = article.metadata?.pageKind {
-            return pageKind.kind.renderRole
-        }
-        
         if article.topics?.taskGroups.isEmpty == false {
             // The documentation includes a "Topics" section, it's a collection or a group
             let isTechnologyRoot = article.metadata?.technologyRoot != nil
