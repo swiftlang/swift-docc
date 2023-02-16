@@ -22,7 +22,7 @@ import Foundation
 public struct ExternalLocationReference: RenderReference, URLReference {
     public static var baseURL: URL = DownloadReference.baseURL
 
-    public private(set) var type: RenderReferenceType = .download
+    public private(set) var type: RenderReferenceType = .externalLocation
 
     public var identifier: RenderReferenceIdentifier
 

@@ -1816,7 +1816,7 @@
                 "properties": {
                     "type": {
                         "type": "string",
-                        "enum": ["download"]
+                        "enum": ["download", "externalLocation"]
                     },
                     "identifier": {
                         "type": "string"
