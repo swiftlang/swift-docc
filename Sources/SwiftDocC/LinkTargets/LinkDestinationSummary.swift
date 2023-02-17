@@ -198,10 +198,47 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let declarationFragments: VariantValue<DeclarationFragments?>
         
-        /// Images that are used to represent the summarized element.
+        /// Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
         ///
         /// If the summarized element has an image but the variant doesn't, this property will be `Optional.some(nil)`.
         public let topicImages: VariantValue<[TopicImage]?>
+        
+        /// Creates a new summary variant with the values that are different from the main summarized values.
+        /// 
+        /// - Parameters:
+        ///   - traits:  The traits of the variant.
+        ///   - kind: The kind of the variant or `nil` if the kind is the same as the summarized element.
+        ///   - language: The source language of the variant or `nil` if the kind is the same as the summarized element.
+        ///   - relativePresentationURL: The relative presentation URL of the variant or `nil` if the relative is the same as the summarized element.
+        ///   - title: The title of the variant or `nil` if the title is the same as the summarized element.
+        ///   - abstract: The abstract of the variant or `nil` if the abstract is the same as the summarized element.
+        ///   - taskGroups: The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
+        ///   - usr: The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
+        ///   - declarationFragments: The declaration of the variant or `nil` if the declaration is the same as the summarized element.
+        ///   - topicImages: Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
+        public init(
+            traits: [RenderNode.Variant.Trait],
+            kind: VariantValue<DocumentationNode.Kind> = nil,
+            language: VariantValue<SourceLanguage> = nil,
+            relativePresentationURL: VariantValue<URL> = nil,
+            title: VariantValue<String> = nil,
+            abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
+            taskGroups: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
+            usr: VariantValue<String?> = nil,
+            declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
+            topicImages: VariantValue<[TopicImage]?> = nil
+        ) {
+            self.traits = traits
+            self.kind = kind
+            self.language = language
+            self.relativePresentationURL = relativePresentationURL
+            self.title = title
+            self.abstract = abstract
+            self.taskGroups = taskGroups
+            self.usr = usr
+            self.declarationFragments = declarationFragments
+            self.topicImages = topicImages
+        }
     }
     
     /// The variants of content (kind, title, abstract, path, urs, declaration, and task groups) for this summarized element.
