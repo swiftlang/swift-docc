@@ -176,7 +176,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         public let relativePresentationURL: VariantValue<URL>
         
         /// The title of the variant or `nil` if the title is the same as the summarized element.
-        public let title: VariantValue<String?>
+        public let title: VariantValue<String>
         
         /// The abstract of the variant or `nil` if the abstract is the same as the summarized element.
         ///
@@ -620,7 +620,7 @@ extension LinkDestinationSummary.Variant {
             language = nil
         }
         relativePresentationURL = try container.decodeIfPresent(URL.self, forKey: .relativePresentationURL)
-        title = try container.decodeIfPresent(String?.self, forKey: .title)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
         usr = try container.decodeIfPresent(String?.self, forKey: .usr)
         declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)
