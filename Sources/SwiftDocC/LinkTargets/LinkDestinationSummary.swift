@@ -206,6 +206,57 @@ public struct LinkDestinationSummary: Codable, Equatable {
     
     /// The variants of content (kind, title, abstract, path, urs, declaration, and task groups) for this summarized element.
     public let variants: [Variant]
+    
+    /// Creates a new summary of an element that can be linked to from outside the local documentation.
+    ///
+    /// - Parameters:
+    ///   - kind: The kind of the summarized element.
+    ///   - language: The language of the summarized element.
+    ///   - relativePresentationURL: The relative presentation URL for this element.
+    ///   - referenceURL: The resolved topic reference URL to this element.
+    ///   - title: The title of the summarized element.
+    ///   - abstract:  The abstract of the summarized element.
+    ///   - availableLanguages: All the languages in which the summarized element is available.
+    ///   - platforms: Information about the platforms for which the summarized element is available.
+    ///   - taskGroups: The reference URLs of the summarized element's children, grouped by their task groups.
+    ///   - usr: The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
+    ///   - declarationFragments: The fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
+    ///   - redirects: Any previous URLs for this element, or `nil` if this element has no previous URLs.
+    ///   - topicImages: Images that are used to represent the summarized element, or `nil` if this element has no topic images.
+    ///   - references: References used in the content of the summarized element, or `nil` if this element has no references to other content.
+    ///   - variants: The variants of content (kind, title, abstract, path, urs, declaration, and task groups) for this summarized element.
+    public init(
+        kind: DocumentationNode.Kind,
+        language: SourceLanguage,
+        relativePresentationURL: URL,
+        referenceURL: URL, title: String,
+        abstract: LinkDestinationSummary.Abstract? = nil,
+        availableLanguages: Set<SourceLanguage>,
+        platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
+        taskGroups: [LinkDestinationSummary.TaskGroup]? = nil,
+        usr: String? = nil,
+        declarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        redirects: [URL]? = nil,
+        topicImages: [TopicImage]? = nil,
+        references: [RenderReference]? = nil,
+        variants: [LinkDestinationSummary.Variant]
+    ) {
+        self.kind = kind
+        self.language = language
+        self.relativePresentationURL = relativePresentationURL
+        self.referenceURL = referenceURL
+        self.title = title
+        self.abstract = abstract
+        self.availableLanguages = availableLanguages
+        self.platforms = platforms
+        self.taskGroups = taskGroups
+        self.usr = usr
+        self.declarationFragments = declarationFragments
+        self.redirects = redirects
+        self.topicImages = topicImages
+        self.references = references
+        self.variants = variants
+    }
 }
 
 // MARK: - Accessing the externally linkable elements
