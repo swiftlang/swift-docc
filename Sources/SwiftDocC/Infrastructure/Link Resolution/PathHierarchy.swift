@@ -378,13 +378,13 @@ struct PathHierarchy {
     /// - Returns: The child disambiguation tree and path component.
     private func findChildTree(node: inout Node, remaining: ArraySlice<PathComponent>) throws -> (DisambiguationTree, PathComponent) {
         var pathComponent = remaining.first!
-        if let match = node.children[pathComponent.name] {
-            return (match, pathComponent)
-        } else if let match = node.children[pathComponent.full] {
+        if let match = node.children[pathComponent.full] {
             // The path component parsing may treat dash separated words as disambiguation information.
             // If the parsed name didn't match, also try the original.
             pathComponent.kind = nil
             pathComponent.hash = nil
+            return (match, pathComponent)
+        } else if let match = node.children[pathComponent.name] {
             return (match, pathComponent)
         } else {
             if node.name == pathComponent.name || node.name == pathComponent.full, let parent = node.parent {

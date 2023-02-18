@@ -1135,6 +1135,47 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
+    func testArticleWithDisambiguationLookingName() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        let exampleDocumentation = Folder(name: "MyKit.docc", content: [
+            CopyOfFile(original: Bundle.module.url(forResource: "BaseKit.symbols", withExtension: "json", subdirectory: "Test Resources")!),
+            InfoPlist(displayName: "BaseKit", identifier: "com.test.BaseKit"),
+            TextFile(name: "basekit.md", utf8Content: """
+            # ``BaseKit``
+            
+            Curate an article that look like a disambiguated symbol
+            
+            ## Topics
+            
+            - <doc:OtherStruct>
+            - <doc:OtherStruct-abcd>
+            """),
+            TextFile(name: "OtherStruct-abcd.md", utf8Content: """
+            # Some article
+            
+            An article with a file name that resembles a disambiguated symbol name.
+            """),
+        ])
+        let tempURL = try createTemporaryDirectory()
+        let bundleURL = try exampleDocumentation.write(inside: tempURL)
+
+        do {
+            let (_, _, context) = try loadBundle(from: bundleURL)
+            XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map(\.localizedDescription))")
+            
+            let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+            
+            let baseKitID = try tree.find(path: "/BaseKit", onlyFindSymbols: true)
+            
+            XCTAssertEqual(try tree.findSymbol(path: "OtherStruct", parent: baseKitID).identifier.precise, "s:7BaseKit11OtherStructV")
+            
+            let articleID = try tree.find(path: "OtherStruct-abcd", parent: baseKitID, onlyFindSymbols: false)
+            let articleNode = try XCTUnwrap(tree.lookup[articleID])
+            XCTAssertNil(articleNode.symbol)
+            XCTAssertEqual(articleNode.name, "OtherStruct-abcd")
+        }
+    }
+    
     func testPartialSymbolGraphPaths() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let symbolPaths = [
