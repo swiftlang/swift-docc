@@ -851,6 +851,34 @@ extension OutOfProcessReferenceResolver {
             ///
             /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
             public let declarationFragments: VariantValue<DeclarationFragments?>
+            
+            /// Creates a new resolved information variant with the values that are different from the resolved information values.
+            ///
+            /// - Parameters:
+            ///   - traits: The traits of the variant.
+            ///   - kind: The resolved kind.
+            ///   - url: The resolved URL.
+            ///   - title: The resolved title
+            ///   - abstract: The resolved (plain text) abstract.
+            ///   - language: The resolved language.
+            ///   - declarationFragments: The resolved declaration fragments, if any.
+            public init(
+                traits: [RenderNode.Variant.Trait],
+                kind: VariantValue<DocumentationNode.Kind> = nil,
+                url: VariantValue<URL> = nil,
+                title: VariantValue<String> = nil,
+                abstract: VariantValue<String> = nil,
+                language: VariantValue<SourceLanguage> = nil,
+                declarationFragments: VariantValue<DeclarationFragments?> = nil
+            ) {
+                self.traits = traits
+                self.kind = kind
+                self.url = url
+                self.title = title
+                self.abstract = abstract
+                self.language = language
+                self.declarationFragments = declarationFragments
+            }
         }
     }
     
