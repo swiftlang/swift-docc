@@ -1153,7 +1153,7 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
     private func assertMultiVariantArticle(
         configureContext: (DocumentationContext, ResolvedTopicReference) throws -> () = { _, _ in },
         configureArticle: (Article) throws -> () = { _ in },
-        configureRenderNodeTranslator: (inout RenderNodeTranslator) -> () = { _ in },
+//        configureRenderNodeTranslator: (inout RenderNodeTranslator) -> () = { _ in },
         assertOriginalRenderNode: (RenderNode) throws -> (),
         assertAfterApplyingVariant: (RenderNode) throws -> () = { _ in },
         assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
