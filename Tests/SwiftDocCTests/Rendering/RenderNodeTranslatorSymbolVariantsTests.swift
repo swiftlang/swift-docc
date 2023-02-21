@@ -172,14 +172,47 @@ class RenderNodeTranslatorSymbolVariantsTests: XCTestCase {
         
         try configureArticle(article)
        
-//        try assertMultiLanguageSemantic(
-//            article,
-//            context: context,
-//            bundle: bundle,
-//            identifier: identifier,
-//            assertOriginalRenderNode: assertOriginalRenderNode,
-//            assertAfterApplyingVariant: assertAfterApplyingVariant,
-//            assertDataAfterApplyingVariant: assertDataAfterApplyingVariant
-//        )
+        try assertMultiLanguageSemantic(
+            article,
+            context: context,
+            bundle: bundle,
+            identifier: identifier,
+            assertOriginalRenderNode: assertOriginalRenderNode,
+            assertAfterApplyingVariant: assertAfterApplyingVariant,
+            assertDataAfterApplyingVariant: assertDataAfterApplyingVariant
+        )
+    }
+    
+    private func assertMultiLanguageSemantic(
+        _ semantic: Semantic,
+        context: DocumentationContext,
+        bundle: DocumentationBundle,
+        identifier: ResolvedTopicReference,
+        configureRenderNodeTranslator: (inout RenderNodeTranslator) -> () = { _ in },
+        assertOriginalRenderNode: (RenderNode) throws -> (),
+        assertAfterApplyingVariant: (RenderNode) throws -> (),
+        assertDataAfterApplyingVariant: (Data) throws -> () = { _ in }
+    ) throws {
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: identifier,
+            source: nil
+        )
+        
+        configureRenderNodeTranslator(&translator)
+        
+        let renderNode = translator.visit(semantic) as! RenderNode
+        
+        let data = try renderNode.encodeToJSON()
+        
+        try assertOriginalRenderNode(RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: data))
+        
+        let variantRenderNode = try RenderNodeVariantOverridesApplier()
+            .applyVariantOverrides(in: data, for: [.interfaceLanguage("occ")])
+        
+        try assertDataAfterApplyingVariant(variantRenderNode)
+        
+        try assertAfterApplyingVariant(RenderJSONDecoder.makeDecoder().decode(RenderNode.self, from: variantRenderNode))
     }
 }
