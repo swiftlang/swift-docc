@@ -45,6 +45,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Whether the documentation converter should include access level information for symbols.
     var shouldEmitSymbolAccessLevels: Bool
     
+    /// Whether tutorials that are not curated in a tutorials overview should be translated.
+    var shouldRenderUncuratedTutorials: Bool = false
+    
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
@@ -116,26 +119,25 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var node = RenderNode(identifier: identifier, kind: .tutorial)
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        guard let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) else {
+        
+        if let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) {
+            let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
+            node.hierarchy = hierarchy.hierarchy
+            node.metadata.category = technology.name
+            node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
+        } else if !context.allowsRegisteringArticlesWithoutTechnologyRoot {
             // This tutorial is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
             return nil
         }
-        
-        let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
         
         node.metadata.title = tutorial.intro.title
         node.metadata.role = contentRenderer.role(for: .tutorial).rawValue
         
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         
-        node.hierarchy = hierarchy.hierarchy
-        node.metadata.category = technology.name
-        
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
-        
-        node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
                 
         var intro = visitIntro(tutorial.intro) as! IntroRenderSection
         intro.estimatedTimeInMinutes = tutorial.durationMinutes

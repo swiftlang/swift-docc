@@ -136,6 +136,7 @@ public struct ConvertService: DocumentationService {
                     info: request.bundleInfo,
                     symbolGraphs: request.symbolGraphs,
                     markupFiles: request.markupFiles,
+                    tutorialFiles: request.tutorialFiles,
                     miscResourceURLs: request.miscResourceURLs
                 )
                 
@@ -144,6 +145,10 @@ public struct ConvertService: DocumentationService {
             
             let context = try DocumentationContext(dataProvider: workspace)
             context.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
+            
+            // Enable support for generating documentation for standalone articles and tutorials.
+            context.allowsRegisteringArticlesWithoutTechnologyRoot = true
+            context.allowsRegisteringUncuratedTutorials = true
             
             if let linkResolvingServer = linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
