@@ -524,6 +524,145 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    func testConvertSingleArticlePage() throws {
+        let articleFile = Bundle.module.url(
+            forResource: "StandaloneArticle",
+            withExtension: "md",
+            subdirectory: "Test Resources"
+        )!
+        
+        let article = try Data(contentsOf: articleFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: nil,
+            documentPathsToConvert: nil,
+            symbolGraphs: [],
+            knownDisambiguatedSymbolPathComponents: nil,
+            markupFiles: [article],
+            miscResourceURLs: []
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let response = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)
+            )
+            
+            XCTAssertEqual(response.renderNodes.count, 1)
+            let data = try XCTUnwrap(response.renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            XCTAssertEqual(
+                renderNode.metadata.externalID,
+                nil
+            )
+            
+            XCTAssertEqual(renderNode.kind, .article)
+            
+            XCTAssertEqual(renderNode.abstract?.count, 1)
+            
+            XCTAssertEqual(
+                renderNode.abstract?.first,
+                .text("An article abstract.")
+            )
+        }
+    }
+    
+    func testConvertSingleTutorial() throws {
+        let tutorialFile = Bundle.module.url(
+            forResource: "StandaloneTutorial",
+            withExtension: "tutorial",
+            subdirectory: "Test Resources"
+        )!
+        
+        let tutorial = try Data(contentsOf: tutorialFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: nil,
+            documentPathsToConvert: nil,
+            symbolGraphs: [],
+            knownDisambiguatedSymbolPathComponents: nil,
+            markupFiles: [],
+            tutorialFiles: [tutorial],
+            miscResourceURLs: []
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let response = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)
+            )
+            
+            XCTAssertEqual(response.renderNodes.count, 1)
+            let data = try XCTUnwrap(response.renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            XCTAssertEqual(
+                renderNode.metadata.externalID,
+                nil
+            )
+            
+            XCTAssertEqual(renderNode.kind, .tutorial)
+            
+            XCTAssertEqual(
+                renderNode.metadata.title,
+                "Standalone Tutorial"
+            )
+        }
+    }
+    
+    func testConvertSingleTutorialOverview() throws {
+        let tutorialOverviewFile = Bundle.module.url(
+            forResource: "StandaloneTutorialOverview",
+            withExtension: "tutorial",
+            subdirectory: "Test Resources"
+        )!
+        
+        let tutorialOverview = try Data(contentsOf: tutorialOverviewFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: nil,
+            documentPathsToConvert: nil,
+            symbolGraphs: [],
+            knownDisambiguatedSymbolPathComponents: nil,
+            markupFiles: [],
+            tutorialFiles: [tutorialOverview],
+            miscResourceURLs: []
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let response = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)
+            )
+            
+            XCTAssertEqual(response.renderNodes.count, 1)
+            let data = try XCTUnwrap(response.renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            XCTAssertEqual(
+                renderNode.metadata.externalID,
+                nil
+            )
+            
+            XCTAssertEqual(renderNode.kind, .overview)
+            
+            XCTAssertEqual(
+                renderNode.metadata.title,
+                "Standalone Tutorial Overview"
+            )
+        }
+    }
+    
     func processAndAssertResponseContents(
         expectedRenderNodePaths: [String],
         includesRenderReferenceStore: Bool,

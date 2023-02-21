@@ -21,7 +21,7 @@ public enum DocumentationBundleFileTypes {
         return url.pathExtension.lowercased() == referenceFileExtension
     }
     
-    private static let tutorialFileExtension = "tutorial"
+    static let tutorialFileExtension = "tutorial"
     /// Checks if a file is a tutorial file.
     /// - Parameter url: The file to check.
     /// - Returns: Whether or not the file at `url` is a tutorial file.

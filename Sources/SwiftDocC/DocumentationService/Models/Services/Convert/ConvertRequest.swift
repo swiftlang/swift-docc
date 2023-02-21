@@ -105,11 +105,15 @@ public struct ConvertRequest: Codable {
     /// - ``DocumentationBundle/symbolGraphURLs``
     public var symbolGraphs: [Data]
     
-    /// The markup file data included in the documentation bundle to convert.
+    /// The article and documentation extension file data included in the documentation bundle to convert.
     ///
     /// ## See Also
     /// - ``DocumentationBundle/markupURLs``
     public var markupFiles: [Data]
+    
+    
+    /// The tutorial file data included in the documentation bundle to convert.
+    public var tutorialFiles: [Data]
     
     /// The on-disk resources in the documentation bundle to convert.
     ///
@@ -153,6 +157,7 @@ public struct ConvertRequest: Codable {
         self.symbolGraphs = symbolGraphs
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
         self.markupFiles = markupFiles
+        self.tutorialFiles = []
         self.miscResourceURLs = miscResourceURLs
         self.featureFlags = FeatureFlags()
         
@@ -174,7 +179,8 @@ public struct ConvertRequest: Codable {
     ///   - symbolGraphs: The symbols graph data included in the documentation bundle to convert.
     ///   - knownDisambiguatedSymbolPathComponents: The mapping of external symbol identifiers to
     ///   known disambiguated symbol path components.
-    ///   - markupFiles: The markup file data included in the documentation bundle to convert.
+    ///   - markupFiles: The article and documentation extension file data included in the documentation bundle to convert.
+    ///   - tutorialFiles: The tutorial file data included in the documentation bundle to convert.
     ///   - miscResourceURLs: The on-disk resources in the documentation bundle to convert.
     public init(
         bundleInfo: DocumentationBundle.Info,
@@ -186,6 +192,7 @@ public struct ConvertRequest: Codable {
         symbolGraphs: [Data],
         knownDisambiguatedSymbolPathComponents: [String: [String]]? = nil,
         markupFiles: [Data],
+        tutorialFiles: [Data] = [],
         miscResourceURLs: [URL]
     ) {
         self.externalIDsToConvert = externalIDsToConvert
@@ -195,6 +202,7 @@ public struct ConvertRequest: Codable {
         self.symbolGraphs = symbolGraphs
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
         self.markupFiles = markupFiles
+        self.tutorialFiles = tutorialFiles
         self.miscResourceURLs = miscResourceURLs
         self.bundleInfo = bundleInfo
         self.featureFlags = featureFlags

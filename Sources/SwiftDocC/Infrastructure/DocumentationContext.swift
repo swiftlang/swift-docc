@@ -139,6 +139,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
     }
+    
+    /// Controls whether bundle registration should allow registering articles when no technology root is defined.
+    ///
+    /// Set this property to `true` to enable registering documentation for standalone articles,
+    /// for example when using ``ConvertService``.
+    var allowsRegisteringArticlesWithoutTechnologyRoot: Bool = false
+    
+    /// Controls whether tutorials that aren't curated in a tutorials overview page are registered and translated.
+    ///
+    /// Set this property to `true` to enable registering documentation for standalone tutorials,
+    /// for example when ``ConvertService``.
+    var allowsRegisteringUncuratedTutorials: Bool = false
+    
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
 
@@ -2133,7 +2146,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
         let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
-        if rootNodeForAutomaticCuration != nil {
+        if allowsRegisteringArticlesWithoutTechnologyRoot || rootNodeForAutomaticCuration != nil {
             otherArticles = registerArticles(otherArticles, in: bundle)
             try shouldContinueRegistration()
         }
