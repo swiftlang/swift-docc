@@ -131,4 +131,52 @@ class RenderContentCompilerTests: XCTestCase {
             XCTAssertEqual(paragraph, RenderBlockContent.Paragraph(inlineContent: [link]))
         }
     }
+    
+    func testLineBreak() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        This text should\
+        appear on two lines.
+
+        This text should  
+        appear on two lines.
+
+        This is the second paragraph.
+        """#
+        let document = Document(parsing: source)
+        let expectedDump = """
+        Document
+        ├─ Paragraph
+        │  ├─ Text "This text should"
+        │  ├─ LineBreak
+        │  └─ Text "appear on two lines."
+        ├─ Paragraph
+        │  ├─ Text "This text should"
+        │  ├─ LineBreak
+        │  └─ Text "appear on two lines."
+        └─ Paragraph
+           └─ Text "This is the second paragraph."
+        """
+        XCTAssertEqual(document.debugDescription(), expectedDump)
+        let result = document.children.flatMap { compiler.visit($0) }
+        XCTAssertEqual(result.count, 3)
+        do {
+            guard case let .paragraph(paragraph) = result[0] as? RenderBlockContent else {
+                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                return
+            }
+            let text = RenderInlineContent.text("\n")
+            XCTAssertEqual(paragraph.inlineContent[1], text)
+        }
+        do {
+            guard case let .paragraph(paragraph) = result[1] as? RenderBlockContent else {
+                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                return
+            }
+            let text = RenderInlineContent.text("\n")
+            XCTAssertEqual(paragraph.inlineContent[1], text)
+        }
+    }
 }
