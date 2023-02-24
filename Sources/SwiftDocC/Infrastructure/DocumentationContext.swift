@@ -1446,6 +1446,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             for (selector, relationships) in combinedRelationships {
                 // Build relationships in the completed graph
                 buildRelationships(relationships, selector: selector, bundle: bundle, engine: diagnosticEngine)
+                // Merge dictionary keys into target dictionaries
+                populateDictionaryKeys(from: relationships, selector: selector)
             }
             
             // Index references
@@ -1531,6 +1533,42 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 )
             default:
                 break
+            }
+        }
+    }
+    
+    /// Identifies all the dictionary keys and records them in the appropriate target dictionaries.
+    private func populateDictionaryKeys(
+        from relationships: Set<SymbolGraph.Relationship>,
+        selector: UnifiedSymbolGraph.Selector
+    ) {
+        var keysByTarget = [String:[DictionaryKey]]()
+        
+        for edge in relationships {
+            if edge.kind == .memberOf || edge.kind == .optionalMemberOf {
+                if let source = symbolIndex[edge.source], let target = symbolIndex[edge.target], let keySymbol = source.symbol,
+                        source.kind == .dictionaryKey && target.kind == .dictionary {
+                    let dictionaryKey = DictionaryKey(name: keySymbol.title, contents: [], symbol: keySymbol, required: (edge.kind == .memberOf))
+                    if keysByTarget[edge.target] == nil {
+                        keysByTarget[edge.target] = [dictionaryKey]
+                    } else {
+                        keysByTarget[edge.target]?.append(dictionaryKey)
+                    }
+                }
+            }
+        }
+        
+        // Merge in all the dictionary keys for each target into their section variants.
+        keysByTarget.forEach { targetIdentifier, keys in
+            let target = symbolIndex[targetIdentifier]
+            if let semantic = target?.semantic as? Symbol {
+                let keys = keys.sorted { $0.name < $1.name }
+                let trait = DocumentationDataVariantsTrait(for: selector)
+                if semantic.dictionaryKeysSectionVariants[trait] == nil {
+                    semantic.dictionaryKeysSectionVariants[trait] = DictionaryKeysSection(dictionaryKeys: keys)
+                } else {
+                    semantic.dictionaryKeysSectionVariants[trait]?.mergeDictionaryKeys(keys)
+                }
             }
         }
     }

@@ -982,6 +982,7 @@ extension OutOfProcessReferenceResolver {
             seeAlsoVariants: .empty,
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
+            dictionaryKeysSectionVariants: .empty,
             redirectsVariants: .empty
         )
     }

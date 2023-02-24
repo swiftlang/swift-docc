@@ -421,6 +421,12 @@ struct ReferenceResolver: SemanticVisitor {
             }
             return ParametersSection(parameters: parameters)
         }
+        let newDictionaryKeysVariants = symbol.dictionaryKeysSectionVariants.map { dictionaryKeysSection -> DictionaryKeysSection in
+            let keys = dictionaryKeysSection.dictionaryKeys.map {
+                DictionaryKey(name: $0.name, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol, required: $0.required)
+            }
+            return DictionaryKeysSection(dictionaryKeys: keys)
+        }
         
         // It's important to carry over aggregate data like the merged declarations
         // or the merged default implementations to the new `Symbol` instance.
@@ -449,6 +455,7 @@ struct ReferenceResolver: SemanticVisitor {
             seeAlsoVariants: newSeeAlsoVariants,
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
+            dictionaryKeysSectionVariants: newDictionaryKeysVariants,
             redirectsVariants: symbol.redirectsVariants,
             crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,

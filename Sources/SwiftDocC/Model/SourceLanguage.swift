@@ -42,7 +42,7 @@ public struct SourceLanguage: Hashable, Codable {
         switch queryID {
         case "swift":
             self = .swift
-        case "occ", "objective-c", "c":
+        case "occ", "objc", "objective-c", "c":
             self = .objectiveC
         case "javascript":
             self = .javaScript
@@ -60,7 +60,7 @@ public struct SourceLanguage: Hashable, Codable {
     public init(id: String) {
         switch id {
         case "swift": self = .swift
-        case "occ", "objective-c", "c": self = .objectiveC
+        case "occ", "objc", "objective-c", "c": self = .objectiveC
         case "javascript": self = .javaScript
         case "data": self = .data
         case "metal": self = .metal

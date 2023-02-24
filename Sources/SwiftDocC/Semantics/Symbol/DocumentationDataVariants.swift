@@ -128,7 +128,10 @@ extension DocumentationDataVariants: Equatable where Variant: Equatable {}
 /// The trait associated with a variant of some piece of information about a documentation node.
 public struct DocumentationDataVariantsTrait: Hashable {
     /// The Swift programming language.
-    public static var swift = DocumentationDataVariantsTrait(interfaceLanguage: "swift")
+    public static var swift = DocumentationDataVariantsTrait(interfaceLanguage: SourceLanguage.swift.id)
+    
+    /// The Objective-C programming language.
+    public static var objectiveC = DocumentationDataVariantsTrait(interfaceLanguage: SourceLanguage.objectiveC.id)
     
     /// The language in which the documentation node is relevant.
     public var interfaceLanguage: String?
@@ -151,5 +154,35 @@ public struct DocumentationDataVariantsTrait: Hashable {
             interfaceLanguage: SourceLanguage(knownLanguageIdentifier: selector.interfaceLanguage)?.id
                 ?? selector.interfaceLanguage
         )
+    }
+}
+
+extension Set where Element == DocumentationDataVariantsTrait {
+    /// Filters set to a subset of language traits that can coexist together.
+    /// 
+    /// - Parameter trait: The language variant being processed.
+    /// 
+    /// Due to the interoptability of Swift and Objective-C, these languages represent separate views into the same APIs rather than being disjoint APIs.
+    /// When constructing content, a page wants to display one or the other, not both, while other language variants are distinct and may be used concurrently.
+    /// Use `compatible(withTrait:)` to obtain a subset of the current set of variants that can coexist on a page in the context of the input `trait`.
+    func traitsCompatible(with trait: DocumentationDataVariantsTrait) -> Set<Element> {
+        let compatibleTraits: Set<Element>
+        if trait == DocumentationDataVariantsTrait.objectiveC {
+            // Objective-C pages should exclude Swift content.
+            compatibleTraits = self.filter { $0 != DocumentationDataVariantsTrait.swift }
+        } else if trait == DocumentationDataVariantsTrait.swift {
+            // Swift pages should exclude Objective-C content.
+            compatibleTraits = self.filter { $0 != DocumentationDataVariantsTrait.objectiveC }
+        } else {
+            // Other pages should allow either Swift (preferred) or Objective-C, but not both.
+            if self.contains(DocumentationDataVariantsTrait.swift) {
+                // A Swift variant is present, so exclude the Objective-C variant, if present.
+                compatibleTraits = self.filter { $0 != DocumentationDataVariantsTrait.objectiveC }
+            } else {
+                // Full list lacks Swift, so can be used as is.
+                compatibleTraits = self
+            }
+        }
+        return compatibleTraits
     }
 }
