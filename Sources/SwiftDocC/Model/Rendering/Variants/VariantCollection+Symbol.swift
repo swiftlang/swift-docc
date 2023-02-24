@@ -297,9 +297,12 @@ public extension VariantCollection {
 private extension DocumentationDataVariants {
     /// Removes and returns the value that should be considered as the default value for rendering.
     ///
-    /// The default value used for rendering is the Swift variant of the symbol data if available, otherwise it's the first one that's been registered.
+    /// The default value used for rendering is either the Swift variant (preferred) or the Objective-C variant of the symbol data if available,
+    /// otherwise it's the first one that's been registered.
     mutating func removeDefaultValueForRendering() -> (trait: DocumentationDataVariantsTrait, variant: Variant)? {
-        let index = allValues.firstIndex(where: { $0.trait == .swift }) ?? allValues.indices.startIndex
+        let index = allValues.firstIndex(where: { $0.trait == .swift })
+                        ?? allValues.firstIndex(where: { $0.trait == .objectiveC })
+                        ?? allValues.indices.startIndex
         
         guard allValues.indices.contains(index) else {
             return nil
@@ -315,13 +318,13 @@ private extension Set where Element == DocumentationDataVariantsTrait {
     /// Removes and returns the trait that should be considered as the default value
     /// for rendering.
     ///
-    /// The default value used for rendering is the Swift variant of the symbol data if available,
+    /// The default value used for rendering is either the Swift variant (preferred) or the Objective-C variant of the symbol data if available, 
     /// otherwise it's the first one that's been registered.
     mutating func removeFirstTraitForRendering() -> DocumentationDataVariantsTrait? {
         if isEmpty {
             return nil
         } else {
-            return remove(.swift) ?? removeFirst()
+            return remove(.swift) ?? remove(.objectiveC) ?? removeFirst()
         }
     }
 }

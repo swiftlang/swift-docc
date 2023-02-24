@@ -386,7 +386,7 @@ class AutomaticCurationTests: XCTestCase {
         
         let swiftTopics = try AutomaticCuration.topics(
             for: frameworkDocumentationNode,
-            withTrait: .swift,
+            withTraits: [.swift],
             context: context
         )
         
@@ -413,7 +413,7 @@ class AutomaticCurationTests: XCTestCase {
         
         let objectiveCTopics = try AutomaticCuration.topics(
             for: frameworkDocumentationNode,
-            withTrait: DocumentationDataVariantsTrait(interfaceLanguage: "occ"),
+            withTraits: [DocumentationDataVariantsTrait(interfaceLanguage: "occ")],
             context: context
         )
         
@@ -464,7 +464,7 @@ class AutomaticCurationTests: XCTestCase {
         )
         let objectiveCTopics = try AutomaticCuration.topics(
             for: frameworkDocumentationNode,
-            withTrait: DocumentationDataVariantsTrait(interfaceLanguage: "occ"),
+            withTraits: [DocumentationDataVariantsTrait(interfaceLanguage: "occ")],
             context: context
         )
 
@@ -490,7 +490,7 @@ class AutomaticCurationTests: XCTestCase {
         )
         let classTopics = try AutomaticCuration.topics(
             for: classDocumentationNode,
-            withTrait: DocumentationDataVariantsTrait(interfaceLanguage: "occ"),
+            withTraits: [DocumentationDataVariantsTrait(interfaceLanguage: "occ")],
             context: context
         )
 
@@ -525,7 +525,7 @@ class AutomaticCurationTests: XCTestCase {
         )
         let topics = try AutomaticCuration.topics(
             for: containerDocumentationNode,
-            withTrait: DocumentationDataVariantsTrait(interfaceLanguage: "swift"),
+            withTraits: [DocumentationDataVariantsTrait(interfaceLanguage: "swift")],
             context: context
         )
 

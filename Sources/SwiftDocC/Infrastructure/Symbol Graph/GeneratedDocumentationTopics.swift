@@ -188,7 +188,7 @@ enum GeneratedDocumentationTopics {
             semantic: Article(markup: nil, metadata: nil, redirects: nil, options: [:])
         )
         
-        let collectionTaskGroups = try AutomaticCuration.topics(for: temporaryCollectionNode, withTrait: nil, context: context)
+        let collectionTaskGroups = try AutomaticCuration.topics(for: temporaryCollectionNode, withTraits: [], context: context)
             .map { taskGroup in
                 AutomaticTaskGroupSection(
                     // Force-unwrapping the title since automatically-generated task groups always have a title.

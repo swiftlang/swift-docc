@@ -52,6 +52,10 @@ extension ExternalSymbolResolver {
             symbolKind = .protocol
         case .structure:
             symbolKind = .struct
+        case .dictionary:
+            symbolKind = .dictionary
+        case .dictionaryKey:
+            symbolKind = .dictionaryKey
         case .instanceSubscript:
             symbolKind = .subscript
         case .typeMethod:

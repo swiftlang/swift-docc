@@ -239,6 +239,7 @@ extension CoverageDataEntry {
             switch documentationNodeKind {
             case .class,
                 .structure,
+                .dictionary,
                 .enumeration,
                 .protocol,
                 .typeAlias,
@@ -277,6 +278,7 @@ extension CoverageDataEntry {
     enum KindSpecificData: Equatable, Codable {
         case `class`(memberStats: [InstanceMemberType: RatioStatistic])
         case structure(memberStats: [InstanceMemberType: RatioStatistic])
+        case dictionary
         case enumeration(memberStats: [InstanceMemberType: RatioStatistic])
         case `protocol`(memberStats: [InstanceMemberType: RatioStatistic])
         case typeAlias
@@ -444,6 +446,7 @@ extension CoverageDataEntry.KindSpecificData {
     internal enum Discriminant: String, Codable {
         case `class`
         case structure
+        case dictionary
         case enumeration
         case `protocol`
         case `operator`
@@ -477,6 +480,7 @@ extension CoverageDataEntry.KindSpecificData {
                 return CoverageDataEntry.KindSpecificData.`operator`(parameterStats:)
             case .class,
                  .`structure`,
+                 .dictionary,
                  .enumeration,
                 .protocol,
                 .typeAlias,
@@ -509,6 +513,7 @@ extension CoverageDataEntry.KindSpecificData {
                 return CoverageDataEntry.KindSpecificData.class(memberStats:)
             case .instanceMethod,
                  .initializer,
+                 .dictionary,
                 .typeAlias,
                 .instanceProperty,
                 .enumerationCase,
@@ -533,6 +538,8 @@ extension CoverageDataEntry.KindSpecificData {
             return .class
         case .structure:
             return .`structure`
+        case .dictionary:
+            return .dictionary
         case .enumeration:
             return .enumeration
         case .protocol:
@@ -625,6 +632,8 @@ extension CoverageDataEntry.KindSpecificData {
             )
             self = try discriminant.associatedMemberStatisticsInitializer()(associatedValue)
 
+        case .dictionary:
+            self = .dictionary
         case .typeAlias:
             self = .typeAlias
         case .instanceProperty:
@@ -657,6 +666,7 @@ extension CoverageDataEntry.KindSpecificData {
             try container.encode(stats, forKey: .associatedValue)
 
         case .typeAlias,
+             .dictionary,
              .instanceProperty,
              .variable,
              .framework,
