@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -55,7 +55,7 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
     /// A topic reference that has successfully been resolved to known documentation.
     case success(ResolvedTopicReference)
     /// A topic reference that has failed to resolve to known documentation and an error message with information about why the reference failed to resolve.
-    case failure(UnresolvedTopicReference, TopicReferenceResolutionError)
+    case failure(UnresolvedTopicReference, TopicReferenceResolutionErrorInfo)
     
     public var description: String {
         switch self {
@@ -68,40 +68,32 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
 }
 
 /// The error causing the failure in the resolution of a ``TopicReference``.
-public struct TopicReferenceResolutionError: DescribedError, Hashable {
-    public let errorDescription: String
-    public let recoverySuggestion: String?
-    public let failureReason: String?
-    public let helpAnchor: String?
-    private let solutions: [Solution]
+public struct TopicReferenceResolutionErrorInfo: Hashable {
+    public var message: String
+    public var note: String?
+    public var solutions: [Solution]
     
-    init(_ message: String, note: String? = nil, solutions: [Solution] = []) {
-        self.errorDescription = message
-        self.recoverySuggestion = note
-        self.failureReason = nil
-        self.helpAnchor = nil
+    public init(_ message: String, note: String? = nil, solutions: [Solution] = []) {
+        self.message = message
+        self.note = note
         self.solutions = solutions
     }
 }
 
-extension TopicReferenceResolutionError {
+extension TopicReferenceResolutionErrorInfo {
     init(_ error: Error, solutions: [Solution] = []) {
         if let describedError = error as? DescribedError {
-            self.errorDescription = describedError.errorDescription
-            self.recoverySuggestion = describedError.recoverySuggestion
-            self.failureReason = describedError.failureReason
-            self.helpAnchor = describedError.helpAnchor
+            self.message = describedError.errorDescription
+            self.note = describedError.recoverySuggestion
         } else {
-            self.errorDescription = error.localizedDescription
-            self.recoverySuggestion = nil
-            self.failureReason = nil
-            self.helpAnchor = nil
+            self.message = error.localizedDescription
+            self.note = nil
         }
         self.solutions = solutions
     }
 }
 
-extension TopicReferenceResolutionError {
+extension TopicReferenceResolutionErrorInfo {
     /// Extracts any `Solution`s from this error, if available.
     ///
     /// The error can provide `Solution`s if appropriate. Since the absolute location of

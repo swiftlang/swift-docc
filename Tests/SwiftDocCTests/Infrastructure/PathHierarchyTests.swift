@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -1333,11 +1333,11 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    private func assertPathRaisesErrorMessage(_ path: String, in tree: PathHierarchy, context: DocumentationContext, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line, _ additionalAssertion: (TopicReferenceResolutionError) -> Void = { _ in }) throws {
+    private func assertPathRaisesErrorMessage(_ path: String, in tree: PathHierarchy, context: DocumentationContext, expectedErrorMessage: String, file: StaticString = #file, line: UInt = #line, _ additionalAssertion: (TopicReferenceResolutionErrorInfo) -> Void = { _ in }) throws {
         XCTAssertThrowsError(try tree.findSymbol(path: path), "Finding path \(path) didn't raise an error.",file: file,line: line) { untypedError in
             let error = untypedError as! PathHierarchy.Error
-            let referenceError = error.asTopicReferenceResolutionError(context: context, originalReference: path)
-            XCTAssertEqual(referenceError.localizedDescription, expectedErrorMessage, file: file, line: line)
+            let referenceError = error.asTopicReferenceResolutionErrorInfo(context: context, originalReference: path)
+            XCTAssertEqual(referenceError.message, expectedErrorMessage, file: file, line: line)
             additionalAssertion(referenceError)
         }
     }
@@ -1360,7 +1360,7 @@ extension PathHierarchy {
     }
 }
 
-private extension TopicReferenceResolutionError {
+private extension TopicReferenceResolutionErrorInfo {
     var solutions: [SimplifiedSolution] {
         self.solutions(referenceSourceRange: SourceLocation(line: 0, column: 0, source: nil)..<SourceLocation(line: 0, column: 0, source: nil)).map { solution in
             SimplifiedSolution(summary: solution.summary, replacements: solution.replacements.map(\.replacement))

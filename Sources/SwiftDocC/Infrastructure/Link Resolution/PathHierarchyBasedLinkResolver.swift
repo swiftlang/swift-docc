@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -207,7 +207,7 @@ final class PathHierarchyBasedLinkResolver {
                 // Return the successful or failed externally resolved reference.
                 return resolvedExternalReference
             } else if !context.registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                return .failure(unresolvedReference, TopicReferenceResolutionError("No external resolver registered for \(bundleID.singleQuoted)."))
+                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
             }
         }
         
@@ -227,7 +227,7 @@ final class PathHierarchyBasedLinkResolver {
                     originalReferenceString += "#" + fragment
                 }
                 
-                return .failure(unresolvedReference, error.asTopicReferenceResolutionError(context: context, originalReference: originalReferenceString))
+                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(context: context, originalReference: originalReferenceString))
             }
         } catch {
             fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")

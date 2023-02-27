@@ -452,7 +452,7 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             XCTFail("Encountered an unexpected type of error.")
             return
         }
-        XCTAssertEqual(error.localizedDescription, "Some error message.")
+        XCTAssertEqual(error.message, "Some error message.")
     }
     
     func testForwardsResolverErrorsProcess() throws {

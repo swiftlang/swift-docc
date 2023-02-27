@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -841,14 +841,14 @@ extension PathHierarchy.Error {
     ///
     /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the `originalReference`, i.e. the beginning
     /// of the _body_ of the original reference.
-    func asTopicReferenceResolutionError(context: DocumentationContext, originalReference: String) -> TopicReferenceResolutionError {
+    func asTopicReferenceResolutionErrorInfo(context: DocumentationContext, originalReference: String) -> TopicReferenceResolutionErrorInfo {
         switch self {
         case .notFound(availableChildren: let availableChildren):
-            return TopicReferenceResolutionError("No local documentation matches this reference.", note: availabilityNote(category: "top-level elements", candidates: availableChildren))
+            return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.", note: availabilityNote(category: "top-level elements", candidates: availableChildren))
         case .unfindableMatch:
-            return TopicReferenceResolutionError("No local documentation matches this reference.")
+            return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.")
         case .nonSymbolMatchForSymbolLink:
-            return TopicReferenceResolutionError("Symbol links can only resolve symbols.", solutions: [
+            return TopicReferenceResolutionErrorInfo("Symbol links can only resolve symbols.", solutions: [
                 Solution(summary: "Use a '<doc:>' style reference.", replacements: [
                     // the SourceRange points to the opening double-backtick
                     Replacement(range: SourceLocation(line: 0, column: -2, source: nil)..<SourceLocation(line: 0, column: 0, source: nil), replacement: "<doc:"),
@@ -891,7 +891,7 @@ extension PathHierarchy.Error {
                 return "Reference at \(partialResult.pathWithoutDisambiguation().singleQuoted) can't resolve \(remainingSubpath.singleQuoted). \(suggestion)"
             }
             
-            return TopicReferenceResolutionError(message, note: availabilityNote(category: "children", candidates: availableChildren), solutions: solutions)
+            return TopicReferenceResolutionErrorInfo(message, note: availabilityNote(category: "children", candidates: availableChildren), solutions: solutions)
             
         case .lookupCollision(partialResult: let partialResult, remainingSubpath: let remainingSubpath, collisions: let collisions):
             let unprocessedSuffix = remainingSubpath.suffix(from: remainingSubpath.firstIndex(of: "/") ?? remainingSubpath.endIndex)
@@ -915,7 +915,7 @@ extension PathHierarchy.Error {
                 ])
             }
             
-            return TopicReferenceResolutionError("Reference is ambiguous after \(partialResult.pathWithoutDisambiguation().singleQuoted).", solutions: solutions)
+            return TopicReferenceResolutionErrorInfo("Reference is ambiguous after \(partialResult.pathWithoutDisambiguation().singleQuoted).", solutions: solutions)
         }
     }
     
