@@ -45,6 +45,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Whether the documentation converter should include access level information for symbols.
     var shouldEmitSymbolAccessLevels: Bool
     
+    /// Whether tutorials that are not curated in a tutorials overview should be translated.
+    var shouldRenderUncuratedTutorials: Bool = false
+    
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
@@ -116,26 +119,25 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var node = RenderNode(identifier: identifier, kind: .tutorial)
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        guard let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) else {
+        
+        if let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) {
+            let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
+            node.hierarchy = hierarchy.hierarchy
+            node.metadata.category = technology.name
+            node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
+        } else if !context.allowsRegisteringArticlesWithoutTechnologyRoot {
             // This tutorial is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
             return nil
         }
-        
-        let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
         
         node.metadata.title = tutorial.intro.title
         node.metadata.role = contentRenderer.role(for: .tutorial).rawValue
         
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         
-        node.hierarchy = hierarchy.hierarchy
-        node.metadata.category = technology.name
-        
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
-        
-        node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
                 
         var intro = visitIntro(tutorial.intro) as! IntroRenderSection
         intro.estimatedTimeInMinutes = tutorial.durationMinutes
@@ -642,6 +644,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
+            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            
             var sections = [TaskGroupRenderSection]()
             
             if let topics = article.topics, !topics.taskGroups.isEmpty {
@@ -650,7 +654,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderGroups(
                         topics,
                         allowExternalLinks: false,
-                        allowedTraits: [trait],
+                        allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
@@ -680,7 +684,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
                 let groups = try! AutomaticCuration.topics(
                     for: documentationNode,
-                    withTrait: trait,
+                    withTraits: allowedTraits,
                     context: context
                 ).compactMap { group -> AutomaticCuration.TaskGroup? in
                     // Remove references that have been already curated.
@@ -743,6 +747,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
+            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            
             var seeAlsoSections = [TaskGroupRenderSection]()
             
             // Authored See Also section
@@ -751,7 +757,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderGroups(
                         seeAlso,
                         allowExternalLinks: true,
-                        allowedTraits: [trait],
+                        allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
@@ -761,7 +767,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Automatic See Also section
             if let seeAlso = try! AutomaticCuration.seeAlso(
                 for: documentationNode,
-                withTrait: trait,
+                withTraits: allowedTraits,
                 context: context,
                 bundle: bundle,
                 renderContext: renderContext,
@@ -1284,6 +1290,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 translators: [
                     DeclarationsSectionTranslator(),
                     ParametersSectionTranslator(),
+                    DictionaryKeysSectionTranslator(),
                     ReturnsSectionTranslator(),
                     DiscussionSectionTranslator(),
                 ]
@@ -1387,16 +1394,19 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
+            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            
             let automaticTaskGroups = symbol.automaticTaskGroupsVariants[trait] ?? []
             let topics = symbol.topicsVariants[trait]
             
             var sections = [TaskGroupRenderSection]()
             if let topics = topics, !topics.taskGroups.isEmpty {
+                // Allowed traits should be all traits except the reverse of the objc/swift pairing
                 sections.append(
                     contentsOf: renderGroups(
                         topics,
                         allowExternalLinks: false,
-                        allowedTraits: [trait],
+                        allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
@@ -1417,7 +1427,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Children of the current symbol that have not been curated manually in a task group will all
             // be automatically curated in task groups after their symbol kind: "Properties", "Enumerations", etc.
             let alreadyCurated = Set(sections.flatMap { $0.identifiers })
-            let groups = try! AutomaticCuration.topics(for: documentationNode, withTrait: trait, context: context)
+            let groups = try! AutomaticCuration.topics(for: documentationNode, withTraits: allowedTraits, context: context)
             
             sections.append(contentsOf: groups.compactMap { group in
                 let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
@@ -1492,6 +1502,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
+            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            
             // If the symbol contains an authored See Also section from the documentation extension,
             // add it as the first section under See Also.
             var seeAlsoSections = [TaskGroupRenderSection]()
@@ -1501,7 +1513,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderGroups(
                         seeAlso,
                         allowExternalLinks: true,
-                        allowedTraits: [trait],
+                        allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
@@ -1511,7 +1523,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Curate the current node's siblings as further See Also groups.
             if let seeAlso = try! AutomaticCuration.seeAlso(
                 for: documentationNode,
-                withTrait: trait,
+                withTraits: allowedTraits,
                 context: context,
                 bundle: bundle,
                 renderContext: renderContext,

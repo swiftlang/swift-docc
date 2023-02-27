@@ -139,6 +139,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
     }
+    
+    /// Controls whether bundle registration should allow registering articles when no technology root is defined.
+    ///
+    /// Set this property to `true` to enable registering documentation for standalone articles,
+    /// for example when using ``ConvertService``.
+    var allowsRegisteringArticlesWithoutTechnologyRoot: Bool = false
+    
+    /// Controls whether tutorials that aren't curated in a tutorials overview page are registered and translated.
+    ///
+    /// Set this property to `true` to enable registering documentation for standalone tutorials,
+    /// for example when ``ConvertService``.
+    var allowsRegisteringUncuratedTutorials: Bool = false
+    
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
 
@@ -1448,6 +1461,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             for (selector, relationships) in combinedRelationships {
                 // Build relationships in the completed graph
                 buildRelationships(relationships, selector: selector, bundle: bundle, engine: diagnosticEngine)
+                // Merge dictionary keys into target dictionaries
+                populateDictionaryKeys(from: relationships, selector: selector)
             }
             
             // Index references
@@ -1533,6 +1548,42 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 )
             default:
                 break
+            }
+        }
+    }
+    
+    /// Identifies all the dictionary keys and records them in the appropriate target dictionaries.
+    private func populateDictionaryKeys(
+        from relationships: Set<SymbolGraph.Relationship>,
+        selector: UnifiedSymbolGraph.Selector
+    ) {
+        var keysByTarget = [String:[DictionaryKey]]()
+        
+        for edge in relationships {
+            if edge.kind == .memberOf || edge.kind == .optionalMemberOf {
+                if let source = symbolIndex[edge.source], let target = symbolIndex[edge.target], let keySymbol = source.symbol,
+                        source.kind == .dictionaryKey && target.kind == .dictionary {
+                    let dictionaryKey = DictionaryKey(name: keySymbol.title, contents: [], symbol: keySymbol, required: (edge.kind == .memberOf))
+                    if keysByTarget[edge.target] == nil {
+                        keysByTarget[edge.target] = [dictionaryKey]
+                    } else {
+                        keysByTarget[edge.target]?.append(dictionaryKey)
+                    }
+                }
+            }
+        }
+        
+        // Merge in all the dictionary keys for each target into their section variants.
+        keysByTarget.forEach { targetIdentifier, keys in
+            let target = symbolIndex[targetIdentifier]
+            if let semantic = target?.semantic as? Symbol {
+                let keys = keys.sorted { $0.name < $1.name }
+                let trait = DocumentationDataVariantsTrait(for: selector)
+                if semantic.dictionaryKeysSectionVariants[trait] == nil {
+                    semantic.dictionaryKeysSectionVariants[trait] = DictionaryKeysSection(dictionaryKeys: keys)
+                } else {
+                    semantic.dictionaryKeysSectionVariants[trait]?.mergeDictionaryKeys(keys)
+                }
             }
         }
     }
@@ -2097,7 +2148,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
         let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
-        if rootNodeForAutomaticCuration != nil {
+        if allowsRegisteringArticlesWithoutTechnologyRoot || rootNodeForAutomaticCuration != nil {
             otherArticles = registerArticles(otherArticles, in: bundle)
             try shouldContinueRegistration()
         }

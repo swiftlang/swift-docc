@@ -49,7 +49,7 @@ let simpleListItemTags = [
 ]
 
 extension Collection where Element == InlineMarkup {
-    func extractParameter() -> Parameter? {
+    private func splitNameAndContent() -> (String, [Markup])? {
         guard let initialTextNode = first as? Text else {
             return nil
         }
@@ -69,7 +69,21 @@ extension Collection where Element == InlineMarkup {
         let newContent: [Markup] = [
             Paragraph([Text(String(remainingInitialText))] + Array(remainingChildren))
         ]
-        return Parameter(name: String(parameterName), contents: newContent)
+        return (String(parameterName), newContent)
+    }
+    
+    func extractParameter() -> Parameter? {
+        if let (name, content) = splitNameAndContent() {
+            return Parameter(name: name, contents: content)
+        }
+        return nil
+    }
+    
+    func extractDictionaryKey() -> DictionaryKey? {
+        if let (name, content) = splitNameAndContent() {
+            return DictionaryKey(name: name, contents: content)
+        }
+        return nil
     }
 }
 
@@ -123,6 +137,65 @@ extension ListItem {
     }
 
     /**
+     Extract a standalone dictionary key description from this list item.
+
+     Expected form:
+
+     ```markdown
+     - dictionaryKey x: A number.
+     ```
+     */
+    func extractStandaloneDictionaryKey() -> DictionaryKey? {
+        guard let remainder = extractTag(TaggedListItemExtractor.dictionaryKeyTag) else {
+            return nil
+        }
+        return remainder.extractDictionaryKey()
+    }
+
+    /**
+     Extracts an outline of dictionary keys from a sublist underneath this list item.
+
+     Expected form:
+
+     ```markdown
+     - DictionaryKeys:
+       - x: a number
+       - y: a number
+     ```
+
+     > Warning: Content underneath `- DictionaryKeys` that doesn't match this form will be dropped.
+     */
+    func extractDictionaryKeyOutline() -> [DictionaryKey]? {
+        guard extractTag(TaggedListItemExtractor.dictionaryKeysTag + ":") != nil else {
+            return nil
+        }
+
+        var dictionaryKeys = [DictionaryKey]()
+
+        for child in children {
+            // The list `- DictionaryKeys:` should have one child, a list of dictionary keys.
+            guard let dictionaryKeysList = child as? UnorderedList else {
+                // If it's not, that content is dropped.
+                continue
+            }
+
+            // Those sublist items are assumed to be a valid `- ___: ...` dictionary key form or else they are dropped.
+            for child in dictionaryKeysList.children {
+                guard let listItem = child as? ListItem,
+                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
+                      let dictionaryKey = Array(firstParagraph.inlineChildren).extractDictionaryKey() else {
+                    continue
+                }
+                // Don't forget the rest of the content under this dictionary key list item.
+                let contents = dictionaryKey.contents + Array(listItem.children.dropFirst(1))
+
+                dictionaryKeys.append(DictionaryKey(name: dictionaryKey.name, contents: contents))
+            }
+        }
+        return dictionaryKeys
+    }
+
+    /**
      Extract a standalone parameter description from this list item.
 
      Expected form:
@@ -146,8 +219,8 @@ extension ListItem {
 
      ```markdown
      - Parameters:
-     - x: a number
-     - y: a number
+       - x: a number
+       - y: a number
      ```
 
      > Warning: Content underneath `- Parameters` that doesn't match this form will be dropped.
@@ -220,8 +293,11 @@ struct TaggedListItemExtractor: MarkupRewriter {
     static let throwsTag = "throws"
     static let parameterTag = "parameter"
     static let parametersTag = "parameters"
+    static let dictionaryKeyTag = "dictionarykey"
+    static let dictionaryKeysTag = "dictionarykeys"
 
     var parameters = [Parameter]()
+    var dictionaryKeys = [DictionaryKey]()
     var returns = [Return]()
     var `throws` = [Throw]()
     var otherTags = [SimpleTag]()
@@ -310,6 +386,16 @@ struct TaggedListItemExtractor: MarkupRewriter {
         } else if let parameterDescription = listItem.extractStandaloneParameter() {
             // - parameter x: ...
             parameters.append(parameterDescription)
+            return nil
+        } else if let dictionaryKeyDescription = listItem.extractDictionaryKeyOutline() {
+            // - DictionaryKeys:
+            //   - x: ...
+            //   - y: ...
+            dictionaryKeys.append(contentsOf: dictionaryKeyDescription)
+            return nil
+        } else if let dictionaryKeyDescription = listItem.extractStandaloneDictionaryKey() {
+            // - dictionaryKey x: ...
+            dictionaryKeys.append(dictionaryKeyDescription)
             return nil
         } else if let simpleTag = listItem.extractSimpleTag() {
             // - todo: ...

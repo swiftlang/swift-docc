@@ -284,6 +284,7 @@ public struct DocumentationNode {
             seeAlsoVariants: .empty,
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
+            dictionaryKeysSectionVariants: .empty,
             redirectsVariants: .empty,
             crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) })
         )
@@ -368,6 +369,11 @@ public struct DocumentationNode {
             semantic.parametersSectionVariants = DocumentationDataVariants(
                 defaultVariantValue: ParametersSection(parameters: parameters)
             )
+        }
+        
+        if let keys = markupModel.discussionTags?.dictionaryKeys, !keys.isEmpty {
+            // Record the keys extracted from the markdown
+            semantic.dictionaryKeysSectionVariants[.fallback] = DictionaryKeysSection(dictionaryKeys:keys)
         }
         
         options = documentationExtension?.options[.local]
@@ -473,6 +479,8 @@ public struct DocumentationNode {
         case .`associatedtype`: return .associatedType
         case .`class`: return .class
         case .`deinit`: return .deinitializer
+        case .dictionary: return .dictionary
+        case .dictionaryKey: return .dictionaryKey
         case .`enum`: return .enumeration
         case .`case`: return .enumerationCase
         case .`func`: return .function
@@ -594,6 +602,7 @@ public struct DocumentationNode {
             seeAlsoVariants: .init(swiftVariant: markupModel.seeAlsoSection),
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
+            dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
             redirectsVariants: .init(swiftVariant: article?.redirects)
         )
         

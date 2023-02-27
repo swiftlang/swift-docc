@@ -48,6 +48,7 @@ import SymbolKit
 /// - ``seeAlsoVariants``
 /// - ``returnsSectionVariants``
 /// - ``parametersSectionVariants``
+/// - ``dictionaryKeysSectionVariants``
 /// - ``redirectsVariants``
 /// - ``abstractVariants``
 /// - ``isDeprecatedVariants``
@@ -81,6 +82,7 @@ import SymbolKit
 /// - ``redirects``
 /// - ``returnsSection``
 /// - ``parametersSection``
+/// - ``dictionaryKeysSection``
 /// - ``abstract``
 /// - ``isDeprecated``
 /// - ``isSPI``
@@ -185,6 +187,9 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     /// Any parameters of the symbol, if the symbol accepts parameters, in each language variant the symbol is available in.
     public var parametersSectionVariants: DocumentationDataVariants<ParametersSection>
     
+    /// Any dictionary keys of the symbol, if the symbol accepts keys, in each language variant the symbol is available in.
+    public var dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>
+        
     /// Any redirect information of the symbol, if the symbol has been moved from another location, in each language variant the symbol is available in.
     public var redirectsVariants: DocumentationDataVariants<[Redirect]>
     
@@ -232,6 +237,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         seeAlsoVariants: DocumentationDataVariants<SeeAlsoSection>,
         returnsSectionVariants: DocumentationDataVariants<ReturnsSection>,
         parametersSectionVariants: DocumentationDataVariants<ParametersSection>,
+        dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>,
         redirectsVariants: DocumentationDataVariants<[Redirect]>,
         crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])? = nil,
         originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
@@ -290,6 +296,7 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.seeAlsoVariants = seeAlsoVariants
         self.returnsSectionVariants = returnsSectionVariants
         self.parametersSectionVariants = parametersSectionVariants
+        self.dictionaryKeysSectionVariants = dictionaryKeysSectionVariants
         self.redirectsVariants = redirectsVariants
         self.originVariants = originVariants
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
@@ -508,6 +515,12 @@ extension Symbol {
     public var parametersSection: ParametersSection? {
         get { parametersSectionVariants.firstValue }
         set { parametersSectionVariants.firstValue = newValue }
+    }
+    
+    /// Any dictionary keys of the first variant of the symbol, if the symbol accepts keys.
+    public var dictionaryKeysSection: DictionaryKeysSection? {
+        get { dictionaryKeysSectionVariants.firstValue }
+        set { dictionaryKeysSectionVariants.firstValue = newValue }
     }
     
     /// The first variant of the symbol's abstract summary as a single paragraph.

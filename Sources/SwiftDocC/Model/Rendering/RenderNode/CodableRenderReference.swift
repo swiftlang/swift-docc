@@ -43,6 +43,8 @@ struct CodableRenderReference: Codable {
             reference = try UnresolvedRenderReference(from: decoder)
         case .link:
             reference = try LinkReference(from: decoder)
+        case .externalLocation:
+            reference = try ExternalLocationReference(from: decoder)
         }
     }
     

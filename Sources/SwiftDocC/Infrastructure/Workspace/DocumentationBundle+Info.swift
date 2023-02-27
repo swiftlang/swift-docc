@@ -78,6 +78,31 @@ extension DocumentationBundle {
             }
         }
         
+        
+        /// Creates a new documentation bundle information value.
+        /// - Parameters:
+        ///   - displayName: The display name of the bundle.
+        ///   - identifier:  The unique identifier of the bundle.
+        ///   - version: The version of the bundle.
+        ///   - defaultCodeListingLanguage: The default language identifier for code listings in the bundle.
+        ///   - defaultAvailability: The default availability for the various modules in the bundle.
+        ///   - defaultModuleKind: The default kind for the various modules in the bundle.
+        public init(
+            displayName: String,
+            identifier: String,
+            version: String?,
+            defaultCodeListingLanguage: String?,
+            defaultAvailability: DefaultAvailability?,
+            defaultModuleKind: String?
+        ) {
+            self.displayName = displayName
+            self.identifier = identifier
+            self.version = version
+            self.defaultCodeListingLanguage = defaultCodeListingLanguage
+            self.defaultAvailability = defaultAvailability
+            self.defaultModuleKind = defaultModuleKind
+        }
+        
         /// Creates documentation bundle information from the given Info.plist data, falling back to the values
         /// in the given bundle discovery options if necessary.
         init(
