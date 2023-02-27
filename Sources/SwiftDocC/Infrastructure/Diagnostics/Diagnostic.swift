@@ -87,21 +87,13 @@ public struct Diagnostic: DescribedError {
 
 public extension Diagnostic {
 
-    /// Returns a copy of the diagnostic but offset using a certain `SourceRange`.
+    /// Offsets the diagnostic using a certain SymbolKit `SourceRange`.
+    ///
     /// Useful when validating a doc comment that needs to be projected in its containing file "space".
-    func offsetedWithRange(_ docRange: SymbolGraph.LineList.SourceRange) -> Diagnostic {
-        guard let diagnosticRange = range else {
-            // No location information in the source diagnostic, might be removed for safety reasons.
-            return self
-        }
-
-        let start = SourceLocation(line: diagnosticRange.lowerBound.line + docRange.start.line, column: diagnosticRange.lowerBound.column + docRange.start.character, source: nil)
-        let end = SourceLocation(line: diagnosticRange.upperBound.line + docRange.start.line, column: diagnosticRange.upperBound.column + docRange.start.character, source: nil)
-
-        // Use the updated source range.
-        var result = self
-        result.range = start..<end
-        return result
+    mutating func offsetWithRange(_ docRange: SymbolGraph.LineList.SourceRange) {
+        // If there is no location information in the source diagnostic, the diagnostic might be removed for safety reasons.
+        range?.offsetWithRange(docRange)
+        
     }
 
     var localizedDescription: String {

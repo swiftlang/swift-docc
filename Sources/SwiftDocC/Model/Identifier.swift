@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import Markdown
 
 /// A resolved or unresolved reference to a piece of documentation.
 ///
@@ -54,7 +55,7 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
     /// A topic reference that has successfully been resolved to known documentation.
     case success(ResolvedTopicReference)
     /// A topic reference that has failed to resolve to known documentation and an error message with information about why the reference failed to resolve.
-    case failure(UnresolvedTopicReference, errorMessage: String)
+    case failure(UnresolvedTopicReference, TopicReferenceResolutionError)
     
     public var description: String {
         switch self {
@@ -63,6 +64,60 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
         case .failure(let unresolved, _):
             return unresolved.description
         }
+    }
+}
+
+/// The error causing the failure in the resolution of a ``TopicReference``.
+public struct TopicReferenceResolutionError: DescribedError, Hashable {
+    public let errorDescription: String
+    public let recoverySuggestion: String?
+    public let failureReason: String?
+    public let helpAnchor: String?
+    private let solutions: [Solution]
+    
+    init(_ message: String, note: String? = nil, solutions: [Solution] = []) {
+        self.errorDescription = message
+        self.recoverySuggestion = note
+        self.failureReason = nil
+        self.helpAnchor = nil
+        self.solutions = solutions
+    }
+}
+
+extension TopicReferenceResolutionError {
+    init(_ error: Error, solutions: [Solution] = []) {
+        if let describedError = error as? DescribedError {
+            self.errorDescription = describedError.errorDescription
+            self.recoverySuggestion = describedError.recoverySuggestion
+            self.failureReason = describedError.failureReason
+            self.helpAnchor = describedError.helpAnchor
+        } else {
+            self.errorDescription = error.localizedDescription
+            self.recoverySuggestion = nil
+            self.failureReason = nil
+            self.helpAnchor = nil
+        }
+        self.solutions = solutions
+    }
+}
+
+extension TopicReferenceResolutionError {
+    /// Extracts any `Solution`s from this error, if available.
+    ///
+    /// The error can provide `Solution`s if appropriate. Since the absolute location of
+    /// the faulty reference is not known at the error's origin, the `Replacement`s
+    /// will use `SourceLocation`s relative to the reference text. Provide range of the
+    /// reference **body** to obtain correctly placed `Replacement`s.
+    func solutions(referenceSourceRange: SourceRange) -> [Solution] {
+        var solutions = self.solutions
+        
+        for i in solutions.indices {
+            for j in solutions[i].replacements.indices {
+                solutions[i].replacements[j].offsetWithRange(referenceSourceRange)
+            }
+        }
+        
+        return solutions
     }
 }
 

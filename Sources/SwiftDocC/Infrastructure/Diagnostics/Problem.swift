@@ -8,6 +8,8 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+import SymbolKit
+
 /**
  A problem with a document along with possible solutions to the problem.
  */
@@ -45,7 +47,22 @@ extension Problem {
             })
         })
 
-        return description +  fixitString
+        return description + fixitString
+    }
+}
+
+extension Problem {
+    /// Offsets the problem using a certain SymbolKit `SourceRange`.
+    ///
+    /// Useful when validating a doc comment that needs to be projected in its containing file "space".
+    mutating func offsetWithRange(_ docRange: SymbolGraph.LineList.SourceRange) {
+        diagnostic.offsetWithRange(docRange)
+        
+        for i in possibleSolutions.indices {
+            for j in possibleSolutions[i].replacements.indices {
+                possibleSolutions[i].replacements[j].offsetWithRange(docRange)
+            }
+        }
     }
 }
 

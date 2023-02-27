@@ -63,16 +63,15 @@ struct MarkupReferenceResolver: MarkupRewriter {
             }
             return resolved
             
-        case .failure(let unresolved, let errorMessage):
+        case .failure(let unresolved, let error):
             if let callback = problemForUnresolvedReference,
-                let problem = callback(unresolved, source, range, fromSymbolLink, errorMessage) {
+               let problem = callback(unresolved, source, range, fromSymbolLink, error.localizedDescription) {
                 problems.append(problem)
                 return nil
             }
             
-            // FIXME: Structure the `PathHierarchyBasedLinkResolver` near-miss suggestions as fixits. https://github.com/apple/swift-docc/issues/438 (rdar://103279313)
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingError: error, fromSymbolLink: fromSymbolLink))
             return nil
         }
     }

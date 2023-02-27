@@ -700,7 +700,7 @@ Document @1:1-1:35
                 guard reference.description == "doc://com.external.testbundle/resolvable" else {
                     switch reference {
                     case .unresolved(let unresolved):
-                        return .failure(unresolved, errorMessage: "Unit test: External resolve error.")
+                        return .failure(unresolved, TopicReferenceResolutionError("Unit test: External resolve error."))
                     case .resolved(let resolvedResult):
                         return resolvedResult
                     }
@@ -758,11 +758,11 @@ Document @1:1-1:35
         // Expected failed externally resolved reference.
         XCTAssertEqual(
             context.externallyResolvedLinks[ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-1")!],
-            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-1")!), errorMessage: "Unit test: External resolve error.")
+            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-1")!), TopicReferenceResolutionError("Unit test: External resolve error."))
         )
         XCTAssertEqual(
             context.externallyResolvedLinks[ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-2")!],
-            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-2")!), errorMessage: "Unit test: External resolve error.")
+            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-2")!), TopicReferenceResolutionError("Unit test: External resolve error."))
         )
         
         // Expected successful externally resolved reference.

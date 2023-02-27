@@ -207,7 +207,7 @@ final class PathHierarchyBasedLinkResolver {
                 // Return the successful or failed externally resolved reference.
                 return resolvedExternalReference
             } else if !context.registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                return .failure(unresolvedReference, errorMessage: "No external resolver registered for \(bundleID.singleQuoted).")
+                return .failure(unresolvedReference, TopicReferenceResolutionError("No external resolver registered for \(bundleID.singleQuoted)."))
             }
         }
         
@@ -222,7 +222,12 @@ final class PathHierarchyBasedLinkResolver {
             if let resolvedFallbackReference = fallbackResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context) {
                 return .success(resolvedFallbackReference)
             } else {
-                return .failure(unresolvedReference, errorMessage: error.errorMessage(context: context))
+                var originalReferenceString = unresolvedReference.path
+                if let fragment = unresolvedReference.topicURL.components.fragment {
+                    originalReferenceString += "#" + fragment
+                }
+                
+                return .failure(unresolvedReference, error.asTopicReferenceResolutionError(context: context, originalReference: originalReferenceString))
             }
         } catch {
             fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")
