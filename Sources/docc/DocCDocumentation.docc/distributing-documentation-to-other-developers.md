@@ -80,8 +80,8 @@ docc convert […] \
     --checkout-path <absolute path to local checkout>
 ```
 
-The option `--checkout-path` expects an absolute path to where the package 
-resides, not a relative path.
+> Note: The option `--checkout-path` expects an absolute path to where the package 
+is checked out, not a relative path.
 
 These arguments can also be provided to `swift package generate-documentation`
 if you're using the SwiftPM DocC Plugin or via the `OTHER_DOCC_FLAGS` build
