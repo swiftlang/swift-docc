@@ -910,7 +910,7 @@ extension PathHierarchy.Error {
                 $0.node.fullNameOfValue(context: context) + $0.disambiguation
                     < $1.node.fullNameOfValue(context: context) + $1.disambiguation
             }).map { collision in
-                Solution(summary: "Insert disambiguation suffix for \(collision.node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                Solution(summary: "Insert \(collision.disambiguation.singleQuoted) to refer to \(collision.node.fullNameOfValue(context: context).singleQuoted)", replacements: [
                     Replacement(range: replacementRange, replacement: "-" + collision.disambiguation)
                 ])
             }

@@ -584,8 +584,8 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 2)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Insert disambiguation suffix for 'init()'", "-33vaw"],
-                ["Insert disambiguation suffix for 'init()'", "-3743d"],
+                ["Insert '33vaw' to refer to 'init()'", "-33vaw"],
+                ["Insert '3743d' to refer to 'init()'", "-3743d"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -630,8 +630,8 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 2)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Insert disambiguation suffix for 'init()'", "-33vaw"],
-                ["Insert disambiguation suffix for 'init()'", "-3743d"],
+                ["Insert '33vaw' to refer to 'init()'", "-33vaw"],
+                ["Insert '3743d' to refer to 'init()'", "-3743d"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -676,8 +676,8 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 2)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Insert disambiguation suffix for 'init()'", "-33vaw"],
-                ["Insert disambiguation suffix for 'init()'", "-3743d"],
+                ["Insert '33vaw' to refer to 'init()'", "-33vaw"],
+                ["Insert '3743d' to refer to 'init()'", "-3743d"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
