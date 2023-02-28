@@ -34,30 +34,21 @@ public struct Diagnostic {
     /// `org.swift.docc.SummaryContainsLink`
     public var identifier: String
 
-    /// Provides the short, localized abstract provided by ``localizedExplanation`` in plain text if an
-    /// explanation is available.
-    ///
-    /// At a bare minimum, all diagnostics must have at least one paragraph or sentence describing what the diagnostic is.
-    public var localizedSummary: String 
+    /// A brief summary that describe the problem or issue.
+    public var summary: String
+    
+    @available(*, deprecated, renamed: "summary")
+    public var localizedSummary: String {
+        return summary
+    }
 
-    /// Provides a markup document for this diagnostic in the end-user's most preferred language, the base language
-    /// if one isn't available, or `nil` if no explanations are provided for this diagnostic's identifier.
-    ///
-    /// - Note: All diagnostics *must have* an explanation. If a diagnostic can't be explained in plain language
-    /// and easily understood by the reader, it should not be shown.
-    ///
-    /// An explanation should have at least the following items:
-    ///
-    /// - Document
-    ///  - Abstract: A summary paragraph; one or two sentences.
-    ///  - Discussion: A discussion of the situation and why it's interesting or a problem for the end-user.
-    ///     This discussion should implicitly justify the diagnostic's existence.
-    ///  - Heading, level 2, text: "Example"
-    ///  - Problem Example: Show an example of the problematic situation and highlight important areas.
-    ///  - Heading, level 2, text: "Solution"
-    ///  - Solution: Explain what the end-user needs to do to correct the problem in plain language.
-    ///  - Solution Example: Show the *Problem Example* as corrected and highlight the changes made.
-    public var localizedExplanation: String?
+    /// Additional details that explain the the problem or issue to the end-user in plain language.
+    public var explanation: String?
+    
+    @available(*, deprecated, renamed: "explanation")
+    public var localizedExplanation: String? {
+        return explanation
+    }
 
     /// Extra notes to tack onto the editor for additional information.
     ///
@@ -78,8 +69,8 @@ public struct Diagnostic {
         self.severity = severity
         self.range = range
         self.identifier = identifier
-        self.localizedSummary = summary
-        self.localizedExplanation = explanation
+        self.summary = summary
+        self.explanation = explanation
         self.notes = notes
     }
 }

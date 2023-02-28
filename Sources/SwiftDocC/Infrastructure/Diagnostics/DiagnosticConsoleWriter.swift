@@ -38,6 +38,10 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         let text = Self.formattedDescriptionFor(problems, options: formattingOptions).appending("\n")
         outputStream.write(text)
     }
+    
+    public func finalize() throws {
+        // The console writer writes each diagnostic as they are received.
+    }
 }
 
 // MARK: Formatted descriptions
@@ -49,7 +53,7 @@ extension DiagnosticConsoleWriter {
     }
     
     public static func formattedDescriptionFor(_ problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
-        guard let source = problem.diagnostic.source, options.contains(.showFixits) else {
+        guard let source = problem.diagnostic.source, options.contains(.formatConsoleOutputForTools) else {
             return formattedDescriptionFor(problem.diagnostic)
         }
         
@@ -95,7 +99,7 @@ extension DiagnosticConsoleWriter {
             result += "\(url.path): "
         }
         
-        result += "\(diagnostic.severity): \(diagnostic.localizedSummary)"
+        result += "\(diagnostic.severity): \(diagnostic.summary)"
         
         return result
     }
@@ -103,7 +107,7 @@ extension DiagnosticConsoleWriter {
     private static func formattedDiagnosticDetails(_ diagnostic: Diagnostic) -> String {
         var result = ""
 
-        if let explanation = diagnostic.localizedExplanation {
+        if let explanation = diagnostic.explanation {
             result += "\n\(explanation)"
         }
 

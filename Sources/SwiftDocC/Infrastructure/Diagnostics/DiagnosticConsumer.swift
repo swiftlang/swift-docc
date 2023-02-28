@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,6 +15,9 @@ public protocol DiagnosticConsumer: AnyObject {
     /// Receive diagnostics encountered by a ``DiagnosticEngine``.
     /// - Parameter problems: The encountered diagnostics.
     func receive(_ problems: [Problem])
+    
+    /// Inform the consumer that the engine has sent all diagnostics for this build.
+    func finalize() throws
 }
 
 /// A type that can format received diagnostics in way that's suitable for writing to a destination such as a file or `TextOutputStream`.

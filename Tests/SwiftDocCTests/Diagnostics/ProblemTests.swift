@@ -50,7 +50,7 @@ class ProblemTests: XCTestCase {
         let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
         let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
 
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescriptionFor(problem, options: [.showFixits]), """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescriptionFor(problem, options: [.formatConsoleOutputForTools]), """
         \(expectedLocation): error: \(summary). \(solutionSummary).
         \(explanation)
         \(source):1:8-1:24: fixit: Replacement text

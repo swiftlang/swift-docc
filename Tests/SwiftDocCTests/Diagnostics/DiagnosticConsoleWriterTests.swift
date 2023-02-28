@@ -75,7 +75,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
             
             let logger = Logger()
-            let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.showFixits])
+            let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
             consumer.receive([problem])
             XCTAssertEqual(logger.output, """
             \(expectedLocation): error: \(summary). \(solutionSummary).
@@ -95,7 +95,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             let problem = Problem(diagnostic: diagnostic, possibleSolutions: [firstSolution, secondSolution])
             
             let logger = Logger()
-            let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.showFixits])
+            let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
             consumer.receive([problem])
             XCTAssertEqual(logger.output, """
             \(expectedLocation): error: \(summary). \(firstSolutionSummary) \(secondSolutionSummary).
@@ -116,7 +116,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
             let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
             
             let logger = Logger()
-            let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.showFixits])
+            let consumer = DiagnosticConsoleWriter(logger, formattingOptions: [.formatConsoleOutputForTools])
             consumer.receive([problem])
             XCTAssertEqual(logger.output, """
             \(expectedLocation): error: \(summary). \(solutionSummary).

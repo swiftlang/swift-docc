@@ -99,12 +99,28 @@ extension Docc {
         @Flag(help: .hidden)
         public var index = false
         
-        /// A user-provided value that is true if fix-its should be written to output.
-        ///
-        /// Defaults to false.
-        @Flag(inversion: .prefixedNo, help: "Outputs fixits for common issues")
-        public var emitFixits = false
-
+        @available(*, deprecated, renamed: "formatConsoleOutputForTools")
+        public var emitFixits: Bool {
+            return formatConsoleOutputForTools
+        }
+        
+        /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
+        @Flag(
+            name: [.customLong("ide-console-output"), .customLong("emit-fixits")],
+            help: "Format output to the console intended for an IDE or other tool to parse.")
+        public var formatConsoleOutputForTools = false
+        
+        /// A user-provided location where the convert action writes the diagnostics file.
+        @Option(
+            name: [.customLong("diagnostics-file"), .customLong("diagnostics-output-path")],
+            help: ArgumentHelp(
+                "The location where the documentation compiler writes the diagnostics file.",
+                discussion: "Specifying a diagnostic file path implies '--ide-console-output'."
+            ),
+            transform: URL.init(fileURLWithPath:)
+        )
+        var diagnosticsOutputPath: URL?
+        
         /// A user-provided value that is true if the user wants to opt in to Experimental documentation coverage generation.
         ///
         /// Defaults to none.
