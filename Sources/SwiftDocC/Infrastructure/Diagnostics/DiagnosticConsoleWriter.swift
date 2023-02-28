@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -35,7 +35,83 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     }
 
     public func receive(_ problems: [Problem]) {
-        let text = problems.formattedLocalizedDescription(withOptions: formattingOptions).appending("\n")
+        let text = Self.formattedDescriptionFor(problems, options: formattingOptions).appending("\n")
         outputStream.write(text)
+    }
+}
+
+// MARK: Formatted descriptions
+
+extension DiagnosticConsoleWriter {
+    
+    public static func formattedDescriptionFor<Problems>(_ problems: Problems, options: DiagnosticFormattingOptions = []) -> String where Problems: Sequence, Problems.Element == Problem {
+        return problems.map { formattedDescriptionFor($0, options: options) }.joined(separator: "\n")
+    }
+    
+    public static func formattedDescriptionFor(_ problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
+        guard let source = problem.diagnostic.source, options.contains(.showFixits) else {
+            return formattedDescriptionFor(problem.diagnostic)
+        }
+        
+        var description = formattedDiagnosticSummary(problem.diagnostic)
+        
+        // Since solution summaries aren't included in the fixit string we include them in the diagnostic
+        // summary so that the solution information isn't dropped.
+        
+        if !problem.possibleSolutions.isEmpty, description.last?.isPunctuation == false {
+            description += "."
+        }
+        for solution in problem.possibleSolutions {
+            description += " \(solution.summary)"
+            if description.last?.isPunctuation == false {
+                description += "."
+            }
+        }
+        
+        // Add explanations and notes
+        description += formattedDiagnosticDetails(problem.diagnostic)
+        
+        // Only one fixit (but multiple related replacements) can be a presented with each diagnostic
+        if problem.possibleSolutions.count == 1, let solution = problem.possibleSolutions.first {
+            description += solution.replacements.reduce(into: "") { accumulation, replacement in
+                let range = replacement.range
+                accumulation +=  "\n\(source.path):\(range.lowerBound.line):\(range.lowerBound.column)-\(range.upperBound.line):\(range.upperBound.column): fixit: \(replacement.replacement)"
+            }
+        }
+
+        return description
+    }
+    
+    public static func formattedDescriptionFor(_ diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
+        return formattedDiagnosticSummary(diagnostic) + formattedDiagnosticDetails(diagnostic)
+    }
+    
+    private static func formattedDiagnosticSummary(_ diagnostic: Diagnostic) -> String {
+        var result = ""
+
+        if let range = diagnostic.range, let url = diagnostic.source {
+            result += "\(url.path):\(range.lowerBound.line):\(range.lowerBound.column): "
+        } else if let url = diagnostic.source {
+            result += "\(url.path): "
+        }
+        
+        result += "\(diagnostic.severity): \(diagnostic.localizedSummary)"
+        
+        return result
+    }
+    
+    private static func formattedDiagnosticDetails(_ diagnostic: Diagnostic) -> String {
+        var result = ""
+
+        if let explanation = diagnostic.localizedExplanation {
+            result += "\n\(explanation)"
+        }
+
+        if !diagnostic.notes.isEmpty {
+            result += "\n"
+            result += diagnostic.notes.map { $0.description }.joined(separator: "\n")
+        }
+        
+        return result
     }
 }
