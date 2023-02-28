@@ -17,8 +17,7 @@ import SymbolKit
 public typealias BasicDiagnostic = Diagnostic
 
 /// A diagnostic explains a problem or issue that needs the end-user's attention.
-public struct Diagnostic: DescribedError {
-
+public struct Diagnostic {
     /// The origin of the diagnostic, such as a file or process.
     public var source: URL?
 
@@ -95,13 +94,19 @@ public extension Diagnostic {
         range?.offsetWithRange(docRange)
         
     }
+}
 
+// MARK: Deprecated
+
+@available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
+extension Diagnostic: DescribedError {
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
     var localizedDescription: String {
         return DiagnosticConsoleWriter.formattedDescriptionFor(self)
     }
 
-    var errorDescription: String {
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
+    public var errorDescription: String {
         return DiagnosticConsoleWriter.formattedDescriptionFor(self)
     }
 }
-

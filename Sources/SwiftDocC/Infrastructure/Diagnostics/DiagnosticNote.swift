@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import Markdown
 /**
  A diagnostic note is a simple string message that should appear somewhere in a document.
  */
-public struct DiagnosticNote: CustomStringConvertible {
+public struct DiagnosticNote {
     /// The source file to which to attach the `message`.
     public var source: URL
 
@@ -23,7 +23,11 @@ public struct DiagnosticNote: CustomStringConvertible {
 
     /// The message to attach to the document.
     public var message: String
+}
 
+@available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
+extension DiagnosticNote: CustomStringConvertible {
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
     public var description: String {
         let location = "\(source.path):\(range.lowerBound.line):\(range.lowerBound.column)"
         return "\(location): note: \(message)"

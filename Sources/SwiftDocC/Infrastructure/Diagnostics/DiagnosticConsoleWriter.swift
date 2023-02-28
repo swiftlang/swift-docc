@@ -109,9 +109,14 @@ extension DiagnosticConsoleWriter {
 
         if !diagnostic.notes.isEmpty {
             result += "\n"
-            result += diagnostic.notes.map { $0.description }.joined(separator: "\n")
+            result += diagnostic.notes.map { formattedDescriptionFor($0) }.joined(separator: "\n")
         }
         
         return result
+    }
+    
+    private static func formattedDescriptionFor(_ note: DiagnosticNote, options: DiagnosticFormattingOptions = []) -> String {
+        let location = "\(note.source.path):\(note.range.lowerBound.line):\(note.range.lowerBound.column)"
+        return "\(location): note: \(note.message)"
     }
 }
