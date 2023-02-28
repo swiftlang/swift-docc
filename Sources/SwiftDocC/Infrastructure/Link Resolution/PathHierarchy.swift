@@ -290,10 +290,14 @@ struct PathHierarchy {
             throw Error.notFound(availableChildren: [])
         }
         
+        var parsedPathForError: [PathComponent] {
+            Self.parse(path: rawPath, omittingEmptyComponents: false).components
+        }
+        
         // Second, find the node to start the search relative to.
         // This may consume or or more path components. See implementation for details.
         var remaining = path[...]
-        var node = try findRoot(parentID: parent, remaining: &remaining, isAbsolute: isAbsolute, onlyFindSymbols: onlyFindSymbols)
+        var node = try findRoot(parentID: parent, parsedPath: parsedPathForError, remaining: &remaining, isAbsolute: isAbsolute, onlyFindSymbols: onlyFindSymbols)
         
         // Third, search for the match relative to the start node.
         if remaining.isEmpty {
@@ -303,16 +307,12 @@ struct PathHierarchy {
         
         // Search for the remaining components from the node
         while true {
-            let (children, pathComponent) = try findChildTree(node: &node, remaining: remaining)
+            let (children, pathComponent) = try findChildTree(node: &node, parsedPath: parsedPathForError, remaining: remaining)
             
             do {
                 guard let child = try children.find(pathComponent.kind, pathComponent.hash) else {
                     // The search has ended with a node that doesn't have a child matching the next path component.
-                    throw Error.partialResult(
-                        partialResult: node,
-                        remainingSubpath: remaining.map(\.full).joined(separator: "/"),
-                        availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
-                    )
+                    throw makePartialResultError(node: node, parsedPath: parsedPathForError, remaining: remaining)
                 }
                 node = child
                 remaining = remaining.dropFirst()
@@ -322,9 +322,7 @@ struct PathHierarchy {
                 }
             } catch DisambiguationTree.Error.lookupCollision(let collisions) {
                 func wrappedCollisionError() -> Error {
-                    Error.lookupCollision(partialResult: node,
-                                          remainingSubpath: remaining.map(\.full).joined(separator: "/"),
-                                          collisions: collisions)
+                    makeCollisionError(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
                 }
                 
                 // See if the collision can be resolved by looking ahead on level deeper.
@@ -366,13 +364,40 @@ struct PathHierarchy {
                     return possibleMatches.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
                 }
                 // Couldn't resolve the collision by look ahead.
-                throw Error.lookupCollision(
-                    partialResult: node,
-                    remainingSubpath: remaining.map(\.full).joined(separator: "/"),
-                    collisions: collisions.map { ($0.node, $0.disambiguation) }
-                )
+                throw makeCollisionError(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
             }
         }
+    }
+                        
+    private func makeCollisionError(
+        node: Node,
+        parsedPath: [PathComponent],
+        remaining: ArraySlice<PathComponent>,
+        collisions: [(node: PathHierarchy.Node, disambiguation: String)]
+    ) -> Error {
+        return Error.lookupCollision(
+            partialResult: (
+                node,
+                Array(parsedPath.dropLast(remaining.count))
+            ),
+            remaining: Array(remaining),
+            collisions: collisions.map { ($0.node, $0.disambiguation) }
+        )
+    }
+    
+    private func makePartialResultError(
+        node: Node,
+        parsedPath: [PathComponent],
+        remaining: ArraySlice<PathComponent>
+    ) -> Error {
+        return Error.partialResult(
+            partialResult: (
+                node,
+                Array(parsedPath.dropLast(remaining.count))
+            ),
+            remaining: Array(remaining),
+            availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
+        )
     }
     
     /// Finds the child disambiguation tree for a given node that match the remaining path components.
@@ -380,7 +405,7 @@ struct PathHierarchy {
     ///   - node: The current node.
     ///   - remaining: The remaining path components.
     /// - Returns: The child disambiguation tree and path component.
-    private func findChildTree(node: inout Node, remaining: ArraySlice<PathComponent>) throws -> (DisambiguationTree, PathComponent) {
+    private func findChildTree(node: inout Node, parsedPath: @autoclosure () -> [PathComponent], remaining: ArraySlice<PathComponent>) throws -> (DisambiguationTree, PathComponent) {
         var pathComponent = remaining.first!
         if let match = node.children[pathComponent.full] {
             // The path component parsing may treat dash separated words as disambiguation information.
@@ -409,11 +434,7 @@ struct PathHierarchy {
             }
         }
         // The search has ended with a node that doesn't have a child matching the next path component.
-        throw Error.partialResult(
-            partialResult: node,
-            remainingSubpath: remaining.map(\.full).joined(separator: "/"),
-            availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
-        )
+        throw makePartialResultError(node: node, parsedPath: parsedPath(), remaining: remaining)
     }
     
     /// Attempt to find the node to start the relative search relative to.
@@ -424,7 +445,7 @@ struct PathHierarchy {
     ///   - isAbsolute: If the parsed path represent an absolute documentation link.
     ///   - onlyFindSymbols: If symbol results are required.
     /// - Returns: The node to start the relative search relative to.
-    private func findRoot(parentID: ResolvedIdentifier?, remaining: inout ArraySlice<PathComponent>, isAbsolute: Bool, onlyFindSymbols: Bool) throws -> Node {
+    private func findRoot(parentID: ResolvedIdentifier?, parsedPath: @autoclosure () -> [PathComponent], remaining: inout ArraySlice<PathComponent>, isAbsolute: Bool, onlyFindSymbols: Bool) throws -> Node {
         // If the first path component is "tutorials" or "documentation" then that
         let isKnownTutorialPath = remaining.first!.full == NodeURLGenerator.Path.tutorialsFolderName
         let isKnownDocumentationPath = remaining.first!.full == NodeURLGenerator.Path.documentationFolderName
@@ -504,7 +525,7 @@ struct PathHierarchy {
                     // No node up the hierarchy from the provided parent has a child that matches the first path component.
                     // Go back to the provided parent node for diagnostic information about its available children.
                     parentNode = lookup[parentID]!
-                    throw Error.partialResult(partialResult: parentNode, remainingSubpath: remaining.map({ $0.full }).joined(separator: "/"), availableChildren: parentNode.children.keys.sorted(by: availableChildNameIsBefore))
+                    throw makePartialResultError(node: parentNode, parsedPath: parsedPath(), remaining: remaining)
                 }
                 parentNode = parent
             }
@@ -613,11 +634,13 @@ extension PathHierarchy {
     }
     
     /// Parsed a documentation link path (and optional fragment) string into structured path component values.
-    /// - Parameter path: The documentation link string, containing a path and an optional fragment.
+    /// - Parameters:
+    ///   - path: The documentation link string, containing a path and an optional fragment.
+    ///   - omittingEmptyComponents: If empty path components should be omitted from the parsed path. By default the are omitted.
     /// - Returns: A pair of the parsed path components and a flag that indicate if the documentation link is absolute or not.
-    static func parse(path: String) -> (components: [PathComponent], isAbsolute: Bool) {
+    static func parse(path: String, omittingEmptyComponents: Bool = true) -> (components: [PathComponent], isAbsolute: Bool) {
         guard !path.isEmpty else { return ([], true) }
-        var components = path.split(separator: "/", omittingEmptySubsequences: true)
+        var components = path.split(separator: "/", omittingEmptySubsequences: omittingEmptyComponents)
         let isAbsolute = path.first == "/"
             || String(components.first ?? "") == NodeURLGenerator.Path.documentationFolderName
             || String(components.first ?? "") == NodeURLGenerator.Path.tutorialsFolderName
@@ -675,6 +698,10 @@ extension PathHierarchy {
             }
         }
         return PathComponent(full: full, name: name, kind: nil, hash: hash)
+    }
+    
+    static func joined<PathComponents>(_ pathComponents: PathComponents) -> String where PathComponents: Sequence, PathComponents.Element == PathComponent {
+        return pathComponents.map(\.full).joined(separator: "/")
     }
 }
 
@@ -812,7 +839,7 @@ extension PathHierarchy {
         /// - The partial result for as much of the path that could be found.
         /// - The remaining portion of the path.
         /// - A list of the names for the children of the partial result.
-        case partialResult(partialResult: Node, remainingSubpath: String, availableChildren: [String])
+        case partialResult(partialResult: (node: Node, path: [PathComponent]), remaining: [PathComponent], availableChildren: [String])
         
         /// Multiple matches are found partway through the path.
         ///
@@ -820,7 +847,7 @@ extension PathHierarchy {
         /// - The partial result for as much of the path that could be found unambiguously.
         /// - The remaining portion of the path.
         /// - A list of possible matches paired with the disambiguation suffixes needed to distinguish them.
-        case lookupCollision(partialResult: Node, remainingSubpath: String, collisions: [(node: Node, disambiguation: String)])
+        case lookupCollision(partialResult: (node: Node, path: [PathComponent]), remaining: [PathComponent], collisions: [(node: Node, disambiguation: String)])
     }
 }
     
@@ -837,7 +864,7 @@ extension PathHierarchy.Error {
     /// - Parameters:
     ///     - context: The ``DocumentationContext`` the `originalReference` was resolved in.
     ///     - originalReference: The raw input string that represents the body of the reference that failed to resolve. This string is
-    ///     used to calculate the proper replacment-ranges for fixits.
+    ///     used to calculate the proper replacement-ranges for fixits.
     ///
     /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the `originalReference`, i.e. the beginning
     /// of the _body_ of the original reference.
@@ -856,25 +883,25 @@ extension PathHierarchy.Error {
                     Replacement(range: SourceLocation(line: 0, column: originalReference.count, source: nil)..<SourceLocation(line: 0, column: originalReference.count+2, source: nil), replacement: ">"),
                 ])
             ])
-        case .partialResult(partialResult: let partialResult, remainingSubpath: let remainingSubpath, availableChildren: let availableChildren):
-            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: remainingSubpath)
+        case .partialResult(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
+            let nextPathComponent = remaining[0].full
+            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: nextPathComponent)
             
-            let validPrefix = originalReference.dropLast(remainingSubpath.count)
-            
-            let unprocessedSuffix = remainingSubpath.suffix(from: remainingSubpath.firstIndex(of: "/") ?? remainingSubpath.endIndex)
-            
-            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: originalReference.count-unprocessedSuffix.count, source: nil)
+            var validPrefix = ""
+            if !partialResult.path.isEmpty {
+                validPrefix += PathHierarchy.joined(partialResult.path) + "/"
+            }
+            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + nextPathComponent.count, source: nil)
             
             // we don't want to provide an endless amount of unrelated fixits, but if there are only three
             // or less valid options, we still suggest them as fixits
             let fixitCandidates = nearMisses.isEmpty && availableChildren.count <= 3 ? availableChildren : nearMisses
             
             let solutions = fixitCandidates.map { candidate in
-                Solution(summary: "Correct reference to \(validPrefix + candidate + unprocessedSuffix).", replacements: [
+                Solution(summary: "Replace \(nextPathComponent.singleQuoted) with \(candidate.singleQuoted).", replacements: [
                     Replacement(range: replacementRange, replacement: candidate)
                 ])
             }
-            
             
             var message: String {
                 var suggestion: String {
@@ -888,34 +915,38 @@ extension PathHierarchy.Error {
                     }
                 }
                 
-                return "Reference at \(partialResult.pathWithoutDisambiguation().singleQuoted) can't resolve \(remainingSubpath.singleQuoted). \(suggestion)"
+                return "Reference at \(partialResult.node.pathWithoutDisambiguation().singleQuoted) can't resolve \(remaining.map { $0.full }.joined(separator: "/").singleQuoted). \(suggestion)"
             }
             
             return TopicReferenceResolutionErrorInfo(message, note: availabilityNote(category: "children", candidates: availableChildren), solutions: solutions)
             
-        case .lookupCollision(partialResult: let partialResult, remainingSubpath: let remainingSubpath, collisions: let collisions):
-            let unprocessedSuffix = remainingSubpath.suffix(from: remainingSubpath.firstIndex(of: "/") ?? remainingSubpath.endIndex)
-            
-            let prefixPotentiallyIncludingInvalidDisambiguation = originalReference.dropLast(unprocessedSuffix.count)
-            let lowerBoundOfLastSegment = prefixPotentiallyIncludingInvalidDisambiguation.lastIndex(of: "/")
-                ?? prefixPotentiallyIncludingInvalidDisambiguation.startIndex
-            let lowerBoundOfLastDisambiguation = prefixPotentiallyIncludingInvalidDisambiguation.lastIndex(of: "-")
-                ?? prefixPotentiallyIncludingInvalidDisambiguation.startIndex
-            let lowerBoundOfInvalidDisambiguation = lowerBoundOfLastDisambiguation > lowerBoundOfLastSegment ? lowerBoundOfLastDisambiguation : nil
-            let validPrefix = prefixPotentiallyIncludingInvalidDisambiguation[..<(lowerBoundOfInvalidDisambiguation ?? prefixPotentiallyIncludingInvalidDisambiguation.endIndex)]
-            
-            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: originalReference.count-unprocessedSuffix.count, source: nil)
+        case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):
+            var validPrefix = ""
+            if !partialResult.path.isEmpty {
+                validPrefix += PathHierarchy.joined(partialResult.path) + "/"
+            }
+            validPrefix += remaining[0].name
+
+            let disambiguations = remaining[0].full.dropFirst(remaining[0].name.count)
+            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + disambiguations.count, source: nil)
             
             let solutions = collisions.sorted(by: {
                 $0.node.fullNameOfValue(context: context) + $0.disambiguation
                     < $1.node.fullNameOfValue(context: context) + $1.disambiguation
             }).map { collision in
-                Solution(summary: "Insert \(collision.disambiguation.singleQuoted) to refer to \(collision.node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                let replacementOperationDescription: String
+                if disambiguations.isEmpty {
+                    replacementOperationDescription = "Insert \(collision.disambiguation.singleQuoted)"
+                } else {
+                    // Drop the leading "-" from the current disambiguation since it's not part of the suggested disambiguation.
+                    replacementOperationDescription = "Replace \(disambiguations.dropFirst().singleQuoted) with \(collision.disambiguation.singleQuoted)"
+                }
+                return Solution(summary: "\(replacementOperationDescription) to refer to \(collision.node.fullNameOfValue(context: context).singleQuoted)", replacements: [
                     Replacement(range: replacementRange, replacement: "-" + collision.disambiguation)
                 ])
             }
             
-            return TopicReferenceResolutionErrorInfo("Reference is ambiguous after \(partialResult.pathWithoutDisambiguation().singleQuoted).", solutions: solutions)
+            return TopicReferenceResolutionErrorInfo("Reference is ambiguous after \(partialResult.node.pathWithoutDisambiguation().singleQuoted).", solutions: solutions)
         }
     }
     

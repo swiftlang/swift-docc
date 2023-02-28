@@ -299,8 +299,8 @@ class PathHierarchyTests: XCTestCase {
         Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentKinds'.
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'enum.case' to refer to 'case something'", replacements: ["-enum.case"]),
-                .init(summary: "Insert 'property' to refer to 'var something: String { get }'", replacements: ["-property"]),
+                .init(summary: "Insert 'enum.case' to refer to 'case something'", replacements: [("-enum.case", 54, 54)]),
+                .init(summary: "Insert 'property' to refer to 'var something: String { get }'", replacements: [("-property", 54, 54)]),
             ])
         }
         
@@ -320,9 +320,9 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords'.") { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' to refer to 'func `init`()'", replacements: ["-method"]),
-                .init(summary: "Insert 'init' to refer to 'init()'", replacements: ["-init"]),
-                .init(summary: "Insert 'type.method' to refer to 'static func `init`()'", replacements: ["-type.method"]),
+                .init(summary: "Insert 'method' to refer to 'func `init`()'", replacements: [("-method", 52, 52)]),
+                .init(summary: "Insert 'init' to refer to 'init()'", replacements: [("-init", 52, 52)]),
+                .init(summary: "Insert 'type.method' to refer to 'static func `init`()'", replacements: [("-type.method", 52, 52)]),
             ])
         }
         
@@ -333,9 +333,9 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords'.") { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' to refer to 'func `subscript`()'", replacements: ["-method"]),
-                .init(summary: "Insert 'type.method' to refer to 'static func `subscript`()'", replacements: ["-type.method"]),
-                .init(summary: "Insert 'subscript' to refer to 'subscript() -> Int { get }'", replacements: ["-subscript"]),
+                .init(summary: "Insert 'method' to refer to 'func `subscript`()'", replacements: [("-method", 57, 57)]),
+                .init(summary: "Insert 'type.method' to refer to 'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
+                .init(summary: "Insert 'subscript' to refer to 'subscript() -> Int { get }'", replacements: [("-subscript", 57, 57)]),
             ])
         }
         
@@ -352,8 +352,18 @@ class PathHierarchyTests: XCTestCase {
                                          context: context,
                                          expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments'.") { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '1cyvp' to refer to 'func something(argument: Int) -> Int'", replacements: ["-1cyvp"]),
-                .init(summary: "Insert '2vke2' to refer to 'func something(argument: String) -> Int'", replacements: ["-2vke2"]),
+                .init(summary: "Insert '1cyvp' to refer to 'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 77)]),
+                .init(summary: "Insert '2vke2' to refer to 'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 77)]),
+            ])
+        }
+        
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-method",
+                                         in: tree,
+                                         context: context,
+                                         expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments'.") { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Replace 'method' with '1cyvp' to refer to 'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
+                .init(summary: "Replace 'method' with '2vke2' to refer to 'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
             ])
         }
         
@@ -367,8 +377,15 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments'.") { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '4fd0l' to refer to 'subscript(something: Int) -> Int { get }'", replacements: ["-4fd0l"]),
-                .init(summary: "Insert '757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'", replacements: ["-757cj"]),
+                .init(summary: "Insert '4fd0l' to refer to 'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 71)]),
+                .init(summary: "Insert '757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 71)]),
+            ])
+        }
+        
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-subscript", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments'.") { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Replace 'subscript' with '4fd0l' to refer to 'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 81)]),
+                .init(summary: "Replace 'subscript' with '757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 81)]),
             ])
         }
         
@@ -878,8 +895,8 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("/SideKit/SideProtocol/func()", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/SideKit/SideProtocol'.") { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '2dxqn' to refer to 'func1()'", replacements: ["-2dxqn"]),
-                .init(summary: "Insert '6ijsi' to refer to 'func1()'", replacements: ["-6ijsi"]),
+                .init(summary: "Insert '2dxqn' to refer to 'func1()'", replacements: [("-2dxqn", 28, 28)]),
+                .init(summary: "Insert '6ijsi' to refer to 'func1()'", replacements: [("-6ijsi", 28, 28)]),
             ])
         } // This test data have the same declaration for both symbols.
         
@@ -924,9 +941,9 @@ class PathHierarchyTests: XCTestCase {
         ])
         try assertPathRaisesErrorMessage("MixedLanguageFramework/Foo", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedLanguageFramework'.") { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'struct' to refer to 'struct Foo'", replacements: ["-struct"]),
-                .init(summary: "Insert 'enum' to refer to 'typedef enum Foo : NSString { ... } Foo;'", replacements: ["-enum"]),
-                .init(summary: "Insert 'typealias' to refer to 'typedef enum Foo : NSString { ... } Foo;'", replacements: ["-typealias"]),
+                .init(summary: "Insert 'struct' to refer to 'struct Foo'", replacements: [("-struct", 26, 26)]),
+                .init(summary: "Insert 'enum' to refer to 'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
+                .init(summary: "Insert 'typealias' to refer to 'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-typealias", 26, 26)]),
             ])
         } // The 'enum' and 'typealias' symbols have multi-line declarations that are presented on a single line
         
@@ -1363,12 +1380,23 @@ extension PathHierarchy {
 private extension TopicReferenceResolutionErrorInfo {
     var solutions: [SimplifiedSolution] {
         self.solutions(referenceSourceRange: SourceLocation(line: 0, column: 0, source: nil)..<SourceLocation(line: 0, column: 0, source: nil)).map { solution in
-            SimplifiedSolution(summary: solution.summary, replacements: solution.replacements.map(\.replacement))
+            SimplifiedSolution(summary: solution.summary, replacements: solution.replacements.map {
+                (
+                    $0.replacement,
+                    start: $0.range.lowerBound.column,
+                    end: $0.range.upperBound.column
+                )
+            })
         }
     }
 }
 
 private struct SimplifiedSolution: Equatable {
     let summary: String
-    let replacements: [String]
+    let replacements: [(String, start: Int, end: Int)]
+    
+    static func == (lhs: SimplifiedSolution, rhs: SimplifiedSolution) -> Bool {
+        return lhs.summary == rhs.summary
+            && lhs.replacements.elementsEqual(rhs.replacements, by: ==)
+    }
 }

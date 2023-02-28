@@ -630,8 +630,8 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 2)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Insert '33vaw' to refer to 'init()'", "-33vaw"],
-                ["Insert '3743d' to refer to 'init()'", "-3743d"],
+                ["Replace 'swift.init' with '33vaw' to refer to 'init()'", "-33vaw"],
+                ["Replace 'swift.init' with '3743d' to refer to 'init()'", "-3743d"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -676,8 +676,8 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 2)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Insert '33vaw' to refer to 'init()'", "-33vaw"],
-                ["Insert '3743d' to refer to 'init()'", "-3743d"],
+                ["Replace 'swift.init' with '33vaw' to refer to 'init()'", "-33vaw"],
+                ["Replace 'swift.init' with '3743d' to refer to 'init()'", "-3743d"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -722,7 +722,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Correct reference to myFunction().", "myFunction()"],
+                ["Replace 'otherFunction()' with 'myFunction()'.", "myFunction()"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -767,7 +767,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Correct reference to /MyKit/MyClass.", "MyClass"],
+                ["Replace 'MyClas' with 'MyClass'.", "MyClass"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -812,7 +812,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Correct reference to MyKit/MyClass/myFunction().", "MyClass"],
+                ["Replace 'MyClas' with 'MyClass'.", "MyClass"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -857,7 +857,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Correct reference to MyKit/MyClass/myFunction().", "MyClass"],
+                ["Replace 'MyClas' with 'MyClass'.", "MyClass"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -902,7 +902,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Correct reference to MyKit/MyClass/myFunction().", "MyClass"],
+                ["Replace 'MyClas' with 'MyClass'.", "MyClass"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -993,7 +993,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Correct reference to Unresolvable-curation.", "Unresolvable-curation"],
+                ["Replace 'UnresolvableSymbolLinkInMyClassOverview' with 'Unresolvable-curation'.", "Unresolvable-curation"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(docComment), """
             A cool API to call.
@@ -1018,7 +1018,7 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Correct reference to Unresolvable-curation.", "Unresolvable-curation"],
+                ["Replace 'UnresolvableClassInMyClassTopicCuration' with 'Unresolvable-curation'.", "Unresolvable-curation"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(docComment), """
             A cool API to call.
@@ -1044,8 +1044,8 @@ class SymbolTests: XCTestCase {
             XCTAssertEqual(problem.possibleSolutions.count, 2)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Correct reference to MyClass/init().", "init()"],
-                ["Correct reference to MyClass/myFunction().", "myFunction()"],
+                ["Replace 'unresolvablePropertyInMyClassTopicCuration' with 'init()'.", "init()"],
+                ["Replace 'unresolvablePropertyInMyClassTopicCuration' with 'myFunction()'.", "myFunction()"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(docComment), """
             A cool API to call.
