@@ -930,19 +930,19 @@ extension PathHierarchy.Error {
             let disambiguations = remaining[0].full.dropFirst(remaining[0].name.count)
             let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + disambiguations.count, source: nil)
             
-            let solutions = collisions.sorted(by: {
+            let solutions: [Solution] = collisions.sorted(by: {
                 $0.node.fullNameOfValue(context: context) + $0.disambiguation
                     < $1.node.fullNameOfValue(context: context) + $1.disambiguation
-            }).map { collision in
+            }).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
                 let replacementOperationDescription: String
                 if disambiguations.isEmpty {
-                    replacementOperationDescription = "Insert \(collision.disambiguation.singleQuoted)"
+                    replacementOperationDescription = "Insert \(disambiguation.singleQuoted)"
                 } else {
                     // Drop the leading "-" from the current disambiguation since it's not part of the suggested disambiguation.
-                    replacementOperationDescription = "Replace \(disambiguations.dropFirst().singleQuoted) with \(collision.disambiguation.singleQuoted)"
+                    replacementOperationDescription = "Replace \(disambiguations.dropFirst().singleQuoted) with \(disambiguation.singleQuoted)"
                 }
-                return Solution(summary: "\(replacementOperationDescription) to refer to \(collision.node.fullNameOfValue(context: context).singleQuoted)", replacements: [
-                    Replacement(range: replacementRange, replacement: "-" + collision.disambiguation)
+                return Solution(summary: "\(replacementOperationDescription) to refer to \(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                    Replacement(range: replacementRange, replacement: "-" + disambiguation)
                 ])
             }
             
