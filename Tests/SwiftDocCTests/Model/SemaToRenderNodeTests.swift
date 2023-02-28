@@ -1951,7 +1951,7 @@ Document
         XCTAssertNotNil(context.problems.first(where: { problem -> Bool in
 
             return problem.diagnostic.identifier == "org.swift.docc.InvalidDocumentationLink"
-                && problem.diagnostic.localizedSummary.contains("https://external.com/link")
+                && problem.diagnostic.summary.contains("https://external.com/link")
         }))
     }
     
@@ -2696,7 +2696,7 @@ Document
             return p.diagnostic.identifier == "org.swift.docc.unresolvedResource"
         }
         XCTAssertFalse(missingResources.contains(where: { p -> Bool in
-            return p.diagnostic.localizedSummary == "Resource 'my-inherited-image.png' couldn't be found"
+            return p.diagnostic.summary == "Resource 'my-inherited-image.png' couldn't be found"
         }))
 
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
@@ -2899,7 +2899,7 @@ Document
 
         // Verify that we don't reference resolve inherited docs.
         XCTAssertFalse(context.diagnosticEngine.problems.contains(where: { problem in
-            problem.diagnostic.localizedSummary.contains("my-inherited-image.png")
+            problem.diagnostic.summary.contains("my-inherited-image.png")
         }))
 
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)

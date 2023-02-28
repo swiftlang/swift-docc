@@ -338,7 +338,7 @@ class ReferenceResolverTests: XCTestCase {
         
         let diagnostics = context.problems.filter({ $0.diagnostic.source?.standardizedFileURL == uncuratedArticleFile.standardizedFileURL }).map(\.diagnostic)
         let diagnostic = try XCTUnwrap(diagnostics.first(where: { $0.identifier == "org.swift.docc.ArticleUncurated" }))
-        XCTAssertEqual(diagnostic.localizedSummary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Bundle/UncuratedArticle'")
+        XCTAssertEqual(diagnostic.summary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Bundle/UncuratedArticle'")
         
         let referencingFileDiagnostics = context.problems.map(\.diagnostic).filter({ $0.source?.standardizedFileURL == referencingArticleURL.standardizedFileURL })
         XCTAssertEqual(referencingFileDiagnostics.filter({ $0.identifier == "org.swift.docc.unresolvedTopicReference" }).count, 1)

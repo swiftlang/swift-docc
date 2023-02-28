@@ -22,13 +22,13 @@ class DiagnosticTests: XCTestCase {
     func testLocalizedSummary() {
         let expectedDump = "This is a test diagnostic"
 
-        XCTAssertEqual(expectedDump, basicDiagnostic.localizedSummary)
+        XCTAssertEqual(expectedDump, basicDiagnostic.summary)
     }
 
     func testLocalizedExplanation() {
-        XCTAssertNil(nonexistentDiagnostic.localizedExplanation)
-        guard let explanation = basicDiagnostic.localizedExplanation else {
-            XCTFail("basicDiagnostic.localizedExplanation was nil.")
+        XCTAssertNil(nonexistentDiagnostic.explanation)
+        guard let explanation = basicDiagnostic.explanation else {
+            XCTFail("basicDiagnostic.explanation was nil.")
             return
         }
         let expectedDump = """
