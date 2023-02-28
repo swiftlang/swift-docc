@@ -285,8 +285,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         let workspace = DocumentationWorkspace()
         _ = try! DocumentationContext(dataProvider: workspace)
 
-        let engine = DiagnosticEngine()
-
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
@@ -298,8 +296,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 emitDigest: false,
                 currentPlatforms: nil,
                 fileManager: FileManager.default,
-                temporaryDirectory: convertActionTempDirectory,
-                diagnosticEngine: engine)
+                temporaryDirectory: convertActionTempDirectory)
         }
         
         guard let preview = try? PreviewAction(
@@ -308,9 +305,10 @@ class PreviewActionIntegrationTests: XCTestCase {
             XCTFail("Could not create preview action from parameters", file: file, line: line)
             return
         }
-
         // Start watching the source and get the initial (successful) state.
         do {
+            let engine = preview.convertAction.diagnosticEngine
+            
             // Wait for watch to produce output.
             let logOutputExpectation = expectation(description: "Did produce log output")
             let logChecker = OutputChecker(fileURL: pipeURL, expectation: logOutputExpectation) { output in
