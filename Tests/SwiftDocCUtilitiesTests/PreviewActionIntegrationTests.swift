@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -329,7 +329,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 
                 XCTAssertTrue(result.didEncounterError, "Did not find an error when running preview", file: file, line: line)
                 XCTAssertNotNil(engine.problems.first(where: { problem -> Bool in
-                    problem.diagnostic.localizedDescription.contains(expectedErrorMessage)
+                    DiagnosticConsoleWriter.formattedDescriptionFor(problem.diagnostic).contains(expectedErrorMessage)
                 }), "Didn't find expected error message '\(expectedErrorMessage)'", file: file, line: line)
 
                 // Verify that the failed server is not added to the server list
@@ -468,7 +468,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                     }
                 
                     if !result.problems.isEmpty {
-                        print(result.problems.localizedDescription, to: &logHandle)
+                        print(DiagnosticConsoleWriter.formattedDescriptionFor(result.problems), to: &logHandle)
                     }
                 } catch {
                     XCTFail(error.localizedDescription)

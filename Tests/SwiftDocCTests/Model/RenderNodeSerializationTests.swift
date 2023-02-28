@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -106,7 +106,7 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { $0.diagnostic.localizedDescription }) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescriptionFor($0.diagnostic) }) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
@@ -129,7 +129,7 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 0, "Found problems \(problems.map { $0.diagnostic.localizedDescription }) analyzing article markup")
+        XCTAssertEqual(problems.count, 0, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescriptionFor($0.diagnostic) }) analyzing article markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
@@ -154,7 +154,7 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { $0.diagnostic.localizedDescription }) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescriptionFor($0.diagnostic) }) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         

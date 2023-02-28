@@ -2948,7 +2948,7 @@ class ConvertActionTests: XCTestCase {
                 return lhs.diagnostic.localizedSummary < rhs.diagnostic.localizedSummary
             }
             return lhs.diagnostic.identifier < rhs.diagnostic.identifier
-        }) .map { $0.diagnostic.localizedDescription }.sorted().joined(separator: "\n")
+        }) .map { DiagnosticConsoleWriter.formattedDescriptionFor($0.diagnostic) }.sorted().joined(separator: "\n")
     }
     
     #endif

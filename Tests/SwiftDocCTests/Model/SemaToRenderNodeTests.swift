@@ -29,7 +29,7 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.localizedDescription) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, 1, "Found problems \(DiagnosticConsoleWriter.formattedDescriptionFor(problems)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
@@ -583,7 +583,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         // Verify we emit a diagnostic for the chapter with no tutorial references.
-        XCTAssertEqual(problems.count, expectedProblemsCount, "Found problems \(problems.localizedDescription) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, expectedProblemsCount, "Found problems \(DiagnosticConsoleWriter.formattedDescriptionFor(problems)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
@@ -819,7 +819,7 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 0, "Found problems \(problems.localizedDescription) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, 0, "Found problems \(DiagnosticConsoleWriter.formattedDescriptionFor(problems)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         

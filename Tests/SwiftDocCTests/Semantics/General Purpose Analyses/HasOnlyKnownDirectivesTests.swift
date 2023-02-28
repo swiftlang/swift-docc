@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -121,7 +121,7 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1)
         guard let first = problems.first else { return }
-        XCTAssertEqual("error: 'baz' directive is unsupported as a child of the 'dir' directive\nThese directives are allowed: 'Comment', 'bar', 'bark', 'foo', 'woof'", first.diagnostic.localizedDescription)
+        XCTAssertEqual("error: 'baz' directive is unsupported as a child of the 'dir' directive\nThese directives are allowed: 'Comment', 'bar', 'bark', 'foo', 'woof'", DiagnosticConsoleWriter.formattedDescriptionFor(first.diagnostic))
     }
 }
 
