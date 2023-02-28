@@ -33,7 +33,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         }
     }
 
-    func testRecieveProblem() {
+    func testReceiveProblem() {
         let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: [])
 
         let logger = Logger()
@@ -43,7 +43,7 @@ class DiagnosticConsoleWriterTests: XCTestCase {
         XCTAssertEqual(logger.output, "warning: Test diagnostic\n")
     }
 
-    func testRecieveMultipleProblems() {
+    func testReceiveMultipleProblems() {
         let problem = Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.tests", summary: "Test diagnostic"), possibleSolutions: [])
 
         let logger = Logger()
