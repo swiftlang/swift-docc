@@ -1297,12 +1297,22 @@ public struct RenderNodeTranslator: SemanticVisitor {
             )
         )
         
+        var sourceRepository = sourceRepository
+        
         if shouldEmitSymbolSourceFileURIs {
             node.metadata.sourceFileURIVariants = VariantCollection<String?>(
                 from: symbol.locationVariants
             ) { _, location in
                 location.uri
             } ?? .init(defaultValue: nil)
+            
+            // If a source repository is not set, set the device's
+            // filesystem as the source repository. This causes
+            // the `metadata.remoteSource` property to link to the
+            // file's location on disk.
+            if sourceRepository == nil {
+                sourceRepository = .localFilesystem()
+            }
         }
         
         if let sourceRepository = sourceRepository {
