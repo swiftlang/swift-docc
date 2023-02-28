@@ -305,6 +305,13 @@ class PreviewActionIntegrationTests: XCTestCase {
             XCTFail("Could not create preview action from parameters", file: file, line: line)
             return
         }
+        defer {
+            do {
+                try preview.stop()
+            } catch {
+                XCTFail("Failed to stop preview server", file: file, line: line)
+            }
+        }
         // Start watching the source and get the initial (successful) state.
         do {
             let engine = preview.convertAction.diagnosticEngine
@@ -340,7 +347,6 @@ class PreviewActionIntegrationTests: XCTestCase {
             wait(for: [logOutputExpectation, erroredExpectation], timeout: 20.0)
             logTimer.invalidate()
         }
-        try preview.stop()
         #endif
     }
 
