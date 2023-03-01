@@ -56,24 +56,24 @@ extension Sequence where Element == Problem {
 // MARK: Deprecated
 
 extension Problem {
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(_:options:)' instead.")
     var localizedDescription: String {
-        return DiagnosticConsoleWriter.formattedDescriptionFor(self)
+        return DiagnosticConsoleWriter.formattedDescription(self)
     }
 
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(_:options:)' instead.")
     func formattedLocalizedDescription(withOptions options: DiagnosticFormattingOptions = []) -> String {
-        return DiagnosticConsoleWriter.formattedDescriptionFor(self, options: options)
+        return DiagnosticConsoleWriter.formattedDescription(self, options: options)
     }
 }
 
 extension Sequence where Element == Problem {
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(_:options:)' instead.")
     public var localizedDescription: String {
         return map { $0.localizedDescription }.joined(separator: "\n")
     }
 
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(_:options:)' instead.")
     public func formattedLocalizedDescription(withOptions options: DiagnosticFormattingOptions) -> String {
         return map { $0.formattedLocalizedDescription(withOptions: options) }.joined(separator: "\n")
     }

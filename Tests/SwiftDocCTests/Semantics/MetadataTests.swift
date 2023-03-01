@@ -169,7 +169,7 @@ class MetadataTests: XCTestCase {
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescriptionFor(analyzer.problems))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(analyzer.problems))")
     }
     
     func testSymbolArticleSupportsMetadataDisplayName() throws {
@@ -193,7 +193,7 @@ class MetadataTests: XCTestCase {
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescriptionFor(analyzer.problems))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(analyzer.problems))")
     }
     
     func testArticleDoesNotSupportsMetadataDisplayName() throws {

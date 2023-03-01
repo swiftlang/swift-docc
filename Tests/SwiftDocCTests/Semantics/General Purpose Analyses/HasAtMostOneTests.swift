@@ -76,7 +76,7 @@ class HasAtMostOneTests: XCTestCase {
             XCTAssertEqual("""
                  warning: Duplicate 'Child' child directive
                  The 'Parent' directive must have at most one 'Child' child directive
-                 """, DiagnosticConsoleWriter.formattedDescriptionFor(problems[0].diagnostic))
+                 """, DiagnosticConsoleWriter.formattedDescription(problems[0].diagnostic))
         }
     }
     

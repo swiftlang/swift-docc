@@ -192,7 +192,7 @@ public struct ConvertService: DocumentationService {
 
             guard conversionProblems.isEmpty else {
                 throw ConvertServiceError.conversionError(
-                    underlyingError: DiagnosticConsoleWriter.formattedDescriptionFor(conversionProblems))
+                    underlyingError: DiagnosticConsoleWriter.formattedDescription(conversionProblems))
             }
             
             let references: RenderReferenceStore?

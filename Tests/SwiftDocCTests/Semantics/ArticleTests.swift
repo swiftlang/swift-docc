@@ -26,7 +26,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescriptionFor(problems))")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(problems))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertEqual(article?.abstract?.plainText, "This is an abstract.")
@@ -48,7 +48,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescriptionFor(problems))")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(problems))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertEqual(article?.abstract?.plainText, "This is an abstract.")
@@ -77,7 +77,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescriptionFor(problems))")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(problems))")
         
         XCTAssertEqual(article?.title?.detachedFromParent.format(), "# This is my article")
         XCTAssertEqual(article?.abstract?.detachedFromParent.format(), "This is an abstract.")
@@ -101,7 +101,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescriptionFor(problems))")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(problems))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertNil(article?.abstract)
@@ -119,7 +119,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescriptionFor(problems))")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(problems))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertNil(article?.abstract)

@@ -114,7 +114,7 @@ class DiagnosticEngineTests: XCTestCase {
         defaultEngine.emit(warning)
         defaultEngine.emit(information)
         defaultEngine.emit(hint)
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescriptionFor(defaultEngine.problems), """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(defaultEngine.problems), """
             error: Test error
             warning: Test warning
             """)
@@ -124,7 +124,7 @@ class DiagnosticEngineTests: XCTestCase {
         engine.emit(warning)
         engine.emit(information)
         engine.emit(hint)
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescriptionFor(engine.problems), """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(engine.problems), """
             error: Test error
             warning: Test warning
             note: Test information
@@ -140,7 +140,7 @@ class DiagnosticEngineTests: XCTestCase {
         defaultEngine.emit(error)
         defaultEngine.emit(warning)
         defaultEngine.emit(information)
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescriptionFor(defaultEngine.problems), """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(defaultEngine.problems), """
             error: Test error
             warning: Test warning
             """)
@@ -149,7 +149,7 @@ class DiagnosticEngineTests: XCTestCase {
         engine.emit(error)
         engine.emit(warning)
         engine.emit(information)
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescriptionFor(engine.problems), """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(engine.problems), """
             error: Test error
             error: Test warning
             note: Test information
@@ -159,7 +159,7 @@ class DiagnosticEngineTests: XCTestCase {
         errorFilterLevelEngine.emit(error)
         errorFilterLevelEngine.emit(warning)
         errorFilterLevelEngine.emit(information)
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescriptionFor(errorFilterLevelEngine.problems), """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(errorFilterLevelEngine.problems), """
             error: Test error
             error: Test warning
             """)

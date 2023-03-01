@@ -1191,7 +1191,7 @@ class PathHierarchyTests: XCTestCase {
 
         do {
             let (_, _, context) = try loadBundle(from: bundleURL)
-            XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map { DiagnosticConsoleWriter.formattedDescriptionFor($0) })")
+            XCTAssert(context.problems.isEmpty, "Unexpected problems: \(context.problems.map { DiagnosticConsoleWriter.formattedDescription($0) })")
             
             let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
             

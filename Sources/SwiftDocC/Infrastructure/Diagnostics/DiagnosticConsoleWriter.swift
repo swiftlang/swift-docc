@@ -58,16 +58,16 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 
 extension DiagnosticConsoleWriter {
     
-    public static func formattedDescriptionFor<Problems>(_ problems: Problems, options: DiagnosticFormattingOptions = []) -> String where Problems: Sequence, Problems.Element == Problem {
-        return problems.map { formattedDescriptionFor($0, options: options) }.joined(separator: "\n")
+    public static func formattedDescription<Problems>(_ problems: Problems, options: DiagnosticFormattingOptions = []) -> String where Problems: Sequence, Problems.Element == Problem {
+        return problems.map { formattedDescription($0, options: options) }.joined(separator: "\n")
     }
     
-    public static func formattedDescriptionFor(_ problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
+    public static func formattedDescription(_ problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options)
         return diagnosticFormatter.formattedDescription(problem)
     }
     
-    public static func formattedDescriptionFor(_ diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
+    public static func formattedDescription(_ diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options)
         return diagnosticFormatter.formattedDescription(diagnostic)
     }

@@ -25,9 +25,9 @@ public struct DiagnosticNote {
     public var message: String
 }
 
-@available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
+@available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(_:options:)' instead.")
 extension DiagnosticNote: CustomStringConvertible {
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescriptionFor(_:options:)' instead.")
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(_:options:)' instead.")
     public var description: String {
         let location = "\(source.path):\(range.lowerBound.line):\(range.lowerBound.column)"
         return "\(location): note: \(message)"

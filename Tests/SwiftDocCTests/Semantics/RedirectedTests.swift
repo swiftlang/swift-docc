@@ -138,7 +138,7 @@ class RedirectedTests: XCTestCase {
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescriptionFor( analyzer.problems))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription( analyzer.problems))")
     }
     
     func testVolumeAndChapterSupportsRedirect() throws {
@@ -235,7 +235,7 @@ class RedirectedTests: XCTestCase {
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescriptionFor( analyzer.problems))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription( analyzer.problems))")
     }
     
     func testTutorialArticleSupportsRedirect() throws {
@@ -263,7 +263,7 @@ class RedirectedTests: XCTestCase {
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescriptionFor( analyzer.problems))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription( analyzer.problems))")
     }
     
     func testResourcesSupportsRedirect() throws {
@@ -333,7 +333,7 @@ class RedirectedTests: XCTestCase {
                 
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescriptionFor( analyzer.problems))")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription( analyzer.problems))")
     }
     
     func testIncorrectArgumentLabel() throws {
