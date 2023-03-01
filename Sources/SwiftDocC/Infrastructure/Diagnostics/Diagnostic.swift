@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -97,30 +97,11 @@ public extension Diagnostic {
     }
 
     var localizedDescription: String {
-        var result = ""
-
-        if let range = range, let url = self.source {
-            result += "\(url.path):\(range.lowerBound.line):\(range.lowerBound.column): "
-        } else if let url = self.source {
-            result += "\(url.path): "
-        }
-        
-        result += "\(severity): \(localizedSummary)"
-
-        if let explanation = localizedExplanation {
-            result += "\n\(explanation)"
-        }
-
-        if !notes.isEmpty {
-            result += "\n"
-            result += notes.map { $0.description }.joined(separator: "\n")
-        }
-
-        return result
+        return DiagnosticConsoleWriter.formattedDescriptionFor(self)
     }
 
     var errorDescription: String {
-        return localizedDescription
+        return DiagnosticConsoleWriter.formattedDescriptionFor(self)
     }
 }
 

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,21 +11,21 @@
 import Foundation
 import Markdown
 
-func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, underlyingError: TopicReferenceResolutionError, fromSymbolLink: Bool) -> Problem {
+func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, underlyingError: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
     var notes = uncuratedArticleMatch.map {
         [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
     
     if let source = source,
        let range = range,
-       let note = underlyingError.recoverySuggestion ?? underlyingError.failureReason ?? underlyingError.helpAnchor {
+       let note = underlyingError.note {
         notes.append(DiagnosticNote(source: source, range: range, message: note))
     }
     
     var solutions: [Solution] = []
     
     if let range = range {
-        // FIXME: The replacements currently only support DocC's predomentantly used custom link formats.
+        // FIXME: The replacements currently only support DocC's predominantly used custom link formats.
         // We should also support the regular markdown link syntax ([doc:my/reference](doc:my/reference), or
         // [custom title](doc:my/reference)), however don't have the necessary information yet.
         // https://github.com/apple/swift-docc/issues/470
@@ -37,7 +37,7 @@ func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: 
         solutions.append(contentsOf: underlyingError.solutions(referenceSourceRange: innerRange))
     }
     
-    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(underlyingError.localizedDescription)", notes: notes)
+    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(underlyingError.message)", notes: notes)
     return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 

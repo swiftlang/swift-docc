@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -129,7 +129,7 @@ final class DocumentationCacheBasedLinkResolver {
         // Ensure we are resolving either relative links or "doc:" scheme links
         guard unresolvedReference.topicURL.url.scheme == nil || ResolvedTopicReference.urlHasResolvedTopicScheme(unresolvedReference.topicURL.url) else {
             // Not resolvable in the topic graph
-            return .failure(unresolvedReference, TopicReferenceResolutionError("Reference URL \(unresolvedReference.description.singleQuoted) doesn't have \"doc:\" scheme."))
+            return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("Reference URL \(unresolvedReference.description.singleQuoted) doesn't have \"doc:\" scheme."))
         }
         
         // Fall back on the parent's bundle identifier for relative paths
@@ -267,7 +267,7 @@ final class DocumentationCacheBasedLinkResolver {
                 // Return the successful or failed externally resolved reference.
                 return resolvedExternalReference
             } else if !context.registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                return .failure(unresolvedReference, TopicReferenceResolutionError("No external resolver registered for \(bundleID.singleQuoted)."))
+                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
             }
         }
         
@@ -295,7 +295,7 @@ final class DocumentationCacheBasedLinkResolver {
         // Give up: there is no local or external document for this reference.
         
         // External references which failed to resolve will already have returned a more specific error message.
-        return .failure(unresolvedReference, TopicReferenceResolutionError("No local documentation matches this reference."))
+        return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No local documentation matches this reference."))
     }
     
     
