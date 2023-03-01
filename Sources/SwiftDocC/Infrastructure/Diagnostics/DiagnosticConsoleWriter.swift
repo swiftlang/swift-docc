@@ -17,14 +17,14 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 
     var outputStream: TextOutputStream
     public var formattingOptions: DiagnosticFormattingOptions
+    private var diagnosticFormatter: DiagnosticConsoleFormatter
 
     /// Creates a new instance of this class with the provided output stream and filter level.
     /// - Parameter stream: The output stream to which this instance will write.
     /// - Parameter filterLevel: Determines what diagnostics should be printed. This filter level is inclusive, i.e. if a level of ``DiagnosticSeverity/information`` is specified, diagnostics with a severity up to and including `.information` will be printed.
     @available(*, deprecated, message: "Use init(_:formattingOptions:) instead")
-    public init(_ stream: TextOutputStream = LogHandle.standardError, filterLevel: DiagnosticSeverity = .warning) {
-        outputStream = stream
-        formattingOptions = []
+    public convenience init(_ stream: TextOutputStream = LogHandle.standardError, filterLevel: DiagnosticSeverity = .warning) {
+        self.init(stream, formattingOptions: [])
     }
 
     /// Creates a new instance of this class with the provided output stream.
@@ -32,15 +32,25 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     public init(_ stream: TextOutputStream = LogHandle.standardError, formattingOptions options: DiagnosticFormattingOptions = []) {
         outputStream = stream
         formattingOptions = options
+        diagnosticFormatter = Self.makeDiagnosticFormatter(options)
     }
 
     public func receive(_ problems: [Problem]) {
-        let text = Self.formattedDescriptionFor(problems, options: formattingOptions).appending("\n")
+        // Add a newline after each formatter description, including the last one.
+        let text = problems.map { diagnosticFormatter.formattedDescription($0).appending("\n") }.joined()
         outputStream.write(text)
     }
     
     public func finalize() throws {
         // The console writer writes each diagnostic as they are received.
+    }
+    
+    private static func makeDiagnosticFormatter(_ options: DiagnosticFormattingOptions) -> DiagnosticConsoleFormatter {
+        if options.contains(.formatConsoleOutputForTools) {
+            return IDEDiagnosticConsoleFormatter(options: options)
+        } else {
+            return DefaultDiagnosticConsoleFormatter(options: options)
+        }
     }
 }
 
@@ -53,8 +63,38 @@ extension DiagnosticConsoleWriter {
     }
     
     public static func formattedDescriptionFor(_ problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
-        guard let source = problem.diagnostic.source, options.contains(.formatConsoleOutputForTools) else {
-            return formattedDescriptionFor(problem.diagnostic)
+        let diagnosticFormatter = makeDiagnosticFormatter(options)
+        return diagnosticFormatter.formattedDescription(problem)
+    }
+    
+    public static func formattedDescriptionFor(_ diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
+        let diagnosticFormatter = makeDiagnosticFormatter(options)
+        return diagnosticFormatter.formattedDescription(diagnostic)
+    }
+}
+
+protocol DiagnosticConsoleFormatter {
+    var options: DiagnosticFormattingOptions { get set }
+    
+    func formattedDescription<Problems>(_ problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem
+    func formattedDescription(_ problem: Problem) -> String
+    func formattedDescription(_ diagnostic: Diagnostic) -> String
+}
+
+extension DiagnosticConsoleFormatter {
+    func formattedDescription<Problems>(_ problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem {
+        return problems.map { formattedDescription($0) }.joined(separator: "\n")
+    }
+}
+
+// MARK: IDE formatting
+
+struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
+    var options: DiagnosticFormattingOptions
+    
+    func formattedDescription(_ problem: Problem) -> String {
+        guard let source = problem.diagnostic.source else {
+            return formattedDescription(problem.diagnostic)
         }
         
         var description = formattedDiagnosticSummary(problem.diagnostic)
@@ -86,11 +126,11 @@ extension DiagnosticConsoleWriter {
         return description
     }
     
-    public static func formattedDescriptionFor(_ diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
+    public func formattedDescription(_ diagnostic: Diagnostic) -> String {
         return formattedDiagnosticSummary(diagnostic) + formattedDiagnosticDetails(diagnostic)
     }
     
-    private static func formattedDiagnosticSummary(_ diagnostic: Diagnostic) -> String {
+    private func formattedDiagnosticSummary(_ diagnostic: Diagnostic) -> String {
         var result = ""
 
         if let range = diagnostic.range, let url = diagnostic.source {
@@ -104,7 +144,7 @@ extension DiagnosticConsoleWriter {
         return result
     }
     
-    private static func formattedDiagnosticDetails(_ diagnostic: Diagnostic) -> String {
+    private func formattedDiagnosticDetails(_ diagnostic: Diagnostic) -> String {
         var result = ""
 
         if let explanation = diagnostic.explanation {
@@ -113,14 +153,27 @@ extension DiagnosticConsoleWriter {
 
         if !diagnostic.notes.isEmpty {
             result += "\n"
-            result += diagnostic.notes.map { formattedDescriptionFor($0) }.joined(separator: "\n")
+            result += diagnostic.notes.map { formattedDescription($0) }.joined(separator: "\n")
         }
         
         return result
     }
     
-    private static func formattedDescriptionFor(_ note: DiagnosticNote, options: DiagnosticFormattingOptions = []) -> String {
+    private func formattedDescription(_ note: DiagnosticNote) -> String {
         let location = "\(note.source.path):\(note.range.lowerBound.line):\(note.range.lowerBound.column)"
         return "\(location): note: \(note.message)"
+    }
+}
+
+// FIXME: Improve the readability for diagnostics on the command line https://github.com/apple/swift-docc/issues/496
+struct DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
+    var options: DiagnosticFormattingOptions
+    
+    func formattedDescription(_ problem: Problem) -> String {
+        formattedDescription(problem.diagnostic)
+    }
+    
+    func formattedDescription(_ diagnostic: Diagnostic) -> String {
+        return IDEDiagnosticConsoleFormatter(options: options).formattedDescription(diagnostic)
     }
 }
