@@ -15,9 +15,25 @@ struct DiagnosticFile: Codable {
     var version: VersionTriplet
     var diagnostics: [Diagnostic]
     
-    init(version: VersionTriplet = .current, problems: [Problem]) {
+    init(version: VersionTriplet = Self.currentVersion, problems: [Problem]) {
         self.version = version
         self.diagnostics = problems.map { .init($0) }
+    }
+    
+    // This file format follows semantic versioning.
+    // Breaking changes should increment the major version component.
+    // Non breaking additions should increment the minor version.
+    // Bug fixes should increment the patch version.
+    static var currentVersion = VersionTriplet(1, 0, 0)
+    
+    enum Error: Swift.Error {
+        case unknownMajorVersion(found: VersionTriplet, latestKnown: VersionTriplet)
+    }
+    
+    static func verifyIsSupported(_ version: VersionTriplet, current: VersionTriplet = Self.currentVersion) throws {
+        guard version.major == current.major else {
+            throw Error.unknownMajorVersion(found: version, latestKnown: current)
+        }
     }
     
     struct Diagnostic: Codable {
@@ -58,29 +74,13 @@ struct DiagnosticFile: Codable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         version = try container.decode(VersionTriplet.self, forKey: .version)
-        try version.verifyIsSupported()
+        try Self.verifyIsSupported(version)
         
         diagnostics = try container.decode([Diagnostic].self, forKey: .diagnostics)
     }
 }
 
 extension VersionTriplet: Codable {
-    // This file format follows semantic versioning.
-    // Breaking changes should increment the major version component.
-    // Non breaking additions should increment the minor version.
-    // Bug fixes should increment the patch version.
-    static var current = VersionTriplet(1, 0, 0)
-    
-    enum Error: Swift.Error {
-        case unknownMajorVersion(found: VersionTriplet, latestKnown: VersionTriplet)
-    }
-    
-    func verifyIsSupported() throws {
-        guard major <= Self.current.major else {
-            throw Error.unknownMajorVersion(found: self, latestKnown: Self.current)
-        }
-    }
-    
     enum CodingKeys: String, CodingKey {
         case major, minor, patch
     }
