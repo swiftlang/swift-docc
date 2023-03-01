@@ -49,6 +49,10 @@ import SymbolKit
 /// - ``returnsSectionVariants``
 /// - ``parametersSectionVariants``
 /// - ``dictionaryKeysSectionVariants``
+/// - ``httpEndpointSectionVariants``
+/// - ``httpParametersSectionVariants``
+/// - ``httpResponsesSectionVariants``
+/// - ``httpBodySectionVariants``
 /// - ``redirectsVariants``
 /// - ``abstractVariants``
 /// - ``isDeprecatedVariants``
@@ -189,7 +193,19 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
     
     /// Any dictionary keys of the symbol, if the symbol accepts keys, in each language variant the symbol is available in.
     public var dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>
-        
+
+    /// The HTTP endpoint of an HTTP request, in each language variant the symbol is available in.
+    public var httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection>
+
+    /// The upload body of an HTTP request, in each language variant the symbol is available in.
+    public var httpBodySectionVariants: DocumentationDataVariants<HTTPBodySection>
+
+    /// The parameters of an HTTP request, in each language variant the symbol is available in.
+    public var httpParametersSectionVariants: DocumentationDataVariants<HTTPParametersSection>
+
+    /// The responses of an HTTP request, in each language variant the symbol is available in.
+    public var httpResponsesSectionVariants: DocumentationDataVariants<HTTPResponsesSection>
+    
     /// Any redirect information of the symbol, if the symbol has been moved from another location, in each language variant the symbol is available in.
     public var redirectsVariants: DocumentationDataVariants<[Redirect]>
     
@@ -238,6 +254,10 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         returnsSectionVariants: DocumentationDataVariants<ReturnsSection>,
         parametersSectionVariants: DocumentationDataVariants<ParametersSection>,
         dictionaryKeysSectionVariants: DocumentationDataVariants<DictionaryKeysSection>,
+        httpEndpointSectionVariants: DocumentationDataVariants<HTTPEndpointSection>,
+        httpBodySectionVariants: DocumentationDataVariants<HTTPBodySection>,
+        httpParametersSectionVariants: DocumentationDataVariants<HTTPParametersSection>,
+        httpResponsesSectionVariants: DocumentationDataVariants<HTTPResponsesSection>,
         redirectsVariants: DocumentationDataVariants<[Redirect]>,
         crossImportOverlayModule: (declaringModule: String, bystanderModules: [String])? = nil,
         originVariants: DocumentationDataVariants<SymbolGraph.Relationship.SourceOrigin> = .init(),
@@ -297,6 +317,10 @@ public final class Symbol: Semantic, Abstracted, Redirected, AutomaticTaskGroups
         self.returnsSectionVariants = returnsSectionVariants
         self.parametersSectionVariants = parametersSectionVariants
         self.dictionaryKeysSectionVariants = dictionaryKeysSectionVariants
+        self.httpEndpointSectionVariants = httpEndpointSectionVariants
+        self.httpBodySectionVariants = httpBodySectionVariants
+        self.httpParametersSectionVariants = httpParametersSectionVariants
+        self.httpResponsesSectionVariants = httpResponsesSectionVariants
         self.redirectsVariants = redirectsVariants
         self.originVariants = originVariants
         self.automaticTaskGroupsVariants = automaticTaskGroupsVariants
@@ -515,12 +539,6 @@ extension Symbol {
     public var parametersSection: ParametersSection? {
         get { parametersSectionVariants.firstValue }
         set { parametersSectionVariants.firstValue = newValue }
-    }
-    
-    /// Any dictionary keys of the first variant of the symbol, if the symbol accepts keys.
-    public var dictionaryKeysSection: DictionaryKeysSection? {
-        get { dictionaryKeysSectionVariants.firstValue }
-        set { dictionaryKeysSectionVariants.firstValue = newValue }
     }
     
     /// The first variant of the symbol's abstract summary as a single paragraph.

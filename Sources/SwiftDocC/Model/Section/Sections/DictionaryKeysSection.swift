@@ -21,8 +21,7 @@ public struct DictionaryKeysSection {
     /// 
     /// Preserves the order and merges in documentation and symbols to any existing keys.
     mutating public func mergeDictionaryKeys(_ newDictionaryKeys: [DictionaryKey]) {
-        // Merge markup content with existing symbol keys.
-        if dictionaryKeys.count == 0 {
+        if dictionaryKeys.isEmpty {
             // There are no existing keys, so swap these in and return.
             dictionaryKeys = newDictionaryKeys
             return

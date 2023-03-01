@@ -983,6 +983,10 @@ extension OutOfProcessReferenceResolver {
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
             dictionaryKeysSectionVariants: .empty,
+            httpEndpointSectionVariants: .empty,
+            httpBodySectionVariants: .empty,
+            httpParametersSectionVariants: .empty,
+            httpResponsesSectionVariants: .empty,
             redirectsVariants: .empty
         )
     }

@@ -24,6 +24,10 @@ extension XCTestCase {
         navigatorTitle expectedNavigatorTitle: String?,
         abstract expectedAbstract: String,
         declarationTokens expectedDeclarationTokens: [String]?,
+        endpointTokens expectedEndpointTokens: [String]? = nil,
+        httpParameters expectedHTTPParameters: [String]? = nil,
+        httpBodyType expectedHTTPBodyType: String? = nil,
+        httpResponses expectedHTTPResponses: [UInt]? = nil,
         discussionSection expectedDiscussionSection: [String]?,
         topicSectionIdentifiers expectedTopicSectionIdentifiers: [String],
         seeAlsoSectionIdentifiers expectedSeeAlsoSectionIdentifiers: [String]? = nil,
@@ -64,6 +68,45 @@ extension XCTestCase {
                 .map(\.text),
             expectedDeclarationTokens,
             failureMessageForField("declaration tokens"),
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            (renderNode.primaryContentSections.compactMap { $0 as? RESTEndpointRenderSection })
+                .flatMap(\.tokens)
+                .map(\.text),
+            expectedEndpointTokens ?? [], // compactMap gives an empty [], but should treat it as match for nil, too
+            failureMessageForField("rest endpoint tokens"),
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            (renderNode.primaryContentSections.compactMap { $0 as? RESTParametersRenderSection })
+                .flatMap(\.items)
+                .map(\.name),
+            expectedHTTPParameters ?? [], // compactMap gives an empty [], but should treat it as match for nil, too
+            failureMessageForField("rest parameters"),
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            (renderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection)?
+                .mimeType,
+            expectedHTTPBodyType,
+            failureMessageForField("rest body media type"),
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            (renderNode.primaryContentSections.compactMap { $0 as? RESTResponseRenderSection })
+                .flatMap(\.items)
+                .map(\.status),
+            expectedHTTPResponses ?? [], // compactMap gives an empty [], but should treat it as match for nil, too
+            failureMessageForField("rest responses"),
             file: file,
             line: line
         )

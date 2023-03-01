@@ -56,6 +56,14 @@ extension ExternalSymbolResolver {
             symbolKind = .dictionary
         case .dictionaryKey:
             symbolKind = .dictionaryKey
+        case .httpRequest:
+            symbolKind = .httpRequest
+        case .httpResponse:
+            symbolKind = .httpResponse
+        case .httpBody:
+            symbolKind = .httpBody
+        case .httpParameter:
+            symbolKind = .httpParameter
         case .instanceSubscript:
             symbolKind = .subscript
         case .typeMethod:
