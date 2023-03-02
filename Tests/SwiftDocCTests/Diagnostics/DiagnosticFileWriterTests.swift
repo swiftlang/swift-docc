@@ -161,10 +161,10 @@ class DiagnosticFileWriterTests: XCTestCase {
     }
     
     func testVerifyVersionIsValidForDecoding() throws {
-        let version1_0_0 = VersionTriplet(1, 0, 0)
-        let version1_0_1 = VersionTriplet(1, 0, 1)
-        let version1_2_3 = VersionTriplet(1, 2, 3)
-        let version2_0_0 = VersionTriplet(2, 0, 0)
+        let version1_0_0 = SemanticVersion(major: 1, minor: 0, patch: 0)
+        let version1_0_1 = SemanticVersion(major: 1, minor: 0, patch: 1)
+        let version1_2_3 = SemanticVersion(major: 1, minor: 2, patch: 3)
+        let version2_0_0 = SemanticVersion(major: 2, minor: 0, patch: 0)
         
         XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_0_0))
         XCTAssertNoThrow(try DiagnosticFile.verifyIsSupported(version1_0_0, current: version1_0_1))

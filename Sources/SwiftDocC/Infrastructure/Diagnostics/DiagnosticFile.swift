@@ -12,10 +12,10 @@ import Foundation
 import struct Markdown.SourceLocation
 
 struct DiagnosticFile: Codable {
-    var version: VersionTriplet
+    var version: SemanticVersion
     var diagnostics: [Diagnostic]
     
-    init(version: VersionTriplet = Self.currentVersion, problems: [Problem]) {
+    init(version: SemanticVersion = Self.currentVersion, problems: [Problem]) {
         self.version = version
         self.diagnostics = problems.map { .init($0) }
     }
@@ -24,13 +24,13 @@ struct DiagnosticFile: Codable {
     // Breaking changes should increment the major version component.
     // Non breaking additions should increment the minor version.
     // Bug fixes should increment the patch version.
-    static var currentVersion = VersionTriplet(1, 0, 0)
+    static var currentVersion = SemanticVersion(major: 1, minor: 0, patch: 0, prerelease: nil, buildMetadata: nil)
     
     enum Error: Swift.Error {
-        case unknownMajorVersion(found: VersionTriplet, latestKnown: VersionTriplet)
+        case unknownMajorVersion(found: SemanticVersion, latestKnown: SemanticVersion)
     }
     
-    static func verifyIsSupported(_ version: VersionTriplet, current: VersionTriplet = Self.currentVersion) throws {
+    static func verifyIsSupported(_ version: SemanticVersion, current: SemanticVersion = Self.currentVersion) throws {
         guard version.major == current.major else {
             throw Error.unknownMajorVersion(found: version, latestKnown: current)
         }
@@ -73,30 +73,10 @@ struct DiagnosticFile: Codable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        version = try container.decode(VersionTriplet.self, forKey: .version)
+        version = try container.decode(SemanticVersion.self, forKey: .version)
         try Self.verifyIsSupported(version)
         
         diagnostics = try container.decode([Diagnostic].self, forKey: .diagnostics)
-    }
-}
-
-extension VersionTriplet: Codable {
-    enum CodingKeys: String, CodingKey {
-        case major, minor, patch
-    }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(major, forKey: .major)
-        try container.encode(minor, forKey: .minor)
-        try container.encode(patch, forKey: .patch)
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        major = try container.decode(Int.self, forKey: .major)
-        minor = try container.decode(Int.self, forKey: .minor)
-        patch = try container.decode(Int.self, forKey: .patch)
     }
 }
 
