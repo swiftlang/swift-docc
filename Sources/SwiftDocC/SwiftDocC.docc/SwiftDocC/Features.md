@@ -2,7 +2,7 @@
 
 Add features to DocC and indicate the feature's availability to other tools.
 
-Over time as we develop new features in DocC we also add, update, or remove the flags and options that the `docc` executable accepts. So that other tools can know what flags and options a certain version of the `docc` executable accepts, we add new entires in the "features.json" file.
+Over time as we develop new features in DocC we also add, update, or remove the flags and options that the `docc` executable accepts. So that other tools can know what flags and options a certain version of the `docc` executable accepts, we add new entries in the "features.json" file.
 
 ## Adding a New Feature
 
