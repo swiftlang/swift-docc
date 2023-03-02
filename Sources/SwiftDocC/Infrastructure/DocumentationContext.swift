@@ -1461,8 +1461,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             for (selector, relationships) in combinedRelationships {
                 // Build relationships in the completed graph
                 buildRelationships(relationships, selector: selector, bundle: bundle, engine: diagnosticEngine)
-                // Merge dictionary keys into target dictionaries
-                populateDictionaryKeys(from: relationships, selector: selector)
+                // Merge into target symbols the member symbols that get rendered on the same page as target.
+                populateOnPageMemberRelationships(from: relationships, selector: selector)
             }
             
             // Index references
@@ -1553,21 +1553,48 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     }
     
     /// Identifies all the dictionary keys and records them in the appropriate target dictionaries.
-    private func populateDictionaryKeys(
+    private func populateOnPageMemberRelationships(
         from relationships: Set<SymbolGraph.Relationship>,
         selector: UnifiedSymbolGraph.Selector
     ) {
-        var keysByTarget = [String:[DictionaryKey]]()
+        var keysByTarget = [String: [DictionaryKey]]()
+        var parametersByTarget = [String: [HTTPParameter]]()
+        var bodyByTarget = [String: HTTPBody]()
+        var responsesByTarget = [String: [HTTPResponse]]()
         
         for edge in relationships {
             if edge.kind == .memberOf || edge.kind == .optionalMemberOf {
-                if let source = symbolIndex[edge.source], let target = symbolIndex[edge.target], let keySymbol = source.symbol,
-                        source.kind == .dictionaryKey && target.kind == .dictionary {
-                    let dictionaryKey = DictionaryKey(name: keySymbol.title, contents: [], symbol: keySymbol, required: (edge.kind == .memberOf))
-                    if keysByTarget[edge.target] == nil {
-                        keysByTarget[edge.target] = [dictionaryKey]
-                    } else {
-                        keysByTarget[edge.target]?.append(dictionaryKey)
+                if let source = symbolIndex[edge.source], let _ = symbolIndex[edge.target], let sourceSymbol = source.symbol {
+                    switch source.kind {
+                    case .dictionaryKey:
+                        let dictionaryKey = DictionaryKey(name: sourceSymbol.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        if keysByTarget[edge.target] == nil {
+                            keysByTarget[edge.target] = [dictionaryKey]
+                        } else {
+                            keysByTarget[edge.target]?.append(dictionaryKey)
+                        }
+                    case .httpParameter:
+                        let parameter = HTTPParameter(name: sourceSymbol.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        if parametersByTarget[edge.target] == nil {
+                            parametersByTarget[edge.target] = [parameter]
+                        } else {
+                            parametersByTarget[edge.target]?.append(parameter)
+                        }
+                    case .httpBody:
+                        let body = HTTPBody(mediaType: sourceSymbol.httpMediaType ?? "application/json", contents: [], symbol: sourceSymbol)
+                        bodyByTarget[edge.target] = body
+                    case .httpResponse:
+                        let statusParts = sourceSymbol.title.split(separator: " ", maxSplits: 1)
+                        let statusCode = UInt(statusParts[0]) ?? 0
+                        let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
+                        let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType ?? "application/json", contents: [], symbol: sourceSymbol)
+                        if responsesByTarget[edge.target] == nil {
+                            responsesByTarget[edge.target] = [response]
+                        } else {
+                            responsesByTarget[edge.target]?.append(response)
+                        }
+                    default:
+                        continue
                     }
                 }
             }
@@ -1583,6 +1610,47 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     semantic.dictionaryKeysSectionVariants[trait] = DictionaryKeysSection(dictionaryKeys: keys)
                 } else {
                     semantic.dictionaryKeysSectionVariants[trait]?.mergeDictionaryKeys(keys)
+                }
+            }
+        }
+        
+        // Merge in all the parameters for each target into their section variants.
+        parametersByTarget.forEach { targetIdentifier, parameters in
+            let target = symbolIndex[targetIdentifier]
+            if let semantic = target?.semantic as? Symbol {
+                let parameters = parameters.sorted { $0.name < $1.name }
+                let trait = DocumentationDataVariantsTrait(for: selector)
+                if semantic.httpParametersSectionVariants[trait] == nil {
+                    semantic.httpParametersSectionVariants[trait] = HTTPParametersSection(parameters: parameters)
+                } else {
+                    semantic.httpParametersSectionVariants[trait]?.mergeParameters(parameters)
+                }
+            }
+        }
+        
+        // Merge in the body for each target into their section variants.
+        bodyByTarget.forEach { targetIdentifier, body in
+            let target = symbolIndex[targetIdentifier]
+            if let semantic = target?.semantic as? Symbol {
+                let trait = DocumentationDataVariantsTrait(for: selector)
+                if semantic.httpBodySectionVariants[trait] == nil {
+                    semantic.httpBodySectionVariants[trait] = HTTPBodySection(body: body)
+                } else {
+                    semantic.httpBodySectionVariants[trait]?.mergeBody(body)
+                }
+            }
+        }
+        
+        // Merge in all the responses for each target into their section variants.
+        responsesByTarget.forEach { targetIdentifier, responses in
+            let target = symbolIndex[targetIdentifier]
+            if let semantic = target?.semantic as? Symbol {
+                let responses = responses.sorted { $0.statusCode < $1.statusCode }
+                let trait = DocumentationDataVariantsTrait(for: selector)
+                if semantic.httpResponsesSectionVariants[trait] == nil {
+                    semantic.httpResponsesSectionVariants[trait] = HTTPResponsesSection(responses: responses)
+                } else {
+                    semantic.httpResponsesSectionVariants[trait]?.mergeResponses(responses)
                 }
             }
         }

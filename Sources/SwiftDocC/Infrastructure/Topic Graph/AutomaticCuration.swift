@@ -199,6 +199,7 @@ extension AutomaticCuration {
             case .dictionary: return "Dictionaries"
             case .extension: return "Extensions"
             case .`func`: return "Functions"
+            case .httpRequest: return "Endpoints"
             case .`operator`: return "Operators"
             case .`init`: return "Initializers"
             case .ivar: return "Instance Variables"
@@ -232,6 +233,7 @@ extension AutomaticCuration {
         .`class`,
         .`protocol`,
         .`struct`,
+        .`httpRequest`,
         .`dictionary`,
         .`var`,
         .`func`,

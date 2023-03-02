@@ -14,6 +14,9 @@ extension SymbolGraph.Symbol.KindIdentifier {
     /// The kinds of symbols that should not generate pages in the documentation hierarchy.
     static let noPageKinds: [SymbolGraph.Symbol.KindIdentifier] = [
         .dictionaryKey,
+        .httpBody,
+        .httpResponse,
+        .httpParameter,
         .module,
         .snippet,
         .snippetGroup

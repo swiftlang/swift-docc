@@ -10,6 +10,16 @@
 
 import Foundation
 
+/// A kind of a REST request endpoint.
+///
+/// Endpoints can describe either a production or sandbox URL.
+enum RESTEndpointType: String, Codable {
+    /// A production endpoint.
+    case production
+    /// A sandbox endpoint used for testing.
+    case sandbox
+}
+
 /// A section that contains a REST API endpoint.
 ///
 /// This section is similar to ``DeclarationRenderSection`` for symbols and

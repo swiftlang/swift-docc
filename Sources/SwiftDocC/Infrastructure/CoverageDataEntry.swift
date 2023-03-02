@@ -249,6 +249,7 @@ extension CoverageDataEntry {
                 .extendedStructure,
                 .extendedEnumeration,
                 .extendedProtocol,
+                .httpRequest,
                 .unknownExtendedType:
                 self = .types
             case .localVariable,
@@ -279,6 +280,7 @@ extension CoverageDataEntry {
         case `class`(memberStats: [InstanceMemberType: RatioStatistic])
         case structure(memberStats: [InstanceMemberType: RatioStatistic])
         case dictionary
+        case httpRequest
         case enumeration(memberStats: [InstanceMemberType: RatioStatistic])
         case `protocol`(memberStats: [InstanceMemberType: RatioStatistic])
         case typeAlias
@@ -448,6 +450,7 @@ extension CoverageDataEntry.KindSpecificData {
         case structure
         case dictionary
         case enumeration
+        case httpRequest
         case `protocol`
         case `operator`
         case typeAlias
@@ -482,6 +485,7 @@ extension CoverageDataEntry.KindSpecificData {
                  .`structure`,
                  .dictionary,
                  .enumeration,
+                .httpRequest,
                 .protocol,
                 .typeAlias,
                 .instanceProperty,
@@ -514,6 +518,7 @@ extension CoverageDataEntry.KindSpecificData {
             case .instanceMethod,
                  .initializer,
                  .dictionary,
+                 .httpRequest,
                 .typeAlias,
                 .instanceProperty,
                 .enumerationCase,
@@ -542,6 +547,8 @@ extension CoverageDataEntry.KindSpecificData {
             return .dictionary
         case .enumeration:
             return .enumeration
+        case .httpRequest:
+            return .httpRequest
         case .protocol:
             return .protocol
         case .typeAlias:
@@ -634,6 +641,8 @@ extension CoverageDataEntry.KindSpecificData {
 
         case .dictionary:
             self = .dictionary
+        case .httpRequest:
+            self = .httpRequest
         case .typeAlias:
             self = .typeAlias
         case .instanceProperty:
@@ -667,6 +676,7 @@ extension CoverageDataEntry.KindSpecificData {
 
         case .typeAlias,
              .dictionary,
+             .httpRequest,
              .instanceProperty,
              .variable,
              .framework,
