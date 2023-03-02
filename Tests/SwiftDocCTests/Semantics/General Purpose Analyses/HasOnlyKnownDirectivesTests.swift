@@ -121,7 +121,7 @@ class HasOnlyKnownDirectivesTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1)
         guard let first = problems.first else { return }
-        XCTAssertEqual("error: 'baz' directive is unsupported as a child of the 'dir' directive\nThese directives are allowed: 'Comment', 'bar', 'bark', 'foo', 'woof'", DiagnosticConsoleWriter.formattedDescription(first.diagnostic))
+        XCTAssertEqual("error: 'baz' directive is unsupported as a child of the 'dir' directive\nThese directives are allowed: 'Comment', 'bar', 'bark', 'foo', 'woof'", DiagnosticConsoleWriter.formattedDescription(for: first.diagnostic))
     }
 }
 

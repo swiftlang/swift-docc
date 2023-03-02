@@ -29,7 +29,7 @@ class ProblemTests: XCTestCase {
         let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
         let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
 
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(problem), """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: problem), """
         \(expectedLocation): error: \(summary)
         \(explanation)
         """)
@@ -50,13 +50,13 @@ class ProblemTests: XCTestCase {
         let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
         let problem = Problem(diagnostic: diagnostic, possibleSolutions: [solution])
 
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(problem, options: [.formatConsoleOutputForTools]), """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: problem, options: [.formatConsoleOutputForTools]), """
         \(expectedLocation): error: \(summary). \(solutionSummary).
         \(explanation)
         \(source):1:8-1:24: fixit: Replacement text
         """)
 
-        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(problem), """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: problem), """
         \(expectedLocation): error: \(summary)
         \(explanation)
         """)

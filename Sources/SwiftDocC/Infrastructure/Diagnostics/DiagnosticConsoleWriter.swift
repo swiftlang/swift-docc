@@ -37,7 +37,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 
     public func receive(_ problems: [Problem]) {
         // Add a newline after each formatter description, including the last one.
-        let text = problems.map { diagnosticFormatter.formattedDescription($0).appending("\n") }.joined()
+        let text = problems.map { diagnosticFormatter.formattedDescription(for: $0).appending("\n") }.joined()
         outputStream.write(text)
     }
     
@@ -58,32 +58,32 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
 
 extension DiagnosticConsoleWriter {
     
-    public static func formattedDescription<Problems>(_ problems: Problems, options: DiagnosticFormattingOptions = []) -> String where Problems: Sequence, Problems.Element == Problem {
-        return problems.map { formattedDescription($0, options: options) }.joined(separator: "\n")
+    public static func formattedDescription<Problems>(for problems: Problems, options: DiagnosticFormattingOptions = []) -> String where Problems: Sequence, Problems.Element == Problem {
+        return problems.map { formattedDescription(for: $0, options: options) }.joined(separator: "\n")
     }
     
-    public static func formattedDescription(_ problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
+    public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options)
-        return diagnosticFormatter.formattedDescription(problem)
+        return diagnosticFormatter.formattedDescription(for: problem)
     }
     
-    public static func formattedDescription(_ diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
+    public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
         let diagnosticFormatter = makeDiagnosticFormatter(options)
-        return diagnosticFormatter.formattedDescription(diagnostic)
+        return diagnosticFormatter.formattedDescription(for: diagnostic)
     }
 }
 
 protocol DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions { get set }
     
-    func formattedDescription<Problems>(_ problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem
-    func formattedDescription(_ problem: Problem) -> String
-    func formattedDescription(_ diagnostic: Diagnostic) -> String
+    func formattedDescription<Problems>(for problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem
+    func formattedDescription(for problem: Problem) -> String
+    func formattedDescription(for diagnostic: Diagnostic) -> String
 }
 
 extension DiagnosticConsoleFormatter {
-    func formattedDescription<Problems>(_ problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem {
-        return problems.map { formattedDescription($0) }.joined(separator: "\n")
+    func formattedDescription<Problems>(for problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem {
+        return problems.map { formattedDescription(for: $0) }.joined(separator: "\n")
     }
 }
 
@@ -92,9 +92,9 @@ extension DiagnosticConsoleFormatter {
 struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions
     
-    func formattedDescription(_ problem: Problem) -> String {
+    func formattedDescription(for problem: Problem) -> String {
         guard let source = problem.diagnostic.source else {
-            return formattedDescription(problem.diagnostic)
+            return formattedDescription(for: problem.diagnostic)
         }
         
         var description = formattedDiagnosticSummary(problem.diagnostic)
@@ -126,7 +126,7 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         return description
     }
     
-    public func formattedDescription(_ diagnostic: Diagnostic) -> String {
+    public func formattedDescription(for diagnostic: Diagnostic) -> String {
         return formattedDiagnosticSummary(diagnostic) + formattedDiagnosticDetails(diagnostic)
     }
     
@@ -153,13 +153,13 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
 
         if !diagnostic.notes.isEmpty {
             result += "\n"
-            result += diagnostic.notes.map { formattedDescription($0) }.joined(separator: "\n")
+            result += diagnostic.notes.map { formattedDescription(for: $0) }.joined(separator: "\n")
         }
         
         return result
     }
     
-    private func formattedDescription(_ note: DiagnosticNote) -> String {
+    private func formattedDescription(for note: DiagnosticNote) -> String {
         let location = "\(note.source.path):\(note.range.lowerBound.line):\(note.range.lowerBound.column)"
         return "\(location): note: \(note.message)"
     }
@@ -169,11 +169,11 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
 struct DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions
     
-    func formattedDescription(_ problem: Problem) -> String {
-        formattedDescription(problem.diagnostic)
+    func formattedDescription(for problem: Problem) -> String {
+        formattedDescription(for: problem.diagnostic)
     }
     
-    func formattedDescription(_ diagnostic: Diagnostic) -> String {
-        return IDEDiagnosticConsoleFormatter(options: options).formattedDescription(diagnostic)
+    func formattedDescription(for diagnostic: Diagnostic) -> String {
+        return IDEDiagnosticConsoleFormatter(options: options).formattedDescription(for: diagnostic)
     }
 }

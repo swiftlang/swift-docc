@@ -106,7 +106,7 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription($0.diagnostic) }) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
@@ -129,7 +129,7 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 0, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription($0.diagnostic) }) analyzing article markup")
+        XCTAssertEqual(problems.count, 0, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing article markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
@@ -154,7 +154,7 @@ class RenderNodeSerializationTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription($0.diagnostic) }) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, 1, "Found problems \(problems.map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         

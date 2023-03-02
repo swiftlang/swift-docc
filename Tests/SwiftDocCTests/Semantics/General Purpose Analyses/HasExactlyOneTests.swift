@@ -30,7 +30,7 @@ class HasExactlyOneTests: XCTestCase {
             problems.first.map { problem in
                 XCTAssertEqual("org.swift.docc.HasExactlyOne<Parent, TestChild>.Missing", problem.diagnostic.identifier)
                 XCTAssertEqual(
-                    DiagnosticConsoleWriter.formattedDescription(problem.diagnostic),
+                    DiagnosticConsoleWriter.formattedDescription(for: problem.diagnostic),
                     """
                     error: Missing 'Child' child directive
                     The 'Parent' directive must have exactly one 'Child' child directive
@@ -87,7 +87,7 @@ class HasExactlyOneTests: XCTestCase {
             XCTAssertEqual("""
                  error: Duplicate 'Child' child directive
                  The 'Parent' directive must have exactly one 'Child' child directive
-                 """, DiagnosticConsoleWriter.formattedDescription(problems[0].diagnostic))
+                 """, DiagnosticConsoleWriter.formattedDescription(for: problems[0].diagnostic))
 
         }
     }

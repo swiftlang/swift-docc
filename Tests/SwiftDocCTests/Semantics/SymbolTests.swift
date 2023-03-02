@@ -1182,7 +1182,7 @@ class SymbolTests: XCTestCase {
             var problems = [Problem]()
             let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
             XCTAssertNotNil(article, "The sidecar Article couldn't be created.", file: (file), line: line)
-            XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(problems))", file: (file), line: line)
+            XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))", file: (file), line: line)
             return article
         }
         

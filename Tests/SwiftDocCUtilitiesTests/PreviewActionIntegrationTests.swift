@@ -334,7 +334,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 
                 XCTAssertTrue(result.didEncounterError, "Did not find an error when running preview", file: file, line: line)
                 XCTAssertNotNil(engine.problems.first(where: { problem -> Bool in
-                    DiagnosticConsoleWriter.formattedDescription(problem.diagnostic).contains(expectedErrorMessage)
+                    DiagnosticConsoleWriter.formattedDescription(for: problem.diagnostic).contains(expectedErrorMessage)
                 }), "Didn't find expected error message '\(expectedErrorMessage)'", file: file, line: line)
 
                 // Verify that the failed server is not added to the server list
@@ -472,7 +472,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                     }
                 
                     if !result.problems.isEmpty {
-                        print(DiagnosticConsoleWriter.formattedDescription(result.problems), to: &logHandle)
+                        print(DiagnosticConsoleWriter.formattedDescription(for: result.problems), to: &logHandle)
                     }
                 } catch {
                     XCTFail(error.localizedDescription)

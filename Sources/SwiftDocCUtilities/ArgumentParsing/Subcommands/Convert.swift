@@ -347,7 +347,7 @@ extension Docc {
                     )
                     
                     print(
-                        DiagnosticConsoleWriter.formattedDescription(invalidOrMissingTemplateDiagnostic),
+                        DiagnosticConsoleWriter.formattedDescription(for: invalidOrMissingTemplateDiagnostic),
                         to: &Self._errorLogHandle
                     )
                     

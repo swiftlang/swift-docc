@@ -89,15 +89,15 @@ public extension Diagnostic {
 
 // MARK: Deprecated
 
-@available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(_:options:)' instead.")
+@available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
 extension Diagnostic: DescribedError {
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(_:options:)' instead.")
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
     var localizedDescription: String {
-        return DiagnosticConsoleWriter.formattedDescription(self)
+        return DiagnosticConsoleWriter.formattedDescription(for: self)
     }
 
-    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(_:options:)' instead.")
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
     public var errorDescription: String {
-        return DiagnosticConsoleWriter.formattedDescription(self)
+        return DiagnosticConsoleWriter.formattedDescription(for: self)
     }
 }
