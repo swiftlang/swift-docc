@@ -89,4 +89,16 @@ public extension SourceRepository {
             formatLineNumber: { line in "lines-\(line)" }
         )
     }
+    
+    /// Creates a source repository hosted by the device's filesystem.
+    ///
+    /// Use this source repository to format `file://` links to files on the
+    /// device where documentation is being presented.
+    static func localFilesystem() -> SourceRepository {
+        SourceRepository(
+            checkoutPath: "",
+            sourceServiceBaseURL: URL(fileURLWithPath: "/"),
+            formatLineNumber: { line in "L\(line)" }
+        )
+    }
 }
