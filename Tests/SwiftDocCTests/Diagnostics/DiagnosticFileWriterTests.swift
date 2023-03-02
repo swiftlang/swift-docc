@@ -103,7 +103,7 @@ class DiagnosticFileWriterTests: XCTestCase {
             XCTAssertEqual(diagnostic.range?.start.column, 8)
             XCTAssertEqual(diagnostic.range?.end.line, 10)
             XCTAssertEqual(diagnostic.range?.end.column, 21)
-            XCTAssertEqual(diagnostic.severity, .information)
+            XCTAssertEqual(diagnostic.severity, .note)
             XCTAssertEqual(diagnostic.summary, summary)
             XCTAssertEqual(diagnostic.explanation, explanation)
             XCTAssertEqual(diagnostic.solutions.count, 2, "Found unexpected solutions: \(diagnostic.solutions)")

@@ -47,7 +47,7 @@ struct DiagnosticFile: Codable {
         }
         var source: URL?
         var range: Range?
-        var severity: DiagnosticSeverity
+        var severity: Severity
         var summary: String
         var explanation: String?
         var solutions: [Solution]
@@ -64,6 +64,9 @@ struct DiagnosticFile: Codable {
             var source: URL?
             var range: Range?
             var message: String
+        }
+        enum Severity: String, Codable {
+            case error, warning, note, remark
         }
     }
     
@@ -86,7 +89,7 @@ extension DiagnosticFile.Diagnostic {
     init(_ problem: Problem) {
         self.source      = problem.diagnostic.source
         self.range       = problem.diagnostic.range.map { .init($0) }
-        self.severity    = problem.diagnostic.severity
+        self.severity    = .init(problem.diagnostic.severity)
         self.summary     = problem.diagnostic.summary
         self.explanation = problem.diagnostic.explanation
         self.solutions   = problem.possibleSolutions.map { .init($0) }
@@ -127,5 +130,18 @@ extension DiagnosticFile.Diagnostic.Note {
         self.source  = note.source
         self.range   = .init(note.range)
         self.message = note.message
+    }
+}
+
+extension DiagnosticFile.Diagnostic.Severity {
+    init(_ severity: DiagnosticSeverity) {
+        switch severity {
+        case .error:
+            self = .error
+        case .warning:
+            self = .warning
+        case .information, .hint:
+            self = .note
+        }
     }
 }
