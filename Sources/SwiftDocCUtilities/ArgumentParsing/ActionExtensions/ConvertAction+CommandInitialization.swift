@@ -21,6 +21,7 @@ extension ConvertAction {
         let outOfProcessResolver: OutOfProcessReferenceResolver?
         
         FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.enableExperimentalDeviceFrameSupport
+        FeatureFlags.current.isExperimentalDoxygenSupportEnabled = convert.experimentalParseDoxygenCommands
         
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
@@ -85,7 +86,8 @@ extension ConvertAction {
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
             transformForStaticHosting: convert.transformForStaticHosting,
             hostingBasePath: convert.hostingBasePath,
-            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments)
+            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
+            experimentalParseDoxygenCommands: convert.experimentalParseDoxygenCommands
         )
     }
 }

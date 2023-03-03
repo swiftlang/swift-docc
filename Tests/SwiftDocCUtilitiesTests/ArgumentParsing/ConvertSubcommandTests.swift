@@ -165,7 +165,7 @@ class ConvertSubcommandTests: XCTestCase {
             ]), "Did not refuse target folder path '\(path)'")
         }
     }
-  
+
     func testAnalyzerIsTurnedOffByDefault() throws {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
         let convertOptions = try Docc.Convert.parse([
@@ -206,7 +206,7 @@ class ConvertSubcommandTests: XCTestCase {
             XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
         }
         
-        // Are set when passed 
+        // Are set when passed
         do {
             let convertOptions = try Docc.Convert.parse([
                 testBundleURL.path,
@@ -389,6 +389,29 @@ class ConvertSubcommandTests: XCTestCase {
         _ = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.enableExperimentalDeviceFrameSupport)
         XCTAssertTrue(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
+    }
+
+    func testExperimentalParseDoxygenFlag() throws {
+        let originalFeatureFlagsState = FeatureFlags.current
+
+        defer {
+            FeatureFlags.current = originalFeatureFlagsState
+        }
+
+        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
+        let actionWithoutFlag = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        XCTAssertFalse(commandWithoutFlag.experimentalParseDoxygenCommands)
+        XCTAssertFalse(actionWithoutFlag.experimentalParseDoxygenCommands)
+        XCTAssertFalse(FeatureFlags.current.isExperimentalDoxygenSupportEnabled)
+
+        let commandWithFlag = try Docc.Convert.parse([
+            "--experimental-parse-doxygen-commands",
+            testBundleURL.path,
+        ])
+        let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
+        XCTAssertTrue(commandWithFlag.experimentalParseDoxygenCommands)
+        XCTAssertTrue(actionWithFlag.experimentalParseDoxygenCommands)
+        XCTAssertTrue(FeatureFlags.current.isExperimentalDoxygenSupportEnabled)
     }
     
     func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {

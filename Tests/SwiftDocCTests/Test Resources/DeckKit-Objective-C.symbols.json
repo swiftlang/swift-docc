@@ -1591,14 +1591,66 @@
             "range" : {
               "end" : {
                 "character" : 68,
-                "line" : 56
+                "line" : 46
               },
               "start" : {
                 "character" : 4,
-                "line" : 56
+                "line" : 46
               }
             },
             "text" : "Allocate and initialize a new card with the given rank and suit."
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 3,
+                "line" : 47
+              },
+              "start" : {
+                "character" : 3,
+                "line" : 47
+              }
+            },
+            "text" : ""
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 37,
+                "line" : 48
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 48
+              }
+            },
+            "text" : "\\param rank The rank of the card."
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 37,
+                "line" : 49
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 49
+              }
+            },
+            "text" : "\\param suit The suit of the card."
+          },
+          {
+            "range" : {
+              "end" : {
+                "character" : 54,
+                "line" : 50
+              },
+              "start" : {
+                "character" : 4,
+                "line" : 50
+              }
+            },
+            "text" : "\\returns A new card with the given configuration. "
           }
         ]
       },

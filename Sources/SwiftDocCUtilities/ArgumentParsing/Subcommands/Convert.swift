@@ -167,6 +167,12 @@ extension Docc {
         @OptionGroup()
         public var sourceRepositoryArguments: SourceRepositoryArguments
 
+        /// A user-provided value that is true if experimental Doxygen support should be enabled.
+        ///
+        /// Defaults to false.
+        @Flag(help: "Parse a limited set of Doxygen commands as equivalent DocC markup")
+        public var experimentalParseDoxygenCommands = false
+
         // MARK: - Info.plist fallbacks
         
         /// A user-provided fallback display name for the documentation bundle.

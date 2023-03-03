@@ -407,4 +407,14 @@ struct TaggedListItemExtractor: MarkupRewriter {
         // No match; leave this list item alone.
         return listItem
     }
+
+    mutating func visitDoxygenParameter(_ doxygenParam: DoxygenParameter) -> Markup? {
+        parameters.append(Parameter(doxygenParam))
+        return nil
+    }
+
+    mutating func visitDoxygenReturns(_ doxygenReturns: DoxygenReturns) -> Markup? {
+        returns.append(Return(doxygenReturns))
+        return nil
+    }
 }

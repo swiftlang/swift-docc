@@ -30,6 +30,9 @@ public struct FeatureFlags: Codable {
     
     /// Whether or not experimental support for device frames on images and video is enabled.
     public var isExperimentalDeviceFrameSupportEnabled = false
+
+    /// Whether or not experimental support for parsing Doxygen commands is enabled.
+    public var isExperimentalDoxygenSupportEnabled = false
     
     /// Creates a set of feature flags with the given values.
     ///

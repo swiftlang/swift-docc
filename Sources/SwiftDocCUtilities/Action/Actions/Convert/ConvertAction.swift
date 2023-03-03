@@ -35,6 +35,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let inheritDocs: Bool
     let treatWarningsAsErrors: Bool
     let experimentalEnableCustomTemplates: Bool
+    let experimentalParseDoxygenCommands: Bool
     let buildLMDBIndex: Bool
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
@@ -105,7 +106,8 @@ public struct ConvertAction: Action, RecreatingContext {
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool = false,
         hostingBasePath: String? = nil,
-        sourceRepository: SourceRepository? = nil
+        sourceRepository: SourceRepository? = nil,
+        experimentalParseDoxygenCommands: Bool = false
     ) throws
     {
         self.rootURL = documentationBundleURL
@@ -123,6 +125,7 @@ public struct ConvertAction: Action, RecreatingContext {
         self.transformForStaticHosting = transformForStaticHosting
         self.hostingBasePath = hostingBasePath
         self.sourceRepository = sourceRepository
+        self.experimentalParseDoxygenCommands = experimentalParseDoxygenCommands
         
         let filterLevel: DiagnosticSeverity
         if analyze {
