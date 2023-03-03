@@ -258,7 +258,8 @@ def install(args, env):
   features_install_path = os.path.join(
     os.path.dirname(docc_install_dir),
     'share',
-    'docc'
+    'docc',
+    'features.json'
   )
   create_intermediate_directories(os.path.dirname(features_install_path), verbose=verbose)
   check_and_sync(
