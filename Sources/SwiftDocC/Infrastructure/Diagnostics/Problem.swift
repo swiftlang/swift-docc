@@ -30,16 +30,6 @@ public struct Problem {
 }
 
 extension Problem {
-    var localizedDescription: String {
-        return DiagnosticConsoleWriter.formattedDescriptionFor(self)
-    }
-
-    func formattedLocalizedDescription(withOptions options: DiagnosticFormattingOptions = []) -> String {
-        return DiagnosticConsoleWriter.formattedDescriptionFor(self, options: options)
-    }
-}
-
-extension Problem {
     /// Offsets the problem using a certain SymbolKit `SourceRange`.
     ///
     /// Useful when validating a doc comment that needs to be projected in its containing file "space".
@@ -61,12 +51,29 @@ extension Sequence where Element == Problem {
             $0.diagnostic.severity == .error
         }
     }
-    
-    /// The human readable summary description for the problems.
+}
+
+// MARK: Deprecated
+
+extension Problem {
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
+    var localizedDescription: String {
+        return DiagnosticConsoleWriter.formattedDescription(for: self)
+    }
+
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
+    func formattedLocalizedDescription(withOptions options: DiagnosticFormattingOptions = []) -> String {
+        return DiagnosticConsoleWriter.formattedDescription(for: self, options: options)
+    }
+}
+
+extension Sequence where Element == Problem {
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
     public var localizedDescription: String {
         return map { $0.localizedDescription }.joined(separator: "\n")
     }
 
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
     public func formattedLocalizedDescription(withOptions options: DiagnosticFormattingOptions) -> String {
         return map { $0.formattedLocalizedDescription(withOptions: options) }.joined(separator: "\n")
     }

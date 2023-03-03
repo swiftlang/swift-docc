@@ -649,7 +649,7 @@ class DocumentationContextTests: XCTestCase {
 
         XCTAssertEqual(problemWithDuplicate.count, 1)
 
-        let localizedSummary = try XCTUnwrap(problemWithDuplicate.first?.diagnostic.localizedSummary)
+        let localizedSummary = try XCTUnwrap(problemWithDuplicate.first?.diagnostic.summary)
         XCTAssertEqual(localizedSummary, "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped")
 
     }
@@ -661,10 +661,10 @@ class DocumentationContextTests: XCTestCase {
 
         XCTAssertEqual(problemWithDuplicateReference.count, 2)
 
-        let localizedSummary = try XCTUnwrap(problemWithDuplicateReference.first?.diagnostic.localizedSummary)
+        let localizedSummary = try XCTUnwrap(problemWithDuplicateReference.first?.diagnostic.summary)
         XCTAssertEqual(localizedSummary, "Redeclaration of \'overview.md\'; this file will be skipped")
 
-        let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.localizedSummary)
+        let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.summary)
         XCTAssertEqual(localizedSummarySecond, "Redeclaration of \'overview.md\'; this file will be skipped")
     }
 
@@ -1172,12 +1172,12 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertNotNil(context.problems
             .map { $0.diagnostic }
             .filter { $0.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
-                && $0.localizedSummary.contains("'/mykit'") }
+                && $0.summary.contains("'/mykit'") }
         )
         XCTAssertNotNil(context.problems
             .map { $0.diagnostic }
             .filter { $0.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
-                && $0.localizedSummary.contains("'/myprotocol'") }
+                && $0.summary.contains("'/myprotocol'") }
         )
     }
     
@@ -1760,7 +1760,7 @@ let expected = """
         if let unmatchedSidecarDiagnostic = unmatchedSidecarProblem?.diagnostic {
             XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
             XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem?.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem?.diagnostic.source))
-            XCTAssertEqual(unmatchedSidecarDiagnostic.localizedSummary, "No symbol matched 'MyKit/UnknownSymbol'. This documentation will be ignored.")
+            XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. This documentation will be ignored.")
             XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .information)
             
             XCTAssertEqual(unmatchedSidecarDiagnostic.notes.count, 1)
@@ -1791,7 +1791,7 @@ let expected = """
         let curationDiagnostics =  context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ArticleUncurated" }).map(\.diagnostic)
         let sidecarDiagnostic = try XCTUnwrap(curationDiagnostics.first(where: { $0.source?.standardizedFileURL == unknownSymbolSidecarURL.standardizedFileURL }))
         XCTAssertNil(sidecarDiagnostic.range)
-        XCTAssertEqual(sidecarDiagnostic.localizedSummary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Bundle/UncuratedArticle'")
+        XCTAssertEqual(sidecarDiagnostic.summary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Bundle/UncuratedArticle'")
         XCTAssertEqual(sidecarDiagnostic.severity, .information)
     }
     
@@ -2573,7 +2573,7 @@ let expected = """
         let identifier = "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
         let duplicateMarkdownProblems = context.problems.filter({ $0.diagnostic.identifier == identifier })
         XCTAssertEqual(duplicateMarkdownProblems.count, 2)
-        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.localizedSummary, "Multiple occurrences of \'/documentation/MyKit/MyClass/myFunction()\' found")
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.summary, "Multiple occurrences of \'/documentation/MyKit/MyClass/myFunction()\' found")
     }
     
     /// This test verifies that collision nodes and children of collision nodes are correctly

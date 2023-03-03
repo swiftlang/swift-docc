@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -126,7 +126,7 @@ class MetadataTests: XCTestCase {
         var problems = [Problem]()
         let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(metadata)
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.localizedSummary })")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         XCTAssertEqual(metadata?.displayName?.name, "Custom Name")
     }
@@ -165,11 +165,11 @@ class MetadataTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child.")
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.localizedSummary })")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(analyzer.problems.localizedDescription)")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
     }
     
     func testSymbolArticleSupportsMetadataDisplayName() throws {
@@ -189,11 +189,11 @@ class MetadataTests: XCTestCase {
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a DisplayName child.")
         XCTAssertNotNil(article?.metadata?.displayName, "The Article has the parsed DisplayName metadata.")
         
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.localizedSummary })")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(analyzer.problems.localizedDescription)")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
     }
     
     func testArticleDoesNotSupportsMetadataDisplayName() throws {
@@ -218,7 +218,7 @@ class MetadataTests: XCTestCase {
         let problem = try XCTUnwrap(problems.first)
         
         XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.Article.DisplayName.NotSupported")
-        XCTAssertEqual(problem.diagnostic.localizedSummary, "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.")
+        XCTAssertEqual(problem.diagnostic.summary, "A 'DisplayName' directive is only supported in documentation extension files. To customize the display name of an article, change the content of the level-1 heading.")
         
         XCTAssertEqual(problem.possibleSolutions.count, 1)
         let solution = try XCTUnwrap(problem.possibleSolutions.first)

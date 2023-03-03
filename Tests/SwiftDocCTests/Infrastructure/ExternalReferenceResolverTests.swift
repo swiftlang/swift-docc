@@ -779,7 +779,7 @@ Document @1:1-1:35
             TopicReferenceResolutionResult.success(ResolvedTopicReference(bundleIdentifier: "com.external.testbundle", path: "/resolved", fragment: nil, sourceLanguage: .swift))
         )
         
-        XCTAssert(context.problems.contains(where: { $0.diagnostic.localizedSummary.contains("Unit test: External resolve error.")}),
+        XCTAssert(context.problems.contains(where: { $0.diagnostic.summary.contains("Unit test: External resolve error.")}),
                   "The external reference resolver error message is included in that problem's error summary.")
         
         // Get MyKit symbol

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -30,7 +30,7 @@ class HasExactlyOneTests: XCTestCase {
             problems.first.map { problem in
                 XCTAssertEqual("org.swift.docc.HasExactlyOne<Parent, TestChild>.Missing", problem.diagnostic.identifier)
                 XCTAssertEqual(
-                    problem.diagnostic.localizedDescription,
+                    DiagnosticConsoleWriter.formattedDescription(for: problem.diagnostic),
                     """
                     error: Missing 'Child' child directive
                     The 'Parent' directive must have exactly one 'Child' child directive
@@ -87,7 +87,7 @@ class HasExactlyOneTests: XCTestCase {
             XCTAssertEqual("""
                  error: Duplicate 'Child' child directive
                  The 'Parent' directive must have exactly one 'Child' child directive
-                 """, problems[0].diagnostic.localizedDescription)
+                 """, DiagnosticConsoleWriter.formattedDescription(for: problems[0].diagnostic))
 
         }
     }

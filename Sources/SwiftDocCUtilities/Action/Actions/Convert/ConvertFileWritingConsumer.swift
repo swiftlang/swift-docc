@@ -253,8 +253,8 @@ private extension Digest.Diagnostic {
         self.start = (diagnostic.range?.lowerBound).map { Location(line: $0.line, column: $0.column) }
         self.source = rootURL.flatMap { diagnostic.source?.relative(to: $0) }
         self.severity = diagnostic.severity
-        self.summary = diagnostic.localizedSummary
-        self.explanation = diagnostic.localizedExplanation
+        self.summary = diagnostic.summary
+        self.explanation = diagnostic.explanation
         self.notes = diagnostic.notes.map {
             Note(location: Location(line: $0.range.lowerBound.line, column: $0.range.lowerBound.column), message: $0.message)
         }

@@ -2945,10 +2945,10 @@ class ConvertActionTests: XCTestCase {
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {
         return problems.sorted(by: { (lhs, rhs) -> Bool in
             guard lhs.diagnostic.identifier != rhs.diagnostic.identifier else {
-                return lhs.diagnostic.localizedSummary < rhs.diagnostic.localizedSummary
+                return lhs.diagnostic.summary < rhs.diagnostic.summary
             }
             return lhs.diagnostic.identifier < rhs.diagnostic.identifier
-        }) .map { $0.diagnostic.localizedDescription }.sorted().joined(separator: "\n")
+        }) .map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }.sorted().joined(separator: "\n")
     }
     
     #endif
