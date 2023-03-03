@@ -514,6 +514,31 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(problems.count, 0)
     }
 
+    func testParseDoxygenWithFeatureFlag() throws {
+        enableFeatureFlag(\.isExperimentalDoxygenSupportEnabled)
+
+        let deckKitSymbolGraph = Bundle.module.url(
+            forResource: "DeckKit-Objective-C",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
+            try? FileManager.default.copyItem(at: deckKitSymbolGraph, to: url.appendingPathComponent("DeckKit.symbols.json"))
+        }
+        let symbol = try XCTUnwrap(context.symbolIndex["c:objc(cs)PlayingCard(cm)newWithRank:ofSuit:"]?.semantic as? Symbol)
+
+        XCTAssertEqual(symbol.abstract?.format(), "Allocate and initialize a new card with the given rank and suit.")
+
+        XCTAssertEqual(symbol.parametersSection?.parameters.count, 2)
+
+        let rankParameter = try XCTUnwrap(symbol.parametersSection?.parameters.first(where:{$0.name == "rank"}))
+        XCTAssertEqual(rankParameter.contents.map({$0.format()}), ["The rank of the card."])
+        let suitParameter = try XCTUnwrap(symbol.parametersSection?.parameters.first(where:{$0.name == "suit"}))
+        XCTAssertEqual(suitParameter.contents.map({$0.format()}), ["The suit of the card."])
+
+        XCTAssertEqual(symbol.returnsSection?.content.map({ $0.format() }), ["A new card with the given configuration."])
+    }
+
     func testUnresolvedReferenceWarningsInDocumentationExtension() throws {
         let (url, _, context) = try testBundleAndContext(copying: "TestBundle") { url in
             let myKitDocumentationExtensionComment = """
