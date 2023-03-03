@@ -16,7 +16,7 @@ public struct ConvertRequest: Codable {
     /// Information about the documentation bundle to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/Info-swift.struct``
+    /// - ``DocumentationBundle/Info``
     public var bundleInfo: DocumentationBundle.Info
     
     /// Feature flags to enable when performing this convert request.
