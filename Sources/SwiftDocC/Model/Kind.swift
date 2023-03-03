@@ -26,6 +26,9 @@ extension DocumentationNode {
                  .chapter,
                  .onPageLandmark,
                  .dictionaryKey,
+                 .httpParameter,
+                 .httpBody,
+                 .httpResponse,
                  .snippet:
                 return false
             default:
@@ -90,6 +93,8 @@ extension DocumentationNode.Kind {
     public static let `extension` = DocumentationNode.Kind(name: "Extension", id: "org.swift.docc.kind.extension", isSymbol: true)
     /// Documentation about a dictionary.
     public static let dictionary = DocumentationNode.Kind(name: "Dictionary", id: "org.swift.docc.kind.dictionary", isSymbol: true)
+    /// Documentation about an HTTP request.
+    public static let httpRequest = DocumentationNode.Kind(name: "HTTP Request", id: "org.swift.docc.kind.httpRequest", isSymbol: true)
     
     // Leaves
     
@@ -122,6 +127,12 @@ extension DocumentationNode.Kind {
     public static let deinitializer = DocumentationNode.Kind(name: "Deinitializer", id: "org.swift.docc.kind.deinitializer", isSymbol: true)
     /// Documentation about a dictionary key.
     public static let dictionaryKey = DocumentationNode.Kind(name: "Dictionary Key", id: "org.swift.docc.kind.dictionarykey", isSymbol: true)
+    /// Documentation about an HTTP parameter.
+    public static let httpBody = DocumentationNode.Kind(name: "HTTP Body", id: "org.swift.docc.kind.httpBody", isSymbol: true)
+    /// Documentation about an HTTP response.
+    public static let httpParameter = DocumentationNode.Kind(name: "HTTP Parameter", id: "org.swift.docc.kind.httpParameter", isSymbol: true)
+    /// Documentation about an HTTP body.
+    public static let httpResponse = DocumentationNode.Kind(name: "HTTP Response", id: "org.swift.docc.kind.httpResponse", isSymbol: true)
     /// Documentation about an instance method.
     public static let instanceMethod = DocumentationNode.Kind(name: "Instance Method", id: "org.swift.docc.kind.instanceMethod", isSymbol: true)
     /// Documentation about an instance property.
@@ -181,11 +192,11 @@ extension DocumentationNode.Kind {
         // Conceptual
         .root, .module, .article, .sampleCode, .technologyOverview, .volume, .chapter, .tutorial, .tutorialArticle, .onPageLandmark,
         // Containers
-        .class, .structure, .enumeration, .protocol, .technology, .extension, .dictionary,
+        .class, .structure, .enumeration, .protocol, .technology, .extension, .dictionary, .httpRequest,
         // Leaves
         .localVariable, .globalVariable, .typeAlias, .typeDef, .typeConstant, .associatedType, .function, .operator, .macro, .union,
         // Member-only leaves
-        .dictionaryKey, .enumerationCase, .initializer, .deinitializer, .instanceMethod, .instanceProperty, .instanceSubscript, .instanceVariable, .typeMethod, .typeProperty, .typeSubscript,
+        .dictionaryKey, .enumerationCase, .httpBody, .httpParameter, .httpResponse, .initializer, .deinitializer, .instanceMethod, .instanceProperty, .instanceSubscript, .instanceVariable, .typeMethod, .typeProperty, .typeSubscript,
         // Data
         .buildSetting, .propertyListKey,
         // Extended Symbols

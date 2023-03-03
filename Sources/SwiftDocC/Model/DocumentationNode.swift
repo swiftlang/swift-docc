@@ -209,6 +209,16 @@ public struct DocumentationNode {
             mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
         }
         
+        let endpointVariants = DocumentationDataVariants(
+            symbolData: unifiedSymbol.mixins,
+            platformName: platformName
+        ) { mixins -> HTTPEndpointSection? in
+            if let endpoint = mixins[SymbolGraph.Symbol.HTTP.Endpoint.mixinKey] as? SymbolGraph.Symbol.HTTP.Endpoint {
+                return HTTPEndpointSection(endpoint: endpoint)
+            }
+            return nil
+        }
+        
         var languages = Set([reference.sourceLanguage])
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
@@ -285,6 +295,10 @@ public struct DocumentationNode {
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
             dictionaryKeysSectionVariants: .empty,
+            httpEndpointSectionVariants: endpointVariants,
+            httpBodySectionVariants: .empty,
+            httpParametersSectionVariants: .empty,
+            httpResponsesSectionVariants: .empty,
             redirectsVariants: .empty,
             crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) })
         )
@@ -484,6 +498,10 @@ public struct DocumentationNode {
         case .`enum`: return .enumeration
         case .`case`: return .enumerationCase
         case .`func`: return .function
+        case .httpRequest: return .httpRequest
+        case .httpParameter: return .httpParameter
+        case .httpBody: return .httpBody
+        case .httpResponse: return .httpResponse
         case .`operator`: return .operator
         case .`init`: return .initializer
         case .ivar: return .instanceVariable
@@ -603,6 +621,10 @@ public struct DocumentationNode {
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
             dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
+            httpEndpointSectionVariants: .empty,
+            httpBodySectionVariants: .empty,
+            httpParametersSectionVariants: .empty,
+            httpResponsesSectionVariants: .empty,
             redirectsVariants: .init(swiftVariant: article?.redirects)
         )
         

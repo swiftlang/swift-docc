@@ -436,6 +436,26 @@ struct ReferenceResolver: SemanticVisitor {
             }
             return DictionaryKeysSection(dictionaryKeys: keys)
         }
+        let newHTTPEndpointVariants = symbol.httpEndpointSectionVariants.map { httpEndpointSection -> HTTPEndpointSection in
+            return HTTPEndpointSection(endpoint: httpEndpointSection.endpoint)
+        }
+        let newHTTPBodyVariants = symbol.httpBodySectionVariants.map { httpBodySection -> HTTPBodySection in
+            let oldBody = httpBodySection.body
+            let newBody = HTTPBody(mediaType: oldBody.mediaType, contents: oldBody.contents.map { visitMarkup($0) }, symbol: oldBody.symbol)
+            return HTTPBodySection(body: newBody)
+        }
+        let newHTTPParametersVariants = symbol.httpParametersSectionVariants.map { httpParametersSection -> HTTPParametersSection in
+            let parameters = httpParametersSection.parameters.map {
+                HTTPParameter(name: $0.name, source: $0.source, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol, required: $0.required)
+            }
+            return HTTPParametersSection(parameters: parameters)
+        }
+        let newHTTPResponsesVariants = symbol.httpResponsesSectionVariants.map { httpResponsesSection -> HTTPResponsesSection in
+            let responses = httpResponsesSection.responses.map {
+                HTTPResponse(statusCode: $0.statusCode, reason: $0.reason, mediaType: $0.mediaType, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol)
+            }
+            return HTTPResponsesSection(responses: responses)
+        }
         
         // It's important to carry over aggregate data like the merged declarations
         // or the merged default implementations to the new `Symbol` instance.
@@ -465,6 +485,10 @@ struct ReferenceResolver: SemanticVisitor {
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
             dictionaryKeysSectionVariants: newDictionaryKeysVariants,
+            httpEndpointSectionVariants: newHTTPEndpointVariants,
+            httpBodySectionVariants: newHTTPBodyVariants,
+            httpParametersSectionVariants: newHTTPParametersVariants,
+            httpResponsesSectionVariants: newHTTPResponsesVariants,
             redirectsVariants: symbol.redirectsVariants,
             crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,
