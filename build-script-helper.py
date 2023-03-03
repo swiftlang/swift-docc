@@ -256,12 +256,9 @@ def install(args, env):
   features_path = os.path.join(args.package_path, 'features.json')
   # Install features.json relative to the docc executable at "../../share/docc/features.json"
   features_install_path = os.path.join(
-    os.path.dirname(
-      os.path.dirname(docc_install_dir)
-    ),
+    os.path.dirname(docc_install_dir),
     'share',
-    'docc',
-    'features.json'
+    'docc'
   )
   create_intermediate_directories(os.path.dirname(features_install_path), verbose=verbose)
   check_and_sync(
