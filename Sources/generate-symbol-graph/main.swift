@@ -189,7 +189,7 @@ func generateSwiftDocCFrameworkSymbolGraph() throws -> SymbolGraph {
 func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph.LineList] {
     let swiftDocCFrameworkSymbolGraph = try generateSwiftDocCFrameworkSymbolGraph()
     
-    let directiveSymbols = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
+    let directiveSymbolUSRs: [String] = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
         guard relationship.kind == .conformsTo
             && relationship.target == "s:9SwiftDocC29AutomaticDirectiveConvertibleP"
         else {
@@ -198,8 +198,9 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
     
         return relationship.source
     }
-    .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
-    .map { (String($0.title.split(separator: ".").last ?? $0.title[...]), $0) }
+    let directiveSymbols = Set(directiveSymbolUSRs)
+        .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
+        .map { (String($0.title.split(separator: ".").last ?? $0.title[...]), $0) }
     
     let directiveDocComments: [(String, SymbolGraph.LineList)] = directiveSymbols.compactMap {
         let (directiveName, directiveSymbol) = $0
