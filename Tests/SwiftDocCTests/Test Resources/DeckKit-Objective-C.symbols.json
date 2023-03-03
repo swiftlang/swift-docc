@@ -1637,7 +1637,7 @@
                 "line" : 49
               }
             },
-            "text" : "\\param suit The suit of the card."
+            "text" : "@param suit The suit of the card."
           },
           {
             "range" : {
