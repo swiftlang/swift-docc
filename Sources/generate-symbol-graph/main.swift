@@ -565,11 +565,30 @@ let symbolGraph = SymbolGraph(
     relationships: []
 )
 
+private struct SortedSymbolGraph: Codable {
+    var wrapped: SymbolGraph
+    init(_ symbolGraph: SymbolGraph) {
+        wrapped = symbolGraph
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: SymbolGraph.CodingKeys.self)
+        try container.encode(wrapped.metadata, forKey: .metadata)
+        try container.encode(wrapped.module, forKey: .module)
+        try container.encode(wrapped.symbols.values.sorted(by: \.identifier.precise), forKey: .symbols)
+        try container.encode(wrapped.relationships, forKey: .relationships)
+    }
+    
+    init(from decoder: Decoder) throws {
+        try self.init(SymbolGraph(from: decoder))
+    }
+}
+
 let output = URL(fileURLWithPath: #file)
     .deletingLastPathComponent()
     .deletingLastPathComponent()
     .appendingPathComponent("docc/DocCDocumentation.docc/docc.symbols.json")
 var encoder = JSONEncoder()
 encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-let data = try! encoder.encode(symbolGraph)
+let data = try! encoder.encode(SortedSymbolGraph(symbolGraph))
 try! data.write(to: output)
