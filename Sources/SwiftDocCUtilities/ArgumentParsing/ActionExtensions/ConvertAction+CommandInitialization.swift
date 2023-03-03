@@ -86,8 +86,7 @@ extension ConvertAction {
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
             transformForStaticHosting: convert.transformForStaticHosting,
             hostingBasePath: convert.hostingBasePath,
-            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments),
-            experimentalParseDoxygenCommands: convert.experimentalParseDoxygenCommands
+            sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments)
         )
     }
 }

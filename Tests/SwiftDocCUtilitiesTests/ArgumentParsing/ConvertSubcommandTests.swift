@@ -399,18 +399,16 @@ class ConvertSubcommandTests: XCTestCase {
         }
 
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
-        let actionWithoutFlag = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        let _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
         XCTAssertFalse(commandWithoutFlag.experimentalParseDoxygenCommands)
-        XCTAssertFalse(actionWithoutFlag.experimentalParseDoxygenCommands)
         XCTAssertFalse(FeatureFlags.current.isExperimentalDoxygenSupportEnabled)
 
         let commandWithFlag = try Docc.Convert.parse([
             "--experimental-parse-doxygen-commands",
             testBundleURL.path,
         ])
-        let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
+        let _ = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.experimentalParseDoxygenCommands)
-        XCTAssertTrue(actionWithFlag.experimentalParseDoxygenCommands)
         XCTAssertTrue(FeatureFlags.current.isExperimentalDoxygenSupportEnabled)
     }
     
