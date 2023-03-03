@@ -170,7 +170,7 @@ extension Docc {
         /// A user-provided value that is true if experimental Doxygen support should be enabled.
         ///
         /// Defaults to false.
-        @Flag(help: "Parse a limited set of Doxygen commands as equivalent DocC markup")
+        @Flag(help: .hidden)
         public var experimentalParseDoxygenCommands = false
 
         // MARK: - Info.plist fallbacks
