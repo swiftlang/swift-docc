@@ -28,7 +28,9 @@ enum SVGIDExtractor {
         let delegate = SVGIDParserDelegate()
         let svgParser = XMLParser(data: data)
         svgParser.delegate = delegate
-        svgParser.parse()
+        
+        // The delegate aborts the parsing when it finds the ID so the larger parsing operation is not "successful"
+        _ = svgParser.parse()
         
         return delegate.id
     }
