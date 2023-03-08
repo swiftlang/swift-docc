@@ -884,23 +884,36 @@ extension PathHierarchy.Error {
                 ])
             ])
         case .partialResult(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
-            let nextPathComponent = remaining[0].full
-            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: nextPathComponent)
+            let nextPathComponent = remaining.first!
+            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: nextPathComponent.name)
             
+            // Use the authored disambiguation to try and reduce the possible near misses. For example, if the link was disambiguated with `-struct` we should
+            // only make suggestions for similarly spelled structs.
+            let filteredNearMisses = nearMisses.filter { name in
+                (try? partialResult.node.children[name]?.find(nextPathComponent.kind, nextPathComponent.hash)) != nil
+            }
+
             var validPrefix = ""
             if !partialResult.path.isEmpty {
                 validPrefix += PathHierarchy.joined(partialResult.path) + "/"
             }
-            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + nextPathComponent.count, source: nil)
-            
-            // we don't want to provide an endless amount of unrelated fixits, but if there are only three
-            // or less valid options, we still suggest them as fixits
-            let fixitCandidates = nearMisses.isEmpty && availableChildren.count <= 3 ? availableChildren : nearMisses
-            
-            let solutions = fixitCandidates.map { candidate in
-                Solution(summary: "Replace \(nextPathComponent.singleQuoted) with \(candidate.singleQuoted).", replacements: [
-                    Replacement(range: replacementRange, replacement: candidate)
-                ])
+            let solutions: [Solution]
+            if filteredNearMisses.isEmpty {
+                // If there are no near-misses where the authored disambiguation narrow down the results, replace the full path component
+                let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + nextPathComponent.full.count, source: nil)
+                solutions = nearMisses.map { candidate in
+                    Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.full, to: candidate))", replacements: [
+                        Replacement(range: replacementRange, replacement: candidate)
+                    ])
+                }
+            } else {
+                // If the authored disambiguation narrows down the possible near-misses, only replace the name part of the path component
+                let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + nextPathComponent.name.count, source: nil)
+                solutions = filteredNearMisses.map { candidate in
+                    Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.name, to: candidate))", replacements: [
+                        Replacement(range: replacementRange, replacement: candidate)
+                    ])
+                }
             }
             
             var message: String {
@@ -909,9 +922,9 @@ extension PathHierarchy.Error {
                     case 0:
                         return "No similar pages."
                     case 1:
-                        return "Did you mean \(nearMisses[0])?"
+                        return "Did you mean \(nearMisses[0].singleQuoted)?"
                     default:
-                        return "Did you mean one of: \(nearMisses.joined(separator: ", "))?"
+                        return "Did you mean one of: \(nearMisses.map(\.singleQuoted).joined(separator: ", "))?"
                     }
                 }
                 
@@ -957,6 +970,16 @@ extension PathHierarchy.Error {
         default:
             return "Available \(category): \(candidates.joined(separator: ", "))."
         }
+    }
+    
+    private static func replacementOperationDescription<S1: StringProtocol, S2: StringProtocol>(from: S1, to: S2) -> String {
+        if from.isEmpty {
+            return "Insert \(to.singleQuoted)"
+        }
+        if to.isEmpty {
+            return "Remove \(from.singleQuoted)"
+        }
+        return "Replace \(from.singleQuoted) with \(to.singleQuoted)"
     }
 }
 
