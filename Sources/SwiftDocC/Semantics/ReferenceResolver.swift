@@ -11,33 +11,42 @@
 import Foundation
 import Markdown
 
-func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, underlyingError: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
+func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
     var notes = uncuratedArticleMatch.map {
-        [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil), message: "This article was found but is not available for linking because it's uncurated")]
+        [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: $0)..<SourceLocation(line: 1, column: 1, source: $0), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
     
-    if let source = source,
-       let range = range,
-       let note = underlyingError.note {
-        notes.append(DiagnosticNote(source: source, range: range, message: note))
+    guard LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver else {
+        let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(errorInfo.message)", notes: notes)
+        return Problem(diagnostic: diagnostic, possibleSolutions: [])
+    }
+    
+    let referenceSourceRange: SourceRange? = range.map { range in
+        // FIXME: Finding the range for the link's destination is better suited for Swift-Markdown
+        // https://github.com/apple/swift-markdown/issues/109
+        if fromSymbolLink {
+            // Inset the range by 2 at the start and end to skip both "``".
+            return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+2, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-2, source: range.upperBound.source)
+        } else {
+            // FIXME: This assumes that the link uses the `<doc:my/reference>` syntax.
+            // Links that use the [link text](doc:my/reference) syntax will have incorrect suggestion replacements.
+            // https://github.com/apple/swift-docc/issues/470
+            
+            // Inset the range by 5 at the start and by 1 at the end to skip "<doc:" at the start and ">" at the end.
+            return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+5, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-1, source: range.upperBound.source)
+        }
     }
     
     var solutions: [Solution] = []
-    
-    if let range = range {
-        // FIXME: The replacements currently only support DocC's predominantly used custom link formats.
-        // We should also support the regular markdown link syntax ([doc:my/reference](doc:my/reference), or
-        // [custom title](doc:my/reference)), however don't have the necessary information yet.
-        // https://github.com/apple/swift-docc/issues/470
-        let innerRange = fromSymbolLink
-            // ``my/reference``
-            ? SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+2, source: range.lowerBound.source)..<SourceLocation(line: range.upperBound.line, column: range.upperBound.column-2, source: range.upperBound.source)
-            // <doc:my/reference>
-            : SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+5, source: range.lowerBound.source)..<SourceLocation(line: range.upperBound.line, column: range.upperBound.column-1, source: range.upperBound.source)
-        solutions.append(contentsOf: underlyingError.solutions(referenceSourceRange: innerRange))
+    if let referenceSourceRange = referenceSourceRange {
+        if let note = errorInfo.note, let source = source {
+            notes.append(DiagnosticNote(source: source, range: referenceSourceRange, message: note))
+        }
+        
+        solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: referenceSourceRange))
     }
     
-    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(underlyingError.message)", notes: notes)
+    let diagnostic = Diagnostic(source: source, severity: severity, range: referenceSourceRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(errorInfo.message)", notes: notes)
     return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 
@@ -106,7 +115,7 @@ struct ReferenceResolver: SemanticVisitor {
             
         case let .failure(unresolved, error):
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingError: error, fromSymbolLink: false))
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
             return .failure(unresolved, error)
         }
     }
