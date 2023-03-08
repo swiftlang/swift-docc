@@ -303,6 +303,14 @@ class PathHierarchyTests: XCTestCase {
                 .init(summary: "Insert 'property' to refer to 'var something: String { get }'", replacements: [("-property", 54, 54)]),
             ])
         }
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something-class", in: tree, context: context, expectedErrorMessage: """
+        Reference 'something' at '/MixedFramework/CollisionsWithDifferentKinds' can't be disambiguated with 'class'.
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Replace 'class' with 'enum.case' to refer to 'case something'", replacements: [("-enum.case", 54, 60)]),
+                .init(summary: "Replace 'class' with 'property' to refer to 'var something: String { get }'", replacements: [("-property", 54, 60)]),
+            ])
+        }
         
         // public final class CollisionsWithEscapedKeywords {
         //     public subscript() -> Int { 0 }
@@ -318,7 +326,18 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyF", disambiguation: "method"),
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyFZ", disambiguation: "type.method"),
         ])
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords'.") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()-abc123", in: tree, context: context, expectedErrorMessage: """
+        Reference 'init()' at '/MixedFramework/CollisionsWithEscapedKeywords' can't be disambiguated with 'abc123'.
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Replace 'abc123' with 'method' to refer to 'func `init`()'", replacements: [("-method", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'init' to refer to 'init()'", replacements: [("-init", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'type.method' to refer to 'static func `init`()'", replacements: [("-type.method", 52, 59)]),
+            ])
+        }
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords'.
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Insert 'method' to refer to 'func `init`()'", replacements: [("-method", 52, 52)]),
                 .init(summary: "Insert 'init' to refer to 'init()'", replacements: [("-init", 52, 52)]),
@@ -326,17 +345,23 @@ class PathHierarchyTests: XCTestCase {
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `()` is missing in the last path component
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init-method", in: tree, context: context, expectedErrorMessage: "Reference at '/MixedFramework/CollisionsWithEscapedKeywords' can't resolve 'init-method'. Did you mean 'init()'?") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init-method", in: tree, context: context, expectedErrorMessage: """
+        Reference at '/MixedFramework/CollisionsWithEscapedKeywords' can't resolve 'init-method'. Did you mean 'init()'?
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'init' with 'init()'", replacements: [("init()", 46, 50)]), // The disambiguation is not replaced so the suggested link is unambiguous
             ])
         }
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init-init", in: tree, context: context, expectedErrorMessage: "Reference at '/MixedFramework/CollisionsWithEscapedKeywords' can't resolve 'init-init'. Did you mean 'init()'?") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init-init", in: tree, context: context, expectedErrorMessage: """
+        Reference at '/MixedFramework/CollisionsWithEscapedKeywords' can't resolve 'init-init'. Did you mean 'init()'?
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'init' with 'init()'", replacements: [("init()", 46, 50)]), // The disambiguation is not replaced so the suggested link is unambiguous
             ])
         }
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init-type.method", in: tree, context: context, expectedErrorMessage: "Reference at '/MixedFramework/CollisionsWithEscapedKeywords' can't resolve 'init-type.method'. Did you mean 'init()'?") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init-type.method", in: tree, context: context, expectedErrorMessage: """
+        Reference at '/MixedFramework/CollisionsWithEscapedKeywords' can't resolve 'init-type.method'. Did you mean 'init()'?
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'init' with 'init()'", replacements: [("init()", 46, 50)]), // The disambiguation is not replaced so the suggested link is unambiguous
             ])
@@ -347,7 +372,9 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsCSiycip", disambiguation: "subscript"),
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyFZ", disambiguation: "type.method"),
         ])
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords'.") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords'.
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Insert 'method' to refer to 'func `subscript`()'", replacements: [("-method", 57, 57)]),
                 .init(summary: "Insert 'type.method' to refer to 'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
@@ -363,29 +390,41 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF", disambiguation: "1cyvp"),
             (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF", disambiguation: "2vke2"),
         ])
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, context: context,
-                                         expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments'.") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments'.
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Insert '1cyvp' to refer to 'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 77)]),
                 .init(summary: "Insert '2vke2' to refer to 'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 77)]),
             ])
         }
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123", in: tree, context: context, expectedErrorMessage: """
+        Reference 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments' can't be disambiguated with 'abc123'.
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Replace 'abc123' with '1cyvp' to refer to 'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
+                .init(summary: "Replace 'abc123' with '2vke2' to refer to 'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
+            ])
+        }
         // Providing disambiguation will narrow down the suggestions. Note that `argument` label is missing in the last path component
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(_:)-1cyvp", in: tree, context: context,
-                                         expectedErrorMessage: "Reference at '/MixedFramework/CollisionsWithDifferentFunctionArguments' can't resolve 'something(_:)-1cyvp'. Did you mean 'something(argument:)'?") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(_:)-1cyvp", in: tree, context: context, expectedErrorMessage: """
+        Reference at '/MixedFramework/CollisionsWithDifferentFunctionArguments' can't resolve 'something(_:)-1cyvp'. Did you mean 'something(argument:)'?
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'something(_:)' with 'something(argument:)'", replacements: [("something(argument:)", 57, 70)]), // The disambiguation is not replaced so the suggested link is unambiguous
             ])
         }
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(_:)-2vke2", in: tree, context: context,
-                                         expectedErrorMessage: "Reference at '/MixedFramework/CollisionsWithDifferentFunctionArguments' can't resolve 'something(_:)-2vke2'. Did you mean 'something(argument:)'?") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(_:)-2vke2", in: tree, context: context, expectedErrorMessage: """
+        Reference at '/MixedFramework/CollisionsWithDifferentFunctionArguments' can't resolve 'something(_:)-2vke2'. Did you mean 'something(argument:)'?
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'something(_:)' with 'something(argument:)'", replacements: [("something(argument:)", 57, 70)]), // The disambiguation is not replaced so the suggested link is unambiguous
             ])
         }
         
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-method", in: tree, context: context,
-                                         expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments'.") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-method", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments'.
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'method' with '1cyvp' to refer to 'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
                 .init(summary: "Replace 'method' with '2vke2' to refer to 'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
@@ -400,14 +439,18 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip", disambiguation: "4fd0l"),
             (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "757cj"),
         ])
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments'.") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments'.
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Insert '4fd0l' to refer to 'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 71)]),
                 .init(summary: "Insert '757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 71)]),
             ])
         }
         
-        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-subscript", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments'.") { error in
+        try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-subscript", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments'.
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'subscript' with '4fd0l' to refer to 'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 81)]),
                 .init(summary: "Replace 'subscript' with '757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 81)]),
@@ -918,7 +961,9 @@ class PathHierarchyTests: XCTestCase {
             ("s:5MyKit0A5MyProtocol0Afunc()DefaultImp", "2dxqn"),
             ("s:5MyKit0A5MyProtocol0Afunc()", "6ijsi"),
         ])
-        try assertPathRaisesErrorMessage("/SideKit/SideProtocol/func()", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/SideKit/SideProtocol'.") { error in
+        try assertPathRaisesErrorMessage("/SideKit/SideProtocol/func()", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/SideKit/SideProtocol'.
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Insert '2dxqn' to refer to 'func1()'", replacements: [("-2dxqn", 28, 28)]),
                 .init(summary: "Insert '6ijsi' to refer to 'func1()'", replacements: [("-6ijsi", 28, 28)]),
@@ -964,7 +1009,9 @@ class PathHierarchyTests: XCTestCase {
             ("c:@E@Foo", "struct"),
             ("c:MixedLanguageFramework.h@T@Foo", "typealias"),
         ])
-        try assertPathRaisesErrorMessage("MixedLanguageFramework/Foo", in: tree, context: context, expectedErrorMessage: "Reference is ambiguous after '/MixedLanguageFramework'.") { error in
+        try assertPathRaisesErrorMessage("MixedLanguageFramework/Foo", in: tree, context: context, expectedErrorMessage: """
+        Reference is ambiguous after '/MixedLanguageFramework'.
+        """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Insert 'struct' to refer to 'struct Foo'", replacements: [("-struct", 26, 26)]),
                 .init(summary: "Insert 'enum' to refer to 'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
@@ -1335,8 +1382,10 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(symbol.identifier.precise, symbolID, file: file, line: line)
         } catch PathHierarchy.Error.notFound {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
-        } catch PathHierarchy.Error.partialResult {
+        } catch PathHierarchy.Error.unknownName {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
+        } catch PathHierarchy.Error.unknownDisambiguation {
+            XCTFail("Symbol for \(path.singleQuoted) not found in tree. Unknown disambiguation.", file: file, line: line)
         } catch PathHierarchy.Error.lookupCollision(_, _, let collisions) {
             let symbols = collisions.map { $0.node.symbol! }
             XCTFail("Unexpected collision for \(path.singleQuoted); \(symbols.map { return "\($0.names.title) - \($0.kind.identifier.identifier) - \($0.identifier.precise.stableHashString)"})", file: file, line: line)
@@ -1349,7 +1398,9 @@ class PathHierarchyTests: XCTestCase {
             XCTFail("Unexpectedly found symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
         } catch PathHierarchy.Error.notFound, PathHierarchy.Error.unfindableMatch, PathHierarchy.Error.nonSymbolMatchForSymbolLink {
             // This specific error is expected.
-        } catch PathHierarchy.Error.partialResult {
+        } catch PathHierarchy.Error.unknownName {
+            // For the purpose of this assertion, this also counts as "not found".
+        } catch PathHierarchy.Error.unknownDisambiguation {
             // For the purpose of this assertion, this also counts as "not found".
         } catch PathHierarchy.Error.lookupCollision(_, _, let collisions) {
             let symbols = collisions.map { $0.node.symbol! }
@@ -1363,8 +1414,10 @@ class PathHierarchyTests: XCTestCase {
             XCTFail("Unexpectedly found unambiguous symbol with ID \(symbol.identifier.precise) for path \(path.singleQuoted)", file: file, line: line)
         } catch PathHierarchy.Error.notFound {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree", file: file, line: line)
-        } catch PathHierarchy.Error.partialResult {
+        } catch PathHierarchy.Error.unknownName {
             XCTFail("Symbol for \(path.singleQuoted) not found in tree. Only part of path is found.", file: file, line: line)
+        } catch PathHierarchy.Error.unknownDisambiguation {
+            XCTFail("Symbol for \(path.singleQuoted) not found in tree. Unknown disambiguation.", file: file, line: line)
         } catch PathHierarchy.Error.lookupCollision(_, _, let collisions) {
             let sortedCollisions = collisions.sorted(by: \.disambiguation)
             XCTAssertEqual(sortedCollisions.count, expectedCollisions.count, file: file, line: line)

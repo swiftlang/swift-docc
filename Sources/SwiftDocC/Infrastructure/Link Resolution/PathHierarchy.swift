@@ -390,7 +390,21 @@ struct PathHierarchy {
         parsedPath: [PathComponent],
         remaining: ArraySlice<PathComponent>
     ) -> Error {
-        return Error.partialResult(
+        if let disambiguationTree = node.children[remaining.first!.name] {
+            return Error.unknownDisambiguation(
+                partialResult: (
+                    node,
+                    Array(parsedPath.dropLast(remaining.count))
+                ),
+                remaining: Array(remaining),
+                candidates: disambiguationTree.disambiguatedValues().map {
+                    (node: $0.value, disambiguation: String($0.disambiguation.makeSuffix().dropFirst()))
+                }
+            )
+        }
+        
+        
+        return Error.unknownName(
             partialResult: (
                 node,
                 Array(parsedPath.dropLast(remaining.count))
@@ -819,6 +833,13 @@ extension PathHierarchy {
 extension PathHierarchy {
     /// An error finding an entry in the path hierarchy.
     enum Error: Swift.Error {
+        /// Information about the portion of a link that could be found.
+        ///
+        /// Includes information about:
+        /// - The node that was found
+        /// - The remaining portion of the path.
+        typealias PartialResult = (node: Node, path: [PathComponent])
+        
         /// No element was found at the beginning of the path.
         ///
         /// Includes information about:
@@ -833,13 +854,21 @@ extension PathHierarchy {
         /// A symbol link found a non-symbol match.
         case nonSymbolMatchForSymbolLink
         
-        /// No child element is found partway through the path.
+        /// Encountered an unknown disambiguation for a found node.
+        ///
+        /// Includes information about:
+        /// - The partial result for as much of the path that could be found.
+        /// - The remaining portion of the path.
+        /// - A list of possible matches paired with the disambiguation suffixes needed to distinguish them.
+        case unknownDisambiguation(partialResult: PartialResult, remaining: [PathComponent], candidates: [(node: Node, disambiguation: String)])
+        
+        /// Encountered an unknown name in the path.
         ///
         /// Includes information about:
         /// - The partial result for as much of the path that could be found.
         /// - The remaining portion of the path.
         /// - A list of the names for the children of the partial result.
-        case partialResult(partialResult: (node: Node, path: [PathComponent]), remaining: [PathComponent], availableChildren: [String])
+        case unknownName(partialResult: PartialResult, remaining: [PathComponent], availableChildren: [String])
         
         /// Multiple matches are found partway through the path.
         ///
@@ -847,7 +876,7 @@ extension PathHierarchy {
         /// - The partial result for as much of the path that could be found unambiguously.
         /// - The remaining portion of the path.
         /// - A list of possible matches paired with the disambiguation suffixes needed to distinguish them.
-        case lookupCollision(partialResult: (node: Node, path: [PathComponent]), remaining: [PathComponent], collisions: [(node: Node, disambiguation: String)])
+        case lookupCollision(partialResult: PartialResult, remaining: [PathComponent], collisions: [(node: Node, disambiguation: String)])
     }
 }
     
@@ -869,6 +898,13 @@ extension PathHierarchy.Error {
     /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the `originalReference`, i.e. the beginning
     /// of the _body_ of the original reference.
     func asTopicReferenceResolutionErrorInfo(context: DocumentationContext, originalReference: String) -> TopicReferenceResolutionErrorInfo {
+        
+        // This is defined inline because it captures `context`.
+        func collisionIsBefore(_ lhs: (node: PathHierarchy.Node, disambiguation: String), _ rhs: (node: PathHierarchy.Node, disambiguation: String)) -> Bool {
+            return lhs.node.fullNameOfValue(context: context) + lhs.disambiguation
+                 < rhs.node.fullNameOfValue(context: context) + rhs.disambiguation
+        }
+        
         switch self {
         case .notFound(availableChildren: let availableChildren):
             return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.", note: availabilityNote(category: "top-level elements", candidates: availableChildren))
@@ -883,7 +919,33 @@ extension PathHierarchy.Error {
                     Replacement(range: SourceLocation(line: 0, column: originalReference.count, source: nil)..<SourceLocation(line: 0, column: originalReference.count+2, source: nil), replacement: ">"),
                 ])
             ])
-        case .partialResult(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
+            
+        case .unknownDisambiguation(partialResult: let partialResult, remaining: let remaining, candidates: let candidates):
+            let nextPathComponent = remaining.first!
+            var validPrefix = ""
+            if !partialResult.path.isEmpty {
+                validPrefix += PathHierarchy.joined(partialResult.path) + "/"
+            }
+            validPrefix += nextPathComponent.name
+            
+            let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
+            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + disambiguations.count, source: nil)
+            
+            let solutions: [Solution] = candidates
+                .sorted(by: collisionIsBefore)
+                .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) to refer to \(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                        Replacement(range: replacementRange, replacement: "-" + disambiguation)
+                    ])
+                }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                Reference \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted) can't be disambiguated with \(disambiguations.dropFirst().singleQuoted).
+                """,
+                solutions: solutions
+            )
+            
+        case .unknownName(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
             let nextPathComponent = remaining.first!
             let nearMisses = NearMiss.bestMatches(for: availableChildren, against: nextPathComponent.name)
             
