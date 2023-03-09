@@ -54,7 +54,7 @@ func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: 
         diagnosticRange = referenceSourceRange
     }
     
-    let diagnostic = Diagnostic(source: source, severity: severity, range: diagnosticRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(errorInfo.message)", notes: notes)
+    let diagnostic = Diagnostic(source: source, severity: severity, range: diagnosticRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: errorInfo.message, notes: notes)
     return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 

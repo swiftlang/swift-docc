@@ -906,8 +906,8 @@ extension PathHierarchy.Error {
         }
         
         switch self {
-        case .notFound(availableChildren: let availableChildren):
-            return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.", note: availabilityNote(category: "top-level elements", candidates: availableChildren))
+        case .notFound(availableChildren: _):
+            return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.")
         case .unfindableMatch:
             return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.")
         case .nonSymbolMatchForSymbolLink:
@@ -934,13 +934,13 @@ extension PathHierarchy.Error {
             let solutions: [Solution] = candidates
                 .sorted(by: collisionIsBefore)
                 .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) to refer to \(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
                         Replacement(range: replacementRange, replacement: "-" + disambiguation)
                     ])
                 }
             
             return TopicReferenceResolutionErrorInfo("""
-                Reference \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted) can't be disambiguated with \(disambiguations.dropFirst().singleQuoted).
+                \(disambiguations.dropFirst().singleQuoted) isn't a disambiguation for \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
                 """,
                 solutions: solutions,
                 rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
@@ -979,24 +979,9 @@ extension PathHierarchy.Error {
                 }
             }
             
-            var message: String {
-                var suggestion: String {
-                    switch nearMisses.count {
-                    case 0:
-                        return "No similar pages."
-                    case 1:
-                        return "Did you mean \(nearMisses[0].singleQuoted)?"
-                    default:
-                        return "Did you mean one of: \(nearMisses.map(\.singleQuoted).joined(separator: ", "))?"
-                    }
-                }
-                
-                return "Reference at \(partialResult.node.pathWithoutDisambiguation().singleQuoted) can't resolve \(remaining.map { $0.full }.joined(separator: "/").singleQuoted). \(suggestion)"
-            }
-            
-            return TopicReferenceResolutionErrorInfo(
-                message,
-                note: availabilityNote(category: "children", candidates: availableChildren),
+            return TopicReferenceResolutionErrorInfo("""
+                \(nextPathComponent.full.singleQuoted) doesn't exist at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
+                """,
                 solutions: solutions,
                 rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.full.count)
             )
@@ -1014,25 +999,17 @@ extension PathHierarchy.Error {
             let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
             
             let solutions: [Solution] = collisions.sorted(by: collisionIsBefore).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) to refer to \(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
                     Replacement(range: replacementRange, replacement: "-" + disambiguation)
                 ])
             }
             
-            return TopicReferenceResolutionErrorInfo(
-                "Reference is ambiguous after \(partialResult.node.pathWithoutDisambiguation().singleQuoted).",
+            return TopicReferenceResolutionErrorInfo("""
+                \(nextPathComponent.full.singleQuoted) is ambiguous at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
+                """,
                 solutions: solutions,
                 rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count - nextPathComponent.full.count, length: nextPathComponent.full.count)
             )
-        }
-    }
-    
-    private func availabilityNote(category: String, candidates: [String]) -> String {
-        switch candidates.count {
-        case 0:
-            return "No \(category) available."
-        default:
-            return "Available \(category): \(candidates.joined(separator: ", "))."
         }
     }
     

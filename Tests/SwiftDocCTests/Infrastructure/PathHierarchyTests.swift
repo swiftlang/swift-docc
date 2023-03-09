@@ -296,19 +296,19 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework28CollisionsWithDifferentKindsO9somethingSSvp", disambiguation: "property"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something", in: tree, context: context, expectedErrorMessage: """
-        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentKinds'.
+        'something' is ambiguous at '/MixedFramework/CollisionsWithDifferentKinds'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'enum.case' to refer to 'case something'", replacements: [("-enum.case", 54, 54)]),
-                .init(summary: "Insert 'property' to refer to 'var something: String { get }'", replacements: [("-property", 54, 54)]),
+                .init(summary: "Insert 'enum.case' for\n'case something'", replacements: [("-enum.case", 54, 54)]),
+                .init(summary: "Insert 'property' for\n'var something: String { get }'", replacements: [("-property", 54, 54)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentKinds/something-class", in: tree, context: context, expectedErrorMessage: """
-        Reference 'something' at '/MixedFramework/CollisionsWithDifferentKinds' can't be disambiguated with 'class'.
+        'class' isn't a disambiguation for 'something' at '/MixedFramework/CollisionsWithDifferentKinds'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'class' with 'enum.case' to refer to 'case something'", replacements: [("-enum.case", 54, 60)]),
-                .init(summary: "Replace 'class' with 'property' to refer to 'var something: String { get }'", replacements: [("-property", 54, 60)]),
+                .init(summary: "Replace 'class' with 'enum.case' for\n'case something'", replacements: [("-enum.case", 54, 60)]),
+                .init(summary: "Replace 'class' with 'property' for\n'var something: String { get }'", replacements: [("-property", 54, 60)]),
             ])
         }
         
@@ -327,40 +327,40 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC4inityyFZ", disambiguation: "type.method"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()-abc123", in: tree, context: context, expectedErrorMessage: """
-        Reference 'init()' at '/MixedFramework/CollisionsWithEscapedKeywords' can't be disambiguated with 'abc123'.
+        'abc123' isn't a disambiguation for 'init()' at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'abc123' with 'method' to refer to 'func `init`()'", replacements: [("-method", 52, 59)]),
-                .init(summary: "Replace 'abc123' with 'init' to refer to 'init()'", replacements: [("-init", 52, 59)]),
-                .init(summary: "Replace 'abc123' with 'type.method' to refer to 'static func `init`()'", replacements: [("-type.method", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'method' for\n'func `init`()'", replacements: [("-method", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'init' for\n'init()'", replacements: [("-init", 52, 59)]),
+                .init(summary: "Replace 'abc123' with 'type.method' for\n'static func `init`()'", replacements: [("-type.method", 52, 59)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init()", in: tree, context: context, expectedErrorMessage: """
-        Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords'.
+        'init()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' to refer to 'func `init`()'", replacements: [("-method", 52, 52)]),
-                .init(summary: "Insert 'init' to refer to 'init()'", replacements: [("-init", 52, 52)]),
-                .init(summary: "Insert 'type.method' to refer to 'static func `init`()'", replacements: [("-type.method", 52, 52)]),
+                .init(summary: "Insert 'method' for\n'func `init`()'", replacements: [("-method", 52, 52)]),
+                .init(summary: "Insert 'init' for\n'init()'", replacements: [("-init", 52, 52)]),
+                .init(summary: "Insert 'type.method' for\n'static func `init`()'", replacements: [("-type.method", 52, 52)]),
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `()` is missing in the last path component
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init-method", in: tree, context: context, expectedErrorMessage: """
-        Reference at '/MixedFramework/CollisionsWithEscapedKeywords' can't resolve 'init-method'. Did you mean 'init()'?
+        'init-method' doesn't exist at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'init' with 'init()'", replacements: [("init()", 46, 50)]), // The disambiguation is not replaced so the suggested link is unambiguous
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init-init", in: tree, context: context, expectedErrorMessage: """
-        Reference at '/MixedFramework/CollisionsWithEscapedKeywords' can't resolve 'init-init'. Did you mean 'init()'?
+        'init-init' doesn't exist at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'init' with 'init()'", replacements: [("init()", 46, 50)]), // The disambiguation is not replaced so the suggested link is unambiguous
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/init-type.method", in: tree, context: context, expectedErrorMessage: """
-        Reference at '/MixedFramework/CollisionsWithEscapedKeywords' can't resolve 'init-type.method'. Did you mean 'init()'?
+        'init-type.method' doesn't exist at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'init' with 'init()'", replacements: [("init()", 46, 50)]), // The disambiguation is not replaced so the suggested link is unambiguous
@@ -373,12 +373,12 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework29CollisionsWithEscapedKeywordsC9subscriptyyFZ", disambiguation: "type.method"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithEscapedKeywords/subscript()", in: tree, context: context, expectedErrorMessage: """
-        Reference is ambiguous after '/MixedFramework/CollisionsWithEscapedKeywords'.
+        'subscript()' is ambiguous at '/MixedFramework/CollisionsWithEscapedKeywords'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'method' to refer to 'func `subscript`()'", replacements: [("-method", 57, 57)]),
-                .init(summary: "Insert 'type.method' to refer to 'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
-                .init(summary: "Insert 'subscript' to refer to 'subscript() -> Int { get }'", replacements: [("-subscript", 57, 57)]),
+                .init(summary: "Insert 'method' for\n'func `subscript`()'", replacements: [("-method", 57, 57)]),
+                .init(summary: "Insert 'type.method' for\n'static func `subscript`()'", replacements: [("-type.method", 57, 57)]),
+                .init(summary: "Insert 'subscript' for\n'subscript() -> Int { get }'", replacements: [("-subscript", 57, 57)]),
             ])
         }
         
@@ -391,31 +391,31 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF", disambiguation: "2vke2"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, context: context, expectedErrorMessage: """
-        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments'.
+        'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '1cyvp' to refer to 'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 77)]),
-                .init(summary: "Insert '2vke2' to refer to 'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 77)]),
+                .init(summary: "Insert '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 77)]),
+                .init(summary: "Insert '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 77)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123", in: tree, context: context, expectedErrorMessage: """
-        Reference 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments' can't be disambiguated with 'abc123'.
+        'abc123' isn't a disambiguation for 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'abc123' with '1cyvp' to refer to 'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
-                .init(summary: "Replace 'abc123' with '2vke2' to refer to 'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
+                .init(summary: "Replace 'abc123' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
+                .init(summary: "Replace 'abc123' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `argument` label is missing in the last path component
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(_:)-1cyvp", in: tree, context: context, expectedErrorMessage: """
-        Reference at '/MixedFramework/CollisionsWithDifferentFunctionArguments' can't resolve 'something(_:)-1cyvp'. Did you mean 'something(argument:)'?
+        'something(_:)-1cyvp' doesn't exist at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'something(_:)' with 'something(argument:)'", replacements: [("something(argument:)", 57, 70)]), // The disambiguation is not replaced so the suggested link is unambiguous
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(_:)-2vke2", in: tree, context: context, expectedErrorMessage: """
-        Reference at '/MixedFramework/CollisionsWithDifferentFunctionArguments' can't resolve 'something(_:)-2vke2'. Did you mean 'something(argument:)'?
+        'something(_:)-2vke2' doesn't exist at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'something(_:)' with 'something(argument:)'", replacements: [("something(argument:)", 57, 70)]), // The disambiguation is not replaced so the suggested link is unambiguous
@@ -423,11 +423,11 @@ class PathHierarchyTests: XCTestCase {
         }
         
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-method", in: tree, context: context, expectedErrorMessage: """
-        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentFunctionArguments'.
+        'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'method' with '1cyvp' to refer to 'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
-                .init(summary: "Replace 'method' with '2vke2' to refer to 'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
+                .init(summary: "Replace 'method' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
+                .init(summary: "Replace 'method' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
             ])
         }
         
@@ -440,20 +440,20 @@ class PathHierarchyTests: XCTestCase {
             (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "757cj"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, context: context, expectedErrorMessage: """
-        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments'.
+        'subscript(_:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '4fd0l' to refer to 'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 71)]),
-                .init(summary: "Insert '757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 71)]),
+                .init(summary: "Insert '4fd0l' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 71)]),
+                .init(summary: "Insert '757cj' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 71)]),
             ])
         }
         
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-subscript", in: tree, context: context, expectedErrorMessage: """
-        Reference is ambiguous after '/MixedFramework/CollisionsWithDifferentSubscriptArguments'.
+        'subscript(_:)-subscript' is ambiguous at '/MixedFramework/CollisionsWithDifferentSubscriptArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'subscript' with '4fd0l' to refer to 'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 81)]),
-                .init(summary: "Replace 'subscript' with '757cj' to refer to 'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 81)]),
+                .init(summary: "Replace 'subscript' with '4fd0l' for\n'subscript(something: Int) -> Int { get }'", replacements: [("-4fd0l", 71, 81)]),
+                .init(summary: "Replace 'subscript' with '757cj' for\n'subscript(somethingElse: String) -> Int { get }'", replacements: [("-757cj", 71, 81)]),
             ])
         }
         
@@ -962,11 +962,11 @@ class PathHierarchyTests: XCTestCase {
             ("s:5MyKit0A5MyProtocol0Afunc()", "6ijsi"),
         ])
         try assertPathRaisesErrorMessage("/SideKit/SideProtocol/func()", in: tree, context: context, expectedErrorMessage: """
-        Reference is ambiguous after '/SideKit/SideProtocol'.
+        'func()' is ambiguous at '/SideKit/SideProtocol'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '2dxqn' to refer to 'func1()'", replacements: [("-2dxqn", 28, 28)]),
-                .init(summary: "Insert '6ijsi' to refer to 'func1()'", replacements: [("-6ijsi", 28, 28)]),
+                .init(summary: "Insert '2dxqn' for\n'func1()'", replacements: [("-2dxqn", 28, 28)]),
+                .init(summary: "Insert '6ijsi' for\n'func1()'", replacements: [("-6ijsi", 28, 28)]),
             ])
         } // This test data have the same declaration for both symbols.
         
@@ -1010,12 +1010,12 @@ class PathHierarchyTests: XCTestCase {
             ("c:MixedLanguageFramework.h@T@Foo", "typealias"),
         ])
         try assertPathRaisesErrorMessage("MixedLanguageFramework/Foo", in: tree, context: context, expectedErrorMessage: """
-        Reference is ambiguous after '/MixedLanguageFramework'.
+        'Foo' is ambiguous at '/MixedLanguageFramework'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert 'struct' to refer to 'struct Foo'", replacements: [("-struct", 26, 26)]),
-                .init(summary: "Insert 'enum' to refer to 'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
-                .init(summary: "Insert 'typealias' to refer to 'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-typealias", 26, 26)]),
+                .init(summary: "Insert 'struct' for\n'struct Foo'", replacements: [("-struct", 26, 26)]),
+                .init(summary: "Insert 'enum' for\n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-enum", 26, 26)]),
+                .init(summary: "Insert 'typealias' for\n'typedef enum Foo : NSString { ... } Foo;'", replacements: [("-typealias", 26, 26)]),
             ])
         } // The 'enum' and 'typealias' symbols have multi-line declarations that are presented on a single line
         

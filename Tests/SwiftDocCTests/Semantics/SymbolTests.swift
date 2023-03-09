@@ -585,32 +585,32 @@ class SymbolTests: XCTestCase {
         
         let unresolvedTopicProblems = context.problems.filter { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }
         
-        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "Topic reference 'doc://com.test.external/ExternalPage' couldn't be resolved. No external resolver registered for 'com.test.external'." }))
+        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "No external resolver registered for 'com.test.external'." }))
         if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             var problem: Problem
             
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'UnresolvableSymbolLinkInMyClassOverview<>(_:))' couldn't be resolved. Reference at '/MyKit/MyClass' can't resolve 'UnresolvableSymbolLinkInMyClassOverview<>(_:))'. No similar pages." }))
-            XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Available children: init(), myFunction()."])
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'UnresolvableSymbolLinkInMyClassOverview<>(_:))' doesn't exist at '/MyKit/MyClass'" }))
+            XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
             XCTAssertEqual(problem.possibleSolutions.count, 0)
             
             
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'UnresolvableClassInMyClassTopicCuration' couldn't be resolved. Reference at '/MyKit/MyClass' can't resolve 'UnresolvableClassInMyClassTopicCuration'. No similar pages." }))
-            XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Available children: init(), myFunction()."])
-            XCTAssertEqual(problem.possibleSolutions.count, 0)
-
-            
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'MyClass/unresolvablePropertyInMyClassTopicCuration' couldn't be resolved. Reference at '/MyKit/MyClass' can't resolve 'unresolvablePropertyInMyClassTopicCuration'. No similar pages." }))
-            XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Available children: init(), myFunction()."])
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'UnresolvableClassInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass'" }))
+            XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
             XCTAssertEqual(problem.possibleSolutions.count, 0)
 
             
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'init()' couldn't be resolved. Reference is ambiguous after '/MyKit/MyClass'." }))
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'unresolvablePropertyInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass'" }))
+            XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
+            XCTAssertEqual(problem.possibleSolutions.count, 0)
+
+            
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'init()' is ambiguous at '/MyKit/MyClass'" }))
             XCTAssert(problem.diagnostic.notes.isEmpty)
             XCTAssertEqual(problem.possibleSolutions.count, 2)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Insert '33vaw' to refer to 'init()'", "-33vaw"],
-                ["Insert '3743d' to refer to 'init()'", "-3743d"],
+                ["Insert '33vaw' for\n'init()'", "-33vaw"],
+                ["Insert '3743d' for\n'init()'", "-3743d"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -650,13 +650,15 @@ class SymbolTests: XCTestCase {
             """)
             
             
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'MyClass/init()-swift.init' couldn't be resolved. Reference is ambiguous after '/MyKit/MyClass'." }))
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
+                $0.diagnostic.range?.lowerBound.line == 33 && $0.diagnostic.summary == "'init()-swift.init' is ambiguous at '/MyKit/MyClass'"
+            }))
             XCTAssert(problem.diagnostic.notes.isEmpty)
             XCTAssertEqual(problem.possibleSolutions.count, 2)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Replace 'swift.init' with '33vaw' to refer to 'init()'", "-33vaw"],
-                ["Replace 'swift.init' with '3743d' to refer to 'init()'", "-3743d"],
+                ["Replace 'swift.init' with '33vaw' for\n'init()'", "-33vaw"],
+                ["Replace 'swift.init' with '3743d' for\n'init()'", "-3743d"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -696,13 +698,15 @@ class SymbolTests: XCTestCase {
             """)
             
             
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'doc:MyClass/init()-swift.init' couldn't be resolved. Reference is ambiguous after '/MyKit/MyClass'." }))
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
+                $0.diagnostic.range?.lowerBound.line == 34 && $0.diagnostic.summary == "'init()-swift.init' is ambiguous at '/MyKit/MyClass'"
+            }))
             XCTAssert(problem.diagnostic.notes.isEmpty)
             XCTAssertEqual(problem.possibleSolutions.count, 2)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Replace 'swift.init' with '33vaw' to refer to 'init()'", "-33vaw"],
-                ["Replace 'swift.init' with '3743d' to refer to 'init()'", "-3743d"],
+                ["Replace 'swift.init' with '33vaw' for\n'init()'", "-33vaw"],
+                ["Replace 'swift.init' with '3743d' for\n'init()'", "-3743d"],
             ])
             XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
             # ``MyKit/MyClass``
@@ -742,8 +746,8 @@ class SymbolTests: XCTestCase {
             """)
 
             
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'otherFunction()' doesn't exist at '/MyKit/MyClass'" }))
             XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'otherFunction()' couldn't be resolved. Reference at '/MyKit/MyClass' can't resolve 'otherFunction()'. Did you mean 'myFunction()'?" }))
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
@@ -787,8 +791,10 @@ class SymbolTests: XCTestCase {
             """)
             
             
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference '/MyKit/MyClas' couldn't be resolved. Reference at '/MyKit' can't resolve 'MyClas'. Did you mean 'MyClass'?" }))
-            XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Available children: Discussion, globalFunction(_:considering:), MyClass, MyProtocol."])
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
+                $0.diagnostic.range?.lowerBound.line == 26 && $0.diagnostic.summary == "'MyClas' doesn't exist at '/MyKit'"
+            }))
+            XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
@@ -832,8 +838,10 @@ class SymbolTests: XCTestCase {
             """)
             
             
-            XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Available children: Discussion, globalFunction(_:considering:), MyClass, MyProtocol."])
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'MyKit/MyClas/myFunction()' couldn't be resolved. Reference at '/MyKit' can't resolve 'MyClas/myFunction()'. Did you mean 'MyClass'?" }))
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
+                $0.diagnostic.range?.lowerBound.line == 27 && $0.diagnostic.summary == "'MyClas' doesn't exist at '/MyKit'"
+            }))
+            XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
@@ -877,53 +885,10 @@ class SymbolTests: XCTestCase {
             """)
             
             
-            XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Available children: Discussion, globalFunction(_:considering:), MyClass, MyProtocol."])
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'MyKit/MyClas/myFunction()' couldn't be resolved. Reference at '/MyKit' can't resolve 'MyClas/myFunction()'. Did you mean 'MyClass'?" }))
-            XCTAssertEqual(problem.possibleSolutions.count, 1)
-            XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
-            XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
-                ["Replace 'MyClas' with 'MyClass'", "MyClass"],
-            ])
-            XCTAssertEqual(try problem.possibleSolutions.first!.applyTo(contentsOf: url.appendingPathComponent("documentation/myclass.md")), """
-            # ``MyKit/MyClass``
-
-            @Metadata {
-               @DocumentationExtension(mergeBehavior: override)
-            }
-
-            A cool API to call.
-
-            This overview has an ``UnresolvableSymbolLinkInMyClassOverview<>(_:))``.
-
-            - Parameters:
-              - name: A parameter
-            - Returns: Return value
-
-            ## Topics
-
-            ### Unresolvable curation
-
-            - ``UnresolvableClassInMyClassTopicCuration``
-            - ``MyClass/unresolvablePropertyInMyClassTopicCuration``
-            - <doc://com.test.external/ExternalPage>
-
-            ### Near Miss
-
-            - ``otherFunction()``
-            - ``/MyKit/MyClas``
-            - ``MyKit/MyClass/myFunction()``
-            - <doc:MyKit/MyClas/myFunction()>
-
-            ### Ambiguous curation
-
-            - ``init()``
-            - ``MyClass/init()-swift.init``
-            - <doc:MyClass/init()-swift.init>
-            """)
-            
-            
-            XCTAssertEqual(problem.diagnostic.notes.map(\.message), ["Available children: Discussion, globalFunction(_:considering:), MyClass, MyProtocol."])
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'doc:MyKit/MyClas/myFunction()' couldn't be resolved. Reference at '/MyKit' can't resolve 'MyClas/myFunction()'. Did you mean 'MyClass'?" }))
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: {
+                $0.diagnostic.range?.lowerBound.line == 28 && $0.diagnostic.summary == "'MyClas' doesn't exist at '/MyKit'"
+            }))
+            XCTAssertEqual(problem.diagnostic.notes.map(\.message), [])
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
             XCTAssertEqual(problem.possibleSolutions.map { [$0.summary, $0.replacements.first!.replacement] }, [
@@ -1013,7 +978,7 @@ class SymbolTests: XCTestCase {
         if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
             var problem: Problem
             
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'UnresolvableSymbolLinkInMyClassOverview' couldn't be resolved. Reference at '/MyKit/MyClass/myFunction()' can't resolve 'UnresolvableSymbolLinkInMyClassOverview'. Did you mean 'Unresolvable-curation'?" }))
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'UnresolvableSymbolLinkInMyClassOverview' doesn't exist at '/MyKit/MyClass/myFunction()'" }))
             XCTAssert(problem.diagnostic.notes.isEmpty)
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
@@ -1038,7 +1003,7 @@ class SymbolTests: XCTestCase {
             - <doc://com.test.external/ExternalPage>
             """)
             
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'UnresolvableClassInMyClassTopicCuration' couldn't be resolved. Reference at '/MyKit/MyClass/myFunction()' can't resolve 'UnresolvableClassInMyClassTopicCuration'. Did you mean 'Unresolvable-curation'?" }))
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'UnresolvableClassInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass/myFunction()'" }))
             XCTAssert(problem.diagnostic.notes.isEmpty)
             XCTAssertEqual(problem.possibleSolutions.count, 1)
             XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
@@ -1064,16 +1029,16 @@ class SymbolTests: XCTestCase {
             """)
             
             
-            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "Topic reference 'MyClass/unresolvablePropertyInMyClassTopicCuration' couldn't be resolved. Reference at '/MyKit/MyClass' can't resolve 'unresolvablePropertyInMyClassTopicCuration'. No similar pages." }))
+            problem = try XCTUnwrap(unresolvedTopicProblems.first(where: { $0.diagnostic.summary == "'unresolvablePropertyInMyClassTopicCuration' doesn't exist at '/MyKit/MyClass'" }))
             XCTAssert(problem.diagnostic.notes.isEmpty)
             XCTAssertEqual(problem.possibleSolutions.count, 0)
-            XCTAssert(problem.possibleSolutions.map(\.replacements.count).allSatisfy { $0 == 1 })
+            XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "No external resolver registered for 'com.test.external'." }))
         } else {
             XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "Topic reference 'UnresolvableSymbolLinkInMyClassOverview' couldn't be resolved. No local documentation matches this reference." }))
             XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "Topic reference 'UnresolvableClassInMyClassTopicCuration' couldn't be resolved. No local documentation matches this reference." }))
             XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "Topic reference 'MyClass/unresolvablePropertyInMyClassTopicCuration' couldn't be resolved. No local documentation matches this reference." }))
+            XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "Topic reference 'doc://com.test.external/ExternalPage' couldn't be resolved. No external resolver registered for 'com.test.external'." }))
         }
-        XCTAssertTrue(unresolvedTopicProblems.contains(where: { $0.diagnostic.summary == "Topic reference 'doc://com.test.external/ExternalPage' couldn't be resolved. No external resolver registered for 'com.test.external'." }))
     }
     
     func testTopicSectionInDocComment() throws {
