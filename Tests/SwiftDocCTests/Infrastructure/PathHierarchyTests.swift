@@ -286,6 +286,22 @@ class PathHierarchyTests: XCTestCase {
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
+        // Symbol name not found. Suggestions only include module names (search is not relative to a known page)
+        try assertPathRaisesErrorMessage("/MixFramework", in: tree, context: context, expectedErrorMessage: """
+        Can't resolve 'MixFramework'
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacements: [("MixedFramework", 1, 13)]),
+            ])
+        }
+        try assertPathRaisesErrorMessage("/documentation/MixFramework", in: tree, context: context, expectedErrorMessage: """
+        Can't resolve 'MixFramework'
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Replace 'MixFramework' with 'MixedFramework'", replacements: [("MixedFramework", 15, 27)]),
+            ])
+        }
+        
         // public enum CollisionsWithDifferentKinds {
         //     case something
         //     public var something: String { "" }
@@ -398,6 +414,15 @@ class PathHierarchyTests: XCTestCase {
                 .init(summary: "Insert '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 77)]),
             ])
         }
+        // The path starts with "/documentation" which is optional
+        try assertPathRaisesErrorMessage("/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, context: context, expectedErrorMessage: """
+        'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Insert '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 91, 91)]),
+                .init(summary: "Insert '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 91, 91)]),
+            ])
+        }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
@@ -428,6 +453,15 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(error.solutions, [
                 .init(summary: "Replace 'method' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
                 .init(summary: "Replace 'method' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
+            ])
+        }
+        // The path starts with "/documentation" which is optional
+        try assertPathRaisesErrorMessage("/documentation/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-method", in: tree, context: context, expectedErrorMessage: """
+        'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Replace 'method' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 91, 98)]),
+                .init(summary: "Replace 'method' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 91, 98)]),
             ])
         }
         

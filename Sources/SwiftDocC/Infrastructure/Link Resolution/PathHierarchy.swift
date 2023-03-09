@@ -287,7 +287,7 @@ struct PathHierarchy {
         // First, parse the path into structured path components.
         let (path, isAbsolute) = Self.parse(path: rawPath)
         guard !path.isEmpty else {
-            throw Error.notFound(availableChildren: [])
+            throw Error.notFound(remaining: [], availableChildren: [])
         }
         
         var parsedPathForError: [PathComponent] {
@@ -468,7 +468,7 @@ struct PathHierarchy {
             remaining.removeFirst()
         }
         guard let component = remaining.first else {
-            throw Error.notFound(availableChildren: [])
+            throw Error.notFound(remaining: [], availableChildren: [])
         }
         
         if !onlyFindSymbols {
@@ -554,8 +554,8 @@ struct PathHierarchy {
         
         // No place to start the search from could be found.
         // It would be a nice future improvement to allow skipping the module and find top level symbols directly.
-        let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name]).sorted(by: availableChildNameIsBefore)
-        throw Error.notFound(availableChildren: topLevelNames)
+        let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
+        throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)
     }
 }
 
@@ -843,8 +843,9 @@ extension PathHierarchy {
         /// No element was found at the beginning of the path.
         ///
         /// Includes information about:
+        /// - The remaining portion of the path. This may be empty
         /// - A list of the names for the top level elements.
-        case notFound(availableChildren: [String])
+        case notFound(remaining: [PathComponent], availableChildren: Set<String>)
         
         /// Matched node does not correspond to a documentation page.
         ///
@@ -906,10 +907,34 @@ extension PathHierarchy.Error {
         }
         
         switch self {
-        case .notFound(availableChildren: _):
-            return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.")
-        case .unfindableMatch:
-            return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.")
+        case .notFound(remaining: let remaining, availableChildren: let availableChildren):
+            guard let firstPathComponent = remaining.first else {
+                return TopicReferenceResolutionErrorInfo(
+                    "No local documentation matches this reference"
+                )
+            }
+            
+            let solutions: [Solution]
+            if let pathComponentIndex = originalReference.range(of: firstPathComponent.full) {
+                let startColumn = originalReference.distance(from: originalReference.startIndex, to: pathComponentIndex.lowerBound)
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: startColumn, length: firstPathComponent.full.count)
+                
+                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: firstPathComponent.name)
+                solutions = nearMisses.map { candidate in
+                    Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
+                        Replacement(range: replacementRange, replacement: candidate)
+                    ])
+                }
+            } else {
+                solutions = []
+            }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                Can't resolve \(firstPathComponent.full.singleQuoted)
+                """,
+                solutions: solutions
+            )
+
         case .unfindableMatch(let node):
             return TopicReferenceResolutionErrorInfo("""
                 \(node.name.singleQuoted) can't be linked to in a partial documentation build
