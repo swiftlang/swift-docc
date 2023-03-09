@@ -274,7 +274,7 @@ struct PathHierarchy {
     func find(path rawPath: String, parent: ResolvedIdentifier? = nil, onlyFindSymbols: Bool) throws -> ResolvedIdentifier {
         let node = try findNode(path: rawPath, parent: parent, onlyFindSymbols: onlyFindSymbols)
         if node.identifier == nil {
-            throw Error.unfindableMatch
+            throw Error.unfindableMatch(node)
         }
         if onlyFindSymbols, node.symbol == nil {
             throw Error.nonSymbolMatchForSymbolLink
@@ -849,7 +849,7 @@ extension PathHierarchy {
         /// Matched node does not correspond to a documentation page.
         ///
         /// For partial symbol graph files, sometimes sparse nodes that don't correspond to known documentation need to be created to form a hierarchy. These nodes are not findable.
-        case unfindableMatch
+        case unfindableMatch(Node)
         
         /// A symbol link found a non-symbol match.
         case nonSymbolMatchForSymbolLink
@@ -910,8 +910,13 @@ extension PathHierarchy.Error {
             return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.")
         case .unfindableMatch:
             return TopicReferenceResolutionErrorInfo("No local documentation matches this reference.")
+        case .unfindableMatch(let node):
+            return TopicReferenceResolutionErrorInfo("""
+                \(node.name.singleQuoted) can't be linked to in a partial documentation build
+            """)
+
         case .nonSymbolMatchForSymbolLink:
-            return TopicReferenceResolutionErrorInfo("Symbol links can only resolve symbols.", solutions: [
+            return TopicReferenceResolutionErrorInfo("Symbol links can only resolve symbols", solutions: [
                 Solution(summary: "Use a '<doc:>' style reference.", replacements: [
                     // the SourceRange points to the opening double-backtick
                     Replacement(range: .makeRelativeRange(startColumn: -2, endColumn: 0), replacement: "<doc:"),
