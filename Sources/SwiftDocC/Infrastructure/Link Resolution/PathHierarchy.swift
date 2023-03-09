@@ -508,6 +508,11 @@ struct PathHierarchy {
             // If a parent ID was provided, start at that node and continue up the hierarchy until that node has a child that matches the first path components name.
             var parentNode = lookup[parentID]!
             let firstComponent = remaining.first!
+            // Check if the start node has a child that matches the first path components name.
+            if parentNode.children.keys.contains(firstComponent.name) || parentNode.children.keys.contains(firstComponent.full) {
+                return parentNode
+            }
+            // Check if the start node itself matches the first path components name.
             if matches(node: parentNode, component: firstComponent) {
                 remaining = remaining.dropFirst()
                 return parentNode
