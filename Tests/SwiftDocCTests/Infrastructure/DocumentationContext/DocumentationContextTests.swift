@@ -2159,7 +2159,7 @@ let expected = """
             // Verify the expected source ranges
             XCTAssertEqual(
                 context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
-                ["17:96", "18:23", "18:43", "18:60", "18:89"].sorted()
+                ["17:98", "18:100", "18:25", "18:45", "18:62"].sorted()
             )
         }
     }
@@ -2389,7 +2389,9 @@ let expected = """
         XCTAssertEqual(linkResolutionProblems.count, 1)
         let problem = try XCTUnwrap(linkResolutionProblems.first)
         XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
-        XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 23)
+        XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 28)
+        XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 7)
+        XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 42)
 
         let functionNode = try XCTUnwrap(context.symbolIndex["s:7SideKit0A5ClassC10myFunctionyyF"])
         XCTAssertEqual(functionNode.docChunks.count, 2)

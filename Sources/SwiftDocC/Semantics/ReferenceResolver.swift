@@ -46,7 +46,15 @@ func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: 
         solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: referenceSourceRange))
     }
     
-    let diagnostic = Diagnostic(source: source, severity: severity, range: referenceSourceRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(errorInfo.message)", notes: notes)
+    let diagnosticRange: SourceRange?
+    if var rangeAdjustment = errorInfo.rangeAdjustment, let referenceSourceRange = referenceSourceRange {
+        rangeAdjustment.offsetWithRange(referenceSourceRange)
+        diagnosticRange = rangeAdjustment
+    } else {
+        diagnosticRange = referenceSourceRange
+    }
+    
+    let diagnostic = Diagnostic(source: source, severity: severity, range: diagnosticRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(errorInfo.message)", notes: notes)
     return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 

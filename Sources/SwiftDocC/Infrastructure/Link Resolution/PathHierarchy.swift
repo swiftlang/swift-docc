@@ -914,9 +914,9 @@ extension PathHierarchy.Error {
             return TopicReferenceResolutionErrorInfo("Symbol links can only resolve symbols.", solutions: [
                 Solution(summary: "Use a '<doc:>' style reference.", replacements: [
                     // the SourceRange points to the opening double-backtick
-                    Replacement(range: SourceLocation(line: 0, column: -2, source: nil)..<SourceLocation(line: 0, column: 0, source: nil), replacement: "<doc:"),
+                    Replacement(range: .makeRelativeRange(startColumn: -2, endColumn: 0), replacement: "<doc:"),
                     // the SourceRange points to the closing double-backtick
-                    Replacement(range: SourceLocation(line: 0, column: originalReference.count, source: nil)..<SourceLocation(line: 0, column: originalReference.count+2, source: nil), replacement: ">"),
+                    Replacement(range: .makeRelativeRange(startColumn: originalReference.count, endColumn: originalReference.count+2), replacement: ">"),
                 ])
             ])
             
@@ -929,7 +929,7 @@ extension PathHierarchy.Error {
             validPrefix += nextPathComponent.name
             
             let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
-            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + disambiguations.count, source: nil)
+            let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
             
             let solutions: [Solution] = candidates
                 .sorted(by: collisionIsBefore)
@@ -942,7 +942,8 @@ extension PathHierarchy.Error {
             return TopicReferenceResolutionErrorInfo("""
                 Reference \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted) can't be disambiguated with \(disambiguations.dropFirst().singleQuoted).
                 """,
-                solutions: solutions
+                solutions: solutions,
+                rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
             )
             
         case .unknownName(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
@@ -962,7 +963,7 @@ extension PathHierarchy.Error {
             let solutions: [Solution]
             if filteredNearMisses.isEmpty {
                 // If there are no near-misses where the authored disambiguation narrow down the results, replace the full path component
-                let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + nextPathComponent.full.count, source: nil)
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.full.count)
                 solutions = nearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.full, to: candidate))", replacements: [
                         Replacement(range: replacementRange, replacement: candidate)
@@ -970,7 +971,7 @@ extension PathHierarchy.Error {
                 }
             } else {
                 // If the authored disambiguation narrows down the possible near-misses, only replace the name part of the path component
-                let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + nextPathComponent.name.count, source: nil)
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.name.count)
                 solutions = filteredNearMisses.map { candidate in
                     Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.name, to: candidate))", replacements: [
                         Replacement(range: replacementRange, replacement: candidate)
@@ -993,35 +994,36 @@ extension PathHierarchy.Error {
                 return "Reference at \(partialResult.node.pathWithoutDisambiguation().singleQuoted) can't resolve \(remaining.map { $0.full }.joined(separator: "/").singleQuoted). \(suggestion)"
             }
             
-            return TopicReferenceResolutionErrorInfo(message, note: availabilityNote(category: "children", candidates: availableChildren), solutions: solutions)
+            return TopicReferenceResolutionErrorInfo(
+                message,
+                note: availabilityNote(category: "children", candidates: availableChildren),
+                solutions: solutions,
+                rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.full.count)
+            )
             
         case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):
+            let nextPathComponent = remaining.first!
+            
             var validPrefix = ""
             if !partialResult.path.isEmpty {
                 validPrefix += PathHierarchy.joined(partialResult.path) + "/"
             }
-            validPrefix += remaining[0].name
+            validPrefix += nextPathComponent.name
 
-            let disambiguations = remaining[0].full.dropFirst(remaining[0].name.count)
-            let replacementRange = SourceLocation(line: 0, column: validPrefix.count, source: nil)..<SourceLocation(line: 0, column: validPrefix.count + disambiguations.count, source: nil)
+            let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
+            let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
             
-            let solutions: [Solution] = collisions.sorted(by: {
-                $0.node.fullNameOfValue(context: context) + $0.disambiguation
-                    < $1.node.fullNameOfValue(context: context) + $1.disambiguation
-            }).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
-                let replacementOperationDescription: String
-                if disambiguations.isEmpty {
-                    replacementOperationDescription = "Insert \(disambiguation.singleQuoted)"
-                } else {
-                    // Drop the leading "-" from the current disambiguation since it's not part of the suggested disambiguation.
-                    replacementOperationDescription = "Replace \(disambiguations.dropFirst().singleQuoted) with \(disambiguation.singleQuoted)"
-                }
-                return Solution(summary: "\(replacementOperationDescription) to refer to \(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+            let solutions: [Solution] = collisions.sorted(by: collisionIsBefore).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
+                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) to refer to \(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
                     Replacement(range: replacementRange, replacement: "-" + disambiguation)
                 ])
             }
             
-            return TopicReferenceResolutionErrorInfo("Reference is ambiguous after \(partialResult.node.pathWithoutDisambiguation().singleQuoted).", solutions: solutions)
+            return TopicReferenceResolutionErrorInfo(
+                "Reference is ambiguous after \(partialResult.node.pathWithoutDisambiguation().singleQuoted).",
+                solutions: solutions,
+                rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count - nextPathComponent.full.count, length: nextPathComponent.full.count)
+            )
         }
     }
     
@@ -1377,5 +1379,15 @@ private struct DisambiguationTree {
                 return .hash(hash)
             }
         }
+    }
+}
+
+private extension SourceRange {
+    static func makeRelativeRange(startColumn: Int, endColumn: Int) -> SourceRange {
+        return SourceLocation(line: 0, column: startColumn, source: nil) ..< SourceLocation(line: 0, column: endColumn, source: nil)
+    }
+    
+    static func makeRelativeRange(startColumn: Int, length: Int) -> SourceRange {
+        return .makeRelativeRange(startColumn: startColumn, endColumn: startColumn + length)
     }
 }
