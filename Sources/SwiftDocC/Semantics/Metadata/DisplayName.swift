@@ -15,9 +15,9 @@ import Markdown
 ///
 /// The ``name`` property will override the symbol's default display name.
 ///
-/// When the ``style-swift.property`` property is ``Style-swift.enum/conceptual``, the symbol's name is rendered as "conceptual"—same as article names or tutorial names —where applicable. The default style is ``Style-swift.enum/conceptual``.
+/// When the ``style`` property is ``Style/conceptual``, the symbol's name is rendered as "conceptual"—same as article names or tutorial names —where applicable. The default style is ``Style/conceptual``.
 ///
-/// When the ``style-swift.property`` property is ``Style-swift.enum/symbol``, the symbol's name is rendered as "symbol"—same as article names or tutorial names —where applicable. The default style is ``Style-swift.enum/conceptual``.
+/// When the ``style`` property is ``Style/symbol``, the symbol's name is rendered as "symbol"—same as article names or tutorial names —where applicable. The default style is ``Style/conceptual``.
 ///
 /// This directive is only valid within a ``Metadata`` directive:
 /// ```
@@ -34,7 +34,7 @@ public final class DisplayName: Semantic, AutomaticDirectiveConvertible {
     
     /// The style of the display name for this symbol.
     ///
-    /// Defaults to ``Style-swift.enum/conceptual``.
+    /// Defaults to ``Style/conceptual``.
     @DirectiveArgumentWrapped
     public var style: Style = .conceptual
     

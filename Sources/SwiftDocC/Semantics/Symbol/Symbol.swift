@@ -86,7 +86,6 @@ import SymbolKit
 /// - ``redirects``
 /// - ``returnsSection``
 /// - ``parametersSection``
-/// - ``dictionaryKeysSection``
 /// - ``abstract``
 /// - ``isDeprecated``
 /// - ``isSPI``
