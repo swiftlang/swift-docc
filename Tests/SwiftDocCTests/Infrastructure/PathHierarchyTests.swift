@@ -1100,6 +1100,41 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual("/Operators/MyNumber/_=(_:_:)-70j0d", /* >=(_:_:) */ paths["s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
     }
     
+    func testSameNameForSymbolAndContainer() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        let (_, context) = try testBundleAndContext(named: "BundleWithSameNameForSymbolAndContainer")
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        
+        // public struct Something {
+        //     public struct Something {
+        //         public enum SomethingElse {}
+        //     }
+        //     public enum SomethingElse {}
+        // }
+        let moduleID = try tree.find(path: "/SameNames", onlyFindSymbols: true)
+        let outerStructID = try tree.find(path: "Something", parent: moduleID, onlyFindSymbols: true)
+        
+        XCTAssertEqual(try tree.findSymbol(path: "Something", parent: moduleID).identifier.precise, "s:9SameNames9SomethingV") // the outer Something struct
+        XCTAssertEqual(try tree.findSymbol(path: "Something", parent: moduleID).absolutePath, "Something")
+        XCTAssertEqual(try tree.findSymbol(path: "Something", parent: outerStructID).identifier.precise, "s:9SameNames9SomethingVABV") // the inner Something struct
+        XCTAssertEqual(try tree.findSymbol(path: "Something", parent: outerStructID).absolutePath, "Something/Something")
+        
+        let innerStructID = try tree.find(path: "Something", parent: outerStructID, onlyFindSymbols: true)
+        
+        XCTAssertEqual(try tree.findSymbol(path: "SomethingElse", parent: outerStructID).identifier.precise, "s:9SameNames9SomethingV0C4ElseO") // the enum within the outer Something struct
+        XCTAssertEqual(try tree.findSymbol(path: "SomethingElse", parent: outerStructID).absolutePath, "Something/SomethingElse")
+        XCTAssertEqual(try tree.findSymbol(path: "SomethingElse", parent: innerStructID).identifier.precise, "s:9SameNames9SomethingVABV0C4ElseO") // the enum within the inner Something struct
+        XCTAssertEqual(try tree.findSymbol(path: "SomethingElse", parent: innerStructID).absolutePath, "Something/Something/SomethingElse")
+        
+        XCTAssertEqual(try tree.findSymbol(path: "Something/SomethingElse", parent: outerStructID).identifier.precise, "s:9SameNames9SomethingVABV0C4ElseO") // the enum within the inner Something struct
+        XCTAssertEqual(try tree.findSymbol(path: "Something/SomethingElse", parent: outerStructID).absolutePath, "Something/Something/SomethingElse")
+        XCTAssertEqual(try tree.findSymbol(path: "Something/SomethingElse", parent: innerStructID).identifier.precise, "s:9SameNames9SomethingVABV0C4ElseO") // the enum within the inner Something struct
+        XCTAssertEqual(try tree.findSymbol(path: "Something/SomethingElse", parent: innerStructID).absolutePath, "Something/Something/SomethingElse")
+        
+        XCTAssertEqual(try tree.findSymbol(path: "Something/SomethingElse", parent: moduleID).identifier.precise, "s:9SameNames9SomethingV0C4ElseO") // the enum within the outer Something struct
+        XCTAssertEqual(try tree.findSymbol(path: "Something/SomethingElse", parent: moduleID).absolutePath, "Something/SomethingElse")
+    }
+    
     func testOneSymbolPathsWithKnownDisambiguation() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let exampleDocumentation = Folder(name: "MyKit.docc", content: [
