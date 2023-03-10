@@ -30,9 +30,9 @@ import Markdown
 /// [ Paragraph ...    ]
 /// ```
 ///
-/// `RenderBlockContent` contains traditional elements like ``paragraph(inlineContent:)`` and
-/// ``heading(level:text:anchor:)`` but also other documentation-specific elements like
-/// ``step(content:caption:media:code:runtimePreview:)`` and ``endpointExample(summary:request:response:)``.
+/// `RenderBlockContent` contains traditional elements like ``paragraph(_:)`` and
+/// ``heading(_:)`` but also other documentation-specific elements like
+/// ``step(_:)`` and ``endpointExample(_:)``.
 ///
 /// Block elements can be nested, for example, an aside note contains one or more paragraphs of text.
 public enum RenderBlockContent: Equatable {

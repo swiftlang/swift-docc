@@ -69,7 +69,7 @@ import SymbolKit
 ///
 /// Various information from the summary is used depending on what content references the summarized element. For example:
 ///  - In a paragraph of text, a link to this element will use the ``title`` as the link text and style the tile in code font if the ``kind`` is a type of symbol.
-///  - In a task group, the the ``title`` and ``abstract-swift.property`` is displayed together to give more context about this element and the element may be marked as deprecated
+///  - In a task group, the the ``title`` and ``abstract`` is displayed together to give more context about this element and the element may be marked as deprecated
 ///    based on the values of its  ``platforms`` and other metadata about the current versions of the platforms.
 ///
 /// The summary may include content that vary based on the source language. The content that is different in another source language is specified in a ``Variant``. Any property on the variant that is `nil` has the same value as the summarized element's value. 
@@ -150,7 +150,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     
     /// References used in the content of the summarized element.
     ///
-    /// This includes the element's ``topicImages`` or references from the element's ``abstract-swift.property``.
+    /// This includes the element's ``topicImages`` or references from the element's ``abstract``.
     /// This also includes any references for all variants' content.
     public var references: [RenderReference]?
     

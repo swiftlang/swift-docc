@@ -149,7 +149,7 @@ extension DocumentationCoverageOptions.KindFilterOptions {
         self.init(rawValue: mask)
     }
 
-    /// Represents a single kind option. ``DocumentationCoverageOptions/KindFilterOptions-swift.struct``
+    /// Represents a single kind option. ``DocumentationCoverageOptions/KindFilterOptions``
     /// cannot enforce the restriction that it only represents one
     /// option when necessary so this type is preferred in when representing individual kinds that can be represented.
     public enum BitFlagRepresentation: CaseIterable {
