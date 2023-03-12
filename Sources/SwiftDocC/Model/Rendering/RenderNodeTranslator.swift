@@ -1060,7 +1060,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 title: group.heading?.plainText,
                 abstract: abstractContent,
                 discussion: discussion,
-                identifiers: group.links.compactMap { link in
+                identifierItems: group.links.compactMap { link in
                     switch link {
                     case let link as Link:
                         if !allowExternalLinks {
@@ -1082,12 +1082,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                            case let RenderInlineContent.reference(
                              identifier: identifier,
                              isActive: _,
-                             overridingTitle: _,
-                             overridingTitleInlineContent: _
+                             overridingTitle: overridingTitle,
+                             overridingTitleInlineContent: overridingTitleInlineContent
                            ) = renderReference
                         {
-                            return isTopicAvailableInAllowedTraits(identifier: identifier.identifier)
-                                ? identifier.identifier : nil
+                            let identifier = identifier.identifier
+                            return isTopicAvailableInAllowedTraits(identifier: identifier)
+                            ? TaskGroupRenderSection.IdentifierItem(identifier: identifier, overrideTitle: overridingTitle, overridingTitleInlineContent: overridingTitleInlineContent) : nil
                         }
                     case let link as SymbolLink:
                         if let referenceInlines = contentCompiler.visitSymbolLink(link) as? [RenderInlineContent],
@@ -1102,12 +1103,13 @@ public struct RenderNodeTranslator: SemanticVisitor {
                            case let RenderInlineContent.reference(
                              identifier: identifier,
                              isActive: _,
-                             overridingTitle: _,
-                             overridingTitleInlineContent: _
+                             overridingTitle: overridingTitle,
+                             overridingTitleInlineContent: overridingTitleInlineContent
                            ) = renderReference
                         {
-                            return isTopicAvailableInAllowedTraits(identifier: identifier.identifier)
-                                ? identifier.identifier : nil
+                            let identifier = identifier.identifier
+                            return isTopicAvailableInAllowedTraits(identifier: identifier)
+                            ? TaskGroupRenderSection.IdentifierItem(identifier: identifier, overrideTitle: overridingTitle, overridingTitleInlineContent: overridingTitleInlineContent) : nil
                         }
                     default: break
                     }

@@ -19,9 +19,40 @@ public struct TaskGroupRenderSection: RenderSection {
     /// An optional discussion for the section.
     public let discussion: RenderSection?
     /// A list of topic graph references.
-    public let identifiers: [String]
+    @available(*, deprecated, message: "Please use identifierItems instead.")
+    public var identifiers: [String] { identifierItems.map { $0.identifier } }
+    /// A list of topic graph reference items
+    public let identifierItems: [IdentifierItem]
     /// If true, this is an automatically generated group. If false, this is an authored group.
     public let generated: Bool
+    
+    public struct IdentifierItem: Codable {
+        public let identifier: String
+        public let overrideTitle: String?
+        public let overridingTitleInlineContent: [RenderInlineContent]?
+
+        public init(identifier: String, overrideTitle: String? = nil, overridingTitleInlineContent: [RenderInlineContent]? = nil) {
+            self.identifier = identifier
+            self.overrideTitle = overrideTitle
+            self.overridingTitleInlineContent = overridingTitleInlineContent
+        }
+    }
+
+    /// Creates a new task group.
+    /// - Parameters:
+    ///   - title: An optional title for the section.
+    ///   - abstract: An optional abstract summary for the section.
+    ///   - discussion: An optional discussion for the section.
+    ///   - identifiers: A list of topic-graph references.
+    ///   - generated: If `true`, this is an automatically generated group. If `false`, this is an authored group.
+    @available(*, deprecated, message: "Please use TaskGroupRenderSection.init(title:abstract:discussion:identifierItems:generated:) instead.")
+    public init(title: String?, abstract: [RenderInlineContent]?, discussion: RenderSection?, identifiers: [String], generated: Bool = false) {
+        self.title = title
+        self.abstract = abstract
+        self.discussion = discussion
+        self.identifierItems = identifiers.map { IdentifierItem(identifier: $0) }
+        self.generated = generated
+    }
     
     /// Creates a new task group.
     /// - Parameters:
@@ -30,17 +61,17 @@ public struct TaskGroupRenderSection: RenderSection {
     ///   - discussion: An optional discussion for the section.
     ///   - identifiers: A list of topic-graph references.
     ///   - generated: If `true`, this is an automatically generated group. If `false`, this is an authored group.
-    public init(title: String?, abstract: [RenderInlineContent]?, discussion: RenderSection?, identifiers: [String], generated: Bool = false) {
+    public init(title: String?, abstract: [RenderInlineContent]?, discussion: RenderSection?, identifierItems: [IdentifierItem], generated: Bool = false) {
         self.title = title
         self.abstract = abstract
         self.discussion = discussion
-        self.identifiers = identifiers
+        self.identifierItems = identifierItems
         self.generated = generated
     }
     
     /// The list of keys you use to encode or decode this section.
     private enum CodingKeys: CodingKey {
-        case title, abstract, discussion, identifiers, generated
+        case title, abstract, discussion, identifiers, identifierItems, generated
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -50,6 +81,7 @@ public struct TaskGroupRenderSection: RenderSection {
         try container.encodeIfPresent(abstract, forKey: .abstract)
         try container.encodeIfPresent(discussion.map(CodableRenderSection.init), forKey: .discussion)
         try container.encode(identifiers, forKey: .identifiers)
+        try container.encode(identifierItems, forKey: .identifierItems)
         if generated {
             try container.encode(generated, forKey: .generated)
         }
@@ -61,11 +93,18 @@ public struct TaskGroupRenderSection: RenderSection {
         title = try container.decodeIfPresent(String.self, forKey: .title)
         abstract = try container.decodeIfPresent([RenderInlineContent].self, forKey: .abstract)
         discussion = (try container.decodeIfPresent(CodableContentSection.self, forKey: .discussion)).map { $0.section }
-        identifiers = try container.decode([String].self, forKey: .identifiers)
-
-        decoder.registerReferences(identifiers)
-
+        
+        let identifiers = try container.decodeIfPresent([String].self, forKey: .identifiers)
+        let identifierItems = try container.decodeIfPresent([IdentifierItem].self, forKey: .identifierItems)
+        if let identifierItems = identifierItems {
+            self.identifierItems = identifierItems
+        } else if let identifiers = identifiers {
+            self.identifierItems = identifiers.map { IdentifierItem(identifier: $0) }
+        } else {
+            self.identifierItems = []
+        }
         generated = try container.decodeIfPresent(Bool.self, forKey: .generated) ?? false
+        decoder.registerReferences(self.identifiers)
     }
 }
 
@@ -76,7 +115,7 @@ extension TaskGroupRenderSection {
         self.title = group.title
         self.abstract = nil
         self.discussion = nil
-        self.identifiers = group.references.map({ $0.absoluteString })
+        self.identifierItems = group.references.map{ IdentifierItem(identifier: $0.absoluteString) }
         self.generated = false
     }
 }
