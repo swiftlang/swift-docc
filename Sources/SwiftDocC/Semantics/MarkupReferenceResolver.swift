@@ -112,10 +112,8 @@ struct MarkupReferenceResolver: MarkupRewriter {
         guard let resolvedURL = resolve(reference: unresolved, range: link.range, severity: .warning) else {
             return link
         }
-        let isAutolink = link.isAutolink // save the original isAutolink status
         var link = link
         link.destination = resolvedURL.absoluteString
-        link.isAutolink = isAutolink // restore the original isAutolink status
         return link
     }
 
