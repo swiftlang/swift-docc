@@ -37,6 +37,8 @@ public class DocumentationContextConverter {
     /// Whether the documentation converter should include access level information for symbols.
     let shouldEmitSymbolAccessLevels: Bool
     
+    let symbolIdentifiersWithExpandedDocumentation: [String]?
+    
     /// The remote source control repository where the documented module's source is hosted.
     let sourceRepository: SourceRepository?
     
@@ -61,7 +63,8 @@ public class DocumentationContextConverter {
         renderContext: RenderContext,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false,
-        sourceRepository: SourceRepository? = nil
+        sourceRepository: SourceRepository? = nil,
+        symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
         self.bundle = bundle
         self.context = context
@@ -69,6 +72,7 @@ public class DocumentationContextConverter {
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
         self.sourceRepository = sourceRepository
+        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
     }
     
     /// Converts a documentation node to a render node.
@@ -91,7 +95,8 @@ public class DocumentationContextConverter {
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
             emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,
-            sourceRepository: sourceRepository
+            sourceRepository: sourceRepository,
+            symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersWithExpandedDocumentation
         )
         return translator.visit(node.semantic) as? RenderNode
     }

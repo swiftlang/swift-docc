@@ -182,7 +182,8 @@ public struct ConvertService: DocumentationService {
                 // this information could be relevant and we don't have the privacy concerns
                 // that come with including this information in public releases of docs.
                 emitSymbolSourceFileURIs: true,
-                emitSymbolAccessLevels: true
+                emitSymbolAccessLevels: true,
+                symbolIdentifiersWithExpandedDocumentation: request.symbolIdentifiersWithExpandedDocumentation
             )
 
             // Run the conversion.

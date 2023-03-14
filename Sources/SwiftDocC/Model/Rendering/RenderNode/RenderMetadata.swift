@@ -163,6 +163,15 @@ public struct RenderMetadata: VariantContainer {
     
     /// Any tags assigned to the node.
     public var tags: [RenderNode.Tag]?
+    
+    /// Whether there isn't a version of the page with more content that a renderer can link to.
+    ///
+    /// This property indicates to renderers that an expanded version of the page does not exist for this render node,
+    /// which, for example, controls whether a 'View More' link should be displayed or not.
+    ///
+    /// It's the renderer's responsibility to fetch the full version of the page, for example using
+    /// the ``RenderNode/variants`` property.
+    public var hasNoExpandedDocumentation: Bool = false
 }
 
 extension RenderMetadata: Codable {
@@ -232,6 +241,7 @@ extension RenderMetadata: Codable {
         public static let tags = CodingKeys(stringValue: "tags")
         public static let images = CodingKeys(stringValue: "images")
         public static let customMetadata = CodingKeys(stringValue: "customMetadata")
+        public static let hasNoExpandedDocumentation = CodingKeys(stringValue: "hasNoExpandedDocumentation")
     }
     
     public init(from decoder: Decoder) throws {
@@ -260,6 +270,7 @@ extension RenderMetadata: Codable {
         sourceFileURIVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .sourceFileURI)
         remoteSourceVariants = try container.decodeVariantCollectionIfPresent(ofValueType: RemoteSource?.self, forKey: .remoteSource)
         tags = try container.decodeIfPresent([RenderNode.Tag].self, forKey: .tags)
+        hasNoExpandedDocumentation = try container.decodeIfPresent(Bool.self, forKey: .hasNoExpandedDocumentation) ?? false
         
         let extraKeys = Set(container.allKeys).subtracting(
             [
@@ -281,7 +292,8 @@ extension RenderMetadata: Codable {
                 .navigatorTitle,
                 .sourceFileURI,
                 .remoteSource,
-                .tags
+                .tags,
+                .hasNoExpandedDocumentation,
             ]
         )
         for extraKey in extraKeys {
@@ -322,5 +334,6 @@ extension RenderMetadata: Codable {
         
         try container.encodeIfNotEmpty(images, forKey: .images)
         try container.encodeIfNotEmpty(customMetadata, forKey: .customMetadata)
+        try container.encodeIfTrue(hasNoExpandedDocumentation, forKey: .hasNoExpandedDocumentation)
     }
 }

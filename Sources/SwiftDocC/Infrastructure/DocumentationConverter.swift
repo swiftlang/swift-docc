@@ -92,6 +92,9 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
+    /// The identifiers of the symbols that have an expanded version of their documentation page.
+    var symbolIdentifiersWithExpandedDocumentation: [String]? = nil
+    
     /// `true` if the conversion is cancelled.
     private var isCancelled: Synchronized<Bool>? = nil
 
@@ -133,7 +136,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         emitSymbolAccessLevels: Bool = false,
         sourceRepository: SourceRepository? = nil,
         isCancelled: Synchronized<Bool>? = nil,
-        diagnosticEngine: DiagnosticEngine = .init()
+        diagnosticEngine: DiagnosticEngine = .init(),
+        symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
         self.rootURL = documentationBundleURL
         self.emitDigest = emitDigest
@@ -149,6 +153,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.sourceRepository = sourceRepository
         self.isCancelled = isCancelled
         self.diagnosticEngine = diagnosticEngine
+        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
         
         // Inject current platform versions if provided
         if let currentPlatforms = currentPlatforms {
@@ -256,7 +261,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
             emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,
-            sourceRepository: sourceRepository
+            sourceRepository: sourceRepository,
+            symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersWithExpandedDocumentation
         )
         
         var indexingRecords = [IndexingRecord]()
