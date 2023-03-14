@@ -209,9 +209,10 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         cancelTimer.resume()
         
         // Start bundle registration
-        try workspace.registerProvider(dataProvider, options: bundleDiscoveryOptions)
-        self.currentDataProvider = dataProvider
-
+        try autoreleasepool {
+            try workspace.registerProvider(dataProvider, options: bundleDiscoveryOptions)
+            self.currentDataProvider = dataProvider
+        }
         // Bundle registration is finished - stop the timer and reset the context cancellation state.
         cancelTimer.cancel()
         cancelTimerQueue = nil
@@ -243,9 +244,13 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         }
         
         // Precompute the render context
-        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
-        
-        try outputConsumer.consume(renderReferenceStore: renderContext.store)
+        let renderContext = try autoreleasepool {
+            let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+            
+            try outputConsumer.consume(renderReferenceStore: renderContext.store)
+            
+            return renderContext
+        }
 
         // Copy images, sample files, and other static assets.
         try outputConsumer.consume(assetsInBundle: bundle)
