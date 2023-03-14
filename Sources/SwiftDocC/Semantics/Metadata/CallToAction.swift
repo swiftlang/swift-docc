@@ -78,7 +78,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     ]
 
     /// The computed label for this Call to Action, whether provided directly via ``label`` or
-    /// indirectly via ``purpose-swift.property``.
+    /// indirectly via ``purpose``.
     public var buttonLabel: String {
         if let label = label {
             return label
