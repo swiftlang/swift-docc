@@ -2290,6 +2290,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         topicGraphGlobalAnalysis()
         
         preResolveModuleNames()
+        
+        symbolIndex.removeAll(keepingCapacity: false)
     }
     
     /// Given a list of topics that have been automatically curated, checks if a topic has been additionally manually curated
