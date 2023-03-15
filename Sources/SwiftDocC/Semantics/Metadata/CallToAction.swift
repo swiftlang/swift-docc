@@ -136,6 +136,23 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
             isValid = false
         }
 
+        return isValid
+    }
+
+    public let originalMarkup: Markdown.BlockDirective
+
+    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
+    init(originalMarkup: Markdown.BlockDirective) {
+        self.originalMarkup = originalMarkup
+    }
+}
+
+extension CallToAction {
+    func resolveFile(
+        for bundle: DocumentationBundle,
+        in context: DocumentationContext,
+        problems: inout [Problem]) -> ResourceReference?
+    {
         if let file = self.file {
             if context.resolveAsset(named: file.url.lastPathComponent, in: bundle.rootReference) == nil {
                 problems.append(.init(
@@ -154,14 +171,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
             }
         }
 
-        return isValid
-    }
-
-    public let originalMarkup: Markdown.BlockDirective
-
-    @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
-    init(originalMarkup: Markdown.BlockDirective) {
-        self.originalMarkup = originalMarkup
+        return self.file
     }
 }
 
