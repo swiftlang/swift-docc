@@ -15,12 +15,24 @@ import SymbolKit
 struct Directive {
     var name: String
 
+    /// The name of the type that implements this directive.
+    ///
+    /// This information is not presented in the documentation. It's only used to find undocumented directives.
+    var implementationName: String
+    
     /// `true` if the directive accepts arguments.
     var acceptsArguments: Bool = true
 
     /// `true` if the directive doesn't expect body content.
     var isLeaf: Bool
-
+    
+    init(name: String, implementationName: String? = nil, acceptsArguments: Bool = true, isLeaf: Bool) {
+        self.name = name
+        self.implementationName = implementationName ?? name
+        self.acceptsArguments = acceptsArguments
+        self.isLeaf = isLeaf
+    }
+    
     var usr: String {
         return directiveUSR(name)
     }
@@ -62,6 +74,7 @@ let supportedDirectives: [Directive] = [
 
     .init(
         name: "Tutorials",
+        implementationName: "Technology",
         isLeaf: false
     ),
     .init(
@@ -75,26 +88,32 @@ let supportedDirectives: [Directive] = [
     ),
     .init(
         name: "Documentation",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "SampleCode",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "Downloads",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "Videos",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "Forums",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "Section",
+        implementationName: "TutorialSection",
         isLeaf: false
     ),
     .init(
@@ -201,6 +220,31 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
     let directiveSymbols = Set(directiveSymbolUSRs)
         .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
         .map { (String($0.title.split(separator: ".").last ?? $0.title[...]), $0) }
+    
+    let missingDirectiveSymbolNames: [String] = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
+        guard relationship.kind == .conformsTo,
+              relationship.target == "s:9SwiftDocC20DirectiveConvertibleP",
+              !directiveSymbolUSRs.contains(relationship.source),
+              let symbol = swiftDocCFrameworkSymbolGraph.symbols[relationship.source]
+        else {
+            return nil
+        }
+    
+        guard !supportedDirectives.contains(where: { $0.implementationName == symbol.names.title }) else {
+            return nil
+        }
+        
+        switch symbol.kind.identifier {
+        case .struct, .class:
+            return symbol.names.title
+        default:
+            return nil
+        }
+    }
+    
+    for missingDirective in missingDirectiveSymbolNames {
+        print("warning: '\(missingDirective)' is not included in the documentation")
+    }
     
     let directiveDocComments: [(String, SymbolGraph.LineList)] = directiveSymbols.compactMap {
         let (directiveName, directiveSymbol) = $0
