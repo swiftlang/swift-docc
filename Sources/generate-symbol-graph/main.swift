@@ -189,7 +189,7 @@ func generateSwiftDocCFrameworkSymbolGraph() throws -> SymbolGraph {
 func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph.LineList] {
     let swiftDocCFrameworkSymbolGraph = try generateSwiftDocCFrameworkSymbolGraph()
     
-    let directiveSymbols = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
+    let directiveSymbolUSRs: [String] = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
         guard relationship.kind == .conformsTo
             && relationship.target == "s:9SwiftDocC29AutomaticDirectiveConvertibleP"
         else {
@@ -198,8 +198,9 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
     
         return relationship.source
     }
-    .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
-    .map { (String($0.title.split(separator: ".").last ?? $0.title[...]), $0) }
+    let directiveSymbols = Set(directiveSymbolUSRs)
+        .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
+        .map { (String($0.title.split(separator: ".").last ?? $0.title[...]), $0) }
     
     let directiveDocComments: [(String, SymbolGraph.LineList)] = directiveSymbols.compactMap {
         let (directiveName, directiveSymbol) = $0
@@ -564,11 +565,30 @@ let symbolGraph = SymbolGraph(
     relationships: []
 )
 
+private struct SortedSymbolGraph: Codable {
+    var wrapped: SymbolGraph
+    init(_ symbolGraph: SymbolGraph) {
+        wrapped = symbolGraph
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: SymbolGraph.CodingKeys.self)
+        try container.encode(wrapped.metadata, forKey: .metadata)
+        try container.encode(wrapped.module, forKey: .module)
+        try container.encode(wrapped.symbols.values.sorted(by: \.identifier.precise), forKey: .symbols)
+        try container.encode(wrapped.relationships, forKey: .relationships)
+    }
+    
+    init(from decoder: Decoder) throws {
+        try self.init(SymbolGraph(from: decoder))
+    }
+}
+
 let output = URL(fileURLWithPath: #file)
     .deletingLastPathComponent()
     .deletingLastPathComponent()
     .appendingPathComponent("docc/DocCDocumentation.docc/docc.symbols.json")
 var encoder = JSONEncoder()
 encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-let data = try! encoder.encode(symbolGraph)
+let data = try! encoder.encode(SortedSymbolGraph(symbolGraph))
 try! data.write(to: output)
