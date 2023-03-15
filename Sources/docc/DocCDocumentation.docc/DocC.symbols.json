@@ -35,6 +35,66 @@
         },
         {
           "kind" : "typeIdentifier",
+          "spelling" : "Article"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Article"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Article",
+            "spelling" : "Article"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Article"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Article"
+      },
+      "pathComponents" : [
+        "Article"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
           "spelling" : "Assessments"
         },
         {

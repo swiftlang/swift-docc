@@ -117,6 +117,11 @@ let supportedDirectives: [Directive] = [
         isLeaf: false
     ),
     .init(
+        name: "Article",
+        implementationName: "TutorialArticle",
+        isLeaf: false
+    ),
+    .init(
         name: "ContentAndMedia",
         acceptsArguments: false,
         isLeaf: false
