@@ -52,10 +52,15 @@ A metadata element must contain one of the following items:
 
 - ``DisplayName``
 - ``PageImage``
+- ``PageKind``
 - ``CallToAction``
 
 ### Customizing the Languages of an Article
 
 - ``SupportedLanguage``
+
+### Customizing the Availability Information of a Page
+
+- ``Available``
 
 <!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
