@@ -72,11 +72,18 @@ public struct TopicReferenceResolutionErrorInfo: Hashable {
     public var message: String
     public var note: String?
     public var solutions: [Solution]
+    public var rangeAdjustment: SourceRange?
     
-    public init(_ message: String, note: String? = nil, solutions: [Solution] = []) {
+    public init(
+        _ message: String,
+        note: String? = nil,
+        solutions: [Solution] = [],
+        rangeAdjustment: SourceRange? = nil
+    ) {
         self.message = message
         self.note = note
         self.solutions = solutions
+        self.rangeAdjustment = rangeAdjustment
     }
 }
 
@@ -90,6 +97,7 @@ extension TopicReferenceResolutionErrorInfo {
             self.note = nil
         }
         self.solutions = solutions
+        self.rangeAdjustment = nil
     }
 }
 
