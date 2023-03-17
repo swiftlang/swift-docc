@@ -152,6 +152,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// for example when ``ConvertService``.
     var allowsRegisteringUncuratedTutorials: Bool = false
     
+    /// A closure that modifies each symbol graph that the context registers.
+    ///
+    /// Set this property if you need to modify symbol graphs before the context registers its information.
+    var configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+    
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
 
@@ -2084,7 +2089,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         var hierarchyBasedResolver: PathHierarchyBasedLinkResolver!
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            symbolGraphLoader = SymbolGraphLoader(bundle: bundle, dataProvider: self.dataProvider)
+            symbolGraphLoader = SymbolGraphLoader(
+                bundle: bundle,
+                dataProvider: self.dataProvider,
+                configureSymbolGraph: configureSymbolGraph
+            )
+            
             do {
                 try symbolGraphLoader.loadAll(using: decoder)
                 if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {

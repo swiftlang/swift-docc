@@ -150,6 +150,14 @@ public struct ConvertService: DocumentationService {
             context.allowsRegisteringArticlesWithoutTechnologyRoot = true
             context.allowsRegisteringUncuratedTutorials = true
             
+            context.configureSymbolGraph = { symbolGraph in
+                for (symbolIdentifier, overridingDocumentationComment) in request.overridingDocumentationComments ?? [:] {
+                    symbolGraph.symbols[symbolIdentifier]?.docComment = SymbolGraph.LineList(
+                        overridingDocumentationComment.map(SymbolGraph.LineList.Line.init(_:))
+                    )
+                }
+            }
+            
             if let linkResolvingServer = linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
                     bundleIdentifier: request.bundleInfo.identifier,
@@ -302,5 +310,26 @@ extension Result {
             default: return transform(error)
             }
         }
+    }
+}
+
+private extension SymbolGraph.LineList.Line {
+    /// Creates a line given a convert request line.
+    init(_ line: ConvertRequest.Line) {
+        self.init(
+            text: line.text,
+            range: line.sourceRange.map { sourceRange in
+                SymbolGraph.LineList.SourceRange(
+                    start: SymbolGraph.LineList.SourceRange.Position(
+                        line: sourceRange.start.line,
+                        character: sourceRange.start.character
+                    ),
+                    end: SymbolGraph.LineList.SourceRange.Position(
+                        line: sourceRange.end.line,
+                        character: sourceRange.end.character
+                    )
+                )
+            }
+        )
     }
 }

@@ -454,9 +454,63 @@ class SymbolGraphLoaderTests: XCTestCase {
         }
     }
     
+    func testConfiguresSymbolGraphs() throws {
+        let tempURL = try createTemporaryDirectory()
+        
+        let symbol = """
+        {
+            "kind": {
+                "identifier": "swift.extension",
+                "displayName": "Extension"
+            },
+            "identifier": {
+                "precise": "s:e:s:EBFfunction",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "EBF"
+            ],
+            "names": {
+                "title": "EBF",
+            },
+            "swiftExtension": {
+                "extendedModule": "A",
+                "typeKind": "struct"
+            },
+            "accessLevel": "public"
+        }
+        """
+        
+        let symbolGraphString = makeSymbolGraphString(moduleName: "MyModule", symbols: symbol)
+        
+        let symbolGraphURL = tempURL.appendingPathComponent("MyModule.symbols.json")
+        
+        try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
+        
+        var loader = try makeSymbolGraphLoader(
+            symbolGraphURLs: [symbolGraphURL],
+            configureSymbolGraph: { symbolGraph in
+                symbolGraph.metadata.formatVersion = .init(major: 9, minor: 9, patch: 9)
+            }
+        )
+        XCTAssertTrue(loader.unifiedGraphs.isEmpty)
+        
+        try loader.loadAll()
+        
+        XCTAssertEqual(
+            loader.unifiedGraphs.first?.value
+                .metadata.first?.value
+                .formatVersion.description,
+            "9.9.9"
+        )
+    }
+    
     // MARK: - Helpers
     
-    private func makeSymbolGraphLoader(symbolGraphURLs: [URL]) throws -> SymbolGraphLoader {
+    private func makeSymbolGraphLoader(
+        symbolGraphURLs: [URL],
+        configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+    ) throws -> SymbolGraphLoader {
         let workspace = DocumentationWorkspace()
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
@@ -471,6 +525,10 @@ class SymbolGraphLoaderTests: XCTestCase {
         )
         try workspace.registerProvider(PrebuiltLocalFileSystemDataProvider(bundles: [bundle]))
         
-        return SymbolGraphLoader(bundle: bundle, dataProvider: workspace)
+        return SymbolGraphLoader(
+            bundle: bundle,
+            dataProvider: workspace,
+            configureSymbolGraph: configureSymbolGraph
+        )
     }
 }
