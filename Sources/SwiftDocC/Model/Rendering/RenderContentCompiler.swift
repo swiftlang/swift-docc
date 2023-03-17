@@ -165,7 +165,30 @@ struct RenderContentCompiler: MarkupVisitor {
             return [RenderInlineContent.text(link.plainText)]
         }
         
-        return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
+        let linkTitleInlineContent = link.children.flatMap { visit($0) } as! [RenderInlineContent]
+        let plainTextLinkTitle = linkTitleInlineContent.plainText
+        let overridingTitle = plainTextLinkTitle.isEmpty ? nil : plainTextLinkTitle
+        let overridingTitleInlineContent = linkTitleInlineContent.isEmpty ? nil : linkTitleInlineContent
+        
+        let useOverriding: Bool
+        if link.isAutolink { // If the link is an auto link, we don't use overriding info
+            useOverriding = false
+        } else if let overridingTitle = overridingTitle,
+                  overridingTitle.hasPrefix(ResolvedTopicReference.urlScheme + ":"),
+                  destination.hasPrefix(ResolvedTopicReference.urlScheme + "://"),
+                  destination.hasSuffix(overridingTitle.dropFirst((ResolvedTopicReference.urlScheme + ":").count)) { // If the link is a transformed doc link, we don't use overriding info
+            useOverriding = false
+        } else {
+            useOverriding = true
+        }
+        return [
+            RenderInlineContent.reference(
+                identifier: .init(resolved.absoluteString),
+                isActive: true,
+                overridingTitle: useOverriding ? overridingTitle : nil,
+                overridingTitleInlineContent: useOverriding ? overridingTitleInlineContent : nil
+            )
+        ]
     }
     
     mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
@@ -194,7 +217,7 @@ struct RenderContentCompiler: MarkupVisitor {
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
         if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
             return cached
-        } 
+        }
 
         // The symbol link may be written with a scheme and bundle identifier.
         let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)

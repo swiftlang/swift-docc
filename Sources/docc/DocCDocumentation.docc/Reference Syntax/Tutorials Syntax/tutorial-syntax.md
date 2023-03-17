@@ -25,6 +25,7 @@ You write tutorial content in Markdown, and use directives to define specific ty
 ### Adding Tutorial Pages
 
 - ``Tutorial``
+- ``Article``
 
 ### Shared Syntax
 

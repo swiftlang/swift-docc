@@ -89,14 +89,21 @@ class DiagnosticTests: XCTestCase {
         // Resolve references
         _ = resolver.visitMarkup(markup)
         
-        XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 8, source: nil)..<SourceLocation(line: 1, column: 21, source: nil))
-        
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 10, source: nil)..<SourceLocation(line: 1, column: 19, source: nil))
+        } else {
+            XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 8, source: nil)..<SourceLocation(line: 1, column: 21, source: nil))
+        }
         let offset = SymbolGraph.LineList.SourceRange(start: .init(line: 10, character: 10), end: .init(line: 10, character: 20))
         
         var problem = try XCTUnwrap(resolver.problems.first)
         problem.offsetWithRange(offset)
         
-        XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 18, source: nil)..<SourceLocation(line: 11, column: 31, source: nil))
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 20, source: nil)..<SourceLocation(line: 11, column: 29, source: nil))
+        } else {
+            XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 18, source: nil)..<SourceLocation(line: 11, column: 31, source: nil))
+        }
     }
 
     func testFormattedDescription() {
