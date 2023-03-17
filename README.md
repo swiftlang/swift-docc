@@ -87,7 +87,7 @@ project's technical documentation:
     with support for building and viewing documentation for your framework and
     its dependencies.
   
-## Getting Started with `docc`
+## Getting started with developing `docc`
 
 `docc` is the command line interface (CLI) for Swift-DocC and provides
 support for converting and previewing DocC documentation.
@@ -147,93 +147,16 @@ log in Xcode's report navigator and expanding the "Compile documentation" step.
   
 ## Using `docc` to build and preview documentation
 
-You can use `docc` directly to build documentation for your Swift framework
-or package. The below instructions use this repository as an example but
-apply to any Swift package. Just replace any reference to `SwiftDocC` below
-with the name of your package.
+The preferred way of building documentation for your Swift package is by using
+the Swift-DocC Plugin, or if you're using Xcode, using the "Build Documentation" command. 
 
-### 1. Generate a symbol graph file
+Refer to instructions in the plugin's 
+[documentation](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/)
+to get started with [building](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
+and publishing your documentation to your [website](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
 
-Begin by navigating to the root of your Swift package.
-
-```sh
-cd ~/Developer/swift-docc
-```
-
-Then run the following to generate _Symbol Graph_ files for your target:
-
-```sh
-mkdir -p .build/symbol-graphs && \
-  swift build --target SwiftDocC \
-    -Xswiftc -emit-symbol-graph \
-    -Xswiftc -emit-symbol-graph-dir -Xswiftc .build/symbol-graphs
-```
-
-You should now have a number of `.symbols.json` files in `.build/symbol-graphs`
-representing the provided target and its dependencies. You can copy out the files representing
-just the target itself with:
-
-```sh
-mkdir .build/swift-docc-symbol-graphs \
-  && mv .build/symbol-graphs/SwiftDocC* .build/swift-docc-symbol-graphs
-```
-
-### 2. Set the path to your renderer
-
-The best place to get started with Swift-DocC-Render is with the
-instructions in the [project's README](https://github.com/apple/swift-docc-render).
-
-If you have Xcode 13 or later installed, you can use the version of Swift-DocC-Render
-that comes included in Xcode with:
-
-```sh
-export DOCC_HTML_DIR="$(dirname $(xcrun --find docc))/../share/docc/render"
-```
-
-Alternatively, you can clone the 
-[Swift-DocC-Render-Artifact repository](https://github.com/apple/swift-docc-render-artifact)
-and use a recent pre-built copy of the renderer:
-
-```sh
-git clone https://github.com/apple/swift-docc-render-artifact.git
-```
-
-Then point the `DOCC_HTML_DIR` environment variable
-to the repository's `/dist` folder.
-
-```sh
-export DOCC_HTML_DIR="/path/to/swift-docc-render-artifact/dist"
-```
-
-### 3. Preview your documentation
-
-The `docc preview` command performs a conversion of your documentation and
-starts a local web server to allow for easy previewing of the built documentation.
-It monitors the provided Documentation Catalog for changes and updates the preview
-as you're working.
-
-```sh
-docc preview Sources/SwiftDocC/SwiftDocC.docc \
-  --fallback-display-name SwiftDocC \
-  --fallback-bundle-identifier org.swift.SwiftDocC \
-  --fallback-bundle-version 1.0.0 \
-  --additional-symbol-graph-dir .build/swift-docc-symbol-graphs
-```
-
-You should now see the following in your terminal:
-
-```
-Input: ~/Developer/swift-docc/Sources/SwiftDocC/SwiftDocC.docc
-Template: ~/Developer/swift-docc-render-artifact/dist
-========================================
-Starting Local Preview Server
-   Address: http://localhost:8080/documentation/swiftdocc
-========================================
-Monitoring ~/Developer/swift-docc/Sources/SwiftDocC/SwiftDocC.docc for changes...
-```
-
-And if you navigate to <http://localhost:8080/documentation/swiftdocc> you'll see
-the rendered documentation for `SwiftDocC`.
+Alternatively, you can manually generate symbol graph files and invoke `docc` directly. 
+Refer to instructions in [CONTRIBUTING.md](/CONTRIBUTING.md#assembling-symbol-graphs-and-building-with-docc-directly).
   
 ## Versioning
 
