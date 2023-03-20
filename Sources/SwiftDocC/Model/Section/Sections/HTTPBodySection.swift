@@ -25,6 +25,9 @@ public struct HTTPBodySection {
         if body.contents.isEmpty {
             body.contents = newBody.contents
         }
+        if body.mediaType == nil {
+            body.mediaType = newBody.mediaType
+        }
         if body.symbol == nil {
             body.symbol = newBody.symbol
         }

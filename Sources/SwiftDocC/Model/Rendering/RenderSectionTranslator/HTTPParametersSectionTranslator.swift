@@ -23,14 +23,14 @@ struct HTTPParametersSectionTranslator: RenderSectionTranslator {
             documentationDataVariants: symbol.httpParametersSectionVariants
         ) { _, httpParametersSection in
             // Filter out keys that aren't backed by a symbol or have a different source than requested
-            let filteredParameters = httpParametersSection.parameters.filter { $0.symbol != nil && $0.source == parameterSource.rawValue }
+            let filteredParameters = httpParametersSection.parameters.filter { $0.symbol != nil && $0.source != nil && $0.source == parameterSource.rawValue }
             
             if filteredParameters.isEmpty { return nil }
             
             return RESTParametersRenderSection(
                 title: "\(parameterSource.rawValue.capitalized) Parameters",
                 items: filteredParameters.map { translateParameter($0, &renderNodeTranslator) },
-                source: .path
+                source: parameterSource
             )
         }
     }

@@ -42,6 +42,8 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             "rest:test:get:v1/artists/{}@body-application/json",
             // 200 response code:
             "rest:test:get:v1/artists/{}=200-application/json",
+            // 200 response code:
+            "rest:test:get:v1/artists/{}=204",
         ]
         
         // Verify we have the right number of cached nodes.
@@ -131,10 +133,10 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
     
     func testRestRequestRenderNodeHasExpectedContent() throws {
         let outputConsumer = try renderNodeConsumer(for: "HTTPRequests")
-        let artistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:get:v1/artists/{}")
+        let getArtistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:get:v1/artists/{}")
         
         assertExpectedContent(
-            artistRenderNode,
+            getArtistRenderNode,
             sourceLanguage: "data",
             symbolKind: "httpRequest",
             title: "Get Artist",
@@ -153,9 +155,9 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
                 "v1/artists/", // path
                 "{id}" // parameter
             ],
-            httpParameters: ["id", "limit"],
+            httpParameters: ["id@path", "limit@query"],
             httpBodyType: "application/json",
-            httpResponses: [200],
+            httpResponses: [200, 204],
             discussionSection: [
                 "The endpoint discussion.",
             ],
@@ -171,5 +173,46 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
                 "'Get Artist' symbol has unexpected content for '\(fieldName)'."
             }
         )
+        
+        // Confirm docs for parameters
+        let paramItemSets = getArtistRenderNode.primaryContentSections.compactMap { ($0 as? RESTParametersRenderSection)?.items }
+        XCTAssertEqual(2, paramItemSets.count)
+        if paramItemSets.count > 0 {
+            let items = paramItemSets[0]
+            XCTAssertEqual(1, items.count)
+            if items.count > 0 {
+                XCTAssertEqual(["ID docs."], items[0].content?.paragraphText)
+                XCTAssertTrue(items[0].required ?? false)
+            }
+        }
+        if paramItemSets.count > 1 {
+            let items = paramItemSets[1]
+            XCTAssertEqual(1, items.count)
+            if items.count > 0 {
+                XCTAssertEqual(["Limit query parameter."], items[0].content?.paragraphText)
+                XCTAssertEqual(["Maximum", "Minimum"], items[0].attributes?.map(\.title).sorted())
+                XCTAssertFalse(items[0].required ?? false)
+            }
+        }
+        
+        // Confirm docs for request body
+        let body = getArtistRenderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection
+        XCTAssertNotNil(body)
+        if let body = body {
+            XCTAssertEqual(["Simple body."], body.content?.paragraphText)
+            XCTAssertEqual("application/json", body.mimeType)
+        }
+        
+        // Confirm docs for responses
+        let responses = getArtistRenderNode.primaryContentSections.compactMap { ($0 as? RESTResponseRenderSection)?.items }.flatMap { $0 }
+        XCTAssertEqual(2, responses.count)
+        if responses.count > 0 {
+            let response = responses[0]
+            XCTAssertEqual(["Everything is good with json."], response.content?.paragraphText)
+        }
+        if responses.count > 1 {
+            let response = responses[1]
+            XCTAssertEqual(["Success without content."], response.content?.paragraphText)
+        }
     }
 }

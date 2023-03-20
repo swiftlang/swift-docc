@@ -1586,13 +1586,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             parametersByTarget[edge.target]?.append(parameter)
                         }
                     case .httpBody:
-                        let body = HTTPBody(mediaType: sourceSymbol.httpMediaType ?? "application/json", contents: [], symbol: sourceSymbol)
+                        let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
                         bodyByTarget[edge.target] = body
                     case .httpResponse:
                         let statusParts = sourceSymbol.title.split(separator: " ", maxSplits: 1)
                         let statusCode = UInt(statusParts[0]) ?? 0
                         let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
-                        let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType ?? "application/json", contents: [], symbol: sourceSymbol)
+                        let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
                         if responsesByTarget[edge.target] == nil {
                             responsesByTarget[edge.target] = [response]
                         } else {
