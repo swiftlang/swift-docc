@@ -42,7 +42,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             "rest:test:get:v1/artists/{}@body-application/json",
             // 200 response code:
             "rest:test:get:v1/artists/{}=200-application/json",
-            // 200 response code:
+            // 204 response code:
             "rest:test:get:v1/artists/{}=204",
         ]
         

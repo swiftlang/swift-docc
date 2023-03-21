@@ -28,7 +28,7 @@ extension Array where Element: ListItemUpdatable {
         newElements.forEach { newElementLookup[$0.listItemIdentifier.description] = $0 }
         
         // Update existing elements with new data being passed in.
-        var updatedElements = self.map { existingElement in
+        var updatedElements = self.map { existingElement -> Element in
             if let newElement = newElementLookup.removeValue(forKey: existingElement.listItemIdentifier.description) {
                 return updater(existingElement, newElement)
             }
