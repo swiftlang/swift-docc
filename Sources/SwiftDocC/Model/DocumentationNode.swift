@@ -390,6 +390,21 @@ public struct DocumentationNode {
             semantic.dictionaryKeysSectionVariants[.fallback] = DictionaryKeysSection(dictionaryKeys:keys)
         }
         
+        if let parameters = markupModel.discussionTags?.httpParameters, !parameters.isEmpty {
+            // Record the parameters extracted from the markdown
+            semantic.httpParametersSectionVariants[.fallback] = HTTPParametersSection(parameters: parameters)
+        }
+        
+        if let body = markupModel.discussionTags?.httpBody {
+            // Record the body extracted from the markdown
+            semantic.httpBodySectionVariants[.fallback] = HTTPBodySection(body: body)
+        }
+        
+        if let responses = markupModel.discussionTags?.httpResponses, !responses.isEmpty {
+            // Record the responses extracted from the markdown
+            semantic.httpResponsesSectionVariants[.fallback] = HTTPResponsesSection(responses: responses)
+        }
+        
         options = documentationExtension?.options[.local]
         self.metadata = documentationExtension?.metadata
         

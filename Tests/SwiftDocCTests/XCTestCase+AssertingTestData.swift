@@ -84,8 +84,9 @@ extension XCTestCase {
         
         XCTAssertEqual(
             (renderNode.primaryContentSections.compactMap { $0 as? RESTParametersRenderSection })
-                .flatMap(\.items)
-                .map(\.name),
+                .flatMap { section in
+                    section.items.map { "\($0.name)@\(section.source.rawValue)" }
+                },
             expectedHTTPParameters ?? [], // compactMap gives an empty [], but should treat it as match for nil, too
             failureMessageForField("rest parameters"),
             file: file,

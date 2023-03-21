@@ -44,6 +44,12 @@
       "source": "rest:test:get:v1/artists/{}=200-application/json",
       "target": "rest:test:get:v1/artists/{}",
       "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "rest:test:get:v1/artists/{}=204",
+      "target": "rest:test:get:v1/artists/{}",
+      "targetFallback": null
     }
   ],
   "symbols": [
@@ -167,11 +173,29 @@
         "identifier": "httpResponse"
       },
       "names": {
-        "title": "200 Is Good"
+        "title": "200 Is OK"
       },
       "pathComponents": [
         "Get_Artist",
         "200"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:get:v1/artists/{}=204"
+      },
+      "kind": {
+        "displayName": "HTTP Response",
+        "identifier": "httpResponse"
+      },
+      "names": {
+        "title": "204"
+      },
+      "pathComponents": [
+        "Get_Artist",
+        "204"
       ]
     },
     {

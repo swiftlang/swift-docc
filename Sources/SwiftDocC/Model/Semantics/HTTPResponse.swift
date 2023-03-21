@@ -18,7 +18,9 @@ public struct HTTPResponse {
     /// The HTTP code description string.
     public var reason: String?
     /// The media type of the response.
-    public var mediaType: String
+    /// 
+    /// Value might be undefined initially when first extracted from markdown.
+    public var mediaType: String?
     /// The content that describe the response.
     public var contents: [Markup]
     /// The symbol graph symbol representing this response.
@@ -31,7 +33,7 @@ public struct HTTPResponse {
     ///   - mediaType: The media type of the response.
     ///   - contents: The content that describe this response.
     ///   - symbol: The symbol data extracted from the symbol graph.
-    public init(statusCode: UInt, reason: String?, mediaType: String, contents: [Markup], symbol: SymbolGraph.Symbol? = nil) {
+    public init(statusCode: UInt, reason: String?, mediaType: String?, contents: [Markup], symbol: SymbolGraph.Symbol? = nil) {
         self.statusCode = statusCode
         self.reason = reason
         self.mediaType = mediaType

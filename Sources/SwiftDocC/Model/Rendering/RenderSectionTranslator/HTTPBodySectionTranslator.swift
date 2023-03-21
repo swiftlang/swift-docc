@@ -20,7 +20,7 @@ struct HTTPBodySectionTranslator: RenderSectionTranslator {
         translateSectionToVariantCollection(
             documentationDataVariants: symbol.httpBodySectionVariants
         ) { _, httpBodySection -> RenderSection? in
-            guard let symbol = httpBodySection.body.symbol else { return nil }
+            guard let symbol = httpBodySection.body.symbol, let mediaType = httpBodySection.body.mediaType else { return nil }
             
             let responseContent = renderNodeTranslator.visitMarkupContainer(
                 MarkupContainer(httpBodySection.body.contents)
@@ -43,7 +43,7 @@ struct HTTPBodySectionTranslator: RenderSectionTranslator {
             
             return RESTBodyRenderSection(
                 title: "HTTP Body",
-                mimeType: httpBodySection.body.mediaType,
+                mimeType: mediaType,
                 bodyContentType: renderedTokens ?? [],
                 content: responseContent,
                 parameters: nil // TODO: Support body parameters
