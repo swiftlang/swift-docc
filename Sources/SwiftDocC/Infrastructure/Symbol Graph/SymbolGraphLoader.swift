@@ -21,14 +21,20 @@ struct SymbolGraphLoader {
     private(set) var graphLocations: [String: [SymbolKit.GraphCollector.GraphKind]] = [:]
     private var dataProvider: DocumentationContextDataProvider
     private var bundle: DocumentationBundle
+    private var configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
     
     /// Creates a new loader, initialized with the given bundle.
     /// - Parameters:
     ///   - bundle: The documentation bundle from which to load symbol graphs.
     ///   - dataProvider: A data provider in the bundle's context.
-    init(bundle: DocumentationBundle, dataProvider: DocumentationContextDataProvider) {
+    init(
+        bundle: DocumentationBundle,
+        dataProvider: DocumentationContextDataProvider,
+        configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+    ) {
         self.bundle = bundle
         self.dataProvider = dataProvider
+        self.configureSymbolGraph = configureSymbolGraph
     }
     
     /// A strategy to decode symbol graphs.
@@ -71,6 +77,8 @@ struct SymbolGraphLoader {
                 case .concurrentlyEachFileInBatches:
                     symbolGraph = try SymbolGraphConcurrentDecoder.decode(data, using: decoder)
                 }
+                
+                configureSymbolGraph?(&symbolGraph)
 
                 // `moduleNameFor(_:at:)` is static because it's pure function.
                 let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(symbolGraph, at: symbolGraphURL)

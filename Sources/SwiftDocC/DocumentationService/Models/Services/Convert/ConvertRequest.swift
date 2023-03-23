@@ -105,6 +105,12 @@ public struct ConvertRequest: Codable {
     /// - ``DocumentationBundle/symbolGraphURLs``
     public var symbolGraphs: [Data]
     
+    /// The mapping of external symbol identifiers to lines of a documentation comment that overrides the value in the symbol graph.
+    ///
+    /// Use this property to override the `docComment` mixin of a symbol entry in a symbol graph. This allows
+    /// the client to pass a more up-to-date value than is available in the symbol graph.
+    public var overridingDocumentationComments: [String: [Line]]? = nil
+    
     /// The article and documentation extension file data included in the documentation bundle to convert.
     ///
     /// ## See Also
@@ -186,6 +192,8 @@ public struct ConvertRequest: Codable {
     ///   response.
     ///   - bundleLocation: The file location of the documentation bundle to convert, if any.
     ///   - symbolGraphs: The symbols graph data included in the documentation bundle to convert.
+    ///   - overridingDocumentationComments: The mapping of external symbol identifiers to lines of a
+    ///   documentation comment that overrides the value in the symbol graph.
     ///   - knownDisambiguatedSymbolPathComponents: The mapping of external symbol identifiers to
     ///   known disambiguated symbol path components.
     ///   - markupFiles: The article and documentation extension file data included in the documentation bundle to convert.
@@ -199,6 +207,7 @@ public struct ConvertRequest: Codable {
         includeRenderReferenceStore: Bool? = nil,
         bundleLocation: URL? = nil,
         symbolGraphs: [Data],
+        overridingDocumentationComments: [String: [Line]]? = nil,
         knownDisambiguatedSymbolPathComponents: [String: [String]]? = nil,
         markupFiles: [Data],
         tutorialFiles: [Data] = [],
@@ -210,6 +219,7 @@ public struct ConvertRequest: Codable {
         self.includeRenderReferenceStore = includeRenderReferenceStore
         self.bundleLocation = bundleLocation
         self.symbolGraphs = symbolGraphs
+        self.overridingDocumentationComments = overridingDocumentationComments
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
         self.markupFiles = markupFiles
         self.tutorialFiles = tutorialFiles
@@ -217,5 +227,63 @@ public struct ConvertRequest: Codable {
         self.bundleInfo = bundleInfo
         self.featureFlags = featureFlags
         self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+    }
+}
+
+extension ConvertRequest {
+    /// A line of text in source code.
+    public struct Line: Codable {
+        /// The string contents of a line.
+        ///
+        /// Do not include newline characters in this property.
+        public var text: String
+        
+        /// The line's range in a document if available.
+        public var sourceRange: SourceRange?
+        
+        /// Creates a line of text from source code.
+        /// - Parameters:
+        ///   - text: The strings contents of a line. Do not include newline characters.
+        ///   - sourceRange: The line's range in a document if available.
+        public init(
+            text: String,
+            sourceRange: SourceRange? = nil
+        ) {
+            self.text = text
+            self.sourceRange = sourceRange
+        }
+    }
+    
+    /// Represents a selection in text.
+    public struct SourceRange: Codable {
+        /// The range's start position.
+        public var start: Position
+        
+        /// The range's end position.
+        public var end: Position
+        
+        /// Creates a new source range with the given start and end positions.
+        public init(
+            start: Position,
+            end: Position
+        ) {
+            self.start = start
+            self.end = end
+        }
+    }
+    
+    /// Represents a cursor position in text.
+    public struct Position: Codable {
+        /// The zero-based line number in a document.
+        public var line: Int
+        
+        /// The zero-based byte offset into a line.
+        public var character: Int
+        
+        /// Creates a new cursor position with the given line number and character offset.
+        public init(line: Int, character: Int) {
+            self.line = line
+            self.character = character
+        }
     }
 }

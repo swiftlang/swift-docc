@@ -152,6 +152,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// for example when ``ConvertService``.
     var allowsRegisteringUncuratedTutorials: Bool = false
     
+    /// A closure that modifies each symbol graph that the context registers.
+    ///
+    /// Set this property if you need to modify symbol graphs before the context registers its information.
+    var configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+    
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
 
@@ -1581,13 +1586,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             parametersByTarget[edge.target]?.append(parameter)
                         }
                     case .httpBody:
-                        let body = HTTPBody(mediaType: sourceSymbol.httpMediaType ?? "application/json", contents: [], symbol: sourceSymbol)
+                        let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
                         bodyByTarget[edge.target] = body
                     case .httpResponse:
                         let statusParts = sourceSymbol.title.split(separator: " ", maxSplits: 1)
                         let statusCode = UInt(statusParts[0]) ?? 0
                         let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
-                        let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType ?? "application/json", contents: [], symbol: sourceSymbol)
+                        let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
                         if responsesByTarget[edge.target] == nil {
                             responsesByTarget[edge.target] = [response]
                         } else {
@@ -2084,7 +2089,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         var hierarchyBasedResolver: PathHierarchyBasedLinkResolver!
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            symbolGraphLoader = SymbolGraphLoader(bundle: bundle, dataProvider: self.dataProvider)
+            symbolGraphLoader = SymbolGraphLoader(
+                bundle: bundle,
+                dataProvider: self.dataProvider,
+                configureSymbolGraph: configureSymbolGraph
+            )
+            
             do {
                 try symbolGraphLoader.loadAll(using: decoder)
                 if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {

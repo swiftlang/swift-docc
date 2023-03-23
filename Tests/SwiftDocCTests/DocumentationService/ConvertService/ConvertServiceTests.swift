@@ -193,6 +193,57 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    func testOverridesDocumentationComments() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            overridingDocumentationComments: [
+                "s:5MyKit0A5ClassC10myFunctionyyF": [
+                    ConvertRequest.Line(
+                        text: "line 1",
+                        sourceRange: ConvertRequest.SourceRange(
+                            start: ConvertRequest.Position(
+                                line: 12,
+                                character: 0
+                            ),
+                            end: ConvertRequest.Position(
+                                line: 12,
+                                character: 7
+                            )
+                        )
+                    ),
+                    ConvertRequest.Line(text: "line 2")
+                ]
+            ],
+            markupFiles: [],
+            miscResourceURLs: []
+        )
+        
+        try processAndAssert(request: request) { message in
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            XCTAssertEqual(renderNodes.count, 1)
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            XCTAssertEqual(
+                renderNode.abstract?.plainText,
+                "line 1 line 2"
+            )
+        }
+    }
+    
     func testConvertSinglePageWithUnrelatedDocumentationExtension() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "mykit-one-symbol",
