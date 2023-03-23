@@ -19,9 +19,9 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// does not have a See Also section.
     func testNoSeeAlso() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
-            /// Article that curates `SideClass`
+            /// Extension that curates `SideClass`
             try """
-            # SideKit
+            # ``SideKit``
             SideKit module root symbol
             ## Topics
             ### Basics
@@ -42,7 +42,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// does include an authored See Also section
     func testAuthoredSeeAlso() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
-            /// Article that curates `SideClass`
+            /// Extension that curates `SideClass`
             try """
             # ``SideKit``
             SideKit module root symbol
@@ -78,7 +78,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// does include both in See Also with authored section first
     func testAuthoredAndAutomaticSeeAlso() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
-            /// Article that curates `SideClass`
+            /// Extension that curates `SideClass`
             try """
             # ``SideKit``
             SideKit module root symbol
