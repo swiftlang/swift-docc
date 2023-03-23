@@ -21,6 +21,9 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             // Get Artist endpoint - ``Get_Artist``:
             "rest:test:get:v1/artists/{}": [.data],
             
+            // Create Artist endpoint - ``Create_Artist``:
+            "rest:test:post:v1/artists": [.data],
+            
             // Artist dictionary - ``Artist``:
             "data:test:Artist": [.data],
             
@@ -38,12 +41,18 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             "rest:test:get:v1/artists/{}@p=id",
             // limit query parameter - ``limit``:
             "rest:test:get:v1/artists/{}@q=limit",
-            // Upload body:
+            // Upload GET body:
             "rest:test:get:v1/artists/{}@body-application/json",
             // 200 response code:
             "rest:test:get:v1/artists/{}=200-application/json",
             // 204 response code:
             "rest:test:get:v1/artists/{}=204",
+            // Upload POST body:
+            "rest:test:post:v1/artists@body-multipart/form-data",
+            // `artist` upload POST body parameter:
+            "rest:test:post:v1/artists@body-multipart/form-data@artist",
+            // `userName` upload POST body parameter:
+            "rest:test:post:v1/artists@body-multipart/form-data@userName",
         ]
         
         // Verify we have the right number of cached nodes.
@@ -85,11 +94,13 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             discussionSection: ["Root level discussion."],
             topicSectionIdentifiers: [
                 "doc://org.swift.docc.HTTPRequests/documentation/HTTPRequests/FooSwift",
+                "doc://org.swift.docc.HTTPRequests/documentation/HTTPRequests/Create_Artist",
                 "doc://org.swift.docc.HTTPRequests/documentation/HTTPRequests/Get_Artist",
                 "doc://org.swift.docc.HTTPRequests/documentation/HTTPRequests/Artist",
             ],
             referenceTitles: [
                 "Artist",
+                "Create Artist",
                 "FooSwift",
                 "Get Artist",
                 "HTTPRequests",
@@ -114,11 +125,13 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             discussionSection: ["Root level discussion."],
             topicSectionIdentifiers: [
                 "doc://org.swift.docc.HTTPRequests/documentation/HTTPRequests/FooSwift",
+                "doc://org.swift.docc.HTTPRequests/documentation/HTTPRequests/Create_Artist",
                 "doc://org.swift.docc.HTTPRequests/documentation/HTTPRequests/Get_Artist",
                 "doc://org.swift.docc.HTTPRequests/documentation/HTTPRequests/Artist",
             ],
             referenceTitles: [
                 "Artist",
+                "Create Artist",
                 "FooSwift",
                 "Get Artist",
                 "HTTPRequests",
@@ -131,7 +144,7 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
         )
     }
     
-    func testRestRequestRenderNodeHasExpectedContent() throws {
+    func testRestGetRequestRenderNodeHasExpectedContent() throws {
         let outputConsumer = try renderNodeConsumer(for: "HTTPRequests")
         let getArtistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:get:v1/artists/{}")
         
@@ -214,5 +227,67 @@ class SemaToRenderNodeHTTPRequestTests: XCTestCase {
             let response = responses[1]
             XCTAssertEqual(["Success without content."], response.content?.paragraphText)
         }
+    }
+    
+    func testRestPostRequestRenderNodeHasExpectedContent() throws {
+        let outputConsumer = try renderNodeConsumer(for: "HTTPRequests")
+        let getArtistRenderNode = try outputConsumer.renderNode(withIdentifier: "rest:test:post:v1/artists")
+        
+        assertExpectedContent(
+            getArtistRenderNode,
+            sourceLanguage: "data",
+            symbolKind: "httpRequest",
+            title: "Create Artist",
+            navigatorTitle: nil,
+            abstract: "Create a new artist.",
+            declarationTokens: nil,
+            endpointTokens: [
+                "POST",  // method
+                " ",    // text
+                "http://test.example.com/", // baseURL
+                "v1/artists", // path
+            ],
+            httpParameters: [],
+            httpBodyType: "multipart/form-data",
+            httpBodyParameters: ["artist", "userName"],
+            httpResponses: [],
+            discussionSection: nil,
+            topicSectionIdentifiers: [],
+            referenceTitles: [
+                "Artist",
+                "Create Artist",
+                "HTTPRequests",
+            ],
+            referenceFragments: [],
+            failureMessage: { fieldName in
+                "'Create Artist' symbol has unexpected content for '\(fieldName)'."
+            }
+        )
+        
+        // Confirm docs for request body
+        let body = getArtistRenderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection
+        XCTAssertNotNil(body)
+        if let body = body {
+            XCTAssertEqual(["Uploaded payload."], body.content?.paragraphText)
+            XCTAssertEqual("multipart/form-data", body.mimeType)
+            
+            // Confirm docs for body parameters
+            let parameters = body.parameters
+            XCTAssertNotNil(parameters)
+            if let parameters = parameters {
+                XCTAssertEqual(2, parameters.count)
+                if parameters.count > 0 {
+                    XCTAssertEqual("artist", parameters[0].name)
+                    XCTAssertEqual(["Full artist definition."], parameters[0].content?.paragraphText)
+                    XCTAssertTrue(parameters[0].required ?? false)
+                }
+                if parameters.count > 1 {
+                    XCTAssertEqual("userName", parameters[1].name)
+                    XCTAssertEqual(["User creating the artist."], parameters[1].content?.paragraphText)
+                    XCTAssertFalse(parameters[1].required ?? false)
+                }
+            }
+        }
+        
     }
 }
