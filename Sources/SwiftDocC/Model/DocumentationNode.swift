@@ -438,10 +438,7 @@ public struct DocumentationNode {
         } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
             let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
 
-            var documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks]
-            if FeatureFlags.current.isExperimentalDoxygenSupportEnabled {
-                documentOptions.insert(.parseMinimalDoxygen)
-            }
+            let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
             let docCommentMarkup = Document(parsing: docCommentString, options: documentOptions)
             
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })

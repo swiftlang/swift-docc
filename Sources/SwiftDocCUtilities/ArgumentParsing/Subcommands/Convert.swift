@@ -169,8 +169,9 @@ extension Docc {
 
         /// A user-provided value that is true if experimental Doxygen support should be enabled.
         ///
-        /// Defaults to false.
+        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
         @Flag(help: .hidden)
+        @available(*, deprecated, message: "Doxygen support is now enabled by default.")
         public var experimentalParseDoxygenCommands = false
 
         // MARK: - Info.plist fallbacks

@@ -390,27 +390,6 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(commandWithFlag.enableExperimentalDeviceFrameSupport)
         XCTAssertTrue(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
     }
-
-    func testExperimentalParseDoxygenFlag() throws {
-        let originalFeatureFlagsState = FeatureFlags.current
-
-        defer {
-            FeatureFlags.current = originalFeatureFlagsState
-        }
-
-        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
-        let _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
-        XCTAssertFalse(commandWithoutFlag.experimentalParseDoxygenCommands)
-        XCTAssertFalse(FeatureFlags.current.isExperimentalDoxygenSupportEnabled)
-
-        let commandWithFlag = try Docc.Convert.parse([
-            "--experimental-parse-doxygen-commands",
-            testBundleURL.path,
-        ])
-        let _ = try ConvertAction(fromConvertCommand: commandWithFlag)
-        XCTAssertTrue(commandWithFlag.experimentalParseDoxygenCommands)
-        XCTAssertTrue(FeatureFlags.current.isExperimentalDoxygenSupportEnabled)
-    }
     
     func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
         unsetenv(TemplateOption.environmentVariableKey)
