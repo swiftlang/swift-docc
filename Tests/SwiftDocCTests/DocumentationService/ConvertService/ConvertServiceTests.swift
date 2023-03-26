@@ -188,7 +188,7 @@ class ConvertServiceTests: XCTestCase {
             
             XCTAssertEqual(
                 renderNode.metadata.remoteSource?.url.absoluteString,
-                "file:///private/tmp/test.swift#L2"
+                "doc-source-file:///private/tmp/test.swift#L2"
             )
         }
     }
