@@ -311,6 +311,48 @@ class MetadataTests: XCTestCase {
         )
     }
     
+    func testPageColorSupport() throws {
+        do {
+            let (problems, metadata) = try parseMetadataFromSource(
+            """
+            # Article title
+            
+            @Metadata {
+                @PageColor(red: 233, green: 58, blue: 43)
+            }
+            
+            The abstract of this article.
+            """
+            )
+            
+            XCTAssertEqual(problems, [])
+            XCTAssertEqual(metadata.pageColor?.red, 233)
+            XCTAssertEqual(metadata.pageColor?.green, 58)
+            XCTAssertEqual(metadata.pageColor?.blue, 43)
+            XCTAssertEqual(metadata.pageColor?.opacity, 1.0)
+        }
+        
+        do {
+            let (problems, metadata) = try parseMetadataFromSource(
+            """
+            # Article title
+            
+            @Metadata {
+                @PageColor(red: 233, green: 58, blue: 43, opacity: 0.5)
+            }
+            
+            The abstract of this article.
+            """
+            )
+            
+            XCTAssertEqual(problems, [])
+            XCTAssertEqual(metadata.pageColor?.red, 233)
+            XCTAssertEqual(metadata.pageColor?.green, 58)
+            XCTAssertEqual(metadata.pageColor?.blue, 43)
+            XCTAssertEqual(metadata.pageColor?.opacity, 0.5)
+        }
+    }
+    
     func parseMetadataFromSource(
         _ source: String,
         file: StaticString = #file,

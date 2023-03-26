@@ -1791,6 +1791,38 @@
                     }
                 }
             },
+            "TopicColor": {
+                "type": "object",
+                "required": [
+                    "red",
+                    "green",
+                    "blue",
+                    "opacity"
+                ],
+                "properties": {
+                    "red": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 255
+                    },
+                    "green": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 255
+                    },
+                    "blue": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 255
+                    },
+                    "opacity": {
+                        "type": "number",
+                        "format": "double",
+                        "minimum": 0.0,
+                        "maximum": 1.0
+                    }
+                }
+            },
             "SymbolTag": {
                 "type": "object",
                 "required": [
@@ -2249,6 +2281,9 @@
                         "items": {
                             "$ref": "#/components/schemas/TopicImage"
                         }
+                    },
+                    "color": {
+                        "$ref": "#/components/schemas/TopicColor"
                     },
                     "customMetadata": {
                         "type": "object",

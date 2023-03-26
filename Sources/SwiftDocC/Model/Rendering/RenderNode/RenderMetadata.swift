@@ -77,6 +77,11 @@ public struct RenderMetadata: VariantContainer {
     /// Authors can use the `@PageImage` metadata directive to provide custom icon and card images for a page.
     public var images: [TopicImage] = []
     
+    /// Custom authored color that represents this page.
+    ///
+    /// Authors can use the `@PageColor` metadata directive to provide a custom color for a page.
+    public var color: TopicColor?
+    
     /// Author provided custom metadata describing the page.
     public var customMetadata: [String: String] = [:]
     
@@ -231,6 +236,7 @@ extension RenderMetadata: Codable {
         public static let remoteSource = CodingKeys(stringValue: "remoteSource")
         public static let tags = CodingKeys(stringValue: "tags")
         public static let images = CodingKeys(stringValue: "images")
+        public static let color = CodingKeys(stringValue: "color")
         public static let customMetadata = CodingKeys(stringValue: "customMetadata")
     }
     
@@ -247,6 +253,7 @@ extension RenderMetadata: Codable {
         requiredVariants = try container.decodeVariantCollectionIfPresent(ofValueType: Bool.self, forKey: .required) ?? .init(defaultValue: false)
         roleHeadingVariants = try container.decodeVariantCollectionIfPresent(ofValueType: String?.self, forKey: .roleHeading)
         images = try container.decodeIfPresent([TopicImage].self, forKey: .images) ?? []
+        color = try container.decodeIfPresent(TopicColor.self, forKey: .color)
         customMetadata = try container.decodeIfPresent([String: String].self, forKey: .customMetadata) ?? [:]
         let rawRole = try container.decodeIfPresent(String.self, forKey: .role)
         role = rawRole == "tutorial" ? Role.tutorial.rawValue : rawRole
@@ -321,6 +328,7 @@ extension RenderMetadata: Codable {
         }
         
         try container.encodeIfNotEmpty(images, forKey: .images)
+        try container.encodeIfPresent(color, forKey: .color)
         try container.encodeIfNotEmpty(customMetadata, forKey: .customMetadata)
     }
 }

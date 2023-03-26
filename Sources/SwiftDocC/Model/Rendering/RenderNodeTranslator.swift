@@ -734,6 +734,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 )
             }
         }
+        
+        if let pageColor = documentationNode.metadata?.pageColor {
+            node.metadata.color = TopicColor(
+                red: pageColor.red,
+                green: pageColor.green,
+                blue: pageColor.blue,
+                opacity: pageColor.opacity
+            )
+        }
 
         var metadataCustomDictionary : [String: String] = [:]
         if let customMetadatas = documentationNode.metadata?.customMetadata {

@@ -71,3 +71,13 @@ extension Int: DirectiveArgumentValueConvertible {
         return nil
     }
 }
+
+extension Double: DirectiveArgumentValueConvertible {
+    init?(rawDirectiveArgumentValue: String) {
+        self.init(rawDirectiveArgumentValue)
+    }
+    
+    static func allowedValues() -> [String]? {
+        return nil
+    }
+}
