@@ -514,9 +514,7 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(problems.count, 0)
     }
 
-    func testParseDoxygenWithFeatureFlag() throws {
-        enableFeatureFlag(\.isExperimentalDoxygenSupportEnabled)
-
+    func testParseDoxygen() throws {
         let deckKitSymbolGraph = Bundle.module.url(
             forResource: "DeckKit-Objective-C",
             withExtension: "symbols.json",
