@@ -61,6 +61,14 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     @ChildDirective(requirements: .zeroOrMore)
     var supportedLanguages: [SupportedLanguage]
     
+    @ChildDirective
+    var _pageColor: PageColor? = nil
+    
+    /// The optional, context-dependent color used to represent this page.
+    var pageColor: PageColor.Color? {
+        _pageColor?.color
+    }
+    
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
         "technologyRoot"        : \Metadata._technologyRoot,
@@ -71,6 +79,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "availability"          : \Metadata._availability,
         "pageKind"              : \Metadata._pageKind,
         "supportedLanguages"    : \Metadata._supportedLanguages,
+        "_pageColor"             : \Metadata.__pageColor,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
@@ -93,7 +102,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
