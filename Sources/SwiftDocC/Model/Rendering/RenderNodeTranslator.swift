@@ -1741,6 +1741,94 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
     }
     
+    /// Generate a RenderProperty object from markup content and symbol data.
+    mutating func createRenderProperty(name: String, contents: [Markup], required: Bool, symbol: SymbolGraph.Symbol?) -> RenderProperty {
+        let parameterContent = self.visitMarkupContainer(
+            MarkupContainer(contents)
+        ) as! [RenderBlockContent]
+        
+        var renderedTokens: [DeclarationRenderSection.Token]? = nil
+        var attributes: [RenderAttribute] = []
+        var isReadOnly: Bool? = nil
+        var deprecated: Bool? = nil
+        var introducedVersion: String? = nil 
+        
+        if let symbol = symbol {
+            // Convert the dictionary key's declaration into section tokens
+            if let fragments = symbol.declarationFragments {
+                renderedTokens = fragments.map { token -> DeclarationRenderSection.Token in
+                    
+                    // Create a reference if one found
+                    var reference: ResolvedTopicReference?
+                    if let preciseIdentifier = token.preciseIdentifier,
+                       let resolved = self.context.symbolIndex[preciseIdentifier]?.reference {
+                        reference = resolved
+                        
+                        // Add relationship to render references
+                        self.collectedTopicReferences.append(resolved)
+                    }
+                    
+                    // Add the declaration token
+                    return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
+                }
+            }
+                
+            // Populate attributes
+            if let constraint = symbol.defaultValue {
+                attributes.append(RenderAttribute.default(String(constraint)))
+            }
+            if let constraint = symbol.minimum {
+                attributes.append(RenderAttribute.minimum(String(constraint)))
+            }
+            if let constraint = symbol.maximum {
+                attributes.append(RenderAttribute.maximum(String(constraint)))
+            }
+            if let constraint = symbol.minimumExclusive {
+                attributes.append(RenderAttribute.minimumExclusive(String(constraint)))
+            }
+            if let constraint = symbol.maximumExclusive {
+                attributes.append(RenderAttribute.maximumExclusive(String(constraint)))
+            }
+            if let constraint = symbol.allowedValues {
+                attributes.append(RenderAttribute.allowedValues(constraint.map{String($0)}))
+            }
+            if let constraint = symbol.isReadOnly {
+                isReadOnly = constraint
+            }
+            if let constraint = symbol.minimumLength {
+                attributes.append(RenderAttribute.minimumLength(String(constraint)))
+            }
+            if let constraint = symbol.maximumLength {
+                attributes.append(RenderAttribute.maximumLength(String(constraint)))
+            }
+            
+            // Extract the availability information
+            if let availabilityItems = symbol.availability, availabilityItems.count > 0 {
+                availabilityItems.forEach { item in
+                    if deprecated == nil && (item.isUnconditionallyDeprecated || item.deprecatedVersion != nil) {
+                        deprecated = true
+                    }
+                    if let intro = item.introducedVersion, introducedVersion == nil {
+                        introducedVersion = "\(intro)"
+                    }
+                }
+            }
+        }
+        
+        return RenderProperty(
+            name: name,
+            type: renderedTokens ?? [],
+            typeDetails: nil,
+            content: parameterContent,
+            attributes: attributes,
+            mimeType: symbol?.httpMediaType,
+            required: required,
+            deprecated: deprecated,
+            readOnly: isReadOnly,
+            introducedVersion: introducedVersion
+        )
+    }
+    
     init(
         context: DocumentationContext,
         bundle: DocumentationBundle,
