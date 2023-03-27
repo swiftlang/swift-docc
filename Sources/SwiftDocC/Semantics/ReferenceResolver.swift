@@ -458,7 +458,7 @@ struct ReferenceResolver: SemanticVisitor {
         }
         let newHTTPBodyVariants = symbol.httpBodySectionVariants.map { httpBodySection -> HTTPBodySection in
             let oldBody = httpBodySection.body
-            let newBody = HTTPBody(mediaType: oldBody.mediaType, contents: oldBody.contents.map { visitMarkup($0) }, symbol: oldBody.symbol)
+            let newBody = HTTPBody(mediaType: oldBody.mediaType, contents: oldBody.contents.map { visitMarkup($0) }, parameters: oldBody.parameters, symbol: oldBody.symbol)
             return HTTPBodySection(body: newBody)
         }
         let newHTTPParametersVariants = symbol.httpParametersSectionVariants.map { httpParametersSection -> HTTPParametersSection in
