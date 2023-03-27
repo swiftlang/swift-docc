@@ -1565,30 +1565,38 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         var keysByTarget = [String: [DictionaryKey]]()
         var parametersByTarget = [String: [HTTPParameter]]()
         var bodyByTarget = [String: HTTPBody]()
+        var bodyParametersByTarget = [String: [HTTPParameter]]()
         var responsesByTarget = [String: [HTTPResponse]]()
         
         for edge in relationships {
             if edge.kind == .memberOf || edge.kind == .optionalMemberOf {
-                if let source = symbolIndex[edge.source], let _ = symbolIndex[edge.target], let sourceSymbol = source.symbol {
-                    switch source.kind {
-                    case .dictionaryKey:
+                if let source = symbolIndex[edge.source], let target = symbolIndex[edge.target], let sourceSymbol = source.symbol {
+                    switch (source.kind, target.kind) {
+                    case (.dictionaryKey, .dictionary):
                         let dictionaryKey = DictionaryKey(name: sourceSymbol.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
                         if keysByTarget[edge.target] == nil {
                             keysByTarget[edge.target] = [dictionaryKey]
                         } else {
                             keysByTarget[edge.target]?.append(dictionaryKey)
                         }
-                    case .httpParameter:
+                    case (.httpParameter, .httpRequest):
                         let parameter = HTTPParameter(name: sourceSymbol.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
                         if parametersByTarget[edge.target] == nil {
                             parametersByTarget[edge.target] = [parameter]
                         } else {
                             parametersByTarget[edge.target]?.append(parameter)
                         }
-                    case .httpBody:
+                    case (.httpBody, .httpRequest):
                         let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
                         bodyByTarget[edge.target] = body
-                    case .httpResponse:
+                    case (.httpParameter, .httpBody):
+                        let parameter = HTTPParameter(name: sourceSymbol.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        if bodyParametersByTarget[edge.target] == nil {
+                            bodyParametersByTarget[edge.target] = [parameter]
+                        } else {
+                            bodyParametersByTarget[edge.target]?.append(parameter)
+                        }
+                    case (.httpResponse, .httpRequest):
                         let statusParts = sourceSymbol.title.split(separator: " ", maxSplits: 1)
                         let statusCode = UInt(statusParts[0]) ?? 0
                         let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
@@ -1598,19 +1606,20 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         } else {
                             responsesByTarget[edge.target]?.append(response)
                         }
-                    default:
+                    case (_, _):
                         continue
                     }
                 }
             }
         }
         
+        let trait = DocumentationDataVariantsTrait(for: selector)
+        
         // Merge in all the dictionary keys for each target into their section variants.
         keysByTarget.forEach { targetIdentifier, keys in
             let target = symbolIndex[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let keys = keys.sorted { $0.name < $1.name }
-                let trait = DocumentationDataVariantsTrait(for: selector)
                 if semantic.dictionaryKeysSectionVariants[trait] == nil {
                     semantic.dictionaryKeysSectionVariants[trait] = DictionaryKeysSection(dictionaryKeys: keys)
                 } else {
@@ -1624,7 +1633,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let target = symbolIndex[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let parameters = parameters.sorted { $0.name < $1.name }
-                let trait = DocumentationDataVariantsTrait(for: selector)
                 if semantic.httpParametersSectionVariants[trait] == nil {
                     semantic.httpParametersSectionVariants[trait] = HTTPParametersSection(parameters: parameters)
                 } else {
@@ -1637,11 +1645,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         bodyByTarget.forEach { targetIdentifier, body in
             let target = symbolIndex[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
-                let trait = DocumentationDataVariantsTrait(for: selector)
+                // Add any body parameters to existing body record
+                var localBody = body
+                if let identifier = body.symbol?.preciseIdentifier, let bodyParameters = bodyParametersByTarget[identifier] {
+                    localBody.parameters = bodyParameters.sorted { $0.name < $1.name }
+                }
                 if semantic.httpBodySectionVariants[trait] == nil {
-                    semantic.httpBodySectionVariants[trait] = HTTPBodySection(body: body)
+                    semantic.httpBodySectionVariants[trait] = HTTPBodySection(body: localBody)
                 } else {
-                    semantic.httpBodySectionVariants[trait]?.mergeBody(body)
+                    semantic.httpBodySectionVariants[trait]?.mergeBody(localBody)
                 }
             }
         }
@@ -1651,7 +1663,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let target = symbolIndex[targetIdentifier]
             if let semantic = target?.semantic as? Symbol {
                 let responses = responses.sorted { $0.statusCode < $1.statusCode }
-                let trait = DocumentationDataVariantsTrait(for: selector)
                 if semantic.httpResponsesSectionVariants[trait] == nil {
                     semantic.httpResponsesSectionVariants[trait] = HTTPResponsesSection(responses: responses)
                 } else {

@@ -47,6 +47,24 @@
     },
     {
       "kind": "memberOf",
+      "source": "rest:test:post:v1/artists@body-multipart/form-data",
+      "target": "rest:test:post:v1/artists",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "rest:test:post:v1/artists@body-multipart/form-data@artist",
+      "target": "rest:test:post:v1/artists@body-multipart/form-data",
+      "targetFallback": null
+    },
+    {
+      "kind": "optionalMemberOf",
+      "source": "rest:test:post:v1/artists@body-multipart/form-data@userName",
+      "target": "rest:test:post:v1/artists@body-multipart/form-data",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
       "source": "rest:test:get:v1/artists/{}=204",
       "target": "rest:test:get:v1/artists/{}",
       "targetFallback": null
@@ -196,6 +214,105 @@
       "pathComponents": [
         "Get_Artist",
         "204"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "httpEndpoint": {
+        "baseURL": "http://test.example.com",
+        "method": "POST",
+        "path": "/v1/artists"
+      },
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:post:v1/artists"
+      },
+      "kind": {
+        "displayName": "Web Request",
+        "identifier": "httpRequest"
+      },
+      "names": {
+        "title": "Create Artist"
+      },
+      "pathComponents": [
+        "Create_Artist"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+            "kind": "text",
+            "spelling": "form-data"
+        }
+      ],
+      "httpMediaType": "multipart/form-data",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:post:v1/artists@body-multipart/form-data"
+      },
+      "kind": {
+        "displayName": "HTTP Body",
+        "identifier": "httpBody"
+      },
+      "names": {
+        "title": "body"
+      },
+      "pathComponents": [
+        "Create_Artist",
+        "body"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "data:test:Artist",
+            "spelling": "Artist"
+        }
+      ],
+      "httpMediaType": "application/json",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:post:v1/artists@body-multipart/form-data@artist"
+      },
+      "kind": {
+        "displayName": "HTTP Parameter",
+        "identifier": "httpParameter"
+      },
+      "names": {
+        "title": "artist"
+      },
+      "pathComponents": [
+        "Create_Artist",
+        "body",
+        "artist"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+            "kind": "text",
+            "spelling": "string"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:post:v1/artists@body-multipart/form-data@userName"
+      },
+      "kind": {
+        "displayName": "HTTP Parameter",
+        "identifier": "httpParameter"
+      },
+      "names": {
+        "title": "userName"
+      },
+      "pathComponents": [
+        "Create_Artist",
+        "body",
+        "userName"
       ]
     },
     {
