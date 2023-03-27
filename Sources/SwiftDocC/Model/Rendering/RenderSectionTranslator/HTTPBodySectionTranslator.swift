@@ -22,7 +22,10 @@ struct HTTPBodySectionTranslator: RenderSectionTranslator {
         ) { _, httpBodySection -> RenderSection? in
             guard let symbol = httpBodySection.body.symbol, let mediaType = httpBodySection.body.mediaType else { return nil }
             
-            let responseContent = renderNodeTranslator.visitMarkupContainer(
+            // Filter out parameters that aren't backed by a symbol or don't have a "body" source.
+            let filteredParameters = httpBodySection.body.parameters.filter { $0.symbol != nil && $0.source == "body" }
+            
+            let bodyContent = renderNodeTranslator.visitMarkupContainer(
                 MarkupContainer(httpBodySection.body.contents)
             ) as! [RenderBlockContent]
             
@@ -45,8 +48,8 @@ struct HTTPBodySectionTranslator: RenderSectionTranslator {
                 title: "HTTP Body",
                 mimeType: mediaType,
                 bodyContentType: renderedTokens ?? [],
-                content: responseContent,
-                parameters: nil // TODO: Support body parameters
+                content: bodyContent,
+                parameters: filteredParameters.map { renderNodeTranslator.createRenderProperty(name: $0.name, contents: $0.contents, required: $0.required, symbol: $0.symbol)  }
             )
         }
     }

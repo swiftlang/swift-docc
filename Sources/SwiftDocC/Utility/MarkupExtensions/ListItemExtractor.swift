@@ -93,6 +93,13 @@ extension Collection where Element == InlineMarkup {
         return nil
     }
     
+    func extractHTTPBodyParameter() -> HTTPParameter? {
+        if let (name, content) = splitNameAndContent() {
+            return HTTPParameter(name: name, source: "body", contents: content)
+        }
+        return nil
+    }
+    
     func extractHTTPResponse() -> HTTPResponse? {
         if let (name, content) = splitNameAndContent() {
             let statusCode = UInt(name) ?? 0
@@ -227,7 +234,7 @@ extension ListItem {
     }
 
     /**
-     Extracts an outline of dictionary keys from a sublist underneath this list item.
+     Extracts an outline of HTTP parameters from a sublist underneath this list item.
 
      Expected form:
 
@@ -260,7 +267,7 @@ extension ListItem {
                       let parameter = Array(firstParagraph.inlineChildren).extractHTTPParameter() else {
                     continue
                 }
-                // Don't forget the rest of the content under this dictionary key list item.
+                // Don't forget the rest of the content under this list item.
                 let contents = parameter.contents + Array(listItem.children.dropFirst(1))
 
                 parameters.append(HTTPParameter(name: parameter.name, source:parameter.source, contents: contents))
@@ -269,6 +276,65 @@ extension ListItem {
         return parameters
     }
 
+    /**
+     Extract a standalone HTTP body parameter description from this list item.
+
+     Expected form:
+
+     ```markdown
+     - HTTPBodyParameter x: A number.
+     ```
+     */
+    func extractStandaloneHTTPBodyParameter() -> HTTPParameter? {
+        guard let remainder = extractTag(TaggedListItemExtractor.httpBodyParameterTag) else {
+            return nil
+        }
+        return remainder.extractHTTPBodyParameter()
+    }
+    
+    /**
+     Extracts an outline of HTTP parameters from a sublist underneath this list item.
+
+     Expected form:
+
+     ```markdown
+     - HTTPBodyParameters:
+       - x: a number
+       - y: another
+     ```
+
+     > Warning: Content underneath `- HTTPBodyParameters` that doesn't match this form will be dropped.
+     */
+    func extractHTTPBodyParameterOutline() -> [HTTPParameter]? {
+        guard extractTag(TaggedListItemExtractor.httpBodyParametersTag + ":") != nil else {
+            return nil
+        }
+
+        var parameters = [HTTPParameter]()
+
+        for child in children {
+            // The list `- HTTPBodyParameters:` should have one child, a list of parameters.
+            guard let parametersList = child as? UnorderedList else {
+                // If it's not, that content is dropped.
+                continue
+            }
+
+            // Those sublist items are assumed to be a valid `- ___: ...` parameter form or else they are dropped.
+            for child in parametersList.children {
+                guard let listItem = child as? ListItem,
+                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
+                      let parameter = Array(firstParagraph.inlineChildren).extractHTTPParameter() else {
+                    continue
+                }
+                // Don't forget the rest of the content under this list item.
+                let contents = parameter.contents + Array(listItem.children.dropFirst(1))
+
+                parameters.append(HTTPParameter(name: parameter.name, source:"body", contents: contents))
+            }
+        }
+        return parameters
+    }
+    
     /**
      Extract a standalone HTTP response description from this list item.
 
@@ -450,6 +516,8 @@ struct TaggedListItemExtractor: MarkupRewriter {
     static let httpResponsesTag = "httpresponses"
     static let httpParameterTag = "httpparameter"
     static let httpParametersTag = "httpparameters"
+    static let httpBodyParameterTag = "httpbodyparameter"
+    static let httpBodyParametersTag = "httpbodyparameters"
 
     var parameters = [Parameter]()
     var dictionaryKeys = [DictionaryKey]()
@@ -567,7 +635,29 @@ struct TaggedListItemExtractor: MarkupRewriter {
             return nil
         } else if let httpBodyDescription = listItem.extractHTTPBody() {
             // - httpBody: ...
-            httpBody = httpBodyDescription
+            if httpBody == nil {
+                httpBody = httpBodyDescription
+            } else {
+                httpBody?.contents = httpBodyDescription.contents
+            }
+            return nil
+        } else if let httpBodyParameterDescription = listItem.extractHTTPBodyParameterOutline() {
+            // - HTTPBodyParameters:
+            //   - x: ...
+            //   - y: ...
+            if httpBody == nil {
+                httpBody = HTTPBody(mediaType: nil, contents: [], parameters: httpBodyParameterDescription, symbol: nil)
+            } else {
+                httpBody?.parameters.append(contentsOf: httpBodyParameterDescription)
+            }
+            return nil
+        } else if let httpBodyParameterDescription = listItem.extractStandaloneHTTPBodyParameter() {
+            // - HTTPBodyParameter x: ...
+            if httpBody == nil {
+                httpBody = HTTPBody(mediaType: nil, contents: [], parameters: [httpBodyParameterDescription], symbol: nil)
+            } else {
+                httpBody?.parameters.append(httpBodyParameterDescription)
+            }
             return nil
         } else if let httpResponseDescription = listItem.extractHTTPResponseOutline() {
             // - HTTPResponses:
