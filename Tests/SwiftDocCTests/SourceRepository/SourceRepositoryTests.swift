@@ -88,7 +88,7 @@ class SourceRepositoryTests: XCTestCase {
         XCTAssertEqual(
             SourceRepository.localFilesystem()
                 .format(sourceFileURL: URL(string: "file:///path/to/file")!, lineNumber: 5),
-            URL(string: "file:///path/to/file#L5")!
+            URL(string: "doc-source-file:///path/to/file#L5")!
         )
     }
 }
