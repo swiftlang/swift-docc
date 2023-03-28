@@ -144,7 +144,12 @@ public struct ConvertAction: Action, RecreatingContext {
         
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
-        engine.add(DiagnosticConsoleWriter(formattingOptions: formattingOptions))
+        engine.add(
+            DiagnosticConsoleWriter(
+                formattingOptions: formattingOptions,
+                baseURL: documentationBundleURL ?? URL(string: fileManager.currentDirectoryPath)
+            )
+        )
         if let diagnosticFilePath = diagnosticFilePath {
             engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
         }

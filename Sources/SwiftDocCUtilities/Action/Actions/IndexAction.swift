@@ -40,7 +40,7 @@ public struct IndexAction: Action {
         self.bundleIdentifier = bundleIdentifier
 
         self.diagnosticEngine = diagnosticEngine
-        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
+        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: [], baseURL: documentationBundleURL))
     }
     
     /// Converts each eligable file from the source documentation bundle,

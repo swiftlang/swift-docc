@@ -40,7 +40,7 @@ struct TransformForStaticHostingAction: Action {
         self.htmlTemplateDirectory = htmlTemplateDirectory
         self.fileManager = fileManager
         self.diagnosticEngine = diagnosticEngine
-        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
+        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: [], baseURL: documentationBundleURL))
     }
     
     /// Converts each eligible file from the source archive and
