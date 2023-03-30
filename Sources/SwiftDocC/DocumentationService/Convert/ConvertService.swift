@@ -184,12 +184,7 @@ public struct ConvertService: DocumentationService {
                     fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 ),
-                // We're enabling the inclusion of symbol declaration file paths
-                // in the produced render json here because the render nodes created by
-                // `ConvertService` are intended for local uses of documentation where
-                // this information could be relevant and we don't have the privacy concerns
-                // that come with including this information in public releases of docs.
-                emitSymbolSourceFileURIs: true,
+                emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
                 emitSymbolAccessLevels: true
             )
 

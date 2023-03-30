@@ -111,6 +111,9 @@ public struct ConvertRequest: Codable {
     /// the client to pass a more up-to-date value than is available in the symbol graph.
     public var overridingDocumentationComments: [String: [Line]]? = nil
     
+    /// Whether the conversion's rendered documentation should include source file location metadata.
+    public var emitSymbolSourceFileURIs: Bool
+    
     /// The article and documentation extension file data included in the documentation bundle to convert.
     ///
     /// ## See Also
@@ -166,6 +169,7 @@ public struct ConvertRequest: Codable {
         self.tutorialFiles = []
         self.miscResourceURLs = miscResourceURLs
         self.featureFlags = FeatureFlags()
+        self.emitSymbolSourceFileURIs = true
         
         self.bundleInfo = DocumentationBundle.Info(
             displayName: displayName,
@@ -185,6 +189,7 @@ public struct ConvertRequest: Codable {
     ///   - symbolGraphs: The symbols graph data included in the documentation bundle to convert.
     ///   - overridingDocumentationComments: The mapping of external symbol identifiers to lines of a
     ///   documentation comment that overrides the value in the symbol graph.
+    ///   - emitSymbolSourceFileURIs: Whether the conversion's rendered documentation should include source file location metadata.
     ///   - knownDisambiguatedSymbolPathComponents: The mapping of external symbol identifiers to
     ///   known disambiguated symbol path components.
     ///   - markupFiles: The article and documentation extension file data included in the documentation bundle to convert.
@@ -200,6 +205,7 @@ public struct ConvertRequest: Codable {
         symbolGraphs: [Data],
         overridingDocumentationComments: [String: [Line]]? = nil,
         knownDisambiguatedSymbolPathComponents: [String: [String]]? = nil,
+        emitSymbolSourceFileURIs: Bool = true,
         markupFiles: [Data],
         tutorialFiles: [Data] = [],
         miscResourceURLs: [URL]
@@ -211,6 +217,13 @@ public struct ConvertRequest: Codable {
         self.symbolGraphs = symbolGraphs
         self.overridingDocumentationComments = overridingDocumentationComments
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
+        
+        // The default value for this is `true` to enable the inclusion of symbol declaration file paths
+        // in the produced render json by default.
+        // This default to true, because the render nodes created by `ConvertService` are intended for
+        // local uses of documentation where this information could be relevant and we don't have the
+        // privacy concerns that come with including this information in public releases of docs.
+        self.emitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.markupFiles = markupFiles
         self.tutorialFiles = tutorialFiles
         self.miscResourceURLs = miscResourceURLs
