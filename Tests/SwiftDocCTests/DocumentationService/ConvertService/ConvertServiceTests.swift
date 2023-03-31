@@ -193,6 +193,40 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    func testRemoteSourceInformationOptOut() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            emitSymbolSourceFileURIs: false,
+            markupFiles: [],
+            miscResourceURLs: []
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            XCTAssertEqual(renderNodes.count, 1)
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            XCTAssertNil(renderNode.metadata.remoteSource, "No remote source when 'emitSymbolSourceFileURIs' is 'false'")
+        }
+    }
+    
     func testOverridesDocumentationComments() throws {
         let symbolGraphFile = Bundle.module.url(
             forResource: "mykit-one-symbol",
