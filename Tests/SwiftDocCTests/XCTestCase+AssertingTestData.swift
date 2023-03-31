@@ -22,7 +22,7 @@ extension XCTestCase {
         symbolKind expectedSymbolKind: String? = nil,
         title expectedTitle: String,
         navigatorTitle expectedNavigatorTitle: String?,
-        abstract expectedAbstract: String,
+        abstract expectedAbstract: String?,
         declarationTokens expectedDeclarationTokens: [String]?,
         endpointTokens expectedEndpointTokens: [String]? = nil,
         httpParameters expectedHTTPParameters: [String]? = nil,
