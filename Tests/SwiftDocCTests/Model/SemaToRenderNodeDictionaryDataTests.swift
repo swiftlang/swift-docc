@@ -37,13 +37,16 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         let expectedPageUSRs: Set<String> = Set(expectedPageUSRsAndLangs.keys)
         
         let expectedNonpageUSRs: Set<String> = [
-            // Name string type - ``Name``:
+            // Name string field - ``name``:
             "data:test:Artist@name",
             
-            // Genre string type - ``Genre``:
+            // Genre string field - ``genre``:
             "data:test:Artist@genre",
             
-            // Age integer type - ``Age``:
+            // Month of birth string field - ``monthOfBirth``:
+            "data:test:Artist@monthOfBirth",
+            
+            // Age integer field - ``age``:
             "data:test:Artist@age",
         ]
         
@@ -179,7 +182,7 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         }
         
         XCTAssertEqual(propertiesSection.kind, .properties)
-        XCTAssertEqual(propertiesSection.items.count, 3)
+        XCTAssertEqual(propertiesSection.items.count, 4)
         
         let ageProperty = propertiesSection.items[0]
         XCTAssertEqual(ageProperty.name, "age")
@@ -193,9 +196,61 @@ class SemaToRenderNodeDictionaryDataTests: XCTestCase {
         attributeTitles = genreProperty.attributes?.map{$0.title.lowercased()}.sorted() ?? []
         XCTAssertEqual(attributeTitles, ["default value", "possible values"])
         
-        let nameProperty = propertiesSection.items[2]
+        let monthProperty = propertiesSection.items[2]
+        XCTAssertEqual(monthProperty.name, "monthOfBirth")
+        XCTAssertNotNil(monthProperty.typeDetails)
+        if let details = monthProperty.typeDetails {
+            XCTAssertEqual(details.count, 2)
+            XCTAssertEqual(details[0].baseType, "integer")
+            XCTAssertEqual(details[1].baseType, "string")
+        }
+        attributeTitles = monthProperty.attributes?.map{$0.title.lowercased()}.sorted() ?? []
+        XCTAssertEqual(attributeTitles, ["possible types"])
+        monthProperty.attributes?.forEach { attribute in
+            if case let .allowedTypes(decls) = attribute {
+                XCTAssertEqual(decls.count, 2)
+                XCTAssertEqual(decls[0][0].text, "integer")
+                XCTAssertEqual(decls[1][0].text, "string")
+            }
+        }
+        
+        let nameProperty = propertiesSection.items[3]
         XCTAssertEqual(nameProperty.name, "name")
         XCTAssertTrue(nameProperty.required ?? false)
         XCTAssert((nameProperty.attributes ?? []).isEmpty)
     }
+    
+    func testTypeRenderNodeHasExpectedContent() throws {
+        let outputConsumer = try renderNodeConsumer(for: "DictionaryData")
+        let genreRenderNode = try outputConsumer.renderNode(withIdentifier: "data:test:Genre")
+        
+        print(genreRenderNode)
+        assertExpectedContent(
+            genreRenderNode,
+            sourceLanguage: "data",
+            symbolKind: "typealias",
+            title: "Genre",
+            navigatorTitle: nil,
+            abstract: nil,
+            declarationTokens: [
+                "string ",
+                "Genre"
+            ],
+            discussionSection: nil,
+            topicSectionIdentifiers: [],
+            referenceTitles: [
+                "Artist",
+                "DictionaryData",
+                "Genre",
+            ],
+            referenceFragments: [
+                "object Artist",
+                "string Genre",
+            ],
+            failureMessage: { fieldName in
+                "'Genre' symbol has unexpected content for '\(fieldName)'."
+            }
+        )
+    }
+
 }
