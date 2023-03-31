@@ -1741,6 +1741,24 @@ public struct RenderNodeTranslator: SemanticVisitor {
             }
     }
     
+    private mutating func convert_fragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
+        return fragments.map { token -> DeclarationRenderSection.Token in
+            
+            // Create a reference if one found
+            var reference: ResolvedTopicReference?
+            if let preciseIdentifier = token.preciseIdentifier,
+               let resolved = self.context.symbolIndex[preciseIdentifier]?.reference {
+                reference = resolved
+                
+                // Add relationship to render references
+                self.collectedTopicReferences.append(resolved)
+            }
+            
+            // Add the declaration token
+            return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
+        }
+    }
+    
     /// Generate a RenderProperty object from markup content and symbol data.
     mutating func createRenderProperty(name: String, contents: [Markup], required: Bool, symbol: SymbolGraph.Symbol?) -> RenderProperty {
         let parameterContent = self.visitMarkupContainer(
@@ -1752,25 +1770,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var isReadOnly: Bool? = nil
         var deprecated: Bool? = nil
         var introducedVersion: String? = nil 
+        var typeDetails: [TypeDetails]? = nil
         
         if let symbol = symbol {
             // Convert the dictionary key's declaration into section tokens
             if let fragments = symbol.declarationFragments {
-                renderedTokens = fragments.map { token -> DeclarationRenderSection.Token in
-                    
-                    // Create a reference if one found
-                    var reference: ResolvedTopicReference?
-                    if let preciseIdentifier = token.preciseIdentifier,
-                       let resolved = self.context.symbolIndex[preciseIdentifier]?.reference {
-                        reference = resolved
-                        
-                        // Add relationship to render references
-                        self.collectedTopicReferences.append(resolved)
-                    }
-                    
-                    // Add the declaration token
-                    return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
-                }
+                renderedTokens = convert_fragments(fragments)
             }
                 
             // Populate attributes
@@ -1801,6 +1806,18 @@ public struct RenderNodeTranslator: SemanticVisitor {
             if let constraint = symbol.maximumLength {
                 attributes.append(RenderAttribute.maximumLength(String(constraint)))
             }
+            if let constraint = symbol.typeDetails, constraint.count > 0 {
+                // Pull out the base-type details.
+                typeDetails = constraint.filter { $0.baseType != nil }
+                                        .map { TypeDetails(baseType: $0.baseType, arrayMode: $0.arrayMode) }
+                // Pull out the allowed-type declarations.
+                // If there is only 1 type declaration found, it would be redundant with declaration, so skip it.
+                let typeDeclarations = constraint.compactMap { $0.fragments }
+                if typeDeclarations.count > 1 {
+                    let allowedTypes = typeDeclarations.map { convert_fragments($0) }
+                    attributes.append(RenderAttribute.allowedTypes(allowedTypes))
+                }
+            }
             
             // Extract the availability information
             if let availabilityItems = symbol.availability, availabilityItems.count > 0 {
@@ -1818,7 +1835,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         return RenderProperty(
             name: name,
             type: renderedTokens ?? [],
-            typeDetails: nil,
+            typeDetails: typeDetails,
             content: parameterContent,
             attributes: attributes,
             mimeType: symbol?.httpMediaType,
