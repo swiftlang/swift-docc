@@ -34,6 +34,12 @@
       "targetFallback": null
     },
     {
+      "kind": "optionalMemberOf",
+      "source": "data:test:Artist@monthOfBirth",
+      "target": "data:test:Artist",
+      "targetFallback": null
+    },
+    {
       "kind": "memberOf",
       "source": "data:test:Artist@name",
       "target": "data:test:Artist",
@@ -168,6 +174,50 @@
       "declarationFragments": [
         {
           "kind": "text",
+          "spelling": "*"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "data:test:Artist@monthOfBirth"
+      },
+      "kind": {
+        "displayName": "Dictionary Key",
+        "identifier": "dictionaryKey"
+      },
+      "names": {
+        "title": "monthOfBirth"
+      },
+      "pathComponents": [
+        "Artist",
+        "monthOfBirth"
+      ],
+      "typeDetails": [
+        {
+          "baseType": "integer",
+          "fragments": [
+            {
+              "kind": "text",
+              "spelling": "integer"
+            }
+          ]
+        },
+        {
+          "baseType": "string",
+          "fragments": [
+            {
+              "kind": "text",
+              "spelling": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
           "spelling": "string"
         }
       ],
@@ -192,7 +242,11 @@
       "declarationFragments": [
         {
           "kind": "text",
-          "spelling": "string Genre"
+          "spelling": "string "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Genre"
         }
       ],
       "identifier": {
@@ -218,6 +272,11 @@
       },
       "pathComponents": [
         "Genre"
+      ],
+      "typeDetails": [
+        {
+          "baseType": "string",
+        }
       ]
     },
     {
