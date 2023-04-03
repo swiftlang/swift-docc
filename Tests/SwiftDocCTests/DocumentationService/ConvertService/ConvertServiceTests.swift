@@ -650,6 +650,144 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    func testConvertsSymbolPageThatHasExpandedDocumentation() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: [],
+            symbolIdentifiersWithExpandedDocumentation: [
+                "s:5MyKit0A5ClassC10myFunctionyyF":
+                    ConvertRequest.ExpandedDocumentationRequirements(accessControlLevels: ["public", "open"])
+            ]
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+
+            XCTAssertFalse(renderNode.metadata.hasNoExpandedDocumentation)
+        }
+    }
+    
+    func testConvertsSymbolPageThatDoesNotMeetAccessLevelRequirementForExpandedDocumentation() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: [],
+            symbolIdentifiersWithExpandedDocumentation: [
+                "s:5MyKit0A5ClassC10myFunctionyyF":
+                    ConvertRequest.ExpandedDocumentationRequirements(accessControlLevels: ["open"])
+            ] // This symbol is public
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+
+            XCTAssertTrue(renderNode.metadata.hasNoExpandedDocumentation)
+        }
+    }
+    
+    func testConvertsSymbolPageThatHasDoesNotHaveExpandedDocumentation() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: [],
+            symbolIdentifiersWithExpandedDocumentation: [:]
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+
+            XCTAssert(renderNode.metadata.hasNoExpandedDocumentation)
+        }
+    }
+    
+    func testConvertsSymbolPageForRequestThatDoesNotSpecifyExpandedDocumentation() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: [],
+            symbolIdentifiersWithExpandedDocumentation: nil
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+
+            XCTAssertFalse(renderNode.metadata.hasNoExpandedDocumentation)
+        }
+    }
+    
     func testConvertSingleArticlePage() throws {
         let articleFile = Bundle.module.url(
             forResource: "StandaloneArticle",
