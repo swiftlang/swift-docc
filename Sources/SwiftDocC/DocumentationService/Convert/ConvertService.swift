@@ -186,7 +186,8 @@ public struct ConvertService: DocumentationService {
                     additionalSymbolGraphFiles: []
                 ),
                 emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
-                emitSymbolAccessLevels: true
+                emitSymbolAccessLevels: true,
+                symbolIdentifiersWithExpandedDocumentation: request.symbolIdentifiersWithExpandedDocumentation
             )
 
             // Run the conversion.
