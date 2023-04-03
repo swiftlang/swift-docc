@@ -130,6 +130,13 @@ public struct ConvertRequest: Codable {
     /// - ``DocumentationBundle/miscResourceURLs``
     public var miscResourceURLs: [URL]
     
+    /// The symbol identifiers that have an expanded documentation page available if they meet the associated access level requirement.
+    ///
+    /// DocC sets the ``RenderMetadata/hasExpandedDocumentationForSymbols`` property to `true`
+    /// for these symbols if they meet the provided  requirements, so that renderers can display a "View More" link
+    /// that navigates the user to the full version of the documentation page.
+    public var symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]?
+    
     /// The default code listing language for the documentation bundle to convert.
     ///
     /// ## See Also
@@ -177,6 +184,8 @@ public struct ConvertRequest: Codable {
             version: version,
             defaultCodeListingLanguage: defaultCodeListingLanguage
         )
+        
+        self.symbolIdentifiersWithExpandedDocumentation = nil
     }
     
     /// Creates a request to convert in-memory documentation.
@@ -195,6 +204,8 @@ public struct ConvertRequest: Codable {
     ///   - markupFiles: The article and documentation extension file data included in the documentation bundle to convert.
     ///   - tutorialFiles: The tutorial file data included in the documentation bundle to convert.
     ///   - miscResourceURLs: The on-disk resources in the documentation bundle to convert.
+    ///   - symbolIdentifiersWithExpandedDocumentation: A dictionary of identifiers to requirements for these symbols to have expanded
+    ///   documentation available.
     public init(
         bundleInfo: DocumentationBundle.Info,
         featureFlags: FeatureFlags = FeatureFlags(),
@@ -208,7 +219,8 @@ public struct ConvertRequest: Codable {
         emitSymbolSourceFileURIs: Bool = true,
         markupFiles: [Data],
         tutorialFiles: [Data] = [],
-        miscResourceURLs: [URL]
+        miscResourceURLs: [URL],
+        symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]? = nil
     ) {
         self.externalIDsToConvert = externalIDsToConvert
         self.documentPathsToConvert = documentPathsToConvert
@@ -229,6 +241,7 @@ public struct ConvertRequest: Codable {
         self.miscResourceURLs = miscResourceURLs
         self.bundleInfo = bundleInfo
         self.featureFlags = featureFlags
+        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
     }
 }
 
@@ -286,6 +299,19 @@ extension ConvertRequest {
         public init(line: Int, character: Int) {
             self.line = line
             self.character = character
+        }
+    }
+    
+    /// Represents any requirements needed for a symbol to have additional documentation available in the client.
+    public struct ExpandedDocumentationRequirements: Codable {
+        /// Access control levels required for the symbol to have additional documentation available.
+        public let accessControlLevels: [String]
+        /// Whether the client provides additional documentation for the symbol despite it being prefixed with an underscore.
+        public let canBeUnderscored: Bool
+        
+        public init(accessControlLevels: [String], canBeUnderscored: Bool = false) {
+            self.accessControlLevels = accessControlLevels
+            self.canBeUnderscored = canBeUnderscored
         }
     }
 }

@@ -128,4 +128,11 @@ extension KeyedEncodingContainer {
             try encode(value, forKey: key)
         }
     }
+    
+    /// Encodes the given boolean if its value is true.
+    mutating func encodeIfTrue(_ value: Bool, forKey key: Key) throws {
+        if value {
+            try encode(value, forKey: key)
+        }
+    }
 }
