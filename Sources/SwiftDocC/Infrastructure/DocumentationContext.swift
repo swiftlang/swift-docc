@@ -1003,6 +1003,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// This allows convenient access to other symbol's documentation nodes while building relationships between symbols.
     private(set) var symbolIndex = [String: DocumentationNode]()
     
+    /// A lookup of resolved references based on the reference's absolute string.
+    private(set) var referenceIndex = [String: ResolvedTopicReference]()
+    
     private func nodeWithInitializedContent(reference: ResolvedTopicReference, matches: [DocumentationContext.SemanticResult<Article>]?) -> DocumentationNode {
         precondition(documentationCache.keys.contains(reference))
         
@@ -2311,6 +2314,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         topicGraphGlobalAnalysis()
         
         preResolveModuleNames()
+        
+        referenceIndex.reserveCapacity(knownIdentifiers.count + nodeAnchorSections.count)
+        for reference in knownIdentifiers {
+            referenceIndex[reference.absoluteString] = reference
+        }
+        for reference in nodeAnchorSections.keys {
+            referenceIndex[reference.absoluteString] = reference
+        }
     }
     
     /// Given a list of topics that have been automatically curated, checks if a topic has been additionally manually curated

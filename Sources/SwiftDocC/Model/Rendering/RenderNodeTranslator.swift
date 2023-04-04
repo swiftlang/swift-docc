@@ -534,8 +534,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let action: RenderInlineContent
         // We expect, at this point of the rendering, this API to be called with valid URLs, otherwise crash.
-        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(link)!)
-        if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: bundle.rootReference) {
+        if let resolved = context.referenceIndex[link.absoluteString] {
             action = RenderInlineContent.reference(identifier: RenderReferenceIdentifier(resolved.absoluteString),
                                                    isActive: true,
                                                    overridingTitle: overridingTitle,

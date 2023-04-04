@@ -192,6 +192,11 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
+        if let cached = context.referenceIndex[destination] {
+            collectedTopicReferences.append(cached)
+            return cached
+        }
+        
         guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
             return nil
         }
@@ -215,7 +220,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
 
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
-        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
+        if let cached = context.referenceIndex[destination] {
             return cached
         }
 
