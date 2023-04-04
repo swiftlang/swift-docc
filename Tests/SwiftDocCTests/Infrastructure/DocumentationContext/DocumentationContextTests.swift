@@ -1667,6 +1667,160 @@ let expected = """
         XCTAssertEqual(node.kind, .unknown)
     }
     
+    func testSpecialCharactersInLinks() throws {
+        let originalSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!.appendingPathComponent("mykit-iOS.symbols.json")
+        
+        let testBundle = Folder(name: "special-characters.docc", content: [
+            try TextFile(name: "mykit.symbols.json", utf8Content: String(contentsOf: originalSymbolGraph).replacingOccurrences(of: "myFunction", with: "myFunc🙂")),
+            
+            TextFile(name: "article-with-emoji-in-heading.md", utf8Content: """
+            # Article with emoji in heading
+            
+            Abstract
+            
+            ### Hello 🌍
+            """),
+            
+            TextFile(name: "article-with-😃-in-filename.md", utf8Content: """
+            # Article with 😃 emoji in file name
+            
+            Abstract
+            
+            ### Hello world
+            """),
+            
+            TextFile(name: "MyKit.md", utf8Content: """
+            # ``MyKit``
+            
+            Test linking to articles, symbols, and headings with special characters;
+            
+            - ``MyClass/myFunc🙂()``
+            - <doc:article-with-emoji-in-heading#Hello-🌍>
+            - <doc:article-with-😃-in-filename>
+            - <doc:article-with-😃-in-filename#Hello-world>
+            
+            Now test the same links in topic curation.
+            
+            ## Topics
+            
+            - ``MyClass/myFunc🙂()``
+            - <doc:article-with-emoji-in-heading#Hello-🌍>
+            - <doc:article-with-😃-in-filename>
+            - <doc:article-with-😃-in-filename#Hello-world>
+            """),
+        ])
+        let bundleURL = try testBundle.write(inside: createTemporaryDirectory())
+        let (_, bundle, context) = try loadBundle(from: bundleURL)
+
+        let problems = context.problems
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let entity = try context.entity(with: moduleReference)
+        
+        let moduleSymbol = try XCTUnwrap(entity.semantic as? Symbol)
+        let topicSection = try XCTUnwrap(moduleSymbol.topics?.taskGroups.first)
+        
+        // Verify that all the links in the topic section resolved
+        XCTAssertEqual(topicSection.links.map(\.destination), [
+            "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
+            "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D",
+            "doc://special-characters/documentation/special-characters/article-with---in-filename",
+            "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world",
+        ])
+        
+        // Verify that all resolved link exist in the context.
+        for reference in topicSection.links {
+            XCTAssertNotNil(reference.destination)
+            XCTAssert(context.knownPages.contains(where: { $0.absoluteString == reference.destination })
+                   || context.nodeAnchorSections.keys.contains(where: { $0.absoluteString == reference.destination })
+            )
+        }
+        
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference, source: nil)
+        let renderNode = translator.visit(moduleSymbol) as! RenderNode
+        
+        // Verify that the resolved links rendered as links
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 4)
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
+            "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
+            "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D",
+            "doc://special-characters/documentation/special-characters/article-with---in-filename",
+            "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world",
+        ])
+        
+        
+        let contentSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
+        let lists = contentSection.content.compactMap({ content in
+            if case let .unorderedList(list) = content {
+                return list
+            } else {
+                return nil
+            }
+        })
+        
+        XCTAssertEqual(lists.count, 1)
+        let list = try XCTUnwrap(lists.first)
+        XCTAssertEqual(list.items.count, 4, "Unexpected list items: \(list.items.map(\.content))")
+        
+        func withContentAsReference(_ listItem: RenderBlockContent.ListItem?, verify: (RenderReferenceIdentifier, Bool, String?, [RenderInlineContent]?) -> Void) {
+            guard let listItem = listItem else {
+                XCTFail("Missing list item")
+                return
+            }
+            if case let .paragraph(paragraph) = listItem.content.first,
+               case let .reference(identifier, isActive, overridingTitle, overridingTitleInlineContent) = paragraph.inlineContent.first {
+                verify(identifier, isActive, overridingTitle, overridingTitleInlineContent)
+            } else {
+                XCTFail("Unexpected list item kind: \(listItem.content)")
+            }
+        }
+        
+        // First
+        withContentAsReference(list.items.first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/MyKit/MyClass/myFunc_()")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        withContentAsReference(list.items.dropFirst().first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        withContentAsReference(list.items.dropFirst(2).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/article-with---in-filename")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        withContentAsReference(list.items.dropFirst(3).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        
+        // Verify that the topic render references have titles with special characters when the original content contained special characters
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/MyKit/MyClass/myFunc_()"] as? TopicRenderReference)?.title,
+            "myFunc🙂()"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D"] as? TopicRenderReference)?.title,
+            "Hello 🌍"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/article-with---in-filename"] as? TopicRenderReference)?.title,
+            "Article with 😃 emoji in file name"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world"] as? TopicRenderReference)?.title,
+            "Hello world"
+        )
+    }
+    
     func testNonOverloadCollisionFromExtension() throws {
         // Add some symbol collisions to graph
         let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: ["mykit-iOS.symbols.json"]) { root in

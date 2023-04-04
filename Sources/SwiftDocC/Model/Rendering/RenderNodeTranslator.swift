@@ -544,7 +544,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // This is an external link
             let externalLinkIdentifier = RenderReferenceIdentifier(forExternalLink: link.absoluteString)
             if linkReferences.keys.contains(externalLinkIdentifier.identifier) {
-                // If we've already seen this link, return the existing reference with an overriden title.
+                // If we've already seen this link, return the existing reference with an overridden title.
                 action = RenderInlineContent.reference(identifier: externalLinkIdentifier,
                                                        isActive: true,
                                                        overridingTitle: overridingTitle,

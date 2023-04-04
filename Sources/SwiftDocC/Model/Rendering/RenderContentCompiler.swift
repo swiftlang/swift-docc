@@ -175,9 +175,23 @@ struct RenderContentCompiler: MarkupVisitor {
             useOverriding = false
         } else if let overridingTitle = overridingTitle,
                   overridingTitle.hasPrefix(ResolvedTopicReference.urlScheme + ":"),
-                  destination.hasPrefix(ResolvedTopicReference.urlScheme + "://"),
-                  destination.hasSuffix(overridingTitle.dropFirst((ResolvedTopicReference.urlScheme + ":").count)) { // If the link is a transformed doc link, we don't use overriding info
-            useOverriding = false
+                  destination.hasPrefix(ResolvedTopicReference.urlScheme + "://")
+        {
+            // The overriding title looks like a documentation link. Escape it like a resolved reference string to compare it with the destination.
+            let withoutScheme = overridingTitle.dropFirst((ResolvedTopicReference.urlScheme + ":").count)
+            if destination.hasSuffix(withoutScheme) {
+                useOverriding = false
+            } else {
+                let escapedTitle: String
+                if let fragmentIndex = withoutScheme.firstIndex(of: "#") {
+                    let escapedFragment = withoutScheme[fragmentIndex...].dropFirst().addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) ?? ""
+                    escapedTitle = "\(urlReadablePath(withoutScheme[..<fragmentIndex]))#\(escapedFragment)"
+                } else {
+                    escapedTitle = urlReadablePath(withoutScheme)
+                }
+                
+                useOverriding = !destination.hasSuffix(escapedTitle) // If the link is a transformed doc link, we don't use overriding info
+            }
         } else {
             useOverriding = true
         }

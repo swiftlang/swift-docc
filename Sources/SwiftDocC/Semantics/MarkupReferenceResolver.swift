@@ -113,7 +113,12 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return link
         }
         var link = link
+        let wasAutoLink = link.isAutolink
         link.destination = resolvedURL.absoluteString
+        if wasAutoLink {
+            link.replaceChildrenInRange(0..<link.childCount, with: [Text(resolvedURL.absoluteString)])
+            assert(link.isAutolink)
+        }
         return link
     }
 
