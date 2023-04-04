@@ -100,6 +100,9 @@ class DocumentationServerTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Completion closure called")
         
         server.process(message, completion: { data in
+            defer {
+                expectation.fulfill()
+            }
             do {
                 try assertion(data)
             } catch {
@@ -107,7 +110,7 @@ class DocumentationServerTests: XCTestCase {
             }
         })
         
-        XCTWaiter().wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 1.0)
     }
 
     func assertIsErrorMessageWithIdentifier(_ identifier: String, messageData: Data) {
