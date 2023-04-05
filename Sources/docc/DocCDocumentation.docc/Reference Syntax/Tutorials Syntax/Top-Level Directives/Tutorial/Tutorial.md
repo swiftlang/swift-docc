@@ -29,7 +29,7 @@ Use a text editor to add a Tutorial file to your documentation catalog and ensur
     }
     
     @Section(title: "<#text#>") {
-        @ContentAndMedia(layout: horizontal) {
+        @ContentAndMedia {
             <#text#>
             
             @Image(source: <#file#>, alt: "<#accessible description#>")
@@ -112,7 +112,7 @@ Define sections using the ``Section`` directive. You can optionally start with d
     }
     
     @Section(title: "Create a Swift Package in a new directory") {
-        @ContentAndMedia(layout: "horizontal") {
+        @ContentAndMedia {
             
             ...
             
@@ -146,7 +146,7 @@ Define sections using the ``Section`` directive. You can optionally start with d
     }
     
     @Section(title: "Add a customization view") {
-        @ContentAndMedia(layout: "horizontal") {
+        @ContentAndMedia {
 
             ...
 
@@ -174,7 +174,7 @@ At the end of a tutorial page, you can optionally use an ``Assessments`` directi
     }
     
     @Section(title: "Create a new project and add SlothCreator") {
-        @ContentAndMedia(layout: "horizontal") {
+        @ContentAndMedia {
             
             ...
 

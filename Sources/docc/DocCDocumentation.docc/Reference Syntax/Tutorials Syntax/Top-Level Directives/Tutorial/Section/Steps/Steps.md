@@ -20,7 +20,7 @@ Each individual step contains instructional text along with either a code listin
     ...
     
     @Section(title: "Create a Swift Package") {
-        @ContentAndMedia(layout: "horizontal") {
+        @ContentAndMedia {
 
             ...
 

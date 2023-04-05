@@ -49,7 +49,7 @@ class ExternalLinkableTests: XCTestCase {
                    }
                    
                    @Section(title: "Create a New AR Project 💻") {
-                      @ContentAndMedia(layout: vertical) {
+                      @ContentAndMedia {
                          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
                          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
 
