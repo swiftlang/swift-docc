@@ -1668,6 +1668,8 @@ let expected = """
     }
     
     func testSpecialCharactersInLinks() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
         let originalSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!.appendingPathComponent("mykit-iOS.symbols.json")
         
         let testBundle = Folder(name: "special-characters.docc", content: [
