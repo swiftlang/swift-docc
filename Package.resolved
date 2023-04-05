@@ -14,8 +14,8 @@
         "package": "cmark-gfm",
         "repositoryURL": "https://github.com/apple/swift-cmark.git",
         "state": {
-          "branch": "gfm",
-          "revision": "eb9a6a357b6816c68f4b194eaa5b67f3cd1fa5c3",
+          "branch": "release/5.9",
+          "revision": "86aeb491675de6f077a3a6df6cbcac1a25dcbee1",
           "version": null
         }
       },
@@ -50,7 +50,7 @@
         "package": "CLMDB",
         "repositoryURL": "https://github.com/apple/swift-lmdb.git",
         "state": {
-          "branch": "main",
+          "branch": "release/5.9",
           "revision": "584941b1236b15bad74d8163785d389c028b1ad8",
           "version": null
         }
@@ -59,8 +59,8 @@
         "package": "swift-markdown",
         "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
-          "branch": "main",
-          "revision": "36b71b380ca9cb7497fc24416f8b77721eaf7330",
+          "branch": "release/5.9",
+          "revision": "bbeb362919d903eb722c913ad49a1b23d27bdc00",
           "version": null
         }
       },
