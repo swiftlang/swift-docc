@@ -1753,7 +1753,7 @@ let expected = """
         
         
         let contentSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
-        let lists = contentSection.content.compactMap({ content in
+        let lists: [RenderBlockContent.UnorderedList] = contentSection.content.compactMap({ (content: RenderBlockContent) -> RenderBlockContent.UnorderedList? in
             if case let .unorderedList(list) = content {
                 return list
             } else {
