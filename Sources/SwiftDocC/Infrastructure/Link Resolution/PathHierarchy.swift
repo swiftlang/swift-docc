@@ -135,6 +135,26 @@ struct PathHierarchy {
                 }
             }
             
+            for relationship in graph.relationships where relationship.kind == .defaultImplementationOf {
+                guard let sourceNode = nodes[relationship.source] else {
+                    continue
+                }
+                
+                let targetNodes = nodes[relationship.target].map { [$0] } ?? allNodes[relationship.target] ?? []
+                guard !targetNodes.isEmpty else {
+                    continue
+                }
+                
+                for requirementTarget in targetNodes {
+                    assert(
+                        requirementTarget.parent != nil,
+                        "The 'defaultImplementationOf' symbol should be a 'memberOf' a known protocol symbol but didn't have a parent relationship in the hierarchy."
+                    )
+                    requirementTarget.parent?.add(symbolChild: sourceNode)
+                }
+                topLevelCandidates.removeValue(forKey: relationship.source)
+            }
+            
             // The hierarchy doesn't contain any non-symbol nodes yet. It's OK to unwrap the `symbol` property.
             for topLevelNode in topLevelCandidates.values where topLevelNode.symbol!.pathComponents.count == 1 {
                 moduleNode.add(symbolChild: topLevelNode)
@@ -155,6 +175,10 @@ struct PathHierarchy {
                     components = components.dropFirst()
                 }
                 for component in components {
+                    assert(
+                        parent.children[components.first!] == nil,
+                        "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
+                    )
                     let component = Self.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: component.name)
                     parent.add(child: nodeWithoutSymbol, kind: component.kind, hash: component.hash)
@@ -164,6 +188,10 @@ struct PathHierarchy {
             }
         }
         
+        assert(
+            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }),
+            "Every node should either have a parent node or be a root node. This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())"
+        )
         allNodes.removeAll()
         
         // build the lookup list by traversing the hierarchy and adding identifiers to each node
@@ -199,12 +227,15 @@ struct PathHierarchy {
         self.tutorialContainer = newNode(bundleName)
         self.tutorialOverviewContainer = newNode("tutorials")
         
-        assert(lookup.allSatisfy({ $0.key == $0.value.identifier}))
+        assert(
+            lookup.allSatisfy({ $0.key == $0.value.identifier }),
+            "Every node lookup should match a node with that identifier."
+        )
         
         self.modules = roots
         self.lookup = lookup
         
-        assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil}))
+        assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil }))
     }
     
     /// Adds an article to the path hierarchy.
