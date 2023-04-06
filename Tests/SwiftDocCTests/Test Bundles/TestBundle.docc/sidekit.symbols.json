@@ -689,11 +689,6 @@
     },
     {
       "source" : "s:5MyKit0A5MyProtocol0Afunc()DefaultImp",
-      "target" : "s:5SideKit0A5SideProtocolP",
-      "kind" : "memberOf"
-    },
-    {
-      "source" : "s:5MyKit0A5MyProtocol0Afunc()DefaultImp",
       "target" : "s:5MyKit0A5MyProtocol0Afunc()",
       "kind" : "defaultImplementationOf"
     },
