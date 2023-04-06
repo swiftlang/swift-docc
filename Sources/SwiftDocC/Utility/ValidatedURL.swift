@@ -62,12 +62,57 @@ public struct ValidatedURL: Hashable, Equatable {
             return
         }
         
-        // If the string doesn't contain a fragment and the string couldn't be parsed with `ValidatedURL(parsing:)` above, then consider it invalid.
-        guard let fragmentSeparatorIndex = string.firstIndex(of: "#"), var components = URLComponents(string: String(string[..<fragmentSeparatorIndex])) else {
-            return nil
+        // If the `URLComponents(string:)` parsing in `init(parsingExact:)` failed try a fallback that attempts to individually
+        // percent encode each component.
+        //
+        // This fallback parsing tries to determine the substrings of the authored link that correspond to the scheme, bundle
+        // identifier, path, and fragment of a documentation link or symbol link. It is not meant to work with general links.
+        //
+        // By identifying the subranges they can each be individually percent encoded with the characters that are allowed for
+        // that component. This allows authored links to contain characters that wouldn't otherwise be valid in a general URL.
+        //
+        // Assigning the percent encoded values to `URLComponents/percentEncodedHost`, URLComponents/percentEncodedPath`, and
+        // URLComponents/percentEncodedFragment` allow for the creation of a `URLComponents` value with special characters.
+        var components = URLComponents()
+        var remainder = string[...]
+        
+        // See if the link is a documentation link and try to split out the scheme and bundle identifier. If the link isn't a
+        // documentation link it's assumed that it's a symbol link that start with the path component.
+        // Other general URLs should have been successfully parsed with `URLComponents(string:)` in `init(parsingExact:)` above.
+        if remainder.hasPrefix("\(ResolvedTopicReference.urlScheme):") {
+            // The authored link is a doc link
+            components.scheme = ResolvedTopicReference.urlScheme
+            remainder = remainder.dropFirst("\(ResolvedTopicReference.urlScheme):".count)
+            
+            if remainder.hasPrefix("//") {
+                // The authored link includes a bundle ID
+                guard let startOfPath = remainder.dropFirst(2).firstIndex(of: "/") else {
+                    // The link started with "doc://" but didn't contain another "/" to start of the path.
+                    return nil
+                }
+                components.percentEncodedHost = String(remainder[..<startOfPath]).addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)
+                remainder = remainder[startOfPath...]
+            }
         }
         
-        components.percentEncodedFragment = String(string[fragmentSeparatorIndex...].dropFirst()).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
+        // This either is the start of a symbol link or the remainder of a doc link after the scheme and bundle ID was parsed.
+        // This means that the remainder of the string is a path with an optional fragment. No other URL components are supported
+        // by documentation links and symbol links.
+        if let fragmentSeparatorIndex = remainder.firstIndex(of: "#") {
+            // Encode the path substring and fragment substring separately
+            guard let path = String(remainder[..<fragmentSeparatorIndex]).addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+                return nil
+            }
+            components.percentEncodedPath = path
+            components.percentEncodedFragment = String(remainder[fragmentSeparatorIndex...].dropFirst()).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed)
+        } else {
+            // Since the link didn't include a fragment, the rest of the string is the path.
+            guard let path = String(remainder).addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else {
+                return nil
+            }
+            components.percentEncodedPath = path
+        }
+        
         self.components = components
     }
     
