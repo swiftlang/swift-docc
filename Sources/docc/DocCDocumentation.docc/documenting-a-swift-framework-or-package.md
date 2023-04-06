@@ -68,43 +68,13 @@ step-by-step, interactive content. For more information, see
 > Important: To use a documentation catalog in a Swift package, make sure the 
 manifest's Swift tools version is set to `5.5` or later. 
 
-To use DocC to create documentation for an existing example package, follow these steps from the command line:
+## Building, publishing, and previewing documentation
 
-1. Check out the DeckOfPlayingCards Swift package.
-    ```
-    git clone https://github.com/apple/example-package-deckofplayingcards.git
-    ```
-
-2. Run the following commands to create a folder for the documentation catalog.
-
-    ```shell
-    cd example-package-deckofplayingcards
-    mkdir DeckOfPlayingCards.docc
-    ```
-
-2. Use a text editor to create a file named `DeckOfPlayingCards.md` under the `DeckOfPlayingCards.docc` folder.
-
-    ```
-    # Deck Of Playing Cards
-    
-    Add the ability to use a deck of cards in your app.
-    ```
-
-3. Run the following command to compile the package.
-
-    ```shell 
-    swift build --target DeckOfPlayingCards -Xswiftc -emit-symbol-graph -Xswiftc -emit-symbol-graph-dir -Xswiftc .build
-    ```
- 
-    The `-emit-symbol-graph` option tells the Swift compiler to emit the symbol graph that DocC ingests to create documentation from source code.
-
-4. Launch DocC in preview mode.
-
-    ```shell
-    docc preview DeckOfPlayingCards.docc --fallback-display-name DeckOfPlayingCards --fallback-bundle-identifier com.example.DeckOfPlayingCards --fallback-bundle-version 1 --additional-symbol-graph-dir .build
-    ```
-
-DocC advertises a URL that you use to preview the documentation. In preview mode on macOS, DocC monitors the documentation catalog for changes and automatically updates its preview. On other platforms, you need to quit and restart DocC to recompile the documentation. 
+The preferred way of building documentation for your Swift package is by using
+the Swift-DocC Plugin. Refer to instructions in the plugin's 
+[documentation](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/)
+to get started with [building](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-a-specific-target), [previewing](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/previewing-documentation),
+and publishing your documentation to your [website](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online) or [GitHub Pages](https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/publishing-to-github-pages).
 
 ## See Also
 
