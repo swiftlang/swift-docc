@@ -108,6 +108,7 @@ struct PathHierarchy {
                 } else {
                     let node = Node(symbol: symbol)
                     // Disfavor synthesized symbols when they collide with other symbol with the same path.
+                    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58
                     node.isDisfavoredInCollision = symbol.identifier.precise.contains("::SYNTHESIZED::")
                     nodes[id] = node
                     allNodes[id, default: []].append(node)
