@@ -107,6 +107,8 @@ struct PathHierarchy {
                     nodes[id] = existingNode
                 } else {
                     let node = Node(symbol: symbol)
+                    // Disfavor synthesized symbols when they collide with other symbol with the same path.
+                    node.isDisfavoredInCollision = symbol.identifier.precise.contains("::SYNTHESIZED::")
                     nodes[id] = node
                     allNodes[id, default: []].append(node)
                 }
@@ -139,6 +141,9 @@ struct PathHierarchy {
                 guard let sourceNode = nodes[relationship.source] else {
                     continue
                 }
+                // Default implementations collide with the protocol requirement that they implement.
+                // Disfavor the default implementation to favor the protocol requirement (or other symbol with the same path).
+                sourceNode.isDisfavoredInCollision = true
                 
                 let targetNodes = nodes[relationship.target].map { [$0] } ?? allNodes[relationship.target] ?? []
                 guard !targetNodes.isEmpty else {
@@ -181,6 +186,7 @@ struct PathHierarchy {
                     )
                     let component = Self.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: component.name)
+                    nodeWithoutSymbol.isDisfavoredInCollision = true
                     parent.add(child: nodeWithoutSymbol, kind: component.kind, hash: component.hash)
                     parent = nodeWithoutSymbol
                 }
@@ -352,8 +358,8 @@ struct PathHierarchy {
                     return child
                 }
             } catch DisambiguationTree.Error.lookupCollision(let collisions) {
-                func wrappedCollisionError() -> Error {
-                    makeCollisionError(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
+                func handleWrappedCollision() throws -> Node {
+                    try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
                 }
                 
                 // See if the collision can be resolved by looking ahead on level deeper.
@@ -366,7 +372,7 @@ struct PathHierarchy {
                     for (node, _) in collisions {
                         guard let symbol = node.symbol else {
                             // Non-symbol collisions should have already been resolved
-                            throw wrappedCollisionError()
+                            return try handleWrappedCollision()
                         }
                         
                         let id = symbol.identifier.precise
@@ -376,7 +382,7 @@ struct PathHierarchy {
                         
                         guard uniqueCollisions.count < 2 else {
                             // Encountered more than one unique symbol
-                            throw wrappedCollisionError()
+                            return try handleWrappedCollision()
                         }
                     }
                     // A wrapped error would have been raised while iterating over the collection.
@@ -395,18 +401,23 @@ struct PathHierarchy {
                     return possibleMatches.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
                 }
                 // Couldn't resolve the collision by look ahead.
-                throw makeCollisionError(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
+                return try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
             }
         }
     }
                         
-    private func makeCollisionError(
+    private func handleCollision(
         node: Node,
         parsedPath: [PathComponent],
         remaining: ArraySlice<PathComponent>,
         collisions: [(node: PathHierarchy.Node, disambiguation: String)]
-    ) -> Error {
-        return Error.lookupCollision(
+    ) throws -> Node {
+        let favoredNodes = collisions.filter { $0.node.isDisfavoredInCollision == false }
+        if favoredNodes.count == 1 {
+            return favoredNodes.first!.node
+        }
+        
+        throw Error.lookupCollision(
             partialResult: (
                 node,
                 Array(parsedPath.dropLast(remaining.count))
@@ -614,11 +625,20 @@ extension PathHierarchy {
         /// The symbol, if a node has one.
         private(set) var symbol: SymbolGraph.Symbol?
         
+        /// If the path hierarchy should disfavor this node in a link collision.
+        ///
+        /// By default, nodes are not disfavored.
+        ///
+        /// If a favored node collides with a disfavored node the link will resolve to the favored node without
+        /// requiring any disambiguation. Referencing the disfavored node requires disambiguation.
+        var isDisfavoredInCollision: Bool
+        
         /// Initializes a symbol node.
         fileprivate init(symbol: SymbolGraph.Symbol!) {
             self.symbol = symbol
             self.name = symbol.pathComponents.last!
             self.children = [:]
+            self.isDisfavoredInCollision = false
         }
         
         /// Initializes a non-symbol node with a given name.
@@ -626,6 +646,7 @@ extension PathHierarchy {
             self.symbol = nil
             self.name = name
             self.children = [:]
+            self.isDisfavoredInCollision = false
         }
         
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
