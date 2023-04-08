@@ -404,6 +404,24 @@ class ReferenceResolverTests: XCTestCase {
             }
         }
     }
+
+    func testCuratedExtensionRemovesEmptyPage() throws {
+        let (bundle, context) = try testBundleAndContext(named: "ModuleWithSingleExtension")
+
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+
+        // The only children of the root topic should be the `MyNamespace` enum - i.e. the Swift
+        // "Extended Module" page and its Array "Extended Structure" page should be removed.
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
+            "doc://org.swift.docc.example/documentation/ModuleWithSingleExtension/MyNamespace"
+        ])
+
+        // Make sure that the symbol added in the extension is still present in the topic graph,
+        // even though its synthetic "extended symbol" parents are not
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
+    }
     
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
         var bundleIdentifier = "com.external.testbundle"

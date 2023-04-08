@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -178,6 +178,37 @@ struct TopicGraph {
             addEdge(from: parentNode, to: newNode)
         }
     }
+
+    /// Removes the given node from the topic graph, reassigning its children to its parent if one exists.
+    ///
+    /// - Precondition: The node must either have no children or must have a parent node to reassign its children to.
+    ///
+    /// - Parameter node: The node to remove from the topic graph.
+    mutating func removeNode(_ node: Node) {
+        let parentEdges = reverseEdges[node.reference]
+        let parentReference = parentEdges?.first
+        let childrenEdges = edges[node.reference] ?? []
+
+        precondition(parentReference != nil || childrenEdges.isEmpty, "Attempting to remove node at \(node.reference) which would create orphans")
+
+        // Reassign edges for this node's children to start from its parent instead
+        if let parentReference = parentReference, let parentNode = nodeWithReference(parentReference) {
+            for child in childrenEdges {
+                removeEdge(fromReference: node.reference, toReference: child)
+                if parentReference != child, let childNode = nodeWithReference(child) {
+                    addEdge(from: parentNode, to: childNode)
+                }
+            }
+        }
+
+        // Clean up any remaining uncaught edges
+        removeEdges(from: node)
+        removeEdges(to: node)
+        edges.removeValue(forKey: node.reference)
+
+        // Finally, remove the node reference itself
+        nodes.removeValue(forKey: node.reference)
+    }
     
     /// Updates the node with the given reference with a new reference.
     mutating func updateReference(_ reference: ResolvedTopicReference, newReference: ResolvedTopicReference) {
@@ -233,6 +264,18 @@ struct TopicGraph {
         }
         
         edges[source.reference] = []
+    }
+
+    mutating func removeEdges(to target: Node) {
+        guard reverseEdges.keys.contains(target.reference) else {
+            return
+        }
+
+        for source in reverseEdges[target.reference, default: []] {
+            edges[source]!.removeAll(where: { $0 == target.reference })
+        }
+
+        reverseEdges[target.reference] = []
     }
 
     /// Removes the edge from one reference to another.
