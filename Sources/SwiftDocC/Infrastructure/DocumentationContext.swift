@@ -2398,8 +2398,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             trimEmptyExtendedSymbolPages(under: child)
         }
 
-        // Finally, if this node was left with no children, remove it from the topic graph.
-        if let node = topicGraph.nodeWithReference(nodeReference), node.kind.isExtendedSymbolKind, topicGraph[node].isEmpty {
+        // Finally, if this node was left with no children and does not have an extension file,
+        // remove it from the topic graph.
+        if let node = topicGraph.nodeWithReference(nodeReference),
+           node.kind.isExtendedSymbolKind,
+           topicGraph[node].isEmpty,
+           documentationExtensionURL(for: nodeReference) == nil
+        {
             topicGraph.removeEdges(to: node)
             topicGraph.removeEdges(from: node)
             topicGraph.edges.removeValue(forKey: nodeReference)

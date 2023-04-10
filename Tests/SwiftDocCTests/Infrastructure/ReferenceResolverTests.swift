@@ -445,6 +445,35 @@ class ReferenceResolverTests: XCTestCase {
         let extendedStructure = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
     }
+
+    func testCuratedExtensionWithDocumentationExtension() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+            let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
+            try FileManager.default.removeItem(at: topLevelArticle)
+
+            try """
+            # ``ModuleWithSingleExtension``
+
+            This is a test module with an extension to ``Swift/Array``.
+            """.write(to: topLevelArticle, atomically: true, encoding: .utf8)
+
+            try """
+            # ``ModuleWithSingleExtension/Swift/Array``
+
+            This is an extension to an extended type in another module.
+            """.write(to: root.appendingPathComponent("Array.md"), atomically: true, encoding: .utf8)
+        }
+
+        // Make sure that linking to `Swift/Array` does not raise a diagnostic, since the page should still exist
+        XCTAssertFalse(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination"}))
+
+        // Because the `Swift/Array` extension has an extension article, the pages should not be marked as virtual
+        let extendedModule = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        XCTAssert(context.knownPages.contains(where: { $0 == extendedModule }))
+
+        let extendedStructure = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        XCTAssert(context.knownPages.contains(where: { $0 == extendedStructure }))
+    }
     
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
         var bundleIdentifier = "com.external.testbundle"
