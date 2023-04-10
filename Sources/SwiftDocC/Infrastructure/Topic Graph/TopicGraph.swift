@@ -205,6 +205,7 @@ struct TopicGraph {
         removeEdges(from: node)
         removeEdges(to: node)
         edges.removeValue(forKey: node.reference)
+        reverseEdges.removeValue(forKey: node.reference)
 
         // Finally, remove the node reference itself
         nodes.removeValue(forKey: node.reference)
