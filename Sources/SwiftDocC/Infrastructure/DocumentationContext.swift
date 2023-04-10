@@ -2400,7 +2400,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         // Finally, if this node was left with no children, remove it from the topic graph.
         if let node = topicGraph.nodeWithReference(nodeReference), node.kind.isExtendedSymbolKind, topicGraph[node].isEmpty {
-            topicGraph.removeNode(node)
+            topicGraph.removeEdges(to: node)
+            topicGraph.removeEdges(from: node)
+            topicGraph.edges.removeValue(forKey: nodeReference)
+            topicGraph.reverseEdges.removeValue(forKey: nodeReference)
+
+            topicGraph.replaceNode(node, with: .init(
+                reference: node.reference,
+                kind: node.kind,
+                source: node.source,
+                title: node.title,
+                isVirtual: true, // set isVirtual to keep it from generating a page later on
+                isEmptyExtension: true
+            ))
         }
     }
     

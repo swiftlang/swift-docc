@@ -26,6 +26,11 @@ fileprivate func unknownSnippetSliceProblem(snippetPath: String, slice: String, 
     return Problem(diagnostic: diagnostic, possibleSolutions: [])
 }
 
+fileprivate func removedLinkDestinationProblem(reference: ResolvedTopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
+    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.")
+    return Problem(diagnostic: diagnostic, possibleSolutions: [])
+}
+
 /**
  Rewrites a ``Markup`` tree to resolve ``UnresolvedTopicReference`s using a ``DocumentationContext``.
  */
@@ -56,8 +61,11 @@ struct MarkupReferenceResolver: MarkupRewriter {
             // If the linked node is part of the topic graph,
             // verify that linking to it is enabled, else return `nil`.
             if let node = context.topicGraph.nodeWithReference(resolved) {
-                guard context.topicGraph.isLinkable(node.reference) else {
+                if !context.topicGraph.isLinkable(node.reference) {
                     problems.append(disabledLinkDestinationProblem(reference: resolved, source: source, range: range, severity: severity))
+                    return nil
+                } else if node.isEmptyExtension {
+                    problems.append(removedLinkDestinationProblem(reference: resolved, source: source, range: range, severity: severity))
                     return nil
                 }
             }

@@ -86,14 +86,18 @@ struct TopicGraph {
         
         /// If true, the topic should not be rendered and exists solely to mark relationships.
         let isVirtual: Bool
+
+        /// If true, the topic has been removed from the hierarchy due to being an extension whose children have been curated elsewhere.
+        let isEmptyExtension: Bool
         
-        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false) {
+        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false) {
             self.reference = reference
             self.kind = kind
             self.source = source
             self.title = title
             self.isResolvable = isResolvable
             self.isVirtual = isVirtual
+            self.isEmptyExtension = isEmptyExtension
         }
         
         func withReference(_ reference: ResolvedTopicReference) -> Node {
@@ -177,38 +181,6 @@ struct TopicGraph {
         if let parentReference = parentReference, let parentNode = nodeWithReference(parentReference) {
             addEdge(from: parentNode, to: newNode)
         }
-    }
-
-    /// Removes the given node from the topic graph, reassigning its children to its parent if one exists.
-    ///
-    /// - Precondition: The node must either have no children or must have a parent node to reassign its children to.
-    ///
-    /// - Parameter node: The node to remove from the topic graph.
-    mutating func removeNode(_ node: Node) {
-        let parentEdges = reverseEdges[node.reference]
-        let parentReference = parentEdges?.first
-        let childrenEdges = edges[node.reference] ?? []
-
-        precondition(parentReference != nil || childrenEdges.isEmpty, "Attempting to remove node at \(node.reference) which would create orphans")
-
-        // Reassign edges for this node's children to start from its parent instead
-        if let parentReference = parentReference, let parentNode = nodeWithReference(parentReference) {
-            for child in childrenEdges {
-                removeEdge(fromReference: node.reference, toReference: child)
-                if parentReference != child, let childNode = nodeWithReference(child) {
-                    addEdge(from: parentNode, to: childNode)
-                }
-            }
-        }
-
-        // Clean up any remaining uncaught edges
-        removeEdges(from: node)
-        removeEdges(to: node)
-        edges.removeValue(forKey: node.reference)
-        reverseEdges.removeValue(forKey: node.reference)
-
-        // Finally, remove the node reference itself
-        nodes.removeValue(forKey: node.reference)
     }
     
     /// Updates the node with the given reference with a new reference.
