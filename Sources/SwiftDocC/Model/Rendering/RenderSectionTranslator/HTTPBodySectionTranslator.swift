@@ -33,7 +33,7 @@ struct HTTPBodySectionTranslator: RenderSectionTranslator {
                 // Create a reference if one found
                 var reference: ResolvedTopicReference?
                 if let preciseIdentifier = token.preciseIdentifier,
-                   let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier]?.reference {
+                   let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier] {
                     reference = resolved
                     
                     // Add relationship to render references
