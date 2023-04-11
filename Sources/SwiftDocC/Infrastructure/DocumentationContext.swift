@@ -2415,6 +2415,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 kind: node.kind,
                 source: node.source,
                 title: node.title,
+                isResolvable: false, // turn isResolvable off to prevent a link from being made
                 isVirtual: true, // set isVirtual to keep it from generating a page later on
                 isEmptyExtension: true
             ))

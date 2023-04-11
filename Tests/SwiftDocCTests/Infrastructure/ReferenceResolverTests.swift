@@ -449,6 +449,18 @@ class ReferenceResolverTests: XCTestCase {
 
         let extendedStructure = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
+
+        // Load the RenderNode for the root article and make sure that the `Swift/Array` symbol link
+        // is not rendered as a link
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+
+        XCTAssertEqual(renderNode.abstract, [
+            .text("This is a test module with an extension to "),
+            .codeVoice(code: "Swift/Array"),
+            .text(".")
+        ])
     }
 
     func testCuratedExtensionWithDanglingReferenceToFragment() throws {

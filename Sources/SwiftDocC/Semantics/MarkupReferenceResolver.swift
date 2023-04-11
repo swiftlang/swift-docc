@@ -69,11 +69,11 @@ struct MarkupReferenceResolver: MarkupRewriter {
             // If the linked node is part of the topic graph,
             // verify that linking to it is enabled, else return `nil`.
             if let node = context.topicGraph.nodeWithReference(resolved) {
-                if !context.topicGraph.isLinkable(node.reference) {
-                    problems.append(disabledLinkDestinationProblem(reference: resolved, source: source, range: range, severity: severity))
-                    return nil
-                } else if node.isEmptyExtension {
+                if node.isEmptyExtension {
                     problems.append(removedLinkDestinationProblem(reference: resolved, source: source, range: range, severity: severity))
+                    return nil
+                } else if !context.topicGraph.isLinkable(node.reference) {
+                    problems.append(disabledLinkDestinationProblem(reference: resolved, source: source, range: range, severity: severity))
                     return nil
                 }
             }
