@@ -1113,7 +1113,7 @@ private extension PathHierarchy.Node {
             if let fragments = symbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments {
                 return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
             }
-            return context.symbolIndex[symbol.identifier.precise]!.name.description
+            return context.nodeWithSymbolIdentifier(symbol.identifier.precise)!.name.description
         }
         // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.
         let reference = context.hierarchyBasedLinkResolver!.resolvedReferenceMap[identifier]!

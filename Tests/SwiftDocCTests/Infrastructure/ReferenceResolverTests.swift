@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -501,7 +501,7 @@ class ReferenceResolverTests: XCTestCase {
         
         var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
         
-        let symbol = try XCTUnwrap(context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)
+        let symbol = try XCTUnwrap(context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)
         
         /// Verifies the given assertion on a variants property of the given symbols.
         func assertSymbolVariants<Variant>(
