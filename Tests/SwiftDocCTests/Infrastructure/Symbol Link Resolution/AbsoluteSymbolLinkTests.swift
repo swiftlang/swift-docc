@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -523,7 +523,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
         XCTAssertEqual(expectedDescriptions.count, context.symbolIndex.count)
         
         let validatedSymbolLinkDescriptions = context.symbolIndex.values
-            .map(\.reference.url.absoluteString)
+            .map(\.url.absoluteString)
             .sorted()
             .compactMap(AbsoluteSymbolLink.init(string:))
             .map(\.description)
@@ -871,7 +871,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
         XCTAssertEqual(expectedDescriptions.count, context.symbolIndex.count)
         
         let validatedSymbolLinkDescriptions = context.symbolIndex.values
-            .map(\.reference.url.absoluteString)
+            .map(\.url.absoluteString)
             .sorted()
             .compactMap(AbsoluteSymbolLink.init(string:))
             .map(\.description)
@@ -890,7 +890,7 @@ class AbsoluteSymbolLinkTests: XCTestCase {
         )
         
         let bundlePathComponents = context.symbolIndex.values
-            .flatMap(\.reference.pathComponents)
+            .flatMap(\.pathComponents)
         
         
         bundlePathComponents.forEach { component in

@@ -1291,7 +1291,7 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
                            "/MyKit/MyClass/myFunction()")
             
-            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.reference.path,
+            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.path,
                            "/documentation/MyKit/MyClass/myFunction()")
         }
         
@@ -1310,7 +1310,7 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
                            "/MyKit/MyClass-class/myFunction()")
             
-            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.reference.path,
+            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.path,
                            "/documentation/MyKit/MyClass-swift.class/myFunction()")
         }
         
@@ -1331,7 +1331,7 @@ class PathHierarchyTests: XCTestCase {
             XCTAssertEqual(tree.caseInsensitiveDisambiguatedPaths()["s:5MyKit0A5ClassC10myFunctionyyF"],
                            "/MyKit/MyClass-class-hash/myFunction()")
             
-            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.reference.path,
+            XCTAssertEqual(context.symbolIndex["s:5MyKit0A5ClassC10myFunctionyyF"]?.path,
                            "/documentation/MyKit/MyClass-swift.class-hash/myFunction()")
         }
     }

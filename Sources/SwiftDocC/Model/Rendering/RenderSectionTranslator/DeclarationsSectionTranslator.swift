@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -33,7 +33,7 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     // Create a reference if one found
                     var reference: ResolvedTopicReference?
                     if let preciseIdentifier = token.preciseIdentifier,
-                       let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier]?.reference {
+                       let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier] {
                         reference = resolved
                         
                         // Add relationship to render references
