@@ -3296,6 +3296,25 @@ let expected = """
         )
     }
     
+    func testAllReferencesInSymbolsIndexExistInDocumentationCache() throws {
+        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        
+        let referencesInSymbolIndex = Set(context.symbolIndex.values)
+        let referencesInDocumentationCache = Set(context.documentationCache.keys)
+        
+        let extraReferencesInSymbolIndex = referencesInSymbolIndex.subtracting(referencesInDocumentationCache)
+        XCTAssert(extraReferencesInSymbolIndex.isEmpty, "Some symbols in the symbol index don't exist in the documentation cache: \(extraReferencesInSymbolIndex.map(\.path).sorted())")
+
+        
+        var referencesToSymbolsInDocumentationCache = Set<ResolvedTopicReference>()
+        for (reference, node) in context.documentationCache where node.semantic is Symbol {
+            referencesToSymbolsInDocumentationCache.insert(reference)
+        }
+            
+        let missingReferencesInSymbolIndex = referencesToSymbolsInDocumentationCache.subtracting(referencesInSymbolIndex)
+        XCTAssert(missingReferencesInSymbolIndex.isEmpty, "Some symbol references in the documentation cache don't exist in the symbol index: \(missingReferencesInSymbolIndex.map(\.path).sorted())")
+    }
+    
     func testDocumentationExtensionURLForReferenceReturnsURLForSymbolReference() throws {
         let (bundleURL, _, context) = try testBundleAndContext(copying: "TestBundle")
         
