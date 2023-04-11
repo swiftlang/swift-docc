@@ -1149,7 +1149,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(tabNavigator.tabs[2].content.count, 1)
     }
     
-    func testCustomPageImage() throws {
+    func testRenderNodeMetadata() throws {
          let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
          let reference = ResolvedTopicReference(
              bundleIdentifier: bundle.identifier,
@@ -1220,5 +1220,10 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.keys.first, "country")
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.values.count, 1)
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.values.first, "Belgium")
+        
+        XCTAssertEqual(
+            roundTrippedArticle.metadata.color?.standardColorIdentifier,
+            "yellow"
+        )
      }
 }

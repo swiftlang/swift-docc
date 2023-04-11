@@ -3077,6 +3077,184 @@
         },
         {
           "kind" : "typeIdentifier",
+          "spelling" : "PageColor"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "color"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Color"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that specifies an accent color for a given documentation page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use the `PageColor` directive to provide a hint to the renderer as to how"
+          },
+          {
+            "text" : "the page should be accented with color. The renderer may use this color,"
+          },
+          {
+            "text" : "depending on the context, as a foundation for other colors used on the"
+          },
+          {
+            "text" : "page. For example, Swift-DocC-Render uses this color as the primary"
+          },
+          {
+            "text" : "background color of a page's introduction section and adjusts other"
+          },
+          {
+            "text" : "elements in the introduction section to account for the new background."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @PageColor(orange)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - color: A context-dependent, standard color."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `blue`: A context-dependent blue color."
+          },
+          {
+            "text" : "     - term `gray`: A context-dependent gray color."
+          },
+          {
+            "text" : "     - term `green`: A context-dependent green color."
+          },
+          {
+            "text" : "     - term `orange`: A context-dependent orange color."
+          },
+          {
+            "text" : "     - term `purple`: A context-dependent purple color."
+          },
+          {
+            "text" : "     - term `red`: A context-dependent red color."
+          },
+          {
+            "text" : "     - term `yellow`: A context-dependent yellow color."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$PageColor"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$PageColor",
+            "spelling" : "PageColor"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "PageColor"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "color"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Color"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "PageColor"
+      },
+      "pathComponents" : [
+        "PageColor"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
           "spelling" : "PageImage"
         },
         {
