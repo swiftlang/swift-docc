@@ -674,6 +674,39 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MixedFramework-module-9r7pl/myTopLevelVariable-var-520ez", in: tree, asSymbolID: "s:14MixedFramework18myTopLevelVariableSbvp")
     }
     
+    func testDefaultImplementationWithCollidingTargetSymbol() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+ 
+        // ---- Inner
+        // public protocol Something {
+        //     func doSomething()
+        // }
+        // public extension Something {
+        //     func doSomething() {}
+        // }
+        //
+        // ---- Outer
+        // @_exported import Inner
+        // public typealias Something = Inner.Something
+        let (_, context) = try testBundleAndContext(named: "DefaultImplementationsWithExportedImport")
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        
+        // The @_export imported protocol can be found
+        try assertFindsPath("/DefaultImplementationsWithExportedImport/Something-protocol", in: tree, asSymbolID: "s:5Inner9SomethingP")
+        // The wrapping type alias can be found
+        try assertFindsPath("/DefaultImplementationsWithExportedImport/Something-typealias", in: tree, asSymbolID: "s:40DefaultImplementationsWithExportedImport9Somethinga")
+        
+        // The protocol requirement and the default implementation both exist at the @_export imported Something protocol.
+        try assertPathRaisesErrorMessage("DefaultImplementationsWithExportedImport/Something-protocol/doSomething()", in: tree, context: context, expectedErrorMessage: """
+        'doSomething()' is ambiguous at '/DefaultImplementationsWithExportedImport/Something'
+        """) { error in
+            XCTAssertEqual(error.solutions, [
+                .init(summary: "Insert '8skxc' for\n'func doSomething()'", replacements: [("-8skxc", 73, 73)]),
+                .init(summary: "Insert 'scj9' for\n'func doSomething()'", replacements: [("-scj9", 73, 73)]),
+            ])
+        }
+    }
+    
     func testDisambiguatedPaths() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
