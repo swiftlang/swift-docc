@@ -436,7 +436,12 @@ class ReferenceResolverTests: XCTestCase {
         }
 
         // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
-        XCTAssert(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination"}))
+        let diagnostic = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination"}))
+        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        XCTAssertEqual(solution.replacements.count, 1)
+        let replacement = try XCTUnwrap(solution.replacements.first)
+        XCTAssertEqual(replacement.replacement, "`Swift/Array`")
 
         // Also make sure that the extension pages are still gone
         let extendedModule = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)

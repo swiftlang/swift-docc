@@ -27,8 +27,16 @@ fileprivate func unknownSnippetSliceProblem(snippetPath: String, slice: String, 
 }
 
 fileprivate func removedLinkDestinationProblem(reference: ResolvedTopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
+    var solutions = [Solution]()
+    if let range = range, reference.pathComponents.count > 3 {
+        // The first three path components are "/", "documentation", and the module name, so drop those
+        let pathRemainder = reference.pathComponents[3...]
+        solutions.append(.init(summary: "Use a plain code span instead of a symbol link", replacements: [
+            .init(range: range, replacement: "`\(pathRemainder.joined(separator: "/"))`")
+        ]))
+    }
     let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.")
-    return Problem(diagnostic: diagnostic, possibleSolutions: [])
+    return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 
 /**
