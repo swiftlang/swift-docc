@@ -451,6 +451,34 @@ class ReferenceResolverTests: XCTestCase {
         XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
     }
 
+    func testCuratedExtensionWithDanglingReferenceToFragment() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+            let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
+            try FileManager.default.removeItem(at: topLevelArticle)
+
+            try """
+            # ``ModuleWithSingleExtension``
+
+            This is a test module with an extension to ``Swift/Array#Array``.
+            """.write(to: topLevelArticle, atomically: true, encoding: .utf8)
+        }
+
+        // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
+        let diagnostic = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination"}))
+        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        XCTAssertEqual(solution.replacements.count, 1)
+        let replacement = try XCTUnwrap(solution.replacements.first)
+        XCTAssertEqual(replacement.replacement, "`Swift/Array`")
+
+        // Also make sure that the extension pages are still gone
+        let extendedModule = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedModule }))
+
+        let extendedStructure = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
+    }
+
     func testCuratedExtensionWithDocumentationExtension() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
             let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
