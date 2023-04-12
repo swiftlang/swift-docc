@@ -6,6 +6,7 @@ This is the abstract of my article. Nice!
     @PageImage(source: "plus", alt: "A plus icon.", purpose: icon)
     @PageImage(source: "figure1", alt: "An example figure.", purpose: card)
     @CustomMetadata(key: "country", value: "Belgium")
+    @PageColor(yellow)
 }
 
 @Row(numberOfColumns: 8) {

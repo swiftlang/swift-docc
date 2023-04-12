@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -152,19 +152,19 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
         
         // Collect the overloaded symbols nodes from the built bundle
-        let ambiguousSymbols = context.symbolIndex.values.compactMap(\.symbol).filter {
-            $0.names.title.lowercased() == symbolTitle.lowercased()
-        }
+        let ambiguousSymbols = context.symbolIndex.values
+            .compactMap { context.documentationCache[$0]?.symbol }
+            .filter { $0.names.title.lowercased() == symbolTitle.lowercased() }
         XCTAssertEqual(ambiguousSymbols.count, expectedNumberOfAmbiguousSymbols)
         
         // Find the documentation node based on what we expect the correct link to be
-        let correctDocumentationNodeToSelect = try XCTUnwrap(
+        let correctReferenceToSelect = try XCTUnwrap(
             context.symbolIndex.values.first {
-                $0.reference.absoluteString == correctLink
+                $0.absoluteString == correctLink
             }
         )
         let correctSymbolToSelect = try XCTUnwrap(
-            correctDocumentationNodeToSelect.symbol
+            context.documentationCache[correctReferenceToSelect]?.symbol
         )
         
         // First confirm the first link does resolve as expected
@@ -187,7 +187,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             XCTAssertEqual(correctSymbolToSelect, selectedSymbol)
         }
         
-        // Now we'll try a couple of inprecise links and verify they don't resolve
+        // Now we'll try a couple of imprecise links and verify they don't resolve
         try incorrectLinks.forEach { incorrectLink in
             let absoluteSymbolLinkLastPathComponent = try XCTUnwrap(
                 AbsoluteSymbolLink(string: incorrectLink)?.basePathComponents.last
@@ -212,10 +212,11 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
         
         var count = 0
-        try context.symbolIndex.values.forEach { documentationNode in
-            guard let symbolLink = AbsoluteSymbolLink(string: documentationNode.reference.absoluteString) else {
+        try context.symbolIndex.values.forEach { reference in
+            guard let symbolLink = AbsoluteSymbolLink(string: reference.absoluteString) else {
                 return
             }
+            let documentationNode = try XCTUnwrap(context.documentationCache[reference])
             
             // The `asLinkComponent` property of DocCSymbolRepresentable doesn't have the context
             // to know what type disambiguation information it should use, so it always includes

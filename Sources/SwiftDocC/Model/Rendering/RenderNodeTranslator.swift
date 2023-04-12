@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -732,6 +732,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     identifier: renderReference
                 )
             }
+        }
+        
+        if let pageColor = documentationNode.metadata?.pageColor {
+            node.metadata.color = TopicColor(standardColorIdentifier: pageColor.rawValue)
         }
 
         var metadataCustomDictionary : [String: String] = [:]
@@ -1746,7 +1750,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Create a reference if one found
             var reference: ResolvedTopicReference?
             if let preciseIdentifier = token.preciseIdentifier,
-               let resolved = self.context.symbolIndex[preciseIdentifier]?.reference {
+               let resolved = self.context.symbolIndex[preciseIdentifier] {
                 reference = resolved
                 
                 // Add relationship to render references

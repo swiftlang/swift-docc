@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -749,7 +749,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertFalse(context.symbolIndex.isEmpty)
         
         // MyClass is loaded
-        guard let myClass = context.symbolIndex["s:5MyKit0A5ClassC"] else {
+        guard let myClass = context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC") else {
             XCTFail("`MyClass` not found in symbol graph")
             return
         }
@@ -820,7 +820,7 @@ class DocumentationContextTests: XCTestCase {
         //
         
         // MyProtocol is loaded
-        guard let myProtocol = context.symbolIndex["s:5MyKit0A5ProtocolP"],
+        guard let myProtocol = context.nodeWithSymbolIdentifier("s:5MyKit0A5ProtocolP"),
             let myProtocolSymbol = myProtocol.semantic as? Symbol else {
             XCTFail("`MyProtocol` not found in symbol graph")
             return
@@ -995,7 +995,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // MyClass is loaded
-        guard let myClass = context.symbolIndex["s:5MyKit0A5ClassC"],
+        guard let myClass = context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC"),
             let myClassSymbol = myClass.semantic as? Symbol else {
             XCTFail("`MyClass` not found in symbol graph")
             return
@@ -1092,7 +1092,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // SideClass is loaded
-        guard let sideClass = context.symbolIndex["s:7SideKit0A5ClassC"],
+        guard let sideClass = context.nodeWithSymbolIdentifier("s:7SideKit0A5ClassC"),
             let sideClassSymbol = sideClass.semantic as? Symbol else {
             XCTFail("`SideClass` not found in symbol graph")
             return
@@ -1129,7 +1129,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // MyClass is loaded
-        guard let myClass = context.symbolIndex["s:5MyKit0A5ClassC"],
+        guard let myClass = context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC"),
             let myClassSymbol = myClass.semantic as? Symbol else {
             XCTFail("`MyClass` not found in symbol graph")
             return
@@ -2089,12 +2089,12 @@ let expected = """
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
         
         // Verify that the symbol index has been updated with the rewritten collision-corrected symbol paths
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testEE"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10tEstPP"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.path, "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testEE"]?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10tEstPP"]?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path")
         
-        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()"]?.reference.path, "/documentation/SideKit/SideProtocol/func()-6ijsi")
-        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()DefaultImp"]?.reference.path, "/documentation/SideKit/SideProtocol/func()-2dxqn")
+        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()"]?.path, "/documentation/SideKit/SideProtocol/func()-6ijsi")
+        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()DefaultImp"]?.path, "/documentation/SideKit/SideProtocol/func()-2dxqn")
     }
 
     func testResolvingArticleLinkBeforeCuratingIt() throws {
@@ -2561,7 +2561,7 @@ let expected = """
             XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 23)
         }
 
-        let functionNode = try XCTUnwrap(context.symbolIndex["s:7SideKit0A5ClassC10myFunctionyyF"])
+        let functionNode = try XCTUnwrap(context.nodeWithSymbolIdentifier("s:7SideKit0A5ClassC10myFunctionyyF"))
         XCTAssertEqual(functionNode.docChunks.count, 2)
         let docCommentChunks = functionNode.docChunks.compactMap { chunk -> DocumentationNode.DocumentationChunk? in
             switch chunk.source {
@@ -3171,7 +3171,7 @@ let expected = """
             let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsingExact: "doc:Test"))))
             let expected = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
             
-            let symbolReference = try XCTUnwrap(context.symbolIndex["s:12Minimal_docs4TestV"]?.reference)
+            let symbolReference = try XCTUnwrap(context.symbolIndex["s:12Minimal_docs4TestV"])
             
             // Resolve from various locations in the bundle
             for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialsRootReference, symbolReference] {
@@ -3367,7 +3367,7 @@ let expected = """
         let (bundle, context) = try testBundleAndContext(named: "BundleWithExecutableModuleKind")
         XCTAssertEqual(bundle.info.defaultModuleKind, "Executable")
         
-        let moduleSymbol = try XCTUnwrap(context.symbolIndex["ExampleDocumentedExecutable"]?.symbol)
+        let moduleSymbol = try XCTUnwrap(context.nodeWithSymbolIdentifier("ExampleDocumentedExecutable")?.symbol)
         XCTAssertEqual(moduleSymbol.kind.identifier.identifier, "module")
         XCTAssertEqual(moduleSymbol.kind.displayName, "Executable")
     }
@@ -3436,8 +3436,8 @@ let expected = """
         )
         
         let symbolsInSymbolIndex = Set(
-            context.symbolIndex.values.compactMap { node -> ObjectIdentifier? in
-                guard let symbol = node.semantic as? Symbol else {
+            context.symbolIndex.values.compactMap { reference -> ObjectIdentifier? in
+                guard let symbol = context.documentationCache[reference]?.semantic as? Symbol else {
                     XCTFail("Node in symbolIndex doesn't have a symbol.")
                     return nil
                 }
@@ -3450,6 +3450,25 @@ let expected = """
             symbolsInSymbolIndex,
             "Expected the symbol instances in the documentationCache and symbolIndex dictionaries to be the same"
         )
+    }
+    
+    func testAllReferencesInSymbolsIndexExistInDocumentationCache() throws {
+        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        
+        let referencesInSymbolIndex = Set(context.symbolIndex.values)
+        let referencesInDocumentationCache = Set(context.documentationCache.keys)
+        
+        let extraReferencesInSymbolIndex = referencesInSymbolIndex.subtracting(referencesInDocumentationCache)
+        XCTAssert(extraReferencesInSymbolIndex.isEmpty, "Some symbols in the symbol index don't exist in the documentation cache: \(extraReferencesInSymbolIndex.map(\.path).sorted())")
+
+        
+        var referencesToSymbolsInDocumentationCache = Set<ResolvedTopicReference>()
+        for (reference, node) in context.documentationCache where node.semantic is Symbol {
+            referencesToSymbolsInDocumentationCache.insert(reference)
+        }
+            
+        let missingReferencesInSymbolIndex = referencesToSymbolsInDocumentationCache.subtracting(referencesInSymbolIndex)
+        XCTAssert(missingReferencesInSymbolIndex.isEmpty, "Some symbol references in the documentation cache don't exist in the symbol index: \(missingReferencesInSymbolIndex.map(\.path).sorted())")
     }
     
     func testDocumentationExtensionURLForReferenceReturnsURLForSymbolReference() throws {

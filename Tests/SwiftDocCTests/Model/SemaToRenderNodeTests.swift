@@ -1287,7 +1287,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertFalse(context.symbolIndex.isEmpty)
         
         // MyProtocol is loaded
-        guard let myProtocol = context.symbolIndex["s:5MyKit0A5ProtocolP"],
+        guard let myProtocol = context.nodeWithSymbolIdentifier("s:5MyKit0A5ProtocolP"),
               let myProtocolSymbol = myProtocol.semantic as? Symbol else {
             XCTFail("`MyProtocol` not found in symbol graph")
             return
@@ -1295,12 +1295,12 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Verify that various symbols that exist are referenced in the symbol graph file have been resolved and added to the symbol index
         
-        XCTAssertNotNil(context.symbolIndex["p:hPP"], "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.symbolIndex["s:Si"], "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.symbolIndex["s:10Foundation3URLV"], "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.symbolIndex["s:10Foundation4DataV"], "External symbol from declaration was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("p:hPP"), "External symbol from declaration was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:Si"), "External symbol from declaration was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:10Foundation3URLV"), "External symbol from declaration was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:10Foundation4DataV"), "External symbol from declaration was resolved and added to the index")
         
-        XCTAssertNotNil(context.symbolIndex["s:5Foundation0A5NSCodableP"], "External symbol from symbol graph relationship was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:5Foundation0A5NSCodableP"), "External symbol from symbol graph relationship was resolved and added to the index")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myProtocol.reference, source: nil)
 

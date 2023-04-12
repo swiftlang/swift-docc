@@ -76,7 +76,6 @@ case $FRAMEWORK in
       --fallback-display-name SwiftDocC \
       --fallback-bundle-identifier org.swift.SwiftDocC \
       --fallback-bundle-version 1.0.0 \
-      --diagnostic-level error \
       --additional-symbol-graph-dir "$SGFS_DIR" \
       --output-path "$DOCS_BUILD_DIR"
   ;;
@@ -103,7 +102,6 @@ case $FRAMEWORK in
       --fallback-display-name SwiftDocCUtilities \
       --fallback-bundle-identifier org.swift.SwiftDocCUtilities \
       --fallback-bundle-version 1.0.0 \
-      --diagnostic-level error \
       --additional-symbol-graph-dir "$SGFS_DIR" \
       --output-path $DOCS_BUILD_DIR
   ;;
@@ -113,7 +111,6 @@ case $FRAMEWORK in
     # Compile the documentation
     swift run docc $DOCC_CMD "$DOCC_ROOT/Sources/docc/DocCDocumentation.docc" \
       --experimental-enable-custom-templates \
-      --diagnostic-level error \
       --output-path $DOCS_BUILD_DIR
   ;;
   
