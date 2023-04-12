@@ -28,7 +28,7 @@ enum LinkResolutionMigrationConfiguration {
             return UserDefaults.standard.bool(forKey: defaultsKey)
         }
         if let environmentValue = ProcessInfo.processInfo.environment[environmentKey] {
-            return environmentValue == "NO"
+            return environmentValue != "NO"
         }
         return true
     }()
