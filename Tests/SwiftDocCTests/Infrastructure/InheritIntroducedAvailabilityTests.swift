@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -52,7 +52,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     /// the macOS version in the Info.plist
     func testMacOSOnlyDeprecated() {
         let macOSOnlyDeprecated =
-            context.symbolIndex["s:14FillIntroduced19macOSOnlyDeprecatedyyF"]!
+            context.nodeWithSymbolIdentifier("s:14FillIntroduced19macOSOnlyDeprecatedyyF")!
                 .symbol!.availability!.availability.first {
             $0.domain?.rawValue == PlatformName.macOS.rawValue
         }!
@@ -69,7 +69,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     func testMacOSOnlyIntroduced() {
         // Don't overwrite existing `macOS, introduced: 10.15`
         let macOSOnlyIntroduced =
-            context.symbolIndex["s:14FillIntroduced09macOSOnlyB0yyF"]!
+            context.nodeWithSymbolIdentifier("s:14FillIntroduced09macOSOnlyB0yyF")!
                 .symbol!.availability!.availability.first {
             $0.domain?.rawValue == PlatformName.macOS.rawValue
         }!
@@ -82,7 +82,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     /// the iOS version in the Info.plist
     func testiOSOnlyDeprecated() {
         let iOSOnlyDeprecated =
-            context.symbolIndex["s:14FillIntroduced17iOSOnlyDeprecatedyyF"]!
+            context.nodeWithSymbolIdentifier("s:14FillIntroduced17iOSOnlyDeprecatedyyF")!
                 .symbol!.availability!.availability.first {
             $0.domain?.rawValue == PlatformName.iOS.rawValue
         }!
@@ -99,7 +99,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     func testiOSOnlyIntroduced() {
         // Don't overwrite existing `macOS, introduced: 10.15`
         let iOSOnlyIntroduced =
-            context.symbolIndex["s:14FillIntroduced07iOSOnlyB0yyF"]!
+            context.nodeWithSymbolIdentifier("s:14FillIntroduced07iOSOnlyB0yyF")!
                 .symbol!.availability!.availability.first {
             $0.domain?.rawValue == PlatformName.iOS.rawValue
         }!
@@ -112,7 +112,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     /// the iOS version in the Info.plist via a fallback mechanism.
     func testCatalystOnlyDeprecated() {
         let catalystOnlyDeprecated =
-            context.symbolIndex["s:14FillIntroduced25macCatalystOnlyDeprecatedyyF"]!
+            context.nodeWithSymbolIdentifier("s:14FillIntroduced25macCatalystOnlyDeprecatedyyF")!
                 .symbol!.availability!.availability.first {
             $0.domain?.rawValue == PlatformName.catalyst.rawValue
         }!
@@ -129,7 +129,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
     func testCatalystOnlyIntroduced() {
         // Don't overwrite existing `macOS, introduced: 10.15`
         let catalystOnlyIntroduced =
-            context.symbolIndex["s:14FillIntroduced015macCatalystOnlyB0yyF"]!
+            context.nodeWithSymbolIdentifier("s:14FillIntroduced015macCatalystOnlyB0yyF")!
                 .symbol!.availability!.availability.first {
             $0.domain?.rawValue == PlatformName.catalyst.rawValue
         }!
@@ -156,7 +156,7 @@ class InheritIntroducedAvailabilityTests: XCTestCase {
         /// @available(tvOS, unavailable)
         /// @available(watchOS, unavailable)
         /// ```
-        let iOSMacOSOnly = context.symbolIndex["s:14FillIntroduced12iOSMacOSOnlyyyF"]!
+        let iOSMacOSOnly = context.nodeWithSymbolIdentifier("s:14FillIntroduced12iOSMacOSOnlyyyF")!
 
         /// These domains should not have had an `introduced` version added.
         let domainsThatShouldntHaveIntroduced = Set([

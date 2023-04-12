@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -179,7 +179,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             // to simulate the loading order we want to test.
             let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
 
-            guard let availability = (context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
+            guard let availability = (context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
                 return
             }
@@ -199,7 +199,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             // to simulate the loading order we want to test.
             let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
             
-            guard let availability = (context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
+            guard let availability = (context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
                 return
             }
