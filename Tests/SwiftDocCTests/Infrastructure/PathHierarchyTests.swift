@@ -697,14 +697,16 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/DefaultImplementationsWithExportedImport/Something-typealias", in: tree, asSymbolID: "s:40DefaultImplementationsWithExportedImport9Somethinga")
         
         // The protocol requirement and the default implementation both exist at the @_export imported Something protocol.
-        try assertPathRaisesErrorMessage("DefaultImplementationsWithExportedImport/Something-protocol/doSomething()", in: tree, context: context, expectedErrorMessage: """
-        'doSomething()' is ambiguous at '/DefaultImplementationsWithExportedImport/Something'
-        """) { error in
-            XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '8skxc' for\n'func doSomething()'", replacements: [("-8skxc", 73, 73)]),
-                .init(summary: "Insert 'scj9' for\n'func doSomething()'", replacements: [("-scj9", 73, 73)]),
-            ])
-        }
+        let paths = tree.caseInsensitiveDisambiguatedPaths()
+        XCTAssertEqual(paths["s:5Inner9SomethingP02doB0yyF"],    "/DefaultImplementationsWithExportedImport/Something/doSomething()-8skxc")
+        XCTAssertEqual(paths["s:5Inner9SomethingPAAE02doB0yyF"], "/DefaultImplementationsWithExportedImport/Something/doSomething()-scj9")
+        
+        // Test disfavoring a default implementation in a symbol collision
+        try assertFindsPath("DefaultImplementationsWithExportedImport/Something-protocol/doSomething()", in: tree, asSymbolID: "s:5Inner9SomethingP02doB0yyF")
+        try assertFindsPath("DefaultImplementationsWithExportedImport/Something-protocol/doSomething()-method", in: tree, asSymbolID: "s:5Inner9SomethingP02doB0yyF")
+        try assertFindsPath("DefaultImplementationsWithExportedImport/Something-protocol/doSomething()-8skxc", in: tree, asSymbolID: "s:5Inner9SomethingP02doB0yyF")
+        // Only with disambiguation does the link resolve to the default implementation symbol
+        try assertFindsPath("DefaultImplementationsWithExportedImport/Something-protocol/doSomething()-scj9", in: tree, asSymbolID: "s:5Inner9SomethingPAAE02doB0yyF")
     }
     
     func testDisambiguatedPaths() throws {
@@ -1024,18 +1026,13 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "UncuratedClass/angle", parent: sideKidModuleID).identifier.precise, "s:So14UncuratedClassCV5MyKitE5angle12CoreGraphics7CGFloatVSgvp")
         try assertFindsPath("/SideKit/SideClass/Element", in: tree, asSymbolID: "s:7SideKit0A5ClassC7Elementa")
         try assertFindsPath("/SideKit/SideClass/Element/inherited()", in: tree, asSymbolID: "s:7SideKit0A5::SYNTESIZED::inheritedFF")
-        try assertPathCollision("/SideKit/SideProtocol/func()", in: tree, collisions: [
-            ("s:5MyKit0A5MyProtocol0Afunc()DefaultImp", "2dxqn"),
-            ("s:5MyKit0A5MyProtocol0Afunc()", "6ijsi"),
-        ])
-        try assertPathRaisesErrorMessage("/SideKit/SideProtocol/func()", in: tree, context: context, expectedErrorMessage: """
-        'func()' is ambiguous at '/SideKit/SideProtocol'
-        """) { error in
-            XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '2dxqn' for\n'func1()'", replacements: [("-2dxqn", 28, 28)]),
-                .init(summary: "Insert '6ijsi' for\n'func1()'", replacements: [("-6ijsi", 28, 28)]),
-            ])
-        } // This test data have the same declaration for both symbols.
+        
+        // Test disfavoring a default implementation in a symbol collision
+        try assertFindsPath("/SideKit/SideProtocol/func()", in: tree, asSymbolID: "s:5MyKit0A5MyProtocol0Afunc()")
+        try assertFindsPath("/SideKit/SideProtocol/func()-method", in: tree, asSymbolID: "s:5MyKit0A5MyProtocol0Afunc()")
+        try assertFindsPath("/SideKit/SideProtocol/func()-6ijsi", in: tree, asSymbolID: "s:5MyKit0A5MyProtocol0Afunc()")
+        // Only with disambiguation does the link resolve to the default implementation symbol
+        try assertFindsPath("/SideKit/SideProtocol/func()-2dxqn", in: tree, asSymbolID: "s:5MyKit0A5MyProtocol0Afunc()DefaultImp")
         
         try assertFindsPath("/FillIntroduced/iOSOnlyDeprecated()", in: tree, asSymbolID: "s:14FillIntroduced17iOSOnlyDeprecatedyyF")
         try assertFindsPath("/FillIntroduced/macCatalystOnlyIntroduced()", in: tree, asSymbolID: "s:14FillIntroduced015macCatalystOnlyB0yyF")
