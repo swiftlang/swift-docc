@@ -24,11 +24,15 @@ enum LinkResolutionMigrationConfiguration {
         let defaultsKey = "DocCUseHierarchyBasedLinkResolver"
         let environmentKey = "DOCC_USE_HIERARCHY_BASED_LINK_RESOLVER"
         
+        if let environmentValue = ProcessInfo.processInfo.environment[environmentKey] {
+            switch environmentValue.uppercased() {
+            case "NO", "FALSE", "0": return false
+            case "YES", "TRUE", "1": return true
+            default: break
+            }
+        }
         if UserDefaults.standard.object(forKey: defaultsKey) != nil {
             return UserDefaults.standard.bool(forKey: defaultsKey)
-        }
-        if let environmentValue = ProcessInfo.processInfo.environment[environmentKey] {
-            return environmentValue != "NO"
         }
         return true
     }()
