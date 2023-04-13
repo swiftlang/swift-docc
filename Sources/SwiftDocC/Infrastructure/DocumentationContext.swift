@@ -2856,13 +2856,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
         let bundleIdentifier = parent.bundleIdentifier
         if let assetManager = assetManagers[bundleIdentifier] {
-            return assetManager.bestKey(forAssetName: name)
-        } else {
-            if _externalAssetResolvers[bundleIdentifier]?._resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier) != nil {
-                return name
-            } else {
-                return nil
+            if let localName = assetManager.bestKey(forAssetName: name) {
+                return localName
+            } else if let fallbackAssetManager = fallbackAssetResolvers[bundleIdentifier] {
+                return fallbackAssetManager.resolve(assetNamed: name, bundleIdentifier: bundleIdentifier) != nil ? name : nil
             }
+            return nil
+        } else if _externalAssetResolvers[bundleIdentifier]?._resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier) != nil {
+            return name
+        } else {
+            return nil
         }
     }
 
