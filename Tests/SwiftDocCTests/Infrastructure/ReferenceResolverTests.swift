@@ -523,6 +523,22 @@ class ReferenceResolverTests: XCTestCase {
         let extendedStructure = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
         XCTAssert(context.knownPages.contains(where: { $0 == extendedStructure }))
     }
+
+    func testCuratedExtensionWithAdditionalConformance() throws {
+        let (bundle, context) = try testBundleAndContext(named: "ModuleWithConformanceAndExtension")
+
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithConformanceAndExtension/MyProtocol", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+
+        let conformanceSection = try XCTUnwrap(renderNode.relationshipSections.first(where: { $0.type == RelationshipsGroup.Kind.conformingTypes.rawValue }))
+        XCTAssertEqual(conformanceSection.identifiers.count, 1)
+
+        // Make sure that the reference to the dropped `Bool` page isn't rendered as a resolved link
+        let boolReference = try XCTUnwrap(conformanceSection.identifiers.first)
+        let renderReference = try XCTUnwrap(renderNode.references[boolReference])
+        XCTAssert(renderReference is UnresolvedRenderReference)
+    }
     
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
         var bundleIdentifier = "com.external.testbundle"

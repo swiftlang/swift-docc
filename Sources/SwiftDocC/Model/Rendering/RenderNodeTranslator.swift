@@ -1383,9 +1383,20 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         let resolver = LinkTitleResolver(context: context, source: resolved.url)
                         let resolvedTitle = resolver.title(for: node)
                         destinationsMap[destination] = resolvedTitle?[trait]
-                        
-                        // Add relationship to render references
-                        collectedTopicReferences.append(resolved)
+
+                        let dropLink = context.topicGraph.nodeWithReference(resolved)?.isEmptyExtension ?? false
+
+                        if !dropLink {
+                            // Add relationship to render references
+                            collectedTopicReferences.append(resolved)
+                        } else if let topicUrl = ValidatedURL(resolved.url) {
+                            // If the topic isn't linkable (e.g. an extended type), then we shouldn't
+                            // add a resolved relationship - deconstruct the resolved reference so
+                            // we can still display it, though
+                            let title = resolvedTitle?[trait] ?? resolved.lastPathComponent
+                            let reference = UnresolvedTopicReference(topicURL: topicUrl, title: title)
+                            collectedUnresolvedTopicReferences.append(reference)
+                        }
 
                     case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
                         // Try creating a render reference anyway
