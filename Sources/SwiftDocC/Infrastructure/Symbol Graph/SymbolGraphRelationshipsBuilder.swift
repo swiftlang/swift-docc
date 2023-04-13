@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -39,27 +39,29 @@ struct SymbolGraphRelationshipsBuilder {
         selector: UnifiedSymbolGraph.Selector,
         in bundle: DocumentationBundle,
         context: DocumentationContext,
-        symbolIndex: inout [String: DocumentationNode],
+        symbolIndex: inout [String: ResolvedTopicReference],
+        documentationCache: [ResolvedTopicReference: DocumentationNode],
         engine: DiagnosticEngine
     ) {
         // Resolve source symbol
-        guard let implementorNode = symbolIndex[edge.source],
-            let implementorSymbol = implementorNode.semantic as? Symbol else {
+        guard let implementorNode = symbolIndex[edge.source].flatMap({ documentationCache[$0] }),
+              let implementorSymbol = implementorNode.semantic as? Symbol
+        else {
             // The source node for implementation relationship not found.
             engine.emit(NodeProblem.notFound(edge.source))
             return
         }
         
         // Resolve target symbol if possible
-        let optionalInterfaceNode = symbolIndex[edge.target]
+        let optionalInterfaceNode = symbolIndex[edge.target].flatMap { documentationCache[$0] }
 
         if optionalInterfaceNode == nil {
             // Take the interface language of the target symbol
             // or if external - default to the language of the current symbol.
-            let language = symbolIndex[edge.target]?.reference.sourceLanguage
+            let language = symbolIndex[edge.target]?.sourceLanguage
                 ?? implementorNode.reference.sourceLanguage
             
-            let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: symbolIndex[edge.target]?.symbol)
+            let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: symbolIndex[edge.target].flatMap { documentationCache[$0]?.symbol })
             guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
                 // The symbol reference format is invalid.
                 engine.emit(NodeProblem.invalidReference(symbolReference.path))
@@ -74,9 +76,10 @@ struct SymbolGraphRelationshipsBuilder {
         // Find out the parent's title
         let parentName: String?
 
-        if let reference = symbolIndex[edge.source]?.reference,
-            let parentNode = try? context.entity(with: reference.removingLastPathComponent()),
-            let title = (parentNode.semantic as? Symbol)?.title {
+        if let reference = symbolIndex[edge.source],
+           let parentNode = try? context.entity(with: reference.removingLastPathComponent()),
+           let title = (parentNode.semantic as? Symbol)?.title
+        {
             parentName = title
         } else {
             parentName = nil
@@ -93,14 +96,14 @@ struct SymbolGraphRelationshipsBuilder {
             )
             
             // Make the implementation a child of the requirement
-            guard let childReference = symbolIndex[edge.source]?.reference else {
+            guard let childReference = symbolIndex[edge.source] else {
                 // The child wasn't found, invalid reference in relationship.
                 engine.emit(SymbolGraphRelationshipsBuilder.NodeProblem.notFound(edge.source))
                 return
             }
             
             if let child = context.topicGraph.nodeWithReference(childReference),
-                let targetReference = symbolIndex[edge.target]?.reference,
+                let targetReference = symbolIndex[edge.target],
                 let parent = context.topicGraph.nodeWithReference(targetReference) {
                 context.topicGraph.addEdge(from: parent, to: child)
             }
@@ -119,19 +122,21 @@ struct SymbolGraphRelationshipsBuilder {
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
         in bundle: DocumentationBundle,
-        symbolIndex: inout [String: DocumentationNode],
+        symbolIndex: inout [String: ResolvedTopicReference],
+        documentationCache: [ResolvedTopicReference: DocumentationNode],
         engine: DiagnosticEngine
     ) {
         // Resolve source symbol
-        guard let conformingNode = symbolIndex[edge.source],
-            let conformingSymbol = conformingNode.semantic as? Symbol else {
-            // The source node for coformance relationship not found.
+        guard let conformingNode = symbolIndex[edge.source].flatMap({ documentationCache[$0] }),
+              let conformingSymbol = conformingNode.semantic as? Symbol
+        else {
+            // The source node for conformance relationship not found.
             engine.emit(NodeProblem.notFound(edge.source))
             return
         }
         
         // Resolve target symbol if possible
-        let optionalConformanceNode = symbolIndex[edge.target]
+        let optionalConformanceNode = symbolIndex[edge.target].flatMap { documentationCache[$0] }
         let conformanceNodeReference: TopicReference
         
         if let conformanceNode = optionalConformanceNode {
@@ -139,10 +144,10 @@ struct SymbolGraphRelationshipsBuilder {
         } else {
             // Take the interface language of the target symbol
             // or if external - default to the language of the current symbol.
-            let language = symbolIndex[edge.target]?.reference.sourceLanguage
+            let language = symbolIndex[edge.target]?.sourceLanguage
                 ?? conformingNode.reference.sourceLanguage
 
-            let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: symbolIndex[edge.target]?.symbol)
+            let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: symbolIndex[edge.target].flatMap { documentationCache[$0]?.symbol })
             guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
                 // The symbol reference format is invalid.
                 engine.emit(NodeProblem.invalidReference(symbolReference.path))
@@ -203,29 +208,32 @@ struct SymbolGraphRelationshipsBuilder {
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
         in bundle: DocumentationBundle,
-        symbolIndex: inout [String: DocumentationNode],
+        symbolIndex: inout [String: ResolvedTopicReference],
+        documentationCache: [ResolvedTopicReference: DocumentationNode],
         engine: DiagnosticEngine
     ) {
         // Resolve source symbol
-        guard let childNode = symbolIndex[edge.source],
-            let childSymbol = childNode.semantic as? Symbol else {
+        guard let childNode = symbolIndex[edge.source].flatMap({ documentationCache[$0] }),
+              let childSymbol = childNode.semantic as? Symbol
+        else {
             // The source node for inheritance relationship not found.
             engine.emit(NodeProblem.notFound(edge.source))
             return
         }
         
         // Resolve target symbol if possible
-        let optionalParentNode = symbolIndex[edge.target]
+        let optionalParentNode = symbolIndex[edge.target].flatMap { documentationCache[$0] }
         let parentNodeReference: TopicReference
         
         if let parentNode = optionalParentNode {
             parentNodeReference = .successfullyResolved(parentNode.reference)
         } else {
-            // Use the target symbol language, if external - fallback on child symbol's langauge
-            let language = symbolIndex[edge.target]?.symbol.map({ SourceLanguage(id: $0.identifier.interfaceLanguage) })
-                ?? childNode.reference.sourceLanguage
+            // Use the target symbol language, if external - fallback on child symbol's language
+            let language: SourceLanguage = symbolIndex[edge.target].flatMap {
+                documentationCache[$0]?.symbol.map({ SourceLanguage(id: $0.identifier.interfaceLanguage) })
+            } ?? childNode.reference.sourceLanguage
             
-            let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: symbolIndex[edge.target]?.symbol)
+            let symbolReference = SymbolReference(edge.target, interfaceLanguage: language, symbol: symbolIndex[edge.target].flatMap { documentationCache[$0]?.symbol })
             guard let unresolved = UnresolvedTopicReference(symbolReference: symbolReference, bundle: bundle) else {
                 // The symbol reference format is invalid.
                 engine.emit(NodeProblem.invalidReference(symbolReference.path))
@@ -267,7 +275,8 @@ struct SymbolGraphRelationshipsBuilder {
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
         in bundle: DocumentationBundle,
-        symbolIndex: inout [String: DocumentationNode],
+        symbolIndex: inout [String: ResolvedTopicReference],
+        documentationCache: [ResolvedTopicReference: DocumentationNode],
         engine: DiagnosticEngine
     ) {
         addProtocolRelationship(
@@ -275,6 +284,7 @@ struct SymbolGraphRelationshipsBuilder {
             selector: selector,
             in: bundle,
             symbolIndex: &symbolIndex,
+            documentationCache: documentationCache,
             engine: engine,
             required: true
         )
@@ -291,7 +301,8 @@ struct SymbolGraphRelationshipsBuilder {
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
         in bundle: DocumentationBundle,
-        symbolIndex: inout [String: DocumentationNode],
+        symbolIndex: inout [String: ResolvedTopicReference],
+        documentationCache: [ResolvedTopicReference: DocumentationNode],
         engine: DiagnosticEngine
     ) {
         addProtocolRelationship(
@@ -299,6 +310,7 @@ struct SymbolGraphRelationshipsBuilder {
             selector: selector,
             in: bundle,
             symbolIndex: &symbolIndex,
+            documentationCache: documentationCache,
             engine: engine,
             required: false
         )
@@ -316,12 +328,15 @@ struct SymbolGraphRelationshipsBuilder {
         edge: SymbolGraph.Relationship,
         selector: UnifiedSymbolGraph.Selector,
         in bundle: DocumentationBundle,
-        symbolIndex: inout [String: DocumentationNode],
+        symbolIndex: inout [String: ResolvedTopicReference],
+        documentationCache: [ResolvedTopicReference: DocumentationNode],
         engine: DiagnosticEngine, required: Bool
     ) {
         // Resolve source symbol
-        guard let requiredNode = symbolIndex[edge.source],
-            let requiredSymbol = requiredNode.semantic as? Symbol else {
+        guard let requiredNodeRef = symbolIndex[edge.source],
+              let requiredNode = documentationCache[requiredNodeRef],
+              let requiredSymbol = requiredNode.semantic as? Symbol
+        else {
             // The source node for requirement relationship not found.
             engine.emit(NodeProblem.notFound(edge.source))
             return
@@ -341,8 +356,8 @@ struct SymbolGraphRelationshipsBuilder {
     static func addInheritedDefaultImplementation(
         edge: SymbolGraph.Relationship,
         context: DocumentationContext, 
-        symbolIndex: inout [String: DocumentationNode], 
-        moduleName: String, 
+        symbolIndex: inout [String: ResolvedTopicReference],
+        moduleName: String,
         engine: DiagnosticEngine
     ) {
         func setAsInheritedSymbol(origin: SymbolGraph.Relationship.SourceOrigin, for node: inout DocumentationNode, originNode: DocumentationNode?) {
@@ -374,13 +389,11 @@ struct SymbolGraphRelationshipsBuilder {
         // verify we have the matching data in symbolIndex and documentationCache
         // and add the origin data to the symbol.
         if let origin = edge.mixins[SymbolGraph.Relationship.SourceOrigin.mixinKey] as? SymbolGraph.Relationship.SourceOrigin,
-           let node = symbolIndex[edge.source],
-           node.semantic is Symbol,
-           context.documentationCache.keys.contains(node.reference) {
-
+           let reference = symbolIndex[edge.source],
+           context.documentationCache[reference]?.semantic is Symbol
+        {
             // OK to unwrap - we've verified the existence of the key above.
-            setAsInheritedSymbol(origin: origin, for: &symbolIndex[edge.source]!, originNode: symbolIndex[origin.identifier])
-            setAsInheritedSymbol(origin: origin, for: &context.documentationCache[node.reference]!, originNode: symbolIndex[origin.identifier])
+            setAsInheritedSymbol(origin: origin, for: &context.documentationCache[reference]!, originNode: symbolIndex[origin.identifier].flatMap { context.documentationCache[$0] })
         }
     }
 }

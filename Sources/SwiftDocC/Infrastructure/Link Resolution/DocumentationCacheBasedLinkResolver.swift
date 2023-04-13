@@ -511,7 +511,7 @@ final class DocumentationCacheBasedLinkResolver {
     /// Method called when walking the symbol url tree that checks if a parent of a symbol has had its
     /// path modified during loading the symbol graph. If that's the case the method replaces
     /// `reference` with an updated reference with a correct reference path.
-    func updateNodeWithReferenceIfCollisionChild(_ reference: ResolvedTopicReference, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, symbolIndex: inout [String: DocumentationNode], context: DocumentationContext) throws {
+    func updateNodeWithReferenceIfCollisionChild(_ reference: ResolvedTopicReference, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, symbolIndex: inout [String: ResolvedTopicReference], context: DocumentationContext) throws {
         let newReference = try currentReferenceFor(reference: reference, symbolsURLHierarchy: &symbolsURLHierarchy)
         guard newReference != reference else { return }
         
@@ -523,7 +523,7 @@ final class DocumentationCacheBasedLinkResolver {
         // Rewrite the symbol index
         if let symbolIdentifier = documentationNode?.symbol?.identifier {
             symbolIndex.removeValue(forKey: symbolIdentifier.precise)
-            symbolIndex[symbolIdentifier.precise] = documentationNode
+            symbolIndex[symbolIdentifier.precise] = newReference
         }
         
         // Replace the topic graph node
