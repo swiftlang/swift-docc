@@ -142,12 +142,18 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
     ) throws {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
         
-        let convertOptions = try Docc.Convert.parse(
-            [testBundleURL.path]
-                + (checkoutPath.map { ["--checkout-path", $0] } ?? [])
-                + (sourceService.map { ["--source-service", $0] } ?? [])
-                + (sourceServiceBaseURL.map { ["--source-service-base-url", $0] } ?? [])
-        )
+        var arguments: [String] = [testBundleURL.path]
+        if let checkoutPath = checkoutPath {
+            arguments.append(contentsOf: ["--checkout-path", checkoutPath])
+        }
+        if let sourceService = sourceService {
+            arguments.append(contentsOf: ["--source-service", sourceService])
+        }
+        if let sourceServiceBaseURL = sourceServiceBaseURL {
+            arguments.append(contentsOf: ["--source-service-base-url", sourceServiceBaseURL])
+        }
+        
+        let convertOptions = try Docc.Convert.parse(arguments)
         
         let result = try ConvertAction(fromConvertCommand: convertOptions)
         try assertion?(result)
