@@ -534,8 +534,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let action: RenderInlineContent
         // We expect, at this point of the rendering, this API to be called with valid URLs, otherwise crash.
-        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(link)!)
-        if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: bundle.rootReference) {
+        if let resolved = context.referenceIndex[link.absoluteString] {
             action = RenderInlineContent.reference(identifier: RenderReferenceIdentifier(resolved.absoluteString),
                                                    isActive: true,
                                                    overridingTitle: overridingTitle,
@@ -545,7 +544,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // This is an external link
             let externalLinkIdentifier = RenderReferenceIdentifier(forExternalLink: link.absoluteString)
             if linkReferences.keys.contains(externalLinkIdentifier.identifier) {
-                // If we've already seen this link, return the existing reference with an overriden title.
+                // If we've already seen this link, return the existing reference with an overridden title.
                 action = RenderInlineContent.reference(identifier: externalLinkIdentifier,
                                                        isActive: true,
                                                        overridingTitle: overridingTitle,
@@ -1245,6 +1244,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 }
             }
         }
+        
+        if let pageColor = documentationNode.metadata?.pageColor {
+            node.metadata.color = TopicColor(standardColorIdentifier: pageColor.rawValue)
+        }
 
         var metadataCustomDictionary : [String: String] = [:]
         if let customMetadatas = documentationNode.metadata?.customMetadata {
@@ -1380,9 +1383,20 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         let resolver = LinkTitleResolver(context: context, source: resolved.url)
                         let resolvedTitle = resolver.title(for: node)
                         destinationsMap[destination] = resolvedTitle?[trait]
-                        
-                        // Add relationship to render references
-                        collectedTopicReferences.append(resolved)
+
+                        let dropLink = context.topicGraph.nodeWithReference(resolved)?.isEmptyExtension ?? false
+
+                        if !dropLink {
+                            // Add relationship to render references
+                            collectedTopicReferences.append(resolved)
+                        } else if let topicUrl = ValidatedURL(resolved.url) {
+                            // If the topic isn't linkable (e.g. an extended type), then we shouldn't
+                            // add a resolved relationship - deconstruct the resolved reference so
+                            // we can still display it, though
+                            let title = resolvedTitle?[trait] ?? resolved.lastPathComponent
+                            let reference = UnresolvedTopicReference(topicURL: topicUrl, title: title)
+                            collectedUnresolvedTopicReferences.append(reference)
+                        }
 
                     case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
                         // Try creating a render reference anyway
