@@ -1,0 +1,200 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 6,
+            "patch": 0
+        },
+        "generator": "Swift 5.9"
+    },
+    "module": {
+        "name": "ModuleWithSingleExtension",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 4
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.extension",
+                "displayName": "Extension"
+            },
+            "identifier": {
+                "precise": "s:e:s:Sa9ModuleWithSingleExtensionE4asdfSivp",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Array"
+            ],
+            "names": {
+                "title": "Array",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "Array"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "extension"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Array",
+                        "preciseIdentifier": "s:Sa"
+                    }
+                ]
+            },
+            "swiftGenerics": {
+                "parameters": [
+                    {
+                        "name": "Element",
+                        "index": 0,
+                        "depth": 0
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift",
+                "typeKind": "swift.struct"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "extension"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Array",
+                    "preciseIdentifier": "s:Sa"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file://path/to/ModuleWithSingleExtension.swift",
+                "position": {
+                    "line": 16,
+                    "character": 7
+                }
+            }
+        },
+        {
+            "kind": {
+                "identifier": "swift.property",
+                "displayName": "Instance Property"
+            },
+            "identifier": {
+                "precise": "s:Sa9ModuleWithSingleExtensionE4asdfSivp",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Array",
+                "asdf"
+            ],
+            "names": {
+                "title": "asdf",
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "var"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "asdf"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": ": "
+                    },
+                    {
+                        "kind": "typeIdentifier",
+                        "spelling": "Int",
+                        "preciseIdentifier": "s:Si"
+                    }
+                ]
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift",
+                "typeKind": "swift.struct"
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "var"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "asdf"
+                },
+                {
+                    "kind": "text",
+                    "spelling": ": "
+                },
+                {
+                    "kind": "typeIdentifier",
+                    "spelling": "Int",
+                    "preciseIdentifier": "s:Si"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " { "
+                },
+                {
+                    "kind": "keyword",
+                    "spelling": "get"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " }"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file://path/to/ModuleWithSingleExtension.swift",
+                "position": {
+                    "line": 17,
+                    "character": 6
+                }
+            }
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "extensionTo",
+            "source": "s:e:s:Sa9ModuleWithSingleExtensionE4asdfSivp",
+            "target": "s:Sa",
+            "targetFallback": "Swift.Array"
+        },
+        {
+            "kind": "memberOf",
+            "source": "s:Sa9ModuleWithSingleExtensionE4asdfSivp",
+            "target": "s:e:s:Sa9ModuleWithSingleExtensionE4asdfSivp",
+            "targetFallback": "Swift.Array"
+        }
+    ]
+}

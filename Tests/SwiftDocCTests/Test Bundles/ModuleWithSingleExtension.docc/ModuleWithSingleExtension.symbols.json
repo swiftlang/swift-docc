@@ -1,0 +1,156 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 6,
+            "patch": 0
+        },
+        "generator": "Swift 5.9"
+    },
+    "module": {
+        "name": "ModuleWithSingleExtension",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 4
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.enum",
+                "displayName": "Enumeration"
+            },
+            "identifier": {
+                "precise": "s:9ModuleWithSingleExtension11MyNamespaceO",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "MyNamespace"
+            ],
+            "names": {
+                "title": "MyNamespace",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "MyNamespace"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "enum"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "MyNamespace"
+                    }
+                ]
+            },
+            "docComment": {
+                "uri": "file://path/to/ModuleWithSingleExtension.swift",
+                "module": "ModuleWithSingleExtension",
+                "lines": [
+                    {
+                        "range": {
+                            "start": {
+                                "line": 9,
+                                "character": 4
+                            },
+                            "end": {
+                                "line": 9,
+                                "character": 33
+                            }
+                        },
+                        "text": "a namespace for organization."
+                    },
+                    {
+                        "range": {
+                            "start": {
+                                "line": 10,
+                                "character": 3
+                            },
+                            "end": {
+                                "line": 10,
+                                "character": 3
+                            }
+                        },
+                        "text": ""
+                    },
+                    {
+                        "range": {
+                            "start": {
+                                "line": 11,
+                                "character": 4
+                            },
+                            "end": {
+                                "line": 11,
+                                "character": 13
+                            }
+                        },
+                        "text": "## Topics"
+                    },
+                    {
+                        "range": {
+                            "start": {
+                                "line": 12,
+                                "character": 3
+                            },
+                            "end": {
+                                "line": 12,
+                                "character": 3
+                            }
+                        },
+                        "text": ""
+                    },
+                    {
+                        "range": {
+                            "start": {
+                                "line": 13,
+                                "character": 4
+                            },
+                            "end": {
+                                "line": 13,
+                                "character": 26
+                            }
+                        },
+                        "text": "- ``Swift/Array/asdf``"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "enum"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "MyNamespace"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file://path/to/ModuleWithSingleExtension.swift",
+                "position": {
+                    "line": 14,
+                    "character": 12
+                }
+            }
+        }
+    ],
+    "relationships": []
+}
