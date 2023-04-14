@@ -12,6 +12,10 @@
 import PackageDescription
 import class Foundation.ProcessInfo
 
+let swiftSettings: [SwiftSetting] = [
+    .unsafeFlags(["-Xfrontend", "-warn-long-expression-type-checking=1000"], .when(configuration: .debug)),
+]
+
 let package = Package(
     name: "SwiftDocC",
     platforms: [
@@ -41,7 +45,9 @@ let package = Package(
                 "SymbolKit",
                 "CLMDB",
                 .product(name: "Crypto", package: "swift-crypto"),
-            ]),
+            ],
+            swiftSettings: swiftSettings
+        ),
         .testTarget(
             name: "SwiftDocCTests",
             dependencies: [
@@ -53,7 +59,9 @@ let package = Package(
                 .copy("Test Bundles"),
                 .copy("Converter/Converter Fixtures"),
                 .copy("Rendering/Rendering Fixtures"),
-            ]),
+            ],
+            swiftSettings: swiftSettings
+        ),
         
         // Command-line tool library
         .target(
@@ -62,7 +70,9 @@ let package = Package(
                 "SwiftDocC",
                 .product(name: "NIOHTTP1", package: "swift-nio"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser")
-            ]),
+            ],
+            swiftSettings: swiftSettings
+        ),
         .testTarget(
             name: "SwiftDocCUtilitiesTests",
             dependencies: [
@@ -73,21 +83,26 @@ let package = Package(
             resources: [
                 .copy("Test Resources"),
                 .copy("Test Bundles"),
-            ]),
-        
+            ],
+            swiftSettings: swiftSettings
+        ),
         // Test utility library
         .target(
             name: "SwiftDocCTestUtilities",
             dependencies: [
                 "SymbolKit"
-            ]),
+            ],
+            swiftSettings: swiftSettings
+        ),
 
         // Command-line tool
         .executableTarget(
             name: "docc",
             dependencies: [
                 "SwiftDocCUtilities",
-            ]),
+            ],
+            swiftSettings: swiftSettings
+        ),
 
         // Test app for SwiftDocCUtilities
         .executableTarget(
@@ -95,14 +110,17 @@ let package = Package(
             dependencies: [
                 "SwiftDocCUtilities",
             ],
-            path: "Tests/signal-test-app"),
+            path: "Tests/signal-test-app",
+            swiftSettings: swiftSettings
+        ),
 
         .executableTarget(
             name: "generate-symbol-graph",
             dependencies: [
                 "SwiftDocC",
                 "SymbolKit",
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
         
     ]
