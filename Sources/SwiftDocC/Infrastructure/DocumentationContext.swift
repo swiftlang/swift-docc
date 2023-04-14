@@ -2306,6 +2306,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
         }
 
+        // Remove any empty "Extended Symbol" pages whose children have been curated elsewhere.
+        for module in rootModules {
+            trimEmptyExtendedSymbolPages(under: module)
+        }
+
         // Emit warnings for any remaining uncurated files.
         emitWarningsForUncuratedTopics()
         
@@ -2377,6 +2382,43 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.FailedToResolveExternalReference", summary: error.localizedDescription), possibleSolutions: []))
                 }
             }
+        }
+    }
+
+    /// Remove unneeded "Extended Symbol" pages whose children have been curated elsewhere.
+    func trimEmptyExtendedSymbolPages(under nodeReference: ResolvedTopicReference) {
+        // Get the children of this node that are an "Extended Symbol" page.
+        let extendedSymbolChildren = topicGraph.edges[nodeReference]?.filter({ childReference in
+            guard let childNode = topicGraph.nodeWithReference(childReference) else { return false }
+            return childNode.kind.isExtendedSymbolKind
+        }) ?? []
+
+        // First recurse to clean up the tree depth-first.
+        for child in extendedSymbolChildren {
+            trimEmptyExtendedSymbolPages(under: child)
+        }
+
+        // Finally, if this node was left with no children and does not have an extension file,
+        // remove it from the topic graph.
+        if let node = topicGraph.nodeWithReference(nodeReference),
+           node.kind.isExtendedSymbolKind,
+           topicGraph[node].isEmpty,
+           documentationExtensionURL(for: nodeReference) == nil
+        {
+            topicGraph.removeEdges(to: node)
+            topicGraph.removeEdges(from: node)
+            topicGraph.edges.removeValue(forKey: nodeReference)
+            topicGraph.reverseEdges.removeValue(forKey: nodeReference)
+
+            topicGraph.replaceNode(node, with: .init(
+                reference: node.reference,
+                kind: node.kind,
+                source: node.source,
+                title: node.title,
+                isResolvable: false, // turn isResolvable off to prevent a link from being made
+                isVirtual: true, // set isVirtual to keep it from generating a page later on
+                isEmptyExtension: true
+            ))
         }
     }
     
