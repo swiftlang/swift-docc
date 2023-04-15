@@ -329,7 +329,7 @@ extension DefaultDiagnosticConsoleFormatter {
             let suggestionAnsiAnnotation = ANSIAnnotation.sourceSuggestionHighlight
             let suggestionLinePrefix = String(repeating: " ", count: maxLinePrefixWidth) + " |"
 
-            for (columnNumber, columnSuggestions) in suggestionsPerColumn.sorted(by: { $0.0 < $1.0 }) {
+            for (columnNumber, columnSuggestions) in suggestionsPerColumn.sorted(by: { $0.0 > $1.0 }) {
                 var prefix = suggestionLinePrefix
 
                 for column in 0...columnNumber - 1 {
