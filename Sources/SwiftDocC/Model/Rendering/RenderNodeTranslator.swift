@@ -1176,6 +1176,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         if let crossImportOverlayModule = symbol.crossImportOverlayModule {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: crossImportOverlayModule.declaringModule, relatedModules: crossImportOverlayModule.bystanderModules)])
+        } else if let extendedModule = symbol.extendedModule, extendedModule != moduleName.displayName {
+            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: [extendedModule])])
         } else {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: nil)]
             )

@@ -142,6 +142,21 @@ class RenderMetadataTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.modules?.first?.name, "OverlayTest")
         XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["BaseKit"])
     }
+
+    func testRendersExtensionSymbolsWithBystanderModules() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "BundleWithRelativePathAmbiguity") { root in
+            // We don't want the external target to be part of the archive as that is not
+            // officially supported yet.
+            try FileManager.default.removeItem(at: root.appendingPathComponent("Dependency.symbols.json"))
+        }
+
+        // Get a translated render node
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/BundleWithRelativePathAmbiguity/Dependency/AmbiguousType", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+        XCTAssertEqual(renderNode.metadata.modules?.first?.name, "BundleWithRelativePathAmbiguity")
+        XCTAssertEqual(renderNode.metadata.modules?.first?.relatedModules, ["Dependency"])
+    }
     
     func testEmitsTitleVariantsDuringEncoding() throws {
         var metadata = RenderMetadata()
