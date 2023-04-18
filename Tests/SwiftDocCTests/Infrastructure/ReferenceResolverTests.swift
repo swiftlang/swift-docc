@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -404,6 +404,141 @@ class ReferenceResolverTests: XCTestCase {
             }
         }
     }
+
+    func testCuratedExtensionRemovesEmptyPage() throws {
+        let (bundle, context) = try testBundleAndContext(named: "ModuleWithSingleExtension")
+
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+
+        // The only children of the root topic should be the `MyNamespace` enum - i.e. the Swift
+        // "Extended Module" page and its Array "Extended Structure" page should be removed.
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
+            "doc://org.swift.docc.example/documentation/ModuleWithSingleExtension/MyNamespace"
+        ])
+
+        // Make sure that the symbol added in the extension is still present in the topic graph,
+        // even though its synthetic "extended symbol" parents are not
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array/asdf", sourceLanguage: .swift)))
+    }
+
+    func testCuratedExtensionWithDanglingReference() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+            let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
+            try FileManager.default.removeItem(at: topLevelArticle)
+
+            try """
+            # ``ModuleWithSingleExtension``
+
+            This is a test module with an extension to ``Swift/Array``.
+            """.write(to: topLevelArticle, atomically: true, encoding: .utf8)
+        }
+
+        // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
+        let diagnostic = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination"}))
+        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        XCTAssertEqual(solution.replacements.count, 1)
+        let replacement = try XCTUnwrap(solution.replacements.first)
+        XCTAssertEqual(replacement.replacement, "`Swift/Array`")
+
+        // Also make sure that the extension pages are still gone
+        let extendedModule = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedModule }))
+
+        let extendedStructure = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
+
+        // Load the RenderNode for the root article and make sure that the `Swift/Array` symbol link
+        // is not rendered as a link
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+
+        XCTAssertEqual(renderNode.abstract, [
+            .text("This is a test module with an extension to "),
+            .codeVoice(code: "Swift/Array"),
+            .text(".")
+        ])
+    }
+
+    func testCuratedExtensionWithDanglingReferenceToFragment() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+            let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
+            try FileManager.default.removeItem(at: topLevelArticle)
+
+            try """
+            # ``ModuleWithSingleExtension``
+
+            This is a test module with an extension to ``Swift/Array#Array``.
+            """.write(to: topLevelArticle, atomically: true, encoding: .utf8)
+        }
+
+        // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            let diagnostic = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination" }))
+            XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+            let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+            XCTAssertEqual(solution.replacements.count, 1)
+            let replacement = try XCTUnwrap(solution.replacements.first)
+            XCTAssertEqual(replacement.replacement, "`Swift/Array`")
+        } else {
+            XCTAssert(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
+        }
+
+        // Also make sure that the extension pages are still gone
+        let extendedModule = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedModule }))
+
+        let extendedStructure = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        XCTAssertFalse(context.knownPages.contains(where: { $0 == extendedStructure }))
+    }
+
+    func testCuratedExtensionWithDocumentationExtension() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "ModuleWithSingleExtension") { root in
+            let topLevelArticle = root.appendingPathComponent("ModuleWithSingleExtension.md")
+            try FileManager.default.removeItem(at: topLevelArticle)
+
+            try """
+            # ``ModuleWithSingleExtension``
+
+            This is a test module with an extension to ``Swift/Array``.
+            """.write(to: topLevelArticle, atomically: true, encoding: .utf8)
+
+            try """
+            # ``ModuleWithSingleExtension/Swift/Array``
+
+            This is an extension to an extended type in another module.
+            """.write(to: root.appendingPathComponent("Array.md"), atomically: true, encoding: .utf8)
+        }
+
+        // Make sure that linking to `Swift/Array` does not raise a diagnostic, since the page should still exist
+        XCTAssertFalse(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination" || $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
+
+        // Because the `Swift/Array` extension has an extension article, the pages should not be marked as virtual
+        let extendedModule = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
+        XCTAssert(context.knownPages.contains(where: { $0 == extendedModule }))
+
+        let extendedStructure = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift/Array", sourceLanguage: .swift)
+        XCTAssert(context.knownPages.contains(where: { $0 == extendedStructure }))
+    }
+
+    func testCuratedExtensionWithAdditionalConformance() throws {
+        let (bundle, context) = try testBundleAndContext(named: "ModuleWithConformanceAndExtension")
+
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithConformanceAndExtension/MyProtocol", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+
+        let conformanceSection = try XCTUnwrap(renderNode.relationshipSections.first(where: { $0.type == RelationshipsGroup.Kind.conformingTypes.rawValue }))
+        XCTAssertEqual(conformanceSection.identifiers.count, 1)
+
+        // Make sure that the reference to the dropped `Bool` page isn't rendered as a resolved link
+        let boolReference = try XCTUnwrap(conformanceSection.identifiers.first)
+        let renderReference = try XCTUnwrap(renderNode.references[boolReference])
+        XCTAssert(renderReference is UnresolvedRenderReference)
+    }
     
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
         var bundleIdentifier = "com.external.testbundle"
@@ -501,7 +636,7 @@ class ReferenceResolverTests: XCTestCase {
         
         var resolver = ReferenceResolver(context: context, bundle: bundle, source: nil)
         
-        let symbol = try XCTUnwrap(context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)
+        let symbol = try XCTUnwrap(context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)
         
         /// Verifies the given assertion on a variants property of the given symbols.
         func assertSymbolVariants<Variant>(

@@ -1,5 +1,9 @@
 # ``TestBed``
 
+@Metadata {
+    @PageColor(purple)
+}
+
 TestBed framework.
 
 TestBed content.

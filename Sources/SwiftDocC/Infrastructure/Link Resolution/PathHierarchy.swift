@@ -107,6 +107,9 @@ struct PathHierarchy {
                     nodes[id] = existingNode
                 } else {
                     let node = Node(symbol: symbol)
+                    // Disfavor synthesized symbols when they collide with other symbol with the same path.
+                    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58
+                    node.isDisfavoredInCollision = symbol.identifier.precise.contains("::SYNTHESIZED::")
                     nodes[id] = node
                     allNodes[id, default: []].append(node)
                 }
@@ -135,6 +138,29 @@ struct PathHierarchy {
                 }
             }
             
+            for relationship in graph.relationships where relationship.kind == .defaultImplementationOf {
+                guard let sourceNode = nodes[relationship.source] else {
+                    continue
+                }
+                // Default implementations collide with the protocol requirement that they implement.
+                // Disfavor the default implementation to favor the protocol requirement (or other symbol with the same path).
+                sourceNode.isDisfavoredInCollision = true
+                
+                let targetNodes = nodes[relationship.target].map { [$0] } ?? allNodes[relationship.target] ?? []
+                guard !targetNodes.isEmpty else {
+                    continue
+                }
+                
+                for requirementTarget in targetNodes {
+                    assert(
+                        requirementTarget.parent != nil,
+                        "The 'defaultImplementationOf' symbol should be a 'memberOf' a known protocol symbol but didn't have a parent relationship in the hierarchy."
+                    )
+                    requirementTarget.parent?.add(symbolChild: sourceNode)
+                }
+                topLevelCandidates.removeValue(forKey: relationship.source)
+            }
+            
             // The hierarchy doesn't contain any non-symbol nodes yet. It's OK to unwrap the `symbol` property.
             for topLevelNode in topLevelCandidates.values where topLevelNode.symbol!.pathComponents.count == 1 {
                 moduleNode.add(symbolChild: topLevelNode)
@@ -155,8 +181,13 @@ struct PathHierarchy {
                     components = components.dropFirst()
                 }
                 for component in components {
+                    assert(
+                        parent.children[components.first!] == nil,
+                        "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
+                    )
                     let component = Self.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: component.name)
+                    nodeWithoutSymbol.isDisfavoredInCollision = true
                     parent.add(child: nodeWithoutSymbol, kind: component.kind, hash: component.hash)
                     parent = nodeWithoutSymbol
                 }
@@ -164,6 +195,10 @@ struct PathHierarchy {
             }
         }
         
+        assert(
+            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }),
+            "Every node should either have a parent node or be a root node. This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())"
+        )
         allNodes.removeAll()
         
         // build the lookup list by traversing the hierarchy and adding identifiers to each node
@@ -199,12 +234,15 @@ struct PathHierarchy {
         self.tutorialContainer = newNode(bundleName)
         self.tutorialOverviewContainer = newNode("tutorials")
         
-        assert(lookup.allSatisfy({ $0.key == $0.value.identifier}))
+        assert(
+            lookup.allSatisfy({ $0.key == $0.value.identifier }),
+            "Every node lookup should match a node with that identifier."
+        )
         
         self.modules = roots
         self.lookup = lookup
         
-        assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil}))
+        assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil }))
     }
     
     /// Adds an article to the path hierarchy.
@@ -321,8 +359,8 @@ struct PathHierarchy {
                     return child
                 }
             } catch DisambiguationTree.Error.lookupCollision(let collisions) {
-                func wrappedCollisionError() -> Error {
-                    makeCollisionError(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
+                func handleWrappedCollision() throws -> Node {
+                    try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
                 }
                 
                 // See if the collision can be resolved by looking ahead on level deeper.
@@ -335,7 +373,7 @@ struct PathHierarchy {
                     for (node, _) in collisions {
                         guard let symbol = node.symbol else {
                             // Non-symbol collisions should have already been resolved
-                            throw wrappedCollisionError()
+                            return try handleWrappedCollision()
                         }
                         
                         let id = symbol.identifier.precise
@@ -345,7 +383,7 @@ struct PathHierarchy {
                         
                         guard uniqueCollisions.count < 2 else {
                             // Encountered more than one unique symbol
-                            throw wrappedCollisionError()
+                            return try handleWrappedCollision()
                         }
                     }
                     // A wrapped error would have been raised while iterating over the collection.
@@ -364,18 +402,23 @@ struct PathHierarchy {
                     return possibleMatches.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
                 }
                 // Couldn't resolve the collision by look ahead.
-                throw makeCollisionError(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
+                return try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
             }
         }
     }
                         
-    private func makeCollisionError(
+    private func handleCollision(
         node: Node,
         parsedPath: [PathComponent],
         remaining: ArraySlice<PathComponent>,
         collisions: [(node: PathHierarchy.Node, disambiguation: String)]
-    ) -> Error {
-        return Error.lookupCollision(
+    ) throws -> Node {
+        let favoredNodes = collisions.filter { $0.node.isDisfavoredInCollision == false }
+        if favoredNodes.count == 1 {
+            return favoredNodes.first!.node
+        }
+        
+        throw Error.lookupCollision(
             partialResult: (
                 node,
                 Array(parsedPath.dropLast(remaining.count))
@@ -583,11 +626,20 @@ extension PathHierarchy {
         /// The symbol, if a node has one.
         private(set) var symbol: SymbolGraph.Symbol?
         
+        /// If the path hierarchy should disfavor this node in a link collision.
+        ///
+        /// By default, nodes are not disfavored.
+        ///
+        /// If a favored node collides with a disfavored node the link will resolve to the favored node without
+        /// requiring any disambiguation. Referencing the disfavored node requires disambiguation.
+        var isDisfavoredInCollision: Bool
+        
         /// Initializes a symbol node.
         fileprivate init(symbol: SymbolGraph.Symbol!) {
             self.symbol = symbol
             self.name = symbol.pathComponents.last!
             self.children = [:]
+            self.isDisfavoredInCollision = false
         }
         
         /// Initializes a non-symbol node with a given name.
@@ -595,6 +647,7 @@ extension PathHierarchy {
             self.symbol = nil
             self.name = name
             self.children = [:]
+            self.isDisfavoredInCollision = false
         }
         
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
@@ -1082,7 +1135,7 @@ private extension PathHierarchy.Node {
             if let fragments = symbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments {
                 return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
             }
-            return context.symbolIndex[symbol.identifier.precise]!.name.description
+            return context.nodeWithSymbolIdentifier(symbol.identifier.precise)!.name.description
         }
         // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.
         let reference = context.hierarchyBasedLinkResolver!.resolvedReferenceMap[identifier]!

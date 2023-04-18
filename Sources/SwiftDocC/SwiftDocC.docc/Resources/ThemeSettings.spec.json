@@ -479,6 +479,27 @@
                                     "secondary-label": {
                                         "$ref": "#/components/schemas/Color"
                                     },
+                                    "standard-blue-documentation-intro-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "standard-gray-documentation-intro-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "standard-green-documentation-intro-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "standard-orange-documentation-intro-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "standard-purple-documentation-intro-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "standard-red-documentation-intro-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
+                                    "standard-yellow-documentation-intro-fill": {
+                                        "$ref": "#/components/schemas/Color"
+                                    },
                                     "step-background": {
                                         "$ref": "#/components/schemas/Color"
                                     },
