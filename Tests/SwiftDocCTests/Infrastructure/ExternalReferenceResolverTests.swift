@@ -62,6 +62,11 @@ class ExternalReferenceResolverTests: XCTestCase {
                     seeAlsoVariants: .init(swiftVariant: nil),
                     returnsSectionVariants: .init(swiftVariant: nil),
                     parametersSectionVariants: .init(swiftVariant: nil),
+                    dictionaryKeysSectionVariants: .init(swiftVariant: nil),
+                    httpEndpointSectionVariants: .init(swiftVariant: nil),
+                    httpBodySectionVariants: .init(swiftVariant: nil),
+                    httpParametersSectionVariants: .init(swiftVariant: nil),
+                    httpResponsesSectionVariants: .init(swiftVariant: nil),
                     redirectsVariants: .init(swiftVariant: nil)
                 )
             } else {
@@ -699,7 +704,7 @@ Document @1:1-1:35
                 guard reference.description == "doc://com.external.testbundle/resolvable" else {
                     switch reference {
                     case .unresolved(let unresolved):
-                        return .failure(unresolved, errorMessage: "Unit test: External resolve error.")
+                        return .failure(unresolved, TopicReferenceResolutionErrorInfo("Unit test: External resolve error."))
                     case .resolved(let resolvedResult):
                         return resolvedResult
                     }
@@ -757,11 +762,11 @@ Document @1:1-1:35
         // Expected failed externally resolved reference.
         XCTAssertEqual(
             context.externallyResolvedLinks[ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-1")!],
-            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-1")!), errorMessage: "Unit test: External resolve error.")
+            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-1")!), TopicReferenceResolutionErrorInfo("Unit test: External resolve error."))
         )
         XCTAssertEqual(
             context.externallyResolvedLinks[ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-2")!],
-            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-2")!), errorMessage: "Unit test: External resolve error.")
+            TopicReferenceResolutionResult.failure(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.external.testbundle/not-resolvable-2")!), TopicReferenceResolutionErrorInfo("Unit test: External resolve error."))
         )
         
         // Expected successful externally resolved reference.
@@ -774,7 +779,7 @@ Document @1:1-1:35
             TopicReferenceResolutionResult.success(ResolvedTopicReference(bundleIdentifier: "com.external.testbundle", path: "/resolved", fragment: nil, sourceLanguage: .swift))
         )
         
-        XCTAssert(context.problems.contains(where: { $0.diagnostic.localizedSummary.contains("Unit test: External resolve error.")}),
+        XCTAssert(context.problems.contains(where: { $0.diagnostic.summary.contains("Unit test: External resolve error.")}),
                   "The external reference resolver error message is included in that problem's error summary.")
         
         // Get MyKit symbol

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import Markdown
 
 /// A resolved or unresolved reference to a piece of documentation.
 ///
@@ -54,7 +55,7 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
     /// A topic reference that has successfully been resolved to known documentation.
     case success(ResolvedTopicReference)
     /// A topic reference that has failed to resolve to known documentation and an error message with information about why the reference failed to resolve.
-    case failure(UnresolvedTopicReference, errorMessage: String)
+    case failure(UnresolvedTopicReference, TopicReferenceResolutionErrorInfo)
     
     public var description: String {
         switch self {
@@ -63,6 +64,60 @@ public enum TopicReferenceResolutionResult: Hashable, CustomStringConvertible {
         case .failure(let unresolved, _):
             return unresolved.description
         }
+    }
+}
+
+/// The error causing the failure in the resolution of a ``TopicReference``.
+public struct TopicReferenceResolutionErrorInfo: Hashable {
+    public var message: String
+    public var note: String?
+    public var solutions: [Solution]
+    public var rangeAdjustment: SourceRange?
+    
+    public init(
+        _ message: String,
+        note: String? = nil,
+        solutions: [Solution] = [],
+        rangeAdjustment: SourceRange? = nil
+    ) {
+        self.message = message
+        self.note = note
+        self.solutions = solutions
+        self.rangeAdjustment = rangeAdjustment
+    }
+}
+
+extension TopicReferenceResolutionErrorInfo {
+    init(_ error: Error, solutions: [Solution] = []) {
+        if let describedError = error as? DescribedError {
+            self.message = describedError.errorDescription
+            self.note = describedError.recoverySuggestion
+        } else {
+            self.message = error.localizedDescription
+            self.note = nil
+        }
+        self.solutions = solutions
+        self.rangeAdjustment = nil
+    }
+}
+
+extension TopicReferenceResolutionErrorInfo {
+    /// Extracts any `Solution`s from this error, if available.
+    ///
+    /// The error can provide `Solution`s if appropriate. Since the absolute location of
+    /// the faulty reference is not known at the error's origin, the `Replacement`s
+    /// will use `SourceLocation`s relative to the reference text. Provide range of the
+    /// reference **body** to obtain correctly placed `Replacement`s.
+    func solutions(referenceSourceRange: SourceRange) -> [Solution] {
+        var solutions = self.solutions
+        
+        for i in solutions.indices {
+            for j in solutions[i].replacements.indices {
+                solutions[i].replacements[j].offsetWithRange(referenceSourceRange)
+            }
+        }
+        
+        return solutions
     }
 }
 
@@ -568,7 +623,7 @@ public struct ResourceReference: Hashable {
 /// If this step is not performed, the disallowed characters are instead percent escape encoded instead which is less readable.
 /// For example, a path like `"hello world/example project"` is converted to `"hello-world/example-project"`
 /// instead of `"hello%20world/example%20project"`.
-func urlReadablePath(_ path: String) -> String {
+func urlReadablePath<S: StringProtocol>(_ path: S) -> String {
     return path.components(separatedBy: .urlPathNotAllowed).joined(separator: "-")
 }
 
@@ -584,7 +639,7 @@ private extension CharacterSet {
 ///
 /// If this step is not performed, the disallowed characters are instead percent escape encoded, which is less readable.
 /// For example, a fragment like `"#hello world"` is converted to `"#hello-world"` instead of `"#hello%20world"`.
-func urlReadableFragment(_ fragment: String) -> String {
+func urlReadableFragment<S: StringProtocol>(_ fragment: S) -> String {
     var fragment = fragment
         // Trim leading/trailing whitespace
         .trimmingCharacters(in: .whitespaces)

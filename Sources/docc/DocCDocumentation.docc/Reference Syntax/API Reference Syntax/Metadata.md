@@ -28,15 +28,7 @@ Use the `Metadata` directive with the ``DisplayName`` directive to configure a s
 @Metadata {
     @DisplayName("Sloth Creator")
 }
-````
-
-### Contained Elements
-
-A metadata element must contain one of the following items:
-
-- term ``DocumentationExtension``: Defines whether the content in a documentation extension file amends or replaces in-source documentation. **(optional)**
-- term ``TechnologyRoot``: Configures a documentation page that's not associated with a particular framework to appear as a top-level page. **(optional)**
-- term ``DisplayName``: Configures a symbol's documentation page to use a custom display name. **(optional)**
+```
 
 ## Topics
 
@@ -52,10 +44,16 @@ A metadata element must contain one of the following items:
 
 - ``DisplayName``
 - ``PageImage``
+- ``PageKind``
+- ``PageColor``
 - ``CallToAction``
 
 ### Customizing the Languages of an Article
 
 - ``SupportedLanguage``
+
+### Customizing the Availability Information of a Page
+
+- ``Available``
 
 <!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

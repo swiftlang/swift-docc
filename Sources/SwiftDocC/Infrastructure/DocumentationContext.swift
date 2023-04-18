@@ -139,6 +139,24 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
     }
+    
+    /// Controls whether bundle registration should allow registering articles when no technology root is defined.
+    ///
+    /// Set this property to `true` to enable registering documentation for standalone articles,
+    /// for example when using ``ConvertService``.
+    var allowsRegisteringArticlesWithoutTechnologyRoot: Bool = false
+    
+    /// Controls whether tutorials that aren't curated in a tutorials overview page are registered and translated.
+    ///
+    /// Set this property to `true` to enable registering documentation for standalone tutorials,
+    /// for example when ``ConvertService``.
+    var allowsRegisteringUncuratedTutorials: Bool = false
+    
+    /// A closure that modifies each symbol graph that the context registers.
+    ///
+    /// Set this property if you need to modify symbol graphs before the context registers its information.
+    var configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+    
     /// The set of all manually curated references if `shouldStoreManuallyCuratedReferences` was true at the time of processing and has remained `true` since.. Nil if curation has not been processed yet.
     public private(set) var manuallyCuratedReferences: Set<ResolvedTopicReference>?
 
@@ -569,7 +587,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             // If the two symbols are coming from different modules,
                             // regardless if they are in the same bundle
                             // (for example Foundation and SwiftUI), skip link resolving.
-                            if let originSymbol = symbolIndex[semantic.origin!.identifier]?.semantic as? Symbol,
+                            if let originSymbol = nodeWithSymbolIdentifier(semantic.origin!.identifier)?.semantic as? Symbol,
                                originSymbol.moduleReference != semantic.moduleReference {
                                 continue
                             }
@@ -583,7 +601,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     if let semantic = documentationNode.semantic as? Symbol,
                         semantic.origin != nil,
                         let originNode = symbolIndex[semantic.origin!.identifier] {
-                        inheritanceParentReference = originNode.reference
+                        inheritanceParentReference = originNode
                     } else {
                         inheritanceParentReference = nil
                     }
@@ -611,10 +629,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                        let docs = documentationNode.symbol?.docComment {
                         // Offset all problem ranges by the start location of the
                         // source comment in the context of the complete file.
-                        problems = problems.compactMap { problem -> Problem? in
-                            guard let docRange = docs.lines.first?.range else { return nil }
-                            return Problem(diagnostic: problem.diagnostic.offsetedWithRange(docRange),
-                                           possibleSolutions: problem.possibleSolutions)
+                        if let docRange = docs.lines.first?.range {
+                            for i in problems.indices {
+                                problems[i].offsetWithRange(docRange)
+                            }
+                        } else {
+                            problems.removeAll()
                         }
                     }
 
@@ -632,7 +652,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for result in results.sync({ $0 }) {
             documentationCache[result.reference] = result.node
             if let preciseIdentifier = result.node.symbol?.identifier.precise {
-                symbolIndex[preciseIdentifier] = result.node
+                symbolIndex[preciseIdentifier] = result.reference
             }
             diagnosticEngine.emit(result.problems)
         }
@@ -978,10 +998,19 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
     }
     
-    /// A lookup of symbol documentation nodes based on the symbol's precise identifier.
+    /// A lookup of topic references for symbol documentation nodes based on the symbol's precise identifier.
     ///
-    /// This allows convenient access to other symbol's documentation nodes while building relationships between symbols.
-    private(set) var symbolIndex = [String: DocumentationNode]()
+    /// To access the symbol's documentation node use ``nodeWithSymbolIdentifier(_:)`` instead.
+    private(set) var symbolIndex = [String: ResolvedTopicReference]()
+    
+    /// Looks up a symbol documentation node based on the symbol's precise identifier.
+    func nodeWithSymbolIdentifier(_ preciseIdentifier: String) -> DocumentationNode? {
+        guard let reference = symbolIndex[preciseIdentifier] else { return nil }
+        return documentationCache[reference]
+    }
+    
+    /// A lookup of resolved references based on the reference's absolute string.
+    private(set) var referenceIndex = [String: ResolvedTopicReference]()
     
     private func nodeWithInitializedContent(reference: ResolvedTopicReference, matches: [DocumentationContext.SemanticResult<Article>]?) -> DocumentationNode {
         precondition(documentationCache.keys.contains(reference))
@@ -1042,7 +1071,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         // Filter only parent <-> child edges
         switch edge.kind {
         case .memberOf, .requirementOf, .declaredIn, .inContextOf:
-            guard let parentRef = symbolIndex[edge.target]?.reference, let childRef = symbolIndex[edge.source]?.reference else {
+            guard let parentRef = symbolIndex[edge.target], let childRef = symbolIndex[edge.source] else {
             return nil
             }
             return (parentRef, childRef)
@@ -1112,7 +1141,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         let symbolData = result.0
         topicGraph.addNode(symbolData.topicGraphNode)
         documentationCache[symbolData.reference] = symbolData.node
-        symbolIndex[symbolData.preciseIdentifier] = symbolData.node
+        symbolIndex[symbolData.preciseIdentifier] = symbolData.reference
         
         for anchor in result.0.node.anchorSections {
             nodeAnchorSections[anchor.reference] = anchor
@@ -1255,8 +1284,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     for symbol in unifiedSymbolGraph.symbols.values where symbol.defaultSymbol!.pathComponents.count == 1 {
                         try symbolIndex[symbol.uniqueIdentifier].map({
                             // If merging symbol graph extension there can be repeat symbols, don't add them again.
-                            guard (try? symbolsURLHierarchy.parent(of: $0.reference)) == nil else { return }
-                            try symbolsURLHierarchy.add($0.reference, parent: moduleReference)
+                            guard (try? symbolsURLHierarchy.parent(of: $0)) == nil else { return }
+                            try symbolsURLHierarchy.add($0, parent: moduleReference)
                         })
                     }
                 }
@@ -1377,7 +1406,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         let hierarchyBasedReferences = hierarchyBasedLinkResolver!.referencesForSymbols(in: symbolGraphLoader.unifiedGraphs, bundle: bundle, context: self)
                         
                         for (usr, hierarchyBasedReference) in hierarchyBasedReferences {
-                            guard let cacheBasedMainReference = symbolIndex[usr.precise]?.reference.path else {
+                            guard let cacheBasedMainReference = symbolIndex[usr.precise]?.path else {
                                 linkResolutionMismatches.missingPathsInCacheBasedLinkResolver.append(hierarchyBasedReference.path)
                                 continue
                             }
@@ -1386,11 +1415,11 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                 linkResolutionMismatches.pathsWithMismatchedDisambiguation[hierarchyBasedReference.path] = cacheBasedMainReference
                             }
                         }
-                        for (usr, node) in symbolIndex {
-                            guard let kind = node.symbol?.kind.identifier, kind.symbolGeneratesPage(),
+                        for (usr, reference) in symbolIndex {
+                            guard let kind = documentationCache[reference]?.symbol?.kind.identifier, kind.symbolGeneratesPage(),
                                   !hierarchyBasedReferences.keys.contains(where: { $0.precise == usr })
                             else { continue }
-                            linkResolutionMismatches.missingPathsInHierarchyBasedLinkResolver.append(node.reference.path)
+                            linkResolutionMismatches.missingPathsInHierarchyBasedLinkResolver.append(reference.path)
                         }
                     }
                 }
@@ -1405,9 +1434,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
             // Parse and prepare the nodes' content concurrently.
             let updatedNodes: [(node: DocumentationNode, matchedArticleURL: URL?)] = Array(symbolIndex.values)
-                .concurrentPerform { node, results in
-                    let finalReference = node.reference
-                    
+                .concurrentPerform { finalReference, results in
                     // Match the symbol's documentation extension and initialize the node content.
                     let matches = uncuratedDocumentationExtensions[finalReference]
                     let updatedNode = nodeWithInitializedContent(reference: finalReference, matches: matches)
@@ -1427,8 +1454,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
                 // Update cache and lookup indexes with the updated node value
                 documentationCache[reference] = updatedNode
-                if let symbol = documentationCache[reference]!.symbol {
-                    symbolIndex[symbol.identifier.precise] = documentationCache[reference]!
+                if let symbol = updatedNode.symbol {
+                    symbolIndex[symbol.identifier.precise] = reference
                 }
                 if let url = matchedArticleURL {
                     documentLocationMap[url] = reference
@@ -1438,7 +1465,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
 
             // Resolve any external references first
-            try preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ symbolIndex[$0]?.reference }), bundle: bundle)
+            try preResolveExternalLinks(references: Array(moduleReferences.values) + combinedSymbols.keys.compactMap({ symbolIndex[$0] }), bundle: bundle)
             
             // Look up and add symbols that are _referenced_ in the symbol graph but don't exist in the symbol graph.
             try resolveExternalSymbols(in: combinedSymbols, relationships: combinedRelationships)
@@ -1446,6 +1473,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             for (selector, relationships) in combinedRelationships {
                 // Build relationships in the completed graph
                 buildRelationships(relationships, selector: selector, bundle: bundle, engine: diagnosticEngine)
+                // Merge into target symbols the member symbols that get rendered on the same page as target.
+                populateOnPageMemberRelationships(from: relationships, selector: selector)
             }
             
             // Index references
@@ -1491,6 +1520,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     selector: selector,
                     in: bundle,
                     symbolIndex: &symbolIndex,
+                    documentationCache: documentationCache,
                     engine: diagnosticEngine
                 )
             case .defaultImplementationOf:
@@ -1500,7 +1530,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     selector: selector,
                     in: bundle,
                     context: self,
-                    symbolIndex: &symbolIndex, engine: diagnosticEngine
+                    symbolIndex: &symbolIndex,
+                    documentationCache: documentationCache,
+                    engine: diagnosticEngine
                 )
             case .inheritsFrom:
                 // Build ancestor <-> offspring relationships.
@@ -1509,6 +1541,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     selector: selector,
                     in: bundle,
                     symbolIndex: &symbolIndex,
+                    documentationCache: documentationCache,
                     engine: diagnosticEngine
                 )
             case .requirementOf:
@@ -1518,6 +1551,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     selector: selector,
                     in: bundle,
                     symbolIndex: &symbolIndex,
+                    documentationCache: documentationCache,
                     engine: diagnosticEngine
                 )
             case .optionalRequirementOf:
@@ -1527,10 +1561,129 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     selector: selector,
                     in: bundle,
                     symbolIndex: &symbolIndex,
+                    documentationCache: documentationCache,
                     engine: diagnosticEngine
                 )
             default:
                 break
+            }
+        }
+    }
+    
+    /// Identifies all the dictionary keys and records them in the appropriate target dictionaries.
+    private func populateOnPageMemberRelationships(
+        from relationships: Set<SymbolGraph.Relationship>,
+        selector: UnifiedSymbolGraph.Selector
+    ) {
+        var keysByTarget = [String: [DictionaryKey]]()
+        var parametersByTarget = [String: [HTTPParameter]]()
+        var bodyByTarget = [String: HTTPBody]()
+        var bodyParametersByTarget = [String: [HTTPParameter]]()
+        var responsesByTarget = [String: [HTTPResponse]]()
+        
+        for edge in relationships {
+            if edge.kind == .memberOf || edge.kind == .optionalMemberOf {
+                if let source = nodeWithSymbolIdentifier(edge.source), let target = nodeWithSymbolIdentifier(edge.target),
+//                   let source = documentationCache[sourceRef], let target = documentationCache[targetRef],
+                   let sourceSymbol = source.symbol
+                {
+                    switch (source.kind, target.kind) {
+                    case (.dictionaryKey, .dictionary):
+                        let dictionaryKey = DictionaryKey(name: sourceSymbol.title, contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        if keysByTarget[edge.target] == nil {
+                            keysByTarget[edge.target] = [dictionaryKey]
+                        } else {
+                            keysByTarget[edge.target]?.append(dictionaryKey)
+                        }
+                    case (.httpParameter, .httpRequest):
+                        let parameter = HTTPParameter(name: sourceSymbol.title, source: (sourceSymbol.httpParameterSource ?? "query"), contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        if parametersByTarget[edge.target] == nil {
+                            parametersByTarget[edge.target] = [parameter]
+                        } else {
+                            parametersByTarget[edge.target]?.append(parameter)
+                        }
+                    case (.httpBody, .httpRequest):
+                        let body = HTTPBody(mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
+                        bodyByTarget[edge.target] = body
+                    case (.httpParameter, .httpBody):
+                        let parameter = HTTPParameter(name: sourceSymbol.title, source: "body", contents: [], symbol: sourceSymbol, required: (edge.kind == .memberOf))
+                        if bodyParametersByTarget[edge.target] == nil {
+                            bodyParametersByTarget[edge.target] = [parameter]
+                        } else {
+                            bodyParametersByTarget[edge.target]?.append(parameter)
+                        }
+                    case (.httpResponse, .httpRequest):
+                        let statusParts = sourceSymbol.title.split(separator: " ", maxSplits: 1)
+                        let statusCode = UInt(statusParts[0]) ?? 0
+                        let reason = statusParts.count > 1 ? String(statusParts[1]) : nil
+                        let response = HTTPResponse(statusCode: statusCode, reason: reason, mediaType: sourceSymbol.httpMediaType, contents: [], symbol: sourceSymbol)
+                        if responsesByTarget[edge.target] == nil {
+                            responsesByTarget[edge.target] = [response]
+                        } else {
+                            responsesByTarget[edge.target]?.append(response)
+                        }
+                    case (_, _):
+                        continue
+                    }
+                }
+            }
+        }
+        
+        let trait = DocumentationDataVariantsTrait(for: selector)
+        
+        // Merge in all the dictionary keys for each target into their section variants.
+        keysByTarget.forEach { targetIdentifier, keys in
+            let target = nodeWithSymbolIdentifier(targetIdentifier)
+            if let semantic = target?.semantic as? Symbol {
+                let keys = keys.sorted { $0.name < $1.name }
+                if semantic.dictionaryKeysSectionVariants[trait] == nil {
+                    semantic.dictionaryKeysSectionVariants[trait] = DictionaryKeysSection(dictionaryKeys: keys)
+                } else {
+                    semantic.dictionaryKeysSectionVariants[trait]?.mergeDictionaryKeys(keys)
+                }
+            }
+        }
+        
+        // Merge in all the parameters for each target into their section variants.
+        parametersByTarget.forEach { targetIdentifier, parameters in
+            let target = nodeWithSymbolIdentifier(targetIdentifier)
+            if let semantic = target?.semantic as? Symbol {
+                let parameters = parameters.sorted { $0.name < $1.name }
+                if semantic.httpParametersSectionVariants[trait] == nil {
+                    semantic.httpParametersSectionVariants[trait] = HTTPParametersSection(parameters: parameters)
+                } else {
+                    semantic.httpParametersSectionVariants[trait]?.mergeParameters(parameters)
+                }
+            }
+        }
+        
+        // Merge in the body for each target into their section variants.
+        bodyByTarget.forEach { targetIdentifier, body in
+            let target = nodeWithSymbolIdentifier(targetIdentifier)
+            if let semantic = target?.semantic as? Symbol {
+                // Add any body parameters to existing body record
+                var localBody = body
+                if let identifier = body.symbol?.preciseIdentifier, let bodyParameters = bodyParametersByTarget[identifier] {
+                    localBody.parameters = bodyParameters.sorted { $0.name < $1.name }
+                }
+                if semantic.httpBodySectionVariants[trait] == nil {
+                    semantic.httpBodySectionVariants[trait] = HTTPBodySection(body: localBody)
+                } else {
+                    semantic.httpBodySectionVariants[trait]?.mergeBody(localBody)
+                }
+            }
+        }
+        
+        // Merge in all the responses for each target into their section variants.
+        responsesByTarget.forEach { targetIdentifier, responses in
+            let target = nodeWithSymbolIdentifier(targetIdentifier)
+            if let semantic = target?.semantic as? Symbol {
+                let responses = responses.sorted { $0.statusCode < $1.statusCode }
+                if semantic.httpResponsesSectionVariants[trait] == nil {
+                    semantic.httpResponsesSectionVariants[trait] = HTTPResponsesSection(responses: responses)
+                } else {
+                    semantic.httpResponsesSectionVariants[trait]?.mergeResponses(responses)
+                }
             }
         }
     }
@@ -1574,7 +1727,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for symbolIdentifier in symbolsToResolve {
             do {
                 let symbolNode = try symbolResolver.symbolEntity(withPreciseIdentifier: symbolIdentifier)
-                symbolIndex[symbolIdentifier] = symbolNode
+                symbolIndex[symbolIdentifier] = symbolNode.reference
                 
                 // Keep track of which symbols were added to the topic graph from external sources so that their pages are not rendered.
                 externallyResolvedSymbols.insert(symbolNode.reference)
@@ -1605,7 +1758,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 return
             }
             
-            guard let existingNode = symbolIndex[symbol.uniqueIdentifier], existingNode.semantic is Symbol else {
+            guard let existingNode =  nodeWithSymbolIdentifier(symbol.uniqueIdentifier), existingNode.semantic is Symbol else {
                 // New symbols that didn't exist in the previous graphs should be added.
                 guard let references = references[symbol.defaultIdentifier], let reference = references.first else {
                     fatalError("Symbol with identifier '\(symbol.uniqueIdentifier)' has no reference. A symbol will always have at least one reference.")
@@ -1963,7 +2116,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         var hierarchyBasedResolver: PathHierarchyBasedLinkResolver!
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
-            symbolGraphLoader = SymbolGraphLoader(bundle: bundle, dataProvider: self.dataProvider)
+            symbolGraphLoader = SymbolGraphLoader(
+                bundle: bundle,
+                dataProvider: self.dataProvider,
+                configureSymbolGraph: configureSymbolGraph
+            )
+            
             do {
                 try symbolGraphLoader.loadAll(using: decoder)
                 if LinkResolutionMigrationConfiguration.shouldSetUpHierarchyBasedLinkResolver {
@@ -2095,7 +2253,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         
         // Articles that will be automatically curated can be resolved but they need to be pre registered before resolving links.
         let rootNodeForAutomaticCuration = soleRootModuleReference.flatMap(topicGraph.nodeWithReference(_:))
-        if rootNodeForAutomaticCuration != nil {
+        if allowsRegisteringArticlesWithoutTechnologyRoot || rootNodeForAutomaticCuration != nil {
             otherArticles = registerArticles(otherArticles, in: bundle)
             try shouldContinueRegistration()
         }
@@ -2148,11 +2306,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             resolveLinks(curatedReferences: Set(articleReferences), bundle: bundle)
         }
 
+        // Remove any empty "Extended Symbol" pages whose children have been curated elsewhere.
+        for module in rootModules {
+            trimEmptyExtendedSymbolPages(under: module)
+        }
+
         // Emit warnings for any remaining uncurated files.
         emitWarningsForUncuratedTopics()
         
         if let hierarchyBasedLinkResolver = hierarchyBasedLinkResolver {
-            hierarchyBasedLinkResolver.addAnchorForSymbols(symbolIndex: symbolIndex)
+            hierarchyBasedLinkResolver.addAnchorForSymbols(symbolIndex: symbolIndex, documentationCache: documentationCache)
         }
         
         // Fifth, resolve links in nodes that are added solely via curation
@@ -2169,6 +2332,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         topicGraphGlobalAnalysis()
         
         preResolveModuleNames()
+        
+        referenceIndex.reserveCapacity(knownIdentifiers.count + nodeAnchorSections.count)
+        for reference in knownIdentifiers {
+            referenceIndex[reference.absoluteString] = reference
+        }
+        for reference in nodeAnchorSections.keys {
+            referenceIndex[reference.absoluteString] = reference
+        }
     }
     
     /// Given a list of topics that have been automatically curated, checks if a topic has been additionally manually curated
@@ -2211,6 +2382,43 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: nil, severity: .warning, range: nil, identifier: "org.swift.docc.FailedToResolveExternalReference", summary: error.localizedDescription), possibleSolutions: []))
                 }
             }
+        }
+    }
+
+    /// Remove unneeded "Extended Symbol" pages whose children have been curated elsewhere.
+    func trimEmptyExtendedSymbolPages(under nodeReference: ResolvedTopicReference) {
+        // Get the children of this node that are an "Extended Symbol" page.
+        let extendedSymbolChildren = topicGraph.edges[nodeReference]?.filter({ childReference in
+            guard let childNode = topicGraph.nodeWithReference(childReference) else { return false }
+            return childNode.kind.isExtendedSymbolKind
+        }) ?? []
+
+        // First recurse to clean up the tree depth-first.
+        for child in extendedSymbolChildren {
+            trimEmptyExtendedSymbolPages(under: child)
+        }
+
+        // Finally, if this node was left with no children and does not have an extension file,
+        // remove it from the topic graph.
+        if let node = topicGraph.nodeWithReference(nodeReference),
+           node.kind.isExtendedSymbolKind,
+           topicGraph[node].isEmpty,
+           documentationExtensionURL(for: nodeReference) == nil
+        {
+            topicGraph.removeEdges(to: node)
+            topicGraph.removeEdges(from: node)
+            topicGraph.edges.removeValue(forKey: nodeReference)
+            topicGraph.reverseEdges.removeValue(forKey: nodeReference)
+
+            topicGraph.replaceNode(node, with: .init(
+                reference: node.reference,
+                kind: node.kind,
+                source: node.source,
+                title: node.title,
+                isResolvable: false, // turn isResolvable off to prevent a link from being made
+                isVirtual: true, // set isVirtual to keep it from generating a page later on
+                isEmptyExtension: true
+            ))
         }
     }
     
@@ -2690,13 +2898,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     public func identifier(forAssetName name: String, in parent: ResolvedTopicReference) -> String? {
         let bundleIdentifier = parent.bundleIdentifier
         if let assetManager = assetManagers[bundleIdentifier] {
-            return assetManager.bestKey(forAssetName: name)
-        } else {
-            if _externalAssetResolvers[bundleIdentifier]?._resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier) != nil {
-                return name
-            } else {
-                return nil
+            if let localName = assetManager.bestKey(forAssetName: name) {
+                return localName
+            } else if let fallbackAssetManager = fallbackAssetResolvers[bundleIdentifier] {
+                return fallbackAssetManager.resolve(assetNamed: name, bundleIdentifier: bundleIdentifier) != nil ? name : nil
             }
+            return nil
+        } else if _externalAssetResolvers[bundleIdentifier]?._resolveExternalAsset(named: name, bundleIdentifier: parent.bundleIdentifier) != nil {
+            return name
+        } else {
+            return nil
         }
     }
 

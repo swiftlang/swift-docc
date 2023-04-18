@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -45,6 +45,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// Whether the documentation converter should include access level information for symbols.
     var shouldEmitSymbolAccessLevels: Bool
     
+    /// Whether tutorials that are not curated in a tutorials overview should be translated.
+    var shouldRenderUncuratedTutorials: Bool = false
+    
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
@@ -84,7 +87,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         let mediaReference = step.media.map { visit($0) } as? RenderReferenceIdentifier
         let codeReference = step.code.map { visitCode($0) } as? RenderReferenceIdentifier
         
-        let previewReference = step.code?.preview.map {
+        let previewReference = step.code?.preview.flatMap {
             createAndRegisterRenderReference(forMedia: $0.source, altText: ($0 as? ImageMedia)?.altText)
         }
         
@@ -116,26 +119,25 @@ public struct RenderNodeTranslator: SemanticVisitor {
         var node = RenderNode(identifier: identifier, kind: .tutorial)
         
         var hierarchyTranslator = RenderHierarchyTranslator(context: context, bundle: bundle)
-        guard let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) else {
+        
+        if let hierarchy = hierarchyTranslator.visitTechnologyNode(identifier) {
+            let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
+            node.hierarchy = hierarchy.hierarchy
+            node.metadata.category = technology.name
+            node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
+        } else if !context.allowsRegisteringArticlesWithoutTechnologyRoot {
             // This tutorial is not curated, so we don't generate a render node.
             // We've warned about this during semantic analysis.
             return nil
         }
-        
-        let technology = try! context.entity(with: hierarchy.technology).semantic as! Technology
         
         node.metadata.title = tutorial.intro.title
         node.metadata.role = contentRenderer.role(for: .tutorial).rawValue
         
         collectedTopicReferences.append(contentsOf: hierarchyTranslator.collectedTopicReferences)
         
-        node.hierarchy = hierarchy.hierarchy
-        node.metadata.category = technology.name
-        
         let documentationNode = try! context.entity(with: identifier)
         node.variants = variants(for: documentationNode)
-        
-        node.metadata.categoryPathComponent = hierarchy.technology.url.lastPathComponent
                 
         var intro = visitIntro(tutorial.intro) as! IntroRenderSection
         intro.estimatedTimeInMinutes = tutorial.durationMinutes
@@ -260,8 +262,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         section.video = intro.video.map { visit($0) } as? RenderReferenceIdentifier
         
         // Set the Intro's background image to the video's poster image.
-        section.backgroundImage = intro.video?.poster.map { createAndRegisterRenderReference(forMedia: $0) }
-            ?? intro.image.map { createAndRegisterRenderReference(forMedia: $0.source) }
+        section.backgroundImage = intro.video?.poster.flatMap { createAndRegisterRenderReference(forMedia: $0) }
+            ?? intro.image.flatMap { createAndRegisterRenderReference(forMedia: $0.source) }
         
         return section
     }
@@ -532,8 +534,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         let action: RenderInlineContent
         // We expect, at this point of the rendering, this API to be called with valid URLs, otherwise crash.
-        let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(link)!)
-        if case let .success(resolved) = context.resolve(.unresolved(unresolved), in: bundle.rootReference) {
+        if let resolved = context.referenceIndex[link.absoluteString] {
             action = RenderInlineContent.reference(identifier: RenderReferenceIdentifier(resolved.absoluteString),
                                                    isActive: true,
                                                    overridingTitle: overridingTitle,
@@ -543,7 +544,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // This is an external link
             let externalLinkIdentifier = RenderReferenceIdentifier(forExternalLink: link.absoluteString)
             if linkReferences.keys.contains(externalLinkIdentifier.identifier) {
-                // If we've already seen this link, return the existing reference with an overriden title.
+                // If we've already seen this link, return the existing reference with an overridden title.
                 action = RenderInlineContent.reference(identifier: externalLinkIdentifier,
                                                        isActive: true,
                                                        overridingTitle: overridingTitle,
@@ -642,6 +643,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
+            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            
             var sections = [TaskGroupRenderSection]()
             
             if let topics = article.topics, !topics.taskGroups.isEmpty {
@@ -650,7 +653,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderGroups(
                         topics,
                         allowExternalLinks: false,
-                        allowedTraits: [trait],
+                        allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
@@ -680,7 +683,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 let alreadyCurated = Set(node.topicSections.flatMap { $0.identifiers })
                 let groups = try! AutomaticCuration.topics(
                     for: documentationNode,
-                    withTrait: trait,
+                    withTraits: allowedTraits,
                     context: context
                 ).compactMap { group -> AutomaticCuration.TaskGroup? in
                     // Remove references that have been already curated.
@@ -722,13 +725,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
        
         if let pageImages = documentationNode.metadata?.pageImages {
-            node.metadata.images = pageImages.map { pageImage -> TopicImage in
+            node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
                 let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
-                return TopicImage(
-                    pageImagePurpose: pageImage.purpose,
-                    identifier: renderReference
-                )
+                return renderReference.map {
+                    TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
+                }
             }
+        }
+        
+        if let pageColor = documentationNode.metadata?.pageColor {
+            node.metadata.color = TopicColor(standardColorIdentifier: pageColor.rawValue)
         }
 
         var metadataCustomDictionary : [String: String] = [:]
@@ -743,6 +749,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
+            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            
             var seeAlsoSections = [TaskGroupRenderSection]()
             
             // Authored See Also section
@@ -751,7 +759,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderGroups(
                         seeAlso,
                         allowExternalLinks: true,
-                        allowedTraits: [trait],
+                        allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
@@ -761,7 +769,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Automatic See Also section
             if let seeAlso = try! AutomaticCuration.seeAlso(
                 for: documentationNode,
-                withTrait: trait,
+                withTraits: allowedTraits,
                 context: context,
                 bundle: bundle,
                 renderContext: renderContext,
@@ -790,8 +798,9 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         overridingTitle: callToAction.buttonLabel,
                         overridingTitleInlineContent: nil))
                 externalLocationReferences[url.description] = ExternalLocationReference(identifier: downloadIdentifier)
-            } else if let fileReference = callToAction.file {
-                let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
+            } else if let fileReference = callToAction.file,
+                      let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
+            {
                 node.sampleDownload = .init(action: .reference(
                     identifier: downloadIdentifier,
                     isActive: true,
@@ -1228,13 +1237,16 @@ public struct RenderNodeTranslator: SemanticVisitor {
         node.metadata.navigatorTitleVariants = contentRenderer.navigatorFragments(for: documentationNode)
         
         if let pageImages = documentationNode.metadata?.pageImages {
-            node.metadata.images = pageImages.map { pageImage -> TopicImage in
+            node.metadata.images = pageImages.compactMap { pageImage -> TopicImage? in
                 let renderReference = createAndRegisterRenderReference(forMedia: pageImage.source)
-                return TopicImage(
-                    pageImagePurpose: pageImage.purpose,
-                    identifier: renderReference
-                )
+                return renderReference.map {
+                    TopicImage(pageImagePurpose: pageImage.purpose, identifier: $0)
+                }
             }
+        }
+        
+        if let pageColor = documentationNode.metadata?.pageColor {
+            node.metadata.color = TopicColor(standardColorIdentifier: pageColor.rawValue)
         }
 
         var metadataCustomDictionary : [String: String] = [:]
@@ -1283,12 +1295,23 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 renderNode: &node,
                 translators: [
                     DeclarationsSectionTranslator(),
+                    HTTPEndpointSectionTranslator(endpointType: .production),
+                    HTTPEndpointSectionTranslator(endpointType: .sandbox),
                     ParametersSectionTranslator(),
+                    HTTPParametersSectionTranslator(parameterSource: .path),
+                    HTTPParametersSectionTranslator(parameterSource: .query),
+                    HTTPParametersSectionTranslator(parameterSource: .cookie),
+                    HTTPParametersSectionTranslator(parameterSource: .header),
+                    HTTPBodySectionTranslator(),
+                    HTTPResponsesSectionTranslator(),
+                    DictionaryKeysSectionTranslator(),
                     ReturnsSectionTranslator(),
                     DiscussionSectionTranslator(),
                 ]
             )
         )
+        
+        var sourceRepository = sourceRepository
         
         if shouldEmitSymbolSourceFileURIs {
             node.metadata.sourceFileURIVariants = VariantCollection<String?>(
@@ -1296,6 +1319,14 @@ public struct RenderNodeTranslator: SemanticVisitor {
             ) { _, location in
                 location.uri
             } ?? .init(defaultValue: nil)
+            
+            // If a source repository is not set, set the device's
+            // filesystem as the source repository. This causes
+            // the `metadata.remoteSource` property to link to the
+            // file's location on disk.
+            if sourceRepository == nil {
+                sourceRepository = .localFilesystem()
+            }
         }
         
         if let sourceRepository = sourceRepository {
@@ -1352,9 +1383,20 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         let resolver = LinkTitleResolver(context: context, source: resolved.url)
                         let resolvedTitle = resolver.title(for: node)
                         destinationsMap[destination] = resolvedTitle?[trait]
-                        
-                        // Add relationship to render references
-                        collectedTopicReferences.append(resolved)
+
+                        let dropLink = context.topicGraph.nodeWithReference(resolved)?.isEmptyExtension ?? false
+
+                        if !dropLink {
+                            // Add relationship to render references
+                            collectedTopicReferences.append(resolved)
+                        } else if let topicUrl = ValidatedURL(resolved.url) {
+                            // If the topic isn't linkable (e.g. an extended type), then we shouldn't
+                            // add a resolved relationship - deconstruct the resolved reference so
+                            // we can still display it, though
+                            let title = resolvedTitle?[trait] ?? resolved.lastPathComponent
+                            let reference = UnresolvedTopicReference(topicURL: topicUrl, title: title)
+                            collectedUnresolvedTopicReferences.append(reference)
+                        }
 
                     case .unresolved(let unresolved), .resolved(.failure(let unresolved, _)):
                         // Try creating a render reference anyway
@@ -1387,16 +1429,19 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
+            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            
             let automaticTaskGroups = symbol.automaticTaskGroupsVariants[trait] ?? []
             let topics = symbol.topicsVariants[trait]
             
             var sections = [TaskGroupRenderSection]()
             if let topics = topics, !topics.taskGroups.isEmpty {
+                // Allowed traits should be all traits except the reverse of the objc/swift pairing
                 sections.append(
                     contentsOf: renderGroups(
                         topics,
                         allowExternalLinks: false,
-                        allowedTraits: [trait],
+                        allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
@@ -1417,7 +1462,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Children of the current symbol that have not been curated manually in a task group will all
             // be automatically curated in task groups after their symbol kind: "Properties", "Enumerations", etc.
             let alreadyCurated = Set(sections.flatMap { $0.identifiers })
-            let groups = try! AutomaticCuration.topics(for: documentationNode, withTrait: trait, context: context)
+            let groups = try! AutomaticCuration.topics(for: documentationNode, withTraits: allowedTraits, context: context)
             
             sections.append(contentsOf: groups.compactMap { group in
                 let newReferences = group.references.filter { !alreadyCurated.contains($0.absoluteString) }
@@ -1492,6 +1537,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
             from: documentationNode.availableVariantTraits,
             fallbackDefaultValue: []
         ) { trait in
+            let allowedTraits = documentationNode.availableVariantTraits.traitsCompatible(with: trait)
+            
             // If the symbol contains an authored See Also section from the documentation extension,
             // add it as the first section under See Also.
             var seeAlsoSections = [TaskGroupRenderSection]()
@@ -1501,7 +1548,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     contentsOf: renderGroups(
                         seeAlso,
                         allowExternalLinks: true,
-                        allowedTraits: [trait],
+                        allowedTraits: allowedTraits,
                         availableTraits: documentationNode.availableVariantTraits,
                         contentCompiler: &contentCompiler
                     )
@@ -1511,7 +1558,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             // Curate the current node's siblings as further See Also groups.
             if let seeAlso = try! AutomaticCuration.seeAlso(
                 for: documentationNode,
-                withTrait: trait,
+                withTraits: allowedTraits,
                 context: context,
                 bundle: bundle,
                 renderContext: renderContext,
@@ -1554,63 +1601,68 @@ public struct RenderNodeTranslator: SemanticVisitor {
     }
 
     /// Creates a render reference for the given media and registers the reference to include it in the `references` dictionary.
-    mutating func createAndRegisterRenderReference(forMedia media: ResourceReference?, poster: ResourceReference? = nil, altText: String? = nil, assetContext: DataAsset.Context = .display) -> RenderReferenceIdentifier {
-        var mediaReference = RenderReferenceIdentifier("")
+    mutating func createAndRegisterRenderReference(forMedia media: ResourceReference?, poster: ResourceReference? = nil, altText: String? = nil, assetContext: DataAsset.Context = .display) -> RenderReferenceIdentifier? {
         guard let oldMedia = media,
-              let path = context.identifier(forAssetName: oldMedia.path, in: identifier) else { return mediaReference }
-        
-        let media = ResourceReference(bundleIdentifier: oldMedia.bundleIdentifier, path: path)
-        let fileExtension = NSString(string: media.path).pathExtension
-        
-        func resolveAsset() -> DataAsset? {
-            renderContext?.store.content(
-                forAssetNamed: media.path, bundleIdentifier: identifier.bundleIdentifier)
-            ?? context.resolveAsset(named: media.path, in: identifier)
+              let mediaIdentifier = context.identifier(forAssetName: oldMedia.path, in: identifier) else {
+            return nil
         }
         
+        let media = ResourceReference(bundleIdentifier: oldMedia.bundleIdentifier, path: mediaIdentifier)
+        guard let resolvedAssets = renderContext?.store.content(forAssetNamed: media.path, bundleIdentifier: identifier.bundleIdentifier)
+                                ?? context.resolveAsset(named: media.path, in: identifier)
+        else {
+            return nil
+        }
+        
+        let fileExtension: String = {
+            let identifierFileExtension = NSString(string: media.path).pathExtension
+            if !identifierFileExtension.isEmpty {
+                return identifierFileExtension
+            }
+            return resolvedAssets.data(bestMatching: DataTraitCollection()).url.pathExtension
+        }()
+        
         // Check if media is a supported image.
-        if DocumentationContext.isFileExtension(fileExtension, supported: .image),
-            let resolvedImages = resolveAsset()
-        {
-            mediaReference = RenderReferenceIdentifier(media.path)
+        if DocumentationContext.isFileExtension(fileExtension, supported: .image) {
+            let mediaReference = RenderReferenceIdentifier(media.path)
             
             imageReferences[media.path] = ImageReference(
                 identifier: mediaReference,
                 // If no alt text has been provided and this image has been registered previously, use the registered alt text.
                 altText: altText ?? imageReferences[media.path]?.altText,
-                imageAsset: resolvedImages
+                imageAsset: resolvedAssets
             )
+            return mediaReference
         }
         
-        if DocumentationContext.isFileExtension(fileExtension, supported: .video),
-           let resolvedVideos = resolveAsset()
-        {
-            mediaReference = RenderReferenceIdentifier(media.path)
-            let poster = poster.map { createAndRegisterRenderReference(forMedia: $0) }
-            videoReferences[media.path] = VideoReference(identifier: mediaReference, altText: altText, videoAsset: resolvedVideos, poster: poster)
+        if DocumentationContext.isFileExtension(fileExtension, supported: .video) {
+            let mediaReference = RenderReferenceIdentifier(media.path)
+            let poster = poster.flatMap { createAndRegisterRenderReference(forMedia: $0) }
+            videoReferences[media.path] = VideoReference(identifier: mediaReference, altText: altText, videoAsset: resolvedAssets, poster: poster)
+            return mediaReference
         }
         
-        if assetContext == DataAsset.Context.download, let resolvedDownload = resolveAsset() {
+        if assetContext == DataAsset.Context.download {
+            let mediaReference = RenderReferenceIdentifier(media.path)
             // Create a download reference if possible.
             let downloadReference: DownloadReference
-            do {            
-                mediaReference = RenderReferenceIdentifier(media.path)
-                let downloadURL = resolvedDownload.variants.first!.value
+            do {
+                let downloadURL = resolvedAssets.variants.first!.value
                 let downloadData = try context.dataProvider.contentsOfURL(downloadURL, in: bundle)
                 downloadReference = DownloadReference(identifier: mediaReference,
                     renderURL: downloadURL,
                     checksum: Checksum.sha512(of: downloadData))
             } catch {
                 // It seems this is the way to error out of here.
-                return mediaReference
+                return nil
             }
 
             // Add the file to the download references.
-            mediaReference = RenderReferenceIdentifier(media.path)
             downloadReferences[media.path] = downloadReference
+            return mediaReference
         }
 
-        return mediaReference
+        return nil
     }
     
     var context: DocumentationContext
@@ -1709,6 +1761,111 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     ]
                 )
             }
+    }
+    
+    private mutating func convert_fragments(_ fragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) -> [DeclarationRenderSection.Token] {
+        return fragments.map { token -> DeclarationRenderSection.Token in
+            
+            // Create a reference if one found
+            var reference: ResolvedTopicReference?
+            if let preciseIdentifier = token.preciseIdentifier,
+               let resolved = self.context.symbolIndex[preciseIdentifier] {
+                reference = resolved
+                
+                // Add relationship to render references
+                self.collectedTopicReferences.append(resolved)
+            }
+            
+            // Add the declaration token
+            return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
+        }
+    }
+    
+    /// Generate a RenderProperty object from markup content and symbol data.
+    mutating func createRenderProperty(name: String, contents: [Markup], required: Bool, symbol: SymbolGraph.Symbol?) -> RenderProperty {
+        let parameterContent = self.visitMarkupContainer(
+            MarkupContainer(contents)
+        ) as! [RenderBlockContent]
+        
+        var renderedTokens: [DeclarationRenderSection.Token]? = nil
+        var attributes: [RenderAttribute] = []
+        var isReadOnly: Bool? = nil
+        var deprecated: Bool? = nil
+        var introducedVersion: String? = nil 
+        var typeDetails: [TypeDetails]? = nil
+        
+        if let symbol = symbol {
+            // Convert the dictionary key's declaration into section tokens
+            if let fragments = symbol.declarationFragments {
+                renderedTokens = convert_fragments(fragments)
+            }
+                
+            // Populate attributes
+            if let constraint = symbol.defaultValue {
+                attributes.append(RenderAttribute.default(String(constraint)))
+            }
+            if let constraint = symbol.minimum {
+                attributes.append(RenderAttribute.minimum(String(constraint)))
+            }
+            if let constraint = symbol.maximum {
+                attributes.append(RenderAttribute.maximum(String(constraint)))
+            }
+            if let constraint = symbol.minimumExclusive {
+                attributes.append(RenderAttribute.minimumExclusive(String(constraint)))
+            }
+            if let constraint = symbol.maximumExclusive {
+                attributes.append(RenderAttribute.maximumExclusive(String(constraint)))
+            }
+            if let constraint = symbol.allowedValues {
+                attributes.append(RenderAttribute.allowedValues(constraint.map{String($0)}))
+            }
+            if let constraint = symbol.isReadOnly {
+                isReadOnly = constraint
+            }
+            if let constraint = symbol.minimumLength {
+                attributes.append(RenderAttribute.minimumLength(String(constraint)))
+            }
+            if let constraint = symbol.maximumLength {
+                attributes.append(RenderAttribute.maximumLength(String(constraint)))
+            }
+            if let constraint = symbol.typeDetails, constraint.count > 0 {
+                // Pull out the base-type details.
+                typeDetails = constraint.filter { $0.baseType != nil }
+                                        .map { TypeDetails(baseType: $0.baseType, arrayMode: $0.arrayMode) }
+                // Pull out the allowed-type declarations.
+                // If there is only 1 type declaration found, it would be redundant with declaration, so skip it.
+                let typeDeclarations = constraint.compactMap { $0.fragments }
+                if typeDeclarations.count > 1 {
+                    let allowedTypes = typeDeclarations.map { convert_fragments($0) }
+                    attributes.append(RenderAttribute.allowedTypes(allowedTypes))
+                }
+            }
+            
+            // Extract the availability information
+            if let availabilityItems = symbol.availability, availabilityItems.count > 0 {
+                availabilityItems.forEach { item in
+                    if deprecated == nil && (item.isUnconditionallyDeprecated || item.deprecatedVersion != nil) {
+                        deprecated = true
+                    }
+                    if let intro = item.introducedVersion, introducedVersion == nil {
+                        introducedVersion = "\(intro)"
+                    }
+                }
+            }
+        }
+        
+        return RenderProperty(
+            name: name,
+            type: renderedTokens ?? [],
+            typeDetails: typeDetails,
+            content: parameterContent,
+            attributes: attributes,
+            mimeType: symbol?.httpMediaType,
+            required: required,
+            deprecated: deprecated,
+            readOnly: isReadOnly,
+            introducedVersion: introducedVersion
+        )
     }
     
     init(

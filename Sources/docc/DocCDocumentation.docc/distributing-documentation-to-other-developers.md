@@ -61,7 +61,7 @@ service configuration flags like so:
 docc convert […] \
     --source-service github \
     --source-service-base-url https://github.com/<org>/<repo>/blob/<branch> \
-    --checkout-path <path to local checkout>
+    --checkout-path <absolute path to local checkout>
 ```
 
 **GitLab**
@@ -69,7 +69,7 @@ docc convert […] \
 docc convert […] \
     --source-service gitlab \
     --source-service-base-url https://gitlab.com/<org>/<repo>/-/tree/<branch> \
-    --checkout-path <path to local checkout>
+    --checkout-path <absolute path to local checkout>
 ```
 
 **BitBucket**
@@ -77,8 +77,11 @@ docc convert […] \
 docc convert […] \
     --source-service bitbucket \
     --source-service-base-url https://bitbucket.org/<org>/<repo>/src/<branch> \
-    --checkout-path <path to local checkout>
+    --checkout-path <absolute path to local checkout>
 ```
+
+> Note: The option `--checkout-path` expects an absolute path to where the package 
+is checked out, not a relative path.
 
 These arguments can also be provided to `swift package generate-documentation`
 if you're using the SwiftPM DocC Plugin or via the `OTHER_DOCC_FLAGS` build

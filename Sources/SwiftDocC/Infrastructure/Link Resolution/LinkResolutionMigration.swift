@@ -21,8 +21,20 @@ enum LinkResolutionMigrationConfiguration {
     
     /// Whether or not the context should the a ``PathHierarchyBasedLinkResolver`` to resolve links.
     static var shouldUseHierarchyBasedLinkResolver: Bool = {
-        return UserDefaults.standard.bool(forKey: "DocCUseHierarchyBasedLinkResolver")
-            || ProcessInfo.processInfo.environment["DOCC_USE_HIERARCHY_BASED_LINK_RESOLVER"] == "YES"
+        let defaultsKey = "DocCUseHierarchyBasedLinkResolver"
+        let environmentKey = "DOCC_USE_HIERARCHY_BASED_LINK_RESOLVER"
+        
+        if let environmentValue = ProcessInfo.processInfo.environment[environmentKey] {
+            switch environmentValue.uppercased() {
+            case "NO", "FALSE", "0": return false
+            case "YES", "TRUE", "1": return true
+            default: break
+            }
+        }
+        if UserDefaults.standard.object(forKey: defaultsKey) != nil {
+            return UserDefaults.standard.bool(forKey: defaultsKey)
+        }
+        return true
     }()
     
     /// Whether or not the context should report differences between the disambiguated paths created by ``PathHierarchyBasedLinkResolver`` and ``DocumentationCacheBasedLinkResolver``.

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -136,6 +136,7 @@ public struct ConvertService: DocumentationService {
                     info: request.bundleInfo,
                     symbolGraphs: request.symbolGraphs,
                     markupFiles: request.markupFiles,
+                    tutorialFiles: request.tutorialFiles,
                     miscResourceURLs: request.miscResourceURLs
                 )
                 
@@ -144,6 +145,18 @@ public struct ConvertService: DocumentationService {
             
             let context = try DocumentationContext(dataProvider: workspace)
             context.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
+            
+            // Enable support for generating documentation for standalone articles and tutorials.
+            context.allowsRegisteringArticlesWithoutTechnologyRoot = true
+            context.allowsRegisteringUncuratedTutorials = true
+            
+            context.configureSymbolGraph = { symbolGraph in
+                for (symbolIdentifier, overridingDocumentationComment) in request.overridingDocumentationComments ?? [:] {
+                    symbolGraph.symbols[symbolIdentifier]?.docComment = SymbolGraph.LineList(
+                        overridingDocumentationComment.map(SymbolGraph.LineList.Line.init(_:))
+                    )
+                }
+            }
             
             if let linkResolvingServer = linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
@@ -171,12 +184,7 @@ public struct ConvertService: DocumentationService {
                     fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 ),
-                // We're enabling the inclusion of symbol declaration file paths
-                // in the produced render json here because the render nodes created by
-                // `ConvertService` are intended for local uses of documentation where
-                // this information could be relevant and we don't have the privacy concerns
-                // that come with including this information in public releases of docs.
-                emitSymbolSourceFileURIs: true,
+                emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
                 emitSymbolAccessLevels: true
             )
 
@@ -187,7 +195,7 @@ public struct ConvertService: DocumentationService {
 
             guard conversionProblems.isEmpty else {
                 throw ConvertServiceError.conversionError(
-                    underlyingError: conversionProblems.localizedDescription)
+                    underlyingError: DiagnosticConsoleWriter.formattedDescription(for: conversionProblems))
             }
             
             let references: RenderReferenceStore?
@@ -297,5 +305,26 @@ extension Result {
             default: return transform(error)
             }
         }
+    }
+}
+
+private extension SymbolGraph.LineList.Line {
+    /// Creates a line given a convert request line.
+    init(_ line: ConvertRequest.Line) {
+        self.init(
+            text: line.text,
+            range: line.sourceRange.map { sourceRange in
+                SymbolGraph.LineList.SourceRange(
+                    start: SymbolGraph.LineList.SourceRange.Position(
+                        line: sourceRange.start.line,
+                        character: sourceRange.start.character
+                    ),
+                    end: SymbolGraph.LineList.SourceRange.Position(
+                        line: sourceRange.end.line,
+                        character: sourceRange.end.character
+                    )
+                )
+            }
+        )
     }
 }

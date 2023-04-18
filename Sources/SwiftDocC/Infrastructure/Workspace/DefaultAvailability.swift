@@ -44,12 +44,12 @@ public struct DefaultAvailability: Codable, Equatable {
         /// A string representation of the version for this platform.
         public var platformVersion: String
 
-        /// Create a new module availability with a given platform name and platform version.
+        /// Creates a new module availability with a given platform name and platform version.
         ///
         /// - Parameters:
         ///   - platformName: A platform name, such as "iOS" or "macOS"; see ``PlatformName``.
         ///   - platformVersion: A 2- or 3-component version string, such as `"13.0"` or `"13.1.2"`
-        init(platformName: PlatformName, platformVersion: String) {
+        public init(platformName: PlatformName, platformVersion: String) {
             self.platformName = platformName
             self.platformVersion = platformVersion
         }
@@ -70,7 +70,9 @@ public struct DefaultAvailability: Codable, Equatable {
     /// For example: "ModuleName" -> ["macOS 10.15", "iOS 13.0"]
     var modules: [String: [ModuleAvailability]]
 
-    init(with modules: [String: [ModuleAvailability]]) {
+    /// Creates a default availability module.
+    /// - Parameter modules: A map of modules and the default platform availability for symbols in that module.
+    public init(with modules: [String: [ModuleAvailability]]) {
         self.modules = modules.mapValues { platformAvailabilities -> [DefaultAvailability.ModuleAvailability] in
             // If a module doesn't contain default introduced availability for macCatalyst,
             // infer it from iOS. Their platform versions are always the same.

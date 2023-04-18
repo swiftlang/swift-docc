@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -24,6 +24,19 @@ fileprivate func disabledLinkDestinationProblem(reference: ResolvedTopicReferenc
 fileprivate func unknownSnippetSliceProblem(snippetPath: String, slice: String, source: URL?, range: SourceRange?) -> Problem {
     let diagnostic = Diagnostic(source: source, severity: .warning, range: range, identifier: "org.swift.docc.unknownSnippetSlice", summary: "Snippet slice \(slice.singleQuoted) does not exist in snippet \(snippetPath.singleQuoted); this directive will be ignored")
     return Problem(diagnostic: diagnostic, possibleSolutions: [])
+}
+
+fileprivate func removedLinkDestinationProblem(reference: ResolvedTopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity) -> Problem {
+    var solutions = [Solution]()
+    if let range = range, reference.pathComponents.count > 3 {
+        // The first three path components are "/", "documentation", and the module name, so drop those
+        let pathRemainder = reference.pathComponents[3...]
+        solutions.append(.init(summary: "Use a plain code span instead of a symbol link", replacements: [
+            .init(range: range, replacement: "`\(pathRemainder.joined(separator: "/"))`")
+        ]))
+    }
+    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.removedExtensionLinkDestination", summary: "The topic \(reference.path.singleQuoted) is an empty extension page and cannot be linked to.", explanation: "This extension symbol has had all its children curated and has been removed.")
+    return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 
 /**
@@ -56,23 +69,25 @@ struct MarkupReferenceResolver: MarkupRewriter {
             // If the linked node is part of the topic graph,
             // verify that linking to it is enabled, else return `nil`.
             if let node = context.topicGraph.nodeWithReference(resolved) {
-                guard context.topicGraph.isLinkable(node.reference) else {
+                if node.isEmptyExtension {
+                    problems.append(removedLinkDestinationProblem(reference: resolved, source: source, range: range, severity: severity))
+                    return nil
+                } else if !context.topicGraph.isLinkable(node.reference) {
                     problems.append(disabledLinkDestinationProblem(reference: resolved, source: source, range: range, severity: severity))
                     return nil
                 }
             }
             return resolved
             
-        case .failure(let unresolved, let errorMessage):
+        case .failure(let unresolved, let error):
             if let callback = problemForUnresolvedReference,
-                let problem = callback(unresolved, source, range, fromSymbolLink, errorMessage) {
+               let problem = callback(unresolved, source, range, fromSymbolLink, error.message) {
                 problems.append(problem)
                 return nil
             }
             
-            // FIXME: Structure the `PathHierarchyBasedLinkResolver` near-miss suggestions as fixits. https://github.com/apple/swift-docc/issues/438 (rdar://103279313)
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.articlesDocumentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: fromSymbolLink))
             return nil
         }
     }
@@ -114,12 +129,17 @@ struct MarkupReferenceResolver: MarkupRewriter {
             return link
         }
         var link = link
+        let wasAutoLink = link.isAutolink
         link.destination = resolvedURL.absoluteString
+        if wasAutoLink {
+            link.replaceChildrenInRange(0..<link.childCount, with: [Text(resolvedURL.absoluteString)])
+            assert(link.isAutolink)
+        }
         return link
     }
 
     mutating func resolveAbsoluteSymbolLink(unresolvedDestination: String, elementRange range: SourceRange?) -> ResolvedTopicReference? {
-        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: unresolvedDestination, parent: rootReference) {
+        if let cached = context.referenceIndex[unresolvedDestination] {
             guard context.topicGraph.isLinkable(cached) == true else {
                 problems.append(disabledLinkDestinationProblem(reference: cached, source: source, range: range, severity: .warning))
                 return nil

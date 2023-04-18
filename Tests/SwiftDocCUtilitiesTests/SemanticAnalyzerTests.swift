@@ -98,7 +98,7 @@ class SemanticAnalyzerTests: XCTestCase {
             XCTAssertEqual(problems.unsupportedTopLevelChildProblems.count, 1)
             
             if let diagnostic = problems.unsupportedTopLevelChildProblems.first?.diagnostic {
-                XCTAssertEqual(diagnostic.localizedSummary, "Found unsupported 'Article' directive in '.md' file")
+                XCTAssertEqual(diagnostic.summary, "Found unsupported 'Article' directive in '.md' file")
                 XCTAssertEqual(diagnostic.severity, .warning)
                 XCTAssertEqual(diagnostic.source?.lastPathComponent, "FileWithDirective.md")
             }
@@ -111,8 +111,8 @@ class SemanticAnalyzerTests: XCTestCase {
             XCTAssertEqual(problems.unsupportedTopLevelChildProblems.count, 0)
             
             if let diagnostic = problems.missingTopLevelChildProblems.first?.diagnostic {
-                XCTAssertEqual(diagnostic.localizedSummary, "No valid content was found in this file")
-                XCTAssertEqual(diagnostic.localizedExplanation, "A '.tutorial' file should contain a top-level directive ('Tutorials', 'Tutorial', or 'Article') and valid child content. Only '.md' files support content without a top-level directive")
+                XCTAssertEqual(diagnostic.summary, "No valid content was found in this file")
+                XCTAssertEqual(diagnostic.explanation, "A '.tutorial' file should contain a top-level directive ('Tutorials', 'Tutorial', or 'Article') and valid child content. Only '.md' files support content without a top-level directive")
                 XCTAssertEqual(diagnostic.severity, .warning)
                 XCTAssertEqual(diagnostic.source?.lastPathComponent, "FileWithoutDirective.tutorial")
             }

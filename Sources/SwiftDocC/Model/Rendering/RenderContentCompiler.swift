@@ -165,10 +165,52 @@ struct RenderContentCompiler: MarkupVisitor {
             return [RenderInlineContent.text(link.plainText)]
         }
         
-        return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
+        let linkTitleInlineContent = link.children.flatMap { visit($0) } as! [RenderInlineContent]
+        let plainTextLinkTitle = linkTitleInlineContent.plainText
+        let overridingTitle = plainTextLinkTitle.isEmpty ? nil : plainTextLinkTitle
+        let overridingTitleInlineContent = linkTitleInlineContent.isEmpty ? nil : linkTitleInlineContent
+        
+        let useOverriding: Bool
+        if link.isAutolink { // If the link is an auto link, we don't use overriding info
+            useOverriding = false
+        } else if let overridingTitle = overridingTitle,
+                  overridingTitle.hasPrefix(ResolvedTopicReference.urlScheme + ":"),
+                  destination.hasPrefix(ResolvedTopicReference.urlScheme + "://")
+        {
+            // The overriding title looks like a documentation link. Escape it like a resolved reference string to compare it with the destination.
+            let withoutScheme = overridingTitle.dropFirst((ResolvedTopicReference.urlScheme + ":").count)
+            if destination.hasSuffix(withoutScheme) {
+                useOverriding = false
+            } else {
+                let escapedTitle: String
+                if let fragmentIndex = withoutScheme.firstIndex(of: "#") {
+                    let escapedFragment = withoutScheme[fragmentIndex...].dropFirst().addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) ?? ""
+                    escapedTitle = "\(urlReadablePath(withoutScheme[..<fragmentIndex]))#\(escapedFragment)"
+                } else {
+                    escapedTitle = urlReadablePath(withoutScheme)
+                }
+                
+                useOverriding = !destination.hasSuffix(escapedTitle) // If the link is a transformed doc link, we don't use overriding info
+            }
+        } else {
+            useOverriding = true
+        }
+        return [
+            RenderInlineContent.reference(
+                identifier: .init(resolved.absoluteString),
+                isActive: true,
+                overridingTitle: useOverriding ? overridingTitle : nil,
+                overridingTitleInlineContent: useOverriding ? overridingTitleInlineContent : nil
+            )
+        ]
     }
     
     mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
+        if let cached = context.referenceIndex[destination] {
+            collectedTopicReferences.append(cached)
+            return cached
+        }
+        
         guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
             return nil
         }
@@ -192,9 +234,9 @@ struct RenderContentCompiler: MarkupVisitor {
     }
 
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
-        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
+        if let cached = context.referenceIndex[destination] {
             return cached
-        } 
+        }
 
         // The symbol link may be written with a scheme and bundle identifier.
         let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -67,18 +67,18 @@ final class PathHierarchyBasedLinkResolver {
     
     /// Map the resolved identifiers to resolved topic references for a given bundle's article, tutorial, and technology root pages.
     func addMappingForRoots(bundle: DocumentationBundle) {
-        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.tutorialsRootReference
+        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.technologyTutorialsRootReference
         resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = bundle.articlesDocumentationRootReference
-        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.technologyTutorialsRootReference
+        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.tutorialsRootReference
     }
     
     /// Map the resolved identifiers to resolved topic references for all symbols in the given symbol index.
-    func addMappingForSymbols(symbolIndex: [String: DocumentationNode]) {
+    func addMappingForSymbols(symbolIndex: [String: ResolvedTopicReference]) {
         for (id, node) in pathHierarchy.lookup {
-            guard let symbol = node.symbol, let node = symbolIndex[symbol.identifier.precise] else {
+            guard let symbol = node.symbol, let reference = symbolIndex[symbol.identifier.precise] else {
                 continue
             }
-            resolvedReferenceMap[id] = node.reference
+            resolvedReferenceMap[id] = reference
         }
     }
     
@@ -164,9 +164,9 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     /// Adds the headings for all symbols in the symbol index to the path hierarchy.
-    func addAnchorForSymbols(symbolIndex: [String: DocumentationNode]) {
+    func addAnchorForSymbols(symbolIndex: [String: ResolvedTopicReference], documentationCache: [ResolvedTopicReference: DocumentationNode]) {
         for (id, node) in pathHierarchy.lookup {
-            guard let symbol = node.symbol, let node = symbolIndex[symbol.identifier.precise] else { continue }
+            guard let symbol = node.symbol, let reference = symbolIndex[symbol.identifier.precise], let node = documentationCache[reference] else { continue }
             addAnchors(node.anchorSections, to: id)
         }
     }
@@ -207,7 +207,7 @@ final class PathHierarchyBasedLinkResolver {
                 // Return the successful or failed externally resolved reference.
                 return resolvedExternalReference
             } else if !context.registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                return .failure(unresolvedReference, errorMessage: "No external resolver registered for \(bundleID.singleQuoted).")
+                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
             }
         }
         
@@ -222,7 +222,12 @@ final class PathHierarchyBasedLinkResolver {
             if let resolvedFallbackReference = fallbackResolver.resolve(unresolvedReference, in: parent, fromSymbolLink: isCurrentlyResolvingSymbolLink, context: context) {
                 return .success(resolvedFallbackReference)
             } else {
-                return .failure(unresolvedReference, errorMessage: error.errorMessage(context: context))
+                var originalReferenceString = unresolvedReference.path
+                if let fragment = unresolvedReference.topicURL.components.fragment {
+                    originalReferenceString += "#" + fragment
+                }
+                
+                return .failure(unresolvedReference, error.asTopicReferenceResolutionErrorInfo(context: context, originalReference: originalReferenceString))
             }
         } catch {
             fatalError("Only SymbolPathTree.Error errors are raised from the symbol link resolution code above.")

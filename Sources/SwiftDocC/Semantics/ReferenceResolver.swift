@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,13 +11,51 @@
 import Foundation
 import Markdown
 
-func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, underlyingErrorMessage: String) -> Problem {
-    let notes = uncuratedArticleMatch.map {
-        [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil), message: "This article was found but is not available for linking because it's uncurated")]
+func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: SourceRange?, severity: DiagnosticSeverity, uncuratedArticleMatch: URL?, errorInfo: TopicReferenceResolutionErrorInfo, fromSymbolLink: Bool) -> Problem {
+    var notes = uncuratedArticleMatch.map {
+        [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: $0)..<SourceLocation(line: 1, column: 1, source: $0), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
     
-    let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(underlyingErrorMessage)", notes: notes)
-    return Problem(diagnostic: diagnostic, possibleSolutions: [])
+    guard LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver else {
+        let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(errorInfo.message)", notes: notes)
+        return Problem(diagnostic: diagnostic, possibleSolutions: [])
+    }
+    
+    let referenceSourceRange: SourceRange? = range.map { range in
+        // FIXME: Finding the range for the link's destination is better suited for Swift-Markdown
+        // https://github.com/apple/swift-markdown/issues/109
+        if fromSymbolLink {
+            // Inset the range by 2 at the start and end to skip both "``".
+            return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+2, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-2, source: range.upperBound.source)
+        } else {
+            // FIXME: This assumes that the link uses the `<doc:my/reference>` syntax.
+            // Links that use the [link text](doc:my/reference) syntax will have incorrect suggestion replacements.
+            // https://github.com/apple/swift-docc/issues/470
+            
+            // Inset the range by 5 at the start and by 1 at the end to skip "<doc:" at the start and ">" at the end.
+            return SourceLocation(line: range.lowerBound.line, column: range.lowerBound.column+5, source: range.lowerBound.source) ..< SourceLocation(line: range.upperBound.line, column: range.upperBound.column-1, source: range.upperBound.source)
+        }
+    }
+    
+    var solutions: [Solution] = []
+    if let referenceSourceRange = referenceSourceRange {
+        if let note = errorInfo.note, let source = source {
+            notes.append(DiagnosticNote(source: source, range: referenceSourceRange, message: note))
+        }
+        
+        solutions.append(contentsOf: errorInfo.solutions(referenceSourceRange: referenceSourceRange))
+    }
+    
+    let diagnosticRange: SourceRange?
+    if var rangeAdjustment = errorInfo.rangeAdjustment, let referenceSourceRange = referenceSourceRange {
+        rangeAdjustment.offsetWithRange(referenceSourceRange)
+        diagnosticRange = rangeAdjustment
+    } else {
+        diagnosticRange = referenceSourceRange
+    }
+    
+    let diagnostic = Diagnostic(source: source, severity: severity, range: diagnosticRange, identifier: "org.swift.docc.unresolvedTopicReference", summary: errorInfo.message, notes: notes)
+    return Problem(diagnostic: diagnostic, possibleSolutions: solutions)
 }
 
 func unresolvedResourceProblem(
@@ -83,11 +121,10 @@ struct ReferenceResolver: SemanticVisitor {
         case .success(let resolved):
             return .success(resolved)
             
-        case let .failure(unresolved, errorMessage):
-            // FIXME: Structure the `PathHierarchyBasedLinkResolver` near-miss suggestions as fixits. https://github.com/apple/swift-docc/issues/438 (rdar://103279313)
+        case let .failure(unresolved, error):
             let uncuratedArticleMatch = context.uncuratedArticles[bundle.documentationRootReference.appendingPathOfReference(unresolved)]?.source
-            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, underlyingErrorMessage: errorMessage))
-            return .failure(unresolved, errorMessage: errorMessage)
+            problems.append(unresolvedReferenceProblem(reference: reference, source: source, range: range, severity: severity, uncuratedArticleMatch: uncuratedArticleMatch, errorInfo: error, fromSymbolLink: false))
+            return .failure(unresolved, error)
         }
     }
     
@@ -188,20 +225,9 @@ struct ReferenceResolver: SemanticVisitor {
         markupResolver.problemForUnresolvedReference = { unresolved, source, range, fromSymbolLink, underlyingErrorMessage -> Problem? in
             // Verify we have all the information about the location of the source comment
             // and the symbol that the comment is inherited from.
-            if let parent = parent, let range = range,
-                let symbol = try? context.entity(with: parent).symbol,
-                let docLines = symbol.docComment,
-                let docStartLine = docLines.lines.first?.range?.start.line,
-                let docStartColumn = docLines.lines.first?.range?.start.character {
-                
+            if let parent = parent, let range = range {
                 switch context.resolve(.unresolved(unresolved), in: parent, fromSymbolLink: fromSymbolLink) {
                     case .success(let resolved):
-                        
-                        // Make the range for the suggested replacement.
-                        let start = SourceLocation(line: docStartLine + range.lowerBound.line, column: docStartColumn + range.lowerBound.column, source: range.lowerBound.source)
-                        let end = SourceLocation(line: docStartLine + range.upperBound.line, column: docStartColumn + range.upperBound.column, source: range.upperBound.source)
-                        let replacementRange = SourceRange(uncheckedBounds: (lower: start, upper: end))
-                        
                         // Return a warning with a suggested change that replaces the relative link with an absolute one.
                         return Problem(diagnostic: Diagnostic(source: source,
                             severity: .warning, range: range,
@@ -209,7 +235,7 @@ struct ReferenceResolver: SemanticVisitor {
                             summary: "This documentation block is inherited by other symbols where \(unresolved.topicURL.absoluteString.singleQuoted) fails to resolve."),
                             possibleSolutions: [
                                 Solution(summary: "Use an absolute link path.", replacements: [
-                                    Replacement(range: replacementRange, replacement: "<doc:\(resolved.path)>")
+                                    Replacement(range: range, replacement: "<doc:\(resolved.path)>")
                                 ])
                             ])
                     default: break
@@ -345,7 +371,7 @@ struct ReferenceResolver: SemanticVisitor {
             visitMarkupContainer($0) as? MarkupContainer
         }
         // If there's a call to action with a local-file reference, change its context to `download`
-        if let downloadFile = article.metadata?.callToAction?.file,
+        if let downloadFile = article.metadata?.callToAction?.resolveFile(for: bundle, in: context, problems: &problems),
             var resolvedDownload = context.resolveAsset(named: downloadFile.path, in: bundle.rootReference) {
             resolvedDownload.context = .download
             context.updateAsset(named: downloadFile.path, asset: resolvedDownload, in: bundle.rootReference)
@@ -421,6 +447,32 @@ struct ReferenceResolver: SemanticVisitor {
             }
             return ParametersSection(parameters: parameters)
         }
+        let newDictionaryKeysVariants = symbol.dictionaryKeysSectionVariants.map { dictionaryKeysSection -> DictionaryKeysSection in
+            let keys = dictionaryKeysSection.dictionaryKeys.map {
+                DictionaryKey(name: $0.name, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol, required: $0.required)
+            }
+            return DictionaryKeysSection(dictionaryKeys: keys)
+        }
+        let newHTTPEndpointVariants = symbol.httpEndpointSectionVariants.map { httpEndpointSection -> HTTPEndpointSection in
+            return HTTPEndpointSection(endpoint: httpEndpointSection.endpoint)
+        }
+        let newHTTPBodyVariants = symbol.httpBodySectionVariants.map { httpBodySection -> HTTPBodySection in
+            let oldBody = httpBodySection.body
+            let newBody = HTTPBody(mediaType: oldBody.mediaType, contents: oldBody.contents.map { visitMarkup($0) }, parameters: oldBody.parameters, symbol: oldBody.symbol)
+            return HTTPBodySection(body: newBody)
+        }
+        let newHTTPParametersVariants = symbol.httpParametersSectionVariants.map { httpParametersSection -> HTTPParametersSection in
+            let parameters = httpParametersSection.parameters.map {
+                HTTPParameter(name: $0.name, source: $0.source, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol, required: $0.required)
+            }
+            return HTTPParametersSection(parameters: parameters)
+        }
+        let newHTTPResponsesVariants = symbol.httpResponsesSectionVariants.map { httpResponsesSection -> HTTPResponsesSection in
+            let responses = httpResponsesSection.responses.map {
+                HTTPResponse(statusCode: $0.statusCode, reason: $0.reason, mediaType: $0.mediaType, contents: $0.contents.map { visitMarkup($0) }, symbol: $0.symbol)
+            }
+            return HTTPResponsesSection(responses: responses)
+        }
         
         // It's important to carry over aggregate data like the merged declarations
         // or the merged default implementations to the new `Symbol` instance.
@@ -449,6 +501,11 @@ struct ReferenceResolver: SemanticVisitor {
             seeAlsoVariants: newSeeAlsoVariants,
             returnsSectionVariants: newReturnsVariants,
             parametersSectionVariants: newParametersVariants,
+            dictionaryKeysSectionVariants: newDictionaryKeysVariants,
+            httpEndpointSectionVariants: newHTTPEndpointVariants,
+            httpBodySectionVariants: newHTTPBodyVariants,
+            httpParametersSectionVariants: newHTTPParametersVariants,
+            httpResponsesSectionVariants: newHTTPResponsesVariants,
             redirectsVariants: symbol.redirectsVariants,
             crossImportOverlayModule: symbol.crossImportOverlayModule,
             originVariants: symbol.originVariants,

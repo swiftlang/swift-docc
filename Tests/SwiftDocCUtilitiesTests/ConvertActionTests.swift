@@ -31,6 +31,10 @@ class ConvertActionTests: XCTestCase {
         withExtension: "symbols.json",
         subdirectory: "Test Resources"
     )!
+
+    let projectZipFile = Bundle.module.url(
+        forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        .appendingPathComponent("project.zip")
     
     /// A symbol graph file that has missing symbols.
     let incompleteSymbolGraphFile = TextFile(name: "TechnologyX.symbols.json", utf8Content: """
@@ -1157,6 +1161,132 @@ class ConvertActionTests: XCTestCase {
             return
         }
         XCTAssertEqual(resultAssets.images.map({ $0.identifier.identifier }).sorted(), images.map({ $0.identifier.identifier }).sorted())
+    }
+
+    func testDownloadMetadataIsWritenToOutputFolder() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            CopyOfFile(original: projectZipFile),
+            CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
+
+            TextFile(name: "MyTechnology.tutorial", utf8Content: """
+            @Tutorial(time: 10, projectFiles: project.zip) {
+              @Intro(title: "TechologyX") {}
+
+              @Section(title: "Section") {
+                @Steps {}
+              }
+
+              @Assessments {
+                @MultipleChoice {
+                  text
+                  @Choice(isCorrect: true) {
+                    text
+                    @Justification(reaction: "reaction text") {}
+                  }
+
+                  @Choice(isCorrect: false) {
+                    text
+                    @Justification(reaction: "reaction text") {}
+                  }
+                }
+              }
+            }
+            """),
+
+            TextFile(name: "TechnologyX.tutorial", utf8Content: """
+            @Tutorials(name: TechnologyX) {
+               @Intro(title: "Technology X") {
+                  Learn about some stuff in Technology X.
+               }
+
+               @Volume(name: "Volume 1") {
+                  This volume contains Chapter 1.
+
+                  @Image(source: referenced-tutorials-image.png, alt: "Some alt text")
+
+                  @Chapter(name: "Chapter 1") {
+                     In this chapter, you'll learn about Tutorial 1.
+
+                     @Image(source: referenced-tutorials-image.png, alt: "Some alt text")
+                     @TutorialReference(tutorial: "doc:MyTechnology")
+                  }
+               }
+            }
+            """),
+
+            TextFile(name: "MySample.md", utf8Content: """
+            # My Sample
+
+            @Metadata {
+                @CallToAction(url: "https://example.com/sample.zip", purpose: download)
+            }
+
+            This is a page with a download button.
+            """),
+
+            TextFile(name: "TestBundle.md", utf8Content: """
+            # ``TestBundle``
+
+            This is a test.
+
+            ## Topics
+
+            ### Pages
+
+            - <doc:TechnologyX>
+            - <doc:MySample>
+            """),
+
+            // A symbol graph
+            CopyOfFile(original: Bundle.module.url(forResource: "TopLevelCuration.symbols", withExtension: "json", subdirectory: "Test Resources")!),
+
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+        ])
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: true,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
+        let result = try action.perform(logHandle: .standardOutput)
+
+        func contentsOfJSONFile<Result: Decodable>(url: URL) -> Result? {
+            guard let data = testDataProvider.contents(atPath: url.path) else {
+                return nil
+            }
+            return try? JSONDecoder().decode(Result.self, from: data)
+        }
+
+        // Verify downloads
+        guard let resultAssets: Digest.Assets = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("assets.json")) else {
+            XCTFail("Can't find assets.json in output")
+            return
+        }
+        XCTAssertEqual(resultAssets.downloads.count, 1)
+
+        XCTAssert(resultAssets.downloads.contains(where: {
+            $0.identifier.identifier == "project.zip"
+        }))
+
+        guard let externalAssets: Digest.ExternalAssets = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("external-assets.json")) else {
+            XCTFail("Can't find external-assets.json in output")
+            return
+        }
+        XCTAssertEqual(externalAssets.externalLocations.count, 1)
+
+        XCTAssert(externalAssets.externalLocations.contains(where: {
+            $0.identifier.identifier == "https://example.com/sample.zip"
+        }))
     }
 
     func testMetadataIsWrittenToOutputFolder() throws {
@@ -2815,10 +2945,10 @@ class ConvertActionTests: XCTestCase {
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {
         return problems.sorted(by: { (lhs, rhs) -> Bool in
             guard lhs.diagnostic.identifier != rhs.diagnostic.identifier else {
-                return lhs.diagnostic.localizedSummary < rhs.diagnostic.localizedSummary
+                return lhs.diagnostic.summary < rhs.diagnostic.summary
             }
             return lhs.diagnostic.identifier < rhs.diagnostic.identifier
-        }) .map { $0.diagnostic.localizedDescription }.sorted().joined(separator: "\n")
+        }) .map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }.sorted().joined(separator: "\n")
     }
     
     #endif

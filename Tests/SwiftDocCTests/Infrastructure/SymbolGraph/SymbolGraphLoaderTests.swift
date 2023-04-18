@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -179,7 +179,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             // to simulate the loading order we want to test.
             let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "faux@MyKit.symbols.json", catalystSymbolGraphName: "MyKit.symbols.json")
 
-            guard let availability = (context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
+            guard let availability = (context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
                 return
             }
@@ -199,7 +199,7 @@ class SymbolGraphLoaderTests: XCTestCase {
             // to simulate the loading order we want to test.
             let (_, _, context) = try testBundleCopy(iOSSymbolGraphName: "MyKit.symbols.json", catalystSymbolGraphName: "faux@MyKit.symbols.json")
             
-            guard let availability = (context.symbolIndex["s:5MyKit0A5ClassC"]?.semantic as? Symbol)?.availability?.availability else {
+            guard let availability = (context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC")?.semantic as? Symbol)?.availability?.availability else {
                 XCTFail("Did not find availability for symbol 's:5MyKit0A5ClassC'")
                 return
             }
@@ -454,9 +454,63 @@ class SymbolGraphLoaderTests: XCTestCase {
         }
     }
     
+    func testConfiguresSymbolGraphs() throws {
+        let tempURL = try createTemporaryDirectory()
+        
+        let symbol = """
+        {
+            "kind": {
+                "identifier": "swift.extension",
+                "displayName": "Extension"
+            },
+            "identifier": {
+                "precise": "s:e:s:EBFfunction",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "EBF"
+            ],
+            "names": {
+                "title": "EBF",
+            },
+            "swiftExtension": {
+                "extendedModule": "A",
+                "typeKind": "struct"
+            },
+            "accessLevel": "public"
+        }
+        """
+        
+        let symbolGraphString = makeSymbolGraphString(moduleName: "MyModule", symbols: symbol)
+        
+        let symbolGraphURL = tempURL.appendingPathComponent("MyModule.symbols.json")
+        
+        try symbolGraphString.write(to: symbolGraphURL, atomically: true, encoding: .utf8)
+        
+        var loader = try makeSymbolGraphLoader(
+            symbolGraphURLs: [symbolGraphURL],
+            configureSymbolGraph: { symbolGraph in
+                symbolGraph.metadata.formatVersion = .init(major: 9, minor: 9, patch: 9)
+            }
+        )
+        XCTAssertTrue(loader.unifiedGraphs.isEmpty)
+        
+        try loader.loadAll()
+        
+        XCTAssertEqual(
+            loader.unifiedGraphs.first?.value
+                .metadata.first?.value
+                .formatVersion.description,
+            "9.9.9"
+        )
+    }
+    
     // MARK: - Helpers
     
-    private func makeSymbolGraphLoader(symbolGraphURLs: [URL]) throws -> SymbolGraphLoader {
+    private func makeSymbolGraphLoader(
+        symbolGraphURLs: [URL],
+        configureSymbolGraph: ((inout SymbolGraph) -> ())? = nil
+    ) throws -> SymbolGraphLoader {
         let workspace = DocumentationWorkspace()
         let bundle = DocumentationBundle(
             info: DocumentationBundle.Info(
@@ -471,6 +525,10 @@ class SymbolGraphLoaderTests: XCTestCase {
         )
         try workspace.registerProvider(PrebuiltLocalFileSystemDataProvider(bundles: [bundle]))
         
-        return SymbolGraphLoader(bundle: bundle, dataProvider: workspace)
+        return SymbolGraphLoader(
+            bundle: bundle,
+            dataProvider: workspace,
+            configureSymbolGraph: configureSymbolGraph
+        )
     }
 }

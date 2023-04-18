@@ -13,7 +13,7 @@ import Foundation
 public extension RenderNode {
     /// All image, video, file, and download references of this node, grouped by their type.
     var assetReferences: [RenderReferenceType: [RenderReference]] {
-        let assetTypes = [RenderReferenceType.image, .video, .file, .download]
+        let assetTypes = [RenderReferenceType.image, .video, .file, .download, .externalLocation]
         return .init(grouping: references.values.lazy.filter({ assetTypes.contains($0.type) }), by: { $0.type })
     }    
 }

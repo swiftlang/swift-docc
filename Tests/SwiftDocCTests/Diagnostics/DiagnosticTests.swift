@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,13 +22,13 @@ class DiagnosticTests: XCTestCase {
     func testLocalizedSummary() {
         let expectedDump = "This is a test diagnostic"
 
-        XCTAssertEqual(expectedDump, basicDiagnostic.localizedSummary)
+        XCTAssertEqual(expectedDump, basicDiagnostic.summary)
     }
 
     func testLocalizedExplanation() {
-        XCTAssertNil(nonexistentDiagnostic.localizedExplanation)
-        guard let explanation = basicDiagnostic.localizedExplanation else {
-            XCTFail("basicDiagnostic.localizedExplanation was nil.")
+        XCTAssertNil(nonexistentDiagnostic.explanation)
+        guard let explanation = basicDiagnostic.explanation else {
+            XCTFail("basicDiagnostic.explanation was nil.")
             return
         }
         let expectedDump = """
@@ -66,7 +66,7 @@ class DiagnosticTests: XCTestCase {
         let range = SourceLocation(line: 1, column: 1, source: URL(fileURLWithPath: path))..<SourceLocation(line: 2, column: 2, source: URL(fileURLWithPath: path))
         let diagnostic = Diagnostic(source: URL(fileURLWithPath: path), severity: .error, range: range, identifier: "org.swift.docc.test.Diagnostic.localizedDescription", summary: "This is a test diagnostic")
         let expectedDescription = "\(path):1:1: error: This is a test diagnostic"
-        XCTAssertEqual(expectedDescription, diagnostic.localizedDescription)
+        XCTAssertEqual(expectedDescription, DiagnosticConsoleWriter.formattedDescription(for: diagnostic))
     }
     
     /// Test that the file path is printed even when range is nil, indicating a whole-file diagnostic or a diagnostic where the range is unknown.
@@ -74,7 +74,7 @@ class DiagnosticTests: XCTestCase {
         let path = "/tmp/foo.md"
         let diagnostic = Diagnostic(source: URL(fileURLWithPath: path), severity: .error, range: nil, identifier: "org.swift.docc.test.Diagnostic.localizedDescription", summary: "This is a test diagnostic")
         let expectedDescription = "\(path): error: This is a test diagnostic"
-        XCTAssertEqual(expectedDescription, diagnostic.localizedDescription)
+        XCTAssertEqual(expectedDescription, DiagnosticConsoleWriter.formattedDescription(for: diagnostic))
     }
     
     /// Test offsetting diagnostic ranges
@@ -89,14 +89,24 @@ class DiagnosticTests: XCTestCase {
         // Resolve references
         _ = resolver.visitMarkup(markup)
         
-        XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 8, source: nil)..<SourceLocation(line: 1, column: 21, source: nil))
-        
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 10, source: nil)..<SourceLocation(line: 1, column: 19, source: nil))
+        } else {
+            XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 8, source: nil)..<SourceLocation(line: 1, column: 21, source: nil))
+        }
         let offset = SymbolGraph.LineList.SourceRange(start: .init(line: 10, character: 10), end: .init(line: 10, character: 20))
         
-        XCTAssertEqual((resolver.problems.first?.diagnostic)?.offsetedWithRange(offset).range, SourceLocation(line: 11, column: 18, source: nil)..<SourceLocation(line: 11, column: 31, source: nil))
+        var problem = try XCTUnwrap(resolver.problems.first)
+        problem.offsetWithRange(offset)
+        
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 20, source: nil)..<SourceLocation(line: 11, column: 29, source: nil))
+        } else {
+            XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 18, source: nil)..<SourceLocation(line: 11, column: 31, source: nil))
+        }
     }
 
-    func testLocalizedDescription() {
+    func testFormattedDescription() {
         let source = URL(string: "/path/to/file.md")!
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
         let identifier = "org.swift.docc.test-identifier"
@@ -105,16 +115,16 @@ class DiagnosticTests: XCTestCase {
         let expectedLocation = "/path/to/file.md:1:8"
 
         let error = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        XCTAssertEqual(error.localizedDescription, "\(expectedLocation): error: \(summary)\n\(explanation)")
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: error), "\(expectedLocation): error: \(summary)\n\(explanation)")
 
         let warning = Diagnostic(source: source, severity: .warning, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        XCTAssertEqual(warning.localizedDescription, "\(expectedLocation): warning: \(summary)\n\(explanation)")
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: warning), "\(expectedLocation): warning: \(summary)\n\(explanation)")
 
         let note = Diagnostic(source: source, severity: .information, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        XCTAssertEqual(note.localizedDescription, "\(expectedLocation): note: \(summary)\n\(explanation)")
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: note), "\(expectedLocation): note: \(summary)\n\(explanation)")
 
         let notice = Diagnostic(source: source, severity: .hint, range: range, identifier: identifier, summary: summary, explanation: explanation)
-        XCTAssertEqual(notice.localizedDescription, "\(expectedLocation): notice: \(summary)\n\(explanation)")
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: notice), "\(expectedLocation): notice: \(summary)\n\(explanation)")
     }
 
     func testLocalizedDescriptionWithNote() {
@@ -135,7 +145,7 @@ class DiagnosticTests: XCTestCase {
         let expectedNoteLocation = "/a/file/path.md:1:1"
 
         let diagnostic = Diagnostic(source: source, severity: .error, range: range, identifier: identifier, summary: summary, explanation: explanation, notes: [note])
-        XCTAssertEqual(diagnostic.localizedDescription, """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: diagnostic), """
         \(expectedLocation): error: \(summary)
         \(explanation)
         \(expectedNoteLocation): note: The message of the note.

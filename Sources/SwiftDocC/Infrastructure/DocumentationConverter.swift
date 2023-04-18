@@ -381,6 +381,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
 
         context.linkResolutionMismatches.reportGatheredMismatchesIfEnabled()
         
+        diagnosticEngine.finalize()
+        
         return (analysisProblems: context.problems, conversionProblems: conversionProblems)
     }
     

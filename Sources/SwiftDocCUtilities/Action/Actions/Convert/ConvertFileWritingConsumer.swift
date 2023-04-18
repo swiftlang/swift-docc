@@ -161,6 +161,14 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         let assetsURL = targetFolder.appendingPathComponent("assets.json", isDirectory: false)
         let data = try encode(digest)
         try fileManager.createFile(at: assetsURL, contents: data)
+
+        let externalAssetsDigest = Digest.ExternalAssets(
+            externalLocations: (uniqueAssets[.externalLocation] as? [ExternalLocationReference]) ?? []
+        )
+
+        let externalAssetsURL = targetFolder.appendingPathComponent("external-assets.json", isDirectory: false)
+        let externalAssetsData = try encode(externalAssetsDigest)
+        try fileManager.createFile(at: externalAssetsURL, contents: externalAssetsData)
     }
     
     func consume(benchmarks: Benchmark) throws {
@@ -217,6 +225,10 @@ enum Digest {
         let videos: [VideoReference]
         let downloads: [DownloadReference]
     }
+
+    struct ExternalAssets: Codable {
+        let externalLocations: [ExternalLocationReference]
+    }
     
     struct Diagnostic: Codable {
         struct Location: Codable {
@@ -241,8 +253,8 @@ private extension Digest.Diagnostic {
         self.start = (diagnostic.range?.lowerBound).map { Location(line: $0.line, column: $0.column) }
         self.source = rootURL.flatMap { diagnostic.source?.relative(to: $0) }
         self.severity = diagnostic.severity
-        self.summary = diagnostic.localizedSummary
-        self.explanation = diagnostic.localizedExplanation
+        self.summary = diagnostic.summary
+        self.explanation = diagnostic.explanation
         self.notes = diagnostic.notes.map {
             Note(location: Location(line: $0.range.lowerBound.line, column: $0.range.lowerBound.column), message: $0.message)
         }

@@ -128,7 +128,7 @@ class DocumentationCuratorTests: XCTestCase {
             SourceLocation(line: 12, column: 4, source: moduleCurationProblem?.diagnostic.source)..<SourceLocation(line: 12, column: 13, source: moduleCurationProblem?.diagnostic.source)
         )
         XCTAssertEqual(
-            moduleCurationProblem?.diagnostic.localizedSummary,
+            moduleCurationProblem?.diagnostic.summary,
             "Linking to \'doc://org.swift.docc.example/documentation/MyKit\' from a Topics group in \'doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()\' isn't allowed"
         )
         
@@ -140,7 +140,7 @@ class DocumentationCuratorTests: XCTestCase {
             SourceLocation(line: 13, column: 4, source: moduleCurationProblem?.diagnostic.source)..<SourceLocation(line: 13, column: 20, source: moduleCurationProblem?.diagnostic.source)
         )
         XCTAssertEqual(
-            cyclicReferenceProblem?.diagnostic.localizedSummary,
+            cyclicReferenceProblem?.diagnostic.summary,
             "A symbol can't link to itself from within its Topics group in \'doc://org.swift.docc.example/documentation/MyKit/MyClass/myFunction()\'"
         )
     }

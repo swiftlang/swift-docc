@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -68,6 +68,6 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1)
         guard let first = problems.first else { return }
-        XCTAssertEqual("error: Unknown argument 'baz' in Intro. These arguments are currently unused but allowed: 'bark', 'woof'.", first.diagnostic.localizedDescription)
+        XCTAssertEqual("error: Unknown argument 'baz' in Intro. These arguments are currently unused but allowed: 'bark', 'woof'.", DiagnosticConsoleWriter.formattedDescription(for: first.diagnostic))
     }
 }

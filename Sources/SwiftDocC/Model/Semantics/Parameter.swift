@@ -25,4 +25,12 @@ public struct Parameter {
         self.name = name
         self.contents = contents
     }
+
+    /// Initialize a value to describe documentation about a symbol's parameter via a Doxygen `\param` command.
+    ///
+    /// - Parameter doxygenParameter: A parsed Doxygen `\param` command.
+    public init(_ doxygenParameter: DoxygenParameter) {
+        self.name = doxygenParameter.name
+        self.contents = Array(doxygenParameter.children)
+    }
 }

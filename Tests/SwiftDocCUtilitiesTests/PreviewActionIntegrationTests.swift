@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -285,8 +285,6 @@ class PreviewActionIntegrationTests: XCTestCase {
         let workspace = DocumentationWorkspace()
         _ = try! DocumentationContext(dataProvider: workspace)
 
-        let engine = DiagnosticEngine()
-
         let convertActionTempDirectory = try createTemporaryDirectory()
         let createConvertAction = {
             try ConvertAction(
@@ -298,8 +296,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 emitDigest: false,
                 currentPlatforms: nil,
                 fileManager: FileManager.default,
-                temporaryDirectory: convertActionTempDirectory,
-                diagnosticEngine: engine)
+                temporaryDirectory: convertActionTempDirectory)
         }
         
         guard let preview = try? PreviewAction(
@@ -308,9 +305,17 @@ class PreviewActionIntegrationTests: XCTestCase {
             XCTFail("Could not create preview action from parameters", file: file, line: line)
             return
         }
-
+        defer {
+            do {
+                try preview.stop()
+            } catch {
+                XCTFail("Failed to stop preview server", file: file, line: line)
+            }
+        }
         // Start watching the source and get the initial (successful) state.
         do {
+            let engine = preview.convertAction.diagnosticEngine
+            
             // Wait for watch to produce output.
             let logOutputExpectation = expectation(description: "Did produce log output")
             let logChecker = OutputChecker(fileURL: pipeURL, expectation: logOutputExpectation) { output in
@@ -329,7 +334,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                 
                 XCTAssertTrue(result.didEncounterError, "Did not find an error when running preview", file: file, line: line)
                 XCTAssertNotNil(engine.problems.first(where: { problem -> Bool in
-                    problem.diagnostic.localizedDescription.contains(expectedErrorMessage)
+                    DiagnosticConsoleWriter.formattedDescription(for: problem.diagnostic).contains(expectedErrorMessage)
                 }), "Didn't find expected error message '\(expectedErrorMessage)'", file: file, line: line)
 
                 // Verify that the failed server is not added to the server list
@@ -342,7 +347,6 @@ class PreviewActionIntegrationTests: XCTestCase {
             wait(for: [logOutputExpectation, erroredExpectation], timeout: 20.0)
             logTimer.invalidate()
         }
-        try preview.stop()
         #endif
     }
 
@@ -468,7 +472,7 @@ class PreviewActionIntegrationTests: XCTestCase {
                     }
                 
                     if !result.problems.isEmpty {
-                        print(result.problems.localizedDescription, to: &logHandle)
+                        print(DiagnosticConsoleWriter.formattedDescription(for: result.problems), to: &logHandle)
                     }
                 } catch {
                     XCTFail(error.localizedDescription)

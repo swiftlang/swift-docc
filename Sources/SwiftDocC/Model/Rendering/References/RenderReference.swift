@@ -26,7 +26,7 @@ public protocol RenderReference: Codable {
 
 /// The type of a reference.
 public enum RenderReferenceType: String, Codable, Equatable {
-    case image, video, file, fileType, xcodeRequirement, topic, section, download, link
+    case image, video, file, fileType, xcodeRequirement, topic, section, download, link, externalLocation
     case unresolvable
 }
 

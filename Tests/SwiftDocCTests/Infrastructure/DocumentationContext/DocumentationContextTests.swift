@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -649,7 +649,7 @@ class DocumentationContextTests: XCTestCase {
 
         XCTAssertEqual(problemWithDuplicate.count, 1)
 
-        let localizedSummary = try XCTUnwrap(problemWithDuplicate.first?.diagnostic.localizedSummary)
+        let localizedSummary = try XCTUnwrap(problemWithDuplicate.first?.diagnostic.summary)
         XCTAssertEqual(localizedSummary, "Redeclaration of 'TestTutorial.tutorial'; this file will be skipped")
 
     }
@@ -661,10 +661,10 @@ class DocumentationContextTests: XCTestCase {
 
         XCTAssertEqual(problemWithDuplicateReference.count, 2)
 
-        let localizedSummary = try XCTUnwrap(problemWithDuplicateReference.first?.diagnostic.localizedSummary)
+        let localizedSummary = try XCTUnwrap(problemWithDuplicateReference.first?.diagnostic.summary)
         XCTAssertEqual(localizedSummary, "Redeclaration of \'overview.md\'; this file will be skipped")
 
-        let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.localizedSummary)
+        let localizedSummarySecond = try XCTUnwrap(problemWithDuplicateReference[1].diagnostic.summary)
         XCTAssertEqual(localizedSummarySecond, "Redeclaration of \'overview.md\'; this file will be skipped")
     }
 
@@ -749,7 +749,7 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertFalse(context.symbolIndex.isEmpty)
         
         // MyClass is loaded
-        guard let myClass = context.symbolIndex["s:5MyKit0A5ClassC"] else {
+        guard let myClass = context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC") else {
             XCTFail("`MyClass` not found in symbol graph")
             return
         }
@@ -820,7 +820,7 @@ class DocumentationContextTests: XCTestCase {
         //
         
         // MyProtocol is loaded
-        guard let myProtocol = context.symbolIndex["s:5MyKit0A5ProtocolP"],
+        guard let myProtocol = context.nodeWithSymbolIdentifier("s:5MyKit0A5ProtocolP"),
             let myProtocolSymbol = myProtocol.semantic as? Symbol else {
             XCTFail("`MyProtocol` not found in symbol graph")
             return
@@ -995,7 +995,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // MyClass is loaded
-        guard let myClass = context.symbolIndex["s:5MyKit0A5ClassC"],
+        guard let myClass = context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC"),
             let myClassSymbol = myClass.semantic as? Symbol else {
             XCTFail("`MyClass` not found in symbol graph")
             return
@@ -1092,7 +1092,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // SideClass is loaded
-        guard let sideClass = context.symbolIndex["s:7SideKit0A5ClassC"],
+        guard let sideClass = context.nodeWithSymbolIdentifier("s:7SideKit0A5ClassC"),
             let sideClassSymbol = sideClass.semantic as? Symbol else {
             XCTFail("`SideClass` not found in symbol graph")
             return
@@ -1129,7 +1129,7 @@ class DocumentationContextTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // MyClass is loaded
-        guard let myClass = context.symbolIndex["s:5MyKit0A5ClassC"],
+        guard let myClass = context.nodeWithSymbolIdentifier("s:5MyKit0A5ClassC"),
             let myClassSymbol = myClass.semantic as? Symbol else {
             XCTFail("`MyClass` not found in symbol graph")
             return
@@ -1172,12 +1172,12 @@ class DocumentationContextTests: XCTestCase {
         XCTAssertNotNil(context.problems
             .map { $0.diagnostic }
             .filter { $0.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
-                && $0.localizedSummary.contains("'/mykit'") }
+                && $0.summary.contains("'/mykit'") }
         )
         XCTAssertNotNil(context.problems
             .map { $0.diagnostic }
             .filter { $0.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
-                && $0.localizedSummary.contains("'/myprotocol'") }
+                && $0.summary.contains("'/myprotocol'") }
         )
     }
     
@@ -1667,6 +1667,162 @@ let expected = """
         XCTAssertEqual(node.kind, .unknown)
     }
     
+    func testSpecialCharactersInLinks() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let originalSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!.appendingPathComponent("mykit-iOS.symbols.json")
+        
+        let testBundle = Folder(name: "special-characters.docc", content: [
+            try TextFile(name: "mykit.symbols.json", utf8Content: String(contentsOf: originalSymbolGraph).replacingOccurrences(of: "myFunction", with: "myFunc🙂")),
+            
+            TextFile(name: "article-with-emoji-in-heading.md", utf8Content: """
+            # Article with emoji in heading
+            
+            Abstract
+            
+            ### Hello 🌍
+            """),
+            
+            TextFile(name: "article-with-😃-in-filename.md", utf8Content: """
+            # Article with 😃 emoji in file name
+            
+            Abstract
+            
+            ### Hello world
+            """),
+            
+            TextFile(name: "MyKit.md", utf8Content: """
+            # ``MyKit``
+            
+            Test linking to articles, symbols, and headings with special characters;
+            
+            - ``MyClass/myFunc🙂()``
+            - <doc:article-with-emoji-in-heading#Hello-🌍>
+            - <doc:article-with-😃-in-filename>
+            - <doc:article-with-😃-in-filename#Hello-world>
+            
+            Now test the same links in topic curation.
+            
+            ## Topics
+            
+            - ``MyClass/myFunc🙂()``
+            - <doc:article-with-emoji-in-heading#Hello-🌍>
+            - <doc:article-with-😃-in-filename>
+            - <doc:article-with-😃-in-filename#Hello-world>
+            """),
+        ])
+        let bundleURL = try testBundle.write(inside: createTemporaryDirectory())
+        let (_, bundle, context) = try loadBundle(from: bundleURL)
+
+        let problems = context.problems
+        XCTAssertEqual(problems.count, 0, "Unexpected problems: \(problems.map(\.diagnostic.summary).sorted())")
+        
+        let moduleReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MyKit", sourceLanguage: .swift)
+        let entity = try context.entity(with: moduleReference)
+        
+        let moduleSymbol = try XCTUnwrap(entity.semantic as? Symbol)
+        let topicSection = try XCTUnwrap(moduleSymbol.topics?.taskGroups.first)
+        
+        // Verify that all the links in the topic section resolved
+        XCTAssertEqual(topicSection.links.map(\.destination), [
+            "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
+            "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D",
+            "doc://special-characters/documentation/special-characters/article-with---in-filename",
+            "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world",
+        ])
+        
+        // Verify that all resolved link exist in the context.
+        for reference in topicSection.links {
+            XCTAssertNotNil(reference.destination)
+            XCTAssert(context.knownPages.contains(where: { $0.absoluteString == reference.destination })
+                   || context.nodeAnchorSections.keys.contains(where: { $0.absoluteString == reference.destination })
+            )
+        }
+        
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: moduleReference, source: nil)
+        let renderNode = translator.visit(moduleSymbol) as! RenderNode
+        
+        // Verify that the resolved links rendered as links
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 4)
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
+            "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
+            "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D",
+            "doc://special-characters/documentation/special-characters/article-with---in-filename",
+            "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world",
+        ])
+        
+        
+        let contentSection = try XCTUnwrap(renderNode.primaryContentSections.first as? ContentRenderSection)
+        let lists: [RenderBlockContent.UnorderedList] = contentSection.content.compactMap({ (content: RenderBlockContent) -> RenderBlockContent.UnorderedList? in
+            if case let .unorderedList(list) = content {
+                return list
+            } else {
+                return nil
+            }
+        })
+        
+        XCTAssertEqual(lists.count, 1)
+        let list = try XCTUnwrap(lists.first)
+        XCTAssertEqual(list.items.count, 4, "Unexpected list items: \(list.items.map(\.content))")
+        
+        func withContentAsReference(_ listItem: RenderBlockContent.ListItem?, verify: (RenderReferenceIdentifier, Bool, String?, [RenderInlineContent]?) -> Void) {
+            guard let listItem = listItem else {
+                XCTFail("Missing list item")
+                return
+            }
+            if case let .paragraph(paragraph) = listItem.content.first,
+               case let .reference(identifier, isActive, overridingTitle, overridingTitleInlineContent) = paragraph.inlineContent.first {
+                verify(identifier, isActive, overridingTitle, overridingTitleInlineContent)
+            } else {
+                XCTFail("Unexpected list item kind: \(listItem.content)")
+            }
+        }
+        
+        // First
+        withContentAsReference(list.items.first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/MyKit/MyClass/myFunc_()")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        withContentAsReference(list.items.dropFirst().first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        withContentAsReference(list.items.dropFirst(2).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/article-with---in-filename")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        withContentAsReference(list.items.dropFirst(3).first) { identifier, isActive, overridingTitle, overridingTitleInlineContent in
+            XCTAssertEqual(identifier.identifier, "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world")
+            XCTAssertEqual(isActive, true)
+            XCTAssertEqual(overridingTitle, nil)
+            XCTAssertEqual(overridingTitleInlineContent, nil)
+        }
+        
+        // Verify that the topic render references have titles with special characters when the original content contained special characters
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/MyKit/MyClass/myFunc_()"] as? TopicRenderReference)?.title,
+            "myFunc🙂()"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D"] as? TopicRenderReference)?.title,
+            "Hello 🌍"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/article-with---in-filename"] as? TopicRenderReference)?.title,
+            "Article with 😃 emoji in file name"
+        )
+        XCTAssertEqual(
+            (renderNode.references["doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world"] as? TopicRenderReference)?.title,
+            "Hello world"
+        )
+    }
+    
     func testNonOverloadCollisionFromExtension() throws {
         // Add some symbol collisions to graph
         let (_, _, context) = try testBundleAndContext(copying: "TestBundle", excludingPaths: ["mykit-iOS.symbols.json"]) { root in
@@ -1760,7 +1916,7 @@ let expected = """
         if let unmatchedSidecarDiagnostic = unmatchedSidecarProblem?.diagnostic {
             XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
             XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem?.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem?.diagnostic.source))
-            XCTAssertEqual(unmatchedSidecarDiagnostic.localizedSummary, "No symbol matched 'MyKit/UnknownSymbol'. This documentation will be ignored.")
+            XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. This documentation will be ignored.")
             XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .information)
             
             XCTAssertEqual(unmatchedSidecarDiagnostic.notes.count, 1)
@@ -1791,7 +1947,7 @@ let expected = """
         let curationDiagnostics =  context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.ArticleUncurated" }).map(\.diagnostic)
         let sidecarDiagnostic = try XCTUnwrap(curationDiagnostics.first(where: { $0.source?.standardizedFileURL == unknownSymbolSidecarURL.standardizedFileURL }))
         XCTAssertNil(sidecarDiagnostic.range)
-        XCTAssertEqual(sidecarDiagnostic.localizedSummary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Bundle/UncuratedArticle'")
+        XCTAssertEqual(sidecarDiagnostic.summary, "You haven't curated 'doc://org.swift.docc.example/documentation/Test-Bundle/UncuratedArticle'")
         XCTAssertEqual(sidecarDiagnostic.severity, .information)
     }
     
@@ -1933,12 +2089,12 @@ let expected = """
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path", sourceLanguage: .swift)))
         
         // Verify that the symbol index has been updated with the rewritten collision-corrected symbol paths
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testEE"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum")
-        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10tEstPP"]?.reference.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testnEE"]?.path, "/documentation/SideKit/SideClass/Test-swift.enum/nestedEnum-swift.property")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10testEE"]?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum")
+        XCTAssertEqual(context.symbolIndex["s:7SideKit0A5ClassC10tEstPP"]?.path, "/documentation/SideKit/SideClass/Test-swift.enum/NestedEnum-swift.enum/path")
         
-        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()"]?.reference.path, "/documentation/SideKit/SideProtocol/func()-6ijsi")
-        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()DefaultImp"]?.reference.path, "/documentation/SideKit/SideProtocol/func()-2dxqn")
+        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()"]?.path, "/documentation/SideKit/SideProtocol/func()-6ijsi")
+        XCTAssertEqual(context.symbolIndex["s:5MyKit0A5MyProtocol0Afunc()DefaultImp"]?.path, "/documentation/SideKit/SideProtocol/func()-2dxqn")
     }
 
     func testResolvingArticleLinkBeforeCuratingIt() throws {
@@ -2157,10 +2313,17 @@ let expected = """
             XCTAssert(context.problems.allSatisfy { $0.diagnostic.source?.absoluteString == expectedDiagnosticSource })
             
             // Verify the expected source ranges
-            XCTAssertEqual(
-                context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
-                ["17:96", "18:23", "18:43", "18:60", "18:89"].sorted()
-            )
+            if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+                XCTAssertEqual(
+                    context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
+                    ["17:98", "18:100", "18:25", "18:45", "18:62"].sorted()
+                )
+            } else {
+                XCTAssertEqual(
+                    context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
+                    ["17:96", "18:23", "18:43", "18:60", "18:89"].sorted()
+                )
+            }
         }
     }
     
@@ -2388,10 +2551,17 @@ let expected = """
         let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("myFunction.md") == true }
         XCTAssertEqual(linkResolutionProblems.count, 1)
         let problem = try XCTUnwrap(linkResolutionProblems.first)
-        XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
-        XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 23)
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 28)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 7)
+            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 42)
+        } else {
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
+            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 23)
+        }
 
-        let functionNode = try XCTUnwrap(context.symbolIndex["s:7SideKit0A5ClassC10myFunctionyyF"])
+        let functionNode = try XCTUnwrap(context.nodeWithSymbolIdentifier("s:7SideKit0A5ClassC10myFunctionyyF"))
         XCTAssertEqual(functionNode.docChunks.count, 2)
         let docCommentChunks = functionNode.docChunks.compactMap { chunk -> DocumentationNode.DocumentationChunk? in
             switch chunk.source {
@@ -2573,7 +2743,7 @@ let expected = """
         let identifier = "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
         let duplicateMarkdownProblems = context.problems.filter({ $0.diagnostic.identifier == identifier })
         XCTAssertEqual(duplicateMarkdownProblems.count, 2)
-        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.localizedSummary, "Multiple occurrences of \'/documentation/MyKit/MyClass/myFunction()\' found")
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.summary, "Multiple occurrences of \'/documentation/MyKit/MyClass/myFunction()\' found")
     }
     
     /// This test verifies that collision nodes and children of collision nodes are correctly
@@ -3001,7 +3171,7 @@ let expected = """
             let unresolved = TopicReference.unresolved(.init(topicURL: try XCTUnwrap(ValidatedURL(parsingExact: "doc:Test"))))
             let expected = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Test-Bundle/Test", sourceLanguage: .swift)
             
-            let symbolReference = try XCTUnwrap(context.symbolIndex["s:12Minimal_docs4TestV"]?.reference)
+            let symbolReference = try XCTUnwrap(context.symbolIndex["s:12Minimal_docs4TestV"])
             
             // Resolve from various locations in the bundle
             for parent in [bundle.rootReference, bundle.documentationRootReference, bundle.tutorialsRootReference, symbolReference] {
@@ -3197,7 +3367,7 @@ let expected = """
         let (bundle, context) = try testBundleAndContext(named: "BundleWithExecutableModuleKind")
         XCTAssertEqual(bundle.info.defaultModuleKind, "Executable")
         
-        let moduleSymbol = try XCTUnwrap(context.symbolIndex["ExampleDocumentedExecutable"]?.symbol)
+        let moduleSymbol = try XCTUnwrap(context.nodeWithSymbolIdentifier("ExampleDocumentedExecutable")?.symbol)
         XCTAssertEqual(moduleSymbol.kind.identifier.identifier, "module")
         XCTAssertEqual(moduleSymbol.kind.displayName, "Executable")
     }
@@ -3266,8 +3436,8 @@ let expected = """
         )
         
         let symbolsInSymbolIndex = Set(
-            context.symbolIndex.values.compactMap { node -> ObjectIdentifier? in
-                guard let symbol = node.semantic as? Symbol else {
+            context.symbolIndex.values.compactMap { reference -> ObjectIdentifier? in
+                guard let symbol = context.documentationCache[reference]?.semantic as? Symbol else {
                     XCTFail("Node in symbolIndex doesn't have a symbol.")
                     return nil
                 }
@@ -3280,6 +3450,25 @@ let expected = """
             symbolsInSymbolIndex,
             "Expected the symbol instances in the documentationCache and symbolIndex dictionaries to be the same"
         )
+    }
+    
+    func testAllReferencesInSymbolsIndexExistInDocumentationCache() throws {
+        let (_, context) = try testBundleAndContext(named: "TestBundle")
+        
+        let referencesInSymbolIndex = Set(context.symbolIndex.values)
+        let referencesInDocumentationCache = Set(context.documentationCache.keys)
+        
+        let extraReferencesInSymbolIndex = referencesInSymbolIndex.subtracting(referencesInDocumentationCache)
+        XCTAssert(extraReferencesInSymbolIndex.isEmpty, "Some symbols in the symbol index don't exist in the documentation cache: \(extraReferencesInSymbolIndex.map(\.path).sorted())")
+
+        
+        var referencesToSymbolsInDocumentationCache = Set<ResolvedTopicReference>()
+        for (reference, node) in context.documentationCache where node.semantic is Symbol {
+            referencesToSymbolsInDocumentationCache.insert(reference)
+        }
+            
+        let missingReferencesInSymbolIndex = referencesToSymbolsInDocumentationCache.subtracting(referencesInSymbolIndex)
+        XCTAssert(missingReferencesInSymbolIndex.isEmpty, "Some symbol references in the documentation cache don't exist in the symbol index: \(missingReferencesInSymbolIndex.map(\.path).sorted())")
     }
     
     func testDocumentationExtensionURLForReferenceReturnsURLForSymbolReference() throws {

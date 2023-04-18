@@ -47,7 +47,7 @@ import Foundation
 /// ### General
 ///
 /// - ``schemaVersion``
-/// - ``kind-swift.property``
+/// - ``kind``
 /// - ``sections``
 /// - ``references``
 /// - ``hierarchy``

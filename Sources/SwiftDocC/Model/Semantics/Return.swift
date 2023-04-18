@@ -20,4 +20,11 @@ public struct Return {
     public init(contents: [Markup]) {
         self.contents = contents
     }
+
+    /// Initialize a value to describe documentation about a symbol's return value.
+    ///
+    /// - Parameter doxygenReturns: A parsed Doxygen `\returns` command.
+    public init(_ doxygenReturns: DoxygenReturns) {
+        self.contents = Array(doxygenReturns.children)
+    }
 }

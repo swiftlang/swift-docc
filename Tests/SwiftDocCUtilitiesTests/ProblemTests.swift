@@ -19,6 +19,6 @@ class ProblemTests: XCTestCase {
         let problem = Problem(description: "Lorem ipsum", source: nil)
         XCTAssertNil(problem.diagnostic.source, "Convenience initializer for Problem should not capture source file location")
         XCTAssertEqual(problem.diagnostic.identifier, "org.swift.docc.ProblemTests")
-        XCTAssertEqual(problem.diagnostic.localizedSummary, "Lorem ipsum")
+        XCTAssertEqual(problem.diagnostic.summary, "Lorem ipsum")
     }
 }

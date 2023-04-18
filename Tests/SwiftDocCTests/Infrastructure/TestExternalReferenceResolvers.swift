@@ -136,6 +136,11 @@ class TestMultiResultExternalReferenceResolver: ExternalReferenceResolver, Fallb
                 seeAlsoVariants: .init(swiftVariant: nil),
                 returnsSectionVariants: .init(swiftVariant: nil),
                 parametersSectionVariants: .init(swiftVariant: nil),
+                dictionaryKeysSectionVariants: .init(swiftVariant: nil),
+                httpEndpointSectionVariants: .init(swiftVariant: nil),
+                httpBodySectionVariants: .init(swiftVariant: nil),
+                httpParametersSectionVariants: .init(swiftVariant: nil),
+                httpResponsesSectionVariants: .init(swiftVariant: nil),
                 redirectsVariants: .init(swiftVariant: nil)
             )
         } else {

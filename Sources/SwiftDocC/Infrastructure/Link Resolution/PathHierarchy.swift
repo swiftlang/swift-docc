@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -10,6 +10,7 @@
 
 import Foundation
 import SymbolKit
+import Markdown
 
 /// An opaque identifier that uniquely identifies a resolved entry in the path hierarchy,
 ///
@@ -106,6 +107,9 @@ struct PathHierarchy {
                     nodes[id] = existingNode
                 } else {
                     let node = Node(symbol: symbol)
+                    // Disfavor synthesized symbols when they collide with other symbol with the same path.
+                    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58
+                    node.isDisfavoredInCollision = symbol.identifier.precise.contains("::SYNTHESIZED::")
                     nodes[id] = node
                     allNodes[id, default: []].append(node)
                 }
@@ -134,6 +138,29 @@ struct PathHierarchy {
                 }
             }
             
+            for relationship in graph.relationships where relationship.kind == .defaultImplementationOf {
+                guard let sourceNode = nodes[relationship.source] else {
+                    continue
+                }
+                // Default implementations collide with the protocol requirement that they implement.
+                // Disfavor the default implementation to favor the protocol requirement (or other symbol with the same path).
+                sourceNode.isDisfavoredInCollision = true
+                
+                let targetNodes = nodes[relationship.target].map { [$0] } ?? allNodes[relationship.target] ?? []
+                guard !targetNodes.isEmpty else {
+                    continue
+                }
+                
+                for requirementTarget in targetNodes {
+                    assert(
+                        requirementTarget.parent != nil,
+                        "The 'defaultImplementationOf' symbol should be a 'memberOf' a known protocol symbol but didn't have a parent relationship in the hierarchy."
+                    )
+                    requirementTarget.parent?.add(symbolChild: sourceNode)
+                }
+                topLevelCandidates.removeValue(forKey: relationship.source)
+            }
+            
             // The hierarchy doesn't contain any non-symbol nodes yet. It's OK to unwrap the `symbol` property.
             for topLevelNode in topLevelCandidates.values where topLevelNode.symbol!.pathComponents.count == 1 {
                 moduleNode.add(symbolChild: topLevelNode)
@@ -154,8 +181,13 @@ struct PathHierarchy {
                     components = components.dropFirst()
                 }
                 for component in components {
+                    assert(
+                        parent.children[components.first!] == nil,
+                        "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
+                    )
                     let component = Self.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: component.name)
+                    nodeWithoutSymbol.isDisfavoredInCollision = true
                     parent.add(child: nodeWithoutSymbol, kind: component.kind, hash: component.hash)
                     parent = nodeWithoutSymbol
                 }
@@ -163,6 +195,10 @@ struct PathHierarchy {
             }
         }
         
+        assert(
+            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }),
+            "Every node should either have a parent node or be a root node. This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())"
+        )
         allNodes.removeAll()
         
         // build the lookup list by traversing the hierarchy and adding identifiers to each node
@@ -198,12 +234,15 @@ struct PathHierarchy {
         self.tutorialContainer = newNode(bundleName)
         self.tutorialOverviewContainer = newNode("tutorials")
         
-        assert(lookup.allSatisfy({ $0.key == $0.value.identifier}))
+        assert(
+            lookup.allSatisfy({ $0.key == $0.value.identifier }),
+            "Every node lookup should match a node with that identifier."
+        )
         
         self.modules = roots
         self.lookup = lookup
         
-        assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil}))
+        assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil }))
     }
     
     /// Adds an article to the path hierarchy.
@@ -273,7 +312,7 @@ struct PathHierarchy {
     func find(path rawPath: String, parent: ResolvedIdentifier? = nil, onlyFindSymbols: Bool) throws -> ResolvedIdentifier {
         let node = try findNode(path: rawPath, parent: parent, onlyFindSymbols: onlyFindSymbols)
         if node.identifier == nil {
-            throw Error.unfindableMatch
+            throw Error.unfindableMatch(node)
         }
         if onlyFindSymbols, node.symbol == nil {
             throw Error.nonSymbolMatchForSymbolLink
@@ -286,13 +325,17 @@ struct PathHierarchy {
         // First, parse the path into structured path components.
         let (path, isAbsolute) = Self.parse(path: rawPath)
         guard !path.isEmpty else {
-            throw Error.notFound(availableChildren: [])
+            throw Error.notFound(remaining: [], availableChildren: [])
+        }
+        
+        var parsedPathForError: [PathComponent] {
+            Self.parse(path: rawPath, omittingEmptyComponents: false).components
         }
         
         // Second, find the node to start the search relative to.
         // This may consume or or more path components. See implementation for details.
         var remaining = path[...]
-        var node = try findRoot(parentID: parent, remaining: &remaining, isAbsolute: isAbsolute, onlyFindSymbols: onlyFindSymbols)
+        var node = try findRoot(parentID: parent, parsedPath: parsedPathForError, remaining: &remaining, isAbsolute: isAbsolute, onlyFindSymbols: onlyFindSymbols)
         
         // Third, search for the match relative to the start node.
         if remaining.isEmpty {
@@ -302,16 +345,12 @@ struct PathHierarchy {
         
         // Search for the remaining components from the node
         while true {
-            let (children, pathComponent) = try findChildTree(node: &node, remaining: remaining)
+            let (children, pathComponent) = try findChildTree(node: &node, parsedPath: parsedPathForError, remaining: remaining)
             
             do {
                 guard let child = try children.find(pathComponent.kind, pathComponent.hash) else {
                     // The search has ended with a node that doesn't have a child matching the next path component.
-                    throw Error.partialResult(
-                        partialResult: node,
-                        remainingSubpath: remaining.map(\.full).joined(separator: "/"),
-                        availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
-                    )
+                    throw makePartialResultError(node: node, parsedPath: parsedPathForError, remaining: remaining)
                 }
                 node = child
                 remaining = remaining.dropFirst()
@@ -320,8 +359,8 @@ struct PathHierarchy {
                     return child
                 }
             } catch DisambiguationTree.Error.lookupCollision(let collisions) {
-                func wrappedCollisionError() -> Error {
-                    Error.lookupCollision(partialResult: node, collisions: collisions)
+                func handleWrappedCollision() throws -> Node {
+                    try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
                 }
                 
                 // See if the collision can be resolved by looking ahead on level deeper.
@@ -334,7 +373,7 @@ struct PathHierarchy {
                     for (node, _) in collisions {
                         guard let symbol = node.symbol else {
                             // Non-symbol collisions should have already been resolved
-                            throw wrappedCollisionError()
+                            return try handleWrappedCollision()
                         }
                         
                         let id = symbol.identifier.precise
@@ -344,7 +383,7 @@ struct PathHierarchy {
                         
                         guard uniqueCollisions.count < 2 else {
                             // Encountered more than one unique symbol
-                            throw wrappedCollisionError()
+                            return try handleWrappedCollision()
                         }
                     }
                     // A wrapped error would have been raised while iterating over the collection.
@@ -363,12 +402,59 @@ struct PathHierarchy {
                     return possibleMatches.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
                 }
                 // Couldn't resolve the collision by look ahead.
-                throw Error.lookupCollision(
-                    partialResult: node,
-                    collisions: collisions.map { ($0.node, $0.disambiguation) }
-                )
+                return try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
             }
         }
+    }
+                        
+    private func handleCollision(
+        node: Node,
+        parsedPath: [PathComponent],
+        remaining: ArraySlice<PathComponent>,
+        collisions: [(node: PathHierarchy.Node, disambiguation: String)]
+    ) throws -> Node {
+        let favoredNodes = collisions.filter { $0.node.isDisfavoredInCollision == false }
+        if favoredNodes.count == 1 {
+            return favoredNodes.first!.node
+        }
+        
+        throw Error.lookupCollision(
+            partialResult: (
+                node,
+                Array(parsedPath.dropLast(remaining.count))
+            ),
+            remaining: Array(remaining),
+            collisions: collisions.map { ($0.node, $0.disambiguation) }
+        )
+    }
+    
+    private func makePartialResultError(
+        node: Node,
+        parsedPath: [PathComponent],
+        remaining: ArraySlice<PathComponent>
+    ) -> Error {
+        if let disambiguationTree = node.children[remaining.first!.name] {
+            return Error.unknownDisambiguation(
+                partialResult: (
+                    node,
+                    Array(parsedPath.dropLast(remaining.count))
+                ),
+                remaining: Array(remaining),
+                candidates: disambiguationTree.disambiguatedValues().map {
+                    (node: $0.value, disambiguation: String($0.disambiguation.makeSuffix().dropFirst()))
+                }
+            )
+        }
+        
+        
+        return Error.unknownName(
+            partialResult: (
+                node,
+                Array(parsedPath.dropLast(remaining.count))
+            ),
+            remaining: Array(remaining),
+            availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
+        )
     }
     
     /// Finds the child disambiguation tree for a given node that match the remaining path components.
@@ -376,15 +462,15 @@ struct PathHierarchy {
     ///   - node: The current node.
     ///   - remaining: The remaining path components.
     /// - Returns: The child disambiguation tree and path component.
-    private func findChildTree(node: inout Node, remaining: ArraySlice<PathComponent>) throws -> (DisambiguationTree, PathComponent) {
+    private func findChildTree(node: inout Node, parsedPath: @autoclosure () -> [PathComponent], remaining: ArraySlice<PathComponent>) throws -> (DisambiguationTree, PathComponent) {
         var pathComponent = remaining.first!
-        if let match = node.children[pathComponent.name] {
-            return (match, pathComponent)
-        } else if let match = node.children[pathComponent.full] {
+        if let match = node.children[pathComponent.full] {
             // The path component parsing may treat dash separated words as disambiguation information.
             // If the parsed name didn't match, also try the original.
             pathComponent.kind = nil
             pathComponent.hash = nil
+            return (match, pathComponent)
+        } else if let match = node.children[pathComponent.name] {
             return (match, pathComponent)
         } else {
             if node.name == pathComponent.name || node.name == pathComponent.full, let parent = node.parent {
@@ -405,11 +491,7 @@ struct PathHierarchy {
             }
         }
         // The search has ended with a node that doesn't have a child matching the next path component.
-        throw Error.partialResult(
-            partialResult: node,
-            remainingSubpath: remaining.map(\.full).joined(separator: "/"),
-            availableChildren: node.children.keys.sorted(by: availableChildNameIsBefore)
-        )
+        throw makePartialResultError(node: node, parsedPath: parsedPath(), remaining: remaining)
     }
     
     /// Attempt to find the node to start the relative search relative to.
@@ -420,7 +502,7 @@ struct PathHierarchy {
     ///   - isAbsolute: If the parsed path represent an absolute documentation link.
     ///   - onlyFindSymbols: If symbol results are required.
     /// - Returns: The node to start the relative search relative to.
-    private func findRoot(parentID: ResolvedIdentifier?, remaining: inout ArraySlice<PathComponent>, isAbsolute: Bool, onlyFindSymbols: Bool) throws -> Node {
+    private func findRoot(parentID: ResolvedIdentifier?, parsedPath: @autoclosure () -> [PathComponent], remaining: inout ArraySlice<PathComponent>, isAbsolute: Bool, onlyFindSymbols: Bool) throws -> Node {
         // If the first path component is "tutorials" or "documentation" then that
         let isKnownTutorialPath = remaining.first!.full == NodeURLGenerator.Path.tutorialsFolderName
         let isKnownDocumentationPath = remaining.first!.full == NodeURLGenerator.Path.documentationFolderName
@@ -429,7 +511,7 @@ struct PathHierarchy {
             remaining.removeFirst()
         }
         guard let component = remaining.first else {
-            throw Error.notFound(availableChildren: [])
+            throw Error.notFound(remaining: [], availableChildren: [])
         }
         
         if !onlyFindSymbols {
@@ -483,6 +565,11 @@ struct PathHierarchy {
             // If a parent ID was provided, start at that node and continue up the hierarchy until that node has a child that matches the first path components name.
             var parentNode = lookup[parentID]!
             let firstComponent = remaining.first!
+            // Check if the start node has a child that matches the first path components name.
+            if parentNode.children.keys.contains(firstComponent.name) || parentNode.children.keys.contains(firstComponent.full) {
+                return parentNode
+            }
+            // Check if the start node itself matches the first path components name.
             if matches(node: parentNode, component: firstComponent) {
                 remaining = remaining.dropFirst()
                 return parentNode
@@ -500,7 +587,7 @@ struct PathHierarchy {
                     // No node up the hierarchy from the provided parent has a child that matches the first path component.
                     // Go back to the provided parent node for diagnostic information about its available children.
                     parentNode = lookup[parentID]!
-                    throw Error.partialResult(partialResult: parentNode, remainingSubpath: remaining.map({ $0.full }).joined(separator: "/"), availableChildren: parentNode.children.keys.sorted(by: availableChildNameIsBefore))
+                    throw makePartialResultError(node: parentNode, parsedPath: parsedPath(), remaining: remaining)
                 }
                 parentNode = parent
             }
@@ -515,8 +602,8 @@ struct PathHierarchy {
         
         // No place to start the search from could be found.
         // It would be a nice future improvement to allow skipping the module and find top level symbols directly.
-        let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name]).sorted(by: availableChildNameIsBefore)
-        throw Error.notFound(availableChildren: topLevelNames)
+        let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
+        throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)
     }
 }
 
@@ -539,11 +626,20 @@ extension PathHierarchy {
         /// The symbol, if a node has one.
         private(set) var symbol: SymbolGraph.Symbol?
         
+        /// If the path hierarchy should disfavor this node in a link collision.
+        ///
+        /// By default, nodes are not disfavored.
+        ///
+        /// If a favored node collides with a disfavored node the link will resolve to the favored node without
+        /// requiring any disambiguation. Referencing the disfavored node requires disambiguation.
+        var isDisfavoredInCollision: Bool
+        
         /// Initializes a symbol node.
         fileprivate init(symbol: SymbolGraph.Symbol!) {
             self.symbol = symbol
             self.name = symbol.pathComponents.last!
             self.children = [:]
+            self.isDisfavoredInCollision = false
         }
         
         /// Initializes a non-symbol node with a given name.
@@ -551,6 +647,7 @@ extension PathHierarchy {
             self.symbol = nil
             self.name = name
             self.children = [:]
+            self.isDisfavoredInCollision = false
         }
         
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
@@ -609,11 +706,13 @@ extension PathHierarchy {
     }
     
     /// Parsed a documentation link path (and optional fragment) string into structured path component values.
-    /// - Parameter path: The documentation link string, containing a path and an optional fragment.
+    /// - Parameters:
+    ///   - path: The documentation link string, containing a path and an optional fragment.
+    ///   - omittingEmptyComponents: If empty path components should be omitted from the parsed path. By default the are omitted.
     /// - Returns: A pair of the parsed path components and a flag that indicate if the documentation link is absolute or not.
-    static func parse(path: String) -> (components: [PathComponent], isAbsolute: Bool) {
+    static func parse(path: String, omittingEmptyComponents: Bool = true) -> (components: [PathComponent], isAbsolute: Bool) {
         guard !path.isEmpty else { return ([], true) }
-        var components = path.split(separator: "/", omittingEmptySubsequences: true)
+        var components = path.split(separator: "/", omittingEmptySubsequences: omittingEmptyComponents)
         let isAbsolute = path.first == "/"
             || String(components.first ?? "") == NodeURLGenerator.Path.documentationFolderName
             || String(components.first ?? "") == NodeURLGenerator.Path.tutorialsFolderName
@@ -671,6 +770,10 @@ extension PathHierarchy {
             }
         }
         return PathComponent(full: full, name: name, kind: nil, hash: hash)
+    }
+    
+    static func joined<PathComponents>(_ pathComponents: PathComponents) -> String where PathComponents: Sequence, PathComponents.Element == PathComponent {
+        return pathComponents.map(\.full).joined(separator: "/")
     }
 }
 
@@ -788,34 +891,51 @@ extension PathHierarchy {
 extension PathHierarchy {
     /// An error finding an entry in the path hierarchy.
     enum Error: Swift.Error {
+        /// Information about the portion of a link that could be found.
+        ///
+        /// Includes information about:
+        /// - The node that was found
+        /// - The remaining portion of the path.
+        typealias PartialResult = (node: Node, path: [PathComponent])
+        
         /// No element was found at the beginning of the path.
         ///
         /// Includes information about:
+        /// - The remaining portion of the path. This may be empty
         /// - A list of the names for the top level elements.
-        case notFound(availableChildren: [String])
+        case notFound(remaining: [PathComponent], availableChildren: Set<String>)
         
         /// Matched node does not correspond to a documentation page.
         ///
         /// For partial symbol graph files, sometimes sparse nodes that don't correspond to known documentation need to be created to form a hierarchy. These nodes are not findable.
-        case unfindableMatch
+        case unfindableMatch(Node)
         
         /// A symbol link found a non-symbol match.
         case nonSymbolMatchForSymbolLink
         
-        /// No child element is found partway through the path.
+        /// Encountered an unknown disambiguation for a found node.
+        ///
+        /// Includes information about:
+        /// - The partial result for as much of the path that could be found.
+        /// - The remaining portion of the path.
+        /// - A list of possible matches paired with the disambiguation suffixes needed to distinguish them.
+        case unknownDisambiguation(partialResult: PartialResult, remaining: [PathComponent], candidates: [(node: Node, disambiguation: String)])
+        
+        /// Encountered an unknown name in the path.
         ///
         /// Includes information about:
         /// - The partial result for as much of the path that could be found.
         /// - The remaining portion of the path.
         /// - A list of the names for the children of the partial result.
-        case partialResult(partialResult: Node, remainingSubpath: String, availableChildren: [String])
+        case unknownName(partialResult: PartialResult, remaining: [PathComponent], availableChildren: [String])
         
         /// Multiple matches are found partway through the path.
         ///
         /// Includes information about:
         /// - The partial result for as much of the path that could be found unambiguously.
+        /// - The remaining portion of the path.
         /// - A list of possible matches paired with the disambiguation suffixes needed to distinguish them.
-        case lookupCollision(partialResult: Node, collisions: [(node: Node, disambiguation: String)])
+        case lookupCollision(partialResult: PartialResult, remaining: [PathComponent], collisions: [(node: Node, disambiguation: String)])
     }
 }
     
@@ -825,31 +945,170 @@ private func availableChildNameIsBefore(_ lhs: String, _ rhs: String) -> Bool {
 }
 
 extension PathHierarchy.Error {
-    /// Formats the error into an error message suitable for presentation
-    func errorMessage(context: DocumentationContext) -> String {
-        switch self {
-        case .partialResult(let partialResult, let remaining, let available):
-            let nearMisses = NearMiss.bestMatches(for: available, against: remaining)
-            let suggestion: String
-            switch nearMisses.count {
-            case 0:
-                suggestion = "No similar pages. Available children: \(available.joined(separator: ", "))."
-            case 1:
-                suggestion = "Did you mean: \(nearMisses[0])?"
-            default:
-                suggestion = "Did you mean one of: \(nearMisses.joined(separator: ", "))?"
-            }
-            return "Reference at \(partialResult.pathWithoutDisambiguation().singleQuoted) can't resolve \(remaining.singleQuoted). \(suggestion)"
-        case .notFound, .unfindableMatch:
-            return "No local documentation matches this reference."
-            
-        case .nonSymbolMatchForSymbolLink:
-            return "Symbol links can only resolve symbols."
-            
-        case .lookupCollision(let partialResult, let collisions):
-            let collisionDescription = collisions.map { "Append '-\($0.disambiguation)' to refer to \($0.node.fullNameOfValue(context: context).singleQuoted)" }.sorted()
-            return "Reference is ambiguous after \(partialResult.pathWithoutDisambiguation().singleQuoted): \(collisionDescription.joined(separator: ". "))."
+    /// Generate a ``TopicReferenceResolutionError`` from this error using the given `context` and `originalReference`.
+    ///
+    /// The resulting ``TopicReferenceResolutionError`` is human-readable and provides helpful solutions.
+    ///
+    /// - Parameters:
+    ///     - context: The ``DocumentationContext`` the `originalReference` was resolved in.
+    ///     - originalReference: The raw input string that represents the body of the reference that failed to resolve. This string is
+    ///     used to calculate the proper replacement-ranges for fixits.
+    ///
+    /// - Note: `Replacement`s produced by this function use `SourceLocation`s relative to the `originalReference`, i.e. the beginning
+    /// of the _body_ of the original reference.
+    func asTopicReferenceResolutionErrorInfo(context: DocumentationContext, originalReference: String) -> TopicReferenceResolutionErrorInfo {
+        
+        // This is defined inline because it captures `context`.
+        func collisionIsBefore(_ lhs: (node: PathHierarchy.Node, disambiguation: String), _ rhs: (node: PathHierarchy.Node, disambiguation: String)) -> Bool {
+            return lhs.node.fullNameOfValue(context: context) + lhs.disambiguation
+                 < rhs.node.fullNameOfValue(context: context) + rhs.disambiguation
         }
+        
+        switch self {
+        case .notFound(remaining: let remaining, availableChildren: let availableChildren):
+            guard let firstPathComponent = remaining.first else {
+                return TopicReferenceResolutionErrorInfo(
+                    "No local documentation matches this reference"
+                )
+            }
+            
+            let solutions: [Solution]
+            if let pathComponentIndex = originalReference.range(of: firstPathComponent.full) {
+                let startColumn = originalReference.distance(from: originalReference.startIndex, to: pathComponentIndex.lowerBound)
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: startColumn, length: firstPathComponent.full.count)
+                
+                let nearMisses = NearMiss.bestMatches(for: availableChildren, against: firstPathComponent.name)
+                solutions = nearMisses.map { candidate in
+                    Solution(summary: "\(Self.replacementOperationDescription(from: firstPathComponent.full, to: candidate))", replacements: [
+                        Replacement(range: replacementRange, replacement: candidate)
+                    ])
+                }
+            } else {
+                solutions = []
+            }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                Can't resolve \(firstPathComponent.full.singleQuoted)
+                """,
+                solutions: solutions
+            )
+
+        case .unfindableMatch(let node):
+            return TopicReferenceResolutionErrorInfo("""
+                \(node.name.singleQuoted) can't be linked to in a partial documentation build
+            """)
+
+        case .nonSymbolMatchForSymbolLink:
+            return TopicReferenceResolutionErrorInfo("Symbol links can only resolve symbols", solutions: [
+                Solution(summary: "Use a '<doc:>' style reference.", replacements: [
+                    // the SourceRange points to the opening double-backtick
+                    Replacement(range: .makeRelativeRange(startColumn: -2, endColumn: 0), replacement: "<doc:"),
+                    // the SourceRange points to the closing double-backtick
+                    Replacement(range: .makeRelativeRange(startColumn: originalReference.count, endColumn: originalReference.count+2), replacement: ">"),
+                ])
+            ])
+            
+        case .unknownDisambiguation(partialResult: let partialResult, remaining: let remaining, candidates: let candidates):
+            let nextPathComponent = remaining.first!
+            var validPrefix = ""
+            if !partialResult.path.isEmpty {
+                validPrefix += PathHierarchy.joined(partialResult.path) + "/"
+            }
+            validPrefix += nextPathComponent.name
+            
+            let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
+            let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
+            
+            let solutions: [Solution] = candidates
+                .sorted(by: collisionIsBefore)
+                .map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
+                    return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                        Replacement(range: replacementRange, replacement: "-" + disambiguation)
+                    ])
+                }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                \(disambiguations.dropFirst().singleQuoted) isn't a disambiguation for \(nextPathComponent.name.singleQuoted) at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
+                """,
+                solutions: solutions,
+                rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
+            )
+            
+        case .unknownName(partialResult: let partialResult, remaining: let remaining, availableChildren: let availableChildren):
+            let nextPathComponent = remaining.first!
+            let nearMisses = NearMiss.bestMatches(for: availableChildren, against: nextPathComponent.name)
+            
+            // Use the authored disambiguation to try and reduce the possible near misses. For example, if the link was disambiguated with `-struct` we should
+            // only make suggestions for similarly spelled structs.
+            let filteredNearMisses = nearMisses.filter { name in
+                (try? partialResult.node.children[name]?.find(nextPathComponent.kind, nextPathComponent.hash)) != nil
+            }
+
+            var validPrefix = ""
+            if !partialResult.path.isEmpty {
+                validPrefix += PathHierarchy.joined(partialResult.path) + "/"
+            }
+            let solutions: [Solution]
+            if filteredNearMisses.isEmpty {
+                // If there are no near-misses where the authored disambiguation narrow down the results, replace the full path component
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.full.count)
+                solutions = nearMisses.map { candidate in
+                    Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.full, to: candidate))", replacements: [
+                        Replacement(range: replacementRange, replacement: candidate)
+                    ])
+                }
+            } else {
+                // If the authored disambiguation narrows down the possible near-misses, only replace the name part of the path component
+                let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.name.count)
+                solutions = filteredNearMisses.map { candidate in
+                    Solution(summary: "\(Self.replacementOperationDescription(from: nextPathComponent.name, to: candidate))", replacements: [
+                        Replacement(range: replacementRange, replacement: candidate)
+                    ])
+                }
+            }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                \(nextPathComponent.full.singleQuoted) doesn't exist at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
+                """,
+                solutions: solutions,
+                rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count, length: nextPathComponent.full.count)
+            )
+            
+        case .lookupCollision(partialResult: let partialResult, remaining: let remaining, collisions: let collisions):
+            let nextPathComponent = remaining.first!
+            
+            var validPrefix = ""
+            if !partialResult.path.isEmpty {
+                validPrefix += PathHierarchy.joined(partialResult.path) + "/"
+            }
+            validPrefix += nextPathComponent.name
+
+            let disambiguations = nextPathComponent.full.dropFirst(nextPathComponent.name.count)
+            let replacementRange = SourceRange.makeRelativeRange(startColumn: validPrefix.count, length: disambiguations.count)
+            
+            let solutions: [Solution] = collisions.sorted(by: collisionIsBefore).map { (node: PathHierarchy.Node, disambiguation: String) -> Solution in
+                return Solution(summary: "\(Self.replacementOperationDescription(from: disambiguations.dropFirst(), to: disambiguation)) for\n\(node.fullNameOfValue(context: context).singleQuoted)", replacements: [
+                    Replacement(range: replacementRange, replacement: "-" + disambiguation)
+                ])
+            }
+            
+            return TopicReferenceResolutionErrorInfo("""
+                \(nextPathComponent.full.singleQuoted) is ambiguous at \(partialResult.node.pathWithoutDisambiguation().singleQuoted)
+                """,
+                solutions: solutions,
+                rangeAdjustment: .makeRelativeRange(startColumn: validPrefix.count - nextPathComponent.full.count, length: nextPathComponent.full.count)
+            )
+        }
+    }
+    
+    private static func replacementOperationDescription<S1: StringProtocol, S2: StringProtocol>(from: S1, to: S2) -> String {
+        if from.isEmpty {
+            return "Insert \(to.singleQuoted)"
+        }
+        if to.isEmpty {
+            return "Remove \(from.singleQuoted)"
+        }
+        return "Replace \(from.singleQuoted) with \(to.singleQuoted)"
     }
 }
 
@@ -876,7 +1135,7 @@ private extension PathHierarchy.Node {
             if let fragments = symbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments {
                 return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
             }
-            return context.symbolIndex[symbol.identifier.precise]!.name.description
+            return context.nodeWithSymbolIdentifier(symbol.identifier.precise)!.name.description
         }
         // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.
         let reference = context.hierarchyBasedLinkResolver!.resolvedReferenceMap[identifier]!
@@ -1185,5 +1444,15 @@ private struct DisambiguationTree {
                 return .hash(hash)
             }
         }
+    }
+}
+
+private extension SourceRange {
+    static func makeRelativeRange(startColumn: Int, endColumn: Int) -> SourceRange {
+        return SourceLocation(line: 0, column: startColumn, source: nil) ..< SourceLocation(line: 0, column: endColumn, source: nil)
+    }
+    
+    static func makeRelativeRange(startColumn: Int, length: Int) -> SourceRange {
+        return .makeRelativeRange(startColumn: startColumn, endColumn: startColumn + length)
     }
 }

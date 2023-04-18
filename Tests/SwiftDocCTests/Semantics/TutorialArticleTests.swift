@@ -275,8 +275,8 @@ TutorialArticle @1:1-23:2 title: 'Basic Augmented Reality App' time: '20'
             XCTAssertEqual(3, problems.count)
             let arbitraryMarkupProblem = problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.Stack.UnexpectedContent" })
             XCTAssertNotNil(arbitraryMarkupProblem)
-            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.localizedSummary, "'Stack' contains unexpected content")
-            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.localizedExplanation, "Arbitrary markup content is not allowed as a child of the 'Stack' directive.")
+            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.summary, "'Stack' contains unexpected content")
+            XCTAssertEqual(arbitraryMarkupProblem?.diagnostic.explanation, "Arbitrary markup content is not allowed as a child of the 'Stack' directive.")
             article.map { article in
                 let expectedDump = """
 TutorialArticle @1:1-81:2

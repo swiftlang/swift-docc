@@ -448,11 +448,11 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver) throws {
         XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
         let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!)), sourceLanguage: .swift)
-        guard case .failure(_, let errorMessage) = resolverResult else {
+        guard case .failure(_, let error) = resolverResult else {
             XCTFail("Encountered an unexpected type of error.")
             return
         }
-        XCTAssertEqual(errorMessage, "Some error message.")
+        XCTAssertEqual(error.message, "Some error message.")
     }
     
     func testForwardsResolverErrorsProcess() throws {

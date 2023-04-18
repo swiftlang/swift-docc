@@ -29,7 +29,7 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 1, "Found problems \(problems.localizedDescription) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, 1, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
@@ -583,7 +583,7 @@ class SemaToRenderNodeTests: XCTestCase {
         }
         
         // Verify we emit a diagnostic for the chapter with no tutorial references.
-        XCTAssertEqual(problems.count, expectedProblemsCount, "Found problems \(problems.localizedDescription) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, expectedProblemsCount, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
@@ -819,7 +819,7 @@ class SemaToRenderNodeTests: XCTestCase {
             return
         }
         
-        XCTAssertEqual(problems.count, 0, "Found problems \(problems.localizedDescription) analyzing tutorial markup")
+        XCTAssertEqual(problems.count, 0, "Found problems \(DiagnosticConsoleWriter.formattedDescription(for: problems)) analyzing tutorial markup")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
         
@@ -1196,6 +1196,11 @@ class SemaToRenderNodeTests: XCTestCase {
                     seeAlsoVariants: .init(swiftVariant: nil),
                     returnsSectionVariants: .init(swiftVariant: nil),
                     parametersSectionVariants: .init(swiftVariant: nil),
+                    dictionaryKeysSectionVariants: .init(swiftVariant: nil),
+                    httpEndpointSectionVariants: .init(swiftVariant: nil),
+                    httpBodySectionVariants: .init(swiftVariant: nil),
+                    httpParametersSectionVariants: .init(swiftVariant: nil),
+                    httpResponsesSectionVariants: .init(swiftVariant: nil),
                     redirectsVariants: .init(swiftVariant: nil)
                 )
                 
@@ -1282,7 +1287,7 @@ class SemaToRenderNodeTests: XCTestCase {
         XCTAssertFalse(context.symbolIndex.isEmpty)
         
         // MyProtocol is loaded
-        guard let myProtocol = context.symbolIndex["s:5MyKit0A5ProtocolP"],
+        guard let myProtocol = context.nodeWithSymbolIdentifier("s:5MyKit0A5ProtocolP"),
               let myProtocolSymbol = myProtocol.semantic as? Symbol else {
             XCTFail("`MyProtocol` not found in symbol graph")
             return
@@ -1290,12 +1295,12 @@ class SemaToRenderNodeTests: XCTestCase {
         
         // Verify that various symbols that exist are referenced in the symbol graph file have been resolved and added to the symbol index
         
-        XCTAssertNotNil(context.symbolIndex["p:hPP"], "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.symbolIndex["s:Si"], "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.symbolIndex["s:10Foundation3URLV"], "External symbol from declaration was resolved and added to the index")
-        XCTAssertNotNil(context.symbolIndex["s:10Foundation4DataV"], "External symbol from declaration was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("p:hPP"), "External symbol from declaration was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:Si"), "External symbol from declaration was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:10Foundation3URLV"), "External symbol from declaration was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:10Foundation4DataV"), "External symbol from declaration was resolved and added to the index")
         
-        XCTAssertNotNil(context.symbolIndex["s:5Foundation0A5NSCodableP"], "External symbol from symbol graph relationship was resolved and added to the index")
+        XCTAssertNotNil(context.nodeWithSymbolIdentifier("s:5Foundation0A5NSCodableP"), "External symbol from symbol graph relationship was resolved and added to the index")
         
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: myProtocol.reference, source: nil)
 
@@ -1950,7 +1955,7 @@ Document
         XCTAssertNotNil(context.problems.first(where: { problem -> Bool in
 
             return problem.diagnostic.identifier == "org.swift.docc.InvalidDocumentationLink"
-                && problem.diagnostic.localizedSummary.contains("https://external.com/link")
+                && problem.diagnostic.summary.contains("https://external.com/link")
         }))
     }
     
@@ -2695,7 +2700,7 @@ Document
             return p.diagnostic.identifier == "org.swift.docc.unresolvedResource"
         }
         XCTAssertFalse(missingResources.contains(where: { p -> Bool in
-            return p.diagnostic.localizedSummary == "Resource 'my-inherited-image.png' couldn't be found"
+            return p.diagnostic.summary == "Resource 'my-inherited-image.png' couldn't be found"
         }))
 
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)
@@ -2898,7 +2903,7 @@ Document
 
         // Verify that we don't reference resolve inherited docs.
         XCTAssertFalse(context.diagnosticEngine.problems.contains(where: { problem in
-            problem.diagnostic.localizedSummary.contains("my-inherited-image.png")
+            problem.diagnostic.summary.contains("my-inherited-image.png")
         }))
 
         let myFuncReference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/SideKit/SideClass/Element/inherited()", sourceLanguage: .swift)

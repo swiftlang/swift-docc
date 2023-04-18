@@ -1,0 +1,387 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 6,
+      "patch": 0
+    },
+    "generator": "Apple Swift version 5.9 (swiftlang-5.9.0.106.53 clang-1500.0.13.6)"
+  },
+  "module": {
+    "name": "DefaultImplementationsWithExportedImport",
+    "platform": {
+      "architecture": "arm64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 13,
+          "minor": 4
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:5Inner9SomethingPAAE02doB0yyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Something",
+        "doSomething()"
+      ],
+      "names": {
+        "title": "doSomething()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "doSomething"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:///Users/username/path/to/DefaultImplementationsWithExportedImport/Inner/Something.swift",
+        "module": "Inner",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 16,
+                "character": 8
+              },
+              "end": {
+                "line": 16,
+                "character": 60
+              }
+            },
+            "text": "A default implementation of the protocol requirement"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "Inner",
+        "typeKind": "swift.protocol"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "doSomething"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/DefaultImplementationsWithExportedImport/Inner/Something.swift",
+        "position": {
+          "line": 17,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.method",
+        "displayName": "Instance Method"
+      },
+      "identifier": {
+        "precise": "s:5Inner9SomethingP02doB0yyF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Something",
+        "doSomething()"
+      ],
+      "names": {
+        "title": "doSomething()",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "doSomething"
+          },
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:///Users/username/path/to/DefaultImplementationsWithExportedImport/Inner/Something.swift",
+        "module": "Inner",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 11,
+                "character": 8
+              },
+              "end": {
+                "line": 11,
+                "character": 33
+              }
+            },
+            "text": "Some protocol requirement"
+          }
+        ]
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "text",
+            "spelling": "()"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "doSomething"
+        },
+        {
+          "kind": "text",
+          "spelling": "()"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/DefaultImplementationsWithExportedImport/Inner/Something.swift",
+        "position": {
+          "line": 12,
+          "character": 9
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.protocol",
+        "displayName": "Protocol"
+      },
+      "identifier": {
+        "precise": "s:5Inner9SomethingP",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Something"
+      ],
+      "names": {
+        "title": "Something",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "protocol"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:///Users/username/path/to/DefaultImplementationsWithExportedImport/Inner/Something.swift",
+        "module": "Inner",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 9,
+                "character": 4
+              },
+              "end": {
+                "line": 9,
+                "character": 17
+              }
+            },
+            "text": "Some protocol"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "protocol"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Something"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/DefaultImplementationsWithExportedImport/Inner/Something.swift",
+        "position": {
+          "line": 10,
+          "character": 16
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.typealias",
+        "displayName": "Type Alias"
+      },
+      "identifier": {
+        "precise": "s:40DefaultImplementationsWithExportedImport9Somethinga",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Something"
+      ],
+      "names": {
+        "title": "Something",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "typealias"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:///Users/username/path/to/DefaultImplementationsWithExportedImport/DefaultImplementationsWithExportedImport/Wrapper.swift",
+        "module": "DefaultImplementationsWithExportedImport",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 11,
+                "character": 4
+              },
+              "end": {
+                "line": 11,
+                "character": 50
+              }
+            },
+            "text": "An alias of Something to the wrapped Something"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "typealias"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Something"
+        },
+        {
+          "kind": "text",
+          "spelling": " = Inner"
+        },
+        {
+          "kind": "text",
+          "spelling": "."
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Something",
+          "preciseIdentifier": "s:5Inner9SomethingP"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/DefaultImplementationsWithExportedImport/DefaultImplementationsWithExportedImport/Wrapper.swift",
+        "position": {
+          "line": 12,
+          "character": 17
+        }
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "requirementOf",
+      "source": "s:5Inner9SomethingP02doB0yyF",
+      "target": "s:5Inner9SomethingP",
+      "targetFallback": "Inner.Something"
+    },
+    {
+      "kind": "defaultImplementationOf",
+      "source": "s:5Inner9SomethingPAAE02doB0yyF",
+      "target": "s:5Inner9SomethingP02doB0yyF",
+      "targetFallback": "Inner.Something.doSomething()"
+    }
+  ]
+}

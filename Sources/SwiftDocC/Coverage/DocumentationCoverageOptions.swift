@@ -99,6 +99,8 @@ extension DocumentationCoverageOptions {
         internal static let typeProperty =                KindFilterOptions(rawValue: BitFlagRepresentation.typeProperty.bitMask)
         internal static let typeSubscript =               KindFilterOptions(rawValue: BitFlagRepresentation.typeSubscript.bitMask)
         internal static let globalVariable =              KindFilterOptions(rawValue: BitFlagRepresentation.globalVariable.bitMask)
+        internal static let dictionary =                  KindFilterOptions(rawValue: BitFlagRepresentation.dictionary.bitMask)
+        internal static let httpRequest =                 KindFilterOptions(rawValue: BitFlagRepresentation.httpRequest.bitMask)
 
         /// Mask with all valid/used bit flags set to 1.
         internal static let allSingleBitOptions: [KindFilterOptions] = {
@@ -147,7 +149,7 @@ extension DocumentationCoverageOptions.KindFilterOptions {
         self.init(rawValue: mask)
     }
 
-    /// Represents a single kind option. ``DocumentationCoverageOptions/KindFilterOptions-swift.struct``
+    /// Represents a single kind option. ``DocumentationCoverageOptions/KindFilterOptions``
     /// cannot enforce the restriction that it only represents one
     /// option when necessary so this type is preferred in when representing individual kinds that can be represented.
     public enum BitFlagRepresentation: CaseIterable {
@@ -172,6 +174,8 @@ extension DocumentationCoverageOptions.KindFilterOptions {
         case typeProperty
         case typeSubscript
         case globalVariable
+        case dictionary
+        case httpRequest
 
         /// Parses given `String` to corresponding `BitFlagRepresentation` if possible. Returns `nil` if the given string does not specify a representable value.
         public init?(string: String) {
@@ -225,6 +229,10 @@ extension DocumentationCoverageOptions.KindFilterOptions {
                 self = .typeSubscript
             case .globalVariable: // 20
                 self = .globalVariable
+            case .dictionary: // 21
+                self = .dictionary
+            case .httpRequest: // 22
+                self = .httpRequest
             default:
                 return nil
             }
@@ -275,6 +283,10 @@ extension DocumentationCoverageOptions.KindFilterOptions {
             return 1 << 19
             case .globalVariable:
                 return 1 << 20
+            case .dictionary:
+                return 1 << 21
+            case .httpRequest:
+                return 1 << 22
             }
         }
 
@@ -327,8 +339,12 @@ extension DocumentationCoverageOptions.KindFilterOptions {
                 return .typeProperty
             case .typeSubscript: // 19
                 return .typeSubscript
-            case .globalVariable:
+            case .globalVariable: // 20
                 return .globalVariable
+            case .dictionary: // 21
+                return .dictionary
+            case .httpRequest: // 22
+                return .httpRequest
             }
         }
 
@@ -376,6 +392,10 @@ extension DocumentationCoverageOptions.KindFilterOptions {
                 return "type-subscript"
             case .globalVariable: // 20
                 return "global-variable"
+            case .dictionary: // 21
+                return "dictionary"
+            case .httpRequest: // 21
+                return "http-request"
             }
         }
         /// A  dictionary where keys are all valid argument strings and values are corresponding instances of ``BitFlagRepresentation``.
@@ -421,6 +441,10 @@ extension DocumentationCoverageOptions.KindFilterOptions {
                 "type-subscript": .typeSubscript,
                 // 20
                 "global-variable": .globalVariable,
+                // 21
+                "dictionary": .dictionary,
+                // 22
+                "http-request": .httpRequest,
             ]
 
         }

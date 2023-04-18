@@ -21,6 +21,8 @@ enum RESTParameterSource: String, Codable {
     case path
     /// An HTTP header sent with the request, for example, `Authorization: MyCredentials`.
     case header
+    /// An HTTP cookie sent with the request.
+    case cookie
 }
 
 /// A section that contains a list of REST parameters.

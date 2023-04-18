@@ -1791,6 +1791,15 @@
                     }
                 }
             },
+            "TopicColor": {
+                "type": "object",
+                "properties": {
+                    "standardColorIdentifier": {
+                        "type": "string",
+                        "enum": ["blue", "gray", "green", "orange", "purple", "red", "yellow"]
+                    }
+                }
+            },
             "SymbolTag": {
                 "type": "object",
                 "required": [
@@ -1816,7 +1825,7 @@
                 "properties": {
                     "type": {
                         "type": "string",
-                        "enum": ["download"]
+                        "enum": ["download", "externalLocation"]
                     },
                     "identifier": {
                         "type": "string"
@@ -2249,6 +2258,9 @@
                         "items": {
                             "$ref": "#/components/schemas/TopicImage"
                         }
+                    },
+                    "color": {
+                        "$ref": "#/components/schemas/TopicColor"
                     },
                     "customMetadata": {
                         "type": "object",

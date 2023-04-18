@@ -24,10 +24,23 @@ extension ConvertService {
             info: DocumentationBundle.Info,
             symbolGraphs: [Data],
             markupFiles: [Data],
+            tutorialFiles: [Data],
             miscResourceURLs: [URL]
         ) {
-            let symbolGraphURLs = symbolGraphs.map { registerFile(contents: $0, isMarkupFile: false) }
-            let markupFileURLs = markupFiles.map { registerFile(contents: $0, isMarkupFile: true) }
+            let symbolGraphURLs = symbolGraphs.map { registerFile(contents: $0, pathExtension: nil) }
+            let markupFileURLs = markupFiles.map { markupFile in
+                registerFile(
+                    contents: markupFile,
+                    pathExtension:
+                        DocumentationBundleFileTypes.referenceFileExtension
+                )
+            } + tutorialFiles.map { tutorialFile in
+                registerFile(
+                    contents: tutorialFile,
+                    pathExtension:
+                        DocumentationBundleFileTypes.tutorialFileExtension
+                )
+            }
             
             bundles.append(
                 DocumentationBundle(
@@ -39,8 +52,8 @@ extension ConvertService {
             )
         }
         
-        private mutating func registerFile(contents: Data, isMarkupFile: Bool) -> URL {
-            let url = Self.createURL(isMarkupFile: isMarkupFile)
+        private mutating func registerFile(contents: Data, pathExtension: String?) -> URL {
+            let url = Self.createURL(pathExtension: pathExtension)
             files[url] = contents
             return url
         }
@@ -50,11 +63,11 @@ extension ConvertService {
         /// The URL this function generates for a resource is not derived from the resource itself, because it doesn't need to be. The
         /// ``DocumentationWorkspaceDataProvider`` model revolves around retrieving resources by their URL. In our use
         /// case, our resources are not file URLs so we generate a URL for each resource.
-        static private func createURL(isMarkupFile: Bool) -> URL {
+        static private func createURL(pathExtension: String? = nil) -> URL {
             var url = URL(string: "docc-service:/\(UUID().uuidString)")!
             
-            if isMarkupFile {
-                url.appendPathExtension(DocumentationBundleFileTypes.referenceFileExtension)
+            if let pathExtension = pathExtension {
+                url.appendPathExtension(pathExtension)
             }
             
             return url

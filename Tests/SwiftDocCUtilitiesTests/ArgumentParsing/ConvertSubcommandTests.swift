@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -165,7 +165,7 @@ class ConvertSubcommandTests: XCTestCase {
             ]), "Did not refuse target folder path '\(path)'")
         }
     }
-  
+
     func testAnalyzerIsTurnedOffByDefault() throws {
         setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
         let convertOptions = try Docc.Convert.parse([
@@ -206,7 +206,7 @@ class ConvertSubcommandTests: XCTestCase {
             XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
         }
         
-        // Are set when passed 
+        // Are set when passed
         do {
             let convertOptions = try Docc.Convert.parse([
                 testBundleURL.path,
@@ -378,7 +378,7 @@ class ConvertSubcommandTests: XCTestCase {
         }
         
         let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
-        let actionWithoutFlag = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
         XCTAssertFalse(commandWithoutFlag.enableExperimentalDeviceFrameSupport)
         XCTAssertFalse(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
 
@@ -386,7 +386,7 @@ class ConvertSubcommandTests: XCTestCase {
             "--enable-experimental-device-frame-support",
             testBundleURL.path,
         ])
-        let actionWithFlag = try ConvertAction(fromConvertCommand: commandWithFlag)
+        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
         XCTAssertTrue(commandWithFlag.enableExperimentalDeviceFrameSupport)
         XCTAssertTrue(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
     }

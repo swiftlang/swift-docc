@@ -69,7 +69,7 @@ import SymbolKit
 ///
 /// Various information from the summary is used depending on what content references the summarized element. For example:
 ///  - In a paragraph of text, a link to this element will use the ``title`` as the link text and style the tile in code font if the ``kind`` is a type of symbol.
-///  - In a task group, the the ``title`` and ``abstract-swift.property`` is displayed together to give more context about this element and the element may be marked as deprecated
+///  - In a task group, the the ``title`` and ``abstract`` is displayed together to give more context about this element and the element may be marked as deprecated
 ///    based on the values of its  ``platforms`` and other metadata about the current versions of the platforms.
 ///
 /// The summary may include content that vary based on the source language. The content that is different in another source language is specified in a ``Variant``. Any property on the variant that is `nil` has the same value as the summarized element's value. 
@@ -150,7 +150,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
     
     /// References used in the content of the summarized element.
     ///
-    /// This includes the element's ``topicImages`` or references from the element's ``abstract-swift.property``.
+    /// This includes the element's ``topicImages`` or references from the element's ``abstract``.
     /// This also includes any references for all variants' content.
     public var references: [RenderReference]?
     
@@ -176,7 +176,7 @@ public struct LinkDestinationSummary: Codable, Equatable {
         public let relativePresentationURL: VariantValue<URL>
         
         /// The title of the variant or `nil` if the title is the same as the summarized element.
-        public let title: VariantValue<String?>
+        public let title: VariantValue<String>
         
         /// The abstract of the variant or `nil` if the abstract is the same as the summarized element.
         ///
@@ -198,14 +198,102 @@ public struct LinkDestinationSummary: Codable, Equatable {
         /// If the summarized element has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
         public let declarationFragments: VariantValue<DeclarationFragments?>
         
-        /// Images that are used to represent the summarized element.
+        /// Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
         ///
         /// If the summarized element has an image but the variant doesn't, this property will be `Optional.some(nil)`.
         public let topicImages: VariantValue<[TopicImage]?>
+        
+        /// Creates a new summary variant with the values that are different from the main summarized values.
+        /// 
+        /// - Parameters:
+        ///   - traits:  The traits of the variant.
+        ///   - kind: The kind of the variant or `nil` if the kind is the same as the summarized element.
+        ///   - language: The source language of the variant or `nil` if the kind is the same as the summarized element.
+        ///   - relativePresentationURL: The relative presentation URL of the variant or `nil` if the relative is the same as the summarized element.
+        ///   - title: The title of the variant or `nil` if the title is the same as the summarized element.
+        ///   - abstract: The abstract of the variant or `nil` if the abstract is the same as the summarized element.
+        ///   - taskGroups: The taskGroups of the variant or `nil` if the taskGroups is the same as the summarized element.
+        ///   - usr: The precise symbol identifier of the variant or `nil` if the precise symbol identifier is the same as the summarized element.
+        ///   - declarationFragments: The declaration of the variant or `nil` if the declaration is the same as the summarized element.
+        ///   - topicImages: Images that are used to represent the summarized element or `nil` if the images are the same as the summarized element.
+        public init(
+            traits: [RenderNode.Variant.Trait],
+            kind: VariantValue<DocumentationNode.Kind> = nil,
+            language: VariantValue<SourceLanguage> = nil,
+            relativePresentationURL: VariantValue<URL> = nil,
+            title: VariantValue<String> = nil,
+            abstract: VariantValue<LinkDestinationSummary.Abstract?> = nil,
+            taskGroups: VariantValue<[LinkDestinationSummary.TaskGroup]?> = nil,
+            usr: VariantValue<String?> = nil,
+            declarationFragments: VariantValue<LinkDestinationSummary.DeclarationFragments?> = nil,
+            topicImages: VariantValue<[TopicImage]?> = nil
+        ) {
+            self.traits = traits
+            self.kind = kind
+            self.language = language
+            self.relativePresentationURL = relativePresentationURL
+            self.title = title
+            self.abstract = abstract
+            self.taskGroups = taskGroups
+            self.usr = usr
+            self.declarationFragments = declarationFragments
+            self.topicImages = topicImages
+        }
     }
     
     /// The variants of content (kind, title, abstract, path, urs, declaration, and task groups) for this summarized element.
     public let variants: [Variant]
+    
+    /// Creates a new summary of an element that can be linked to from outside the local documentation.
+    ///
+    /// - Parameters:
+    ///   - kind: The kind of the summarized element.
+    ///   - language: The language of the summarized element.
+    ///   - relativePresentationURL: The relative presentation URL for this element.
+    ///   - referenceURL: The resolved topic reference URL to this element.
+    ///   - title: The title of the summarized element.
+    ///   - abstract:  The abstract of the summarized element.
+    ///   - availableLanguages: All the languages in which the summarized element is available.
+    ///   - platforms: Information about the platforms for which the summarized element is available.
+    ///   - taskGroups: The reference URLs of the summarized element's children, grouped by their task groups.
+    ///   - usr: The unique, precise identifier for this symbol that you use to reference it across different systems, or `nil` if the summarized element isn't a symbol.
+    ///   - declarationFragments: The fragments for this symbol's declaration, or `nil` if the summarized element isn't a symbol.
+    ///   - redirects: Any previous URLs for this element, or `nil` if this element has no previous URLs.
+    ///   - topicImages: Images that are used to represent the summarized element, or `nil` if this element has no topic images.
+    ///   - references: References used in the content of the summarized element, or `nil` if this element has no references to other content.
+    ///   - variants: The variants of content (kind, title, abstract, path, urs, declaration, and task groups) for this summarized element.
+    public init(
+        kind: DocumentationNode.Kind,
+        language: SourceLanguage,
+        relativePresentationURL: URL,
+        referenceURL: URL, title: String,
+        abstract: LinkDestinationSummary.Abstract? = nil,
+        availableLanguages: Set<SourceLanguage>,
+        platforms: [LinkDestinationSummary.PlatformAvailability]? = nil,
+        taskGroups: [LinkDestinationSummary.TaskGroup]? = nil,
+        usr: String? = nil,
+        declarationFragments: LinkDestinationSummary.DeclarationFragments? = nil,
+        redirects: [URL]? = nil,
+        topicImages: [TopicImage]? = nil,
+        references: [RenderReference]? = nil,
+        variants: [LinkDestinationSummary.Variant]
+    ) {
+        self.kind = kind
+        self.language = language
+        self.relativePresentationURL = relativePresentationURL
+        self.referenceURL = referenceURL
+        self.title = title
+        self.abstract = abstract
+        self.availableLanguages = availableLanguages
+        self.platforms = platforms
+        self.taskGroups = taskGroups
+        self.usr = usr
+        self.declarationFragments = declarationFragments
+        self.redirects = redirects
+        self.topicImages = topicImages
+        self.references = references
+        self.variants = variants
+    }
 }
 
 // MARK: - Accessing the externally linkable elements
@@ -569,7 +657,7 @@ extension LinkDestinationSummary.Variant {
             language = nil
         }
         relativePresentationURL = try container.decodeIfPresent(URL.self, forKey: .relativePresentationURL)
-        title = try container.decodeIfPresent(String?.self, forKey: .title)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
         abstract = try container.decodeIfPresent(LinkDestinationSummary.Abstract?.self, forKey: .abstract)
         usr = try container.decodeIfPresent(String?.self, forKey: .usr)
         declarationFragments = try container.decodeIfPresent(LinkDestinationSummary.DeclarationFragments?.self, forKey: .declarationFragments)

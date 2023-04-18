@@ -74,6 +74,27 @@ class PageKindTests: XCTestCase {
         XCTAssertEqual(renderNode.metadata.roleHeading, "Article")
     }
 
+    func testPageKindReference() throws {
+        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/SomeSample",
+            sourceLanguage: .swift
+        )
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+
+        let sampleReference = try XCTUnwrap(renderNode.references["doc://org.swift.docc.sample/documentation/SampleBundle/MyLocalSample"] as? TopicRenderReference)
+
+        XCTAssertEqual(sampleReference.role, RenderMetadata.Role.sampleCode.rawValue)
+    }
+
     func testValidMetadataWithOnlyPageKind() throws {
         let source = """
         @Metadata {

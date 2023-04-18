@@ -209,6 +209,16 @@ public struct DocumentationNode {
             mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability
         }
         
+        let endpointVariants = DocumentationDataVariants(
+            symbolData: unifiedSymbol.mixins,
+            platformName: platformName
+        ) { mixins -> HTTPEndpointSection? in
+            if let endpoint = mixins[SymbolGraph.Symbol.HTTP.Endpoint.mixinKey] as? SymbolGraph.Symbol.HTTP.Endpoint {
+                return HTTPEndpointSection(endpoint: endpoint)
+            }
+            return nil
+        }
+        
         var languages = Set([reference.sourceLanguage])
         var operatingSystemName = platformName.map({ Set([$0]) }) ?? []
         
@@ -284,6 +294,11 @@ public struct DocumentationNode {
             seeAlsoVariants: .empty,
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
+            dictionaryKeysSectionVariants: .empty,
+            httpEndpointSectionVariants: endpointVariants,
+            httpBodySectionVariants: .empty,
+            httpParametersSectionVariants: .empty,
+            httpResponsesSectionVariants: .empty,
             redirectsVariants: .empty,
             crossImportOverlayModule: moduleData.bystanders.map({ (moduleData.name, $0) })
         )
@@ -370,6 +385,26 @@ public struct DocumentationNode {
             )
         }
         
+        if let keys = markupModel.discussionTags?.dictionaryKeys, !keys.isEmpty {
+            // Record the keys extracted from the markdown
+            semantic.dictionaryKeysSectionVariants[.fallback] = DictionaryKeysSection(dictionaryKeys:keys)
+        }
+        
+        if let parameters = markupModel.discussionTags?.httpParameters, !parameters.isEmpty {
+            // Record the parameters extracted from the markdown
+            semantic.httpParametersSectionVariants[.fallback] = HTTPParametersSection(parameters: parameters)
+        }
+        
+        if let body = markupModel.discussionTags?.httpBody {
+            // Record the body extracted from the markdown
+            semantic.httpBodySectionVariants[.fallback] = HTTPBodySection(body: body)
+        }
+        
+        if let responses = markupModel.discussionTags?.httpResponses, !responses.isEmpty {
+            // Record the responses extracted from the markdown
+            semantic.httpResponsesSectionVariants[.fallback] = HTTPResponsesSection(responses: responses)
+        }
+        
         options = documentationExtension?.options[.local]
         self.metadata = documentationExtension?.metadata
         
@@ -402,7 +437,9 @@ public struct DocumentationNode {
             ]
         } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
             let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
-            let docCommentMarkup = Document(parsing: docCommentString, options: [.parseBlockDirectives, .parseSymbolLinks])
+
+            let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
+            let docCommentMarkup = Document(parsing: docCommentString, options: documentOptions)
             
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
             if !docCommentDirectives.isEmpty {
@@ -417,7 +454,7 @@ public struct DocumentationNode {
                         continue
                     }
 
-                    var diagnostic = Diagnostic(
+                    let diagnostic = Diagnostic(
                         source: location,
                         severity: .warning,
                         range: range,
@@ -426,11 +463,13 @@ public struct DocumentationNode {
                         explanation: "Found \(comment.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
                     )
                     
+                    var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
+                    
                     if let offset = docComment.lines.first?.range {
-                        diagnostic = diagnostic.offsetedWithRange(offset)
+                        problem.offsetWithRange(offset)
                     }
                     
-                    engine.emit(Problem(diagnostic: diagnostic, possibleSolutions: []))
+                    engine.emit(problem)
                 }
             }
 
@@ -471,9 +510,15 @@ public struct DocumentationNode {
         case .`associatedtype`: return .associatedType
         case .`class`: return .class
         case .`deinit`: return .deinitializer
+        case .dictionary: return .dictionary
+        case .dictionaryKey: return .dictionaryKey
         case .`enum`: return .enumeration
         case .`case`: return .enumerationCase
         case .`func`: return .function
+        case .httpRequest: return .httpRequest
+        case .httpParameter: return .httpParameter
+        case .httpBody: return .httpBody
+        case .httpResponse: return .httpResponse
         case .`operator`: return .operator
         case .`init`: return .initializer
         case .ivar: return .instanceVariable
@@ -592,6 +637,11 @@ public struct DocumentationNode {
             seeAlsoVariants: .init(swiftVariant: markupModel.seeAlsoSection),
             returnsSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.returns.isEmpty ? nil : ReturnsSection(content: $0.returns[0].contents) })),
             parametersSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.parameters.isEmpty ? nil : ParametersSection(parameters: $0.parameters) })),
+            dictionaryKeysSectionVariants: .init(swiftVariant: markupModel.discussionTags.flatMap({ $0.dictionaryKeys.isEmpty ? nil : DictionaryKeysSection(dictionaryKeys: $0.dictionaryKeys) })),
+            httpEndpointSectionVariants: .empty,
+            httpBodySectionVariants: .empty,
+            httpParametersSectionVariants: .empty,
+            httpResponsesSectionVariants: .empty,
             redirectsVariants: .init(swiftVariant: article?.redirects)
         )
         

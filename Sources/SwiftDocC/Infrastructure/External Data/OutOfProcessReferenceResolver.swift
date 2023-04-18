@@ -123,7 +123,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             do {
                 guard let unresolvedTopicURL = unresolvedReference.topicURL.components.url else {
                     // Return the unresolved reference if the underlying URL is not valid
-                    return .failure(unresolvedReference, errorMessage: "URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid.")
+                    return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid."))
                 }
                 let metadata = try resolveInformationForTopicURL(unresolvedTopicURL)
                 // Don't do anything with this URL. The external URL will be resolved during conversion to render nodes
@@ -136,7 +136,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
                     )
                 )
             } catch let error {
-                return .failure(unresolvedReference, errorMessage: error.localizedDescription)
+                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo(error))
             }
         }
     }
@@ -851,6 +851,34 @@ extension OutOfProcessReferenceResolver {
             ///
             /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
             public let declarationFragments: VariantValue<DeclarationFragments?>
+            
+            /// Creates a new resolved information variant with the values that are different from the resolved information values.
+            ///
+            /// - Parameters:
+            ///   - traits: The traits of the variant.
+            ///   - kind: The resolved kind.
+            ///   - url: The resolved URL.
+            ///   - title: The resolved title
+            ///   - abstract: The resolved (plain text) abstract.
+            ///   - language: The resolved language.
+            ///   - declarationFragments: The resolved declaration fragments, if any.
+            public init(
+                traits: [RenderNode.Variant.Trait],
+                kind: VariantValue<DocumentationNode.Kind> = nil,
+                url: VariantValue<URL> = nil,
+                title: VariantValue<String> = nil,
+                abstract: VariantValue<String> = nil,
+                language: VariantValue<SourceLanguage> = nil,
+                declarationFragments: VariantValue<DeclarationFragments?> = nil
+            ) {
+                self.traits = traits
+                self.kind = kind
+                self.url = url
+                self.title = title
+                self.abstract = abstract
+                self.language = language
+                self.declarationFragments = declarationFragments
+            }
         }
     }
     
@@ -954,6 +982,11 @@ extension OutOfProcessReferenceResolver {
             seeAlsoVariants: .empty,
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
+            dictionaryKeysSectionVariants: .empty,
+            httpEndpointSectionVariants: .empty,
+            httpBodySectionVariants: .empty,
+            httpParametersSectionVariants: .empty,
+            httpResponsesSectionVariants: .empty,
             redirectsVariants: .empty
         )
     }

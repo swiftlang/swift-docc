@@ -1,0 +1,85 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 6,
+            "patch": 0
+        },
+        "generator": "Swift 5.9"
+    },
+    "module": {
+        "name": "ModuleWithConformanceAndExtension",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 4
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.protocol",
+                "displayName": "Protocol"
+            },
+            "identifier": {
+                "precise": "s:9ModuleWithConformanceAndExtension10MyProtocolP",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "MyProtocol"
+            ],
+            "names": {
+                "title": "MyProtocol",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "MyProtocol"
+                    }
+                ],
+                "subHeading": [
+                    {
+                        "kind": "keyword",
+                        "spelling": "protocol"
+                    },
+                    {
+                        "kind": "text",
+                        "spelling": " "
+                    },
+                    {
+                        "kind": "identifier",
+                        "spelling": "MyProtocol"
+                    }
+                ]
+            },
+            "declarationFragments": [
+                {
+                    "kind": "keyword",
+                    "spelling": "protocol"
+                },
+                {
+                    "kind": "text",
+                    "spelling": " "
+                },
+                {
+                    "kind": "identifier",
+                    "spelling": "MyProtocol"
+                }
+            ],
+            "accessLevel": "public",
+            "location": {
+                "uri": "file://path/to/ModuleWithConformanceAndExtension.swift",
+                "position": {
+                    "line": 9,
+                    "character": 16
+                }
+            }
+        }
+    ],
+    "relationships": []
+}
