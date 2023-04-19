@@ -20,7 +20,7 @@ Use the `Step` directive to define a single task the reader performs within a se
         }
         
         @Section(title: "Create a new folder and add SlothCreator") {
-            @ContentAndMedia(layout: "horizontal") {
+            @ContentAndMedia {
                 
                 ...
                 
