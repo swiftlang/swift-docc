@@ -67,7 +67,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
         if options.contains(.formatConsoleOutputForTools) {
             return IDEDiagnosticConsoleFormatter(options: options)
         } else {
-            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, options: options)
+            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, highlight: TerminalHelper.isConnectedToTerminal, options: options)
         }
     }
 }
@@ -188,15 +188,18 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
 final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     var options: DiagnosticFormattingOptions
     private let baseUrl: URL?
+    private let highlight: Bool
     private var sourceLines: [URL: [String]] = [:]
     
     private static let contextSize = 2
     
     init(
         baseUrl: URL?,
+        highlight: Bool,
         options: DiagnosticFormattingOptions
     ) {
         self.baseUrl = baseUrl
+        self.highlight = highlight
         self.options = options
     }
     
@@ -313,8 +316,15 @@ extension DefaultDiagnosticConsoleFormatter {
                 lineNumber: lineNumber,
                 range: diagnosticRange
             )
+            
+            let separator: String
+            if lineNumber >= diagnosticRange.lowerBound.line && lineNumber <= diagnosticRange.upperBound.line {
+                separator = "+"
+            } else {
+                separator = "|"
+            }
 
-            result.append("\n\(linePrefix) | \(highlightedSource)")
+            result.append("\n\(linePrefix) \(separator) \(highlightedSource)")
 
             var columnsWithSuggestions = Set<Int>()
             var suggestionsPerColumn = [(Int, [String])]()
@@ -326,7 +336,6 @@ extension DefaultDiagnosticConsoleFormatter {
                 }
             }
 
-            let suggestionAnsiAnnotation = ANSIAnnotation.sourceSuggestionHighlight
             let suggestionLinePrefix = String(repeating: " ", count: maxLinePrefixWidth) + " |"
 
             for (columnNumber, columnSuggestions) in suggestionsPerColumn.sorted(by: { $0.0 > $1.0 }) {
@@ -343,7 +352,7 @@ extension DefaultDiagnosticConsoleFormatter {
                 for (index, suggestion) in columnSuggestions.enumerated() {
                     // Highlight suggestion and make sure it's displayed on a single line.
                     let singleLineSuggestion = suggestion.split(separator: "\n", omittingEmptySubsequences: true).joined(separator: "")
-                    let highlightedSuggestion = suggestionAnsiAnnotation.applied(to: "suggestion: \(singleLineSuggestion)")
+                    let highlightedSuggestion = highlightSuggestion("suggestion: \(singleLineSuggestion)")
 
                     if index == columnSuggestions.count - 1 {
                         result.append("\n\(prefix)╰─\(highlightedSuggestion)")
@@ -356,14 +365,24 @@ extension DefaultDiagnosticConsoleFormatter {
         
         return result
     }
+    
+    private func highlightSuggestion(
+        _ suggestion: String
+    ) -> String {
+        guard highlight
+        else { return suggestion }
+        
+        let suggestionAnsiAnnotation = ANSIAnnotation.sourceSuggestionHighlight
+        return suggestionAnsiAnnotation.applied(to: suggestion)
+    }
 
     private func highlightSource(
         sourceLine: String,
         lineNumber: Int,
         range: SourceRange
     ) -> String {
-        guard lineNumber >= range.lowerBound.line &&
-                lineNumber <= range.upperBound.line,
+        guard highlight,
+              lineNumber >= range.lowerBound.line && lineNumber <= range.upperBound.line,
               !sourceLine.isEmpty
         else { return sourceLine }
         
