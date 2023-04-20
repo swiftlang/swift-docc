@@ -69,7 +69,7 @@ Tutorial pages provide instructions that walk through using your APIs in realist
     }
     
     @Section(title: "Add the name of your section here.") {
-        @ContentAndMedia(layout: horizontal) {
+        @ContentAndMedia {
             Add engaging section text here.
             
             @Image(source: "section-image-filename-here.jpg", alt: "Add an accessible description for your image here.")    
@@ -103,7 +103,7 @@ Replace the placeholders with your custom content. Use the ``Intro`` directive t
     }
     
     @Section(title: "Add a section title here") {
-        @ContentAndMedia(layout: "horizontal") {
+        @ContentAndMedia {
             Add some content here to introduce the steps that follow.
             
             @Image(source: "section-image-filename.png", alt: "Add an accessible description for your image here.")
