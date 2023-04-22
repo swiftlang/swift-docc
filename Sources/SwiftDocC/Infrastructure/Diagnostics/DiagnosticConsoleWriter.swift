@@ -26,7 +26,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     /// - Parameter filterLevel: Determines what diagnostics should be printed. This filter level is inclusive, i.e. if a level of ``DiagnosticSeverity/information`` is specified, diagnostics with a severity up to and including `.information` will be printed.
     @available(*, deprecated, message: "Use init(_:formattingOptions:) instead")
     public convenience init(_ stream: TextOutputStream = LogHandle.standardError, filterLevel: DiagnosticSeverity = .warning) {
-        self.init(stream, formattingOptions: [], baseURL: nil)
+        self.init(stream, formattingOptions: [], baseURL: nil, highlight: nil)
     }
 
     /// Creates a new instance of this class with the provided output stream.
@@ -34,11 +34,16 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     public init(
         _ stream: TextOutputStream = LogHandle.standardError,
         formattingOptions options: DiagnosticFormattingOptions = [],
-        baseURL: URL? = nil
+        baseURL: URL? = nil,
+        highlight: Bool? = nil
     ) {
         outputStream = stream
         formattingOptions = options
-        diagnosticFormatter = Self.makeDiagnosticFormatter(options, baseURL: baseURL)
+        diagnosticFormatter = Self.makeDiagnosticFormatter(
+            options,
+            baseURL: baseURL,
+            highlight: highlight ?? TerminalHelper.isConnectedToTerminal
+        )
     }
 
     public func receive(_ problems: [Problem]) {
@@ -62,12 +67,13 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     
     private static func makeDiagnosticFormatter(
         _ options: DiagnosticFormattingOptions,
-        baseURL: URL?
+        baseURL: URL?,
+        highlight: Bool
     ) -> DiagnosticConsoleFormatter {
         if options.contains(.formatConsoleOutputForTools) {
             return IDEDiagnosticConsoleFormatter(options: options)
         } else {
-            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, highlight: TerminalHelper.isConnectedToTerminal, options: options)
+            return DefaultDiagnosticConsoleFormatter(baseUrl: baseURL, highlight: highlight, options: options)
         }
     }
 }
@@ -81,12 +87,12 @@ extension DiagnosticConsoleWriter {
     }
     
     public static func formattedDescription(for problem: Problem, options: DiagnosticFormattingOptions = []) -> String {
-        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil)
+        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal)
         return diagnosticFormatter.formattedDescription(for: problem)
     }
     
     public static func formattedDescription(for diagnostic: Diagnostic, options: DiagnosticFormattingOptions = []) -> String {
-        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil)
+        let diagnosticFormatter = makeDiagnosticFormatter(options, baseURL: nil, highlight: TerminalHelper.isConnectedToTerminal)
         return diagnosticFormatter.formattedDescription(for: diagnostic)
     }
 }
@@ -238,8 +244,13 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
 
 extension DefaultDiagnosticConsoleFormatter {
     private func formattedDiagnosticsSummary(for diagnostic: Diagnostic) -> String {
-        let ansiAnnotation = diagnostic.severity.ansiAnnotation
-        return ansiAnnotation.applied(to: diagnostic.severity.description + ": " + diagnostic.summary)
+        let summary =  diagnostic.severity.description + ": " + diagnostic.summary
+        if highlight {
+            let ansiAnnotation = diagnostic.severity.ansiAnnotation
+            return ansiAnnotation.applied(to: summary)
+        } else {
+            return summary
+        }
     }
     
     private func formattedDiagnosticDetails(for diagnostic: Diagnostic) -> String {
