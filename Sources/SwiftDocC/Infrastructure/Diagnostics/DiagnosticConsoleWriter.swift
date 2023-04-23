@@ -354,7 +354,7 @@ extension DefaultDiagnosticConsoleFormatter {
 
                 for column in 0...columnNumber - 1 {
                     if columnsWithSuggestions.contains(column) {
-                        prefix.append("|")
+                        prefix.append("│")
                     } else {
                         prefix.append(" ")
                     }
@@ -451,7 +451,7 @@ private extension DiagnosticSeverity {
         case .warning:
             return .init(color: .yellow, trait: .bold)
         case .information, .hint:
-            return .normal
+            return .init(color: .default, trait: .bold)
         }
     }
 }
