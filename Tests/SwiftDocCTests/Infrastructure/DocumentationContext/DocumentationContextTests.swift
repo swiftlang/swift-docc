@@ -1900,33 +1900,24 @@ let expected = """
         // Add a sidecar file for a symbol that doesn't exist
         let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             unknownSymbolSidecarURL = root.appendingPathComponent("documentation/unknownSymbol.md")
-            otherUnknownSymbolSidecarURL = root.appendingPathComponent("documentation/xanotherSidecarFileForThisUnknownSymbol.md")
+            otherUnknownSymbolSidecarURL = root.appendingPathComponent("documentation/anotherSidecarFileForThisUnknownSymbol.md")
             
             try content.write(to: unknownSymbolSidecarURL, atomically: true, encoding: .utf8)
             try content.write(to: otherUnknownSymbolSidecarURL, atomically: true, encoding: .utf8)
         }
         
-        let unmatchedSidecarProblem = context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.SymbolUnmatched" })
+        let unmatchedSidecarProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.SymbolUnmatched" }))
         
         // Verify the diagnostics have the sidecar source URL
-        XCTAssertNotNil(unmatchedSidecarProblem?.diagnostic.source)
-        var sidecarFilesForUnknownSymbol: Set<URL?> = [unknownSymbolSidecarURL.standardizedFileURL, otherUnknownSymbolSidecarURL.standardizedFileURL]
+        XCTAssertNotNil(unmatchedSidecarProblem.diagnostic.source)
+        let sidecarFilesForUnknownSymbol: Set<URL?> = [unknownSymbolSidecarURL.standardizedFileURL, otherUnknownSymbolSidecarURL.standardizedFileURL]
         
         XCTAssertNotNil(unmatchedSidecarProblem)
-        if let unmatchedSidecarDiagnostic = unmatchedSidecarProblem?.diagnostic {
-            XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
-            XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem?.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem?.diagnostic.source))
-            XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. This documentation will be ignored.")
-            XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .information)
-            
-            XCTAssertEqual(unmatchedSidecarDiagnostic.notes.count, 1)
-            if let note = unmatchedSidecarDiagnostic.notes.first {
-                sidecarFilesForUnknownSymbol.remove(unmatchedSidecarDiagnostic.source?.standardizedFileURL)
-                XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(note.source.standardizedFileURL), "The other files should be the note's source")
-                
-                XCTAssertEqual(note.message, "'MyKit/UnknownSymbol' is also documented here.")
-            }
-        }
+        let unmatchedSidecarDiagnostic = unmatchedSidecarProblem.diagnostic
+        XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
+        XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem.diagnostic.source))
+        XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/MyKit'.")
+        XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
     }
     
     func testUncuratedArticleDiagnostics() throws {
@@ -2742,8 +2733,10 @@ let expected = """
 
         let identifier = "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
         let duplicateMarkdownProblems = context.problems.filter({ $0.diagnostic.identifier == identifier })
-        XCTAssertEqual(duplicateMarkdownProblems.count, 2)
-        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.summary, "Multiple occurrences of \'/documentation/MyKit/MyClass/myFunction()\' found")
+        XCTAssertEqual(duplicateMarkdownProblems.count, 1)
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.summary, "Multiple documentation extensions matched 'MyKit/MyClass/myFunction()'.")
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.notes.count, 1)
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.notes.first?.message, "'MyKit/MyClass/myFunction()' is also documented here.")
     }
     
     /// This test verifies that collision nodes and children of collision nodes are correctly
@@ -3084,6 +3077,65 @@ let expected = """
             let symbol = try XCTUnwrap(node.semantic as? Symbol)
             XCTAssertEqual(symbol.abstract?.plainText, "my type alias", "The abstract should be from the overriding documentation extension.")
         }
+    }
+    
+    func testMultipleDocumentationExtensionMatchDiagnostic() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
+            //     MyObjectiveCOptionNone                                      = 0,
+            //     MyObjectiveCOptionFirst                                     = 1 << 0,
+            //     MyObjectiveCOptionSecond NS_SWIFT_NAME(secondCaseSwiftName) = 1 << 1
+            // };
+            try """
+            # ``MixedFramework/MyObjectiveCOption/MyObjectiveCOptionFirst``
+            
+            This documentation extension link uses the Objective-C spelling to refer to the "first" option case.
+            """.write(to: url.appendingPathComponent("objc-case.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCOption/first``
+            
+            This documentation extension link uses the customized Swift spelling to refer to the "first" option case.
+            """.write(to: url.appendingPathComponent("objc-case-swift-name.md"), atomically: true, encoding: .utf8)
+            
+            // NS_SWIFT_NAME(MyObjectiveCClassSwiftName)
+            // @interface MyObjectiveCClassObjectiveCName : NSObject
+            //
+            // @property (copy, readonly) NSString * myPropertyObjectiveCName NS_SWIFT_NAME(myPropertySwiftName);
+            //
+            // - (void)myMethodObjectiveCName NS_SWIFT_NAME(myMethodSwiftName());
+            // - (void)myMethodWithArgument:(NSString *)argument NS_SWIFT_NAME(myMethod(argument:));
+            //
+            // @end
+            try """
+            # ``MixedFramework/MyObjectiveCClassObjectiveCName/myMethodWithArgument:``
+            
+            This documentation extension link uses the Objective-C spelling to refer to the method with an argument.
+            """.write(to: url.appendingPathComponent("objc-method.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)``
+            
+            This documentation extension link uses the customized Swift spelling to refer to the method with an argument.
+            """.write(to: url.appendingPathComponent("objc-method-swift-name.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let multipleDocExtensionProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences" })
+        XCTAssertEqual(multipleDocExtensionProblems.count, 2)
+        
+        let enumCaseMultipleMatchProblem = try XCTUnwrap(multipleDocExtensionProblems.first(where: { $0.diagnostic.summary == "Multiple documentation extensions matched 'MixedFramework/MyObjectiveCOption/first'." }))
+        XCTAssert(["objc-case.md", "objc-case-swift-name.md"].contains(enumCaseMultipleMatchProblem.diagnostic.source?.lastPathComponent ?? ""), "The warning should refer to one of the documentation extensions files")
+        XCTAssertEqual(enumCaseMultipleMatchProblem.diagnostic.notes.count, 1)
+        XCTAssert(["objc-case.md", "objc-case-swift-name.md"].contains(enumCaseMultipleMatchProblem.diagnostic.notes.first?.source.lastPathComponent ?? ""), "The note should refer to one of the documentation extension files")
+        XCTAssertNotEqual(enumCaseMultipleMatchProblem.diagnostic.source, enumCaseMultipleMatchProblem.diagnostic.notes.first?.source, "The warning and the note should refer to different documentation extension files")
+        
+        let methodMultipleMatchProblem = try XCTUnwrap(multipleDocExtensionProblems.first(where: { $0.diagnostic.summary == "Multiple documentation extensions matched 'MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)'." }))
+        XCTAssert(["objc-method.md", "objc-method-swift-name.md"].contains(methodMultipleMatchProblem.diagnostic.source?.lastPathComponent ?? ""), "The warning should refer to one of the documentation extensions files")
+        XCTAssertEqual(methodMultipleMatchProblem.diagnostic.notes.count, 1)
+        XCTAssert(["objc-method.md", "objc-method-swift-name.md"].contains(methodMultipleMatchProblem.diagnostic.notes.first?.source.lastPathComponent ?? ""), "The note should refer to one of the documentation extension files")
+        XCTAssertNotEqual(methodMultipleMatchProblem.diagnostic.source, methodMultipleMatchProblem.diagnostic.notes.first?.source, "The warning and the note should refer to different documentation extension files")
     }
     
     func testAutomaticallyCuratesArticles() throws {

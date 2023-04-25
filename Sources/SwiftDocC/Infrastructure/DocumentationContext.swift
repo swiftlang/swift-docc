@@ -291,9 +291,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// has been built, this list of uncurated documentation extensions will be empty.
     ///
     /// The key to lookup a documentation extension file is the symbol reference from its title (level 1 heading).
-    ///
-    /// - Warning: It's possible—but not supported—for multiple documentation extension files to specify the same symbol link.
-    var uncuratedDocumentationExtensions = [ResolvedTopicReference: [SemanticResult<Article>]]()
+    var uncuratedDocumentationExtensions = [ResolvedTopicReference: SemanticResult<Article>]()
 
     /// External metadata injected into the context, for example via command line arguments.
     public var externalMetadata = ExternalMetadata()
@@ -1010,24 +1008,13 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// A lookup of resolved references based on the reference's absolute string.
     private(set) var referenceIndex = [String: ResolvedTopicReference]()
     
-    private func nodeWithInitializedContent(reference: ResolvedTopicReference, matches: [DocumentationContext.SemanticResult<Article>]?) -> DocumentationNode {
+    private func nodeWithInitializedContent(reference: ResolvedTopicReference, match foundDocumentationExtension: DocumentationContext.SemanticResult<Article>?) -> DocumentationNode {
         precondition(documentationCache.keys.contains(reference))
         
-        // A symbol can have only one documentation extension markdown file, so emit warnings if there are more.
-        if let matches = matches, matches.count > 1 {
-            let zeroRange = SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
-            for match in matches {
-                let range = match.value.title?.range ?? zeroRange
-                let problem = Problem(diagnostic: Diagnostic(source: match.source, severity: .warning, range: range, identifier: "org.swift.docc.DuplicateMarkdownTitleSymbolReferences", summary: "Multiple occurrences of \(reference.path.singleQuoted) found", explanation: "Only one documentation extension file should reference the symbol \(reference.path.singleQuoted) in its title."), possibleSolutions: [])
-                diagnosticEngine.emit(problem)
-            }
-        }
-
         var updatedNode = documentationCache[reference]!
         
         // Pull a matched article out of the cache and attach content to the symbol
         let symbol = updatedNode.unifiedSymbol?.documentedSymbol
-        let foundDocumentationExtension = matches?.first
         
         updatedNode.initializeSymbolContent(
             documentationExtension: foundDocumentationExtension?.value,
@@ -1316,6 +1303,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
                 hierarchyBasedLinkResolver!.addMappingForSymbols(symbolIndex: symbolIndex)
             }
+            // Track the symbols that have multiple matching documentation extension files for diagnostics.
+            var symbolsWithMultipleDocumentationExtensionMatches = [ResolvedTopicReference: [SemanticResult<Article>]]()
             for documentationExtension in documentationExtensions {
                 guard let link = documentationExtension.value.title?.child(at: 0) as? AnyLink else {
                     fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
@@ -1350,22 +1339,25 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                     let reference = TopicReference.unresolved(.init(topicURL: url))
                     switch resolve(reference, in: rootReference, fromSymbolLink: true) {
                     case .success(let resolved):
-                        uncuratedDocumentationExtensions[resolved, default: []].append(documentationExtension)
-                    case .failure(_, _):
-                        // TODO: Warn that the link didn't match any symbol https://github.com/apple/swift-docc/issues/560
-                        
-                        // Fallback to the documentation cache based link resolver's behavior.
-                        let reference = documentationExtension.topicGraphNode.reference
-                        
-                        let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
-                        let symbolReference = ResolvedTopicReference(
-                            bundleIdentifier: reference.bundleIdentifier,
-                            path: symbolPath,
-                            fragment: nil,
-                            sourceLanguages: reference.sourceLanguages
+                        if let existing = uncuratedDocumentationExtensions[resolved] {
+                            if symbolsWithMultipleDocumentationExtensionMatches[resolved] == nil {
+                                symbolsWithMultipleDocumentationExtensionMatches[resolved] = [existing]
+                            }
+                            symbolsWithMultipleDocumentationExtensionMatches[resolved]!.append(documentationExtension)
+                        } else {
+                            uncuratedDocumentationExtensions[resolved] = documentationExtension
+                        }
+                    case .failure(_, let errorInfo):
+                        // Present a diagnostic specific to documentation extension files but get the solutions and notes from the general unresolved link problem.
+                        let unresolvedLinkProblem =
+                            unresolvedReferenceProblem(reference: reference, source: documentationExtension.source, range: link.range, severity: .warning, uncuratedArticleMatch: nil, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
+                       
+                        diagnosticEngine.emit(
+                            Problem(
+                                diagnostic: Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.SymbolUnmatched", summary: "No symbol matched \(destination.singleQuoted). \(errorInfo.message).", notes: unresolvedLinkProblem.diagnostic.notes),
+                                possibleSolutions: unresolvedLinkProblem.possibleSolutions
+                            )
                         )
-                        
-                        uncuratedDocumentationExtensions[symbolReference, default: []].append(documentationExtension)
                         continue
                     }
                 } else {
@@ -1381,9 +1373,18 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                         sourceLanguages: reference.sourceLanguages
                     )
                     
-                    uncuratedDocumentationExtensions[symbolReference, default: []].append(documentationExtension)
+                    if let existing = uncuratedDocumentationExtensions[symbolReference] {
+                        if symbolsWithMultipleDocumentationExtensionMatches[symbolReference] == nil {
+                            symbolsWithMultipleDocumentationExtensionMatches[symbolReference] = [existing]
+                        }
+                        symbolsWithMultipleDocumentationExtensionMatches[symbolReference]!.append(documentationExtension)
+                    } else {
+                        uncuratedDocumentationExtensions[symbolReference] = documentationExtension
+                    }
                 }
             }
+            emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with: symbolsWithMultipleDocumentationExtensionMatches)
+            symbolsWithMultipleDocumentationExtensionMatches.removeAll()
             
             if hierarchyBasedLinkResolver == nil || LinkResolutionMigrationConfiguration.shouldReportLinkResolutionMismatches {
                 // The `symbolsURLHierarchy` is only used in the cache-based link resolver to traverse the documentation and
@@ -1507,12 +1508,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             let updatedNodes: [(node: DocumentationNode, matchedArticleURL: URL?)] = Array(symbolIndex.values)
                 .concurrentPerform { finalReference, results in
                     // Match the symbol's documentation extension and initialize the node content.
-                    let matches = uncuratedDocumentationExtensions[finalReference]
-                    let updatedNode = nodeWithInitializedContent(reference: finalReference, matches: matches)
+                    let match = uncuratedDocumentationExtensions[finalReference]
+                    let updatedNode = nodeWithInitializedContent(reference: finalReference, match: match)
                     
                     results.append((
                         node: updatedNode,
-                        matchedArticleURL: matches?.first?.source
+                        matchedArticleURL: match?.source
                     ))
                 }
             
@@ -1566,6 +1567,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             throw ContextError.registrationDisabled
         }
     }
+    
     
     /// Builds in-memory relationships between symbols based on the relationship information in a given symbol graph file.
     ///
@@ -2600,27 +2602,32 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         return crawler.curatedNodes
     }
 
-    /// Emits warnings for unmatched documentation extensions and uncurated articles.
-    private func emitWarningsForUncuratedTopics() {
-        // Check that all documentation extension files matched a symbol and that all articles are curated
-        for results in uncuratedDocumentationExtensions.values {
-            let articleResult = results.first!
-            let remaining  = results.dropFirst()
+    /// Emits warnings for symbols that are matched by multiple documentation extensions.
+    private func emitWarningsForSymbolsMatchedInMultipleDocumentationExtensions(with symbolsWithMultipleDocumentationExtensionMatches: [ResolvedTopicReference : [DocumentationContext.SemanticResult<Article>]]) {
+        for (reference, documentationExtensions) in symbolsWithMultipleDocumentationExtensionMatches {
+            let symbolPath = reference.url.pathComponents.dropFirst(2).joined(separator: "/")
+            let firstExtension = documentationExtensions.first!
             
-            guard let link = articleResult.value.title?.child(at: 0) as? AnyLink else {
-                fatalError("An article shouldn't have ended up in the documentation extension cache unless its title was a link. File: \(articleResult.source.absoluteString.singleQuoted)")
+            guard let link = firstExtension.value.title?.child(at: 0) as? AnyLink else {
+                fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(firstExtension.source.absoluteString.singleQuoted)")
             }
-            
-            let notes: [DiagnosticNote] = remaining.map { articleResult in
-                guard let linkMarkup = articleResult.value.title?.child(at: 0), linkMarkup is AnyLink else {
-                    fatalError("An article shouldn't have ended up in the documentation extension cache unless its title was a link. File: \(articleResult.source.absoluteString.singleQuoted)")
+            let zeroRange = SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
+            let notes: [DiagnosticNote] = documentationExtensions.dropFirst().map { documentationExtension in
+                guard let link = documentationExtension.value.title?.child(at: 0) as? AnyLink else {
+                    fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
                 }
-                let zeroRange = SourceLocation(line: 1, column: 1, source: nil)..<SourceLocation(line: 1, column: 1, source: nil)
-                return DiagnosticNote(source: articleResult.source, range: linkMarkup.range ?? zeroRange, message: "\(link.destination?.singleQuoted ?? "''") is also documented here.")
+                return DiagnosticNote(source: documentationExtension.source, range: link.range ?? zeroRange, message: "\(symbolPath.singleQuoted) is also documented here.")
             }
-            diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: articleResult.source, severity: .information, range: link.range, identifier: "org.swift.docc.SymbolUnmatched", summary: "No symbol matched \(link.destination?.singleQuoted ?? "''"). This documentation will be ignored.", notes: notes), possibleSolutions: []))
+            
+            diagnosticEngine.emit(
+                Problem(diagnostic: Diagnostic(source: firstExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.DuplicateMarkdownTitleSymbolReferences", summary: "Multiple documentation extensions matched \(symbolPath.singleQuoted).", notes: notes), possibleSolutions: [])
+            )
         }
-        
+    }
+    
+    /// Emits information diagnostics for uncurated articles.
+    private func emitWarningsForUncuratedTopics() {
+        // Check that all articles are curated
         for articleResult in uncuratedArticles.values {
             diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: articleResult.source, severity: .information, range: nil, identifier: "org.swift.docc.ArticleUncurated", summary: "You haven't curated \(articleResult.topicGraphNode.reference.description.singleQuoted)"), possibleSolutions: []))
         }

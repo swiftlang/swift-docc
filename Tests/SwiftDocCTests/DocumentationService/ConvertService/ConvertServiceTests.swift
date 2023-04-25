@@ -1224,12 +1224,7 @@ class ConvertServiceTests: XCTestCase {
                 XCTAssertEqual(
                     Set(referenceStore.topics.keys.map(\.path)),
                     [
-                        // Documentation extension files:
-                        "/documentation/MyKit",
-                        "/documentation/SideKit",
-                        "/documentation/MyKit/MyClass",
-                        "/documentation/MyKit/MyProtocol",
-                        "/documentation/SideKit/SideClass/init()",
+                        // This bundle doesn't contain any symbol graphs so documentation extensions can't match with any symbols
                         
                         // Articles and tutorials:
                         "/tutorials/TestOverview",
@@ -1244,14 +1239,6 @@ class ConvertServiceTests: XCTestCase {
                         "/tutorials/Test-Bundle/TutorialMediaWithSpaces",
                         "/documentation/Test-Bundle/Default-Code-Listing-Syntax",
                     ]
-                )
-            
-                try self.assertReferenceStoreContains(
-                    referenceStore: referenceStore,
-                    topicPath: "/documentation/MyKit/MyClass",
-                    source: testBundleURL.appendingPathComponent("documentation/myclass.md"),
-                    title: "doc:MyKit/MyClass",
-                    isDocumentationExtensionContent: true
                 )
                 
                 try self.assertReferenceStoreContains(

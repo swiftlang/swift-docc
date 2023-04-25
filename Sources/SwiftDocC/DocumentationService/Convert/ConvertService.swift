@@ -252,9 +252,7 @@ public struct ConvertService: DocumentationService {
         baseReferenceStore: RenderReferenceStore?
     ) -> RenderReferenceStore {
         let uncuratedArticles = context.uncuratedArticles.map { ($0, isDocumentationExtensionContent: false) }
-        let uncuratedDocumentationExtensions = context.uncuratedDocumentationExtensions.flatMap { reference, articles in
-            articles.map { article in ((reference, article), isDocumentationExtensionContent: true) }
-        }
+        let uncuratedDocumentationExtensions = context.uncuratedDocumentationExtensions.map { ($0, isDocumentationExtensionContent: true) }
         let topicContent = (uncuratedArticles + uncuratedDocumentationExtensions)
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
