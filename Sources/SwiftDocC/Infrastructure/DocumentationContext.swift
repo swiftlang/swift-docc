@@ -823,7 +823,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         technologies: [SemanticResult<Technology>],
         tutorials: [SemanticResult<Tutorial>],
         tutorialArticles: [SemanticResult<TutorialArticle>],
-        articles: [SemanticResult<Article>]
+        articles: [SemanticResult<Article>],
+        documentationExtensions: [SemanticResult<Article>]
     ) {
         // First, try to understand the basic structure of the document by
         // analyzing it and putting references in as "unresolved".
@@ -831,6 +832,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         var tutorials = [SemanticResult<Tutorial>]()
         var tutorialArticles = [SemanticResult<TutorialArticle>]()
         var articles = [SemanticResult<Article>]()
+        var documentationExtensions = [SemanticResult<Article>]()
         
         var references: [ResolvedTopicReference: URL] = [:]
 
@@ -937,25 +939,21 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 // Separate articles that look like documentation extension files from other articles, so that the documentation extension files can be matched up with a symbol.
                 // At this point we consider all articles with an H1 containing link "documentation extension" - some links might not resolve in the final documentation hierarchy
                 // and we will emit warnings for those later on when we finalize the bundle discovery phase.
-                if let link = result.value.title?.child(at: 0) as? AnyLink,
-                   let url = link.destination.flatMap(ValidatedURL.init(parsingExact:)) {
-                    let reference = result.topicGraphNode.reference
-                    
-                    let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
-                    let symbolReference = ResolvedTopicReference(
-                        bundleIdentifier: reference.bundleIdentifier,
-                        path: symbolPath,
-                        fragment: nil,
-                        sourceLanguages: reference.sourceLanguages
-                    )
-                    
-                    uncuratedDocumentationExtensions[symbolReference, default: []].append(result)
+                if result.value.title?.child(at: 0) is AnyLink {
+                    documentationExtensions.append(result)
                     
                     // Warn for an incorrect root page metadata directive.
-                    if result.value.metadata?.technologyRoot != nil {
-                        let diagnostic = Diagnostic(source: url.url, severity: .warning, range: article.metadata?.technologyRoot?.originalMarkup.range, identifier: "org.swift.docc.UnexpectedTechnologyRoot", summary: "Don't use TechnologyRoot in documentation extension files because it's only valid as a directive in articles")
-                        let problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
-                        diagnosticEngine.emit(problem)
+                    if let technologyRoot = result.value.metadata?.technologyRoot {
+                        let diagnostic = Diagnostic(source: url, severity: .warning, range: article.metadata?.technologyRoot?.originalMarkup.range, identifier: "org.swift.docc.UnexpectedTechnologyRoot", summary: "Documentation extension files can't become technology roots.")
+                        let solutions: [Solution]
+                        if let range = technologyRoot.originalMarkup.range {
+                            solutions = [
+                                Solution(summary: "Remove the TechnologyRoot directive", replacements: [Replacement(range: range, replacement: "")])
+                            ]
+                        } else {
+                            solutions = []
+                        }
+                        diagnosticEngine.emit(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
                     }
                 } else {
                     precondition(uncuratedArticles[result.topicGraphNode.reference] == nil, "Article references are unique.")
@@ -976,7 +974,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             }
         }
         
-        return (technologies, tutorials, tutorialArticles, articles)
+        return (technologies, tutorials, tutorialArticles, articles, documentationExtensions)
     }
     
     private func insertLandmarks<Landmarks: Sequence>(_ landmarks: Landmarks, from topicGraphNode: TopicGraph.Node, source url: URL) where Landmarks.Element == Landmark {
@@ -1154,7 +1152,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     ///
     /// - Parameter bundle: The bundle to load symbol graph files from.
     /// - Returns: A pair of the references to all loaded modules and the hierarchy of all the loaded symbol's references.
-    private func registerSymbols(from bundle: DocumentationBundle, symbolGraphLoader: SymbolGraphLoader) throws -> (moduleReferences: Set<ResolvedTopicReference>, urlHierarchy: BidirectionalTree<ResolvedTopicReference>) {
+    private func registerSymbols(
+        from bundle: DocumentationBundle,
+        symbolGraphLoader: SymbolGraphLoader,
+        documentationExtensions: [SemanticResult<Article>]
+    ) throws -> (moduleReferences: Set<ResolvedTopicReference>, urlHierarchy: BidirectionalTree<ResolvedTopicReference>)
+    {
         // Making sure that we correctly let decoding memory get released, do not remove the autorelease pool.
         return try autoreleasepool { [documentationCacheBasedLinkResolver] () -> (Set<ResolvedTopicReference>, BidirectionalTree<ResolvedTopicReference>) in
             /// A tree of the symbol hierarchy as defined by the combined symbol graph.
@@ -1312,6 +1315,65 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             // Otherwise the mappings will save the unmodified references and the hierarchy based resolver won't find the expected parent nodes when resolving links.
             if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
                 hierarchyBasedLinkResolver!.addMappingForSymbols(symbolIndex: symbolIndex)
+            }
+            for documentationExtension in documentationExtensions {
+                guard let link = documentationExtension.value.title?.child(at: 0) as? AnyLink else {
+                    fatalError("An article shouldn't have ended up in the documentation extension list unless its title was a link. File: \(documentationExtension.source.absoluteString.singleQuoted)")
+                }
+                
+                guard let destination = link.destination else {
+                    let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.emptyLinkDestination", summary: """
+                        Documentation extension with an empty link doesn't correspond to any symbol.
+                        """, explanation: nil, notes: [])
+                    diagnosticEngine.emit(Problem(diagnostic: diagnostic))
+                    continue
+                }
+                guard let url = ValidatedURL(parsingExact: destination) else {
+                    let diagnostic = Diagnostic(source: documentationExtension.source, severity: .warning, range: link.range, identifier: "org.swift.docc.invalidLinkDestination", summary: """
+                        \(destination.singleQuoted) is
+                        """, explanation: nil, notes: [])
+                    diagnosticEngine.emit(Problem(diagnostic: diagnostic))
+                    continue
+                }
+                
+                if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+                    // TODO: Resolve the link relative to the module https://github.com/apple/swift-docc/issues/516
+                    let reference = TopicReference.unresolved(.init(topicURL: url))
+                    switch resolve(reference, in: bundle.rootReference, fromSymbolLink: true) {
+                    case .success(let resolved):
+                        uncuratedDocumentationExtensions[resolved, default: []].append(documentationExtension)
+                    case .failure(_, _):
+                        // TODO: Warn that the link didn't match any symbol https://github.com/apple/swift-docc/issues/560
+                        
+                        // Fallback to the documentation cache based link resolver's behavior.
+                        let reference = documentationExtension.topicGraphNode.reference
+                        
+                        let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
+                        let symbolReference = ResolvedTopicReference(
+                            bundleIdentifier: reference.bundleIdentifier,
+                            path: symbolPath,
+                            fragment: nil,
+                            sourceLanguages: reference.sourceLanguages
+                        )
+                        
+                        uncuratedDocumentationExtensions[symbolReference, default: []].append(documentationExtension)
+                        continue
+                    }
+                } else {
+                    // The documentation cache based link resolver doesn't "resolve" the links in the documentation extension titles.
+                    // Instead it matches them by exact match or not at all.
+                    let reference = documentationExtension.topicGraphNode.reference
+                    
+                    let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
+                    let symbolReference = ResolvedTopicReference(
+                        bundleIdentifier: reference.bundleIdentifier,
+                        path: symbolPath,
+                        fragment: nil,
+                        sourceLanguages: reference.sourceLanguages
+                    )
+                    
+                    uncuratedDocumentationExtensions[symbolReference, default: []].append(documentationExtension)
+                }
             }
             
             if hierarchyBasedLinkResolver == nil || LinkResolutionMigrationConfiguration.shouldReportLinkResolutionMismatches {
@@ -2157,7 +2219,8 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             technologies: [SemanticResult<Technology>],
             tutorials: [SemanticResult<Tutorial>],
             tutorialArticles: [SemanticResult<TutorialArticle>],
-            articles: [SemanticResult<Article>]
+            articles: [SemanticResult<Article>],
+            documentationExtensions: [SemanticResult<Article>]
         )!
         
         discoveryGroup.async(queue: discoveryQueue) { [unowned self] in
@@ -2181,10 +2244,10 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         // All discovery went well, process the inputs.
-        let (technologies, tutorials, tutorialArticles, allArticles) = result
+        let (technologies, tutorials, tutorialArticles, allArticles, documentationExtensions) = result
         var (otherArticles, rootPageArticles) = splitArticles(allArticles)
         
-        let globalOptions = (allArticles + uncuratedDocumentationExtensions.values.flatMap { $0 }).compactMap { article in
+        let globalOptions = (allArticles + documentationExtensions).compactMap { article in
             return article.value.options[.global]
         }
         
@@ -2236,7 +2299,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         }
         
         let rootPages = registerRootPages(from: rootPageArticles, in: bundle)
-        let (moduleReferences, symbolsURLHierarchy) = try registerSymbols(from: bundle, symbolGraphLoader: symbolGraphLoader)
+        let (moduleReferences, symbolsURLHierarchy) = try registerSymbols(from: bundle, symbolGraphLoader: symbolGraphLoader, documentationExtensions: documentationExtensions)
         // We don't need to keep the loader in memory after we've registered all symbols.
         symbolGraphLoader = nil
         

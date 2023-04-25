@@ -2824,6 +2824,119 @@ let expected = """
         XCTAssertTrue(tgNode2.contains(articleReference))
     }
     
+    func testMatchesDocumentationExtensionsAsSymbolLinks() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // Two colliding symbols that differ by capitalization.
+            try """
+            # ``MixedFramework/CollisionsWithDifferentCapitalization/someThing``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            some thing
+            
+            This documentation extension link doesn't need disambiguation because "someThing" is capitalized differently than "something".
+            """.write(to: url.appendingPathComponent("some-thing.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/CollisionsWithDifferentCapitalization/something``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+
+            something
+            
+            This documentation extension link doesn't need disambiguation because "something" is capitalized differently than "someThing".
+            """.write(to: url.appendingPathComponent("something.md"), atomically: true, encoding: .utf8)
+            
+            // Three colliding symbols that differ by symbol kind.
+            try """
+            # ``MixedFramework/CollisionsWithEscapedKeywords/subscript()-method``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            method
+            
+            This documentation extension link can be disambiguated with only the kind information (without the language).
+            """.write(to: url.appendingPathComponent("method.md"), atomically: true, encoding: .utf8)
+
+            try """
+            # ``MixedFramework/CollisionsWithEscapedKeywords/subscript()-subscript``
+
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            subscript
+            
+            This documentation extension link can be disambiguated with only the kind information (without the language).
+            """.write(to: url.appendingPathComponent("subscript.md"), atomically: true, encoding: .utf8)
+
+            try """
+            # ``MixedFramework/CollisionsWithEscapedKeywords/subscript()-type.method``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            type method
+            
+            This documentation extension link can be disambiguated with only the kind information (without the language).
+            """.write(to: url.appendingPathComponent("type-method.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/someThing-90i4h", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "some thing", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/something-2c4k6", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "something", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.method", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "method", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.subscript", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "subscript", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.type.method", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "type method", "The abstract should be from the overriding documentation extension.")
+        }
+    }
+    
     func testAutomaticallyCuratesArticles() throws {
         let articleOne = TextFile(name: "Article1.md", utf8Content: """
             # Article 1
