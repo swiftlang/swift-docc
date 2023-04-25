@@ -83,15 +83,7 @@ public final class CallToAction: Semantic, AutomaticDirectiveConvertible {
     /// indirectly via ``purpose``.
     @available(*, deprecated, renamed: "buttonLabel(for:)")
     public var buttonLabel: String {
-        if let label = label {
-            return label
-        } else if let purpose = purpose {
-            return purpose.defaultLabel
-        } else {
-            // The `validate()` method ensures that this type should never be constructed without
-            // one of the above.
-            fatalError("A valid CallToAction should have either a purpose or label")
-        }
+        return buttonLabel(for: nil)
     }
     
     /// The label that should be used when rendering the user-interface for this call to action button.
@@ -199,12 +191,7 @@ extension CallToAction.Purpose {
     /// a separate label.
     @available(*, deprecated, message: "Replaced with 'CallToAction.buttonLabel(for:)'.")
     public var defaultLabel: String {
-        switch self {
-        case .download:
-            return "Download"
-        case .link:
-            return "Visit"
-        }
+        return defaultLabel(for: nil)
     }
     
     fileprivate func defaultLabel(for pageKind: Metadata.PageKind.Kind?) -> String {
