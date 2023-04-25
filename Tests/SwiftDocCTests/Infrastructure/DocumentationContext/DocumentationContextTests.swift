@@ -1916,8 +1916,14 @@ let expected = """
         let unmatchedSidecarDiagnostic = unmatchedSidecarProblem.diagnostic
         XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
         XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem.diagnostic.source))
-        XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/MyKit'.")
-        XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
+        
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/MyKit'.")
+            XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
+        } else {
+            XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. This documentation will be ignored.")
+            XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .information)
+        }
     }
     
     func testUncuratedArticleDiagnostics() throws {

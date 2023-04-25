@@ -2628,6 +2628,16 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// Emits information diagnostics for uncurated articles.
     private func emitWarningsForUncuratedTopics() {
         // Check that all articles are curated
+        if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            for articleResult in uncuratedDocumentationExtensions.values {
+                guard let link = articleResult.value.title?.child(at: 0) as? AnyLink else {
+                    fatalError("An article shouldn't have ended up in the documentation extension cache unless its title was a link. File: \(articleResult.source.absoluteString.singleQuoted)")
+                }
+                
+                diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: articleResult.source, severity: .information, range: link.range, identifier: "org.swift.docc.SymbolUnmatched", summary: "No symbol matched \(link.destination?.singleQuoted ?? "''"). This documentation will be ignored.", notes: []), possibleSolutions: []))
+            }
+        }
+        
         for articleResult in uncuratedArticles.values {
             diagnosticEngine.emit(Problem(diagnostic: Diagnostic(source: articleResult.source, severity: .information, range: nil, identifier: "org.swift.docc.ArticleUncurated", summary: "You haven't curated \(articleResult.topicGraphNode.reference.description.singleQuoted)"), possibleSolutions: []))
         }
