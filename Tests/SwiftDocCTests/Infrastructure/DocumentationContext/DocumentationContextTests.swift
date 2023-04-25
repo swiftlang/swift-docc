@@ -2937,6 +2937,110 @@ let expected = """
         }
     }
     
+    func testMatchesDocumentationExtensionsWithSourceLanguageSpecificLinks() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
+            //     MyObjectiveCOptionNone                                      = 0,
+            //     MyObjectiveCOptionFirst                                     = 1 << 0,
+            //     MyObjectiveCOptionSecond NS_SWIFT_NAME(secondCaseSwiftName) = 1 << 1
+            // };
+            try """
+            # ``MixedFramework/MyObjectiveCOption/MyObjectiveCOptionFirst``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Objective-C option case
+            
+            This documentation extension link uses the Objective-C spelling to refer to the "first" option case.
+            """.write(to: url.appendingPathComponent("objc-case.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCOption/secondCaseSwiftName``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Swift spelling of Objective-C option case
+            
+            This documentation extension link uses the customized Swift spelling to refer to the "second" option case.
+            """.write(to: url.appendingPathComponent("objc-case-swift-name.md"), atomically: true, encoding: .utf8)
+            
+            // NS_SWIFT_NAME(MyObjectiveCClassSwiftName)
+            // @interface MyObjectiveCClassObjectiveCName : NSObject
+            //
+            // @property (copy, readonly) NSString * myPropertyObjectiveCName NS_SWIFT_NAME(myPropertySwiftName);
+            //
+            // - (void)myMethodObjectiveCName NS_SWIFT_NAME(myMethodSwiftName());
+            // - (void)myMethodWithArgument:(NSString *)argument NS_SWIFT_NAME(myMethod(argument:));
+            //
+            // @end
+            try """
+            # ``MixedFramework/MyObjectiveCClassObjectiveCName/myMethodWithArgument:``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Objective-C method with one argument
+            
+            This documentation extension link uses the Objective-C spelling to refer to the method with an argument.
+            """.write(to: url.appendingPathComponent("objc-method.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Swift spelling for Objective-C method without arguments
+            
+            This documentation extension link uses the customized Swift spelling to refer to the method without an argument.
+            """.write(to: url.appendingPathComponent("objc-method-swift-name.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCOption/first", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Objective-C option case", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCOption/secondCaseSwiftName", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Swift spelling of Objective-C option case", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Objective-C method with one argument", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Swift spelling for Objective-C method without arguments", "The abstract should be from the overriding documentation extension.")
+        }
+    }
+    
     func testAutomaticallyCuratesArticles() throws {
         let articleOne = TextFile(name: "Article1.md", utf8Content: """
             # Article 1
