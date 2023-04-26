@@ -817,7 +817,13 @@
             "text" : "  - `download` indicates that the link is to a downloadable file. The button will be labeled \"Download\"."
           },
           {
-            "text" : "  - `link` indicates that the link is to an external webpage. The button will be labeled \"Visit\"."
+            "text" : "  - `link` indicates that the link is to an external webpage."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "     The button will be labeled \"Visit\" when used on article pages and \"View Source\" when used on sample code pages."
           },
           {
             "text" : "- The `label` parameter specifies the literal text to use as the button label."
