@@ -795,7 +795,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     action: .reference(
                         identifier: downloadIdentifier,
                         isActive: true,
-                        overridingTitle: callToAction.buttonLabel,
+                        overridingTitle: callToAction.buttonLabel(for: article.metadata?.pageKind?.kind),
                         overridingTitleInlineContent: nil))
                 externalLocationReferences[url.description] = ExternalLocationReference(identifier: downloadIdentifier)
             } else if let fileReference = callToAction.file,
@@ -804,7 +804,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 node.sampleDownload = .init(action: .reference(
                     identifier: downloadIdentifier,
                     isActive: true,
-                    overridingTitle: callToAction.buttonLabel,
+                    overridingTitle: callToAction.buttonLabel(for: article.metadata?.pageKind?.kind),
                     overridingTitleInlineContent: nil
                 ))
             }
