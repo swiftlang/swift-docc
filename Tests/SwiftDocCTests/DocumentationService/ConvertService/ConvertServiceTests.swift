@@ -1221,52 +1221,33 @@ class ConvertServiceTests: XCTestCase {
             assert: { renderNodes, referenceStore in
                 let referenceStore = try XCTUnwrap(referenceStore)
                 
-                if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-                    XCTAssertEqual(
-                        Set(referenceStore.topics.keys.map(\.path)),
-                        [
-                            // This bundle doesn't contain any symbol graphs so documentation extensions can't match with any symbols
-                            
-                            // Articles and tutorials:
-                            "/tutorials/TestOverview",
-                            "/tutorials/TestOverview/$volume",
-                            "/tutorials/TestOverview/Chapter-1",
-                            "/documentation/Test-Bundle/article",
-                            "/documentation/Test-Bundle/article2",
-                            "/documentation/Test-Bundle/article3",
-                            "/tutorials/Test-Bundle/TestTutorial",
-                            "/tutorials/Test-Bundle/TestTutorial2",
-                            "/tutorials/Test-Bundle/TestTutorialArticle",
-                            "/tutorials/Test-Bundle/TutorialMediaWithSpaces",
-                            "/documentation/Test-Bundle/Default-Code-Listing-Syntax",
-                        ]
-                    )
-                } else {
-                    XCTAssertEqual(
-                        Set(referenceStore.topics.keys.map(\.path)),
-                        [
-                            // Documentation extension files:
-                            "/documentation/MyKit",
-                            "/documentation/SideKit",
-                            "/documentation/MyKit/MyClass",
-                            "/documentation/MyKit/MyProtocol",
-                            "/documentation/SideKit/SideClass/init()",
-                            
-                            // Articles and tutorials:
-                            "/tutorials/TestOverview",
-                            "/tutorials/TestOverview/$volume",
-                            "/tutorials/TestOverview/Chapter-1",
-                            "/documentation/Test-Bundle/article",
-                            "/documentation/Test-Bundle/article2",
-                            "/documentation/Test-Bundle/article3",
-                            "/tutorials/Test-Bundle/TestTutorial",
-                            "/tutorials/Test-Bundle/TestTutorial2",
-                            "/tutorials/Test-Bundle/TestTutorialArticle",
-                            "/tutorials/Test-Bundle/TutorialMediaWithSpaces",
-                            "/documentation/Test-Bundle/Default-Code-Listing-Syntax",
-                        ]
-                    )
-                }
+                // The ConvertService relies on old implementation detail where documentation extension files were always considered "resolved" even when they didn't match a symbol. (rdar://108563483)
+                // https://github.com/apple/swift-docc/issues/567
+                
+                XCTAssertEqual(
+                    Set(referenceStore.topics.keys.map(\.path)),
+                    [
+                        // Documentation extension files:
+                        "/documentation/MyKit",
+                        "/documentation/SideKit",
+                        "/documentation/MyKit/MyClass",
+                        "/documentation/MyKit/MyProtocol",
+                        "/documentation/SideKit/SideClass/init()",
+                        
+                        // Articles and tutorials:
+                        "/tutorials/TestOverview",
+                        "/tutorials/TestOverview/$volume",
+                        "/tutorials/TestOverview/Chapter-1",
+                        "/documentation/Test-Bundle/article",
+                        "/documentation/Test-Bundle/article2",
+                        "/documentation/Test-Bundle/article3",
+                        "/tutorials/Test-Bundle/TestTutorial",
+                        "/tutorials/Test-Bundle/TestTutorial2",
+                        "/tutorials/Test-Bundle/TestTutorialArticle",
+                        "/tutorials/Test-Bundle/TutorialMediaWithSpaces",
+                        "/documentation/Test-Bundle/Default-Code-Listing-Syntax",
+                    ]
+                )
                 
                 try self.assertReferenceStoreContains(
                     referenceStore: referenceStore,

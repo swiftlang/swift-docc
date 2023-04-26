@@ -149,6 +149,7 @@ public struct ConvertService: DocumentationService {
             // Enable support for generating documentation for standalone articles and tutorials.
             context.allowsRegisteringArticlesWithoutTechnologyRoot = true
             context.allowsRegisteringUncuratedTutorials = true
+            context.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved = true
             
             context.configureSymbolGraph = { symbolGraph in
                 for (symbolIdentifier, overridingDocumentationComment) in request.overridingDocumentationComments ?? [:] {

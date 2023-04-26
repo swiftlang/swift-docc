@@ -149,8 +149,17 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// Controls whether tutorials that aren't curated in a tutorials overview page are registered and translated.
     ///
     /// Set this property to `true` to enable registering documentation for standalone tutorials,
-    /// for example when ``ConvertService``.
+    /// for example when using ``ConvertService``.
     var allowsRegisteringUncuratedTutorials: Bool = false
+    
+    /// Controls whether documentation extension files are considered resolved even when they don't match a symbol.
+    ///
+    /// Set this property to `true` to always consider documentation extensions as "resolved", for example when using  ``ConvertService``.
+    ///
+    /// > Note:
+    /// > Setting this property tor `true` means taking over the responsibility to match documentation extension files to symbols
+    /// > diagnosing unmatched documentation extension files, and diagnostic symbols that match multiple documentation extension files.
+    var considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved: Bool = false
     
     /// A closure that modifies each symbol graph that the context registers.
     ///
@@ -1348,6 +1357,38 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                             uncuratedDocumentationExtensions[resolved] = documentationExtension
                         }
                     case .failure(_, let errorInfo):
+                        guard !considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved else {
+                            // The ConvertService relies on old implementation detail where documentation extension files were always considered "resolved" even when they didn't match a symbol.
+                            //
+                            // Don't rely on this behavior for new functionality. The behavior will be removed once we have a new solution to meets the needs of the ConvertService. (rdar://108563483)
+                            // https://github.com/apple/swift-docc/issues/567
+                            //
+                            // The process that interacts with the convert service is responsible for:
+                            // - Distinguishing between documentation extension files that match symbols and documentation extension files that don't match symbols.
+                            // - Resolving symbol link in a way that match the behavior of regular documentation builds.
+                            // the process that interacts with the convert service is responsible for maintaining it's own link resolutions implementation to match the behavior of a regular build.
+                            // - Diagnosing documentation extension files that don't match any symbols.
+                            let reference = documentationExtension.topicGraphNode.reference
+                            
+                            let symbolPath = NodeURLGenerator.Path.documentation(path: url.components.path).stringValue
+                            let symbolReference = ResolvedTopicReference(
+                                bundleIdentifier: reference.bundleIdentifier,
+                                path: symbolPath,
+                                fragment: nil,
+                                sourceLanguages: reference.sourceLanguages
+                            )
+                            
+                            if let existing = uncuratedDocumentationExtensions[symbolReference] {
+                                if symbolsWithMultipleDocumentationExtensionMatches[symbolReference] == nil {
+                                    symbolsWithMultipleDocumentationExtensionMatches[symbolReference] = [existing]
+                                }
+                                symbolsWithMultipleDocumentationExtensionMatches[symbolReference]!.append(documentationExtension)
+                            } else {
+                                uncuratedDocumentationExtensions[symbolReference] = documentationExtension
+                            }
+                            continue
+                        }
+                        
                         // Present a diagnostic specific to documentation extension files but get the solutions and notes from the general unresolved link problem.
                         let unresolvedLinkProblem =
                             unresolvedReferenceProblem(reference: reference, source: documentationExtension.source, range: link.range, severity: .warning, uncuratedArticleMatch: nil, errorInfo: errorInfo, fromSymbolLink: link is SymbolLink)
@@ -1358,7 +1399,6 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                                 possibleSolutions: unresolvedLinkProblem.possibleSolutions
                             )
                         )
-                        continue
                     }
                 } else {
                     // The documentation cache based link resolver doesn't "resolve" the links in the documentation extension titles.
