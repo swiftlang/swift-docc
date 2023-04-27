@@ -75,20 +75,8 @@ class SampleDownloadTests: XCTestCase {
     }
 
     func testParseSampleDownload() throws {
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/SampleBundle/MySample",
-            sourceLanguage: .swift
-        )
-        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let renderNode = try renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MySample")
+        
         let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
         guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
             XCTFail("Unexpected action in callToAction")
@@ -98,20 +86,8 @@ class SampleDownloadTests: XCTestCase {
     }
 
     func testParseSampleLocalDownload() throws {
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/SampleBundle/MyLocalSample",
-            sourceLanguage: .swift
-        )
-        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let renderNode = try renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MyLocalSample")
+        
         let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
         guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
             XCTFail("Unexpected action in callToAction")
@@ -121,20 +97,7 @@ class SampleDownloadTests: XCTestCase {
     }
 
     func testSampleDownloadRoundtrip() throws {
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/SampleBundle/MySample",
-            sourceLanguage: .swift
-        )
-        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let renderNode = try renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MySample")
 
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
@@ -161,12 +124,12 @@ class SampleDownloadTests: XCTestCase {
 
         XCTAssertEqual(origIdent, decodedIdent)
     }
-
-    func testSampleDownloadRelativeURL() throws {
+    
+    private func renderNodeFromSampleBundle(at referencePath: String) throws -> RenderNode {
         let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
         let reference = ResolvedTopicReference(
             bundleIdentifier: bundle.identifier,
-            path: "/documentation/SampleBundle/RelativeURLSample",
+            path: referencePath,
             sourceLanguage: .swift
         )
         let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
@@ -176,7 +139,11 @@ class SampleDownloadTests: XCTestCase {
             identifier: reference,
             source: nil
         )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        return try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+    }
+
+    func testSampleDownloadRelativeURL() throws {
+        let renderNode = try renderNodeFromSampleBundle(at: "/documentation/SampleBundle/RelativeURLSample")
         let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
         guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
             XCTFail("Unexpected action in callToAction")
@@ -197,20 +164,7 @@ class SampleDownloadTests: XCTestCase {
     }
 
     func testExternalLocationRoundtrip() throws {
-        let (bundle, context) = try testBundleAndContext(named: "SampleBundle")
-        let reference = ResolvedTopicReference(
-            bundleIdentifier: bundle.identifier,
-            path: "/documentation/SampleBundle/RelativeURLSample",
-            sourceLanguage: .swift
-        )
-        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-        var translator = RenderNodeTranslator(
-            context: context,
-            bundle: bundle,
-            identifier: reference,
-            source: nil
-        )
-        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let renderNode = try renderNodeFromSampleBundle(at: "/documentation/SampleBundle/RelativeURLSample")
         let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
         guard case .reference(identifier: let ident, isActive: true, overridingTitle: "Download", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
             XCTFail("Unexpected action in callToAction")
@@ -259,5 +213,31 @@ class SampleDownloadTests: XCTestCase {
 
             XCTAssertEqual(firstJson, finalJson)
         }
+    }
+    
+    func testExternalLinkOnSampleCodePage() throws {
+        let renderNode = try renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MyExternalSample")
+        let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
+        guard case .reference(identifier: let identifier, isActive: true, overridingTitle: "View Source", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
+            XCTFail("Unexpected action in callToAction")
+            return
+        }
+        
+        XCTAssertEqual(identifier.identifier, "https://www.example.com/source-repository.git")
+        let reference = try XCTUnwrap(renderNode.references[identifier.identifier])
+        XCTAssert(reference is ExternalLocationReference)
+    }
+    
+    func testExternalLinkOnRegularArticlePage() throws {
+        let renderNode = try renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MyArticle")
+        let sampleCodeDownload = try XCTUnwrap(renderNode.sampleDownload)
+        guard case .reference(identifier: let identifier, isActive: true, overridingTitle: "Visit", overridingTitleInlineContent: nil) = sampleCodeDownload.action else {
+            XCTFail("Unexpected action in callToAction")
+            return
+        }
+        
+        XCTAssertEqual(identifier.identifier, "https://www.example.com")
+        let reference = try XCTUnwrap(renderNode.references[identifier.identifier])
+        XCTAssert(reference is ExternalLocationReference)
     }
 }

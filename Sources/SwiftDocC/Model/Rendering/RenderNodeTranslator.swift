@@ -795,7 +795,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                     action: .reference(
                         identifier: downloadIdentifier,
                         isActive: true,
-                        overridingTitle: callToAction.buttonLabel,
+                        overridingTitle: callToAction.buttonLabel(for: article.metadata?.pageKind?.kind),
                         overridingTitleInlineContent: nil))
                 externalLocationReferences[url.description] = ExternalLocationReference(identifier: downloadIdentifier)
             } else if let fileReference = callToAction.file,
@@ -804,7 +804,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 node.sampleDownload = .init(action: .reference(
                     identifier: downloadIdentifier,
                     isActive: true,
-                    overridingTitle: callToAction.buttonLabel,
+                    overridingTitle: callToAction.buttonLabel(for: article.metadata?.pageKind?.kind),
                     overridingTitleInlineContent: nil
                 ))
             }
@@ -1176,6 +1176,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
 
         if let crossImportOverlayModule = symbol.crossImportOverlayModule {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: crossImportOverlayModule.declaringModule, relatedModules: crossImportOverlayModule.bystanderModules)])
+        } else if let extendedModule = symbol.extendedModule, extendedModule != moduleName.displayName {
+            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: [extendedModule])])
         } else {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: nil)]
             )
