@@ -1248,6 +1248,13 @@ class ConvertServiceTests: XCTestCase {
                         "/documentation/Test-Bundle/Default-Code-Listing-Syntax",
                     ]
                 )
+                try self.assertReferenceStoreContains(
+                    referenceStore: referenceStore,
+                    topicPath: "/documentation/MyKit/MyClass",
+                    source: testBundleURL.appendingPathComponent("documentation/myclass.md"),
+                    title: "doc:MyKit/MyClass",
+                    isDocumentationExtensionContent: true
+                )
                 
                 try self.assertReferenceStoreContains(
                     referenceStore: referenceStore,
