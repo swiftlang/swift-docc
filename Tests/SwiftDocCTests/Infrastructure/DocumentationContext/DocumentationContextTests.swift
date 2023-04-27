@@ -1900,32 +1900,29 @@ let expected = """
         // Add a sidecar file for a symbol that doesn't exist
         let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             unknownSymbolSidecarURL = root.appendingPathComponent("documentation/unknownSymbol.md")
-            otherUnknownSymbolSidecarURL = root.appendingPathComponent("documentation/xanotherSidecarFileForThisUnknownSymbol.md")
+            otherUnknownSymbolSidecarURL = root.appendingPathComponent("documentation/anotherSidecarFileForThisUnknownSymbol.md")
             
             try content.write(to: unknownSymbolSidecarURL, atomically: true, encoding: .utf8)
             try content.write(to: otherUnknownSymbolSidecarURL, atomically: true, encoding: .utf8)
         }
         
-        let unmatchedSidecarProblem = context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.SymbolUnmatched" })
+        let unmatchedSidecarProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.SymbolUnmatched" }))
         
         // Verify the diagnostics have the sidecar source URL
-        XCTAssertNotNil(unmatchedSidecarProblem?.diagnostic.source)
-        var sidecarFilesForUnknownSymbol: Set<URL?> = [unknownSymbolSidecarURL.standardizedFileURL, otherUnknownSymbolSidecarURL.standardizedFileURL]
+        XCTAssertNotNil(unmatchedSidecarProblem.diagnostic.source)
+        let sidecarFilesForUnknownSymbol: Set<URL?> = [unknownSymbolSidecarURL.standardizedFileURL, otherUnknownSymbolSidecarURL.standardizedFileURL]
         
         XCTAssertNotNil(unmatchedSidecarProblem)
-        if let unmatchedSidecarDiagnostic = unmatchedSidecarProblem?.diagnostic {
-            XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
-            XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem?.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem?.diagnostic.source))
+        let unmatchedSidecarDiagnostic = unmatchedSidecarProblem.diagnostic
+        XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
+        XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem.diagnostic.source))
+        
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/MyKit'.")
+            XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
+        } else {
             XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. This documentation will be ignored.")
             XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .information)
-            
-            XCTAssertEqual(unmatchedSidecarDiagnostic.notes.count, 1)
-            if let note = unmatchedSidecarDiagnostic.notes.first {
-                sidecarFilesForUnknownSymbol.remove(unmatchedSidecarDiagnostic.source?.standardizedFileURL)
-                XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(note.source.standardizedFileURL), "The other files should be the note's source")
-                
-                XCTAssertEqual(note.message, "'MyKit/UnknownSymbol' is also documented here.")
-            }
         }
     }
     
@@ -2742,8 +2739,10 @@ let expected = """
 
         let identifier = "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
         let duplicateMarkdownProblems = context.problems.filter({ $0.diagnostic.identifier == identifier })
-        XCTAssertEqual(duplicateMarkdownProblems.count, 2)
-        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.summary, "Multiple occurrences of \'/documentation/MyKit/MyClass/myFunction()\' found")
+        XCTAssertEqual(duplicateMarkdownProblems.count, 1)
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.summary, "Multiple documentation extensions matched 'MyKit/MyClass/myFunction()'.")
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.notes.count, 1)
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.notes.first?.message, "'MyKit/MyClass/myFunction()' is also documented here.")
     }
     
     /// This test verifies that collision nodes and children of collision nodes are correctly
@@ -2822,6 +2821,327 @@ let expected = """
         // Verify the correct topic graph parent <-> child relationship is created.
         let tgNode2 = try XCTUnwrap(context.topicGraph.edges[reference2])
         XCTAssertTrue(tgNode2.contains(articleReference))
+    }
+    
+    func testMatchesDocumentationExtensionsAsSymbolLinks() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // Two colliding symbols that differ by capitalization.
+            try """
+            # ``MixedFramework/CollisionsWithDifferentCapitalization/someThing``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            some thing
+            
+            This documentation extension link doesn't need disambiguation because "someThing" is capitalized differently than "something".
+            """.write(to: url.appendingPathComponent("some-thing.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/CollisionsWithDifferentCapitalization/something``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+
+            something
+            
+            This documentation extension link doesn't need disambiguation because "something" is capitalized differently than "someThing".
+            """.write(to: url.appendingPathComponent("something.md"), atomically: true, encoding: .utf8)
+            
+            // Three colliding symbols that differ by symbol kind.
+            try """
+            # ``MixedFramework/CollisionsWithEscapedKeywords/subscript()-method``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            method
+            
+            This documentation extension link can be disambiguated with only the kind information (without the language).
+            """.write(to: url.appendingPathComponent("method.md"), atomically: true, encoding: .utf8)
+
+            try """
+            # ``MixedFramework/CollisionsWithEscapedKeywords/subscript()-subscript``
+
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            subscript
+            
+            This documentation extension link can be disambiguated with only the kind information (without the language).
+            """.write(to: url.appendingPathComponent("subscript.md"), atomically: true, encoding: .utf8)
+
+            try """
+            # ``MixedFramework/CollisionsWithEscapedKeywords/subscript()-type.method``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            type method
+            
+            This documentation extension link can be disambiguated with only the kind information (without the language).
+            """.write(to: url.appendingPathComponent("type-method.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/someThing-90i4h", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "some thing", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/something-2c4k6", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "something", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.method", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "method", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.subscript", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "subscript", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.type.method", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "type method", "The abstract should be from the overriding documentation extension.")
+        }
+    }
+    
+    func testMatchesDocumentationExtensionsWithSourceLanguageSpecificLinks() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
+            //     MyObjectiveCOptionNone                                      = 0,
+            //     MyObjectiveCOptionFirst                                     = 1 << 0,
+            //     MyObjectiveCOptionSecond NS_SWIFT_NAME(secondCaseSwiftName) = 1 << 1
+            // };
+            try """
+            # ``MixedFramework/MyObjectiveCOption/MyObjectiveCOptionFirst``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Objective-C option case
+            
+            This documentation extension link uses the Objective-C spelling to refer to the "first" option case.
+            """.write(to: url.appendingPathComponent("objc-case.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCOption/secondCaseSwiftName``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Swift spelling of Objective-C option case
+            
+            This documentation extension link uses the customized Swift spelling to refer to the "second" option case.
+            """.write(to: url.appendingPathComponent("objc-case-swift-name.md"), atomically: true, encoding: .utf8)
+            
+            // NS_SWIFT_NAME(MyObjectiveCClassSwiftName)
+            // @interface MyObjectiveCClassObjectiveCName : NSObject
+            //
+            // @property (copy, readonly) NSString * myPropertyObjectiveCName NS_SWIFT_NAME(myPropertySwiftName);
+            //
+            // - (void)myMethodObjectiveCName NS_SWIFT_NAME(myMethodSwiftName());
+            // - (void)myMethodWithArgument:(NSString *)argument NS_SWIFT_NAME(myMethod(argument:));
+            //
+            // @end
+            try """
+            # ``MixedFramework/MyObjectiveCClassObjectiveCName/myMethodWithArgument:``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Objective-C method with one argument
+            
+            This documentation extension link uses the Objective-C spelling to refer to the method with an argument.
+            """.write(to: url.appendingPathComponent("objc-method.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Swift spelling for Objective-C method without arguments
+            
+            This documentation extension link uses the customized Swift spelling to refer to the method without an argument.
+            """.write(to: url.appendingPathComponent("objc-method-swift-name.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCOption/first", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Objective-C option case", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCOption/secondCaseSwiftName", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Swift spelling of Objective-C option case", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Objective-C method with one argument", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Swift spelling for Objective-C method without arguments", "The abstract should be from the overriding documentation extension.")
+        }
+    }
+    
+    func testMatchesDocumentationExtensionsRelativeToModule() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // Top level symbols, omitting the module name
+            try """
+            # ``MyStruct/myStructProperty``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            my struct property
+            """.write(to: url.appendingPathComponent("struct-property.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MyTypeAlias``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            my type alias
+            """.write(to: url.appendingPathComponent("alias.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyStruct/myStructProperty", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "my struct property", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyTypeAlias", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "my type alias", "The abstract should be from the overriding documentation extension.")
+        }
+    }
+    
+    func testMultipleDocumentationExtensionMatchDiagnostic() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
+            //     MyObjectiveCOptionNone                                      = 0,
+            //     MyObjectiveCOptionFirst                                     = 1 << 0,
+            //     MyObjectiveCOptionSecond NS_SWIFT_NAME(secondCaseSwiftName) = 1 << 1
+            // };
+            try """
+            # ``MixedFramework/MyObjectiveCOption/MyObjectiveCOptionFirst``
+            
+            This documentation extension link uses the Objective-C spelling to refer to the "first" option case.
+            """.write(to: url.appendingPathComponent("objc-case.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCOption/first``
+            
+            This documentation extension link uses the customized Swift spelling to refer to the "first" option case.
+            """.write(to: url.appendingPathComponent("objc-case-swift-name.md"), atomically: true, encoding: .utf8)
+            
+            // NS_SWIFT_NAME(MyObjectiveCClassSwiftName)
+            // @interface MyObjectiveCClassObjectiveCName : NSObject
+            //
+            // @property (copy, readonly) NSString * myPropertyObjectiveCName NS_SWIFT_NAME(myPropertySwiftName);
+            //
+            // - (void)myMethodObjectiveCName NS_SWIFT_NAME(myMethodSwiftName());
+            // - (void)myMethodWithArgument:(NSString *)argument NS_SWIFT_NAME(myMethod(argument:));
+            //
+            // @end
+            try """
+            # ``MixedFramework/MyObjectiveCClassObjectiveCName/myMethodWithArgument:``
+            
+            This documentation extension link uses the Objective-C spelling to refer to the method with an argument.
+            """.write(to: url.appendingPathComponent("objc-method.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)``
+            
+            This documentation extension link uses the customized Swift spelling to refer to the method with an argument.
+            """.write(to: url.appendingPathComponent("objc-method-swift-name.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let multipleDocExtensionProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences" })
+        XCTAssertEqual(multipleDocExtensionProblems.count, 2)
+        
+        let enumCaseMultipleMatchProblem = try XCTUnwrap(multipleDocExtensionProblems.first(where: { $0.diagnostic.summary == "Multiple documentation extensions matched 'MixedFramework/MyObjectiveCOption/first'." }))
+        XCTAssert(["objc-case.md", "objc-case-swift-name.md"].contains(enumCaseMultipleMatchProblem.diagnostic.source?.lastPathComponent ?? ""), "The warning should refer to one of the documentation extensions files")
+        XCTAssertEqual(enumCaseMultipleMatchProblem.diagnostic.notes.count, 1)
+        XCTAssert(["objc-case.md", "objc-case-swift-name.md"].contains(enumCaseMultipleMatchProblem.diagnostic.notes.first?.source.lastPathComponent ?? ""), "The note should refer to one of the documentation extension files")
+        XCTAssertNotEqual(enumCaseMultipleMatchProblem.diagnostic.source, enumCaseMultipleMatchProblem.diagnostic.notes.first?.source, "The warning and the note should refer to different documentation extension files")
+        
+        let methodMultipleMatchProblem = try XCTUnwrap(multipleDocExtensionProblems.first(where: { $0.diagnostic.summary == "Multiple documentation extensions matched 'MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)'." }))
+        XCTAssert(["objc-method.md", "objc-method-swift-name.md"].contains(methodMultipleMatchProblem.diagnostic.source?.lastPathComponent ?? ""), "The warning should refer to one of the documentation extensions files")
+        XCTAssertEqual(methodMultipleMatchProblem.diagnostic.notes.count, 1)
+        XCTAssert(["objc-method.md", "objc-method-swift-name.md"].contains(methodMultipleMatchProblem.diagnostic.notes.first?.source.lastPathComponent ?? ""), "The note should refer to one of the documentation extension files")
+        XCTAssertNotEqual(methodMultipleMatchProblem.diagnostic.source, methodMultipleMatchProblem.diagnostic.notes.first?.source, "The warning and the note should refer to different documentation extension files")
     }
     
     func testAutomaticallyCuratesArticles() throws {
