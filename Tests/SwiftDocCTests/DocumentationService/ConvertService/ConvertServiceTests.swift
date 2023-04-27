@@ -12,6 +12,7 @@ import XCTest
 import Foundation
 @testable import SwiftDocC
 import SymbolKit
+import SwiftDocCTestUtilities
 
 class ConvertServiceTests: XCTestCase {
     private let testBundleInfo = DocumentationBundle.Info(
@@ -697,6 +698,175 @@ class ConvertServiceTests: XCTestCase {
         }
     }
 
+    func testConvertTutorialWithCode() throws {
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "TutorialWithCodeTest.docc", content: [
+                TextFile(name: "Something.tutorial", utf8Content: """
+                    @Tutorial(time: 99) {
+                        @Intro(title: "Tutorial Title") {
+                            Tutorial intro.
+                        }
+                        @Section(title: "Section title") {
+                            This section has one step with a code file reference.
+                            
+                            @Steps {
+                                @Step {
+                                    Start with this
+                                    
+                                    @Code(name: "Something.swift", file: before.swift)
+                                }
+                    
+                                @Step {
+                                    Add this
+                                    
+                                    @Code(name: "Something.swift", file: after.swift)
+                                }
+                            }
+                        }
+                    }
+                    """),
+                
+                TextFile(name: "before.swift", utf8Content: """
+                    // This is an example swift file
+                    """),
+                TextFile(name: "after.swift", utf8Content: """
+                    // This is an example swift file
+                    let something = 0
+                    """),
+            ])
+        ])
+        let catalog = tempURL.appendingPathComponent("TutorialWithCodeTest.docc")
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: nil,
+            documentPathsToConvert: nil,
+            bundleLocation: catalog,
+            symbolGraphs: [],
+            knownDisambiguatedSymbolPathComponents: nil,
+            markupFiles: [],
+            tutorialFiles: [],
+            miscResourceURLs: []
+        )
+        
+        let server = DocumentationServer()
+        
+        let mockLinkResolvingService = LinkResolvingService { message in
+            XCTAssertEqual(message.type, "resolve-reference")
+            XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
+            do {
+                let payload = try XCTUnwrap(message.payload)
+                let request = try JSONDecoder()
+                    .decode(
+                        ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
+                        from: payload
+                    )
+                
+                XCTAssertEqual(request.convertRequestIdentifier, "test-identifier")
+                
+                switch request.payload {
+                case .topic(let url):
+                    XCTFail("Unexpected topic request: \(url.absoluteString.singleQuoted)")
+                    // Fail to resolve every topic
+                    return DocumentationServer.Message(
+                        type: "resolve-reference-response",
+                        payload: try JSONEncoder().encode(
+                            OutOfProcessReferenceResolver.Response.errorMessage("Unexpected topic request")
+                        )
+                    )
+                    
+                case .symbol(let preciseIdentifier):
+                    XCTFail("Unexpected symbol request: \(preciseIdentifier)")
+                    // Fail to resolve every symbol
+                    return DocumentationServer.Message(
+                        type: "resolve-reference-response",
+                        payload: try JSONEncoder().encode(
+                            OutOfProcessReferenceResolver.Response.errorMessage("Unexpected symbol request")
+                        )
+                    )
+                    
+                case .asset(let assetReference):
+                    print(assetReference)
+                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
+                    case ("something.swift", "identifier"):
+                        var asset = DataAsset()
+                        asset.register(
+                            catalog.appendingPathComponent("something.swift"),
+                            with: DataTraitCollection()
+                        )
+                        
+                        return DocumentationServer.Message(
+                            type: "resolve-reference-response",
+                            payload: try JSONEncoder().encode(
+                                OutOfProcessReferenceResolver.Response
+                                    .asset(asset)
+                            )
+                        )
+
+                    default:
+                        XCTFail("Unexpected asset request: \(assetReference.assetName)")
+                        // Fail to resolve all other assets
+                        return DocumentationServer.Message(
+                            type: "resolve-reference-response",
+                            payload: try JSONEncoder().encode(
+                                OutOfProcessReferenceResolver.Response.errorMessage("Unexpected topic request")
+                            )
+                        )
+                    }
+                }
+            } catch {
+                XCTFail(error.localizedDescription)
+                return nil
+            }
+        }
+        
+        server.register(service: mockLinkResolvingService)
+        
+        try processAndAssert(request: request, linkResolvingServer: server) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let response = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)
+            )
+            
+            XCTAssertEqual(response.renderNodes.count, 1)
+            let data = try XCTUnwrap(response.renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            let beforeIdentifier = RenderReferenceIdentifier("before.swift")
+            let afterIdentifier = RenderReferenceIdentifier("after.swift")
+            
+            XCTAssertEqual(
+                renderNode.references["before.swift"] as? FileReference,
+                FileReference(identifier: beforeIdentifier, fileName: "Something.swift", fileType: "swift", syntax: "swift", content: [
+                    "// This is an example swift file",
+                ], highlights: [])
+            )
+            XCTAssertEqual(
+                renderNode.references["after.swift"] as? FileReference,
+                FileReference(identifier: afterIdentifier, fileName: "Something.swift", fileType: "swift", syntax: "swift", content: [
+                    "// This is an example swift file",
+                    "let something = 0",
+                ], highlights: [.init(line: 2)])
+            )
+            
+            let stepsSection = try XCTUnwrap(renderNode.sections.compactMap { $0 as? TutorialSectionsRenderSection }.first?.tasks.first?.stepsSection)
+            XCTAssertEqual(stepsSection.count, 2)
+            if case .step(let step) = stepsSection.first {
+                XCTAssertEqual(step.code, beforeIdentifier)
+            } else {
+                XCTFail("Unexpected kind of step")
+            }
+            
+            if case .step(let step) = stepsSection.last {
+                XCTAssertEqual(step.code, afterIdentifier)
+            } else {
+                XCTFail("Unexpected kind of step")
+            }
+        }
+    }
+    
     func testConvertArticleWithImageReferencesAndDetailedGridLinks() throws {
         let articleData = try XCTUnwrap("""
             # First article

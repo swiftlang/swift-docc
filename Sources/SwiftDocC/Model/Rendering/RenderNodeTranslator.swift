@@ -53,11 +53,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
     
     public mutating func visitCode(_ code: Code) -> RenderTree? {
         let fileType = NSString(string: code.fileName).pathExtension
-        let fileReference = code.fileReference
+        guard let fileIdentifier = context.identifier(forAssetName: code.fileReference.path, in: identifier) else {
+            return nil
+        }
         
-        guard let fileData = try? context.resource(with: code.fileReference),
-            let fileContents = String(data: fileData, encoding: .utf8) else {
-            return RenderReferenceIdentifier("")
+        let fileReference = ResourceReference(bundleIdentifier: code.fileReference.bundleIdentifier, path: fileIdentifier)
+        guard let fileData = try? context.resource(with: fileReference),
+              let fileContents = String(data: fileData, encoding: .utf8)
+        else {
+            return nil
         }
         
         let assetReference = RenderReferenceIdentifier(fileReference.path)
