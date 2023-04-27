@@ -160,7 +160,7 @@ enum GeneratedDocumentationTopics {
         var collectionArticle: Article
         
         // Find matching doc extension or create an empty article.
-        if let docExtensionMatch = context.uncuratedDocumentationExtensions[collectionReference]?.first?.value {
+        if let docExtensionMatch = context.uncuratedDocumentationExtensions[collectionReference]?.value {
             collectionArticle = docExtensionMatch
             collectionArticle.title = Heading(level: 1, Text(title))
             context.uncuratedDocumentationExtensions.removeValue(forKey: collectionReference)
