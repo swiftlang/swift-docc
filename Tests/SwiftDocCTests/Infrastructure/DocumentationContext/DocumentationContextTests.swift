@@ -3040,6 +3040,83 @@ let expected = """
         }
     }
     
+    func testMatchesDocumentationExtensionsRelativeToModule() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // Top level symbols, omitting the module name
+            try """
+            # ``MyStruct/myStructProperty``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            my struct property
+            """.write(to: url.appendingPathComponent("struct-property.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MyTypeAlias``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            my type alias
+            """.write(to: url.appendingPathComponent("alias.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyStruct/myStructProperty", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "my struct property", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyTypeAlias", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "my type alias", "The abstract should be from the overriding documentation extension.")
+        }
+    }
+    
+    func testCurationOfSymbolsWithSameNameAsModule() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        
+        let (_, bundle, context) = try testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
+            // Top level symbols, omitting the module name
+            try """
+            # ``Something``
+            
+            This documentation extension covers the module symbol
+            
+            ## Topics
+            
+            This link curates the top-level struct
+            
+            - ``Something``
+            """.write(to: url.appendingPathComponent("something.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Something", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "This documentation extension covers the module symbol", "The abstract should be from the overriding documentation extension.")
+            
+            let topics = try XCTUnwrap(symbol.topics?.taskGroups.first)
+            XCTAssertEqual(topics.abstract?.paragraph.plainText, "This link curates the top-level struct")
+            XCTAssertEqual(topics.links.first?.destination, "doc://SymbolsWithSameNameAsModule/documentation/Something/Something")
+        }
+    }
+    
     func testMultipleDocumentationExtensionMatchDiagnostic() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         
