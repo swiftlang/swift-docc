@@ -576,8 +576,8 @@ struct PathHierarchy {
                         return parentNode
                     }
                     
-                    if matches(node: parentNode, component: nextComponent) {
-                        // If the parent also matches the next component, prefer it as the root.
+                    if parentNode.children.keys.contains(nextComponent.name) || parentNode.children.keys.contains(nextComponent.full) {
+                        // If the parent also contain the next component, prefer it as the root.
                         remaining = remaining.dropFirst()
                         return parentNode
                     } else {

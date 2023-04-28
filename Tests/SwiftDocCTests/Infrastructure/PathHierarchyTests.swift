@@ -1149,6 +1149,40 @@ class PathHierarchyTests: XCTestCase {
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-88rbf")
     }
     
+    
+    func testSymbolsWithSameNameAsModule() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        let (_, context) = try testBundleAndContext(named: "SymbolsWithSameNameAsModule")
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        
+        // /* in a module named "Something "*/
+        // public struct Something {
+        //     public enum Something {
+        //         case first
+        //     }
+        //     public var second = 0
+        // }
+        // public struct Wrapper {
+        //     public struct Something {
+        //         public var third = 0
+        //     }
+        // }
+        try assertFindsPath("Something", in: tree, asSymbolID: "Something")
+        try assertFindsPath("/Something", in: tree, asSymbolID: "Something")
+        
+        let moduleID = try tree.find(path: "/Something", onlyFindSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "Something", parent: moduleID).identifier.precise, "Something")
+        XCTAssertEqual(try tree.findSymbol(path: "Something/Something", parent: moduleID).identifier.precise, "s:9SomethingAAV")
+        XCTAssertEqual(try tree.findSymbol(path: "Something/second", parent: moduleID).identifier.precise, "s:9SomethingAAV6secondSivp")
+        
+        let topLevelSymbolID = try tree.find(path: "/Something/Something", onlyFindSymbols: true)
+        XCTAssertEqual(try tree.findSymbol(path: "Something", parent: topLevelSymbolID).identifier.precise, "s:9SomethingAAV")
+        XCTAssertEqual(try tree.findSymbol(path: "Something/Something", parent: topLevelSymbolID).identifier.precise, "s:9SomethingAAVAAO")
+        XCTAssertEqual(try tree.findSymbol(path: "Something/second", parent: topLevelSymbolID).identifier.precise, "s:9SomethingAAV6secondSivp")
+        
+        // Test more paths here when the link resolver can handle them (rdar://108672152) https://github.com/apple/swift-docc/issues/572
+    }
+    
     func testSnippets() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "Snippets")
