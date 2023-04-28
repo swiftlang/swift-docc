@@ -565,13 +565,33 @@ struct PathHierarchy {
             // If a parent ID was provided, start at that node and continue up the hierarchy until that node has a child that matches the first path components name.
             var parentNode = lookup[parentID]!
             let firstComponent = remaining.first!
-            // Check if the start node has a child that matches the first path components name.
-            if parentNode.children.keys.contains(firstComponent.name) || parentNode.children.keys.contains(firstComponent.full) {
-                return parentNode
-            }
             // Check if the start node itself matches the first path components name.
             if matches(node: parentNode, component: firstComponent) {
+                // FIXME: Lazily walk up the hierarchy to if one "root" can't find the element (rdar://108672152) https://github.com/apple/swift-docc/issues/572
+                // Approximate branching hierarchy traversal by peeking one level down. This covers common cases but isn't a complete solution.
+                if parentNode.children.keys.contains(firstComponent.name) || parentNode.children.keys.contains(firstComponent.full) {
+                    guard let nextComponent = remaining.dropFirst().first else {
+                        // If this is the only path component; prefer the parent.
+                        remaining = remaining.dropFirst()
+                        return parentNode
+                    }
+                    
+                    if matches(node: parentNode, component: nextComponent) {
+                        // If the parent also matches the next component, prefer it as the root.
+                        remaining = remaining.dropFirst()
+                        return parentNode
+                    } else {
+                        // Otherwise, since the parentNode won't successfully find the element, assume that the child node might and use it as the root.
+                        // If that search fails, the error message is presented relative to the child node.
+                        return parentNode
+                    }
+                }
+                
                 remaining = remaining.dropFirst()
+                return parentNode
+            }
+            // Check if the start node has a child that matches the first path components name.
+            if parentNode.children.keys.contains(firstComponent.name) || parentNode.children.keys.contains(firstComponent.full) {
                 return parentNode
             }
             while !parentNode.children.keys.contains(firstComponent.name) && !parentNode.children.keys.contains(firstComponent.full) {
