@@ -1335,18 +1335,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 }
                 
                 if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-                    // If there's a single module then resolve relative to the module symbol. Otherwise resolve relative to the bundle root.
-                    // This means that links can omit the module name if there's only one module but need to start with the module name if there are multiple modules.
-                    let rootReference: ResolvedTopicReference
-                    let moduleReferences = hierarchyBasedLinkResolver!.modules()
-                    if moduleReferences.count == 1 {
-                        rootReference = moduleReferences.first!
-                    } else {
-                        rootReference = bundle.rootReference
-                    }
-                    
+                    // FIXME: Resolve the link relative to the module https://github.com/apple/swift-docc/issues/516
                     let reference = TopicReference.unresolved(.init(topicURL: url))
-                    switch resolve(reference, in: rootReference, fromSymbolLink: true) {
+                    switch resolve(reference, in: bundle.rootReference, fromSymbolLink: true) {
                     case .success(let resolved):
                         if let existing = uncuratedDocumentationExtensions[resolved] {
                             if symbolsWithMultipleDocumentationExtensionMatches[resolved] == nil {
