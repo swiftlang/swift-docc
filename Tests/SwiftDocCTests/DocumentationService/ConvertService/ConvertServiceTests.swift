@@ -699,32 +699,34 @@ class ConvertServiceTests: XCTestCase {
     }
 
     func testConvertTutorialWithCode() throws {
+        let tutorialContent = """
+        @Tutorial(time: 99) {
+            @Intro(title: "Tutorial Title") {
+                Tutorial intro.
+            }
+            @Section(title: "Section title") {
+                This section has one step with a code file reference.
+                
+                @Steps {
+                    @Step {
+                        Start with this
+                        
+                        @Code(name: "Something.swift", file: before.swift)
+                    }
+        
+                    @Step {
+                        Add this
+                        
+                        @Code(name: "Something.swift", file: after.swift)
+                    }
+                }
+            }
+        }
+        """
+        
         let tempURL = try createTempFolder(content: [
             Folder(name: "TutorialWithCodeTest.docc", content: [
-                TextFile(name: "Something.tutorial", utf8Content: """
-                    @Tutorial(time: 99) {
-                        @Intro(title: "Tutorial Title") {
-                            Tutorial intro.
-                        }
-                        @Section(title: "Section title") {
-                            This section has one step with a code file reference.
-                            
-                            @Steps {
-                                @Step {
-                                    Start with this
-                                    
-                                    @Code(name: "Something.swift", file: before.swift)
-                                }
-                    
-                                @Step {
-                                    Add this
-                                    
-                                    @Code(name: "Something.swift", file: after.swift)
-                                }
-                            }
-                        }
-                    }
-                    """),
+                TextFile(name: "Something.tutorial", utf8Content: tutorialContent),
                 
                 TextFile(name: "before.swift", utf8Content: """
                     // This is an example swift file
@@ -741,11 +743,11 @@ class ConvertServiceTests: XCTestCase {
             bundleInfo: testBundleInfo,
             externalIDsToConvert: nil,
             documentPathsToConvert: nil,
-            bundleLocation: catalog,
+            bundleLocation: nil,
             symbolGraphs: [],
             knownDisambiguatedSymbolPathComponents: nil,
             markupFiles: [],
-            tutorialFiles: [],
+            tutorialFiles: [tutorialContent.data(using: .utf8)!],
             miscResourceURLs: []
         )
         
@@ -788,10 +790,10 @@ class ConvertServiceTests: XCTestCase {
                 case .asset(let assetReference):
                     print(assetReference)
                     switch (assetReference.assetName, assetReference.bundleIdentifier) {
-                    case ("something.swift", "identifier"):
+                    case (let assetName, "identifier") where ["before.swift", "after.swift"].contains(assetName):
                         var asset = DataAsset()
                         asset.register(
-                            catalog.appendingPathComponent("something.swift"),
+                            catalog.appendingPathComponent(assetName),
                             with: DataTraitCollection()
                         )
                         

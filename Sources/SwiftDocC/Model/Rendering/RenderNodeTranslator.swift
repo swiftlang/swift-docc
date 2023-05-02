@@ -58,9 +58,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         let fileReference = ResourceReference(bundleIdentifier: code.fileReference.bundleIdentifier, path: fileIdentifier)
-        guard let fileData = try? context.resource(with: fileReference),
-              let fileContents = String(data: fileData, encoding: .utf8)
-        else {
+        guard let fileContents = fileContents(with: fileReference) else {
             return nil
         }
         
@@ -74,6 +72,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
             content: fileContents.splitByNewlines
         )
         return assetReference
+    }
+    
+    private func fileContents(with fileReference: ResourceReference) -> String? {
+        // Check if the file is a local asset that can be read directly from the context
+        if let fileData = try? context.resource(with: fileReference) {
+            return String(data: fileData, encoding: .utf8)
+        }
+        // Check if the file needs to be resolved to read its content
+        else if let asset = context.resolveAsset(named: fileReference.path, in: identifier) {
+            return try? String(contentsOf: asset.data(bestMatching: DataTraitCollection()).url, encoding: .utf8)
+        }
+        // Couldn't find the file reference's content
+        else {
+            return nil
+        }
     }
     
     public mutating func visitSteps(_ steps: Steps) -> RenderTree? {
@@ -109,7 +122,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             stepsContent = []
         }
         
-        let highlightsPerFile = LineHighlighter(context: context, tutorialSection: tutorialSection).highlights
+        let highlightsPerFile = LineHighlighter(context: context, tutorialSection: tutorialSection, tutorialReference: identifier).highlights
         
         // Add the highlights to the file references.
         for result in highlightsPerFile {
