@@ -202,4 +202,25 @@ class RenderMetadataTests: XCTestCase {
         metadata.titleVariants = testTitleVariants
         XCTAssertEqual(metadata.title, "Default title")
     }
+    
+    func testEncodesHasExpandedDocumentation() throws {
+        var metadata = RenderMetadata()
+        metadata.hasNoExpandedDocumentation = true
+        
+        XCTAssert(
+            try JSONDecoder().decode(
+                RenderMetadata.self,
+                from: JSONEncoder().encode(metadata)
+            ).hasNoExpandedDocumentation
+        )
+    }
+    
+    func testDecodesMissingExpandedDocumentationAsFalse() throws {
+        XCTAssertFalse(
+            try JSONDecoder().decode(
+                RenderMetadata.self,
+                from: "{}".data(using: .utf8)!
+            ).hasNoExpandedDocumentation
+        )
+    }
 }

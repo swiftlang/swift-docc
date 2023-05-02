@@ -51,6 +51,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
+    var symbolIdentifiersWithExpandedDocumentation: [String]? = nil
+    
     public mutating func visitCode(_ code: Code) -> RenderTree? {
         let fileType = NSString(string: code.fileName).pathExtension
         guard let fileIdentifier = context.identifier(forAssetName: code.fileReference.path, in: identifier) else {
@@ -1196,8 +1198,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } else if let extendedModule = symbol.extendedModule, extendedModule != moduleName.displayName {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: [extendedModule])])
         } else {
-            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: nil)]
-            )
+            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: nil)])
         }
         
         node.metadata.extendedModuleVariants = VariantCollection<String?>(defaultValue: symbol.extendedModule)
@@ -1370,6 +1371,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if shouldEmitSymbolAccessLevels {
             node.metadata.symbolAccessLevelVariants = VariantCollection<String?>(from: symbol.accessLevelVariants)
+        }
+        
+        if let externalID = symbol.externalID,
+           let symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+        {
+            node.metadata.hasNoExpandedDocumentation = !symbolIdentifiersWithExpandedDocumentation.contains(externalID)
         }
         
         node.relationshipSectionsVariants = VariantCollection<[RelationshipsRenderSection]>(
@@ -1895,7 +1902,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         renderContext: RenderContext? = nil,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false,
-        sourceRepository: SourceRepository? = nil
+        sourceRepository: SourceRepository? = nil,
+        symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
         self.context = context
         self.bundle = bundle
@@ -1906,6 +1914,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
         self.sourceRepository = sourceRepository
+        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
     }
 }
 
