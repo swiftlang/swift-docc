@@ -11,12 +11,20 @@
 import Foundation
 import Markdown
 
+/// Associates an image with a page.
+///
+/// You can use this directive to set the image used when rendering a user-interface element representing the page.
+/// For example, use the page image directive to customize the icon used to represent this page in the navigation sidebar,
+/// or the card image used to represent this page when using the ``Links`` directive and the ``Links/detailedGrid``
+/// visual style.
 public final class PageImage: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
+    /// The image's purpose.
     @DirectiveArgumentWrapped
     public private(set) var purpose: Purpose
     
+    /// The base file name of an image in your documentation catalog.
     @DirectiveArgumentWrapped(
         parseArgument: { bundle, argumentValue in
             ResourceReference(bundleIdentifier: bundle.identifier, path: argumentValue)
@@ -24,6 +32,7 @@ public final class PageImage: Semantic, AutomaticDirectiveConvertible {
     )
     public private(set) var source: ResourceReference
     
+    /// Alternative text that describes the image to screen readers.
     @DirectiveArgumentWrapped
     public private(set) var alt: String? = nil
     
@@ -33,10 +42,12 @@ public final class PageImage: Semantic, AutomaticDirectiveConvertible {
         "alt"       : \PageImage._alt,
     ]
     
-    /// The style of the display name for this symbol.
+    /// The name of the display style for this image.
     public enum Purpose: String, CaseIterable, DirectiveArgumentValueConvertible {
+        /// The image will be used when representing the page as an icon, such as in the navigation sidebar.
         case icon
         
+        /// The image will be used when representing the page as a card, such as in grid styled Topics sections.
         case card
     }
     
