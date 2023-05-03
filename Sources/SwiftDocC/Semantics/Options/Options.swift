@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 
-/// Use Option directives to adjust DocC's default behaviors when rendering a page.
+/// A directive to adjust Swift-DocC's default behaviors when rendering a page.
 ///
 /// ## Topics
 ///

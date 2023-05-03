@@ -25,7 +25,7 @@ public class AutomaticTitleHeading: Semantic, AutomaticDirectiveConvertible {
     @DirectiveArgumentWrapped(name: .unnamed)
     public private(set) var enabledness: Enabledness
     
-    /// A value that represent whether automatic title heading generation is enabled or disabled.
+    /// A value that represents whether automatic title heading generation is enabled or disabled.
     public enum Enabledness: String, CaseIterable, DirectiveArgumentValueConvertible {
         /// A title heading should be automatically created for the page (the default).
         case enabled
