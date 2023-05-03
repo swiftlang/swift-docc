@@ -104,4 +104,12 @@ struct DirectiveIndex {
         // is not in the pre-populated index.
         return indexedDirectives[directiveConvertible.directiveName]!
     }
+    
+    func reflection(of implementationName: String) -> DirectiveMirror.ReflectedDirective? {
+        return indexedDirectives.first(
+            where: { (directiveName: String, reflectedDirective: DirectiveMirror.ReflectedDirective) in
+                directiveName == implementationName || String(describing: reflectedDirective.type) == implementationName
+            }
+        )?.value
+    }
 }
