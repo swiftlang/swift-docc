@@ -252,11 +252,11 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
     }
     
     let directiveDocComments: [(String, SymbolGraph.LineList)] = directiveSymbols.compactMap {
-        let (directiveName, directiveSymbol) = $0
+        let (directiveImplementationName, directiveSymbol) = $0
         
-        guard let indexedDirective = DirectiveIndex.shared.indexedDirectives[directiveName] else {
+        guard let indexedDirective = DirectiveIndex.shared.reflection(of: directiveImplementationName) else {
             if let docComment = directiveSymbol.docComment {
-                return (directiveName, docComment)
+                return (directiveImplementationName, docComment)
             } else {
                 return nil
             }
@@ -384,7 +384,7 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
         if docComment.lines.isEmpty {
             return nil
         } else {
-            return (directiveName, docComment)
+            return (indexedDirective.name, docComment)
         }
     }
     
