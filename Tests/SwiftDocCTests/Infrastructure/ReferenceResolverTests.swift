@@ -471,7 +471,7 @@ class ReferenceResolverTests: XCTestCase {
             try """
             # ``ModuleWithSingleExtension``
 
-            This is a test module with an extension to ``Swift/Array#Array``.
+            This is a test module with an extension to ``Swift/Array``.
             """.write(to: topLevelArticle, atomically: true, encoding: .utf8)
         }
 
