@@ -1185,8 +1185,6 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "Something/Something", parent: topLevelSymbolID).identifier.precise, "s:9SomethingAAVAAO")
         XCTAssertEqual(try tree.findSymbol(path: "Something/second", parent: topLevelSymbolID).identifier.precise, "s:9SomethingAAV6secondSivp")
         
-        // Test more paths here when the link resolver can handle them (rdar://108672152) https://github.com/apple/swift-docc/issues/572
-        
         let wrapperID = try tree.find(path: "/Something/Wrapper", onlyFindSymbols: true)
         XCTAssertEqual(try tree.findSymbol(path: "Something/second", parent: wrapperID).identifier.precise, "s:9SomethingAAV6secondSivp")
         XCTAssertEqual(try tree.findSymbol(path: "Something/third", parent: wrapperID).identifier.precise, "s:9Something7WrapperVAAV5thirdSivp")
