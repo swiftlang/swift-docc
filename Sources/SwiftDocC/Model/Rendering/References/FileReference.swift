@@ -47,12 +47,21 @@ public struct FileReference: RenderReference, Equatable {
     ///   - fileType: The type of file, typically represented by its file extension.
     ///   - syntax: The syntax of the file's content.
     ///   - content: The line-by-line contents of the file.
-    public init(identifier: RenderReferenceIdentifier, fileName: String, fileType: String, syntax: String, content: [String]) {
+    ///   - highlights: The line highlights for this file.
+    public init(
+        identifier: RenderReferenceIdentifier,
+        fileName: String,
+        fileType: String,
+        syntax: String,
+        content: [String],
+        highlights: [LineHighlighter.Highlight] = []
+    ) {
         self.identifier = identifier
         self.fileName = fileName
         self.fileType = fileType
         self.syntax = syntax
         self.content = content
+        self.highlights = highlights
     }
     
     public init(from decoder: Decoder) throws {
