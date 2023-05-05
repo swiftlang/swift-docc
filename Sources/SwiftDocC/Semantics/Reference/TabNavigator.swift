@@ -61,6 +61,8 @@ public final class TabNavigator: Semantic, AutomaticDirectiveConvertible, Markup
 extension TabNavigator {
     /// A container directive that holds general markup content describing an individual
     /// tab within a tab-based layout.
+    ///
+    ///  To add a new tab to a ``TabNavigator``, add  a `@Tab` directive within the content of the `@TabNavigator` directive.
     public final class Tab: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
         public let originalMarkup: BlockDirective
         
