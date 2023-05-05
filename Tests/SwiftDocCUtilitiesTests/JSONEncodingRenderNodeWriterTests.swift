@@ -36,13 +36,17 @@ class JSONEncodingRenderNodeWriterTests: XCTestCase {
         
         // We take precautions in case we deadlock to stop the execution with a failing code.
         // In case the original issue is present and we deadlock, we fatalError from a bg thread.
-        var didReleaseExecution = false
-        DispatchQueue.global(qos: .default).asyncAfter(deadline: .now() + 2.0) {
-            guard didReleaseExecution else {
-                fatalError("\(#file):\(#function) failed to release the execution.")
+        let didReleaseExecution = expectation(description: "Did release execution")
+        
+        DispatchQueue.global(qos: .default).async {
+            do {
+                try writer.write(renderNode)
+                XCTFail("Did not throw when writing to invalid path.")
+            } catch {
+                didReleaseExecution.fulfill()
             }
         }
-        XCTAssertThrowsError(try writer.write(renderNode), "Did not throw when writing to invalid path.") { _ in }
-        didReleaseExecution = true
+        
+        waitForExpectations(timeout: 2.0)
     }    
 }
