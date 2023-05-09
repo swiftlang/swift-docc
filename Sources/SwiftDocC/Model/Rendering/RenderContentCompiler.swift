@@ -206,11 +206,17 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
-        if let cached = context.referenceIndex[destination] {
+         if let cached = context.referenceIndex[destination] {
+            if let node = context.topicGraph.nodeWithReference(cached), !context.topicGraph.isLinkable(node.reference) {
+                return nil
+            }
             collectedTopicReferences.append(cached)
             return cached
         }
         
+        // FIXME: Links from this build already exist in the reference index and don't need to be resolved again.
+        // https://github.com/apple/swift-docc/issues/581
+
         guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
             return nil
         }
