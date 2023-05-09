@@ -206,7 +206,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
-         if let cached = context.referenceIndex[destination] {
+        if let cached = context.referenceIndex[destination] {
             if let node = context.topicGraph.nodeWithReference(cached), !context.topicGraph.isLinkable(node.reference) {
                 return nil
             }
