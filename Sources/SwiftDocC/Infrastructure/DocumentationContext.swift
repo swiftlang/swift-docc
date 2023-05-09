@@ -2442,6 +2442,9 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         for reference in knownIdentifiers {
             referenceIndex[reference.absoluteString] = reference
         }
+        for case .success(let reference) in externallyResolvedLinks.values {
+            referenceIndex[reference.absoluteString] = reference
+        }
         for reference in nodeAnchorSections.keys {
             referenceIndex[reference.absoluteString] = reference
         }

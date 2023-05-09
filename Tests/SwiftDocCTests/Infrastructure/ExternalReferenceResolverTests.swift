@@ -12,6 +12,7 @@ import XCTest
 @testable import SwiftDocC
 import Markdown
 import SymbolKit
+import SwiftDocCTestUtilities
 
 class ExternalReferenceResolverTests: XCTestCase {
     class TestExternalReferenceResolver: ExternalReferenceResolver, FallbackReferenceResolver {
@@ -397,6 +398,66 @@ Document @1:1-1:35
             .init(text: " ", kind: .text),
             .init(text: "ClassName", kind: .identifier),
         ])
+    }
+    
+    func testExternalReferenceWithDifferentResolvedPath() throws {
+        let externalResolver = TestExternalReferenceResolver()
+        externalResolver.bundleIdentifier = "com.test.external"
+        // Return a different path for this resolved reference
+        externalResolver.expectedReferencePath = "/path/to/externally-resolved-symbol"
+        externalResolver.resolvedEntityTitle = "ClassName"
+        externalResolver.resolvedEntityKind = .class
+        
+        let tempFolder = try createTempFolder(content: [
+        Folder(name: "SingleArticleWithExternalLink.docc", content: [
+            TextFile(name: "article.md", utf8Content: """
+            # Article with external link
+            
+            @Metadata {
+              @TechnologyRoot
+            }
+            
+            Link to an external page: <doc://com.test.external/path/to/external/symbol>
+            """)
+            ])
+        ])
+        
+        let workspace = DocumentationWorkspace()
+        let context = try DocumentationContext(dataProvider: workspace)
+        context.externalReferenceResolvers = [externalResolver.bundleIdentifier: externalResolver]
+        let dataProvider = try LocalFileSystemDataProvider(rootURL: tempFolder)
+        try workspace.registerProvider(dataProvider)
+        let bundle = try XCTUnwrap(workspace.bundles.first?.value)
+        
+        let converter = DocumentationNodeConverter(bundle: bundle, context: context)
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/article", sourceLanguage: .swift))
+        
+        guard let fileURL = context.documentURL(for: node.reference) else {
+            XCTFail("Unable to find the file for \(node.reference.path)")
+            return
+        }
+        
+        let renderNode = try converter.convert(node, at: fileURL)
+        
+        XCTAssertEqual(externalResolver.resolvedExternalPaths, ["/path/to/external/symbol"], "The authored link was resolved")
+        
+        // Verify that the article contains the external reference
+        guard let symbolRenderReference = renderNode.references["doc://com.test.external/path/to/externally-resolved-symbol"] as? TopicRenderReference else {
+            XCTFail("The external reference should be resolved and included among the article's references.")
+            return
+        }
+        
+        XCTAssertEqual(symbolRenderReference.identifier.identifier, "doc://com.test.external/path/to/externally-resolved-symbol")
+        XCTAssertEqual(symbolRenderReference.title, "ClassName")
+        XCTAssertEqual(symbolRenderReference.url, "/example/path/to/externally-resolved-symbol") // External references in topic groups use relative URLs
+        XCTAssertEqual(symbolRenderReference.kind, .symbol)
+        
+        // Verify that the rendered abstract contains the resolved link
+        if case RenderInlineContent.reference(identifier: let identifier, isActive: true, overridingTitle: _, overridingTitleInlineContent: _)? = renderNode.abstract?.last {
+            XCTAssertEqual(identifier.identifier, "doc://com.test.external/path/to/externally-resolved-symbol")
+        } else {
+            XCTFail("Unexpected abstract content: \(renderNode.abstract ?? [])")
+        }
     }
     
     func testSampleCodeReferenceHasSampleCodeRole() throws {
