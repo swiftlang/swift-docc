@@ -33,13 +33,8 @@ class DocumentationConverterTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
         var converter = DocumentationConverter(documentationBundleURL: rootURL, emitDigest: false, documentationCoverageOptions: .noCoverage, currentPlatforms: nil, workspace: workspace, context: context, dataProvider: dataProvider, bundleDiscoveryOptions: BundleDiscoveryOptions())
-        XCTAssertThrowsError(try converter.convert(outputConsumer: EmptyConvertOutputConsumer())) { error in
-            let converterError = try? XCTUnwrap(error as? DocumentationConverter.Error)
-            XCTAssertEqual(converterError?.errorDescription, """
-            The directory at '\(rootURL)' and its subdirectories do not contain at least one \
-            valid documentation bundle. A documentation bundle is a directory ending in \
-            `.docc`.
-            """)
-        }
+        let (analysisProblems, conversionProblems) = try converter.convert(outputConsumer: EmptyConvertOutputConsumer())
+        XCTAssertTrue(analysisProblems.isEmpty)
+        XCTAssertTrue(conversionProblems.isEmpty)
     }
 }
