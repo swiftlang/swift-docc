@@ -336,18 +336,19 @@ extension DefaultDiagnosticConsoleFormatter {
             result.append("\n\(linePrefix) \(separator) \(highlightedSource)")
 
             var columnsWithSuggestions = Set<Int>()
-            var suggestionsPerColumn = [(Int, [String])]()
+            var suggestionsPerColumn = [Int: [String]]()
 
-            for (location, suggestions) in suggestionsPerLocation {
+            for (location, suggestions) in suggestionsPerLocation where location.line == lineNumber {
                 if location.line == lineNumber {
-                    suggestionsPerColumn.append((location.column, suggestions))
+                    suggestionsPerColumn[location.column] = suggestions
                     columnsWithSuggestions.insert(location.column)
                 }
             }
 
             let suggestionLinePrefix = String(repeating: " ", count: maxLinePrefixWidth) + " |"
 
-            for (columnNumber, columnSuggestions) in suggestionsPerColumn.sorted(by: { $0.0 > $1.0 }) {
+            for columnNumber in suggestionsPerColumn.keys.sorted(by: >) {
+                let columnSuggestions = suggestionsPerColumn[columnNumber, default: []]
                 var prefix = suggestionLinePrefix
 
                 for column in 0...columnNumber - 1 {
