@@ -33,6 +33,25 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
     /// - Parameter stream: The output stream to which this instance will write.
     public init(
         _ stream: TextOutputStream = LogHandle.standardError,
+        formattingOptions options: DiagnosticFormattingOptions = []
+    ) {
+        outputStream = stream
+        formattingOptions = options
+        diagnosticFormatter = Self.makeDiagnosticFormatter(
+            options,
+            baseURL: nil,
+            highlight: TerminalHelper.isConnectedToTerminal
+        )
+    }
+
+    /// Creates a new instance of this class with the provided output stream.
+    /// - Parameters:
+    ///   - stream: The output stream to which this instance will write.
+    ///   - formattingOptions: The formatting options for the diagnostics.
+    ///   - baseUrl: A url to be used as a base url when formatting diagnostic source path.
+    ///   - highlight: Whether or not to highlight the default diagnostic formatting output.
+    init(
+        _ stream: TextOutputStream,
         formattingOptions options: DiagnosticFormattingOptions = [],
         baseURL: URL? = nil,
         highlight: Bool? = nil
