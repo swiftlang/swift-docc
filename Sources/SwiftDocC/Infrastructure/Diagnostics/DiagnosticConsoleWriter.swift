@@ -236,9 +236,7 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     }
 
     func formattedDescription(for diagnostic: Diagnostic) -> String {
-        formattedDiagnosticsSummary(for: diagnostic) +
-        formattedDiagnosticDetails(for: diagnostic) +
-        formattedDiagnosticSource(for: diagnostic, with: [])
+        formattedDescription(for: Problem(diagnostic: diagnostic))
     }
 }
 
