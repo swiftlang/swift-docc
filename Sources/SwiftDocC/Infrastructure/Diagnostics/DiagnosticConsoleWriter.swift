@@ -335,29 +335,26 @@ extension DefaultDiagnosticConsoleFormatter {
 
             result.append("\n\(linePrefix) \(separator) \(highlightedSource)")
 
-            var columnsWithSuggestions = Set<Int>()
             var suggestionsPerColumn = [Int: [String]]()
 
             for (location, suggestions) in suggestionsPerLocation where location.line == lineNumber {
-                if location.line == lineNumber {
-                    suggestionsPerColumn[location.column] = suggestions
-                    columnsWithSuggestions.insert(location.column)
-                }
+                suggestionsPerColumn[location.column] = suggestions
             }
+
+            let sortedColumns = suggestionsPerColumn.keys.sorted(by: >)
+
+            guard let firstColumn = sortedColumns.first else { continue }
 
             let suggestionLinePrefix = String(repeating: " ", count: maxLinePrefixWidth) + " |"
 
-            for columnNumber in suggestionsPerColumn.keys.sorted(by: >) {
-                let columnSuggestions = suggestionsPerColumn[columnNumber, default: []]
-                var prefix = suggestionLinePrefix
+            var longestPrefix = [Character](repeating: " ", count: firstColumn + 1)
+            for column in sortedColumns {
+                longestPrefix[column] = "│"
+            }
 
-                for column in 0...columnNumber - 1 {
-                    if columnsWithSuggestions.contains(column) {
-                        prefix.append("│")
-                    } else {
-                        prefix.append(" ")
-                    }
-                }
+            for columnNumber in sortedColumns {
+                let columnSuggestions = suggestionsPerColumn[columnNumber, default: []]
+                let prefix = suggestionLinePrefix + String(longestPrefix.prefix(columnNumber))
 
                 for (index, suggestion) in columnSuggestions.enumerated() {
                     // Highlight suggestion and make sure it's displayed on a single line.
