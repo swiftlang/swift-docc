@@ -23,7 +23,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     }
 
     func testSeverityHighlight() {
-        let source = URL(string: "/path/to/file.md")!
+        let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
         let identifier = "org.swift.docc.test-identifier"
         let summary = "Test diagnostic summary"
@@ -88,8 +88,8 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     }
 
     func testDisplaysRelativePath() {
-        let baseURL = URL(string: "/path/to")!
-        let source = URL(string: "/path/to/file.md")!
+        let baseURL = URL(fileURLWithPath: "/path/to")
+        let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
         let identifier = "org.swift.docc.test-identifier"
         let summary = "Test diagnostic summary"
@@ -109,7 +109,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     }
 
     func testDisplaysNotes() {
-        let source = URL(string: "/path/to/file.md")!
+        let source = URL(fileURLWithPath: "/path/to/file.md")
         let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
         let identifier = "org.swift.docc.test-identifier"
         let summary = "Test diagnostic summary"
@@ -118,7 +118,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         let logger = Logger()
         let consumer = DiagnosticConsoleWriter(logger, highlight: true)
 
-        let noteSource = URL(string: "/path/to/other/file.md")!
+        let noteSource = URL(fileURLWithPath: "/path/to/other/file.md")
         let noteRange = SourceLocation(line: 1, column: 1, source: noteSource)..<SourceLocation(line: 1, column: 20, source: noteSource)
 
         let diagnostic = Diagnostic(
@@ -145,7 +145,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
     func testDisplaysMultipleDiagnosticsSorted() {
         let identifier = "org.swift.docc.test-identifier"
         let firstProblem = {
-            let source = URL(string: "/path/to/file.md")!
+            let source = URL(fileURLWithPath: "/path/to/file.md")
             let range = SourceLocation(line: 1, column: 8, source: source)..<SourceLocation(line: 10, column: 21, source: source)
 
             return Problem(
@@ -162,7 +162,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             )
         }()
         let secondProblem = {
-            let source = URL(string: "/path/to/file.md")!
+            let source = URL(fileURLWithPath: "/path/to/file.md")
             let range = SourceLocation(line: 12, column: 1, source: source)..<SourceLocation(line: 12, column: 10, source: source)
 
             return Problem(
@@ -180,7 +180,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         }()
 
         let thirdProblem = {
-            let source = URL(string: "/path/to/other/file.md")!
+            let source = URL(fileURLWithPath: "/path/to/other/file.md")
 
             return Problem(
                 diagnostic: Diagnostic(
