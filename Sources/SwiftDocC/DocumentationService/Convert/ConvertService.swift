@@ -149,6 +149,7 @@ public struct ConvertService: DocumentationService {
             // Enable support for generating documentation for standalone articles and tutorials.
             context.allowsRegisteringArticlesWithoutTechnologyRoot = true
             context.allowsRegisteringUncuratedTutorials = true
+            context.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved = true
             
             context.configureSymbolGraph = { symbolGraph in
                 for (symbolIdentifier, overridingDocumentationComment) in request.overridingDocumentationComments ?? [:] {
@@ -185,7 +186,8 @@ public struct ConvertService: DocumentationService {
                     additionalSymbolGraphFiles: []
                 ),
                 emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
-                emitSymbolAccessLevels: true
+                emitSymbolAccessLevels: true,
+                symbolIdentifiersWithExpandedDocumentation: request.symbolIdentifiersWithExpandedDocumentation
             )
 
             // Run the conversion.
@@ -252,9 +254,7 @@ public struct ConvertService: DocumentationService {
         baseReferenceStore: RenderReferenceStore?
     ) -> RenderReferenceStore {
         let uncuratedArticles = context.uncuratedArticles.map { ($0, isDocumentationExtensionContent: false) }
-        let uncuratedDocumentationExtensions = context.uncuratedDocumentationExtensions.flatMap { reference, articles in
-            articles.map { article in ((reference, article), isDocumentationExtensionContent: true) }
-        }
+        let uncuratedDocumentationExtensions = context.uncuratedDocumentationExtensions.map { ($0, isDocumentationExtensionContent: true) }
         let topicContent = (uncuratedArticles + uncuratedDocumentationExtensions)
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
