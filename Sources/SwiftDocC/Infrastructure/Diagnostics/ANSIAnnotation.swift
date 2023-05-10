@@ -12,6 +12,7 @@ import Foundation
 
 struct ANSIAnnotation {
     enum Color: UInt8 {
+        case normal = 0
         case red = 31
         case green = 32
         case yellow = 33
@@ -42,7 +43,7 @@ struct ANSIAnnotation {
     }
     
     static var normal: ANSIAnnotation {
-        self.init(color: .default, trait: .normal)
+        self.init(color: .normal, trait: .normal)
     }
     
     /// Annotation used for highlighting source text.

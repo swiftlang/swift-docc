@@ -38,7 +38,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.finalize()
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;31merror: \(summary)\u{001B}[0;39m
+            \u{001B}[1;31merror: \(summary)\u{001B}[0;0m
             \(explanation)
             \(expectedPath)
             """)
@@ -52,7 +52,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.finalize()
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;39m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
             \(expectedPath)
             """)
@@ -66,7 +66,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.finalize()
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;39mnotice: \(summary)\u{001B}[0;39m
+            \u{001B}[1;39mnotice: \(summary)\u{001B}[0;0m
             \(explanation)
             \(expectedPath)
             """)
@@ -80,7 +80,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             consumer.receive([problem])
             try? consumer.finalize()
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;39mnote: \(summary)\u{001B}[0;39m
+            \u{001B}[1;39mnote: \(summary)\u{001B}[0;0m
             \(explanation)
             \(expectedPath)
             """)
@@ -102,7 +102,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         consumer.receive([problem])
         try? consumer.finalize()
         XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;39m
+        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
         --> file.md:1:8-10:21
         """)
@@ -135,7 +135,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         try? consumer.finalize()
 
         XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;39m
+        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
         /path/to/other/file.md:1:1: This is a note
         --> /path/to/file.md:1:8-10:21
@@ -202,15 +202,15 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         consumer.receive([firstProblem, secondProblem, thirdProblem])
         try? consumer.finalize()
         XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: First diagnostic summary\u{001B}[0;39m
+        \u{001B}[1;33mwarning: First diagnostic summary\u{001B}[0;0m
         First diagnostic explanation
         --> /path/to/file.md:1:8-10:21
 
-        \u{001B}[1;33mwarning: Second diagnostic summary\u{001B}[0;39m
+        \u{001B}[1;33mwarning: Second diagnostic summary\u{001B}[0;0m
         Second diagnostic explanation
         --> /path/to/file.md:12:1-12:10
 
-        \u{001B}[1;33mwarning: Third diagnostic summary\u{001B}[0;39m
+        \u{001B}[1;33mwarning: Third diagnostic summary\u{001B}[0;0m
         Third diagnostic explanation
         --> /path/to/other/file.md
         """)
@@ -234,12 +234,12 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         try? consumer.finalize()
         print(logger.output)
         XCTAssertEqual(logger.output, """
-        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;39m
+        \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
           --> TestTutorial.tutorial:44:59-44:138
         42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
         43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-        44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;39m
+        44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
         45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
         46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
         """)
@@ -277,14 +277,14 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
             print(logger.output)
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;39m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
             42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;39m
-               |                                                           │  ╰─\u{001B}[1;39msuggestion: Other solution summary\u{001B}[0;39m
-               |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;39m
+            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
+               |                                                           │  ╰─\u{001B}[1;39msuggestion: Other solution summary\u{001B}[0;0m
+               |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
             45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
             46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
             """)
@@ -302,13 +302,13 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
             print(logger.output)
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;39m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
             42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;39m
-               |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;39m
+            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
+               |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
             45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
             46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
             """)
@@ -334,13 +334,13 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
 
             print(logger.output)
             XCTAssertEqual(logger.output, """
-            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;39m
+            \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
             42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
-            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;39m
-               |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;39m
+            44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
+               |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
             45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
             46 |          This section link refers to the next section in this file: <doc:/tutorials/Test-Bundle/TestTutorial#Initiate-ARKit-Plane-Detection>.
             """)
