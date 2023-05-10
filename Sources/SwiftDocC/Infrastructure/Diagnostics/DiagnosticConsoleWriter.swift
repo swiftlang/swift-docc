@@ -215,7 +215,8 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     private let baseUrl: URL?
     private let highlight: Bool
     private var sourceLines: [URL: [String]] = [:]
-    
+
+    /// The number of additional lines from the source file that should be displayed both before and after the diagnostic source line.
     private static let contextSize = 2
     
     init(
@@ -333,6 +334,11 @@ extension DefaultDiagnosticConsoleFormatter {
             suggestionsPerLocation[location, default: []].append(solution.summary)
         }
 
+        // Constructs the header for the diagnostic output.
+        // This header is aligned with the line prefix and includes the file path and the range of the diagnostic.\
+        //
+        // Example:
+        //   --> /path/to/file.md:1:10-2:20
         result.append("\n\(String(repeating: " ", count: maxLinePrefixWidth))--> ")
         result.append(        "\(formattedSourcePath(url)):\(diagnosticRange.lowerBound.line):\(diagnosticRange.lowerBound.column)-\(diagnosticRange.upperBound.line):\(diagnosticRange.upperBound.column)"
         )
@@ -354,6 +360,12 @@ extension DefaultDiagnosticConsoleFormatter {
                 separator = "|"
             }
 
+            // Adds to the header, a formatted source line containing the line number as prefix and a source line.
+            // A source line is contained in the diagnostic range will be highlighted.
+            //
+            // Example:
+            // 9  | A line outside the diagnostic range.
+            // 10 + A line inside the diagnostic range.
             result.append("\n\(linePrefix) \(separator) \(highlightedSource)")
 
             var suggestionsPerColumn = [Int: [String]]()
@@ -368,6 +380,15 @@ extension DefaultDiagnosticConsoleFormatter {
 
             let suggestionLinePrefix = String(repeating: " ", count: maxLinePrefixWidth) + " |"
 
+            // Constructs a prefix containing vertical separator at each column containing a suggestion.
+            // Suggestions are shown on different lines, this allows to visually connect a suggestion shown several lines below
+            // with the source code column.
+            //
+            // Example:
+            // 9  | A line outside the diagnostic range.
+            // 10 + A line inside the diagnostic range.
+            //    |   │    ╰─suggestion: A suggestion.
+            //    |   ╰─ suggestion: Another suggestion.
             var longestPrefix = [Character](repeating: " ", count: firstColumn + 1)
             for column in sortedColumns {
                 longestPrefix[column] = "│"
@@ -446,7 +467,8 @@ extension DefaultDiagnosticConsoleFormatter {
         if let lines = sourceLines[url] {
             return lines
         }
-        
+
+        // TODO: Add support for also getting the source lines from the symbol graph files.
         guard let content = try? String(contentsOf: url)
         else { return [] }
         
