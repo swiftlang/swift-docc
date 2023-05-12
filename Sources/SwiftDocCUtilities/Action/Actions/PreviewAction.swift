@@ -162,9 +162,11 @@ public final class PreviewAction: Action, RecreatingContext {
         // Preview the output and monitor the source bundle for changes.
         do {
             print(String(repeating: "=", count: 40), to: &logHandle)
-            print("Starting Local Preview Server", to: &logHandle)
-            printPreviewAddresses(base: URL(string: "http://localhost:\(port)")!)
-            print(String(repeating: "=", count: 40), to: &logHandle)
+            if let previewURL = URL(string: "http://localhost:\(port)") {
+                print("Starting Local Preview Server", to: &logHandle)
+                printPreviewAddresses(base: previewURL)
+                print(String(repeating: "=", count: 40), to: &logHandle)
+            }
 
             let to: PreviewServer.Bind = bindServerToSocketPath.map { .socket(path: $0) } ?? .localhost(port: port)
             servers[serverIdentifier] = try PreviewServer(contentURL: convertAction.targetDirectory, bindTo: to, logHandle: &logHandle)
