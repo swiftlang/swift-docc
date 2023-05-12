@@ -54,7 +54,7 @@ class ResolvedTopicReferenceTests: XCTestCase {
         do {
             let resolvedOriginal = ResolvedTopicReference(bundleIdentifier: "bundleID", path: "/path/sub-path", fragment: "fragment", sourceLanguage: .swift)
             
-            let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://host.name/;;;")!)
+            let unresolved = UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://host.name/🌎🌍🌏")!)
             XCTAssertFalse(unresolved.path.isEmpty)
             
             let appended = resolvedOriginal.appendingPathOfReference(unresolved)
