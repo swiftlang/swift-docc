@@ -1705,10 +1705,10 @@ let expected = """
             
             ## Topics
             
+            Only curate the pages. Headings don't support curation.
+            
             - ``MyClass/myFunc🙂()``
-            - <doc:article-with-emoji-in-heading#Hello-🌍>
             - <doc:article-with-😃-in-filename>
-            - <doc:article-with-😃-in-filename#Hello-world>
             """),
         ])
         let bundleURL = try testBundle.write(inside: createTemporaryDirectory())
@@ -1726,9 +1726,7 @@ let expected = """
         // Verify that all the links in the topic section resolved
         XCTAssertEqual(topicSection.links.map(\.destination), [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
-            "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
-            "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world",
         ])
         
         // Verify that all resolved link exist in the context.
@@ -1743,12 +1741,10 @@ let expected = """
         let renderNode = translator.visit(moduleSymbol) as! RenderNode
         
         // Verify that the resolved links rendered as links
-        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 4)
+        XCTAssertEqual(renderNode.topicSections.first?.identifiers.count, 2)
         XCTAssertEqual(renderNode.topicSections.first?.identifiers, [
             "doc://special-characters/documentation/MyKit/MyClass/myFunc_()",
-            "doc://special-characters/documentation/special-characters/article-with-emoji-in-heading#Hello-%F0%9F%8C%8D",
             "doc://special-characters/documentation/special-characters/article-with---in-filename",
-            "doc://special-characters/documentation/special-characters/article-with---in-filename#Hello-world",
         ])
         
         
