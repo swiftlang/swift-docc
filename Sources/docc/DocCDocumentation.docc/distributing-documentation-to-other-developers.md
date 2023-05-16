@@ -193,4 +193,4 @@ to date by using a continuous integration workflow that builds the
 documentation archive using `docc`, and copies the resulting
 `.doccarchive` to your web server.
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
