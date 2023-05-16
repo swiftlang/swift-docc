@@ -39,6 +39,9 @@ public struct FileReference: RenderReference, Equatable {
     /// The line highlights for this file.
     public var highlights: [LineHighlighter.Highlight] = []
     
+    /// The delete line highlights for this file.
+    public var deleteHighlights: [LineHighlighter.Highlight] = []
+    
     /// Creates a new file reference.
     ///
     /// - Parameters:
@@ -54,7 +57,8 @@ public struct FileReference: RenderReference, Equatable {
         fileType: String,
         syntax: String,
         content: [String],
-        highlights: [LineHighlighter.Highlight] = []
+        highlights: [LineHighlighter.Highlight] = [],
+        deleteHighlights: [LineHighlighter.Highlight] = []
     ) {
         self.identifier = identifier
         self.fileName = fileName
@@ -62,6 +66,7 @@ public struct FileReference: RenderReference, Equatable {
         self.syntax = syntax
         self.content = content
         self.highlights = highlights
+        self.deleteHighlights = deleteHighlights
     }
     
     public init(from decoder: Decoder) throws {
@@ -73,6 +78,7 @@ public struct FileReference: RenderReference, Equatable {
         syntax = try values.decode(String.self, forKey: .syntax)
         content = try values.decode([String].self, forKey: .content)
         highlights = try values.decodeIfPresent([LineHighlighter.Highlight].self, forKey: .highlights) ?? []
+        deleteHighlights = (try? values.decodeIfPresent([LineHighlighter.Highlight].self, forKey: .deleteHighlights)) ?? []
     }
 }
 

@@ -129,6 +129,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         // Add the highlights to the file references.
         for result in highlightsPerFile {
             fileReferences[result.file.path]?.highlights = result.highlights
+            fileReferences[result.file.path]?.deleteHighlights = result.deleteHighlights
         }
         
         return TutorialSectionsRenderSection.Section(title: tutorialSection.title, contentSection: introduction, stepsSection: stepsContent, anchor: urlReadableFragment(tutorialSection.title))
