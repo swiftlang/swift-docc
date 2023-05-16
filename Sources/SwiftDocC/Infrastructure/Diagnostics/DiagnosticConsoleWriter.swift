@@ -82,6 +82,7 @@ public final class DiagnosticConsoleWriter: DiagnosticFormattingConsumer {
             let text = self.diagnosticFormatter.formattedDescription(for: problems)
             outputStream.write(text)
         }
+        self.diagnosticFormatter.finalize()
     }
     
     private static func makeDiagnosticFormatter(
@@ -122,6 +123,7 @@ protocol DiagnosticConsoleFormatter {
     func formattedDescription<Problems>(for problems: Problems) -> String where Problems: Sequence, Problems.Element == Problem
     func formattedDescription(for problem: Problem) -> String
     func formattedDescription(for diagnostic: Diagnostic) -> String
+    func finalize()
 }
 
 extension DiagnosticConsoleFormatter {
@@ -167,6 +169,10 @@ struct IDEDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
         }
 
         return description
+    }
+
+    func finalize() {
+        // Nothing to do after all diagnostics have been formatted.
     }
     
     public func formattedDescription(for diagnostic: Diagnostic) -> String {
@@ -250,15 +256,19 @@ final class DefaultDiagnosticConsoleFormatter: DiagnosticConsoleFormatter {
     }
 
     func formattedDescription(for problem: Problem) -> String {
-        defer { performCleanup() }
-
-        return formattedDiagnosticsSummary(for: problem.diagnostic) +
+        formattedDiagnosticsSummary(for: problem.diagnostic) +
         formattedDiagnosticDetails(for: problem.diagnostic) +
         formattedDiagnosticSource(for: problem.diagnostic, with: problem.possibleSolutions)
     }
 
     func formattedDescription(for diagnostic: Diagnostic) -> String {
         formattedDescription(for: Problem(diagnostic: diagnostic))
+    }
+
+    func finalize() {
+        // Since the `sourceLines` could potentially be big if there were diagnostics in many large files,
+        // we remove the cached lines in a clean up step after all diagnostics have been formatted.
+        sourceLines = [:]
     }
 }
 
@@ -479,12 +489,6 @@ extension DefaultDiagnosticConsoleFormatter {
 
     private func formattedSourcePath(_ url: URL) -> String {
         baseUrl.flatMap { url.relative(to: $0) }.map(\.path) ?? url.path
-    }
-
-    private func performCleanup() {
-        // Since the `sourceLines` could potentially be big if there were diagnostics in many large files,
-        // we remove the cached lines in a clean up step after the console writer finished writing the diagnostics.
-        sourceLines = [:]
     }
 }
 
