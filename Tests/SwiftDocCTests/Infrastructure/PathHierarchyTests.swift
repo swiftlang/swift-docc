@@ -1319,6 +1319,40 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "Something/SomethingElse", parent: moduleID).absolutePath, "Something/SomethingElse")
     }
     
+    func testPrefersNonSymbolsWhenOnlyFindSymbolIsFalse() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+ 
+        let (_, _, context) = try testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
+            // This bundle has a top-level struct named "Wrapper". Adding an article named "Wrapper.md" introduces a possibility for a link collision
+            try """
+            # An article
+            
+            This is an article with the same name as a top-level symbol
+            """.write(to: url.appendingPathComponent("Wrapper.md"), atomically: true, encoding: .utf8)
+            
+            // Also change the display name so that the article container has the same name as the module.
+            try InfoPlist(displayName: "Something", identifier: "com.example.Something").write(inside: url)
+        }
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        
+        do {
+            // Links to non-symbols can use only the file name, without specifying the module or catalog name.
+            let articleID = try tree.find(path: "Wrapper", onlyFindSymbols: false)
+            let articleMatch = try XCTUnwrap(tree.lookup[articleID])
+            XCTAssertNil(articleMatch.symbol, "Should have found the article")
+        }
+        do {
+            // Links to non-symbols can also use module-relative links.
+            let articleID = try tree.find(path: "/Something/Wrapper", onlyFindSymbols: false)
+            let articleMatch = try XCTUnwrap(tree.lookup[articleID])
+            XCTAssertNil(articleMatch.symbol, "Should have found the article")
+        }
+        // Symbols can only use absolute links or be found relative to another page.
+        let symbolID = try tree.find(path: "/Something/Wrapper", onlyFindSymbols: true)
+        let symbolMatch = try XCTUnwrap(tree.lookup[symbolID])
+        XCTAssertNotNil(symbolMatch.symbol, "Should have found the struct")
+    }
+    
     func testOneSymbolPathsWithKnownDisambiguation() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let exampleDocumentation = Folder(name: "MyKit.docc", content: [
