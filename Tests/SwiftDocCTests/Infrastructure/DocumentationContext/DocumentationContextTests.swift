@@ -2133,6 +2133,50 @@ let expected = """
         XCTAssertEqual(context.problems.filter { $0.diagnostic.source?.path.hasSuffix(newArticle1URL.lastPathComponent) == true }.count, 0)
     }
 
+    func testPrefersNonSymbolsInDocLink() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+ 
+        let (_, bundle, context) = try testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
+            // This bundle has a top-level struct named "Wrapper". Adding an article named "Wrapper.md" introduces a possibility for a link collision
+            try """
+            # An article
+            
+            This is an article with the same name as a top-level symbol
+            """.write(to: url.appendingPathComponent("Wrapper.md"), atomically: true, encoding: .utf8)
+            
+            // Also change the display name so that the article container has the same name as the module.
+            try InfoPlist(displayName: "Something", identifier: "com.example.Something").write(inside: url)
+            
+            // Use a doc-link to curate the article.
+            try """
+            # ``Something``
+            
+            Curate the article and the symbol top-level.
+            
+            ## Topics
+            
+            - <doc:Wrapper>
+            """.write(to: url.appendingPathComponent("Something.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let moduleReference = try XCTUnwrap(context.rootModules.first)
+        let moduleNode = try context.entity(with: moduleReference)
+        
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let source = context.documentURL(for: moduleReference)
+        
+        let renderNode = try XCTUnwrap(converter.renderNode(for: moduleNode, at: source))
+        let curatedTopic = try XCTUnwrap(renderNode.topicSections.first?.identifiers.first)
+        
+        let topicReference = try XCTUnwrap(renderNode.references[curatedTopic] as? TopicRenderReference)
+        XCTAssertEqual(topicReference.title, "An article")
+        
+        // This test also reproduce https://github.com/apple/swift-docc/issues/593
+        // When that's fixed this test should also use a symbol link to curate the top-level symbol and verify that
+        // the symbol link resolves to the symbol.
+    }
+    
     // Modules that are being extended should not have their own symbol in the current bundle's graph.
     func testNoSymbolForTertiarySymbolGraphModules() throws {
         // Add an article without curating it anywhere
