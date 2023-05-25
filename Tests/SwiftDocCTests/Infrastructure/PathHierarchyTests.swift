@@ -167,10 +167,14 @@ class PathHierarchyTests: XCTestCase {
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp", in: tree, asSymbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF")
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2", in: tree, asSymbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF")
         
+        try assertFindsPath("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)", in: tree, asSymbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF")
+        try assertFindsPath("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)", in: tree, asSymbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF")
+        
         // public enum CollisionsWithDifferentSubscriptArguments {
         //     public subscript(something: Int) -> Int { 0 }
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
+        // Subscripts don't have function signature information in the symbol graph file (rdar://111072228)
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsO")
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip")
         try assertFindsPath("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-757cj", in: tree, asSymbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip")
@@ -403,15 +407,15 @@ class PathHierarchyTests: XCTestCase {
         //     public func something(argument: String) -> Int { 0 }
         // }
         try assertPathCollision("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, collisions: [
-            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF", disambiguation: "1cyvp"),
-            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF", disambiguation: "2vke2"),
+            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF", disambiguation: "(Int)"),
+            (symbolID: "s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF", disambiguation: "(String)"),
         ])
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)", in: tree, context: context, expectedErrorMessage: """
         'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 77)]),
-                .init(summary: "Insert '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 77)]),
+                .init(summary: "Insert '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 77)]),
+                .init(summary: "Insert '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 77)]),
             ])
         }
         // The path starts with "/documentation" which is optional
@@ -419,16 +423,16 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Insert '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 91, 91)]),
-                .init(summary: "Insert '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 91, 91)]),
+                .init(summary: "Insert '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 91)]),
+                .init(summary: "Insert '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 91)]),
             ])
         }
         try assertPathRaisesErrorMessage("/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-abc123", in: tree, context: context, expectedErrorMessage: """
         'abc123' isn't a disambiguation for 'something(argument:)' at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'abc123' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
-                .init(summary: "Replace 'abc123' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
+                .init(summary: "Replace 'abc123' with '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 84)]),
+                .init(summary: "Replace 'abc123' with '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 84)]),
             ])
         }
         // Providing disambiguation will narrow down the suggestions. Note that `argument` label is missing in the last path component
@@ -451,8 +455,8 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'method' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 77, 84)]),
-                .init(summary: "Replace 'method' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 77, 84)]),
+                .init(summary: "Replace 'method' with '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 77, 84)]),
+                .init(summary: "Replace 'method' with '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 77, 84)]),
             ])
         }
         // The path starts with "/documentation" which is optional
@@ -460,8 +464,8 @@ class PathHierarchyTests: XCTestCase {
         'something(argument:)-method' is ambiguous at '/MixedFramework/CollisionsWithDifferentFunctionArguments'
         """) { error in
             XCTAssertEqual(error.solutions, [
-                .init(summary: "Replace 'method' with '1cyvp' for\n'func something(argument: Int) -> Int'", replacements: [("-1cyvp", 91, 98)]),
-                .init(summary: "Replace 'method' with '2vke2' for\n'func something(argument: String) -> Int'", replacements: [("-2vke2", 91, 98)]),
+                .init(summary: "Replace 'method' with '(Int)' for\n'func something(argument: Int) -> Int'", replacements: [("-(Int)", 91, 98)]),
+                .init(summary: "Replace 'method' with '(String)' for\n'func something(argument: String) -> Int'", replacements: [("-(String)", 91, 98)]),
             ])
         }
         
@@ -469,6 +473,7 @@ class PathHierarchyTests: XCTestCase {
         //     public subscript(something: Int) -> Int { 0 }
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
+        // Subscripts don't have function signature information in the symbol graph file (rdar://111072228)
         try assertPathCollision("/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)", in: tree, collisions: [
             (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip", disambiguation: "4fd0l"),
             (symbolID: "s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOySiSScip", disambiguation: "757cj"),
@@ -814,15 +819,16 @@ class PathHierarchyTests: XCTestCase {
         // }
         XCTAssertEqual(
             paths["s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentS2i_tF"],
-            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-1cyvp")
+            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(Int)")
         XCTAssertEqual(
             paths["s:14MixedFramework40CollisionsWithDifferentFunctionArgumentsO9something8argumentSiSS_tF"],
-            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-2vke2")
+            "/MixedFramework/CollisionsWithDifferentFunctionArguments/something(argument:)-(String)")
         
         // public enum CollisionsWithDifferentSubscriptArguments {
         //     public subscript(something: Int) -> Int { 0 }
         //     public subscript(somethingElse: String) -> Int { 0 }
         // }
+        // Subscripts don't have function signature information in the symbol graph file (rdar://111072228)
         XCTAssertEqual(
             paths["s:14MixedFramework41CollisionsWithDifferentSubscriptArgumentsOyS2icip"],
             "/MixedFramework/CollisionsWithDifferentSubscriptArguments/subscript(_:)-4fd0l")
@@ -997,8 +1003,8 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual(try tree.findSymbol(path: "documentation/MixedFramework/MyEnum", parent: moduleID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
         XCTAssertEqual(try tree.findSymbol(path: "/documentation/MixedFramework/MyEnum", parent: moduleID).identifier.precise, "c:@M@MixedFramework@E@MyEnum")
         
-        assertParsedPathComponents("documentation/MixedFramework/MyEnum", [("documentation", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
-        assertParsedPathComponents("/documentation/MixedFramework/MyEnum", [("documentation", nil, nil), ("MixedFramework", nil, nil), ("MyEnum", nil, nil)])
+        assertParsedPathComponents("documentation/MixedFramework/MyEnum", [("documentation", nil), ("MixedFramework", nil), ("MyEnum", nil)])
+        assertParsedPathComponents("/documentation/MixedFramework/MyEnum", [("documentation", nil), ("MixedFramework", nil), ("MyEnum", nil)])
     }
     
     func testTestBundle() throws {
@@ -1156,11 +1162,11 @@ class PathHierarchyTests: XCTestCase {
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-enum.case")
         // These are all methods and can only be disambiguated with the USR hash
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSiF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Int)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSfF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ife")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(Float)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSSF"],
-                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14ob0")
+                       "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-(String)")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameyS2dF"],
                        "/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-4ja8m")
         XCTAssertEqual(paths["s:8ShapeKit14OverloadedEnumO19firstTestMemberNameySdSaySdGF"],
@@ -1287,8 +1293,8 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual("/Operators/MyNumber/-=(_:_:)", paths["s:s18AdditiveArithmeticPsE2seoiyyxz_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         XCTAssertEqual("/Operators/MyNumber/*(_:_:)", paths["s:9Operators8MyNumberV1moiyA2C_ACtFZ"])
         XCTAssertEqual("/Operators/MyNumber/*=(_:_:)", paths["s:9Operators8MyNumberV2meoiyyACz_ACtFZ"])
-        XCTAssertEqual("/Operators/MyNumber/...(_:)-28faz", paths["s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
-        XCTAssertEqual("/Operators/MyNumber/...(_:)-8ooeh", paths["s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/...(_:)->PartialRangeFrom", paths["s:SLsE3zzzoPys16PartialRangeFromVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/...(_:)->PartialRangeThrough", paths["s:SLsE3zzzopys19PartialRangeThroughVyxGxFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         XCTAssertEqual("/Operators/MyNumber/...(_:_:)", paths["s:SLsE3zzzoiySNyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         
         // "<" is replaced with "_" without introducing ambiguity
@@ -1296,8 +1302,8 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertEqual("/Operators/MyNumber/.._(_:_:)", paths["s:SLsE3zzloiySnyxGx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         
         // "<" and ">" are not allowed in paths of URLs resulting in added ambiguity.
-        XCTAssertEqual("/Operators/MyNumber/_(_:_:)-736gk",  /* <(_:_:) */ paths["s:9Operators8MyNumberV1loiySbAC_ACtFZ"])
-        XCTAssertEqual("/Operators/MyNumber/_(_:_:)-21jxf",  /* >(_:_:) */ paths["s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
+        XCTAssertEqual("/Operators/MyNumber/_(_:_:)-(MyNumber,_)",  /* <(_:_:) */ paths["s:9Operators8MyNumberV1loiySbAC_ACtFZ"])
+        XCTAssertEqual("/Operators/MyNumber/_(_:_:)-(Self,_)",  /* >(_:_:) */ paths["s:SLsE1goiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         XCTAssertEqual("/Operators/MyNumber/_=(_:_:)-9uewk", /* <=(_:_:) */ paths["s:SLsE2leoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
         XCTAssertEqual("/Operators/MyNumber/_=(_:_:)-70j0d", /* >=(_:_:) */ paths["s:SLsE2geoiySbx_xtFZ::SYNTHESIZED::s:9Operators8MyNumberV"])
     }
@@ -1549,28 +1555,33 @@ class PathHierarchyTests: XCTestCase {
         // Check path components without disambiguation
         assertParsedPathComponents("", [])
         assertParsedPathComponents("/", [])
-        assertParsedPathComponents("/first", [("first", nil, nil)])
-        assertParsedPathComponents("first", [("first", nil, nil)])
-        assertParsedPathComponents("first/second/third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
-        assertParsedPathComponents("first/", [("first", nil, nil)])
-        assertParsedPathComponents("first//second", [("first", nil, nil), ("second", nil, nil)])
-        assertParsedPathComponents("first/second#third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
+        assertParsedPathComponents("/first", [("first", nil)])
+        assertParsedPathComponents("first", [("first", nil)])
+        assertParsedPathComponents("first/second/third", [("first", nil), ("second", nil), ("third", nil)])
+        assertParsedPathComponents("first/", [("first", nil)])
+        assertParsedPathComponents("first//second", [("first", nil), ("second", nil)])
+        assertParsedPathComponents("first/second#third", [("first", nil), ("second", nil), ("third", nil)])
 
         // Check disambiguation
-        assertParsedPathComponents("path-hash", [("path", nil, "hash")])
-        assertParsedPathComponents("path-struct", [("path", "struct", nil)])
-        assertParsedPathComponents("path-struct-hash", [("path", "struct", "hash")])
+        assertParsedPathComponents("path-hash", [("path", .kindAndHash(kind: nil, hash: "hash"))])
+        assertParsedPathComponents("path-struct", [("path", .kindAndHash(kind: "struct", hash: nil))])
+        assertParsedPathComponents("path-struct-hash", [("path", .kindAndHash(kind: "struct", hash: "hash"))])
         
-        assertParsedPathComponents("path-swift.something", [("path", "something", nil)])
-        assertParsedPathComponents("path-c.something", [("path", "something", nil)])
+        assertParsedPathComponents("path-swift.something", [("path", .kindAndHash(kind: "something", hash: nil))])
+        assertParsedPathComponents("path-c.something", [("path", .kindAndHash(kind: "something", hash: nil))])
         
-        assertParsedPathComponents("path-swift.something-hash", [("path", "something", "hash")])
-        assertParsedPathComponents("path-c.something-hash", [("path", "something", "hash")])
+        assertParsedPathComponents("path-swift.something-hash", [("path", .kindAndHash(kind: "something", hash: "hash"))])
+        assertParsedPathComponents("path-c.something-hash", [("path", .kindAndHash(kind: "something", hash: "hash"))])
         
-        assertParsedPathComponents("path-type.property-hash", [("path", "type.property", "hash")])
-        assertParsedPathComponents("path-swift.type.property-hash", [("path", "type.property", "hash")])
-        assertParsedPathComponents("path-type.property", [("path", "type.property", nil)])
-        assertParsedPathComponents("path-swift.type.property", [("path", "type.property", nil)])
+        assertParsedPathComponents("path-type.property-hash", [("path", .kindAndHash(kind: "type.property", hash: "hash"))])
+        assertParsedPathComponents("path-swift.type.property-hash", [("path", .kindAndHash(kind: "type.property", hash: "hash"))])
+        assertParsedPathComponents("path-type.property", [("path", .kindAndHash(kind: "type.property", hash: nil))])
+        assertParsedPathComponents("path-swift.type.property", [("path", .kindAndHash(kind: "type.property", hash: nil))])
+        
+        // TODO: Test more combinations here
+        assertParsedPathComponents("..<(_:_:)->Bool", [("..<(_:_:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"]))])
+        assertParsedPathComponents("..<(_:_:)-(_,Int)", [("..<(_:_:)", .typeSignature(parameterTypes: ["_", "Int"], returnTypes: nil))])
+        assertParsedPathComponents("..<(_:_:)->(_,Int,_)", [("..<(_:_:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "Int", "_"]))])
     }
     
     // MARK: Test helpers
@@ -1636,13 +1647,23 @@ class PathHierarchyTests: XCTestCase {
         }
     }
     
-    private func assertParsedPathComponents(_ path: String, _ expected: [(String, String?, String?)], file: StaticString = #file, line: UInt = #line) {
+    private func assertParsedPathComponents(_ path: String, _ expected: [(String, PathHierarchy.PathComponent.Disambiguation?)], file: StaticString = #file, line: UInt = #line) {
         let (actual, _) = PathHierarchy.parse(path: path)
         XCTAssertEqual(actual.count, expected.count, file: file, line: line)
         for (actualComponents, expectedComponents) in zip(actual, expected) {
             XCTAssertEqual(actualComponents.name, expectedComponents.0, "Incorrect path component", file: file, line: line)
-            XCTAssertEqual(actualComponents.kind, expectedComponents.1, "Incorrect kind disambiguation", file: file, line: line)
-            XCTAssertEqual(actualComponents.hash, expectedComponents.2, "Incorrect hash disambiguation", file: file, line: line)
+            switch (actualComponents.disambiguation, expectedComponents.1) {
+            case (.kindAndHash(let actualKind, let actualHash), .kindAndHash(let expectedKind, let expectedHash)):
+                XCTAssertEqual(actualKind, expectedKind, "Incorrect kind disambiguation", file: file, line: line)
+                XCTAssertEqual(actualHash, expectedHash, "Incorrect hash disambiguation", file: file, line: line)
+            case (.typeSignature(let actualParameters, let actualReturns), .typeSignature(let expectedParameters, let expectedReturns)):
+                XCTAssertEqual(actualParameters, expectedParameters, "Incorrect parameter type disambiguation", file: file, line: line)
+                XCTAssertEqual(actualReturns, expectedReturns, "Incorrect return type disambiguation", file: file, line: line)
+            case (nil, nil):
+                continue
+            default:
+                XCTFail("Incorrect type of disambiguation", file: file, line: line)
+            }
         }
     }
 }
