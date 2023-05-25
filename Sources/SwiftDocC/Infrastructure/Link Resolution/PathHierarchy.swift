@@ -539,8 +539,22 @@ struct PathHierarchy {
         if let favoredMatch = collisions.singleMatch({ $0.node.isDisfavoredInCollision == false }) {
             return favoredMatch.node
         }
-        // If non-symbols are allowed, those results are preferred over any symbols. It's recommended to use symbol links to find symbols.
-        // If non-symbols aren't allowed, skip all non-symbols.
+        // If a module has the same name as the article root (which is named after the bundle display name) then its possible
+        // for an article a symbol to collide. Articles aren't supported in symbol links but symbols are supported in general
+        // documentation links (although the non-symbol result is prioritized).
+        //
+        // There is a later check that the returned node is a symbol for symbol links, but that won't happen if the link is a
+        // collision. To fully handle the collision in both directions, the check below uses `onlyFindSymbols` in the closure
+        // so that only symbol matches are returned for symbol links (when `onlyFindSymbols` is `true`) and non-symbol matches
+        // for general documentation links (when `onlyFindSymbols` is `false`).
+        //
+        // It's a more compact way to write
+        //
+        //     if onlyFindSymbols {
+        //        return $0.node.symbol != nil
+        //     } else {
+        //        return $0.node.symbol == nil
+        //     }
         if let symbolOrNonSymbolMatch = collisions.singleMatch({ ($0.node.symbol != nil) == onlyFindSymbols }) {
             return symbolOrNonSymbolMatch.node
         }

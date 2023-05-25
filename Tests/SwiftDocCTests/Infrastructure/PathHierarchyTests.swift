@@ -1115,6 +1115,24 @@ class PathHierarchyTests: XCTestCase {
                        "/MixedLanguageFramework/SwiftOnlyStruct/tada()")
     }
     
+    func testArticleAndSymbolCollisions() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+            try """
+            # An article
+            
+            This article has the same path as a symbol
+            """.write(to: url.appendingPathComponent("Bar.md"), atomically: true, encoding: .utf8)
+        }
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        
+        // The added article above has the same path as an existing symbol in the this module.
+        let symbolNode = try tree.findNode(path: "/MixedLanguageFramework/Bar", onlyFindSymbols: true)
+        XCTAssertNotNil(symbolNode.symbol, "Symbol link finds the symbol")
+        let articleNode = try tree.findNode(path: "/MixedLanguageFramework/Bar", onlyFindSymbols: false)
+        XCTAssertNil(articleNode.symbol, "General documentation link find the article")
+    }
+    
     func testOverloadedSymbols() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
@@ -1630,9 +1648,13 @@ class PathHierarchyTests: XCTestCase {
 }
 
 extension PathHierarchy {
+    func findNode(path rawPath: String, onlyFindSymbols: Bool, parent: ResolvedIdentifier? = nil) throws -> PathHierarchy.Node {
+        let id = try find(path: rawPath, parent: parent, onlyFindSymbols: onlyFindSymbols)
+        return lookup[id]!
+    }
+    
     func findSymbol(path rawPath: String, parent: ResolvedIdentifier? = nil) throws -> SymbolGraph.Symbol {
-        let id = try find(path: rawPath, parent: parent, onlyFindSymbols: true)
-        return lookup[id]!.symbol!
+        return try findNode(path: rawPath, onlyFindSymbols: true, parent: parent).symbol!
     }
 }
 
