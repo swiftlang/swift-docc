@@ -118,7 +118,7 @@ public struct GeneratedCurationWriter {
                 if catalogURL == outputURL {
                     updatedFileURL = existingURL
                 } else {
-                    var url = catalogURL
+                    var url = outputURL
                     let relativeComponents = existingURL.standardizedFileURL.pathComponents.dropFirst(catalogURL.standardizedFileURL.pathComponents.count)
                     for component in relativeComponents.dropLast() {
                         url.appendPathComponent(component, isDirectory: true)
