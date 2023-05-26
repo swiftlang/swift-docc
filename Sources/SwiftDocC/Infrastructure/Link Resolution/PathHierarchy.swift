@@ -834,6 +834,47 @@ private func symbolFileName(_ symbolName: String) -> String {
 }
 
 extension PathHierarchy {
+    /// Determines the disambiguated relative links of all the direct descendants of the given node.
+    ///
+    /// - Parameters:
+    ///   - nodeID: The identifier of the node to determine direct descendant links for.
+    /// - Returns: A map if node identifiers to pairs of links and flags indicating if the link is disambiguated or not.
+    func disambiguatedChildLinks(of nodeID: ResolvedIdentifier) -> [ResolvedIdentifier: (link: String, hasDisambiguation: Bool)] {
+        let node = lookup[nodeID]!
+        
+        var gathered = [(symbolID: String, (link: String, hasDisambiguation: Bool, id: ResolvedIdentifier, isSwift: Bool))]()
+        for (_, tree) in node.children {
+            let disambiguatedChildren = tree.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: false)
+            
+            for (node, disambiguation) in disambiguatedChildren {
+                guard let id = node.identifier, let symbolID = node.symbol?.identifier.precise else { continue }
+                let suffix = disambiguation.makeSuffix()
+                gathered.append((
+                    symbolID: symbolID, (
+                        link: node.name + suffix,
+                        hasDisambiguation: !suffix.isEmpty,
+                        id: id,
+                        isSwift: node.symbol?.identifier.interfaceLanguage == "swift"
+                    )
+                ))
+            }
+        }
+        
+        // If a symbol node exist in multiple languages, prioritize the Swift variant.
+        let uniqueSymbolValues = Dictionary(gathered, uniquingKeysWith: { lhs, rhs in lhs.isSwift ? lhs : rhs })
+            .values.map({ ($0.id, ($0.link, $0.hasDisambiguation)) })
+        return .init(uniqueKeysWithValues: uniqueSymbolValues)
+    }
+    
+    func disambiguatedAbsoluteLinks() -> [String: String] {
+        return disambiguatedPaths(
+            caseSensitive: true,
+            transformToFileNames: false,
+            includeDisambiguationForUnambiguousChildren: false,
+            includeLanguage: false
+        )
+    }
+    
     /// Determines the least disambiguated paths for all symbols in the path hierarchy.
     ///
     /// - Parameters:
@@ -844,13 +885,42 @@ extension PathHierarchy {
         includeDisambiguationForUnambiguousChildren: Bool = false,
         includeLanguage: Bool = false
     ) -> [String: String] {
+        return disambiguatedPaths(
+            caseSensitive: false,
+            transformToFileNames: true,
+            includeDisambiguationForUnambiguousChildren: includeDisambiguationForUnambiguousChildren,
+            includeLanguage: includeLanguage
+        )
+    }
+    
+    private func disambiguatedPaths(
+        caseSensitive: Bool,
+        transformToFileNames: Bool,
+        includeDisambiguationForUnambiguousChildren: Bool,
+        includeLanguage: Bool
+    ) -> [String: String] {
+        
+        let nameTransform: (String) -> String
+        if transformToFileNames {
+            nameTransform = symbolFileName(_:)
+        } else {
+            nameTransform = { $0 }
+        }
+        
         func descend(_ node: Node, accumulatedPath: String) -> [(String, (String, Bool))] {
             var results: [(String, (String, Bool))] = []
-            let caseInsensitiveChildren = [String: DisambiguationTree](node.children.map { (symbolFileName($0.key.lowercased()), $0.value) }, uniquingKeysWith: { $0.merge(with: $1) })
+            let children = [String: DisambiguationTree](node.children.map {
+                var name = $0.key
+                if !caseSensitive {
+                    name = name.lowercased()
+                }
+                return (nameTransform(name), $0.value)
+            }, uniquingKeysWith: { $0.merge(with: $1) })
             
-            for (_, tree) in caseInsensitiveChildren {
+            for (_, tree) in children {
                 let disambiguatedChildren = tree.disambiguatedValuesWithCollapsedUniqueSymbols(includeLanguage: includeLanguage)
                 let uniqueNodesWithChildren = Set(disambiguatedChildren.filter { $0.disambiguation.value() != nil && !$0.value.children.isEmpty }.map { $0.value.symbol?.identifier.precise })
+                
                 for (node, disambiguation) in disambiguatedChildren {
                     var path: String
                     if node.identifier == nil && disambiguatedChildren.count == 1 {
@@ -865,9 +935,9 @@ extension PathHierarchy {
                         if hash != "_" {
                             knownDisambiguation += "-\(hash)"
                         }
-                        path = accumulatedPath + "/" + symbolFileName(node.name) + knownDisambiguation
+                        path = accumulatedPath + "/" +  nameTransform(node.name) + knownDisambiguation
                     } else {
-                        path = accumulatedPath + "/" + symbolFileName(node.name)
+                        path = accumulatedPath + "/" + nameTransform(node.name)
                     }
                     if let symbol = node.symbol {
                         results.append(

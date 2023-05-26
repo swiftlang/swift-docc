@@ -139,6 +139,17 @@ extension Docc {
         @Flag(help: .hidden)
         public var enableExperimentalObjectiveCSupport = false
         
+        /// A user-provided value that is true if the user wants to in-place modify the provided documentation catalog to write generated curation to documentation extension files.
+        ///
+        /// Defaults to false
+        ///
+        /// > Important: This
+        @Flag(help: ArgumentHelp(
+            "Write documentation files containing generated curation to the documentation catalog.",
+            discussion: "The documentation catalog used in the build will be modified in-place. "
+        ))
+        public var experimentalModifyCatalogWithGeneratedCuration = false
+        
         /// A user-provided value that is true if the user enables experimental support for emitting
         /// a JSON index.
         ///
