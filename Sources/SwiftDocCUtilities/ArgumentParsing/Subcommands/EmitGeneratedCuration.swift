@@ -43,11 +43,6 @@ extension Docc.ProcessCatalog {
             transform: URL.init(fileURLWithPath:)
         )
         var outputURL: URL?
-        
-        ///
-        @Flag(
-            help: ArgumentHelp(""))
-        var shortenExistingLinks: Bool = false
 
         mutating func validate() throws {
             if let documentationCatalog = documentationCatalog {

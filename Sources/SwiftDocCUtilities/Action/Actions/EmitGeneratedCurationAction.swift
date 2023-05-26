@@ -16,7 +16,6 @@ struct EmitGeneratedCurationAction: Action {
     let catalogURL: URL?
     let additionalSymbolGraphDirectory: URL?
     let outputURL: URL
-    let shortenExistingLinks: Bool
 
     let fileManager: FileManagerProtocol
     
@@ -24,7 +23,6 @@ struct EmitGeneratedCurationAction: Action {
         documentationCatalog: URL?,
         additionalSymbolGraphDirectory: URL?,
         outputURL: URL?,
-        shortenExistingLinks: Bool,
         fileManager: FileManagerProtocol = FileManager.default
     ) throws {
         self.catalogURL = documentationCatalog
@@ -34,7 +32,6 @@ struct EmitGeneratedCurationAction: Action {
             self.outputURL = URL(fileURLWithPath: fileManager.currentDirectoryPath).appendingPathComponent("Generated.docc")
         }
         self.additionalSymbolGraphDirectory = additionalSymbolGraphDirectory
-        self.shortenExistingLinks = shortenExistingLinks
         self.fileManager = fileManager
     }
     
