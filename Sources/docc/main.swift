@@ -8,10 +8,10 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
-#if os(macOS) || os(Linux) || os(Android)
+#if os(macOS) || os(Linux) || os(Android) || os(Windows)
 import SwiftDocCUtilities
 
 Docc.main()
 #else
-fatalError("Command line interface supported only on macOS and Linux platforms.") 
+fatalError("Command line interface supported only on macOS, Windows, and Linux platforms.")
 #endif
