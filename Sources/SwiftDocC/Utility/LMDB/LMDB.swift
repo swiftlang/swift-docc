@@ -81,19 +81,11 @@ extension Data: LMDBData {
         self = Data.init(bytes: data.baseAddress!, count: data.count)
     }
 
-#if swift(>=5.0)
     public func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R{
         return try self.withUnsafeBytes({ (ptr) -> R in
             return try body(ptr)
         })
     }
-#else
-    public func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R{
-        return try self.withUnsafeBytes({ (ptr) -> R in
-            return try body(UnsafeRawBufferPointer(start: ptr, count: self.count))
-        })
-    }
-#endif
 }
 
 extension String: LMDBData {
@@ -106,26 +98,7 @@ extension String: LMDBData {
     }
 }
 
-#if !os(Linux) && !os(Android)
-// This is required for macOS and Swift 4.2, for Linux the default implementation works as expected.
-extension Array: LMDBData where Element: FixedWidthInteger {
-    
-    public init?(data: UnsafeRawBufferPointer) {
-        var array = Array<Element>(repeating: 0, count: data.count / MemoryLayout<Element>.stride)
-        _ = array.withUnsafeMutableBytes { data.copyBytes(to: $0) }
-        self = array
-    }
-    
-    public func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
-        let data = self.withUnsafeBufferPointer { Data(buffer: $0) }
-        return try data.read(body)
-    }
-
-}
-#else
 extension Array: LMDBData where Element: FixedWidthInteger {}
-#endif
-
 extension Bool: LMDBData {}
 extension Int: LMDBData {}
 extension Int8: LMDBData {}
