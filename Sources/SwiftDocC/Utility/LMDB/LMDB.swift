@@ -98,7 +98,24 @@ extension String: LMDBData {
     }
 }
 
-extension Array: LMDBData where Element: FixedWidthInteger {}
+// This is required for macOS, for Linux the default implementation works as expected.
+extension Array: LMDBData where Element: FixedWidthInteger {
+    
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
+    public init?(data: UnsafeRawBufferPointer) {
+        var array = Array<Element>(repeating: 0, count: data.count / MemoryLayout<Element>.stride)
+        _ = array.withUnsafeMutableBytes { data.copyBytes(to: $0) }
+        self = array
+    }
+    
+    public func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
+        let data = self.withUnsafeBufferPointer { Data(buffer: $0) }
+        return try data.read(body)
+    }
+#endif
+
+}
+
 extension Bool: LMDBData {}
 extension Int: LMDBData {}
 extension Int8: LMDBData {}
