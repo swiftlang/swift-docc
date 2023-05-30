@@ -54,11 +54,11 @@ extension LMDB {
             - maxDBs: The maximum number of databases that can be opened in the environment. Default: infinite.
             - maxReaders: The maximum number of readers to use. Default: 126
             - mapSize: The size of the map on disk in bytes. Default: 10 MB.
-            - fileMode: The `mode_t` to use when opening a file for the database. Default: 744.
+            - fileMode: The `LMDB.ModeType` to use when opening a file for the database. Default: 744.
          
          - Throws: An error if the environment can't be initialized correctly.
          */
-        public init(path: String, flags: Flags = [], maxDBs: UInt32 = LMDB.defaultMaxDBs, maxReaders: UInt32 = LMDB.defaultMaxReaders, mapSize: size_t = LMDB.defaultMapSize, fileMode: mode_t = LMDB.defaultFileMode) throws {
+        public init(path: String, flags: Flags = [], maxDBs: UInt32 = LMDB.defaultMaxDBs, maxReaders: UInt32 = LMDB.defaultMaxReaders, mapSize: size_t = LMDB.defaultMapSize, fileMode: LMDB.ModeType = LMDB.defaultFileMode) throws {
 
             let result = mdb_env_create(&opaquePointer)
             guard result == 0 else {
@@ -91,7 +91,7 @@ extension LMDB {
             }
         }
         
-        private func configureEnvironment(opaquePointer: OpaquePointer? = nil, maxDBs: UInt32 = LMDB.defaultMaxDBs, maxReaders: UInt32 = LMDB.defaultMaxReaders, mapSize: size_t = LMDB.defaultMapSize, fileMode: mode_t = LMDB.defaultFileMode) throws {
+        private func configureEnvironment(opaquePointer: OpaquePointer? = nil, maxDBs: UInt32 = LMDB.defaultMaxDBs, maxReaders: UInt32 = LMDB.defaultMaxReaders, mapSize: size_t = LMDB.defaultMapSize, fileMode: LMDB.ModeType = LMDB.defaultFileMode) throws {
             
             if maxDBs != LMDB.defaultMaxDBs {
                 let returnCode = mdb_env_set_maxdbs(opaquePointer, MDB_dbi(maxDBs))

@@ -18,6 +18,11 @@ import CLMDB
             Reads are never blocked, but writes are serialized using a mutually exclusive lock at the database level.
  */
 final class LMDB {
+    #if os(Windows)
+    public typealias ModeType = CInt
+    #else
+    public typealias ModeType = mode_t
+    #endif
         
     /// Default instance.
     public static var `default` = LMDB()
@@ -37,7 +42,11 @@ final class LMDB {
     public static let defaultMapSize: size_t = 10485760
     
     /// The default file mode for opening an environment which is `744`.
-    public static let defaultFileMode: mode_t = S_IRWXU | S_IRGRP | S_IROTH
+    #if os(Windows)
+    public static let defaultFileMode: ModeType = _S_IREAD | _S_IWRITE
+    #else
+    public static let defaultFileMode: ModeType = S_IRWXU | S_IRGRP | S_IROTH
+    #endif
     
 }
 
