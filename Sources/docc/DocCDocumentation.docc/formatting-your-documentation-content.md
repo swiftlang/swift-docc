@@ -25,25 +25,24 @@ space. For the page title of an article or API collection, use plain text only.
 > Important: Page titles must be the first line of content in a documentation 
 file. One or more empty lines can precede the page title.
 
-For the page title of a framework landing page or extension file, use a _symbol 
-link_. To create a symbol link for a framework landing page, wrap the 
-framework's module name within a set of double backticks (\`\`).
+For the page title of a landing page, enter a symbol link by wrapping the framework's 
+module name within a set of double backticks (\`\`).
 
 ```markdown
 # ``SlothCreator``
 ```
 
-To create a symbol link for a documentation extension file, wrap the path to the
-symbol within double backticks (\`\`). The path may start with the framework's
-module name or with the name of a top-level symbol in the module.
+For a documentation extension file, enter a symbol link by wrapping the path to the symbol 
+within double backticks (\`\`). The path may start with the framework's module name
+or with the name of a top-level symbol in the module.
 
-**A documentation extension link starting with a framework module name:**
+The following example shows a documentation extension link starting with a framework module name:
 
 ```markdown
 # ``SlothCreator/CareSchedule/Event``
 ```
 
-**A documentation extension link starting with a top-level symbol name:**
+The following example shows a documentation extension link to the same symbol starting with a top-level symbol name:
 
 ```markdown
 # ``CareSchedule/Event``
@@ -83,7 +82,7 @@ DocC provides three ways to format the text in your documentation. You can
 apply bold or italic styling, or you can use code voice, which renders the 
 specified text in a monospace font.
 
-To add bold styling, wrap the text in a pair of double asterisks (`**`) or you can wrap it in a pair of double underscores (`__`) .
+To add bold styling, wrap the text in a pair of double asterisks (`**`). 
 Alternatively, use double underscores (`__`).
 
 The following example uses bold styling for the names of the sloths:
@@ -250,8 +249,8 @@ mutating public func update(_ energyLevel: Int) {
 Both methods have an identical symbol path of `SlothCreator/Sloth/update(_:)`. 
 In this scenario, and to ensure uniqueness, DocC uses the symbol's unique 
 identifier instead of its name to disambiguate. DocC's warnings about ambiguous
-symbol links present the suggested disambiguation for each possible symbol that
-the ambiguous link could refer to.
+symbol links suggests one disambiguation for each of the symbols that match the
+ambiguous symbol path.
 
 ```markdown
 ### Updating Sloths
@@ -260,10 +259,14 @@ the ambiguous link could refer to.
 ```
 
 In the example above, both symbols are functions so you need the unique 
-identifiers to disambiguate the `Sloth/update(_:)` link. Sometimes, symbols 
-with identical paths are of different types. For example, consider a `Color` 
-structure with `red`, `green`, and `blue` properties for color components and 
-static properties for a handful of predefined color values.
+identifiers to disambiguate the `Sloth/update(_:)` link. 
+
+Unique identifiers aren't the only way to disambiguate symbol links. If a symbol
+has a different type from the other symbols with the same symbol path, you can 
+use that symbol's type suffix to disambiguate the link and make the link refer 
+to that symbol. For example, consider a `Color` structure with `red`, `green`, 
+and `blue` properties for color components and static properties for a handful 
+of predefined color values.
 
 ```swift
 public struct Color {
@@ -279,16 +282,15 @@ extension Color {
 
 Both the `red` property and the `red` static property have a symbol path of 
 `Color/red`. Because these are different types of symbols you can disambiguate 
-the `Color/red` link with a symbol type suffix instead of the symbols' unique 
-identifiers.
+`Color/red` with symbol type suffixes instead of the symbols' unique identifiers.
 
-**A symbol link to the `red` property** 
+The following example shows a symbol link to the `red` property:
 
 ```markdown
 ``Color/red-property``
 ```
 
-**A symbol link to the `red` static property** 
+The following example shows a symbol link to the `red` static property:
 
 ```markdown
 ``Color/red-type.property``
@@ -319,8 +321,8 @@ DocC supports the following symbol types for use in symbol links:
 | Module            | `-module`         |
 
 Symbol type suffixes can include a source language identifier prefix — for 
-example  `-swift.enum` instead of `-enum` — but it doesn't further disambiguate 
-the link.
+example,  `-swift.enum` instead of `-enum`. However, the language 
+identifier doesn't disambiguate the link.
 
 Symbol paths are case-sensitive meaning that symbols with the same name in
 different text casing don't need disambiguation. 
@@ -392,15 +394,15 @@ display scale-aware versions of an image. You use specific components to create 
 | Component | Description |
 | --- | --- |
 | Image name | **Required**. Identifies the image within the documentation catalog. The name must be unique across all images in the catalog, even if you store them in separate folders. |
-| Appearance | **Optional**. Identifies the appearance mode in which DocC uses the image. Add `~dark` directly after the image name to identify the image as a dark appearance mode variant. |
+| Appearance | **Optional**. Identifies the appearance mode in which DocC uses the image. Add `~dark` directly after the image name to identify the image as a dark mode variant. |
 | Display scale | **Optional**. Identifies the display scale at which DocC uses the image. Possible values are `@1x`, `@2x`, and `@3x`. When specifying a display scale, add it directly before the file extension. |
 | File extension | **Required**. Identifies the type of image, such as .png or .jpeg. |
 
 For example, the following are all valid DocC image filenames:
 
 - term `sloth.png`: An image that's independent of all appearance modes and display scales.
-- term `sloth~dark.png`: An image that's specific to a dark appearance mode, but is display-scale independent.
-- term `sloth~dark@2x.png`: An image that's specific to a dark appearance mode and the 2x display scale.
+- term `sloth~dark.png`: An image that's specific to dark mode, but is display-scale independent.
+- term `sloth~dark@2x.png`: An image that's specific to dark mode and the 2x display scale.
 
 > Important: You must store images you include in your documentation in a 
 documentation catalog. For more information, see <doc:documenting-a-swift-framework-or-package>.
