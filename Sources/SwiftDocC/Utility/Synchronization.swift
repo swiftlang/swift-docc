@@ -9,6 +9,9 @@
 */
 
 import Foundation
+#if os(Windows)
+import WinSDK
+#endif
 
 /// A wrapper type that ensures a synchronous access to a value.
 ///
@@ -32,6 +35,8 @@ public class Synchronized<Value> {
     #elseif os(Linux) || os(Android)
     /// A lock type appropriate for the current platform.
     var lock: UnsafeMutablePointer<pthread_mutex_t>
+    #elseif os(Windows)
+    var lock: UnsafeMutablePointer<SRWLOCK>
     #else
     #error("Unsupported platform")
     #endif
@@ -48,6 +53,9 @@ public class Synchronized<Value> {
         lock = UnsafeMutablePointer<pthread_mutex_t>.allocate(capacity: 1)
         lock.initialize(to: pthread_mutex_t())
         pthread_mutex_init(lock, nil)
+        #elseif os(Windows)
+        lock = UnsafeMutablePointer<SRWLOCK>.allocate(capacity: 1)
+        InitializeSRWLock(lock)
         #else
         #error("Unsupported platform")
         #endif
@@ -69,6 +77,9 @@ public class Synchronized<Value> {
         #elseif os(Linux) || os(Android)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
+        #elseif os(Windows)
+        AcquireSRWLockExclusive(lock)
+        defer { ReleaseSRWLockExclusive(lock) }
         #else
         #error("Unsupported platform")
         #endif
@@ -102,6 +113,9 @@ public extension Lock {
         #elseif os(Linux) || os(Android)
         pthread_mutex_lock(lock)
         defer { pthread_mutex_unlock(lock) }
+        #elseif os(Windows)
+        AcquireSRWLockExclusive(lock)
+        defer { ReleaseSRWLockExclusive(lock) }
         #else
         #error("Unsupported platform")
         #endif
