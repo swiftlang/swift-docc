@@ -456,7 +456,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         problems.append(problem)
     }
     
-    enum Error: DescribedError {
+    enum Error: DescribedError, Equatable {
         case doesNotContainBundle(url: URL)
         
         var errorDescription: String {

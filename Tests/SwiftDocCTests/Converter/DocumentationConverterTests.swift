@@ -33,8 +33,9 @@ class DocumentationConverterTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         let context = try DocumentationContext(dataProvider: workspace)
         var converter = DocumentationConverter(documentationBundleURL: rootURL, emitDigest: false, documentationCoverageOptions: .noCoverage, currentPlatforms: nil, workspace: workspace, context: context, dataProvider: dataProvider, bundleDiscoveryOptions: BundleDiscoveryOptions())
-        let (analysisProblems, conversionProblems) = try converter.convert(outputConsumer: EmptyConvertOutputConsumer())
-        XCTAssertTrue(analysisProblems.isEmpty)
-        XCTAssertTrue(conversionProblems.isEmpty)
+        XCTAssertThrowsError(try converter.convert(outputConsumer: EmptyConvertOutputConsumer())) { error in
+            let converterError = try? XCTUnwrap(error as? DocumentationConverter.Error)
+            XCTAssertEqual(converterError, DocumentationConverter.Error.doesNotContainBundle(url: rootURL))
+        }
     }
 }
