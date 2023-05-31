@@ -18,6 +18,11 @@ import CLMDB
             Reads are never blocked, but writes are serialized using a mutually exclusive lock at the database level.
  */
 final class LMDB {
+    #if os(Windows)
+    public typealias ModeType = CInt
+    #else
+    public typealias ModeType = mode_t
+    #endif
         
     /// Default instance.
     public static var `default` = LMDB()
@@ -37,7 +42,11 @@ final class LMDB {
     public static let defaultMapSize: size_t = 10485760
     
     /// The default file mode for opening an environment which is `744`.
-    public static let defaultFileMode: mode_t = S_IRWXU | S_IRGRP | S_IROTH
+    #if os(Windows)
+    public static let defaultFileMode: ModeType = _S_IREAD | _S_IWRITE
+    #else
+    public static let defaultFileMode: ModeType = S_IRWXU | S_IRGRP | S_IROTH
+    #endif
     
 }
 
@@ -72,19 +81,11 @@ extension Data: LMDBData {
         self = Data.init(bytes: data.baseAddress!, count: data.count)
     }
 
-#if swift(>=5.0)
     public func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R{
         return try self.withUnsafeBytes({ (ptr) -> R in
             return try body(ptr)
         })
     }
-#else
-    public func read<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R{
-        return try self.withUnsafeBytes({ (ptr) -> R in
-            return try body(UnsafeRawBufferPointer(start: ptr, count: self.count))
-        })
-    }
-#endif
 }
 
 extension String: LMDBData {
@@ -97,10 +98,10 @@ extension String: LMDBData {
     }
 }
 
-#if !os(Linux) && !os(Android)
-// This is required for macOS and Swift 4.2, for Linux the default implementation works as expected.
+// This is required for macOS, for Linux the default implementation works as expected.
 extension Array: LMDBData where Element: FixedWidthInteger {
     
+#if os(macOS) || os(iOS) || os(tvOS) || os(watchOS)
     public init?(data: UnsafeRawBufferPointer) {
         var array = Array<Element>(repeating: 0, count: data.count / MemoryLayout<Element>.stride)
         _ = array.withUnsafeMutableBytes { data.copyBytes(to: $0) }
@@ -111,11 +112,9 @@ extension Array: LMDBData where Element: FixedWidthInteger {
         let data = self.withUnsafeBufferPointer { Data(buffer: $0) }
         return try data.read(body)
     }
+#endif
 
 }
-#else
-extension Array: LMDBData where Element: FixedWidthInteger {}
-#endif
 
 extension Bool: LMDBData {}
 extension Int: LMDBData {}
