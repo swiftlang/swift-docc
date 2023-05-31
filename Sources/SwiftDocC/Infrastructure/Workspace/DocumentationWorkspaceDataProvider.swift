@@ -18,6 +18,8 @@ public protocol DocumentationWorkspaceDataProvider {
     /// use `UUID().uuidString`  for the provider's identifier.
     var identifier: String { get }
 
+    var allowArbitraryCatalogDirectories: Bool { get }
+
     /// Returns the data backing one of the files that this data provider provides.
     ///
     /// Your implementation can expect to only receive URLs that it provides. It's acceptable to assert if you receive

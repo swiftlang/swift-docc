@@ -18,7 +18,9 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
     public typealias SymbolGraphDataLoader = (URL) -> Data?
     private let symbolGraphDataLoader: SymbolGraphDataLoader
     private var generatedMarkdownFiles: [String: Data] = [:]
-    
+
+    public let allowArbitraryCatalogDirectories = false
+
     /// Creates a new provider that generates documentation bundles from the ``BundleDiscoveryOptions`` it is passed in ``bundles(options:)``.
     ///
     /// - Parameters:

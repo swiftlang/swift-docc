@@ -19,7 +19,7 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
         }
 
         // If no bundles were found in the root directory, assume that the directory itself is a bundle.
-        if bundles.isEmpty {
+        if bundles.isEmpty && self.allowArbitraryCatalogDirectories {
             bundles.append(try createBundle(rootDirectory, rootDirectory.children, options: options))
         }
 

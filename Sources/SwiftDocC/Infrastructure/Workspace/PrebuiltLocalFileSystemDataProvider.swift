@@ -13,7 +13,9 @@ import Foundation
 /// A data provider that provides existing in-memory documentation bundles with files on the local filesystem.
 public struct PrebuiltLocalFileSystemDataProvider: DocumentationWorkspaceDataProvider {
     public var identifier: String = UUID().uuidString
-    
+
+    public let allowArbitraryCatalogDirectories = false
+
     private var _bundles: [DocumentationBundle]
     public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
         // Ignore the bundle discovery options, these bundles are already built.
