@@ -10,6 +10,9 @@
 
 import XCTest
 @testable import SwiftDocC
+#if os(Windows)
+import func WinSDK.TryAcquireSRWLockExclusive
+#endif
 
 class SynchronizationTests: XCTestCase {
     func testInitialState() {
@@ -21,6 +24,8 @@ class SynchronizationTests: XCTestCase {
         // Verify the lock is unlocked
         #if os(macOS) || os(iOS)
         XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
+        #elseif os(Windows)
+        XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
         #else
         XCTAssertEqual(pthread_mutex_trylock(synced.lock),0)
         #endif
@@ -44,6 +49,8 @@ class SynchronizationTests: XCTestCase {
         // Verify the lock is unlocked after running the block
         #if os(macOS) || os(iOS)
         XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
+        #elseif os(Windows)
+        XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
         #else
         XCTAssertEqual(pthread_mutex_trylock(synced.lock),0)
         #endif
@@ -66,6 +73,8 @@ class SynchronizationTests: XCTestCase {
             // Verify the used lock is lock in here
             #if os(macOS) || os(iOS)
             XCTAssertFalse(os_unfair_lock_trylock(synced.lock))
+            #elseif os(Windows)
+            XCTAssertEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
             #else
             XCTAssertNotEqual(pthread_mutex_trylock(synced.lock),0)
             #endif
@@ -90,6 +99,8 @@ class SynchronizationTests: XCTestCase {
         // Verify that the lock is unlocked after re-throwing
         #if os(macOS) || os(iOS)
         XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
+        #elseif os(Windows)
+        XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
         #else
         XCTAssertEqual(pthread_mutex_trylock(synced.lock),0)
         #endif
@@ -128,6 +139,8 @@ class SynchronizationTests: XCTestCase {
         // Verify the lock is unlocked
         #if os(macOS) || os(iOS)
         XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
+        #elseif os(Windows)
+        XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
         #else
         XCTAssertEqual(pthread_mutex_trylock(synced.lock), 0)
         #endif
