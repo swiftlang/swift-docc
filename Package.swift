@@ -105,7 +105,7 @@ let package = Package(
 
 // Command-line tool library
 #if os(Windows)
-package.targets.append(
+package.targets.append(contentsOf: [
     .target(
         name: "SwiftDocCUtilities",
         dependencies: [
@@ -120,10 +120,29 @@ package.targets.append(
             "ArgumentParsing/Subcommands/Preview.swift",
         ],
         swiftSettings: swiftSettings
-    )
-)
+    ),
+    .testTarget(
+        name: "SwiftDocCUtilitiesTests",
+        dependencies: [
+            .target(name: "SwiftDocCUtilities"),
+            .target(name: "SwiftDocC"),
+            .target(name: "SwiftDocCTestUtilities"),
+        ],
+        exclude: [
+            // PreviewServer requires NIO which cannot support non-POSIX platforms.
+            "ArgumentParsing/PreviewSubcommandTests.swift",
+            "PreviewActionIntegrationTests.swift",
+            "PreviewServer",
+        ],
+        resources: [
+            .copy("Test Resources"),
+            .copy("Test Bundles"),
+        ],
+        swiftSettings: swiftSettings
+    ),
+])
 #else
-package.targets.append(
+package.targets.append(contentsOf: [
     .target(
         name: "SwiftDocCUtilities",
         dependencies: [
@@ -132,11 +151,7 @@ package.targets.append(
             .product(name: "ArgumentParser", package: "swift-argument-parser")
         ],
         swiftSettings: swiftSettings
-    )
-)
-#endif
-
-package.targets.append(
+    ),
     .testTarget(
         name: "SwiftDocCUtilitiesTests",
         dependencies: [
@@ -149,8 +164,9 @@ package.targets.append(
             .copy("Test Bundles"),
         ],
         swiftSettings: swiftSettings
-    )
-)
+    ),
+])
+#endif
 
 // If the `SWIFTCI_USE_LOCAL_DEPS` environment variable is set,
 // we're building in the Swift.org CI system alongside other projects in the Swift toolchain and
