@@ -128,7 +128,6 @@ class DocumentationWorkspaceTests: XCTestCase {
     }
     
     struct SimpleDataProvider: DocumentationWorkspaceDataProvider {
-        let allowArbitraryCatalogDirectories = false
         let identifier: String = UUID().uuidString
         
         static let testMarkupFile = URL(fileURLWithPath: "/test.documentation/markup.md")

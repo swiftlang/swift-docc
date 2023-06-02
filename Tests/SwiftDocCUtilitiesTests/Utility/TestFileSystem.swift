@@ -43,7 +43,6 @@ import SwiftDocCTestUtilities
 /// - Note: This class is thread-safe by using a naive locking for each access to the files dictionary.
 /// - Warning: Use this type for unit testing.
 class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
-    let allowArbitraryCatalogDirectories = false
     let currentDirectoryPath = "/"
     
     var identifier: String = UUID().uuidString

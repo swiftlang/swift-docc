@@ -20,8 +20,6 @@ extension ConvertService {
         
         var files: [URL: Data] = [:]
 
-        let allowArbitraryCatalogDirectories = false
-
         mutating func registerBundle(
             info: DocumentationBundle.Info,
             symbolGraphs: [Data],

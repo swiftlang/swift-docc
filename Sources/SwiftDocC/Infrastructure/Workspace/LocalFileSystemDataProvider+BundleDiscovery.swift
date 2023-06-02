@@ -10,7 +10,7 @@
 
 import Foundation
 
-extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
+extension LocalFileSystemDataProvider {
     public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
         var bundles = try bundlesInTree(fileSystem, options: options)
 

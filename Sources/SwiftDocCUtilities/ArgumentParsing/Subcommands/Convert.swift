@@ -174,7 +174,7 @@ extension Docc {
         @available(*, deprecated, message: "Doxygen support is now enabled by default.")
         public var experimentalParseDoxygenCommands = false
 
-        @Flag(help: "Allow catalog directories without the `.docc` extension.")
+        @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
         var allowArbitraryCatalogDirectories = false
 
         // MARK: - Info.plist fallbacks
