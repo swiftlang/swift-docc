@@ -847,6 +847,11 @@ public struct RenderNodeTranslator: SemanticVisitor {
             node.metadata.roleHeading = pageKind.kind.titleHeading
         }
         
+        if let titleHeading = article.metadata?.titleHeading {
+            node.metadata.role = titleHeading.headingText
+            node.metadata.roleHeading = titleHeading.headingText
+        }
+        
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
 
