@@ -10,7 +10,7 @@
 
 import ArgumentParser
 
-#if canImport(NIOHTTP)
+#if canImport(NIOHTTP1)
 private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.Preview.self, Docc.ProcessArchive.self]
 #else
 private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.ProcessArchive.self]
