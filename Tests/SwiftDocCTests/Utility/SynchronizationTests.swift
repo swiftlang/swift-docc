@@ -14,6 +14,26 @@ import XCTest
 import func WinSDK.TryAcquireSRWLockExclusive
 #endif
 
+private func XCTAssertLockIsUnlocked<T>(_ synced: Synchronized<T>) {
+    #if os(macOS) || os(iOS)
+    XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
+    #elseif os(Windows)
+    XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
+    #else
+    XCTAssertEqual(pthread_mutex_trylock(synced.lock), 0)
+    #endif
+}
+
+private func XCTAssertLockIsLocked<T>(_ synced: Synchronized<T>) {
+    #if os(macOS) || os(iOS)
+    XCTAssertFalse(os_unfair_lock_trylock(synced.lock))
+    #elseif os(Windows)
+    XCTAssertEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
+    #else
+    XCTAssertNotEqual(pthread_mutex_trylock(synced.lock), 0)
+    #endif
+}
+
 class SynchronizationTests: XCTestCase {
     func testInitialState() {
         let synced = Synchronized(false)
@@ -22,13 +42,7 @@ class SynchronizationTests: XCTestCase {
         XCTAssertEqual(synced.sync({ $0 }), false)
         
         // Verify the lock is unlocked
-        #if os(macOS) || os(iOS)
-        XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
-        #elseif os(Windows)
-        XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
-        #else
-        XCTAssertEqual(pthread_mutex_trylock(synced.lock),0)
-        #endif
+        XCTAssertLockIsUnlocked(synced)
     }
     
     func testUpdatesWrappedValue() {
@@ -47,13 +61,7 @@ class SynchronizationTests: XCTestCase {
         XCTAssertEqual(synced.sync({ $0 }), true)
         
         // Verify the lock is unlocked after running the block
-        #if os(macOS) || os(iOS)
-        XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
-        #elseif os(Windows)
-        XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
-        #else
-        XCTAssertEqual(pthread_mutex_trylock(synced.lock),0)
-        #endif
+        XCTAssertLockIsUnlocked(synced)
     }
     
     func testLocksLockDuringPerformingWork() {
@@ -71,13 +79,7 @@ class SynchronizationTests: XCTestCase {
         // Asynchronously perform a check after 0.25 secs that the lock is locked
         testQueue.asyncAfter(deadline: .now() + 0.25) {
             // Verify the used lock is lock in here
-            #if os(macOS) || os(iOS)
-            XCTAssertFalse(os_unfair_lock_trylock(synced.lock))
-            #elseif os(Windows)
-            XCTAssertEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
-            #else
-            XCTAssertNotEqual(pthread_mutex_trylock(synced.lock),0)
-            #endif
+            XCTAssertLockIsLocked(synced)
             didTest.fulfill()
         }
 
@@ -97,13 +99,7 @@ class SynchronizationTests: XCTestCase {
         }
         
         // Verify that the lock is unlocked after re-throwing
-        #if os(macOS) || os(iOS)
-        XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
-        #elseif os(Windows)
-        XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
-        #else
-        XCTAssertEqual(pthread_mutex_trylock(synced.lock),0)
-        #endif
+        XCTAssertLockIsUnlocked(synced)
     }
 
     func testBlocking() {
@@ -137,13 +133,7 @@ class SynchronizationTests: XCTestCase {
         let synced = Lock()
                 
         // Verify the lock is unlocked
-        #if os(macOS) || os(iOS)
-        XCTAssertTrue(os_unfair_lock_trylock(synced.lock))
-        #elseif os(Windows)
-        XCTAssertNotEqual(TryAcquireSRWLockExclusive(synced.lock), 0)
-        #else
-        XCTAssertEqual(pthread_mutex_trylock(synced.lock), 0)
-        #endif
+        XCTAssertLockIsUnlocked(synced)
     }
     
     func testBlockingWithLock() {
