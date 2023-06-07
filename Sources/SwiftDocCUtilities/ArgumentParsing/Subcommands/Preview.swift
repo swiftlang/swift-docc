@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import ArgumentParser
 import Foundation
 
@@ -52,3 +53,4 @@ extension Docc {
         }
     }
 }
+#endif
