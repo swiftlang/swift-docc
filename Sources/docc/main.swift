@@ -13,5 +13,5 @@ import SwiftDocCUtilities
 
 Docc.main()
 #else
-fatalError("Command line interface supported only on macOS, Windows, and Linux platforms.")
+fatalError("Command line interface supported only on macOS, Linux and Windows platforms.")
 #endif
