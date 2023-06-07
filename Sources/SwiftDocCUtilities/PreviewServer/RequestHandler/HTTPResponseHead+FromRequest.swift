@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import Foundation
 import NIOHTTP1
 
@@ -36,3 +37,4 @@ extension HTTPResponseHead {
         }
     }
 }
+#endif

@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import XCTest
 @testable import SwiftDocC
 @testable import SwiftDocCUtilities
@@ -544,3 +545,4 @@ class PreviewActionIntegrationTests: XCTestCase {
         super.tearDown()
     }
 }
+#endif

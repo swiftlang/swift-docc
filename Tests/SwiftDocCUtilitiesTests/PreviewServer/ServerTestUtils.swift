@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import Foundation
 import NIO
 import NIOHTTP1
@@ -104,3 +105,4 @@ func responseWithPipeline(request: HTTPRequestHead, handler factory: RequestHand
     response.requestError = channelHandler.requestError
     return response
 }
+#endif
