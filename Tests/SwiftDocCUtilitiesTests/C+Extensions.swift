@@ -9,6 +9,13 @@
 */
 
 import Foundation
+#if os(Windows)
+import ucrt
+#elseif os(Linux) || os(Android)
+import Glibc
+#else
+import Darwin
+#endif
 
 internal func SetEnvironmentVariable(_ key: String, _ value: String) {
 #if os(Windows)
