@@ -2447,6 +2447,43 @@ let expected = """
         XCTAssertNotNil(try context.entity(with: referenceForPath("/Collisions/SharedStruct/iOSVar")))
     }
     
+    func testLinkToSymbolWithoutPage() throws {
+        let inheritedDefaultImplementationsSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        let inheritedDefaultImplementationsAtSwiftSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations@Swift.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let testBundle = try Folder(
+            name: "unit-test.docc",
+            content: [
+                CopyOfFile(original: inheritedDefaultImplementationsSGF),
+                CopyOfFile(original: inheritedDefaultImplementationsAtSwiftSGF),
+                TextFile(name: "doc-extension.md", utf8Content: """
+                # ``FirstTarget``
+                
+                Link to a default implementation symbol that doesn't have a page in this build.
+                
+                - ``Comparable/localDefaultImplementation()``
+                """)
+            ]
+        ).write(inside: createTemporaryDirectory())
+        
+        let (_, _, context) = try loadBundle(from: testBundle)
+        
+        let problem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
+        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
+            XCTAssertEqual(problem.diagnostic.summary, "'FirstTarget/Comparable/localDefaultImplementation()' has no page and isn't available for linking.")
+        } else {
+            XCTAssertEqual(problem.diagnostic.summary, "Topic reference 'Comparable/localDefaultImplementation()' couldn't be resolved. No local documentation matches this reference.")
+        }
+    }
+    
     func testContextCachesReferences() throws {
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
