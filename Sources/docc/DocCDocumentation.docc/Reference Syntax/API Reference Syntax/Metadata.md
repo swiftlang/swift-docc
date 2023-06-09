@@ -30,7 +30,7 @@ Use the `Metadata` directive with the ``DisplayName`` directive to configure a s
 }
 ```
 
-Use the `Metadata` directive with the ``TitleHeading`` directive to configure the text of a page-title heading (also known as an eyebrow or kick).
+Use the `Metadata` directive with the ``TitleHeading`` directive to configure the text of a page's title heading.
 
 ```
 # ``SlothCreator``
