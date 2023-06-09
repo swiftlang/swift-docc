@@ -249,31 +249,6 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(solution.replacements.last?.replacement, "# Custom Name")
     }
 
-    func testSymbolArticleSupportsMetadataTitleHeading() throws {
-        let source = """
-        # ``SomeSymbol``
-        
-        @Metadata {
-           @TitleHeading("Custom Heading")
-        }
-
-        The abstract of this documentation extension
-        """
-        let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
-        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-        var problems = [Problem]()
-        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
-        XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a TitleHeading child.")
-        XCTAssertNotNil(article?.metadata?.titleHeading, "The Article has the parsed TitleHeading metadata.")
-        XCTAssertNotNil(article?.metadata?.titleHeading?.headingText, "Custom Heading")
-        
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
-        
-        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
-        _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
-    }
-
     func testArticleSupportsMetadataTitleHeading() throws {
         let source = """
         # Article title

@@ -1250,4 +1250,26 @@ class RenderNodeTranslatorTests: XCTestCase {
         let roundTrippedSymbol = try JSONDecoder().decode(RenderNode.self, from: encodedSymbol)
         XCTAssertEqual(roundTrippedSymbol.metadata.color?.standardColorIdentifier, "purple")
     }
+
+    func testTitleHeadingMetadataInSymbolExtension() throws {
+        let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/TestBed",
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+   
+        let encodedSymbol = try JSONEncoder().encode(renderNode)
+        let roundTrippedSymbol = try JSONDecoder().decode(RenderNode.self, from: encodedSymbol)
+        XCTAssertEqual(roundTrippedSymbol.metadata.roleHeading, "TestBed Notes")
+        XCTAssertEqual(roundTrippedSymbol.metadata.role, "collection")
+    }
 }

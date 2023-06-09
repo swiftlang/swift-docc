@@ -2,6 +2,7 @@
 
 @Metadata {
     @PageColor(purple)
+    @TitleHeading("TestBed Notes")
 }
 
 TestBed framework.
