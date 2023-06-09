@@ -1225,6 +1225,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             roundTrippedArticle.metadata.color?.standardColorIdentifier,
             "yellow"
         )
+
+        XCTAssertEqual(roundTrippedArticle.metadata.roleHeading, "Book-Like Content")
+        XCTAssertEqual(roundTrippedArticle.metadata.role, "article")
      }
     
     func testPageColorMetadataInSymbolExtension() throws {
