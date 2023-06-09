@@ -27,6 +27,12 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
     /// The location of the downloadable resource.
     public var url: URL
 
+    /// Indicates whether the ``url`` property was loaded from the regular initializer or from the
+    /// `Decodable` initializer.
+    ///
+    /// This is used during encoding to determine whether to filter ``url`` through the
+    /// `renderURL(for:)` method. In case the URL was loaded from JSON, we don't want to modify it
+    /// further after a round-trip.
     private var urlWasDecoded = false
 
     /// The SHA512 hash value for the resource.
