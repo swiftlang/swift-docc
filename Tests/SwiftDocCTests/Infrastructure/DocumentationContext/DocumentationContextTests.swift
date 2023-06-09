@@ -2548,7 +2548,7 @@ let expected = """
                         subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
-        let (_, _, context) = try! loadBundle(from: bundleURL)
+        let (_, _, context) = try XCTUnwrap(loadBundle(from: bundleURL))
         
         // MissingDocs contains a struct that has a link to a non-existent type.
         // If there are no problems, that indicates that symbol graph link
