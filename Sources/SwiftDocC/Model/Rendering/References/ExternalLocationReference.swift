@@ -24,16 +24,9 @@ public struct ExternalLocationReference: RenderReference, URLReference {
 
     public private(set) var type: RenderReferenceType = .externalLocation
 
-    public var identifier: RenderReferenceIdentifier {
-        didSet {
-            // Keep the url property in sync if it was just a copy of the reference identifier
-            if self.url == oldValue.identifier {
-                self.url = identifier.identifier
-            }
-        }
-    }
+    public let identifier: RenderReferenceIdentifier
 
-    private var url: String
+    private let url: String
 
     enum CodingKeys: String, CodingKey {
         case type
