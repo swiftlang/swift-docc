@@ -240,4 +240,22 @@ class SampleDownloadTests: XCTestCase {
         let reference = try XCTUnwrap(renderNode.references[identifier.identifier])
         XCTAssert(reference is ExternalLocationReference)
     }
+
+    /// Ensure that a DownloadReference where the URL is different from the reference identifier
+    /// can still round-trip through an ExternalLocationReference with the URL and reference identifier intact.
+    func testRoundTripWithDifferentUrl() throws {
+        let baseReference = DownloadReference(identifier: .init("DownloadReference.zip"), renderURL: .init(string: "https://example.com/DownloadReference.zip")!, checksum: nil)
+
+        let encoder = JSONEncoder()
+        let decoder = JSONDecoder()
+
+        let encodedReference = try encoder.encode(baseReference)
+
+        let interimReference = try decoder.decode(ExternalLocationReference.self, from: encodedReference)
+        let interimEncodedReference = try encoder.encode(interimReference)
+
+        let roundTripReference = try decoder.decode(DownloadReference.self, from: interimEncodedReference)
+
+        XCTAssertEqual(baseReference, roundTripReference)
+    }
 }
