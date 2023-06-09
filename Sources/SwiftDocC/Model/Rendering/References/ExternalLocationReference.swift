@@ -43,12 +43,7 @@ public struct ExternalLocationReference: RenderReference, URLReference {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
-        let url = try container.decodeIfPresent(String.self, forKey: .url)
-        if let url = url {
-            self.url = url
-        } else {
-            self.url = self.identifier.identifier
-        }
+        self.url = try container.decode(String.self, forKey: .url)
         self.type = try container.decode(RenderReferenceType.self, forKey: .type)
     }
 
