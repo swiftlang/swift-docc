@@ -258,4 +258,37 @@ class SampleDownloadTests: XCTestCase {
 
         XCTAssertEqual(baseReference, roundTripReference)
     }
+
+    /// Ensure that an ExternalLocationReference loaded from JSON continues to encode the same
+    /// information after being decoded and re-encoded.
+    func testRoundTripExternalLocationFromFixture() throws {
+        let downloadSymbolURL = Bundle.module.url(
+            forResource: "external-location-custom-url", withExtension: "json",
+            subdirectory: "Rendering Fixtures")!
+
+        let originalData = try Data(contentsOf: downloadSymbolURL)
+        let originalRenderNode = try RenderNode.decode(fromJSON: originalData)
+
+        let encodedRenderNode = try JSONEncoder().encode(originalRenderNode)
+        let symbol = try RenderNode.decode(fromJSON: encodedRenderNode)
+
+        //
+        // Sample Download Details
+        //
+
+        guard let section = symbol.sampleDownload else {
+            XCTFail("Download section not decoded")
+            return
+        }
+
+        guard case RenderInlineContent.reference(let identifier, _, _, _) = section.action else {
+            XCTFail("Could not decode action reference")
+            return
+        }
+
+        XCTAssertEqual(identifier.identifier, "doc://org.swift.docc.example/downloads/sample.zip")
+
+        let externalReference = try XCTUnwrap(symbol.references[identifier.identifier] as? ExternalLocationReference)
+        XCTAssertEqual(externalReference.url, "https://example.com/ExternalLocation.zip")
+    }
 }
