@@ -24,11 +24,6 @@ A title heading is also known as a page eyebrow or kicker.
 ```
 
 A custom title heading appears in place of the page kind at the top of the page.
-
-> Note: Customizing the title heading of a symbol page doesn't alter the page's URL.
-
-> Note: Adding a `TitleHeading` directive to a non-symbol page results in a warning. 
-
 ### Containing Elements
 
 The following items can include a title heading element:
