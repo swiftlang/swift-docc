@@ -85,10 +85,6 @@ public struct RenderMetadata: VariantContainer {
     /// Author provided custom metadata describing the page.
     public var customMetadata: [String: String] = [:]
     
-
-    /// -----------------------------------------------------------------------------
-    /// TODO: MODIFY THIS SECTION????? WHATS THE DIFFERENCE BETWEEN A TITLE AND A TITLE HEADING???
-    
     /// The title of the page.
     public var title: String? {
         get { getVariantDefaultValue(keyPath: \.titleVariants) }
@@ -97,9 +93,6 @@ public struct RenderMetadata: VariantContainer {
     
     /// The variants of the title.
     public var titleVariants: VariantCollection<String?> = .init(defaultValue: nil)
-
-    /// END OF TODO SECTION -----------------------------------------------------------------------------
-    
 
     /// An identifier for a symbol generated externally.
     public var externalID: String? {

@@ -31,6 +31,19 @@ class DirectiveMirrorTests: XCTestCase {
         XCTAssertEqual(reflectedDirective.arguments["style"]?.propertyLabel, "style")
         XCTAssertEqual(reflectedDirective.arguments["style"]?.allowedValues, ["conceptual", "symbol"])
     }
+
+    func testReflectTitleHeadingDirective() {
+        let reflectedDirective = DirectiveMirror(reflecting: TitleHeading.self).reflectedDirective
+        
+        XCTAssertEqual(reflectedDirective.name, "TitleHeading")
+        XCTAssertFalse(reflectedDirective.allowsMarkup)
+        XCTAssertEqual(reflectedDirective.arguments.count, 1)
+        
+        XCTAssertEqual(reflectedDirective.arguments["headingText"]?.unnamed, true)
+        XCTAssertEqual(reflectedDirective.arguments["headingText"]?.required, true)
+        XCTAssertEqual(reflectedDirective.arguments["headingText"]?.labelDisplayName, "_ headingText")
+        XCTAssertEqual(reflectedDirective.arguments["headingText"]?.propertyLabel, "headingText")
+    }
     
     func testReflectMetadataDirective() {
         let reflectedDirective = DirectiveMirror(reflecting: Metadata.self).reflectedDirective
@@ -39,7 +52,7 @@ class DirectiveMirrorTests: XCTestCase {
         XCTAssertFalse(reflectedDirective.allowsMarkup)
         XCTAssert(reflectedDirective.arguments.isEmpty)
         
-        XCTAssertEqual(reflectedDirective.childDirectives.count, 10)
+        XCTAssertEqual(reflectedDirective.childDirectives.count, 11)
         
         XCTAssertEqual(
             reflectedDirective.childDirectives["DocumentationExtension"]?.propertyLabel,

@@ -230,7 +230,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let source = """
             # My Article
             My introduction.
-            My exposè.
+            My exposé.
             My conclusion.
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -247,7 +247,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let source = """
             # My Article
             My introduction.
-            My exposè.
+            My exposé.
             My conclusion.
             ## Topics
             ### Basics
