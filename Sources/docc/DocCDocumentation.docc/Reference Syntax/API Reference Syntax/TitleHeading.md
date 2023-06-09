@@ -28,6 +28,8 @@ A custom title heading appears in place of the page kind at the top of the page.
 
 The following items can include a title heading element:
 
-- ``Metadata``
+@Links(visualStyle: list) {
+   - ``Metadata``
+}
 
 <!-- Copyright (c) 2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
