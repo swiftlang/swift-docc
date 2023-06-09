@@ -11,7 +11,7 @@
 import Foundation
 import Markdown
 
-/// A directive for customizing the text of a page-title heading (aka an eyebrow or kick).
+/// A directive for customizing the text of a page's title heading.
 /// 
 /// @TitleHeading accepts an unnamed parameter containing containing the page-title’s heading text.
 /// 
