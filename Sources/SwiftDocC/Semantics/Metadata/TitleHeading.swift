@@ -13,7 +13,9 @@ import Markdown
 
 /// A directive for customizing the text of a page's title heading.
 /// 
-/// @TitleHeading accepts an unnamed parameter containing containing the page-title’s heading text.
+/// The ``headingText`` property will override the page's default title heading.
+///
+/// @TitleHeading accepts an unnamed parameter containing containing the page's title heading.
 /// 
 /// This directive is only valid within a top-level ``Metadata`` directive:
 /// ```markdown

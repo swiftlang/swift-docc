@@ -5100,13 +5100,19 @@
       "docComment" : {
         "lines" : [
           {
-            "text" : "A directive for customizing the text of a page-title heading (aka an eyebrow or kick)."
+            "text" : "A directive for customizing the text of a page's title heading."
           },
           {
             "text" : ""
           },
           {
-            "text" : "@TitleHeading accepts an unnamed parameter containing containing the page-title’s heading text."
+            "text" : "The ``headingText`` property will override the page's default title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "@TitleHeading accepts an unnamed parameter containing containing the page's title heading."
           },
           {
             "text" : ""

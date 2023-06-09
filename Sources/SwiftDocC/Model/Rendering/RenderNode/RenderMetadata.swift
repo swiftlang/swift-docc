@@ -93,7 +93,7 @@ public struct RenderMetadata: VariantContainer {
     
     /// The variants of the title.
     public var titleVariants: VariantCollection<String?> = .init(defaultValue: nil)
-
+    
     /// An identifier for a symbol generated externally.
     public var externalID: String? {
         get { getVariantDefaultValue(keyPath: \.externalIDVariants) }
