@@ -11,7 +11,7 @@ Configures a symbol's documentation page and any references to that page to show
 
 ## Overview
 
-Place the `TitleHeading` directive within a `Metadata` directive to configure a symbol's documentation page to show a custom title heading. This allows for the creation of custom kinds of pages beyond just articles.
+Place the `TitleHeading` directive within a `Metadata` directive to configure a documentation page to show a custom title heading. Custom title headings, along with custom [page icons](doc:PageImage) and [page colors](doc:PageColor), allow for the creation of custom kinds of pages beyond just articles.
 
 A title heading is also known as a page eyebrow or kicker.
 
