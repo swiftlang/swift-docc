@@ -28,7 +28,7 @@ public final class TitleHeading: Semantic, AutomaticDirectiveConvertible {
 
     /// An unnamed parameter containing containing the page-title’s heading text.
     @DirectiveArgumentWrapped(name: .unnamed)
-    public var headingText: String
+    public var heading: String
 
     static var keyPaths: [String : AnyKeyPath] = [
         "headingText" : \TitleHeading._headingText,
