@@ -1,6 +1,6 @@
 # ``docc/TitleHeading``
 
-Configures a symbol's documentation page and any references to that page to show a custom title heading instead of the default (page kind).
+A directive that specifies a title heading for a given documentation page.
 
 @Metadata {
     @DocumentationExtension(mergeBehavior: override)
