@@ -848,7 +848,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         if let titleHeading = article.metadata?.titleHeading {
-            node.metadata.roleHeading = titleHeading.headingText
+            node.metadata.roleHeading = titleHeading.heading
         } 
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
@@ -1253,7 +1253,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
 
         if let titleHeading = documentationNode.metadata?.titleHeading {
-            node.metadata.roleHeadingVariants = VariantCollection<String?>(defaultValue: titleHeading.headingText)
+            node.metadata.roleHeadingVariants = VariantCollection<String?>(defaultValue: titleHeading.heading)
         }
         
         node.metadata.symbolKindVariants = VariantCollection<String?>(from: symbol.kindVariants) { _, kindVariants in

@@ -39,10 +39,10 @@ class DirectiveMirrorTests: XCTestCase {
         XCTAssertFalse(reflectedDirective.allowsMarkup)
         XCTAssertEqual(reflectedDirective.arguments.count, 1)
         
-        XCTAssertEqual(reflectedDirective.arguments["headingText"]?.unnamed, true)
-        XCTAssertEqual(reflectedDirective.arguments["headingText"]?.required, true)
-        XCTAssertEqual(reflectedDirective.arguments["headingText"]?.labelDisplayName, "_ headingText")
-        XCTAssertEqual(reflectedDirective.arguments["headingText"]?.propertyLabel, "headingText")
+        XCTAssertEqual(reflectedDirective.arguments["heading"]?.unnamed, true)
+        XCTAssertEqual(reflectedDirective.arguments["heading"]?.required, true)
+        XCTAssertEqual(reflectedDirective.arguments["heading"]?.labelDisplayName, "_ heading")
+        XCTAssertEqual(reflectedDirective.arguments["heading"]?.propertyLabel, "heading")
     }
     
     func testReflectMetadataDirective() {

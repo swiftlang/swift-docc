@@ -5082,7 +5082,7 @@
         },
         {
           "kind" : "identifier",
-          "spelling" : "headingText"
+          "spelling" : "heading"
         },
         {
           "kind" : "text",
@@ -5106,7 +5106,7 @@
             "text" : ""
           },
           {
-            "text" : "The ``headingText`` property will override the page's default title heading."
+            "text" : "The ``heading`` property will override the page's default title heading."
           },
           {
             "text" : ""
@@ -5139,7 +5139,7 @@
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - headingText: An unnamed parameter containing containing the page-title’s heading text."
+            "text" : "  - heading: An unnamed parameter containing containing the page-title’s heading text."
           },
           {
             "text" : "     **(required)**"
@@ -5185,7 +5185,7 @@
           },
           {
             "kind" : "identifier",
-            "spelling" : "headingText"
+            "spelling" : "heading"
           },
           {
             "kind" : "text",

@@ -145,7 +145,7 @@ class MetadataTests: XCTestCase {
         XCTAssertNotNil(metadata)
         XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
-        XCTAssertEqual(metadata?.titleHeading?.headingText, "Custom Heading")
+        XCTAssertEqual(metadata?.titleHeading?.heading, "Custom Heading")
     }
     
     func testCustomMetadataSupport() throws {
@@ -265,7 +265,7 @@ class MetadataTests: XCTestCase {
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a TitleHeading child.")
         XCTAssertNotNil(article?.metadata?.titleHeading, "The Article has the parsed TitleHeading metadata.")
-        XCTAssertEqual(article?.metadata?.titleHeading?.headingText, "Custom Heading")
+        XCTAssertEqual(article?.metadata?.titleHeading?.heading, "Custom Heading")
         
         XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         

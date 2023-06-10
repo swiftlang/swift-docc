@@ -13,7 +13,7 @@ import Markdown
 
 /// A directive for customizing the text of a page's title heading.
 /// 
-/// The ``headingText`` property will override the page's default title heading.
+/// The ``heading`` property will override the page's default title heading.
 ///
 /// @TitleHeading accepts an unnamed parameter containing containing the page's title heading.
 /// 
@@ -31,7 +31,7 @@ public final class TitleHeading: Semantic, AutomaticDirectiveConvertible {
     public var heading: String
 
     static var keyPaths: [String : AnyKeyPath] = [
-        "headingText" : \TitleHeading._headingText,
+        "heading" : \TitleHeading._heading,
     ]
 
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
