@@ -7,7 +7,7 @@ A directive that specifies a title heading for a given documentation page.
 }
 
 - Parameters:
-    - headingText: The text for the custom title heading.
+    - heading: The text for the custom title heading.
 
 ## Overview
 
