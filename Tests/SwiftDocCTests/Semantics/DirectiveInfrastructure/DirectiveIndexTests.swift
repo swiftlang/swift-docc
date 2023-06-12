@@ -48,6 +48,7 @@ class DirectiveIndexTests: XCTestCase {
                 "Tab",
                 "TabNavigator",
                 "TechnologyRoot",
+                "TitleHeading",
                 "TopicsVisualStyle",
                 "Tutorial",
                 "TutorialReference",
