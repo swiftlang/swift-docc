@@ -2446,9 +2446,9 @@ class ConvertActionTests: XCTestCase {
         let doccCatalogDirectory = try emptyCatalog.write(inside: temporaryDirectory)
         let htmlTemplateDirectory = try Folder.emptyHTMLTemplateDirectory.write(inside: temporaryDirectory)
         
-        setenv(TemplateOption.environmentVariableKey, htmlTemplateDirectory.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, htmlTemplateDirectory.path)
         defer {
-            unsetenv(TemplateOption.environmentVariableKey)
+            UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
         }
         
         let convertCommand = try Docc.Convert.parse(

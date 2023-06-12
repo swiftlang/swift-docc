@@ -24,7 +24,7 @@ class ErrorMessageTests: XCTestCase {
         try "".write(to: rendererDirectory.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
         
         do {
-            setenv(TemplateOption.environmentVariableKey, rendererDirectory.path, 1)
+            SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererDirectory.path)
             let _ = try Docc.Convert.parse([
                 sourceURL.path,
             ])

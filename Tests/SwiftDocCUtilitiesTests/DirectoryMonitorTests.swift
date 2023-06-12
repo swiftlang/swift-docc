@@ -11,7 +11,7 @@
 import XCTest
 @testable import SwiftDocCUtilities
 
-#if !os(Linux) && !os(Android)
+#if !os(Linux) && !os(Android) && !os(Windows)
 fileprivate extension NSNotification.Name {
     static let testNodeUpdated = NSNotification.Name(rawValue: "testNodeUpdated")
     static let testDirectoryReloaded = NSNotification.Name(rawValue: "testDirectoryReloaded")
@@ -24,7 +24,7 @@ func fileURLsAreEqual(_ url1: URL, _ url2: URL) -> Bool {
 #endif
 
 class DirectoryMonitorTests: XCTestCase {
-    #if !os(Linux) && !os(Android)
+    #if !os(Linux) && !os(Android) && !os(Windows)
     // - MARK: Directory watching test infra
     
     /// Method that automates setting up a directory monitor, setting up the relevant expectations for a test,
@@ -118,7 +118,7 @@ class DirectoryMonitorTests: XCTestCase {
     /// Tests a succession of file system changes and verifies that they produce
     /// the expected monitor events.
     func testMonitorUpdates() throws {
-        #if !os(Linux) && !os(Android)
+        #if !os(Linux) && !os(Android) && !os(Windows)
 
         // Create temp folder & sub-folder.
         let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
@@ -167,7 +167,7 @@ class DirectoryMonitorTests: XCTestCase {
     }
     
     func testMonitorDoesNotTriggerUpdates() throws {
-        #if !os(Linux) && !os(Android)
+        #if !os(Linux) && !os(Android) && !os(Windows)
         
         // Create temp folder & sub-folder.
         let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
@@ -200,7 +200,7 @@ class DirectoryMonitorTests: XCTestCase {
     
     /// Tests a zero sum change aggregation triggers an event.
     func testMonitorZeroSumSizeChangesUpdates() throws {
-        #if !os(Linux) && !os(Android)
+        #if !os(Linux) && !os(Android) && !os(Windows)
 
         // Create temp folder & sub-folder.
         let tempSubfolderURL = try createTemporaryDirectory(named: "subfolder")
