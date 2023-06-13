@@ -7,6 +7,7 @@ This is the abstract of my article. Nice!
     @PageImage(source: "figure1", alt: "An example figure.", purpose: card)
     @CustomMetadata(key: "country", value: "Belgium")
     @PageColor(yellow)
+    @TitleHeading("Book-Like Content")
 }
 
 @Row(numberOfColumns: 8) {
