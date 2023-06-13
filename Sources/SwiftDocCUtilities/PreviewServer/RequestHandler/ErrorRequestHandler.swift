@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import Foundation
 import NIO
 import NIOHTTP1
@@ -52,3 +53,4 @@ struct ErrorRequestHandler: RequestHandlerFactory {
         }
     }
 }
+#endif
