@@ -26,7 +26,7 @@ public struct ExternalLocationReference: RenderReference, URLReference {
 
     public let identifier: RenderReferenceIdentifier
 
-    let url: String
+    public var url: String
 
     enum CodingKeys: String, CodingKey {
         case type
