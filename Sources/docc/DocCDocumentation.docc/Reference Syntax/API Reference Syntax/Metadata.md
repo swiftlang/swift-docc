@@ -30,6 +30,16 @@ Use the `Metadata` directive with the ``DisplayName`` directive to configure a s
 }
 ```
 
+Use the `Metadata` directive with the ``TitleHeading`` directive to configure the text of a page's title heading.
+
+```
+# ``SlothCreator``
+
+@Metadata {
+    @TitleHeading("Release Notes")
+}
+```
+
 ## Topics
 
 ### Extending or Overriding Source Documentation
@@ -47,6 +57,7 @@ Use the `Metadata` directive with the ``DisplayName`` directive to configure a s
 - ``PageKind``
 - ``PageColor``
 - ``CallToAction``
+- ``TitleHeading``
 
 ### Customizing the Languages of an Article
 

@@ -230,7 +230,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let source = """
             # My Article
             My introduction.
-            My exposè.
+            My exposé.
             My conclusion.
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -247,7 +247,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let source = """
             # My Article
             My introduction.
-            My exposè.
+            My exposé.
             My conclusion.
             ## Topics
             ### Basics
@@ -1225,6 +1225,9 @@ class RenderNodeTranslatorTests: XCTestCase {
             roundTrippedArticle.metadata.color?.standardColorIdentifier,
             "yellow"
         )
+
+        XCTAssertEqual(roundTrippedArticle.metadata.roleHeading, "Book-Like Content")
+        XCTAssertEqual(roundTrippedArticle.metadata.role, "article")
      }
     
     func testPageColorMetadataInSymbolExtension() throws {
@@ -1246,5 +1249,27 @@ class RenderNodeTranslatorTests: XCTestCase {
         let encodedSymbol = try JSONEncoder().encode(renderNode)
         let roundTrippedSymbol = try JSONDecoder().decode(RenderNode.self, from: encodedSymbol)
         XCTAssertEqual(roundTrippedSymbol.metadata.color?.standardColorIdentifier, "purple")
+    }
+
+    func testTitleHeadingMetadataInSymbolExtension() throws {
+        let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/TestBed",
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+   
+        let encodedSymbol = try JSONEncoder().encode(renderNode)
+        let roundTrippedSymbol = try JSONDecoder().decode(RenderNode.self, from: encodedSymbol)
+        XCTAssertEqual(roundTrippedSymbol.metadata.roleHeading, "TestBed Notes")
+        XCTAssertEqual(roundTrippedSymbol.metadata.role, "collection")
     }
 }
