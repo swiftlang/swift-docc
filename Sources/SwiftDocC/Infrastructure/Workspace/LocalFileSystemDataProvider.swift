@@ -16,13 +16,16 @@ public struct LocalFileSystemDataProvider: DocumentationWorkspaceDataProvider, F
     
     /// The location that this provider searches for documentation bundles in.
     public var rootURL: URL
-    
+
     public var fileSystem: FSNode
-    
+
+    public let allowArbitraryCatalogDirectories: Bool
+
     /// Creates a new provider that recursively traverses the content of the given root URL to discover documentation bundles.
     /// - Parameter rootURL: The location that this provider searches for documentation bundles in.
-    public init(rootURL: URL) throws {
+    public init(rootURL: URL, allowArbitraryCatalogDirectories: Bool = false) throws {
         self.rootURL = rootURL
+        self.allowArbitraryCatalogDirectories = allowArbitraryCatalogDirectories
         fileSystem = try LocalFileSystemDataProvider.buildTree(root: rootURL)
     }
     

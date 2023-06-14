@@ -19,7 +19,7 @@ extension ConvertService {
         var bundles: [DocumentationBundle] = []
         
         var files: [URL: Data] = [:]
-        
+
         mutating func registerBundle(
             info: DocumentationBundle.Info,
             symbolGraphs: [Data],

@@ -84,6 +84,7 @@ extension ConvertAction {
             treatWarningsAsErrors: convert.warningsAsErrors,
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
             transformForStaticHosting: convert.transformForStaticHosting,
+            allowArbitraryCatalogDirectories: convert.allowArbitraryCatalogDirectories,
             hostingBasePath: convert.hostingBasePath,
             sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments)
         )
