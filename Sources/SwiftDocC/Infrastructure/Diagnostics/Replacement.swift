@@ -9,11 +9,12 @@
 */
 
 import Markdown
+import SymbolKit
 
 /**
  A textual replacement.
  */
-public struct Replacement {
+public struct Replacement: Hashable {
     /// The range to replace.
     public var range: SourceRange
     
@@ -23,5 +24,24 @@ public struct Replacement {
     public init(range: SourceRange, replacement: String) {
         self.range = range
         self.replacement = replacement
+    }
+}
+
+extension Replacement {
+    /// Offsets the replacement using a certain `SourceRange`.
+    ///
+    /// Useful when validating a doc comment that needs to be projected in its containing file "space".
+    ///
+    /// - Warning: Absolute `SourceRange`s index line and column from 1. Thus, at least one
+    /// of `self` or `range` must be a relative range indexed from 0.
+    mutating func offsetWithRange(_ range: SourceRange) {
+        self.range.offsetWithRange(range)
+    }
+    
+    /// Offsets the replacement using a certain SymbolKit `SourceRange`.
+    /// 
+    /// Useful when validating a doc comment that needs to be projected in its containing file "space".
+    mutating func offsetWithRange(_ docRange: SymbolGraph.LineList.SourceRange) {
+        self.offsetWithRange(SourceRange(from: docRange))
     }
 }

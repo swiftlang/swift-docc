@@ -16,21 +16,29 @@ import Markdown
 public class AutomaticSeeAlso: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
-    /// The specified behavior for automatic See Also section generation.
-    @DirectiveArgumentWrapped(name: .unnamed)
-    public private(set) var behavior: Behavior
+    // This property exist so that the generated directive documentation makes it
+    // clear that "enabled" and "disabled" are then two possible values.
     
-    /// A behavior for automatic See Also section generation.
-    public enum Behavior: String, CaseIterable, DirectiveArgumentValueConvertible {
-        /// A See Also section will not be automatically created.
-        case disabled
+    /// Whether or not DocC generates automatic See Also sections.
+    @DirectiveArgumentWrapped(name: .unnamed)
+    public private(set) var enabledness: Enabledness
+    
+    /// A value that represent whether automatic See Also section generation is enabled or disabled.
+    public enum Enabledness: String, CaseIterable, DirectiveArgumentValueConvertible {
+        /// A See Also section should be automatically created (the default).
+        case enabled
         
-        /// A See Also section will be automatically created based on the page's siblings.
-        case siblingPages
+        /// No automatic See Also section should be created.
+        case disabled
+    }
+    
+    /// Whether or not DocC generates automatic See Also sections.
+    public var enabled: Bool {
+        return enabledness == .enabled
     }
     
     static var keyPaths: [String : AnyKeyPath] = [
-        "behavior"  : \AutomaticSeeAlso._behavior,
+        "enabledness"  : \AutomaticSeeAlso._enabledness,
     ]
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")

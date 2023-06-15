@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -61,7 +61,7 @@ public struct LineHighlighter {
     /**
      A single line's highlight.
      */
-    public struct Highlight: Codable {
+    public struct Highlight: Codable, Equatable {
         /// The line to highlight.
         public let line: Int
         
@@ -90,23 +90,38 @@ public struct LineHighlighter {
     /// The ``TutorialSection`` whose ``Steps`` will be analyzed for their code highlights.
     private let tutorialSection: TutorialSection
     
-    init(context: DocumentationContext, tutorialSection: TutorialSection) {
+    /// The topic reference of the tutorial whose section will be analyzed for their code highlights.
+    private let tutorialReference: ResolvedTopicReference
+    
+    init(context: DocumentationContext, tutorialSection: TutorialSection, tutorialReference: ResolvedTopicReference) {
         self.context = context
         self.tutorialSection = tutorialSection
+        self.tutorialReference = tutorialReference
     }
     
     /// The lines in the `resource` file.
-    private func lines(of resource: ResourceReference) throws -> [String] {
-        let data = try context.resource(with: ResourceReference(bundleIdentifier: resource.bundleIdentifier, path: resource.path))
-        return String(data: data, encoding: .utf8)?.splitByNewlines ?? []
+    private func lines(of resource: ResourceReference) -> [String]? {
+        let fileContent: String?
+        // Check if the file is a local asset that can be read directly from the context
+        if let fileData = try? context.resource(with: resource) {
+            fileContent = String(data: fileData, encoding: .utf8)
+        }
+        // Check if the file needs to be resolved to read its content
+        else if let asset = context.resolveAsset(named: resource.path, in: tutorialReference) {
+            fileContent = try? String(contentsOf: asset.data(bestMatching: DataTraitCollection()).url, encoding: .utf8)
+        }
+        // Couldn't find the file reference's content
+        else {
+            fileContent = nil
+        }
+        return fileContent?.splitByNewlines
     }
     
     /// Returns the line highlights between two files.
     private func lineHighlights(old: ResourceReference, new: ResourceReference) -> Result {
         // Retrieve the contents of the current file and the file we're comparing against.
-        guard let oldLines = try? lines(of: old),
-            let newLines = try? lines(of: new) else {
-                return Result(file: new, highlights: [])
+        guard let oldLines = lines(of: old), let newLines = lines(of: new) else {
+            return Result(file: new, highlights: [])
         }
 
         let diff = newLines.difference(from: oldLines)

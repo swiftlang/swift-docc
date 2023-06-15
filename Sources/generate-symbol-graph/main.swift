@@ -15,14 +15,32 @@ import SymbolKit
 struct Directive {
     var name: String
 
+    /// The name of the type that implements this directive.
+    ///
+    /// This information is not presented in the documentation. It's only used to find undocumented directives.
+    var implementationName: String
+    
     /// `true` if the directive accepts arguments.
     var acceptsArguments: Bool = true
 
     /// `true` if the directive doesn't expect body content.
     var isLeaf: Bool
-
+    
+    init(name: String, implementationName: String? = nil, acceptsArguments: Bool = true, isLeaf: Bool) {
+        self.name = name
+        self.implementationName = implementationName ?? name
+        self.acceptsArguments = acceptsArguments
+        self.isLeaf = isLeaf
+    }
+    
     var usr: String {
         return directiveUSR(name)
+    }
+}
+
+extension DirectiveMirror.ReflectedDirective {
+    var documentableArguments: [DirectiveMirror.ReflectedArgument] {
+        arguments.filter { !$0.hiddenFromDocumentation }
     }
 }
 
@@ -56,6 +74,7 @@ let supportedDirectives: [Directive] = [
 
     .init(
         name: "Tutorials",
+        implementationName: "Technology",
         isLeaf: false
     ),
     .init(
@@ -69,26 +88,37 @@ let supportedDirectives: [Directive] = [
     ),
     .init(
         name: "Documentation",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "SampleCode",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "Downloads",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "Videos",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "Forums",
+        implementationName: "Tile",
         isLeaf: false
     ),
     .init(
         name: "Section",
+        implementationName: "TutorialSection",
+        isLeaf: false
+    ),
+    .init(
+        name: "Article",
+        implementationName: "TutorialArticle",
         isLeaf: false
     ),
     .init(
@@ -129,7 +159,7 @@ let supportedDirectives: [Directive] = [
     .map { directive in
         return Directive(
             name: directive.name,
-            acceptsArguments: !directive.arguments.isEmpty,
+            acceptsArguments: !directive.documentableArguments.isEmpty,
             isLeaf: !directive.allowsMarkup && directive.childDirectives.isEmpty
         )
     }
@@ -183,7 +213,7 @@ func generateSwiftDocCFrameworkSymbolGraph() throws -> SymbolGraph {
 func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph.LineList] {
     let swiftDocCFrameworkSymbolGraph = try generateSwiftDocCFrameworkSymbolGraph()
     
-    let directiveSymbols = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
+    let directiveSymbolUSRs: [String] = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
         guard relationship.kind == .conformsTo
             && relationship.target == "s:9SwiftDocC29AutomaticDirectiveConvertibleP"
         else {
@@ -192,15 +222,41 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
     
         return relationship.source
     }
-    .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
-    .map { (String($0.title.split(separator: ".").last ?? $0.title[...]), $0) }
+    let directiveSymbols = Set(directiveSymbolUSRs)
+        .compactMap { swiftDocCFrameworkSymbolGraph.symbols[$0] }
+        .map { (String($0.title.split(separator: ".").last ?? $0.title[...]), $0) }
+    
+    let missingDirectiveSymbolNames: [String] = swiftDocCFrameworkSymbolGraph.relationships.compactMap { relationship in
+        guard relationship.kind == .conformsTo,
+              relationship.target == "s:9SwiftDocC20DirectiveConvertibleP",
+              !directiveSymbolUSRs.contains(relationship.source),
+              let symbol = swiftDocCFrameworkSymbolGraph.symbols[relationship.source]
+        else {
+            return nil
+        }
+    
+        guard !supportedDirectives.contains(where: { $0.implementationName == symbol.names.title }) else {
+            return nil
+        }
+        
+        switch symbol.kind.identifier {
+        case .struct, .class:
+            return symbol.names.title
+        default:
+            return nil
+        }
+    }
+    
+    for missingDirective in missingDirectiveSymbolNames {
+        print("warning: '\(missingDirective)' is not included in the documentation")
+    }
     
     let directiveDocComments: [(String, SymbolGraph.LineList)] = directiveSymbols.compactMap {
-        let (directiveName, directiveSymbol) = $0
+        let (directiveImplementationName, directiveSymbol) = $0
         
-        guard let indexedDirective = DirectiveIndex.shared.indexedDirectives[directiveName] else {
+        guard let indexedDirective = DirectiveIndex.shared.reflection(of: directiveImplementationName) else {
             if let docComment = directiveSymbol.docComment {
-                return (directiveName, docComment)
+                return (directiveImplementationName, docComment)
             } else {
                 return nil
             }
@@ -214,7 +270,7 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
         
         var parametersDocumentation = [SymbolGraph.LineList.Line]()
         var createdParametersSection = false
-        for argument in indexedDirective.arguments {
+        for argument in indexedDirective.documentableArguments {
             let argumentDisplayName: String
             if argument.name.isEmpty {
                 argumentDisplayName = argument.propertyLabel
@@ -328,7 +384,7 @@ func extractDocumentationCommentsForDirectives() throws -> [String : SymbolGraph
         if docComment.lines.isEmpty {
             return nil
         } else {
-            return (directiveName, docComment)
+            return (indexedDirective.name, docComment)
         }
     }
     
@@ -405,11 +461,11 @@ func declarationFragments(
         ]
     )
     
-    if !directive.arguments.isEmpty {
+    if !directive.documentableArguments.isEmpty {
         fragments.append("(")
     }
     
-    for (index, argument) in directive.arguments.enumerated() {
+    for (index, argument) in directive.documentableArguments.enumerated() {
         if argument.labelDisplayName.hasPrefix("_ ") {
             fragments.append("_ ")
             let adjustedLabel = argument.labelDisplayName.trimmingCharacters(in: CharacterSet(charactersIn: " _"))
@@ -439,7 +495,7 @@ func declarationFragments(
             fragments.append(.init(argument.typeDisplayName, kind: .typeIdentifier))
         }
         
-        if index < directive.arguments.count - 1 {
+        if index < directive.documentableArguments.count - 1 {
             fragments.append(", ")
         } else {
             fragments.append(")")
@@ -558,11 +614,30 @@ let symbolGraph = SymbolGraph(
     relationships: []
 )
 
+private struct SortedSymbolGraph: Codable {
+    var wrapped: SymbolGraph
+    init(_ symbolGraph: SymbolGraph) {
+        wrapped = symbolGraph
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: SymbolGraph.CodingKeys.self)
+        try container.encode(wrapped.metadata, forKey: .metadata)
+        try container.encode(wrapped.module, forKey: .module)
+        try container.encode(wrapped.symbols.values.sorted(by: \.identifier.precise), forKey: .symbols)
+        try container.encode(wrapped.relationships, forKey: .relationships)
+    }
+    
+    init(from decoder: Decoder) throws {
+        try self.init(SymbolGraph(from: decoder))
+    }
+}
+
 let output = URL(fileURLWithPath: #file)
     .deletingLastPathComponent()
     .deletingLastPathComponent()
     .appendingPathComponent("docc/DocCDocumentation.docc/docc.symbols.json")
 var encoder = JSONEncoder()
 encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-let data = try! encoder.encode(symbolGraph)
+let data = try! encoder.encode(SortedSymbolGraph(symbolGraph))
 try! data.write(to: output)

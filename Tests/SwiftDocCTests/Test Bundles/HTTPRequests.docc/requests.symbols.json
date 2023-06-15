@@ -1,0 +1,369 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 0
+    },
+    "generator": "Manual"
+  },
+  "module": {
+    "name": "HTTPRequests",
+    "platform": {
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 1,
+          "minor": 0,
+          "patch": 0
+        },
+        "name": "test"
+      }
+    }
+  },
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "rest:test:get:v1/artists/{}@p=id",
+      "target": "rest:test:get:v1/artists/{}",
+      "targetFallback": null
+    },
+    {
+      "kind": "optionalMemberOf",
+      "source": "rest:test:get:v1/artists/{}@q=limit",
+      "target": "rest:test:get:v1/artists/{}",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "rest:test:get:v1/artists/{}@body-application/json",
+      "target": "rest:test:get:v1/artists/{}",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "rest:test:get:v1/artists/{}=200-application/json",
+      "target": "rest:test:get:v1/artists/{}",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "rest:test:post:v1/artists@body-multipart/form-data",
+      "target": "rest:test:post:v1/artists",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "rest:test:post:v1/artists@body-multipart/form-data@artist",
+      "target": "rest:test:post:v1/artists@body-multipart/form-data",
+      "targetFallback": null
+    },
+    {
+      "kind": "optionalMemberOf",
+      "source": "rest:test:post:v1/artists@body-multipart/form-data@userName",
+      "target": "rest:test:post:v1/artists@body-multipart/form-data",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "rest:test:get:v1/artists/{}=204",
+      "target": "rest:test:get:v1/artists/{}",
+      "targetFallback": null
+    }
+  ],
+  "symbols": [
+    {
+      "accessLevel": "public",
+      "httpEndpoint": {
+        "baseURL": "http://test.example.com",
+        "method": "GET",
+        "path": "/v1/artists/{id}",
+        "sandboxURL": "http://sandbox.example.com"
+      },
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:get:v1/artists/{}"
+      },
+      "kind": {
+        "displayName": "Web Request",
+        "identifier": "httpRequest"
+      },
+      "names": {
+        "title": "Get Artist"
+      },
+      "pathComponents": [
+        "Get_Artist"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "int"
+        }
+      ],
+      "httpParameterSource": "path",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:get:v1/artists/{}@p=id"
+      },
+      "kind": {
+        "displayName": "HTTP Parameter",
+        "identifier": "httpParameter"
+      },
+      "names": {
+        "title": "id"
+      },
+      "pathComponents": [
+        "Get_Artist",
+        "id"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "int"
+        }
+      ],
+      "httpParameterSource": "query",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:get:v1/artists/{}@q=limit"
+      },
+      "kind": {
+        "displayName": "HTTP Parameter",
+        "identifier": "httpParameter"
+      },
+      "maximum": 50,
+      "minimum": 5,
+      "names": {
+        "title": "limit"
+      },
+      "pathComponents": [
+        "Get_Artist",
+        "limit"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "data:test:Artist",
+          "spelling": "Artist"
+        }
+      ],
+      "httpMediaType": "application/json",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:get:v1/artists/{}@body-application/json"
+      },
+      "kind": {
+        "displayName": "HTTP Body",
+        "identifier": "httpBody"
+      },
+      "names": {
+        "title": "body"
+      },
+      "pathComponents": [
+        "Get_Artist",
+        "body"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "data:test:Artist",
+          "spelling": "Artist"
+        }
+      ],
+      "httpMediaType": "application/json",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:get:v1/artists/{}=200-application/json"
+      },
+      "kind": {
+        "displayName": "HTTP Response",
+        "identifier": "httpResponse"
+      },
+      "names": {
+        "title": "200 Is OK"
+      },
+      "pathComponents": [
+        "Get_Artist",
+        "200"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:get:v1/artists/{}=204"
+      },
+      "kind": {
+        "displayName": "HTTP Response",
+        "identifier": "httpResponse"
+      },
+      "names": {
+        "title": "204"
+      },
+      "pathComponents": [
+        "Get_Artist",
+        "204"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "httpEndpoint": {
+        "baseURL": "http://test.example.com",
+        "method": "POST",
+        "path": "/v1/artists"
+      },
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:post:v1/artists"
+      },
+      "kind": {
+        "displayName": "Web Request",
+        "identifier": "httpRequest"
+      },
+      "names": {
+        "title": "Create Artist"
+      },
+      "pathComponents": [
+        "Create_Artist"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+            "kind": "text",
+            "spelling": "form-data"
+        }
+      ],
+      "httpMediaType": "multipart/form-data",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:post:v1/artists@body-multipart/form-data"
+      },
+      "kind": {
+        "displayName": "HTTP Body",
+        "identifier": "httpBody"
+      },
+      "names": {
+        "title": "body"
+      },
+      "pathComponents": [
+        "Create_Artist",
+        "body"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+            "kind": "typeIdentifier",
+            "preciseIdentifier": "data:test:Artist",
+            "spelling": "Artist"
+        }
+      ],
+      "httpMediaType": "application/json",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:post:v1/artists@body-multipart/form-data@artist"
+      },
+      "kind": {
+        "displayName": "HTTP Parameter",
+        "identifier": "httpParameter"
+      },
+      "names": {
+        "title": "artist"
+      },
+      "pathComponents": [
+        "Create_Artist",
+        "body",
+        "artist"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+            "kind": "text",
+            "spelling": "string"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "rest:test:post:v1/artists@body-multipart/form-data@userName"
+      },
+      "kind": {
+        "displayName": "HTTP Parameter",
+        "identifier": "httpParameter"
+      },
+      "names": {
+        "title": "userName"
+      },
+      "pathComponents": [
+        "Create_Artist",
+        "body",
+        "userName"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "object "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Artist"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "data:test:Artist"
+      },
+      "kind": {
+        "displayName": "Dictionary",
+        "identifier": "dictionary"
+      },
+      "names": {
+        "title": "Artist"
+      },
+      "pathComponents": [
+        "Artist"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "class FooSwift"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "swift",
+        "precise": "s:FooSwift"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "class"
+      },
+      "names": {
+        "title": "FooSwift"
+      },
+      "pathComponents": [
+        "FooSwift"
+      ]
+    }
+  ]
+}

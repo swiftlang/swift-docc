@@ -1,12 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
+
+import SymbolKit
 
 /**
  A problem with a document along with possible solutions to the problem.
@@ -28,24 +30,17 @@ public struct Problem {
 }
 
 extension Problem {
-    var localizedDescription: String {
-        return formattedLocalizedDescription(withOptions: [])
-    }
-
-    func formattedLocalizedDescription(withOptions options: DiagnosticFormattingOptions = []) -> String {
-        let description = diagnostic.localizedDescription
-
-        guard let source = diagnostic.source, options.contains(.showFixits) else {
-            return description
+    /// Offsets the problem using a certain SymbolKit `SourceRange`.
+    ///
+    /// Useful when validating a doc comment that needs to be projected in its containing file "space".
+    mutating func offsetWithRange(_ docRange: SymbolGraph.LineList.SourceRange) {
+        diagnostic.offsetWithRange(docRange)
+        
+        for i in possibleSolutions.indices {
+            for j in possibleSolutions[i].replacements.indices {
+                possibleSolutions[i].replacements[j].offsetWithRange(docRange)
+            }
         }
-
-        let fixitString = possibleSolutions.reduce("", { string, solution -> String in
-            return solution.replacements.reduce(string, {
-                $0 + "\n\(source.path):\($1.range.lowerBound.line):\($1.range.lowerBound.column)-\($1.range.upperBound.line):\($1.range.upperBound.column): fixit: \($1.replacement)"
-            })
-        })
-
-        return description +  fixitString
     }
 }
 
@@ -56,12 +51,29 @@ extension Sequence where Element == Problem {
             $0.diagnostic.severity == .error
         }
     }
-    
-    /// The human readable summary description for the problems.
+}
+
+// MARK: Deprecated
+
+extension Problem {
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
+    var localizedDescription: String {
+        return DiagnosticConsoleWriter.formattedDescription(for: self)
+    }
+
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
+    func formattedLocalizedDescription(withOptions options: DiagnosticFormattingOptions = []) -> String {
+        return DiagnosticConsoleWriter.formattedDescription(for: self, options: options)
+    }
+}
+
+extension Sequence where Element == Problem {
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
     public var localizedDescription: String {
         return map { $0.localizedDescription }.joined(separator: "\n")
     }
 
+    @available(*, deprecated, message: "Use 'DiagnosticConsoleWriter.formattedDescription(for:options:)' instead.")
     public func formattedLocalizedDescription(withOptions options: DiagnosticFormattingOptions) -> String {
         return map { $0.formattedLocalizedDescription(withOptions: options) }.joined(separator: "\n")
     }

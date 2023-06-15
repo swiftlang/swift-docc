@@ -28,15 +28,17 @@ Use the `Metadata` directive with the ``DisplayName`` directive to configure a s
 @Metadata {
     @DisplayName("Sloth Creator")
 }
-````
+```
 
-### Contained Elements
+Use the `Metadata` directive with the ``TitleHeading`` directive to configure the text of a page's title heading.
 
-A metadata element must contain one of the following items:
+```
+# ``SlothCreator``
 
-- term ``DocumentationExtension``: Defines whether the content in a documentation extension file amends or replaces in-source documentation. **(optional)**
-- term ``TechnologyRoot``: Configures a documentation page that's not associated with a particular framework to appear as a top-level page. **(optional)**
-- term ``DisplayName``: Configures a symbol's documentation page to use a custom display name. **(optional)**
+@Metadata {
+    @TitleHeading("Release Notes")
+}
+```
 
 ## Topics
 
@@ -52,6 +54,17 @@ A metadata element must contain one of the following items:
 
 - ``DisplayName``
 - ``PageImage``
+- ``PageKind``
+- ``PageColor``
 - ``CallToAction``
+- ``TitleHeading``
 
-<!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+### Customizing the Languages of an Article
+
+- ``SupportedLanguage``
+
+### Customizing the Availability Information of a Page
+
+- ``Available``
+
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

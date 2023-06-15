@@ -70,7 +70,7 @@ some more *stuff*
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)
         
-        XCTAssertEqual(problems.map { $0.diagnostic.localizedSummary },
+        XCTAssertEqual(problems.map { $0.diagnostic.summary },
                        [
                         "This heading doesn't meet or exceed the minimum allowed heading level (2)",
                         "This heading doesn't meet or exceed the minimum allowed heading level (2)",
@@ -91,7 +91,7 @@ some more *stuff*
         var problems: [Problem] = []
         Semantic.Analyses.HasOnlySequentialHeadings<TutorialArticle>(severityIfFound: .warning, startingFromLevel: 2).analyze(containerDirective, children: document.children, source: nil, for: bundle, in: context, problems: &problems)
         
-        XCTAssertEqual(problems.map { $0.diagnostic.localizedSummary },
+        XCTAssertEqual(problems.map { $0.diagnostic.summary },
                        [
                         "This heading doesn't sequentially follow the previous heading",
                         "This heading doesn't sequentially follow the previous heading",

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -73,6 +73,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             declarationFragments: .init(declarationFragments: [
                 .init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)
             ]),
+            topicImages: nil,
+            references: nil,
             variants: [
                 .init(
                     traits: [.interfaceLanguage("com.test.another-language.id")],
@@ -216,6 +218,9 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         makeResolver: (OutOfProcessReferenceResolver.ResolvedInformation) throws
             -> OutOfProcessReferenceResolver
     ) throws {
+        let lightCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name.jpg"))
+        let darkCardImageURL = try XCTUnwrap(URL(string: "https://com.test.example/some-image-name-dark.jpg"))
+        
         let testMetadata = OutOfProcessReferenceResolver.ResolvedInformation(
             kind: .init(name: "Kind Name", id: "com.test.kind.id", isSymbol: true),
             url: URL(string: "/relative/path/to/symbol")!,
@@ -234,6 +239,30 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
             declarationFragments: .init(declarationFragments: [
                 .init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)
             ]),
+            topicImages: [
+                TopicImage(
+                    type: .card,
+                    identifier: RenderReferenceIdentifier("external-card")
+                ),
+            ],
+            references: [
+                ImageReference(
+                    identifier: RenderReferenceIdentifier("external-card"),
+                    altText: "External card alt text",
+                    imageAsset:
+                        DataAsset(
+                            variants: [
+                                DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightCardImageURL,
+                                DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
+                            ],
+                            metadata: [
+                                lightCardImageURL : DataAsset.Metadata(svgID: nil),
+                                darkCardImageURL : DataAsset.Metadata(svgID: nil),
+                            ],
+                            context: .display
+                        )
+                    ),
+            ],
             variants: [
                 .init(
                     traits: [.interfaceLanguage("com.test.another-language.id")],
@@ -297,6 +326,26 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
         XCTAssertEqual(symbol.titleVariants[variantTrait], "Resolved Variant Title")
         XCTAssertEqual(symbol.abstractVariants[variantTrait]?.plainText, "Resolved variant abstract for this topic.")
         XCTAssertEqual(symbol.subHeadingVariants[variantTrait], [.init(kind: .text, spelling: "variant declaration fragment", preciseIdentifier: nil)])
+        
+        XCTAssertEqual(symbolNode.metadata?.pageImages.count, 1)
+        let pageImage = try XCTUnwrap(symbolNode.metadata?.pageImages.first)
+        XCTAssertEqual(pageImage.purpose, .card)
+        XCTAssertEqual(pageImage.source, ResourceReference(bundleIdentifier: "com.externally.resolved.symbol", path: "external-card"))
+        XCTAssertEqual(pageImage.alt, "External card alt text")
+        
+        let asset = try XCTUnwrap(resolver.resolve(assetNamed: pageImage.source.path, bundleIdentifier: pageImage.source.bundleIdentifier))
+        
+        XCTAssertEqual(asset, DataAsset(
+            variants: [
+                DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): lightCardImageURL,
+                DataTraitCollection(userInterfaceStyle: .dark, displayScale: .double): darkCardImageURL,
+            ],
+            metadata: [
+                lightCardImageURL : DataAsset.Metadata(svgID: nil),
+                darkCardImageURL : DataAsset.Metadata(svgID: nil),
+            ],
+            context: .display
+        ))
     }
     
     func testResolvingSymbolProcess() throws {
@@ -399,11 +448,11 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
     func assertForwardsResolverErrors(resolver: OutOfProcessReferenceResolver) throws {
         XCTAssertEqual(resolver.bundleIdentifier, "com.test.bundle")
         let resolverResult = resolver.resolve(.unresolved(UnresolvedTopicReference(topicURL: ValidatedURL(parsingExact: "doc://com.test.bundle/something")!)), sourceLanguage: .swift)
-        guard case .failure(_, let errorMessage) = resolverResult else {
+        guard case .failure(_, let error) = resolverResult else {
             XCTFail("Encountered an unexpected type of error.")
             return
         }
-        XCTAssertEqual(errorMessage, "Some error message.")
+        XCTAssertEqual(error.message, "Some error message.")
     }
     
     func testForwardsResolverErrorsProcess() throws {
@@ -511,7 +560,9 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                 language: .init(name: "Language Name", id: "com.test.language.id"),
                 availableLanguages: [],
                 platforms: nil,
-                declarationFragments: nil
+                declarationFragments: nil,
+                topicImages: nil,
+                references: nil
             )
             let message = OutOfProcessReferenceResolver.Response.resolvedInformation(testMetadata)
             
@@ -553,6 +604,8 @@ class OutOfProcessReferenceResolverTests: XCTestCase {
                 declarationFragments: .init(declarationFragments: [
                     .init(kind: .text, spelling: "declaration fragment", preciseIdentifier: nil)
                 ]),
+                topicImages: nil,
+                references: nil,
                 variants: [
                     .init(
                         traits: [.interfaceLanguage("com.test.other-language.id")],

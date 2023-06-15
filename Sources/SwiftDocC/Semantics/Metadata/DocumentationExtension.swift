@@ -13,11 +13,11 @@ import Markdown
 
 /// A directive that controls how the documentation-extension file merges with or overrides the in-source documentation.
 ///
-/// When the ``behavior-swift.property`` property is ``Behavior-swift.enum/append``, the content from the documentation-extension file is added after the content from
+/// When the ``behavior`` property is ``Behavior/append``, the content from the documentation-extension file is added after the content from
 /// the in-source documentation for that symbol.
-/// If a documentation-extension file doesn't have a `DocumentationExtension` directive, then it has the ``Behavior-swift.enum/append`` behavior.
+/// If a documentation-extension file doesn't have a `DocumentationExtension` directive, then it has the ``Behavior/append`` behavior.
 ///
-/// When the ``behavior-swift.property`` property is ``Behavior-swift.enum/override``, the content from the documentation-extension file completely replaces the content
+/// When the ``behavior`` property is ``Behavior/override``, the content from the documentation-extension file completely replaces the content
 /// from the in-source documentation for that symbol
 ///
 /// This directive is only valid within a ``Metadata`` directive:

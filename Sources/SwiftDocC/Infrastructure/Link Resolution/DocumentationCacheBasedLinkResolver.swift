@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -129,7 +129,7 @@ final class DocumentationCacheBasedLinkResolver {
         // Ensure we are resolving either relative links or "doc:" scheme links
         guard unresolvedReference.topicURL.url.scheme == nil || ResolvedTopicReference.urlHasResolvedTopicScheme(unresolvedReference.topicURL.url) else {
             // Not resolvable in the topic graph
-            return .failure(unresolvedReference, errorMessage: "Reference URL \(unresolvedReference.description.singleQuoted) doesn't have \"doc:\" scheme.")
+            return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("Reference URL \(unresolvedReference.description.singleQuoted) doesn't have \"doc:\" scheme."))
         }
         
         // Fall back on the parent's bundle identifier for relative paths
@@ -267,7 +267,7 @@ final class DocumentationCacheBasedLinkResolver {
                 // Return the successful or failed externally resolved reference.
                 return resolvedExternalReference
             } else if !context.registeredBundles.contains(where: { $0.identifier == bundleID }) {
-                return .failure(unresolvedReference, errorMessage: "No external resolver registered for \(bundleID.singleQuoted).")
+                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No external resolver registered for \(bundleID.singleQuoted)."))
             }
         }
         
@@ -295,7 +295,7 @@ final class DocumentationCacheBasedLinkResolver {
         // Give up: there is no local or external document for this reference.
         
         // External references which failed to resolve will already have returned a more specific error message.
-        return .failure(unresolvedReference, errorMessage: "No local documentation matches this reference.")
+        return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("No local documentation matches this reference."))
     }
     
     
@@ -511,7 +511,7 @@ final class DocumentationCacheBasedLinkResolver {
     /// Method called when walking the symbol url tree that checks if a parent of a symbol has had its
     /// path modified during loading the symbol graph. If that's the case the method replaces
     /// `reference` with an updated reference with a correct reference path.
-    func updateNodeWithReferenceIfCollisionChild(_ reference: ResolvedTopicReference, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, symbolIndex: inout [String: DocumentationNode], context: DocumentationContext) throws {
+    func updateNodeWithReferenceIfCollisionChild(_ reference: ResolvedTopicReference, symbolsURLHierarchy: inout BidirectionalTree<ResolvedTopicReference>, symbolIndex: inout [String: ResolvedTopicReference], context: DocumentationContext) throws {
         let newReference = try currentReferenceFor(reference: reference, symbolsURLHierarchy: &symbolsURLHierarchy)
         guard newReference != reference else { return }
         
@@ -523,7 +523,7 @@ final class DocumentationCacheBasedLinkResolver {
         // Rewrite the symbol index
         if let symbolIdentifier = documentationNode?.symbol?.identifier {
             symbolIndex.removeValue(forKey: symbolIdentifier.precise)
-            symbolIndex[symbolIdentifier.precise] = documentationNode
+            symbolIndex[symbolIdentifier.precise] = newReference
         }
         
         // Replace the topic graph node

@@ -83,4 +83,12 @@ class SourceRepositoryTests: XCTestCase {
             URL(string: "https://example.com/source/file#lines-5")!
         )
     }
+    
+    func testLocalFileSystemFormatting() {
+        XCTAssertEqual(
+            SourceRepository.localFilesystem()
+                .format(sourceFileURL: URL(string: "file:///path/to/file")!, lineNumber: 5),
+            URL(string: "doc-source-file:///path/to/file#L5")!
+        )
+    }
 }

@@ -20,6 +20,8 @@ extension ConvertAction {
         var standardError = LogHandle.standardError
         let outOfProcessResolver: OutOfProcessReferenceResolver?
         
+        FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled = convert.enableExperimentalDeviceFrameSupport
+        
         // If the user-provided a URL for an external link resolver, attempt to
         // initialize an `OutOfProcessReferenceResolver` with the provided URL.
         if let linkResolverURL = convert.outOfProcessLinkResolverOption.linkResolverExecutableURL {
@@ -76,11 +78,13 @@ extension ConvertAction {
             ),
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             diagnosticLevel: convert.diagnosticLevel,
-            emitFixits: convert.emitFixits,
+            diagnosticFilePath: convert.diagnosticsOutputPath,
+            formatConsoleOutputForTools: convert.formatConsoleOutputForTools,
             inheritDocs: convert.enableInheritedDocs,
             treatWarningsAsErrors: convert.warningsAsErrors,
             experimentalEnableCustomTemplates: convert.experimentalEnableCustomTemplates,
             transformForStaticHosting: convert.transformForStaticHosting,
+            allowArbitraryCatalogDirectories: convert.allowArbitraryCatalogDirectories,
             hostingBasePath: convert.hostingBasePath,
             sourceRepository: SourceRepository(from: convert.sourceRepositoryArguments)
         )

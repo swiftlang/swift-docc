@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -11,7 +11,7 @@
 import Foundation
 
 /// A reference to a resource that can be downloaded.
-public struct DownloadReference: RenderReference, URLReference {
+public struct DownloadReference: RenderReference, URLReference, Equatable {
     /// The name you use for the directory that contains download items.
     ///
     /// This is the name of the directory within the generated build folder
@@ -26,7 +26,15 @@ public struct DownloadReference: RenderReference, URLReference {
     
     /// The location of the downloadable resource.
     public var url: URL
-    
+
+    /// Indicates whether the ``url`` property was loaded from the regular initializer or from the
+    /// `Decodable` initializer.
+    ///
+    /// This is used during encoding to determine whether to filter ``url`` through the
+    /// `renderURL(for:)` method. In case the URL was loaded from JSON, we don't want to modify it
+    /// further after a round-trip.
+    private var urlWasDecoded = false
+
     /// The SHA512 hash value for the resource.
     public var checksum: String?
 
@@ -60,7 +68,23 @@ public struct DownloadReference: RenderReference, URLReference {
     public init(identifier: RenderReferenceIdentifier, renderURL url: URL, sha512Checksum: String) {
         self.init(identifier: identifier, renderURL: url, checksum: sha512Checksum)
     }
-    
+
+    enum CodingKeys: CodingKey {
+        case type
+        case identifier
+        case url
+        case checksum
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.type = try container.decode(RenderReferenceType.self, forKey: .type)
+        self.identifier = try container.decode(RenderReferenceIdentifier.self, forKey: .identifier)
+        self.url = try container.decode(URL.self, forKey: .url)
+        self.urlWasDecoded = true
+        self.checksum = try container.decodeIfPresent(String.self, forKey: .checksum)
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
@@ -68,7 +92,17 @@ public struct DownloadReference: RenderReference, URLReference {
         try container.encodeIfPresent(checksum, forKey: .checksum)
         
         // Render URL
-        try container.encode(renderURL(for: url), forKey: .url)
+        if !urlWasDecoded {
+            try container.encode(renderURL(for: url), forKey: .url)
+        } else {
+            try container.encode(url, forKey: .url)
+        }
+    }
+
+    static public func ==(lhs: DownloadReference, rhs: DownloadReference) -> Bool {
+        lhs.identifier == rhs.identifier
+        && lhs.url == rhs.url
+        && lhs.checksum == rhs.checksum
     }
 }
 

@@ -19,7 +19,6 @@ import argparse
 import json
 import sys
 import os, platform
-import re
 import subprocess
 
 def printerr(message):
@@ -159,7 +158,9 @@ def get_swiftpm_options(action, args):
   if args.verbose or action == 'install':
     swiftpm_args += ['--verbose']
 
-  if platform.system() == 'Darwin':
+  build_target = get_build_target(args)
+  build_os = build_target.split('-')[2]
+  if build_os.startswith('macosx'):
     swiftpm_args += [
       # Relative library rpath for swift; will only be used when /usr/lib/swift
       # is not available.
@@ -168,13 +169,12 @@ def get_swiftpm_options(action, args):
   else:
     swiftpm_args += [
       # Library rpath for swift, dispatch, Foundation, etc. when installing
-      '-Xlinker', '-rpath', '-Xlinker', '$ORIGIN/../lib/swift/linux',
+      '-Xlinker', '-rpath', '-Xlinker', '$ORIGIN/../lib/swift/' + build_os,
     ]
   
-  build_target = get_build_target(args)
   cross_compile_hosts = args.cross_compile_hosts
   if cross_compile_hosts:
-    if re.search('-apple-macosx', build_target) and re.match('macosx-', cross_compile_hosts):
+    if build_os.startswith('macosx') and cross_compile_hosts.startswith('macosx-'):
       swiftpm_args += ["--arch", "x86_64", "--arch", "arm64"]
     else:
       printerr("cannot cross-compile for %s" % cross_compile_hosts)
@@ -253,6 +253,21 @@ def install(args, env):
     verbose=verbose
   )
 
+  features_path = os.path.join(args.package_path, 'features.json')
+  # Install features.json relative to the docc executable at "../../share/docc/features.json"
+  features_install_path = os.path.join(
+    os.path.dirname(docc_install_dir),
+    'share',
+    'docc',
+    'features.json'
+  )
+  create_intermediate_directories(os.path.dirname(features_install_path), verbose=verbose)
+  check_and_sync(
+    file_path=features_path,
+    install_path=features_install_path,
+    verbose=verbose
+  )
+
   # Copy the content of the build_dir into the install dir with a call like
   # rsync -a src/ dest
   copy_render_from=args.copy_doccrender_from
@@ -275,7 +290,7 @@ def get_build_target(args):
   command = [args.swift_exec, '-print-target-info']
   target_info_json = subprocess.check_output(command, stderr=subprocess.PIPE, universal_newlines=True).strip()
   args.target_info = json.loads(target_info_json)
-  if platform.system() == 'Darwin':
+  if '-apple-macosx' in args.target_info["target"]["unversionedTriple"]:
     return args.target_info["target"]["unversionedTriple"]
   
   return args.target_info["target"]["triple"]

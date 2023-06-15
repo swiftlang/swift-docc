@@ -16,7 +16,7 @@ public struct ConvertRequest: Codable {
     /// Information about the documentation bundle to convert.
     ///
     /// ## See Also
-    /// - ``DocumentationBundle/Info-swift.struct``
+    /// - ``DocumentationBundle/Info``
     public var bundleInfo: DocumentationBundle.Info
     
     /// Feature flags to enable when performing this convert request.
@@ -105,17 +105,37 @@ public struct ConvertRequest: Codable {
     /// - ``DocumentationBundle/symbolGraphURLs``
     public var symbolGraphs: [Data]
     
-    /// The markup file data included in the documentation bundle to convert.
+    /// The mapping of external symbol identifiers to lines of a documentation comment that overrides the value in the symbol graph.
+    ///
+    /// Use this property to override the `docComment` mixin of a symbol entry in a symbol graph. This allows
+    /// the client to pass a more up-to-date value than is available in the symbol graph.
+    public var overridingDocumentationComments: [String: [Line]]? = nil
+    
+    /// Whether the conversion's rendered documentation should include source file location metadata.
+    public var emitSymbolSourceFileURIs: Bool
+    
+    /// The article and documentation extension file data included in the documentation bundle to convert.
     ///
     /// ## See Also
     /// - ``DocumentationBundle/markupURLs``
     public var markupFiles: [Data]
+    
+    
+    /// The tutorial file data included in the documentation bundle to convert.
+    public var tutorialFiles: [Data]
     
     /// The on-disk resources in the documentation bundle to convert.
     ///
     /// ## See Also
     /// - ``DocumentationBundle/miscResourceURLs``
     public var miscResourceURLs: [URL]
+    
+    /// The symbol identifiers that have an expanded documentation page available if they meet the associated access level requirement.
+    ///
+    /// DocC sets the ``RenderMetadata/hasExpandedDocumentationForSymbols`` property to `true`
+    /// for these symbols if they meet the provided  requirements, so that renderers can display a "View More" link
+    /// that navigates the user to the full version of the documentation page.
+    public var symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]?
     
     /// The default code listing language for the documentation bundle to convert.
     ///
@@ -153,8 +173,10 @@ public struct ConvertRequest: Codable {
         self.symbolGraphs = symbolGraphs
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
         self.markupFiles = markupFiles
+        self.tutorialFiles = []
         self.miscResourceURLs = miscResourceURLs
         self.featureFlags = FeatureFlags()
+        self.emitSymbolSourceFileURIs = true
         
         self.bundleInfo = DocumentationBundle.Info(
             displayName: displayName,
@@ -162,6 +184,8 @@ public struct ConvertRequest: Codable {
             version: version,
             defaultCodeListingLanguage: defaultCodeListingLanguage
         )
+        
+        self.symbolIdentifiersWithExpandedDocumentation = nil
     }
     
     /// Creates a request to convert in-memory documentation.
@@ -172,10 +196,16 @@ public struct ConvertRequest: Codable {
     ///   response.
     ///   - bundleLocation: The file location of the documentation bundle to convert, if any.
     ///   - symbolGraphs: The symbols graph data included in the documentation bundle to convert.
+    ///   - overridingDocumentationComments: The mapping of external symbol identifiers to lines of a
+    ///   documentation comment that overrides the value in the symbol graph.
+    ///   - emitSymbolSourceFileURIs: Whether the conversion's rendered documentation should include source file location metadata.
     ///   - knownDisambiguatedSymbolPathComponents: The mapping of external symbol identifiers to
     ///   known disambiguated symbol path components.
-    ///   - markupFiles: The markup file data included in the documentation bundle to convert.
+    ///   - markupFiles: The article and documentation extension file data included in the documentation bundle to convert.
+    ///   - tutorialFiles: The tutorial file data included in the documentation bundle to convert.
     ///   - miscResourceURLs: The on-disk resources in the documentation bundle to convert.
+    ///   - symbolIdentifiersWithExpandedDocumentation: A dictionary of identifiers to requirements for these symbols to have expanded
+    ///   documentation available.
     public init(
         bundleInfo: DocumentationBundle.Info,
         featureFlags: FeatureFlags = FeatureFlags(),
@@ -184,19 +214,104 @@ public struct ConvertRequest: Codable {
         includeRenderReferenceStore: Bool? = nil,
         bundleLocation: URL? = nil,
         symbolGraphs: [Data],
+        overridingDocumentationComments: [String: [Line]]? = nil,
         knownDisambiguatedSymbolPathComponents: [String: [String]]? = nil,
+        emitSymbolSourceFileURIs: Bool = true,
         markupFiles: [Data],
-        miscResourceURLs: [URL]
+        tutorialFiles: [Data] = [],
+        miscResourceURLs: [URL],
+        symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]? = nil
     ) {
         self.externalIDsToConvert = externalIDsToConvert
         self.documentPathsToConvert = documentPathsToConvert
         self.includeRenderReferenceStore = includeRenderReferenceStore
         self.bundleLocation = bundleLocation
         self.symbolGraphs = symbolGraphs
+        self.overridingDocumentationComments = overridingDocumentationComments
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
+        
+        // The default value for this is `true` to enable the inclusion of symbol declaration file paths
+        // in the produced render json by default.
+        // This default to true, because the render nodes created by `ConvertService` are intended for
+        // local uses of documentation where this information could be relevant and we don't have the
+        // privacy concerns that come with including this information in public releases of docs.
+        self.emitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.markupFiles = markupFiles
+        self.tutorialFiles = tutorialFiles
         self.miscResourceURLs = miscResourceURLs
         self.bundleInfo = bundleInfo
         self.featureFlags = featureFlags
+        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+    }
+}
+
+extension ConvertRequest {
+    /// A line of text in source code.
+    public struct Line: Codable {
+        /// The string contents of a line.
+        ///
+        /// Do not include newline characters in this property.
+        public var text: String
+        
+        /// The line's range in a document if available.
+        public var sourceRange: SourceRange?
+        
+        /// Creates a line of text from source code.
+        /// - Parameters:
+        ///   - text: The strings contents of a line. Do not include newline characters.
+        ///   - sourceRange: The line's range in a document if available.
+        public init(
+            text: String,
+            sourceRange: SourceRange? = nil
+        ) {
+            self.text = text
+            self.sourceRange = sourceRange
+        }
+    }
+    
+    /// Represents a selection in text.
+    public struct SourceRange: Codable {
+        /// The range's start position.
+        public var start: Position
+        
+        /// The range's end position.
+        public var end: Position
+        
+        /// Creates a new source range with the given start and end positions.
+        public init(
+            start: Position,
+            end: Position
+        ) {
+            self.start = start
+            self.end = end
+        }
+    }
+    
+    /// Represents a cursor position in text.
+    public struct Position: Codable {
+        /// The zero-based line number in a document.
+        public var line: Int
+        
+        /// The zero-based byte offset into a line.
+        public var character: Int
+        
+        /// Creates a new cursor position with the given line number and character offset.
+        public init(line: Int, character: Int) {
+            self.line = line
+            self.character = character
+        }
+    }
+    
+    /// Represents any requirements needed for a symbol to have additional documentation available in the client.
+    public struct ExpandedDocumentationRequirements: Codable {
+        /// Access control levels required for the symbol to have additional documentation available.
+        public let accessControlLevels: [String]
+        /// Whether the client provides additional documentation for the symbol despite it being prefixed with an underscore.
+        public let canBeUnderscored: Bool
+        
+        public init(accessControlLevels: [String], canBeUnderscored: Bool = false) {
+            self.accessControlLevels = accessControlLevels
+            self.canBeUnderscored = canBeUnderscored
+        }
     }
 }

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -99,12 +99,28 @@ extension Docc {
         @Flag(help: .hidden)
         public var index = false
         
-        /// A user-provided value that is true if fix-its should be written to output.
-        ///
-        /// Defaults to false.
-        @Flag(inversion: .prefixedNo, help: "Outputs fixits for common issues")
-        public var emitFixits = false
-
+        @available(*, deprecated, renamed: "formatConsoleOutputForTools")
+        public var emitFixits: Bool {
+            return formatConsoleOutputForTools
+        }
+        
+        /// A user-provided value that is true if output to the console should be formatted for an IDE or other tool to parse.
+        @Flag(
+            name: [.customLong("ide-console-output"), .customLong("emit-fixits")],
+            help: "Format output to the console intended for an IDE or other tool to parse.")
+        public var formatConsoleOutputForTools = false
+        
+        /// A user-provided location where the convert action writes the diagnostics file.
+        @Option(
+            name: [.customLong("diagnostics-file"), .customLong("diagnostics-output-path")],
+            help: ArgumentHelp(
+                "The location where the documentation compiler writes the diagnostics file.",
+                discussion: "Specifying a diagnostic file path implies '--ide-console-output'."
+            ),
+            transform: URL.init(fileURLWithPath:)
+        )
+        var diagnosticsOutputPath: URL?
+        
         /// A user-provided value that is true if the user wants to opt in to Experimental documentation coverage generation.
         ///
         /// Defaults to none.
@@ -131,6 +147,11 @@ extension Docc {
         @Flag(help: .hidden)
         @available(*, deprecated, message: "Render Index JSON is now emitted by default.")
         public var enableExperimentalJSONIndex = false
+        
+        /// A user-provided value that is true if the user enables experimental support for
+        /// device frames.
+        @Flag(help: .hidden)
+        public var enableExperimentalDeviceFrameSupport = false
 
         /// A user-provided value that is true if experimental documentation inheritance is to be enabled.
         ///
@@ -145,6 +166,16 @@ extension Docc {
         /// Arguments for specifying information about the source code repository that hosts the documented project's code.
         @OptionGroup()
         public var sourceRepositoryArguments: SourceRepositoryArguments
+
+        /// A user-provided value that is true if experimental Doxygen support should be enabled.
+        ///
+        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
+        @Flag(help: .hidden)
+        @available(*, deprecated, message: "Doxygen support is now enabled by default.")
+        public var experimentalParseDoxygenCommands = false
+
+        @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
+        var allowArbitraryCatalogDirectories = false
 
         // MARK: - Info.plist fallbacks
         
@@ -326,7 +357,7 @@ extension Docc {
                     )
                     
                     print(
-                        invalidOrMissingTemplateDiagnostic.localizedDescription,
+                        DiagnosticConsoleWriter.formattedDescription(for: invalidOrMissingTemplateDiagnostic),
                         to: &Self._errorLogHandle
                     )
                     

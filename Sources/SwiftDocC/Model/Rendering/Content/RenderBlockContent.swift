@@ -30,9 +30,9 @@ import Markdown
 /// [ Paragraph ...    ]
 /// ```
 ///
-/// `RenderBlockContent` contains traditional elements like ``paragraph(inlineContent:)`` and
-/// ``heading(level:text:anchor:)`` but also other documentation-specific elements like
-/// ``step(content:caption:media:code:runtimePreview:)`` and ``endpointExample(summary:request:response:)``.
+/// `RenderBlockContent` contains traditional elements like ``paragraph(_:)`` and
+/// ``heading(_:)`` but also other documentation-specific elements like
+/// ``step(_:)`` and ``endpointExample(_:)``.
 ///
 /// Block elements can be nested, for example, an aside note contains one or more paragraphs of text.
 public enum RenderBlockContent: Equatable {
@@ -295,11 +295,9 @@ public enum RenderBlockContent: Equatable {
     
     /// A type the describes an aside style.
     public struct AsideStyle: Codable, Equatable {
-        private static let specialDisplayNames: [String: String] = [
-            "nonmutatingvariant": "Non-Mutating Variant",
-            "mutatingvariant": "Mutating Variant",
-            "todo": "To Do",
-        ]
+        private static let knownDisplayNames: [String: String] = Dictionary(
+            uniqueKeysWithValues: Markdown.Aside.Kind.allCases.map { ($0.rawValue.lowercased(), $0.displayName) }
+        )
         
         /// Returns a Boolean value indicating whether two aside styles are equal.
         ///
@@ -317,7 +315,7 @@ public enum RenderBlockContent: Equatable {
 
         /// The heading text to use when rendering this style of aside.
         public var displayName: String {
-            if let value = Self.specialDisplayNames[rawValue.lowercased()] {
+            if let value = Self.knownDisplayNames[rawValue.lowercased()] {
                 return value
             } else if rawValue.contains(where: \.isUppercase) {
                 // If any character is upper-cased, assume the content has
@@ -363,7 +361,7 @@ public enum RenderBlockContent: Equatable {
         /// Creates an aside style with the specified display name.
         /// - Parameter displayName: The heading text to use when rendering this style of aside.
         public init(displayName: String) {
-            self.rawValue = Self.specialDisplayNames.first(where: { $0.value == displayName })?.key ?? displayName
+            self.rawValue = Self.knownDisplayNames.first(where: { $0.value == displayName })?.key ?? displayName
         }
         
         /// Encodes the aside style into the specified encoder.

@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import XCTest
 @testable import SwiftDocCUtilities
 
@@ -98,3 +99,4 @@ class PreviewSubcommandTests: XCTestCase {
         }
     }
 }
+#endif

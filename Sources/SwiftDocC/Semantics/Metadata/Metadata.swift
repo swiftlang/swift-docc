@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -24,6 +24,10 @@ import Markdown
 /// - ``DisplayName``
 /// - ``PageImage``
 /// - ``CallToAction``
+/// - ``Availability``
+/// - ``PageKind``
+/// - ``SupportedLanguage``
+/// - ``TitleHeading``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
@@ -48,6 +52,26 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
 
     @ChildDirective
     var callToAction: CallToAction? = nil
+
+    @ChildDirective(requirements: .zeroOrMore)
+    var availability: [Availability]
+
+    @ChildDirective
+    var pageKind: PageKind? = nil
+    
+    @ChildDirective(requirements: .zeroOrMore)
+    var supportedLanguages: [SupportedLanguage]
+    
+    @ChildDirective
+    var _pageColor: PageColor? = nil
+    
+    /// The optional, context-dependent color used to represent this page.
+    var pageColor: PageColor.Color? {
+        _pageColor?.color
+    }
+
+    @ChildDirective
+    var titleHeading: TitleHeading? = nil
     
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
@@ -56,6 +80,11 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "pageImages"            : \Metadata._pageImages,
         "customMetadata"        : \Metadata._customMetadata,
         "callToAction"          : \Metadata._callToAction,
+        "availability"          : \Metadata._availability,
+        "pageKind"              : \Metadata._pageKind,
+        "supportedLanguages"    : \Metadata._supportedLanguages,
+        "_pageColor"            : \Metadata.__pageColor,
+        "titleHeading"          : \Metadata._titleHeading,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
@@ -63,12 +92,14 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     ///   - originalMarkup: The original markup for this metadata directive.
     ///   - documentationExtension: Optional configuration that describes how this documentation extension file merges or overrides the in-source documentation.
     ///   - technologyRoot: Optional configuration to make this page root-level documentation.
-    ///   - displayName:Optional configuration to customize this page's symbol's display name.
-    init(originalMarkup: BlockDirective, documentationExtension: DocumentationExtension?, technologyRoot: TechnologyRoot?, displayName: DisplayName?) {
+    ///   - displayName: Optional configuration to customize this page's symbol's display name.
+    ///   - titleHeading: Optional configuration to customize the text of this page's title heading.
+    init(originalMarkup: BlockDirective, documentationExtension: DocumentationExtension?, technologyRoot: TechnologyRoot?, displayName: DisplayName?, titleHeading: TitleHeading?) {
         self.originalMarkup = originalMarkup
         self.documentationOptions = documentationExtension
         self.technologyRoot = technologyRoot
         self.displayName = displayName
+        self.titleHeading = titleHeading
     }
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
@@ -78,7 +109,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,
@@ -129,6 +160,41 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
                     ]
                 )
                 
+                problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
+            }
+        }
+
+        let categorizedAvailability = Dictionary(grouping: availability, by: \.platform)
+
+        for duplicateIntroduced in categorizedAvailability.values {
+            guard duplicateIntroduced.count > 1 else {
+                continue
+            }
+            
+            for availability in duplicateIntroduced {
+                let diagnostic = Diagnostic(
+                    source: availability.originalMarkup.nameLocation?.source,
+                    severity: .warning,
+                    range: availability.originalMarkup.range,
+                    identifier: "org.swift.docc.\(Metadata.Availability.self).DuplicateIntroduced",
+                    summary: "Duplicate \(Metadata.Availability.directiveName.singleQuoted) directive with 'introduced' argument",
+                    explanation: """
+                    A documentation page can only contain a single 'introduced' version for each platform.
+                    """
+                )
+
+                guard let range = availability.originalMarkup.range else {
+                    problems.append(Problem(diagnostic: diagnostic))
+                    continue
+                }
+
+                let solution = Solution(
+                    summary: "Remove extraneous \(Metadata.Availability.directiveName.singleQuoted) directive",
+                    replacements: [
+                        Replacement(range: range, replacement: "")
+                    ]
+                )
+
                 problems.append(Problem(diagnostic: diagnostic, possibleSolutions: [solution]))
             }
         }

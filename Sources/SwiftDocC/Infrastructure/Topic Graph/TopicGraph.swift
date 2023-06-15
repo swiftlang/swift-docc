@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -86,14 +86,18 @@ struct TopicGraph {
         
         /// If true, the topic should not be rendered and exists solely to mark relationships.
         let isVirtual: Bool
+
+        /// If true, the topic has been removed from the hierarchy due to being an extension whose children have been curated elsewhere.
+        let isEmptyExtension: Bool
         
-        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false) {
+        init(reference: ResolvedTopicReference, kind: DocumentationNode.Kind, source: ContentLocation, title: String, isResolvable: Bool = true, isVirtual: Bool = false, isEmptyExtension: Bool = false) {
             self.reference = reference
             self.kind = kind
             self.source = source
             self.title = title
             self.isResolvable = isResolvable
             self.isVirtual = isVirtual
+            self.isEmptyExtension = isEmptyExtension
         }
         
         func withReference(_ reference: ResolvedTopicReference) -> Node {
@@ -233,6 +237,18 @@ struct TopicGraph {
         }
         
         edges[source.reference] = []
+    }
+
+    mutating func removeEdges(to target: Node) {
+        guard reverseEdges.keys.contains(target.reference) else {
+            return
+        }
+
+        for source in reverseEdges[target.reference, default: []] {
+            edges[source]!.removeAll(where: { $0 == target.reference })
+        }
+
+        reverseEdges[target.reference] = []
     }
 
     /// Removes the edge from one reference to another.

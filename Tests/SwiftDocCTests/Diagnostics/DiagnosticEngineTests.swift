@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -21,6 +21,7 @@ class DiagnosticEngineTests: XCTestCase {
         func receive(_ problems: [Problem]) {
             expectation.fulfill()
         }
+        func finalize() { }
     }
 
     func testEmitDiagnostic() {
@@ -113,7 +114,7 @@ class DiagnosticEngineTests: XCTestCase {
         defaultEngine.emit(warning)
         defaultEngine.emit(information)
         defaultEngine.emit(hint)
-        XCTAssertEqual(defaultEngine.problems.localizedDescription, """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: defaultEngine.problems), """
             error: Test error
             warning: Test warning
             """)
@@ -123,7 +124,7 @@ class DiagnosticEngineTests: XCTestCase {
         engine.emit(warning)
         engine.emit(information)
         engine.emit(hint)
-        XCTAssertEqual(engine.problems.localizedDescription, """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engine.problems), """
             error: Test error
             warning: Test warning
             note: Test information
@@ -139,7 +140,7 @@ class DiagnosticEngineTests: XCTestCase {
         defaultEngine.emit(error)
         defaultEngine.emit(warning)
         defaultEngine.emit(information)
-        XCTAssertEqual(defaultEngine.problems.localizedDescription, """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: defaultEngine.problems), """
             error: Test error
             warning: Test warning
             """)
@@ -148,7 +149,7 @@ class DiagnosticEngineTests: XCTestCase {
         engine.emit(error)
         engine.emit(warning)
         engine.emit(information)
-        XCTAssertEqual(engine.problems.localizedDescription, """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: engine.problems), """
             error: Test error
             error: Test warning
             note: Test information
@@ -158,7 +159,7 @@ class DiagnosticEngineTests: XCTestCase {
         errorFilterLevelEngine.emit(error)
         errorFilterLevelEngine.emit(warning)
         errorFilterLevelEngine.emit(information)
-        XCTAssertEqual(errorFilterLevelEngine.problems.localizedDescription, """
+        XCTAssertEqual(DiagnosticConsoleWriter.formattedDescription(for: errorFilterLevelEngine.problems), """
             error: Test error
             error: Test warning
             """)

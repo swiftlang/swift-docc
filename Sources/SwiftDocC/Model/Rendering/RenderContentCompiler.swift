@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -85,22 +85,24 @@ struct RenderContentCompiler: MarkupVisitor {
         return visitImage(
             source: image.source ?? "",
             altText: image.altText,
-            caption: nil
+            caption: nil,
+            deviceFrame: nil
         )
     }
     
     mutating func visitImage(
         source: String,
         altText: String?,
-        caption: [RenderInlineContent]?
+        caption: [RenderInlineContent]?,
+        deviceFrame: String?
     ) -> [RenderContent] {
         guard let imageIdentifier = resolveImage(source: source, altText: altText) else {
             return []
         }
         
         var metadata: RenderContentMetadata?
-        if let caption = caption {
-            metadata = RenderContentMetadata(abstract: caption)
+        if caption != nil || deviceFrame != nil {
+            metadata = RenderContentMetadata(abstract: caption, deviceFrame: deviceFrame)
         }
         
         return [RenderInlineContent.image(identifier: imageIdentifier, metadata: metadata)]
@@ -163,10 +165,58 @@ struct RenderContentCompiler: MarkupVisitor {
             return [RenderInlineContent.text(link.plainText)]
         }
         
-        return [RenderInlineContent.reference(identifier: .init(resolved.absoluteString), isActive: true, overridingTitle: nil, overridingTitleInlineContent: nil)]
+        let linkTitleInlineContent = link.children.flatMap { visit($0) } as! [RenderInlineContent]
+        let plainTextLinkTitle = linkTitleInlineContent.plainText
+        let overridingTitle = plainTextLinkTitle.isEmpty ? nil : plainTextLinkTitle
+        let overridingTitleInlineContent = linkTitleInlineContent.isEmpty ? nil : linkTitleInlineContent
+        
+        let useOverriding: Bool
+        if link.isAutolink { // If the link is an auto link, we don't use overriding info
+            useOverriding = false
+        } else if let overridingTitle = overridingTitle,
+                  overridingTitle.hasPrefix(ResolvedTopicReference.urlScheme + ":"),
+                  destination.hasPrefix(ResolvedTopicReference.urlScheme + "://")
+        {
+            // The overriding title looks like a documentation link. Escape it like a resolved reference string to compare it with the destination.
+            let withoutScheme = overridingTitle.dropFirst((ResolvedTopicReference.urlScheme + ":").count)
+            if destination.hasSuffix(withoutScheme) {
+                useOverriding = false
+            } else {
+                let escapedTitle: String
+                if let fragmentIndex = withoutScheme.firstIndex(of: "#") {
+                    let escapedFragment = withoutScheme[fragmentIndex...].dropFirst().addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) ?? ""
+                    escapedTitle = "\(urlReadablePath(withoutScheme[..<fragmentIndex]))#\(escapedFragment)"
+                } else {
+                    escapedTitle = urlReadablePath(withoutScheme)
+                }
+                
+                useOverriding = !destination.hasSuffix(escapedTitle) // If the link is a transformed doc link, we don't use overriding info
+            }
+        } else {
+            useOverriding = true
+        }
+        return [
+            RenderInlineContent.reference(
+                identifier: .init(resolved.absoluteString),
+                isActive: true,
+                overridingTitle: useOverriding ? overridingTitle : nil,
+                overridingTitleInlineContent: useOverriding ? overridingTitleInlineContent : nil
+            )
+        ]
     }
     
     mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
+        if let cached = context.referenceIndex[destination] {
+            if let node = context.topicGraph.nodeWithReference(cached), !context.topicGraph.isLinkable(node.reference) {
+                return nil
+            }
+            collectedTopicReferences.append(cached)
+            return cached
+        }
+        
+        // FIXME: Links from this build already exist in the reference index and don't need to be resolved again.
+        // https://github.com/apple/swift-docc/issues/581
+
         guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
             return nil
         }
@@ -190,9 +240,9 @@ struct RenderContentCompiler: MarkupVisitor {
     }
 
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
-        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
+        if let cached = context.referenceIndex[destination] {
             return cached
-        } 
+        }
 
         // The symbol link may be written with a scheme and bundle identifier.
         let url = ValidatedURL(parsingExact: destination)?.requiring(scheme: ResolvedTopicReference.urlScheme) ?? ValidatedURL(symbolPath: destination)
