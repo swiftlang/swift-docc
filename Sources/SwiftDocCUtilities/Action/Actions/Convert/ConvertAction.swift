@@ -19,7 +19,11 @@ public struct ConvertAction: Action, RecreatingContext {
         var errorDescription: String {
             switch self {
             case .doesNotContainBundle(let url):
-                return "The directory at '\(url)' and its subdirectories do not contain at least one valid documentation bundle. A documentation bundle is a directory ending in `.docc`."
+                return """
+                    The directory at '\(url)' and its subdirectories do not contain at least one valid documentation \
+                    bundle. A documentation bundle is a directory ending in `.docc`. Pass \
+                    `--allow-arbitrary-catalog-directories` flag to convert a directory without a `.docc` extension.
+                    """
             case .cancelPending:
                 return "The action is already in the process of being cancelled."
             }
@@ -40,7 +44,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
     let diagnosticEngine: DiagnosticEngine
-    
+
     let transformForStaticHosting: Bool
     let hostingBasePath: String?
     
@@ -106,6 +110,7 @@ public struct ConvertAction: Action, RecreatingContext {
         experimentalEnableCustomTemplates: Bool = false,
         experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool = false,
+        allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String? = nil,
         sourceRepository: SourceRepository? = nil
     ) throws
@@ -176,7 +181,10 @@ public struct ConvertAction: Action, RecreatingContext {
         if let injectedDataProvider = injectedDataProvider {
             dataProvider = injectedDataProvider
         } else if let rootURL = rootURL {
-            dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
+            dataProvider = try LocalFileSystemDataProvider(
+                rootURL: rootURL,
+                allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
+            )
         } else {
             self.context.externalMetadata.isGeneratedBundle = true
             dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { url in
@@ -270,6 +278,7 @@ public struct ConvertAction: Action, RecreatingContext {
         experimentalEnableCustomTemplates: Bool = false,
         experimentalModifyCatalogWithGeneratedCuration: Bool = false,
         transformForStaticHosting: Bool,
+        allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String?,
         sourceRepository: SourceRepository? = nil,
         temporaryDirectory: URL
@@ -304,6 +313,7 @@ public struct ConvertAction: Action, RecreatingContext {
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
             experimentalModifyCatalogWithGeneratedCuration: experimentalModifyCatalogWithGeneratedCuration,
             transformForStaticHosting: transformForStaticHosting,
+            allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
             hostingBasePath: hostingBasePath,
             sourceRepository: sourceRepository
         )

@@ -470,7 +470,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         problems.append(problem)
     }
     
-    enum Error: DescribedError {
+    enum Error: DescribedError, Equatable {
         case doesNotContainBundle(url: URL)
         
         var errorDescription: String {
@@ -480,6 +480,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                     The directory at '\(url)' and its subdirectories do not contain at least one \
                     valid documentation bundle. A documentation bundle is a directory ending in \
                     `.docc`.
+                    Pass `--allow-arbitrary-catalog-directories` flag to convert a directory \
+                    without a `.docc` extension.
                     """
             }
         }

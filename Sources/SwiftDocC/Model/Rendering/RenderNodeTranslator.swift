@@ -841,11 +841,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 node.metadata.platformsVariants = .init(defaultValue: renderAvailability)
             }
         }
-
+        
         if let pageKind = article.metadata?.pageKind {
             node.metadata.role = pageKind.kind.renderRole.rawValue
             node.metadata.roleHeading = pageKind.kind.titleHeading
         }
+        
+        if let titleHeading = article.metadata?.titleHeading {
+            node.metadata.roleHeading = titleHeading.heading
+        } 
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
@@ -1246,6 +1250,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if shouldCreateAutomaticRoleHeading(for: documentationNode) {
             node.metadata.roleHeadingVariants = VariantCollection<String?>(from: symbol.roleHeadingVariants)
+        }
+
+        if let titleHeading = documentationNode.metadata?.titleHeading {
+            node.metadata.roleHeadingVariants = VariantCollection<String?>(defaultValue: titleHeading.heading)
         }
         
         node.metadata.symbolKindVariants = VariantCollection<String?>(from: symbol.kindVariants) { _, kindVariants in
