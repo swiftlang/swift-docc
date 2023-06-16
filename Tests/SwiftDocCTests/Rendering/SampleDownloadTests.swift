@@ -291,4 +291,14 @@ class SampleDownloadTests: XCTestCase {
         let externalReference = try XCTUnwrap(symbol.references[identifier.identifier] as? ExternalLocationReference)
         XCTAssertEqual(externalReference.url, "https://example.com/ExternalLocation.zip")
     }
+    
+    func testRoundTripExternalLocationReferenceWithModifiedURL() throws {
+        var reference = ExternalLocationReference(identifier: RenderReferenceIdentifier("/test/sample.zip"))
+        XCTAssertEqual(reference.url, "/test/sample.zip")
+        reference.url = "https://swift.org/documentation/test/sample.zip"
+        let encodedReference = try JSONEncoder().encode(reference)
+        let decodedReference = try JSONDecoder().decode(ExternalLocationReference.self, from: encodedReference)
+        XCTAssertEqual(decodedReference.identifier.identifier, "/test/sample.zip")
+        XCTAssertEqual(decodedReference.url, "https://swift.org/documentation/test/sample.zip")
+    }
 }
