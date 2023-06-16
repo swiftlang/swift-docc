@@ -52,6 +52,15 @@ extension Metadata {
                     return "Sample Code"
                 }
             }
+
+            var documentationNodeKind: DocumentationNode.Kind {
+                switch self {
+                case .article:
+                    return .article
+                case .sampleCode:
+                    return .sampleCode
+                }
+            }
         }
 
         /// The page kind to apply to the page.
