@@ -2048,13 +2048,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         in bundle: DocumentationBundle
     ) -> DocumentationContext.Articles {
         articles.map { article in
+            let kind = article.value.metadata?.pageKind?.kind.documentationNodeKind ?? .article
             guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(
                 for: article,
                 // By default, articles are available in the languages the module that's being documented
                 // is available in. It's possible to override that behavior using the `@SupportedLanguage`
                 // directive though; see its documentation for more details.
                 availableSourceLanguages: soleRootModuleReference.map { sourceLanguages(for: $0) },
-                kind: .article,
+                kind: kind,
                 in: bundle
             ) else {
                 return article

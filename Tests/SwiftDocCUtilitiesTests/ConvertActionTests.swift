@@ -965,6 +965,19 @@ class ConvertActionTests: XCTestCase {
                 """
             ),
 
+            TextFile(name: "SampleArticle.md", utf8Content: """
+                # Sample Article
+
+                @Metadata {
+                    @PageKind(sampleCode)
+                }
+
+                Sample abstract.
+
+                Discussion content
+                """
+            ),
+
             // A module page
             TextFile(name: "TestBed.md", utf8Content: """
                 # ``TestBed``
@@ -1046,6 +1059,15 @@ class ConvertActionTests: XCTestCase {
                     headings: ["Overview", "Article Section"],
                     rawIndexableTextContent: "Article abstract. Overview Discussion content  Article Section This is another section of the article."
                 )
+            case "/documentation/TestBundle/SampleArticle":
+                return IndexingRecord(
+                    kind: .article,
+                    location: .topLevelPage(reference),
+                    title: "Sample Article",
+                    summary: "Sample abstract.",
+                    headings: ["Overview"],
+                    rawIndexableTextContent: "Sample abstract. Overview Discussion content"
+                )
             default:
                 XCTFail("Encountered unexpected page '\(reference)'")
                 return nil
@@ -1064,6 +1086,7 @@ class ConvertActionTests: XCTestCase {
                         abstract: "TestBed abstract.",
                         taskGroups: [
                             .init(title: "Basics", identifiers: ["doc://com.test.example/documentation/TestBundle/Article"]),
+                            .init(title: "Articles", identifiers: ["doc://com.test.example/documentation/TestBundle/SampleArticle"]),
                             .init(title: "Structures", identifiers: ["doc://com.test.example/documentation/TestBed/A"]),
                         ],
                         usr: "TestBed",
@@ -1108,6 +1131,23 @@ class ConvertActionTests: XCTestCase {
                         references: nil,
                         redirects: nil
                     ),
+                ]
+            case "/documentation/TestBundle/SampleArticle":
+                return [
+                    LinkDestinationSummary(
+                        kind: .sampleCode,
+                        relativePresentationURL: URL(string: "/documentation/testbundle/samplearticle")!,
+                        referenceURL: reference.url,
+                        title: "Sample Article",
+                        language: .swift,
+                        abstract: "Sample abstract.",
+                        taskGroups: [],
+                        availableLanguages: [.swift],
+                        platforms: nil,
+                        topicImages: nil,
+                        references: nil,
+                        redirects: nil
+                    )
                 ]
             default:
                 XCTFail("Encountered unexpected page '\(reference)'")
