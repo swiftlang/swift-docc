@@ -535,7 +535,19 @@ class ReferenceResolverTests: XCTestCase {
         let renderReference = try XCTUnwrap(renderNode.references[boolReference])
         XCTAssert(renderReference is UnresolvedRenderReference)
     }
-    
+
+    func testExtensionWithEmptyDeclarationFragments() throws {
+        let (bundle, context) = try testBundleAndContext(named: "ModuleWithEmptyDeclarationFragments")
+
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithEmptyDeclarationFragments", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+
+        // Despite having an extension to Float, there are no symbols added by that extension, so
+        // the resulting documentation should be empty
+        XCTAssertEqual(renderNode.topicSections.count, 0)
+    }
+
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
         var bundleIdentifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"
