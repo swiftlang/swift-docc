@@ -45,3 +45,21 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
         return true
     }
 }
+
+extension Snippet: RenderableDirectiveConvertible {
+    func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
+        // Render the content normally
+        let renderBlockContent = contentCompiler.visitBlockDirective(originalMarkup)
+        
+        // Transform every paragraph in the render block content to a snippet paragraph
+        // let transformedRenderBlockContent = renderBlockContent.map { block -> RenderBlockContent in
+            // guard let renderedSnippet = contentCompiler.visit
+
+        //     return .snippet(RenderBlockContent.Snippet())
+        // }
+        
+        // return transformedRenderBlockContent
+
+        return renderBlockContent
+    }
+}
