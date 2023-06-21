@@ -1312,19 +1312,12 @@ class ConvertActionTests: XCTestCase {
             XCTFail("Can't find assets.json in output")
             return
         }
-        XCTAssertEqual(resultAssets.downloads.count, 1)
+        XCTAssertEqual(resultAssets.downloads.count, 2)
 
         XCTAssert(resultAssets.downloads.contains(where: {
             $0.identifier.identifier == "project.zip"
         }))
-
-        guard let externalAssets: Digest.ExternalAssets = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("external-assets.json")) else {
-            XCTFail("Can't find external-assets.json in output")
-            return
-        }
-        XCTAssertEqual(externalAssets.externalLocations.count, 1)
-
-        XCTAssert(externalAssets.externalLocations.contains(where: {
+        XCTAssert(resultAssets.downloads.contains(where: {
             $0.identifier.identifier == "https://example.com/sample.zip"
         }))
     }
