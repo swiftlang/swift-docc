@@ -1073,39 +1073,6 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(row.columns.last?.size, 5)
         XCTAssertEqual(row.columns.last?.content.count, 3)
     }
-
-    // func testSnippet() throws {
-    //     let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
-    //     let reference = ResolvedTopicReference(
-    //         bundleIdentifier: bundle.identifier,
-    //         path: "/documentation/BestBook/MyArticle",
-    //         sourceLanguage: .swift
-    //     )
-    //     let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
-    //     var translator = RenderNodeTranslator(
-    //         context: context,
-    //         bundle: bundle,
-    //         identifier: reference,
-    //         source: nil
-    //     )
-    //     let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
-        
-    //     let discussion = try XCTUnwrap(
-    //         renderNode.primaryContentSections.first(
-    //             where: { $0.kind == .content }
-    //         ) as? ContentRenderSection
-    //     )
-        
-    //     let discussion_content_size = discussion.content.capacity - 1
-    //     guard case let .snippet(snippet) = discussion.content[discussion_content_size - 1] else {
-    //         print("discussion.content")
-    //         print(discussion.content)
-    //         XCTFail("Expected to find snippet as second last child")
-    //         return
-    //     }
-        
-    //     XCTAssertEqual(snippet.code, ["foo"])
-    // }
     
     func testSmall() throws {
         let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")

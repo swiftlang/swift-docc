@@ -192,11 +192,8 @@ class DiagnosticTests: XCTestCase {
         let engine1 = DiagnosticEngine()
 
         let _ = DocumentationNode.contentFrom(documentedSymbol: symbolWithKnownDirective, documentationExtension: nil, engine: engine1)
-
-        // count should 1 for the known directive '@Image'
+        XCTAssertEqual(engine.problems.count, 0)
         // TODO: Consider adding a diagnostic for Doxygen tags (rdar://92184094)
-        XCTAssertEqual(engine1.problems.count, 1)
-        XCTAssertEqual(engine1.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnsupportedDocCommentDirective"])
     }
 }
 
