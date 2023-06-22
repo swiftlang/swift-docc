@@ -269,4 +269,12 @@ class SampleDownloadTests: XCTestCase {
         XCTAssertEqual(decodedReference.identifier.identifier, "/test/sample.zip")
         XCTAssertEqual(decodedReference.url, newURL)
     }
+
+    func testProjectFilesForCallToActionDirectives() throws {
+        // Make sure that the `projectFiles()` method correctly returns the DownloadReference
+        // created by the `@CallToAction` directive.
+        let renderNode = try renderNodeFromSampleBundle(at: "/documentation/SampleBundle/MySample")
+        let downloadReference = try XCTUnwrap(renderNode.projectFiles())
+        XCTAssertEqual(downloadReference.url.description, "https://example.com/sample.zip")
+    }
 }
