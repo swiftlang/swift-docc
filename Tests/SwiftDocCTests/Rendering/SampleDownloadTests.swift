@@ -253,8 +253,8 @@ class SampleDownloadTests: XCTestCase {
 
         XCTAssertEqual(identifier.identifier, "doc://org.swift.docc.example/downloads/sample.zip")
 
-        let externalReference = try XCTUnwrap(symbol.references[identifier.identifier] as? DownloadReference)
-        XCTAssertEqual(externalReference.url.description, "https://example.com/ExternalLocation.zip")
+        let externalReference = try XCTUnwrap(symbol.references[identifier.identifier] as? ExternalLocationReference)
+        XCTAssertEqual(externalReference.url, "https://example.com/ExternalLocation.zip")
     }
     
     func testRoundTripDownloadReferenceWithModifiedUrl() throws {
