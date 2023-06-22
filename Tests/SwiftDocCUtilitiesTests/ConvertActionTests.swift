@@ -2323,6 +2323,47 @@ class ConvertActionTests: XCTestCase {
             XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
         }
     }
+    
+    func testWritesDiagnosticFileWhenThrowingError() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
+            TextFile(name: "Article.md", utf8Content: """
+            Bad title
+
+            This article has a malformed title and can't be analyzed, so it
+            produces one warning.
+            """),
+            incompleteSymbolGraphFile,
+        ])
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+
+        let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: true,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
+            diagnosticLevel: "error",
+            diagnosticFilePath: diagnosticFile
+        )
+        
+        XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file doesn't exist before")
+        XCTAssertThrowsError(try action.performAndHandleResult()) { error in
+            XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
+        }
+        XCTAssertTrue(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file exist after")
+    }
 
     // Verifies setting convert inherit docs flag
     func testConvertInheritDocsOption() throws {
