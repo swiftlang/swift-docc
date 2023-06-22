@@ -37,12 +37,14 @@ struct CodableRenderReference: Codable {
             reference = try TopicRenderReference(from: decoder)
         case .section:
             reference = try TopicRenderReference(from: decoder)
-        case .download, .externalLocation:
+        case .download:
             reference = try DownloadReference(from: decoder)
         case .unresolvable:
             reference = try UnresolvedRenderReference(from: decoder)
         case .link:
             reference = try LinkReference(from: decoder)
+        case .externalLocation:
+            reference = try ExternalLocationReference(from: decoder)
         }
     }
     
