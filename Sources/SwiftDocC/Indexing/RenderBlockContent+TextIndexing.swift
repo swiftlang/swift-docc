@@ -64,6 +64,8 @@ extension RenderBlockContent: TextIndexing {
             }.joined(separator: " ")
         case .small(let small):
             return small.inlineContent.rawIndexableTextContent(references: references)
+        case .snippet(let snippet):
+            return snippet.metadata?.rawIndexableTextContent(references: references) ?? ""
         case .tabNavigator(let tabNavigator):
             return tabNavigator.tabs.map { tab in
                 return tab.content.rawIndexableTextContent(references: references)

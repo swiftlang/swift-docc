@@ -444,6 +444,9 @@
                         "$ref": "#/components/schemas/Small"
                     },
                     {
+                        "$ref": "#/components/schemas/Snippet"
+                    },
+                    {
                         "$ref": "#/components/schemas/Links"
                     },
                     {
@@ -738,6 +741,33 @@
                         "items": {
                             "$ref": "#/components/schemas/RenderInlineContent"
                         }
+                    }
+                }
+            },
+            "Snippet": {
+                "type": "object",
+                "required": [
+                    "type",
+                    "code",
+                    "syntax"
+                ],
+                "properties": {
+                    "type": {
+                        "type": "string",
+                        "enum": ["snippet"]
+                    },
+                    "code": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "syntax": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/RenderContentMetadata"
                     }
                 }
             },
