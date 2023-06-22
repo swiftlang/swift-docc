@@ -43,9 +43,6 @@ public enum RenderBlockContent: Equatable {
     /// A block of sample code.
     case codeListing(CodeListing)
 
-    /// A snippet of sample code
-    case snippet(Snippet)
-
     /// A heading with the given level.
     case heading(Heading)
     /// A list that contains ordered items.
@@ -134,25 +131,6 @@ public enum RenderBlockContent: Equatable {
         }
     }
 
-    /// A block of sample code.
-    public struct Snippet: Equatable {
-        /// The language to use for syntax highlighting, if given.
-        public var syntax: String?
-        /// The lines of code inside the code block.
-        public var code: [String]
-        /// Additional metadata for this code block.
-        public var metadata: RenderContentMetadata?
-
-        // /// The inline content that should be rendered.
-        // public let inlineContent: [RenderInlineContent]
-
-        /// Make a new `Snippet` with the given data.
-        public init(syntax: String?, code: [String], metadata: RenderContentMetadata?) {
-            self.syntax = syntax
-            self.code = code
-            self.metadata = metadata
-        }
-    }
 
     /// A heading with the given level.
     public struct Heading: Equatable {

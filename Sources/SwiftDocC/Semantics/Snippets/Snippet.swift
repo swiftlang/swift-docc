@@ -48,18 +48,30 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
 
 extension Snippet: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
-        // Render the content normally
-        let renderBlockContent = contentCompiler.visitBlockDirective(originalMarkup)
-        
-        // Transform every paragraph in the render block content to a snippet paragraph
-        // let transformedRenderBlockContent = renderBlockContent.map { block -> RenderBlockContent in
-            // guard let renderedSnippet = contentCompiler.visit
-
-        //     return .snippet(RenderBlockContent.Snippet())
-        // }
-        
-        // return transformedRenderBlockContent
-
-        return renderBlockContent
+        guard let snippet = Snippet(from: blockDirective, for: bundle, in: context) else {
+                return []
+            }
+            
+            guard let snippetReference = resolveSymbolReference(destination: snippet.path),
+                  let snippetEntity = try? context.entity(with: snippetReference),
+                  let snippetSymbol = snippetEntity.symbol,
+                  let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
+                return []
+            }
+            
+            if let requestedSlice = snippet.slice,
+               let requestedLineRange = snippetMixin.slices[requestedSlice] {
+                // Render only the slice.
+                let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)
+                let lines = snippetMixin.lines[lineRange]
+                let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
+                let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
+                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
+            } else {
+                // Render the whole snippet with its explanation content.
+                let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
+                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
+                return docCommentContent + [code]
+            }
     }
 }

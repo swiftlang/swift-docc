@@ -447,10 +447,14 @@ public struct DocumentationNode {
                     for: SymbolGraph.Symbol.Location.self
                 )?.url()
 
-                for comment in docCommentDirectives {
-                    let range = docCommentMarkup.child(at: comment.indexInParent)?.range
+                for directive in docCommentDirectives {
+                    let range = docCommentMarkup.child(at: directive.indexInParent)?.range
                     
-                    guard BlockDirective.allKnownDirectiveNames.contains(comment.name) else {
+                    guard BlockDirective.allKnownDirectiveNames.contains(directive.name) else {
+                        continue
+                    }
+
+                    guard DirectiveIndex.shared.renderableDirectives[directive.name] == nil else {
                         continue
                     }
 
@@ -460,7 +464,7 @@ public struct DocumentationNode {
                         range: range,
                         identifier: "org.swift.docc.UnsupportedDocCommentDirective",
                         summary: "Directives are not supported in symbol source documentation",
-                        explanation: "Found \(comment.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
+                        explanation: "Found \(directive.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
                     )
                     
                     var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])
