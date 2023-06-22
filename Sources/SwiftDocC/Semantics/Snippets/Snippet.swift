@@ -10,6 +10,7 @@
 
 import Foundation
 import Markdown
+import SymbolKit
 
 public final class Snippet: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
@@ -48,12 +49,12 @@ public final class Snippet: Semantic, AutomaticDirectiveConvertible {
 
 extension Snippet: RenderableDirectiveConvertible {
     func render(with contentCompiler: inout RenderContentCompiler) -> [RenderContent] {
-        guard let snippet = Snippet(from: blockDirective, for: bundle, in: context) else {
+        guard let snippet = Snippet(from: originalMarkup, for: contentCompiler.bundle, in: contentCompiler.context) else {
                 return []
             }
             
-            guard let snippetReference = resolveSymbolReference(destination: snippet.path),
-                  let snippetEntity = try? context.entity(with: snippetReference),
+            guard let snippetReference = contentCompiler.resolveSymbolReference(destination: snippet.path),
+                  let snippetEntity = try? contentCompiler.context.entity(with: snippetReference),
                   let snippetSymbol = snippetEntity.symbol,
                   let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
                 return []
@@ -69,7 +70,7 @@ extension Snippet: RenderableDirectiveConvertible {
                 return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
             } else {
                 // Render the whole snippet with its explanation content.
-                let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
+                let docCommentContent = snippetEntity.markup.children.flatMap { contentCompiler.visit($0) }
                 let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
                 return docCommentContent + [code]
             }
