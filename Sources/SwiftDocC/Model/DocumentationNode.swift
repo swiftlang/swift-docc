@@ -463,7 +463,7 @@ public struct DocumentationNode {
                         severity: .warning,
                         range: range,
                         identifier: "org.swift.docc.UnsupportedDocCommentDirective",
-                        summary: "Directives are not supported in symbol source documentation",
+                        summary: "The \(directive.name.singleQuoted) directive is not supported in symbol source documentation",
                         explanation: "Found \(directive.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
                     )
                     
