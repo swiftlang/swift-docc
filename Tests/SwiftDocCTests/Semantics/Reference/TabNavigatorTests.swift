@@ -159,6 +159,9 @@ class TabNavigatorTests: XCTestCase {
         }
         
         XCTAssertNotNil(tabNavigator)
+
+        // UnresolvedTopicReference warning expected since the reference to the snippet "Snippets/Snippets/MySnippet" 
+        // should fail to resolve here and then nothing would be added to the content.
         XCTAssertEqual(
             problems,
             ["23: warning – org.swift.docc.unresolvedTopicReference"]

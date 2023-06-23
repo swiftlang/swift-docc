@@ -87,18 +87,4 @@ class SnippetTests: XCTestCase {
         XCTAssertNotNil(snippet)
         XCTAssertTrue(problems.isEmpty)
     }
-
-    func testCommentResolves() throws {
-        let (bundle, context) = try testBundleAndContext(named: "Snippets")
-        let source = """
-        @Snippet(path: "Test/Snippets/MySnippet")
-        """
-        let document = Document(parsing: source, options: .parseBlockDirectives)
-        let directive = document.child(at: 0) as! BlockDirective
-        var problems = [Problem]()
-        let snippet = try XCTUnwrap(Snippet(from: directive, source: nil, for: bundle, in: context, problems: &problems))
-        XCTAssertEqual("Test/Snippets/MySnippet", snippet.path)
-        XCTAssertNotNil(snippet)
-        XCTAssertTrue(problems.isEmpty)
-    }
 }

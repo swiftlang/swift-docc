@@ -450,10 +450,13 @@ public struct DocumentationNode {
                 for directive in docCommentDirectives {
                     let range = docCommentMarkup.child(at: directive.indexInParent)?.range
                     
+                    // Don't throw a warning if a directive is not included in allKnownDirectiveNames
                     guard BlockDirective.allKnownDirectiveNames.contains(directive.name) else {
                         continue
                     }
 
+                    // Renderable directives are processed like any other piece of structured markdown (tables, lists, etc.)
+                    // and so are inherently supported in doc comments.
                     guard DirectiveIndex.shared.renderableDirectives[directive.name] == nil else {
                         continue
                     }
