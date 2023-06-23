@@ -11,9 +11,9 @@
 import ArgumentParser
 
 #if canImport(NIOHTTP1)
-private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.Preview.self, Docc.ProcessArchive.self, ProcessCatalog.self]
+private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.Preview.self, Docc.ProcessArchive.self, Docc.ProcessCatalog.self]
 #else
-private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.ProcessArchive.self, ProcessCatalog.self]
+private let subcommands: [ParsableCommand.Type] = [Docc.Convert.self, Docc.Index.self, Docc.ProcessArchive.self, Docc.ProcessCatalog.self]
 #endif
 
 /// The default, command-line interface you use to compile and preview documentation.
