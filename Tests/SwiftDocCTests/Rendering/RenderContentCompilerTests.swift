@@ -137,31 +137,48 @@ class RenderContentCompilerTests: XCTestCase {
         var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
 
         let source = #"""
-        This text should\
-        appear on two lines.
+        Backslash before new line\
+        is an explicit hard line break.
 
-        This text should  
-        appear on two lines.
+        Two spaces before new line  
+        is a hard line break.
 
-        This is the second paragraph.
+        Paragraph can't end with hard line break.\
+
+        # Headings can't end with hard line break.\
+
+            Code blocks ignore\
+            hard line breaks.
+
+        A single space before new line
+        is a soft line break.
         """#
         let document = Document(parsing: source)
-        let expectedDump = """
+        let expectedDump = #"""
         Document
         ├─ Paragraph
-        │  ├─ Text "This text should"
+        │  ├─ Text "Backslash before new line"
         │  ├─ LineBreak
-        │  └─ Text "appear on two lines."
+        │  └─ Text "is an explicit hard line break."
         ├─ Paragraph
-        │  ├─ Text "This text should"
+        │  ├─ Text "Two spaces before new line"
         │  ├─ LineBreak
-        │  └─ Text "appear on two lines."
+        │  └─ Text "is a hard line break."
+        ├─ Paragraph
+        │  └─ Text "Paragraph can’t end with hard line break.\"
+        ├─ Heading level: 1
+        │  └─ Text "Headings can’t end with hard line break.\"
+        ├─ CodeBlock language: none
+        │  Code blocks ignore\
+        │  hard line breaks.
         └─ Paragraph
-           └─ Text "This is the second paragraph."
-        """
+           ├─ Text "A single space before new line"
+           ├─ SoftBreak
+           └─ Text "is a soft line break."
+        """#
         XCTAssertEqual(document.debugDescription(), expectedDump)
         let result = document.children.flatMap { compiler.visit($0) }
-        XCTAssertEqual(result.count, 3)
+        XCTAssertEqual(result.count, 6)
         do {
             guard case let .paragraph(paragraph) = result[0] as? RenderBlockContent else {
                 XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
