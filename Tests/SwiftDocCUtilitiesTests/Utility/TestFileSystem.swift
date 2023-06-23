@@ -40,7 +40,7 @@ import SwiftDocCTestUtilities
 /// 2. No support for file links
 /// 3. No support for relative paths or traversing the tree upwards (e.g. "/root/nested/../other" will not resolve)
 ///
-/// - Note: This class is thread-safe by using a naive locking for each accesss to the files dictionary.
+/// - Note: This class is thread-safe by using a naive locking for each access to the files dictionary.
 /// - Warning: Use this type for unit testing.
 class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
     let currentDirectoryPath = "/"
