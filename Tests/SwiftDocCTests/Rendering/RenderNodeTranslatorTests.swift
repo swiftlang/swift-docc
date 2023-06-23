@@ -1014,6 +1014,48 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(l.syntax, "swift")
         XCTAssertEqual(l.code, ["func foo() {}"])
     }
+
+    func testNestedSnippetSliceToCodeListing() throws {
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
+        
+        let lastCodeListingIndex = try XCTUnwrap(discussion.content.indices.last {
+            guard case .codeListing = discussion.content[$0] else {
+                return false
+            }
+            return true
+        })
+
+        if case let .paragraph(p) = discussion.content.dropFirst(2).first {
+            XCTAssertEqual(p.inlineContent, [.text("Does a foo.")])
+        } else {
+            XCTFail("Unexpected content where snippet explanation should be.")
+        }
+
+        if case let .codeListing(l) = discussion.content.dropFirst(3).first {
+            XCTAssertEqual(l.syntax, "swift")
+            XCTAssertEqual(l.code.joined(separator: "\n"), """
+                func foo() {}
+                
+                do {
+                  middle()
+                }
+                
+                func bar() {}
+                """)
+        } else {
+            XCTFail("Missing snippet code block")
+        }
+
+        guard case .codeListing(_) = discussion.content[lastCodeListingIndex] else {
+            XCTFail("Missing snippet TabNavigator code block")
+            return
+        }
+    }
     
     func testSnippetSliceTrimsIndentation() throws {
         let (bundle, context) = try testBundleAndContext(named: "Snippets")

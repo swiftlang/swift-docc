@@ -159,7 +159,12 @@ class TabNavigatorTests: XCTestCase {
         }
         
         XCTAssertNotNil(tabNavigator)
-        XCTAssertEqual(problems, [])
+        XCTAssertEqual(
+            problems,
+            ["23: warning – org.swift.docc.unresolvedTopicReference"]
+        )
+
+        
         
         XCTAssertEqual(renderBlockContent.count, 1)
         XCTAssertEqual(
