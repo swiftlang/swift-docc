@@ -152,7 +152,7 @@ class TabNavigatorTests: XCTestCase {
                         Hey but small.
                     }
 
-                    @Snippet(path: "Snippets/Snippets/MySnippet") {}
+                    @Snippet(path: "Snippets/Snippets/MySnippet")
                 }
             }
             """
