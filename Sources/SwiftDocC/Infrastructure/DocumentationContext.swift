@@ -658,9 +658,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         for result in results.sync({ $0 }) {
             documentationCache[result.reference] = result.node
-            if let preciseIdentifier = result.node.symbol?.identifier.precise {
-                symbolIndex[preciseIdentifier] = result.reference
-            }
+            assert(
+                // If this is a symbol, verify that the reference exist in the in the symbolIndex
+                result.node.symbol.map { symbolIndex[$0.identifier.precise] == result.reference }
+                ?? true, // Nothing to check for non-symbols
+                "Previous versions updated the symbolIndex here. This assert verifies that that's no longer necessary."
+            )
             diagnosticEngine.emit(result.problems)
         }
     }
