@@ -151,13 +151,12 @@ class TabNavigatorTests: XCTestCase {
                     @Small {
                         Hey but small.
                     }
+
+                    @Snippet(path: "Snippets/Snippets/MySnippet") {}
                 }
             }
             """
         }
-
-        // todo: include this in the second @Tab??
-        // @Snippet(path: "Tests/SwiftDocCTests/Test Bundles/Snippets.docc/Snippets.md", slice: "foo")
         
         XCTAssertNotNil(tabNavigator)
         XCTAssertEqual(problems, [])
@@ -195,8 +194,6 @@ class TabNavigatorTests: XCTestCase {
                             "Hey there.",
     
                             .small(RenderBlockContent.Small(inlineContent: [.text("Hey but small.")])),
-
-                            // .snippet(RenderBlockContent.Snippet(syntax: nil, code: ["foo"], metadata: nil))
                         ]
                     ),
                 ]

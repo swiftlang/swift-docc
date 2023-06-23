@@ -10,4 +10,8 @@ This is a slice of the above snippet, called "foo".
 
 @Snippet(path: "Snippets/Snippets/MySnippet", slice: "foo")
 
-<!-- Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+This is the above snippet in comment form.
+
+/// @Snippet(path: "Snippets/Snippets/MySnippet")
+
+<!-- Copyright (c) 2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->
