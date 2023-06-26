@@ -34,7 +34,7 @@ This is a snippet nested inside a tab navigator.
             Hey but small.
         }
 
-        @Snippet(path: "Snippets/Snippets/MySnippet") {}
+        @Snippet(path: "Snippets/Snippets/MySnippet", slice: "middle") {}
     }
 }
 

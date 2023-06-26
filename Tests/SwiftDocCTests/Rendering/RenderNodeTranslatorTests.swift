@@ -1022,39 +1022,28 @@ class RenderNodeTranslatorTests: XCTestCase {
         var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
         let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
         let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
-        
-        let lastCodeListingIndex = try XCTUnwrap(discussion.content.indices.last {
-            guard case .codeListing = discussion.content[$0] else {
+
+        let lastTabNavigator = try XCTUnwrap(discussion.content.indices.last {
+            guard case .tabNavigator = discussion.content[$0] else {
                 return false
             }
             return true
         })
 
-        if case let .paragraph(p) = discussion.content.dropFirst(2).first {
-            XCTAssertEqual(p.inlineContent, [.text("Does a foo.")])
-        } else {
-            XCTFail("Unexpected content where snippet explanation should be.")
-        }
-
-        if case let .codeListing(l) = discussion.content.dropFirst(3).first {
-            XCTAssertEqual(l.syntax, "swift")
-            XCTAssertEqual(l.code.joined(separator: "\n"), """
-                func foo() {}
-                
-                do {
-                  middle()
-                }
-                
-                func bar() {}
-                """)
-        } else {
-            XCTFail("Missing snippet code block")
-        }
-
-        guard case .codeListing(_) = discussion.content[lastCodeListingIndex] else {
-            XCTFail("Missing snippet TabNavigator code block")
+        guard case let .tabNavigator(t) = discussion.content[lastTabNavigator] else {
+            XCTFail("Missing snippet slice code block")
             return
         }
+
+        let codeListing = t.tabs.last?.content.last
+
+        guard case let .codeListing(l) = codeListing else {
+            XCTFail("Missing nested snippet inside TabNavigator")
+            return
+        }
+
+        XCTAssertEqual(l.syntax, "swift")
+        XCTAssertEqual(l.code, ["middle()"])
     }
     
     func testSnippetSliceTrimsIndentation() throws {
