@@ -1667,6 +1667,28 @@ let expected = """
         XCTAssertEqual(node.kind, .unknown)
     }
     
+    func testCuratingSymbolsWithSpecialCharacters() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+
+        let (_, _, context) = try testBundleAndContext(copying: "InheritedOperators") { root in
+            try """
+            # ``Operators/MyNumber``
+            
+            A documentation extension that curates symbosl with characters not allowed in a resolved reference URL.
+
+            ## Topics
+
+            - ``<(_:_:)``
+            - ``>(_:_:)``
+            - ``<=(_:_:)``
+            - ``>=(_:_:)``
+            """.write(to: root.appendingPathComponent("doc-extension.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let unresolvedTopicProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" })
+        XCTAssertEqual(unresolvedTopicProblems.map(\.diagnostic.summary), [], "All links should resolve without warnings")
+    }
+    
     func testSpecialCharactersInLinks() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         
