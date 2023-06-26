@@ -450,7 +450,10 @@ public struct DocumentationNode {
                 for directive in docCommentDirectives {
                     let range = docCommentMarkup.child(at: directive.indexInParent)?.range
                     
-                    // Don't throw a warning if a directive is not included in allKnownDirectiveNames
+                    // Only throw warnings for known directive names.
+                    //
+                    // This is important so that we avoid throwing warnings when building
+                    // Objective-C/C documentation that includes doxygen commands.
                     guard BlockDirective.allKnownDirectiveNames.contains(directive.name) else {
                         continue
                     }
