@@ -285,6 +285,11 @@ public class NavigatorIndex {
             throw Error.missingBundleIndentifier
         }
     }
+
+    internal func clearIndex() throws {
+        self.environment?.close()
+        try FileManager.default.removeItem(at: self.url)
+    }
     
     /// Indicates the page type of a given item inside the tree.
     /// - Note: This information is stored as UInt8 to decrease the required size to store it and make

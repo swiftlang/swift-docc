@@ -1981,7 +1981,7 @@ class ConvertActionTests: XCTestCase {
         let indexFromConvertAction = try NavigatorIndex.readNavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromConvertAction.count, 37)
         
-        try FileManager.default.removeItem(at: indexURL)
+        try indexFromConvertAction.clearIndex()
         
         // Run just the index command over the built documentation
         
