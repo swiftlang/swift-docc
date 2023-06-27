@@ -19,7 +19,7 @@ enum LinkResolutionMigrationConfiguration {
     
     // MARK: Configuration
     
-    /// Whether or not the context should the a ``PathHierarchyBasedLinkResolver`` to resolve links.
+    /// Whether or not the context should a ``PathHierarchyBasedLinkResolver`` to resolve links.
     static var shouldUseHierarchyBasedLinkResolver: Bool = {
         let defaultsKey = "DocCUseHierarchyBasedLinkResolver"
         let environmentKey = "DOCC_USE_HIERARCHY_BASED_LINK_RESOLVER"

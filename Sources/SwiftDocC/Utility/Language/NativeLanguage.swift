@@ -12,7 +12,7 @@ import Foundation
 
 /// A set of functions providing support for constructing human language phrases
 /// for use alongside code documentation.
-protocol LanguageConstructible {    
+protocol LanguageConstructible {
     /// Returns all the separators to insert between items of a list.
     func listSeparators(itemsCount: Int, listType: NativeLanguage.ListType) -> [String]
 }

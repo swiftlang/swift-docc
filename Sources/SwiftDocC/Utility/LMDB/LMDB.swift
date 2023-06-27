@@ -28,14 +28,14 @@ final class LMDB {
     public static var `default` = LMDB()
     
     /// Returns the library version.
-    public var version: Version {        
+    public var version: Version {
         return [Int(MDB_VERSION_MAJOR), Int(MDB_VERSION_MINOR), Int(MDB_VERSION_PATCH)]
     }
     
     /// The default number of databases to open which is `0`. The `0` value means no named databases can be opened.
     public static let defaultMaxDBs: UInt32 = 0
     
-    /// The default number of  readers to open which is `126`.
+    /// The default number of readers to open which is `126`.
     public static let defaultMaxReaders: UInt32 = 126
     
     /// The default number of map size which is `10485760`.

@@ -13,7 +13,7 @@ import ArgumentParser
 
 /// A parsable argument for an optional directory path.
 ///
-/// This option validates the the provided path exists and that it's a directory.
+/// This option validates the provided path exists and that it's a directory.
 public protocol DirectoryPathOption: ParsableArguments {
     /// The path to a directory.
     var url: URL? { get }

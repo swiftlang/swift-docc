@@ -12,7 +12,7 @@ import SwiftDocC
 import Foundation
 
 extension ConvertAction {
-    /// Creates a  convert action from the options in the given convert command.
+    /// Creates a convert action from the options in the given convert command.
     /// - Parameters:
     ///   - convert: The convert command this `ConvertAction` will be based on.
     ///   - fallbackTemplateURL: A template URL to use if the one provided by the convert command is `nil`.

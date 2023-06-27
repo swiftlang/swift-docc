@@ -264,7 +264,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     
     /// The mapping of external symbol identifiers to known disambiguated symbol path components.
     ///
-    /// In situations where the the local documentation context doesn't contain all of the current module's
+    /// In situations where the local documentation context doesn't contain all of the current module's
     /// symbols, for example when using a ``ConvertService`` with a partial symbol graph,
     /// the documentation context is otherwise unable to accurately detect a collision for a given symbol and correctly
     /// disambiguate its path components. This value can be used to inject already disambiguated symbol
@@ -444,7 +444,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameter moduleReference: The module reference to find the module name for.
     /// - Returns: The plain string name for the referenced module.
     func moduleName(forModuleReference moduleReference: ResolvedTopicReference) -> (displayName: String, symbolName: String) {
-        if let name = moduleNameCache[moduleReference]  {
+        if let name = moduleNameCache[moduleReference] {
             return name
         }
         // If no name is found it's considered a programmer error; either that the names haven't been resolved yet
@@ -1467,7 +1467,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
                 if LinkResolutionMigrationConfiguration.shouldReportLinkResolutionPathMismatches {
                     // The way that symbol path mismatches are gathered depend on which link resolution implementation is used to resolve links.
                     if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-                        // Attempting to use the The documentation cache based link resolver to compute the disambiguated symbol paths when it is not in full control of the symbol index,
+                        // Attempting to use the documentation cache based link resolver to compute the disambiguated symbol paths when it is not in full control of the symbol index,
                         // topic graph, and documentation cache will result in the wrong behavior. The issues range from incorrectly computed paths to precondition failures.
                         //
                         // To compute what the disambiguated symbol paths would be for the documentation cache based link resolver, one needs to first compute the initial disambiguated
@@ -2818,7 +2818,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
     // MARK: - Relationship queries
     
-    /// Fetch the child nodes of a documentation node with the given `reference``,  optionally filtering to only children of the given `kind`.
+    /// Fetch the child nodes of a documentation node with the given `reference`, optionally filtering to only children of the given `kind`.
     ///
     /// - Parameters:
     ///   - reference: The reference of the node to fetch children for.
@@ -2971,7 +2971,7 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
     /// - Parameters:
     ///   - name: The name of the asset.
     ///   - parent: The topic where the asset is referenced.
-    /// - Returns: The data that's associated with a image asset if it was found, otherwise `nil`.
+    /// - Returns: The data that's associated with an image asset if it was found, otherwise `nil`.
     public func resolveAsset(named name: String, in parent: ResolvedTopicReference, withType type: AssetType? = nil) -> DataAsset? {
         let bundleIdentifier = parent.bundleIdentifier
         return resolveAsset(named: name, bundleIdentifier: bundleIdentifier, withType: type)

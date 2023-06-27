@@ -50,7 +50,7 @@ struct TransformForStaticHostingAction: Action {
         return ActionResult(didEncounterError: false, outputs: [outputURL])
     }
     
-    mutating private func emit() throws  {
+    mutating private func emit() throws {
         
 
         // If the emit is to create the static hostable content outside of the source archive

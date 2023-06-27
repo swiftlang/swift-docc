@@ -222,7 +222,7 @@ enum GeneratedDocumentationTopics {
         }
     }
     
-    /// Creates a API collection in the given documentation context for all inherited symbols according to the symbol graph.
+    /// Creates an API collection in the given documentation context for all inherited symbols according to the symbol graph.
     ///
     /// Inspects the given symbol relationships and extracts all inherited symbols into a separate level in the documentation hierarchy -
     /// an API collection called "Inherited APIs" where all inherited symbols are listed unless they are manually curated in

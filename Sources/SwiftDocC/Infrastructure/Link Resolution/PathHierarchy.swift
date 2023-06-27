@@ -52,7 +52,7 @@ struct PathHierarchy {
     
     // MARK: Creating a path hierarchy
     
-    /// Initializes a path hierarchy with the all the symbols from all modules that a the given symbol graph loader provides.
+    /// Initializes a path hierarchy with all the symbols from all modules that the given symbol graph loader provides.
     ///
     /// - Parameters:
     ///   - loader: The symbol graph loader that provides all symbols.
@@ -369,11 +369,11 @@ struct PathHierarchy {
             if !isKnownDocumentationPath {
                 if tutorialContainer.matches(firstComponent) {
                     return try searchForNode(descendingFrom: tutorialContainer, pathComponents: remaining.dropFirst(), parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
-                } else if tutorialContainer.anyChildMatches(firstComponent)  {
+                } else if tutorialContainer.anyChildMatches(firstComponent) {
                     return try searchForNode(descendingFrom: tutorialContainer, pathComponents: remaining, parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
                 }
                 // The parent for tutorial overviews / technologies is "tutorials" which has already been removed above, so no need to check against that name.
-                else if tutorialOverviewContainer.anyChildMatches(firstComponent)  {
+                else if tutorialOverviewContainer.anyChildMatches(firstComponent) {
                     return try searchForNode(descendingFrom: tutorialOverviewContainer, pathComponents: remaining, parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
                 }
             }
