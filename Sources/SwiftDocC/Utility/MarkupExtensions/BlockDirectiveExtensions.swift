@@ -45,6 +45,7 @@ extension BlockDirective {
         TechnologyRoot.directiveName,
         TechnologyRoot.directiveName,
         Tile.directiveName,
+        TitleHeading.directiveName,
         Tutorial.directiveName,
         TutorialArticle.directiveName,
         TutorialReference.directiveName,

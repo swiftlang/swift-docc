@@ -447,10 +447,20 @@ public struct DocumentationNode {
                     for: SymbolGraph.Symbol.Location.self
                 )?.url()
 
-                for comment in docCommentDirectives {
-                    let range = docCommentMarkup.child(at: comment.indexInParent)?.range
+                for directive in docCommentDirectives {
+                    let range = docCommentMarkup.child(at: directive.indexInParent)?.range
                     
-                    guard BlockDirective.allKnownDirectiveNames.contains(comment.name) else {
+                    // Only throw warnings for known directive names.
+                    //
+                    // This is important so that we avoid throwing warnings when building
+                    // Objective-C/C documentation that includes doxygen commands.
+                    guard BlockDirective.allKnownDirectiveNames.contains(directive.name) else {
+                        continue
+                    }
+
+                    // Renderable directives are processed like any other piece of structured markdown (tables, lists, etc.)
+                    // and so are inherently supported in doc comments.
+                    guard DirectiveIndex.shared.renderableDirectives[directive.name] == nil else {
                         continue
                     }
 
@@ -459,8 +469,8 @@ public struct DocumentationNode {
                         severity: .warning,
                         range: range,
                         identifier: "org.swift.docc.UnsupportedDocCommentDirective",
-                        summary: "Directives are not supported in symbol source documentation",
-                        explanation: "Found \(comment.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
+                        summary: "The \(directive.name.singleQuoted) directive is not supported in symbol source documentation",
+                        explanation: "Found \(directive.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
                     )
                     
                     var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])

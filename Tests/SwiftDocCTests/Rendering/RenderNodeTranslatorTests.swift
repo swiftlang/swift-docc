@@ -1014,6 +1014,37 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(l.syntax, "swift")
         XCTAssertEqual(l.code, ["func foo() {}"])
     }
+
+    func testNestedSnippetSliceToCodeListing() throws {
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
+
+        let lastTabNavigator = try XCTUnwrap(discussion.content.indices.last {
+            guard case .tabNavigator = discussion.content[$0] else {
+                return false
+            }
+            return true
+        })
+
+        guard case let .tabNavigator(t) = discussion.content[lastTabNavigator] else {
+            XCTFail("Missing snippet slice code block")
+            return
+        }
+
+        let codeListing = t.tabs.last?.content.last
+
+        guard case let .codeListing(l) = codeListing else {
+            XCTFail("Missing nested snippet inside TabNavigator")
+            return
+        }
+
+        XCTAssertEqual(l.syntax, "swift")
+        XCTAssertEqual(l.code, ["middle()"])
+    }
     
     func testSnippetSliceTrimsIndentation() throws {
         let (bundle, context) = try testBundleAndContext(named: "Snippets")
