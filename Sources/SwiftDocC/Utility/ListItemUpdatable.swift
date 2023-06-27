@@ -51,7 +51,7 @@ extension Array where Element: ListItemUpdatable {
     
     /// Checks whether the array of values are sorted alphabetically according to their `listItemIdentifier`.
     private var isSortedByIdentifier: Bool {
-        if self.count < 2  { return true }
+        if self.count < 2 { return true }
         if self.count == 2 { return (self[0].listItemIdentifier <= self[1].listItemIdentifier) }
         return (1..<self.count).allSatisfy {
             self[$0 - 1].listItemIdentifier <= self[$0].listItemIdentifier

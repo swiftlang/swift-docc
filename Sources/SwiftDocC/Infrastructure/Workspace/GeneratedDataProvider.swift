@@ -98,7 +98,7 @@ public class GeneratedDataProvider: DocumentationWorkspaceDataProvider {
                     symbolGraphFileList += "\n"
                 }
                 
-                var errorMessage =  """
+                var errorMessage = """
                     The information provided as command line arguments is not enough to generate a documentation bundle:
                     """
                 

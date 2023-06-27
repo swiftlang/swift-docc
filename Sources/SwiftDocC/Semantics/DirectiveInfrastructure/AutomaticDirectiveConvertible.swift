@@ -313,7 +313,7 @@ extension AutomaticDirectiveConvertible {
             firstChildMarkup.setValue(on: self, to: content)
             
             supportsChildMarkup = true
-        } else  {
+        } else {
             supportsChildMarkup = false
         }
         
