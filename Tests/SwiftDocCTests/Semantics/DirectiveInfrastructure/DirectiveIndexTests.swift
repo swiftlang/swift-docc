@@ -66,6 +66,7 @@ class DirectiveIndexTests: XCTestCase {
                 "Links",
                 "Row",
                 "Small",
+                "Snippet",
                 "TabNavigator",
                 "Video",
             ]
