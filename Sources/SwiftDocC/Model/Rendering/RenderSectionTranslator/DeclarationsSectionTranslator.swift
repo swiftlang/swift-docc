@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import SymbolKit
 
 /// Translates a symbol's declaration into a render node's Declarations section.
 struct DeclarationsSectionTranslator: RenderSectionTranslator {
@@ -23,27 +24,28 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
             guard !declaration.isEmpty else {
                 return nil
             }
-            
+
+            func translateFragment(_ token: SymbolGraph.Symbol.DeclarationFragments.Fragment) -> DeclarationRenderSection.Token {
+                // Create a reference if one found
+                var reference: ResolvedTopicReference?
+                if let preciseIdentifier = token.preciseIdentifier,
+                   let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier] {
+                    reference = resolved
+
+                    // Add relationship to render references
+                    renderNodeTranslator.collectedTopicReferences.append(resolved)
+                }
+
+                // Add the declaration token
+                return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
+            }
+
             var declarations = [DeclarationRenderSection]()
             for pair in declaration {
                 let (platforms, declaration) = pair
                 
-                let renderedTokens = declaration.declarationFragments.map { token -> DeclarationRenderSection.Token in
-                    
-                    // Create a reference if one found
-                    var reference: ResolvedTopicReference?
-                    if let preciseIdentifier = token.preciseIdentifier,
-                       let resolved = renderNodeTranslator.context.symbolIndex[preciseIdentifier] {
-                        reference = resolved
-                        
-                        // Add relationship to render references
-                        renderNodeTranslator.collectedTopicReferences.append(resolved)
-                    }
-                    
-                    // Add the declaration token
-                    return DeclarationRenderSection.Token(fragment: token, identifier: reference?.absoluteString)
-                }
-                
+                let renderedTokens = declaration.declarationFragments.map(translateFragment)
+
                 let platformNames = platforms.sorted { (lhs, rhs) -> Bool in
                     guard let lhsValue = lhs, let rhsValue = rhs else {
                         return lhs == nil
@@ -59,7 +61,31 @@ struct DeclarationsSectionTranslator: RenderSectionTranslator {
                     )
                 )
             }
-        
+
+            if let alternateDeclarations = symbol.alternateDeclarationVariants[trait] {
+                for pair in alternateDeclarations {
+                    let (platforms, decls) = pair
+                    for alternateDeclaration in decls {
+                        let renderedTokens = alternateDeclaration.declarationFragments.map(translateFragment)
+
+                        let platformNames = platforms.sorted { (lhs, rhs) -> Bool in
+                            guard let lhsValue = lhs, let rhsValue = rhs else {
+                                return lhs == nil
+                            }
+                            return lhsValue.rawValue < rhsValue.rawValue
+                        }
+
+                        declarations.append(
+                            DeclarationRenderSection(
+                                languages: [trait.interfaceLanguage ?? renderNodeTranslator.identifier.sourceLanguage.id],
+                                platforms: platformNames,
+                                tokens: renderedTokens
+                            )
+                        )
+                    }
+                }
+            }
+
             return DeclarationsRenderSection(declarations: declarations)
         }
     }
