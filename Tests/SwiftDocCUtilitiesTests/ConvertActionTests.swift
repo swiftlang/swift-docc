@@ -1982,7 +1982,7 @@ class ConvertActionTests: XCTestCase {
         XCTAssertEqual(indexFromConvertAction.count, 37)
         
         indexFromConvertAction.environment?.close()
-        try FileManager.default.removeItem(at: self.url)
+        try FileManager.default.removeItem(at: indexURL)
         
         // Run just the index command over the built documentation
         
