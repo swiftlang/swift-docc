@@ -322,7 +322,7 @@ extension ExtendedTypeFormatTransformation {
                 newMixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] = swiftExtension
             }
             
-            if let declarationFragments = extensionBlockSymbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments {
+            if let declarationFragments = extensionBlockSymbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments, declarationFragments.count >= 3 {
                 var prefixWithoutWhereClause: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = Array(declarationFragments[..<3])
                 
             outer: for fragment in declarationFragments[3...] {

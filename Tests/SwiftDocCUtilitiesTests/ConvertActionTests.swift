@@ -965,6 +965,19 @@ class ConvertActionTests: XCTestCase {
                 """
             ),
 
+            TextFile(name: "SampleArticle.md", utf8Content: """
+                # Sample Article
+
+                @Metadata {
+                    @PageKind(sampleCode)
+                }
+
+                Sample abstract.
+
+                Discussion content
+                """
+            ),
+
             // A module page
             TextFile(name: "TestBed.md", utf8Content: """
                 # ``TestBed``
@@ -1046,6 +1059,15 @@ class ConvertActionTests: XCTestCase {
                     headings: ["Overview", "Article Section"],
                     rawIndexableTextContent: "Article abstract. Overview Discussion content  Article Section This is another section of the article."
                 )
+            case "/documentation/TestBundle/SampleArticle":
+                return IndexingRecord(
+                    kind: .article,
+                    location: .topLevelPage(reference),
+                    title: "Sample Article",
+                    summary: "Sample abstract.",
+                    headings: ["Overview"],
+                    rawIndexableTextContent: "Sample abstract. Overview Discussion content"
+                )
             default:
                 XCTFail("Encountered unexpected page '\(reference)'")
                 return nil
@@ -1064,6 +1086,7 @@ class ConvertActionTests: XCTestCase {
                         abstract: "TestBed abstract.",
                         taskGroups: [
                             .init(title: "Basics", identifiers: ["doc://com.test.example/documentation/TestBundle/Article"]),
+                            .init(title: "Articles", identifiers: ["doc://com.test.example/documentation/TestBundle/SampleArticle"]),
                             .init(title: "Structures", identifiers: ["doc://com.test.example/documentation/TestBed/A"]),
                         ],
                         usr: "TestBed",
@@ -1108,6 +1131,23 @@ class ConvertActionTests: XCTestCase {
                         references: nil,
                         redirects: nil
                     ),
+                ]
+            case "/documentation/TestBundle/SampleArticle":
+                return [
+                    LinkDestinationSummary(
+                        kind: .sampleCode,
+                        relativePresentationURL: URL(string: "/documentation/testbundle/samplearticle")!,
+                        referenceURL: reference.url,
+                        title: "Sample Article",
+                        language: .swift,
+                        abstract: "Sample abstract.",
+                        taskGroups: [],
+                        availableLanguages: [.swift],
+                        platforms: nil,
+                        topicImages: nil,
+                        references: nil,
+                        redirects: nil
+                    )
                 ]
             default:
                 XCTFail("Encountered unexpected page '\(reference)'")
@@ -1272,19 +1312,12 @@ class ConvertActionTests: XCTestCase {
             XCTFail("Can't find assets.json in output")
             return
         }
-        XCTAssertEqual(resultAssets.downloads.count, 1)
+        XCTAssertEqual(resultAssets.downloads.count, 2)
 
         XCTAssert(resultAssets.downloads.contains(where: {
             $0.identifier.identifier == "project.zip"
         }))
-
-        guard let externalAssets: Digest.ExternalAssets = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("external-assets.json")) else {
-            XCTFail("Can't find external-assets.json in output")
-            return
-        }
-        XCTAssertEqual(externalAssets.externalLocations.count, 1)
-
-        XCTAssert(externalAssets.externalLocations.contains(where: {
+        XCTAssert(resultAssets.downloads.contains(where: {
             $0.identifier.identifier == "https://example.com/sample.zip"
         }))
     }
@@ -1948,6 +1981,7 @@ class ConvertActionTests: XCTestCase {
         let indexFromConvertAction = try NavigatorIndex.readNavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromConvertAction.count, 37)
         
+        indexFromConvertAction.environment?.close()
         try FileManager.default.removeItem(at: indexURL)
         
         // Run just the index command over the built documentation
@@ -2282,6 +2316,47 @@ class ConvertActionTests: XCTestCase {
         XCTAssertThrowsError(try action.performAndHandleResult()) { error in
             XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
         }
+    }
+    
+    func testWritesDiagnosticFileWhenThrowingError() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
+            TextFile(name: "Article.md", utf8Content: """
+            Bad title
+
+            This article has a malformed title and can't be analyzed, so it
+            produces one warning.
+            """),
+            incompleteSymbolGraphFile,
+        ])
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+
+        let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: true,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
+            diagnosticLevel: "error",
+            diagnosticFilePath: diagnosticFile
+        )
+        
+        XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file doesn't exist before")
+        XCTAssertThrowsError(try action.performAndHandleResult()) { error in
+            XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
+        }
+        XCTAssertTrue(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file exist after")
     }
 
     // Verifies setting convert inherit docs flag

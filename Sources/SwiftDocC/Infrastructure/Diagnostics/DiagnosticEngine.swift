@@ -97,9 +97,7 @@ public final class DiagnosticEngine {
     }
     
     public func finalize() {
-        workQueue.async { [weak self] in
-            // If the engine isn't around then return early
-            guard let self = self else { return }
+        workQueue.sync {
             for consumer in self.consumers.sync({ $0.values }) {
                 try? consumer.finalize()
             }

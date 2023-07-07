@@ -177,6 +177,10 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     mutating public func convert<OutputConsumer: ConvertOutputConsumer>(
         outputConsumer: OutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem]) {
+        defer {
+            diagnosticEngine.finalize()
+        }
+        
         // Unregister the current file data provider and all its bundles
         // when running repeated conversions.
         if let dataProvider = self.currentDataProvider {
@@ -395,8 +399,6 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         // Log the peak memory.
         benchmark(add: Benchmark.PeakMemory())
         
-        diagnosticEngine.finalize()
-        
         return (analysisProblems: context.problems, conversionProblems: conversionProblems)
     }
     
@@ -454,7 +456,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         problems.append(problem)
     }
     
-    enum Error: DescribedError {
+    enum Error: DescribedError, Equatable {
         case doesNotContainBundle(url: URL)
         
         var errorDescription: String {
@@ -464,6 +466,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                     The directory at '\(url)' and its subdirectories do not contain at least one \
                     valid documentation bundle. A documentation bundle is a directory ending in \
                     `.docc`.
+                    Pass `--allow-arbitrary-catalog-directories` flag to convert a directory \
+                    without a `.docc` extension.
                     """
             }
         }

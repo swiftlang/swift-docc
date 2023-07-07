@@ -764,10 +764,16 @@ extension PathHierarchy {
         let isAbsolute = path.first == "/"
             || String(components.first ?? "") == NodeURLGenerator.Path.documentationFolderName
             || String(components.first ?? "") == NodeURLGenerator.Path.tutorialsFolderName
-       
+
+        // If there is a # character in the last component, split that into two components
         if let hashIndex = components.last?.firstIndex(of: "#") {
             let last = components.removeLast()
-            components.append(last[..<hashIndex])
+            // Allow anrhor-only links where there's nothing before #.
+            // In case the pre-# part is empty, and we're omitting empty components, don't add it in.
+            let pathName = last[..<hashIndex]
+            if !pathName.isEmpty || !omittingEmptyComponents {
+                components.append(pathName)
+            }
             
             let fragment = String(last[hashIndex...].dropFirst())
             return (components.map(Self.parse(pathComponent:)) + [PathComponent(full: fragment, name: fragment, kind: nil, hash: nil)], isAbsolute)

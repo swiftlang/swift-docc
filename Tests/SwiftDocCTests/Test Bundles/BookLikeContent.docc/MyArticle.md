@@ -34,6 +34,8 @@ This is the abstract of my article. Nice!
     }
 }
 
+@Snippet(path: "Snippets/Snippets/MySnippet", slice: "foo")
+
 @Small {
     Copyright (c) 2022 Apple Inc and the Swift Project authors. All Rights Reserved.
 }

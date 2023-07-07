@@ -161,14 +161,6 @@ struct ConvertFileWritingConsumer: ConvertOutputConsumer {
         let assetsURL = targetFolder.appendingPathComponent("assets.json", isDirectory: false)
         let data = try encode(digest)
         try fileManager.createFile(at: assetsURL, contents: data)
-
-        let externalAssetsDigest = Digest.ExternalAssets(
-            externalLocations: (uniqueAssets[.externalLocation] as? [ExternalLocationReference]) ?? []
-        )
-
-        let externalAssetsURL = targetFolder.appendingPathComponent("external-assets.json", isDirectory: false)
-        let externalAssetsData = try encode(externalAssetsDigest)
-        try fileManager.createFile(at: externalAssetsURL, contents: externalAssetsData)
     }
     
     func consume(benchmarks: Benchmark) throws {
@@ -224,10 +216,6 @@ enum Digest {
         let images: [ImageReference]
         let videos: [VideoReference]
         let downloads: [DownloadReference]
-    }
-
-    struct ExternalAssets: Codable {
-        let externalLocations: [ExternalLocationReference]
     }
     
     struct Diagnostic: Codable {

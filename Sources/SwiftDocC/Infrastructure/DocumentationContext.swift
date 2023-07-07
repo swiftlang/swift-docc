@@ -649,9 +649,12 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         for result in results.sync({ $0 }) {
             documentationCache[result.reference] = result.node
-            if let preciseIdentifier = result.node.symbol?.identifier.precise {
-                symbolIndex[preciseIdentifier] = result.reference
-            }
+            assert(
+                // If this is a symbol, verify that the reference exist in the in the symbolIndex
+                result.node.symbol.map { symbolIndex[$0.identifier.precise] == result.reference }
+                ?? true, // Nothing to check for non-symbols
+                "Previous versions updated the symbolIndex here. This assert verifies that that's no longer necessary."
+            )
             diagnosticEngine.emit(result.problems)
         }
     }
@@ -1851,13 +1854,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
         in bundle: DocumentationBundle
     ) -> DocumentationContext.Articles {
         articles.map { article in
+            let kind = article.value.metadata?.pageKind?.kind.documentationNodeKind ?? .article
             guard let (documentation, title) = DocumentationContext.documentationNodeAndTitle(
                 for: article,
                 // By default, articles are available in the languages the module that's being documented
                 // is available in. It's possible to override that behavior using the `@SupportedLanguage`
                 // directive though; see its documentation for more details.
                 availableSourceLanguages: soleRootModuleReference.map { sourceLanguages(for: $0) },
-                kind: .article,
+                kind: kind,
                 in: bundle
             ) else {
                 return article
@@ -2174,6 +2178,15 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
             bundle: bundle
         )
         
+        // After the resolving links in tutorial content all the local references are known and can be added to the referenceIndex for fast lookup.
+        referenceIndex.reserveCapacity(knownIdentifiers.count + nodeAnchorSections.count)
+        for reference in knownIdentifiers {
+            referenceIndex[reference.absoluteString] = reference
+        }
+        for reference in nodeAnchorSections.keys {
+            referenceIndex[reference.absoluteString] = reference
+        }
+        
         try shouldContinueRegistration()
         var allCuratedReferences = try crawlSymbolCuration(in: hierarchyBasedLinkResolver.topLevelSymbols(), bundle: bundle)
         
@@ -2221,22 +2234,14 @@ public class DocumentationContext: DocumentationContextDataProviderDelegate {
 
         // Sixth - fetch external entities and merge them in the context
         mergeExternalEntities(withReferences: Array(externallyResolvedSymbols))
+        for case .success(let reference) in externallyResolvedLinks.values {
+            referenceIndex[reference.absoluteString] = reference
+        }
         
         // Seventh, the complete topic graph—with all nodes and all edges added—is analyzed.
         topicGraphGlobalAnalysis()
         
         preResolveModuleNames()
-        
-        referenceIndex.reserveCapacity(knownIdentifiers.count + nodeAnchorSections.count)
-        for reference in knownIdentifiers {
-            referenceIndex[reference.absoluteString] = reference
-        }
-        for case .success(let reference) in externallyResolvedLinks.values {
-            referenceIndex[reference.absoluteString] = reference
-        }
-        for reference in nodeAnchorSections.keys {
-            referenceIndex[reference.absoluteString] = reference
-        }
     }
     
     /// Given a list of topics that have been automatically curated, checks if a topic has been additionally manually curated

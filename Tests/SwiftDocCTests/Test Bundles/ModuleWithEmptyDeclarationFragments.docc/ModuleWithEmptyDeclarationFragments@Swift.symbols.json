@@ -1,0 +1,95 @@
+{
+    "metadata": {
+        "formatVersion": {
+            "major": 0,
+            "minor": 6,
+            "patch": 0
+        },
+        "generator": "Swift 5.9"
+    },
+    "module": {
+        "name": "ModuleWithEmptyDeclarationFragments",
+        "platform": {
+            "architecture": "x86_64",
+            "vendor": "apple",
+            "operatingSystem": {
+                "name": "macosx",
+                "minimumVersion": {
+                    "major": 12,
+                    "minor": 4
+                }
+            }
+        }
+    },
+    "symbols": [
+        {
+            "kind": {
+                "identifier": "swift.extension",
+                "displayName": "Extension"
+            },
+            "identifier": {
+                "precise": "s:e:s:Sf10FoundationE4_argSfvp",
+                "interfaceLanguage": "swift"
+            },
+            "pathComponents": [
+                "Float"
+            ],
+            "names": {
+                "title": "Float",
+                "navigator": [
+                    {
+                        "kind": "identifier",
+                        "spelling": "Float"
+                    }
+                ],
+                "subHeading": []
+            },
+            "swiftExtension": {
+                "extendedModule": "Swift",
+                "typeKind": "swift.struct"
+            },
+            "declarationFragments": [],
+            "accessLevel": "public",
+            "availability": [
+                {
+                    "domain": "macOS",
+                    "introduced": {
+                        "major": 12
+                    }
+                },
+                {
+                    "domain": "watchOS",
+                    "introduced": {
+                        "major": 8
+                    }
+                },
+                {
+                    "domain": "iOS",
+                    "introduced": {
+                        "major": 15
+                    }
+                },
+                {
+                    "domain": "tvOS",
+                    "introduced": {
+                        "major": 15
+                    }
+                }
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "kind": "extensionTo",
+            "source": "s:e:s:Sf10FoundationE4_argSfvp",
+            "target": "s:Sf",
+            "targetFallback": "Swift.Float"
+        },
+        {
+            "kind": "conformsTo",
+            "source": "s:e:s:Sf10FoundationE4_argSfvp",
+            "target": "s:SQ",
+            "targetFallback": "Swift.Equatable"
+        }
+    ]
+}

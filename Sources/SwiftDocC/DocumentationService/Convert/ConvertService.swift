@@ -34,10 +34,13 @@ public struct ConvertService: DocumentationService {
     
     /// A peer server that can be used for resolving links.
     var linkResolvingServer: DocumentationServer?
-    
+
+    private let allowArbitraryCatalogDirectories: Bool
+
     /// Creates a conversion service, which converts in-memory documentation data.
-    public init(linkResolvingServer: DocumentationServer? = nil) {
+    public init(linkResolvingServer: DocumentationServer? = nil, allowArbitraryCatalogDirectories: Bool) {
         self.linkResolvingServer = linkResolvingServer
+        self.allowArbitraryCatalogDirectories = allowArbitraryCatalogDirectories
     }
     
     init(
@@ -46,6 +49,7 @@ public struct ConvertService: DocumentationService {
     ) {
         self.converter = converter
         self.linkResolvingServer = linkResolvingServer
+        self.allowArbitraryCatalogDirectories = false
     }
     
     public func process(
@@ -127,7 +131,10 @@ public struct ConvertService: DocumentationService {
             if let bundleLocation = request.bundleLocation {
                 // If an on-disk bundle is provided, convert it.
                 // Additional symbol graphs and markup are ignored for now.
-                provider = try LocalFileSystemDataProvider(rootURL: bundleLocation)
+                provider = try LocalFileSystemDataProvider(
+                    rootURL: bundleLocation,
+                    allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
+                )
             } else {
                 // Otherwise, convert the in-memory content.
                 var inMemoryProvider = InMemoryContentDataProvider()

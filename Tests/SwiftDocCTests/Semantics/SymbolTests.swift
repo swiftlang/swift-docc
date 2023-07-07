@@ -480,7 +480,7 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(withRedirectInArticle.redirects?.map { $0.oldPath.absoluteString }, ["some/previous/path/to/this/symbol"])
     }
     
-    func testWarningWhenDocCommentContainsDirective() throws {
+    func testWarningWhenDocCommentContainsUnsupportedDirective() throws {
         let (withRedirectInArticle, problems) = try makeDocumentationNodeSymbol(
             docComment: """
                 A cool API to call.
@@ -493,10 +493,24 @@ class SymbolTests: XCTestCase {
         )
         XCTAssertFalse(problems.isEmpty)
         XCTAssertEqual(withRedirectInArticle.redirects, nil)
-        
+
         XCTAssertEqual(problems.first?.diagnostic.identifier, "org.swift.docc.UnsupportedDocCommentDirective")
         XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.line, 3)
         XCTAssertEqual(problems.first?.diagnostic.range?.lowerBound.column, 1)
+    }
+
+    func testNoWarningWhenDocCommentContainsDirective() throws {
+        let (_, problems) = try makeDocumentationNodeSymbol(
+            docComment: """
+                A cool API to call.
+
+                @Snippet(from: "Snippets/Snippets/MySnippet")
+                """,
+            articleContent: """
+                # This is my article
+                """
+        )
+        XCTAssertTrue(problems.isEmpty)
     }
     
     func testNoWarningWhenDocCommentContainsDoxygen() throws {
@@ -1095,9 +1109,7 @@ class SymbolTests: XCTestCase {
         
         let engine = DiagnosticEngine()
         let _ = DocumentationNode.contentFrom(documentedSymbol: symbol, documentationExtension: nil, engine: engine)
-        XCTAssertEqual(engine.problems.count, 1)
-        let problem = try XCTUnwrap(engine.problems.first)
-        XCTAssertEqual(problem.diagnostic.source?.path, "/path/to/my file.swift")
+        XCTAssertEqual(engine.problems.count, 0)
     }
     
     // MARK: - Helpers
