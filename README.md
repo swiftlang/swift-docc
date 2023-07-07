@@ -148,14 +148,16 @@ log in Xcode's report navigator and expanding the "Compile documentation" step.
 ### Invoking `docc` from Swift Package Manager
 
 You can also test a locally built version of Swift-DocC using Swift Package Manager
-CLI. SwiftPM will try to read `DOCC_EXEC` environment variable value, and use
+CLI. The Swift-DocC SwiftPM plugin will try to read `DOCC_EXEC` environment variable value, and use
 the path you provded if it's set.
 
-  1. In your test `Package.swift`, add a dependency on [`Swift-DocC Plugin`](https://github.com/apple/swift-docc-plugin).
-  2. Set `DOCC_EXEC` environment variable and run documentation generation
-     command like this:
+  1. In your project's `Package.swift`, add a dependency on the [`Swift-DocC Plugin`](https://github.com/apple/swift-docc-plugin).
+  2. Set the `DOCC_EXEC` environment variable and run the documentation generation
+     command:
 
-        `DOCC_EXEC=/path/to/docc swift package generate-documentation`
+        ```bash
+        DOCC_EXEC=/path/to/docc swift package generate-documentation
+        ```
 
 ## Using `docc` to build and preview documentation
 
