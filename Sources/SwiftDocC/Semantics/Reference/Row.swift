@@ -50,6 +50,7 @@ import Markdown
 public final class Row: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
     public let originalMarkup: BlockDirective
     
+    /// The number of columns available in this row.
     @DirectiveArgumentWrapped(name: .custom("numberOfColumns"))
     public private(set) var _numberOfColumns: Int? = nil
     
@@ -89,6 +90,8 @@ public final class Row: Semantic, AutomaticDirectiveConvertible, MarkupContainin
 extension Row {
     /// A container directive that holds general markup content describing a column
     /// with a row in a grid-based layout.
+    ///
+    /// Create a column inside a ``Row`` by nesting a `@Column` directive within the content for an `@Row` directive.
     public final class Column: Semantic, AutomaticDirectiveConvertible, MarkupContaining {
         public let originalMarkup: BlockDirective
         

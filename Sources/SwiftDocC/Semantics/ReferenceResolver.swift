@@ -16,11 +16,6 @@ func unresolvedReferenceProblem(reference: TopicReference, source: URL?, range: 
         [DiagnosticNote(source: $0, range: SourceLocation(line: 1, column: 1, source: $0)..<SourceLocation(line: 1, column: 1, source: $0), message: "This article was found but is not available for linking because it's uncurated")]
     } ?? []
     
-    guard LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver else {
-        let diagnostic = Diagnostic(source: source, severity: severity, range: range, identifier: "org.swift.docc.unresolvedTopicReference", summary: "Topic reference \(reference.description.singleQuoted) couldn't be resolved. \(errorInfo.message)", notes: notes)
-        return Problem(diagnostic: diagnostic, possibleSolutions: [])
-    }
-    
     let referenceSourceRange: SourceRange? = range.map { range in
         // FIXME: Finding the range for the link's destination is better suited for Swift-Markdown
         // https://github.com/apple/swift-markdown/issues/109
@@ -458,7 +453,7 @@ struct ReferenceResolver: SemanticVisitor {
         }
         let newHTTPBodyVariants = symbol.httpBodySectionVariants.map { httpBodySection -> HTTPBodySection in
             let oldBody = httpBodySection.body
-            let newBody = HTTPBody(mediaType: oldBody.mediaType, contents: oldBody.contents.map { visitMarkup($0) }, symbol: oldBody.symbol)
+            let newBody = HTTPBody(mediaType: oldBody.mediaType, contents: oldBody.contents.map { visitMarkup($0) }, parameters: oldBody.parameters, symbol: oldBody.symbol)
             return HTTPBodySection(body: newBody)
         }
         let newHTTPParametersVariants = symbol.httpParametersSectionVariants.map { httpParametersSection -> HTTPParametersSection in

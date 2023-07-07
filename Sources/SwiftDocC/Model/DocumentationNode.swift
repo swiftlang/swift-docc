@@ -390,6 +390,21 @@ public struct DocumentationNode {
             semantic.dictionaryKeysSectionVariants[.fallback] = DictionaryKeysSection(dictionaryKeys:keys)
         }
         
+        if let parameters = markupModel.discussionTags?.httpParameters, !parameters.isEmpty {
+            // Record the parameters extracted from the markdown
+            semantic.httpParametersSectionVariants[.fallback] = HTTPParametersSection(parameters: parameters)
+        }
+        
+        if let body = markupModel.discussionTags?.httpBody {
+            // Record the body extracted from the markdown
+            semantic.httpBodySectionVariants[.fallback] = HTTPBodySection(body: body)
+        }
+        
+        if let responses = markupModel.discussionTags?.httpResponses, !responses.isEmpty {
+            // Record the responses extracted from the markdown
+            semantic.httpResponsesSectionVariants[.fallback] = HTTPResponsesSection(responses: responses)
+        }
+        
         options = documentationExtension?.options[.local]
         self.metadata = documentationExtension?.metadata
         
@@ -423,10 +438,7 @@ public struct DocumentationNode {
         } else if let symbol = documentedSymbol, let docComment = symbol.docComment {
             let docCommentString = docComment.lines.map { $0.text }.joined(separator: "\n")
 
-            var documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks]
-            if FeatureFlags.current.isExperimentalDoxygenSupportEnabled {
-                documentOptions.insert(.parseMinimalDoxygen)
-            }
+            let documentOptions: ParseOptions = [.parseBlockDirectives, .parseSymbolLinks, .parseMinimalDoxygen]
             let docCommentMarkup = Document(parsing: docCommentString, options: documentOptions)
             
             let docCommentDirectives = docCommentMarkup.children.compactMap({ $0 as? BlockDirective })
@@ -435,10 +447,20 @@ public struct DocumentationNode {
                     for: SymbolGraph.Symbol.Location.self
                 )?.url()
 
-                for comment in docCommentDirectives {
-                    let range = docCommentMarkup.child(at: comment.indexInParent)?.range
+                for directive in docCommentDirectives {
+                    let range = docCommentMarkup.child(at: directive.indexInParent)?.range
                     
-                    guard BlockDirective.allKnownDirectiveNames.contains(comment.name) else {
+                    // Only throw warnings for known directive names.
+                    //
+                    // This is important so that we avoid throwing warnings when building
+                    // Objective-C/C documentation that includes doxygen commands.
+                    guard BlockDirective.allKnownDirectiveNames.contains(directive.name) else {
+                        continue
+                    }
+
+                    // Renderable directives are processed like any other piece of structured markdown (tables, lists, etc.)
+                    // and so are inherently supported in doc comments.
+                    guard DirectiveIndex.shared.renderableDirectives[directive.name] == nil else {
                         continue
                     }
 
@@ -447,8 +469,8 @@ public struct DocumentationNode {
                         severity: .warning,
                         range: range,
                         identifier: "org.swift.docc.UnsupportedDocCommentDirective",
-                        summary: "Directives are not supported in symbol source documentation",
-                        explanation: "Found \(comment.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
+                        summary: "The \(directive.name.singleQuoted) directive is not supported in symbol source documentation",
+                        explanation: "Found \(directive.name.singleQuoted) in \(symbol.absolutePath.singleQuoted)"
                     )
                     
                     var problem = Problem(diagnostic: diagnostic, possibleSolutions: [])

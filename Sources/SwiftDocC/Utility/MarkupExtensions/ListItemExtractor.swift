@@ -85,6 +85,28 @@ extension Collection where Element == InlineMarkup {
         }
         return nil
     }
+    
+    func extractHTTPParameter() -> HTTPParameter? {
+        if let (name, content) = splitNameAndContent() {
+            return HTTPParameter(name: name, source: nil, contents: content)
+        }
+        return nil
+    }
+    
+    func extractHTTPBodyParameter() -> HTTPParameter? {
+        if let (name, content) = splitNameAndContent() {
+            return HTTPParameter(name: name, source: "body", contents: content)
+        }
+        return nil
+    }
+    
+    func extractHTTPResponse() -> HTTPResponse? {
+        if let (name, content) = splitNameAndContent() {
+            let statusCode = UInt(name) ?? 0
+            return HTTPResponse(statusCode: statusCode, reason: nil, mediaType: nil, contents: content)
+        }
+        return nil
+    }
 }
 
 extension ListItem {
@@ -196,6 +218,183 @@ extension ListItem {
     }
 
     /**
+     Extract a standalone HTTP parameter description from this list item.
+
+     Expected form:
+
+     ```markdown
+     - httpParameter x: A number.
+     ```
+     */
+    func extractStandaloneHTTPParameter() -> HTTPParameter? {
+        guard let remainder = extractTag(TaggedListItemExtractor.httpParameterTag) else {
+            return nil
+        }
+        return remainder.extractHTTPParameter()
+    }
+
+    /**
+     Extracts an outline of HTTP parameters from a sublist underneath this list item.
+
+     Expected form:
+
+     ```markdown
+     - HTTPParameters:
+       - x: a number
+       - y: another
+     ```
+
+     > Warning: Content underneath `- HTTPParameters` that doesn't match this form will be dropped.
+     */
+    func extractHTTPParameterOutline() -> [HTTPParameter]? {
+        guard extractTag(TaggedListItemExtractor.httpParametersTag + ":") != nil else {
+            return nil
+        }
+
+        var parameters = [HTTPParameter]()
+
+        for child in children {
+            // The list `- HTTPParameters:` should have one child, a list of parameters.
+            guard let parametersList = child as? UnorderedList else {
+                // If it's not, that content is dropped.
+                continue
+            }
+
+            // Those sublist items are assumed to be a valid `- ___: ...` parameter form or else they are dropped.
+            for child in parametersList.children {
+                guard let listItem = child as? ListItem,
+                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
+                      let parameter = Array(firstParagraph.inlineChildren).extractHTTPParameter() else {
+                    continue
+                }
+                // Don't forget the rest of the content under this list item.
+                let contents = parameter.contents + Array(listItem.children.dropFirst(1))
+
+                parameters.append(HTTPParameter(name: parameter.name, source:parameter.source, contents: contents))
+            }
+        }
+        return parameters
+    }
+
+    /**
+     Extract a standalone HTTP body parameter description from this list item.
+
+     Expected form:
+
+     ```markdown
+     - HTTPBodyParameter x: A number.
+     ```
+     */
+    func extractStandaloneHTTPBodyParameter() -> HTTPParameter? {
+        guard let remainder = extractTag(TaggedListItemExtractor.httpBodyParameterTag) else {
+            return nil
+        }
+        return remainder.extractHTTPBodyParameter()
+    }
+    
+    /**
+     Extracts an outline of HTTP parameters from a sublist underneath this list item.
+
+     Expected form:
+
+     ```markdown
+     - HTTPBodyParameters:
+       - x: a number
+       - y: another
+     ```
+
+     > Warning: Content underneath `- HTTPBodyParameters` that doesn't match this form will be dropped.
+     */
+    func extractHTTPBodyParameterOutline() -> [HTTPParameter]? {
+        guard extractTag(TaggedListItemExtractor.httpBodyParametersTag + ":") != nil else {
+            return nil
+        }
+
+        var parameters = [HTTPParameter]()
+
+        for child in children {
+            // The list `- HTTPBodyParameters:` should have one child, a list of parameters.
+            guard let parametersList = child as? UnorderedList else {
+                // If it's not, that content is dropped.
+                continue
+            }
+
+            // Those sublist items are assumed to be a valid `- ___: ...` parameter form or else they are dropped.
+            for child in parametersList.children {
+                guard let listItem = child as? ListItem,
+                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
+                      let parameter = Array(firstParagraph.inlineChildren).extractHTTPParameter() else {
+                    continue
+                }
+                // Don't forget the rest of the content under this list item.
+                let contents = parameter.contents + Array(listItem.children.dropFirst(1))
+
+                parameters.append(HTTPParameter(name: parameter.name, source:"body", contents: contents))
+            }
+        }
+        return parameters
+    }
+    
+    /**
+     Extract a standalone HTTP response description from this list item.
+
+     Expected form:
+
+     ```markdown
+     - httpResponse 200: A number.
+     ```
+     */
+    func extractStandaloneHTTPResponse() -> HTTPResponse? {
+        guard let remainder = extractTag(TaggedListItemExtractor.httpResponseTag) else {
+            return nil
+        }
+        return remainder.extractHTTPResponse()
+    }
+
+    /**
+     Extracts an outline of dictionary keys from a sublist underneath this list item.
+
+     Expected form:
+
+     ```markdown
+     - HTTPResponses:
+       - 200: a status code
+       - 204: another status code
+     ```
+
+     > Warning: Content underneath `- HTTPResponses` that doesn't match this form will be dropped.
+     */
+    func extractHTTPResponseOutline() -> [HTTPResponse]? {
+        guard extractTag(TaggedListItemExtractor.httpResponsesTag + ":") != nil else {
+            return nil
+        }
+
+        var responses = [HTTPResponse]()
+
+        for child in children {
+            // The list `- HTTPResponses:` should have one child, a list of responses.
+            guard let responseList = child as? UnorderedList else {
+                // If it's not, that content is dropped.
+                continue
+            }
+
+            // Those sublist items are assumed to be a valid `- ___: ...` response form or else they are dropped.
+            for child in responseList.children {
+                guard let listItem = child as? ListItem,
+                      let firstParagraph = listItem.child(at: 0) as? Paragraph,
+                      let response = Array(firstParagraph.inlineChildren).extractHTTPResponse() else {
+                    continue
+                }
+                // Don't forget the rest of the content under this dictionary key list item.
+                let contents = response.contents + Array(listItem.children.dropFirst(1))
+
+                responses.append(HTTPResponse(statusCode: response.statusCode, reason: response.reason, mediaType: response.mediaType, contents: contents))
+            }
+        }
+        return responses
+    }
+
+    /**
      Extract a standalone parameter description from this list item.
 
      Expected form:
@@ -256,6 +455,22 @@ extension ListItem {
     }
 
     /**
+     Extract an HTTP body description from a list item.
+
+     Expected form:
+
+     ```markdown
+     - httpBody: ...
+     ```
+     */
+    func extractHTTPBody() -> HTTPBody? {
+        guard let remainder = extractTag(TaggedListItemExtractor.httpBodyTag + ":") else {
+            return nil
+        }
+        return HTTPBody(mediaType: nil, contents: [Paragraph(remainder)])
+    }
+
+    /**
      Extract a return description from a list item.
 
      Expected form:
@@ -295,9 +510,20 @@ struct TaggedListItemExtractor: MarkupRewriter {
     static let parametersTag = "parameters"
     static let dictionaryKeyTag = "dictionarykey"
     static let dictionaryKeysTag = "dictionarykeys"
+    
+    static let httpBodyTag = "httpbody"
+    static let httpResponseTag = "httpresponse"
+    static let httpResponsesTag = "httpresponses"
+    static let httpParameterTag = "httpparameter"
+    static let httpParametersTag = "httpparameters"
+    static let httpBodyParameterTag = "httpbodyparameter"
+    static let httpBodyParametersTag = "httpbodyparameters"
 
     var parameters = [Parameter]()
     var dictionaryKeys = [DictionaryKey]()
+    var httpResponses = [HTTPResponse]()
+    var httpParameters = [HTTPParameter]()
+    var httpBody: HTTPBody? = nil
     var returns = [Return]()
     var `throws` = [Throw]()
     var otherTags = [SimpleTag]()
@@ -396,6 +622,52 @@ struct TaggedListItemExtractor: MarkupRewriter {
         } else if let dictionaryKeyDescription = listItem.extractStandaloneDictionaryKey() {
             // - dictionaryKey x: ...
             dictionaryKeys.append(dictionaryKeyDescription)
+            return nil
+        } else if let httpParameterDescription = listItem.extractHTTPParameterOutline() {
+            // - HTTPParameters:
+            //   - x: ...
+            //   - y: ...
+            httpParameters.append(contentsOf: httpParameterDescription)
+            return nil
+        } else if let httpParameterDescription = listItem.extractStandaloneHTTPParameter() {
+            // - HTTPParameter x: ...
+            httpParameters.append(httpParameterDescription)
+            return nil
+        } else if let httpBodyDescription = listItem.extractHTTPBody() {
+            // - httpBody: ...
+            if httpBody == nil {
+                httpBody = httpBodyDescription
+            } else {
+                httpBody?.contents = httpBodyDescription.contents
+            }
+            return nil
+        } else if let httpBodyParameterDescription = listItem.extractHTTPBodyParameterOutline() {
+            // - HTTPBodyParameters:
+            //   - x: ...
+            //   - y: ...
+            if httpBody == nil {
+                httpBody = HTTPBody(mediaType: nil, contents: [], parameters: httpBodyParameterDescription, symbol: nil)
+            } else {
+                httpBody?.parameters.append(contentsOf: httpBodyParameterDescription)
+            }
+            return nil
+        } else if let httpBodyParameterDescription = listItem.extractStandaloneHTTPBodyParameter() {
+            // - HTTPBodyParameter x: ...
+            if httpBody == nil {
+                httpBody = HTTPBody(mediaType: nil, contents: [], parameters: [httpBodyParameterDescription], symbol: nil)
+            } else {
+                httpBody?.parameters.append(httpBodyParameterDescription)
+            }
+            return nil
+        } else if let httpResponseDescription = listItem.extractHTTPResponseOutline() {
+            // - HTTPResponses:
+            //   - x: ...
+            //   - y: ...
+            httpResponses.append(contentsOf: httpResponseDescription)
+            return nil
+        } else if let httpResponseDescription = listItem.extractStandaloneHTTPResponse() {
+            // - HTTPResponse x: ...
+            httpResponses.append(httpResponseDescription)
             return nil
         } else if let simpleTag = listItem.extractSimpleTag() {
             // - todo: ...

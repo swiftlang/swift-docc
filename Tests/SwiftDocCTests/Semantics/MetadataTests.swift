@@ -130,6 +130,23 @@ class MetadataTests: XCTestCase {
         
         XCTAssertEqual(metadata?.displayName?.name, "Custom Name")
     }
+
+    func testTitleHeadingSupport() throws {
+        let source = """
+        @Metadata {
+           @TitleHeading("Custom Heading")
+        }
+        """
+        let document = Document(parsing: source, options: .parseBlockDirectives)
+        let directive = document.child(at: 0)! as! BlockDirective
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let metadata = Metadata(from: directive, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(metadata)
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
+        
+        XCTAssertEqual(metadata?.titleHeading?.heading, "Custom Heading")
+    }
     
     func testCustomMetadataSupport() throws {
         let source = """
@@ -231,6 +248,31 @@ class MetadataTests: XCTestCase {
         XCTAssertEqual(solution.replacements.last?.range, SourceLocation(line: 1, column: 1, source: nil) ..< SourceLocation(line: 1, column: 16, source: nil))
         XCTAssertEqual(solution.replacements.last?.replacement, "# Custom Name")
     }
+
+    func testArticleSupportsMetadataTitleHeading() throws {
+        let source = """
+        # Article title
+        
+        @Metadata {
+           @TitleHeading("Custom Heading")
+        }
+
+        The abstract of this documentation extension
+        """
+        let document = Document(parsing: source, options:  [.parseBlockDirectives, .parseSymbolLinks])
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var problems = [Problem]()
+        let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
+        XCTAssertNotNil(article, "An Article value can be created with a Metadata child with a TitleHeading child.")
+        XCTAssertNotNil(article?.metadata?.titleHeading, "The Article has the parsed TitleHeading metadata.")
+        XCTAssertEqual(article?.metadata?.titleHeading?.heading, "Custom Heading")
+        
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
+        
+        var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
+        _ = analyzer.visit(document)
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got:\n \(DiagnosticConsoleWriter.formattedDescription(for: analyzer.problems))")
+    }
     
     func testDuplicateMetadata() throws {
         let source = """
@@ -309,6 +351,42 @@ class MetadataTests: XCTestCase {
                 "5: warning – org.swift.docc.DuplicatePageImage",
             ]
         )
+    }
+    
+    func testPageColorSupport() throws {
+        do {
+            let (problems, metadata) = try parseMetadataFromSource(
+            """
+            # Article title
+            
+            @Metadata {
+                @PageColor(blue)
+            }
+            
+            The abstract of this article.
+            """
+            )
+            
+            XCTAssertEqual(problems, [])
+            XCTAssertEqual(metadata.pageColor, .blue)
+        }
+        
+        do {
+            let (problems, metadata) = try parseMetadataFromSource(
+            """
+            # Article title
+            
+            @Metadata {
+                @PageColor(green)
+            }
+            
+            The abstract of this article.
+            """
+            )
+            
+            XCTAssertEqual(problems, [])
+            XCTAssertEqual(metadata.pageColor, .green)
+        }
     }
     
     func parseMetadataFromSource(

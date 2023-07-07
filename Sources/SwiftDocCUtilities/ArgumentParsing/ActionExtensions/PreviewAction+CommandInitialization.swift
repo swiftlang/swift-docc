@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import Foundation
 
 extension PreviewAction {
@@ -33,3 +34,4 @@ extension PreviewAction {
             printTemplatePath: printTemplatePath)
     }
 }
+#endif

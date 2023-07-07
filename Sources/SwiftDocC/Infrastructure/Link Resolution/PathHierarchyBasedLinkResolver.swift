@@ -63,22 +63,27 @@ final class PathHierarchyBasedLinkResolver {
         return pathHierarchy.topLevelSymbols().map { resolvedReferenceMap[$0]! }
     }
     
+    /// Returns a list of all module symbols.
+    func modules() -> [ResolvedTopicReference] {
+        return pathHierarchy.modules.values.map { resolvedReferenceMap[$0.identifier]! }
+    }
+    
     // MARK: - Adding non-symbols
     
     /// Map the resolved identifiers to resolved topic references for a given bundle's article, tutorial, and technology root pages.
     func addMappingForRoots(bundle: DocumentationBundle) {
-        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.tutorialsRootReference
+        resolvedReferenceMap[pathHierarchy.tutorialContainer.identifier] = bundle.technologyTutorialsRootReference
         resolvedReferenceMap[pathHierarchy.articlesContainer.identifier] = bundle.articlesDocumentationRootReference
-        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.technologyTutorialsRootReference
+        resolvedReferenceMap[pathHierarchy.tutorialOverviewContainer.identifier] = bundle.tutorialsRootReference
     }
     
     /// Map the resolved identifiers to resolved topic references for all symbols in the given symbol index.
-    func addMappingForSymbols(symbolIndex: [String: DocumentationNode]) {
+    func addMappingForSymbols(symbolIndex: [String: ResolvedTopicReference]) {
         for (id, node) in pathHierarchy.lookup {
-            guard let symbol = node.symbol, let node = symbolIndex[symbol.identifier.precise] else {
+            guard let symbol = node.symbol, let reference = symbolIndex[symbol.identifier.precise] else {
                 continue
             }
-            resolvedReferenceMap[id] = node.reference
+            resolvedReferenceMap[id] = reference
         }
     }
     
@@ -164,9 +169,9 @@ final class PathHierarchyBasedLinkResolver {
     }
     
     /// Adds the headings for all symbols in the symbol index to the path hierarchy.
-    func addAnchorForSymbols(symbolIndex: [String: DocumentationNode]) {
+    func addAnchorForSymbols(symbolIndex: [String: ResolvedTopicReference], documentationCache: [ResolvedTopicReference: DocumentationNode]) {
         for (id, node) in pathHierarchy.lookup {
-            guard let symbol = node.symbol, let node = symbolIndex[symbol.identifier.precise] else { continue }
+            guard let symbol = node.symbol, let reference = symbolIndex[symbol.identifier.precise], let node = documentationCache[reference] else { continue }
             addAnchors(node.anchorSections, to: id)
         }
     }
@@ -214,7 +219,12 @@ final class PathHierarchyBasedLinkResolver {
         do {
             let parentID = resolvedReferenceMap[parent]
             let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
-            let foundReference = resolvedReferenceMap[found]!
+            guard let foundReference = resolvedReferenceMap[found] else {
+                // It's possible for the path hierarchy to find a symbol that the local build doesn't create a page for. Such symbols can't be linked to.
+                let simplifiedFoundPath = sequence(first: pathHierarchy.lookup[found]!, next: \.parent)
+                    .map(\.name).reversed().joined(separator: "/")
+                return .failure(unresolvedReference, .init("\(simplifiedFoundPath.singleQuoted) has no page and isn't available for linking."))
+            }
             
             return .success(foundReference)
         } catch let error as PathHierarchy.Error {

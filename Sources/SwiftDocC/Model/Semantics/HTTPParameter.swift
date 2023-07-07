@@ -16,7 +16,9 @@ public struct HTTPParameter {
     /// The name of the parameter.
     public var name: String
     /// The source of the parameter, such as "query" or "path".
-    public var source: String
+    /// 
+    /// Value might be undefined initially when first extracted from markdown.
+    public var source: String?
     /// The content that describe the parameter.
     public var contents: [Markup]
     /// The symbol graph symbol representing this parameter.
@@ -31,7 +33,7 @@ public struct HTTPParameter {
     ///   - contents: The content that describe this parameter.
     ///   - symbol: The symbol data extracted from the symbol graph.
     ///   - required: Flag indicating whether the parameter is required to be present in the request.
-    public init(name: String, source: String, contents: [Markup], symbol: SymbolGraph.Symbol? = nil, required: Bool = false) {
+    public init(name: String, source: String?, contents: [Markup], symbol: SymbolGraph.Symbol? = nil, required: Bool = false) {
         self.name = name
         self.source = source
         self.contents = contents

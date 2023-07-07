@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -371,9 +371,7 @@ extension CoverageDataEntry {
                 )
                 let total = children.count
                 let documented = children.filter {
-                    (context.symbolIndex[$0.reference.description]?.semantic as? Symbol)?
-                        .abstractSection
-                        != nil
+                    (context.nodeWithSymbolIdentifier($0.reference.description)?.semantic as? Symbol)?.abstractSection != nil
                 }.count
 
                 if total == 0 {

@@ -11,6 +11,7 @@
 import Foundation
 import XCTest
 @testable import SwiftDocC
+import SwiftDocCTestUtilities
 
 class AutomaticSeeAlsoTests: XCTestCase {
     
@@ -18,9 +19,9 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// does not have a See Also section.
     func testNoSeeAlso() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
-            /// Article that curates `SideClass`
+            /// Extension that curates `SideClass`
             try """
-            # SideKit
+            # ``SideKit``
             SideKit module root symbol
             ## Topics
             ### Basics
@@ -41,7 +42,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// does include an authored See Also section
     func testAuthoredSeeAlso() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
-            /// Article that curates `SideClass`
+            /// Extension that curates `SideClass`
             try """
             # ``SideKit``
             SideKit module root symbol
@@ -77,7 +78,7 @@ class AutomaticSeeAlsoTests: XCTestCase {
     /// does include both in See Also with authored section first
     func testAuthoredAndAutomaticSeeAlso() throws {
         let (_, bundle, context) = try testBundleAndContext(copying: "TestBundle") { root in
-            /// Article that curates `SideClass`
+            /// Extension that curates `SideClass`
             try """
             # ``SideKit``
             SideKit module root symbol
@@ -256,4 +257,41 @@ class AutomaticSeeAlsoTests: XCTestCase {
         }
     }
 
+    func testSeeAlsoWithSymbolAndTutorial() throws {
+        let exampleDocumentation = Folder(name: "MyKit.docc", content: [
+           CopyOfFile(original: Bundle.module.url(forResource: "mykit-one-symbol.symbols", withExtension: "json", subdirectory: "Test Resources")!),
+            
+           // The tutorial has the same file name (excluding the file extension) as the module and as the bundle.
+           TextFile(name: "MyKit.tutorial", utf8Content: """
+           @Tutorials(name: "My Tutorials") {
+               @Intro(title: "My Intro") {
+               }
+           }
+           """),
+           
+            TextFile(name: "MyKit.md", utf8Content: """
+            # ``MyKit``
+
+            Curate a symbol and a tutorial together so that the symbol's generated See Also section includes the tutorial.
+
+            ## Topics
+
+            - ``MyKit/MyClass/myFunction()``
+            - <doc:/tutorials/MyKit>
+            """),
+        ])
+        let tempURL = try createTemporaryDirectory()
+        let bundleURL = try exampleDocumentation.write(inside: tempURL)
+
+        let (_, bundle, context) = try loadBundle(from: bundleURL)
+        
+        // Get a translated render node
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: "MyKit", path: "/documentation/MyKit/MyClass/myFunction()", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+        
+        // Verify there is a See Also with the resolved tutorial reference
+        XCTAssertEqual(renderNode.seeAlsoSections.count, 1)
+        XCTAssertEqual(renderNode.seeAlsoSections.first?.identifiers, ["doc://MyKit/tutorials/MyKit"])
+    }
 }

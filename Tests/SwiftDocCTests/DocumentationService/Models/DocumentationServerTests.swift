@@ -48,18 +48,24 @@ class DocumentationServerTests: XCTestCase {
         let server = DocumentationServer()
         
         let expectedMessage = DocumentationServer.Message(
-            type: .init(rawValue: "type"),
+            type: .init(rawValue: "type-1"),
             payload: "payload".data(using: .utf8)!
         )
+        XCTAssertTrue(TestServiceA.handlingTypes.contains(expectedMessage.type))
         
-        let expectation = XCTestExpectation()
+        let messageExpectation = XCTestExpectation(description: "service received message")
+        let responseExpectation = XCTestExpectation(description: "server received response")
         
         server.register(service: TestServiceA(onProcess: { message in
             XCTAssertEqual(message, expectedMessage)
-            expectation.fulfill()
+            messageExpectation.fulfill()
         }))
         
-        XCTWaiter().wait(for: [expectation], timeout: 1.0)
+        processAndAssert(server, withMessage: expectedMessage, satisfies: { data in
+            responseExpectation.fulfill()
+        })
+        
+        wait(for: [messageExpectation, responseExpectation], timeout: 1.0)
     }
     
     func testReturnsInvalidMessageErrorWhenGivenAnInvalidMessage() throws {
@@ -100,6 +106,9 @@ class DocumentationServerTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Completion closure called")
         
         server.process(message, completion: { data in
+            defer {
+                expectation.fulfill()
+            }
             do {
                 try assertion(data)
             } catch {
@@ -107,7 +116,7 @@ class DocumentationServerTests: XCTestCase {
             }
         })
         
-        XCTWaiter().wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 1.0)
     }
 
     func assertIsErrorMessageWithIdentifier(_ identifier: String, messageData: Data) {

@@ -25,8 +25,23 @@ public struct HTTPBodySection {
         if body.contents.isEmpty {
             body.contents = newBody.contents
         }
+        if body.mediaType == nil {
+            body.mediaType = newBody.mediaType
+        }
         if body.symbol == nil {
             body.symbol = newBody.symbol
+        }
+        if body.parameters.isEmpty {
+            body.parameters = newBody.parameters
+        } else if !newBody.parameters.isEmpty {
+            // Update existing parameters with new data being passed in.
+            body.parameters = body.parameters.insertAndUpdate(newBody.parameters) { existingParameter, newParameter in
+                let contents = existingParameter.contents.count > 0 ? existingParameter.contents : newParameter.contents
+                let symbol = existingParameter.symbol ?? newParameter.symbol
+                let source = existingParameter.source ?? newParameter.source
+                let required = existingParameter.required || newParameter.required
+                return HTTPParameter(name: existingParameter.name, source: source, contents: contents, symbol: symbol, required: required)
+            }
         }
     }
 }

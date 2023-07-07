@@ -89,21 +89,13 @@ class DiagnosticTests: XCTestCase {
         // Resolve references
         _ = resolver.visitMarkup(markup)
         
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 10, source: nil)..<SourceLocation(line: 1, column: 19, source: nil))
-        } else {
-            XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 8, source: nil)..<SourceLocation(line: 1, column: 21, source: nil))
-        }
+        XCTAssertEqual(resolver.problems.first?.diagnostic.range, SourceLocation(line: 1, column: 10, source: nil)..<SourceLocation(line: 1, column: 19, source: nil))
         let offset = SymbolGraph.LineList.SourceRange(start: .init(line: 10, character: 10), end: .init(line: 10, character: 20))
         
         var problem = try XCTUnwrap(resolver.problems.first)
         problem.offsetWithRange(offset)
         
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 20, source: nil)..<SourceLocation(line: 11, column: 29, source: nil))
-        } else {
-            XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 18, source: nil)..<SourceLocation(line: 11, column: 31, source: nil))
-        }
+        XCTAssertEqual(problem.diagnostic.range, SourceLocation(line: 11, column: 20, source: nil)..<SourceLocation(line: 11, column: 29, source: nil))
     }
 
     func testFormattedDescription() {
@@ -185,15 +177,15 @@ class DiagnosticTests: XCTestCase {
         let commentWithKnownDirective = """
           Brief description of this method
           
-          @Image(source: "my-sloth-image.png", alt: "An illustration of a sleeping sloth.")
+          @TitleHeading("Fancy Type of Article")
           @returns Description of return value
           """
         let symbolWithKnownDirective = createTestSymbol(commentText: commentWithKnownDirective)
         let engine1 = DiagnosticEngine()
 
         let _ = DocumentationNode.contentFrom(documentedSymbol: symbolWithKnownDirective, documentationExtension: nil, engine: engine1)
-
-        // count should 1 for the known directive '@Image'
+        
+        // count should be 1 for the known directive '@TitleHeading'
         // TODO: Consider adding a diagnostic for Doxygen tags (rdar://92184094)
         XCTAssertEqual(engine1.problems.count, 1)
         XCTAssertEqual(engine1.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.UnsupportedDocCommentDirective"])

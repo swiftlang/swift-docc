@@ -107,6 +107,9 @@ struct PathHierarchy {
                     nodes[id] = existingNode
                 } else {
                     let node = Node(symbol: symbol)
+                    // Disfavor synthesized symbols when they collide with other symbol with the same path.
+                    // FIXME: Get information about synthesized symbols from SymbolKit https://github.com/apple/swift-docc-symbolkit/issues/58
+                    node.isDisfavoredInCollision = symbol.identifier.precise.contains("::SYNTHESIZED::")
                     nodes[id] = node
                     allNodes[id, default: []].append(node)
                 }
@@ -135,6 +138,29 @@ struct PathHierarchy {
                 }
             }
             
+            for relationship in graph.relationships where relationship.kind == .defaultImplementationOf {
+                guard let sourceNode = nodes[relationship.source] else {
+                    continue
+                }
+                // Default implementations collide with the protocol requirement that they implement.
+                // Disfavor the default implementation to favor the protocol requirement (or other symbol with the same path).
+                sourceNode.isDisfavoredInCollision = true
+                
+                let targetNodes = nodes[relationship.target].map { [$0] } ?? allNodes[relationship.target] ?? []
+                guard !targetNodes.isEmpty else {
+                    continue
+                }
+                
+                for requirementTarget in targetNodes {
+                    assert(
+                        requirementTarget.parent != nil,
+                        "The 'defaultImplementationOf' symbol should be a 'memberOf' a known protocol symbol but didn't have a parent relationship in the hierarchy."
+                    )
+                    requirementTarget.parent?.add(symbolChild: sourceNode)
+                }
+                topLevelCandidates.removeValue(forKey: relationship.source)
+            }
+            
             // The hierarchy doesn't contain any non-symbol nodes yet. It's OK to unwrap the `symbol` property.
             for topLevelNode in topLevelCandidates.values where topLevelNode.symbol!.pathComponents.count == 1 {
                 moduleNode.add(symbolChild: topLevelNode)
@@ -155,8 +181,13 @@ struct PathHierarchy {
                     components = components.dropFirst()
                 }
                 for component in components {
+                    assert(
+                        parent.children[components.first!] == nil,
+                        "Shouldn't create a new sparse node when symbol node already exist. This is an indication that a symbol is missing a relationship."
+                    )
                     let component = Self.parse(pathComponent: component[...])
                     let nodeWithoutSymbol = Node(name: component.name)
+                    nodeWithoutSymbol.isDisfavoredInCollision = true
                     parent.add(child: nodeWithoutSymbol, kind: component.kind, hash: component.hash)
                     parent = nodeWithoutSymbol
                 }
@@ -164,6 +195,10 @@ struct PathHierarchy {
             }
         }
         
+        assert(
+            allNodes.allSatisfy({ $0.value[0].parent != nil || roots[$0.key] != nil }),
+            "Every node should either have a parent node or be a root node. This wasn't true for \(allNodes.filter({ $0.value[0].parent != nil || roots[$0.key] != nil }).map(\.key).sorted())"
+        )
         allNodes.removeAll()
         
         // build the lookup list by traversing the hierarchy and adding identifiers to each node
@@ -199,12 +234,15 @@ struct PathHierarchy {
         self.tutorialContainer = newNode(bundleName)
         self.tutorialOverviewContainer = newNode("tutorials")
         
-        assert(lookup.allSatisfy({ $0.key == $0.value.identifier}))
+        assert(
+            lookup.allSatisfy({ $0.key == $0.value.identifier }),
+            "Every node lookup should match a node with that identifier."
+        )
         
         self.modules = roots
         self.lookup = lookup
         
-        assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil}))
+        assert(topLevelSymbols().allSatisfy({ lookup[$0] != nil }))
     }
     
     /// Adds an article to the path hierarchy.
@@ -260,7 +298,7 @@ struct PathHierarchy {
         
         return newReference
     }
-    
+
     // MARK: Finding elements in the hierarchy
     
     /// Attempts to find an element in the path hierarchy for a given path relative to another element.
@@ -272,7 +310,7 @@ struct PathHierarchy {
     /// - Returns: Returns the unique identifier for the found match or raises an error if no match can be found.
     /// - Throws: Raises a ``PathHierarchy/Error`` if no match can be found.
     func find(path rawPath: String, parent: ResolvedIdentifier? = nil, onlyFindSymbols: Bool) throws -> ResolvedIdentifier {
-        let node = try findNode(path: rawPath, parent: parent, onlyFindSymbols: onlyFindSymbols)
+        let node = try findNode(path: rawPath, parentID: parent, onlyFindSymbols: onlyFindSymbols)
         if node.identifier == nil {
             throw Error.unfindableMatch(node)
         }
@@ -282,22 +320,144 @@ struct PathHierarchy {
         return node.identifier
     }
     
-    private func findNode(path rawPath: String, parent: ResolvedIdentifier?, onlyFindSymbols: Bool) throws -> Node {
+    private func findNode(path rawPath: String, parentID: ResolvedIdentifier?, onlyFindSymbols: Bool) throws -> Node {
         // The search for a documentation element can be though of as 3 steps:
-        // First, parse the path into structured path components.
+        // - First, parse the path into structured path components.
+        // - Second, find nodes that match the beginning of the path as starting points for the search
+        // - Third, traverse the hierarchy from those starting points to search for the node.
         let (path, isAbsolute) = Self.parse(path: rawPath)
         guard !path.isEmpty else {
             throw Error.notFound(remaining: [], availableChildren: [])
         }
         
-        var parsedPathForError: [PathComponent] {
+        var remaining = path[...]
+        
+        // If the first path component is "tutorials" or "documentation" then use that information to narrow the search.
+        let isKnownTutorialPath      = remaining.first!.full == NodeURLGenerator.Path.tutorialsFolderName
+        let isKnownDocumentationPath = remaining.first!.full == NodeURLGenerator.Path.documentationFolderName
+        if isKnownDocumentationPath || isKnownTutorialPath {
+            // Skip this component since it isn't represented in the path hierarchy.
+            remaining.removeFirst()
+        }
+        
+        guard let firstComponent = remaining.first else {
+            throw Error.notFound(remaining: [], availableChildren: [])
+        }
+        
+        // A function to avoid eagerly computing the full path unless it needs to be presented in an error message.
+        func parsedPathForError() -> [PathComponent] {
             Self.parse(path: rawPath, omittingEmptyComponents: false).components
         }
         
-        // Second, find the node to start the search relative to.
-        // This may consume or or more path components. See implementation for details.
-        var remaining = path[...]
-        var node = try findRoot(parentID: parent, parsedPath: parsedPathForError, remaining: &remaining, isAbsolute: isAbsolute, onlyFindSymbols: onlyFindSymbols)
+        if !onlyFindSymbols {
+            // If non-symbol matches are possible there is a fixed order to try resolving the link:
+            // Articles match before tutorials which match before the tutorial overview page which match before symbols.
+            
+            // Non-symbols have a very shallow hierarchy so the simplified search peak at the first few layers and then searches only one subtree once if finds a probable match.
+            lookForArticleRoot: if !isKnownTutorialPath {
+                if articlesContainer.matches(firstComponent) {
+                    if let next = remaining.dropFirst().first {
+                        if !articlesContainer.anyChildMatches(next) {
+                            break lookForArticleRoot
+                        }
+                    }
+                    return try searchForNode(descendingFrom: articlesContainer, pathComponents: remaining.dropFirst(), parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+                } else if articlesContainer.anyChildMatches(firstComponent) {
+                    return try searchForNode(descendingFrom: articlesContainer, pathComponents: remaining, parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+                }
+            }
+            if !isKnownDocumentationPath {
+                if tutorialContainer.matches(firstComponent) {
+                    return try searchForNode(descendingFrom: tutorialContainer, pathComponents: remaining.dropFirst(), parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+                } else if tutorialContainer.anyChildMatches(firstComponent)  {
+                    return try searchForNode(descendingFrom: tutorialContainer, pathComponents: remaining, parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+                }
+                // The parent for tutorial overviews / technologies is "tutorials" which has already been removed above, so no need to check against that name.
+                else if tutorialOverviewContainer.anyChildMatches(firstComponent)  {
+                    return try searchForNode(descendingFrom: tutorialOverviewContainer, pathComponents: remaining, parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+                }
+            }
+        }
+        
+        // A function to avoid repeating the
+        func searchForNodeInModules() throws -> Node {
+            // Note: This captures `parentID`, `remaining`, and `parsedPathForError`.
+            if let moduleMatch = modules[firstComponent.full] ?? modules[firstComponent.name] {
+                return try searchForNode(descendingFrom: moduleMatch, pathComponents: remaining.dropFirst(), parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+            }
+            if modules.count == 1 {
+                do {
+                    return try searchForNode(descendingFrom: modules.first!.value, pathComponents: remaining, parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+                } catch {
+                    // Ignore this error and raise an error about not finding the module instead.
+                }
+            }
+            let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
+            throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)
+        }
+        
+        // A recursive function to traverse up the path hierarchy searching for the matching node
+        func searchForNodeUpTheHierarchy(from startingPoint: Node?, path: ArraySlice<PathComponent>) throws -> Node {
+            guard let possibleStartingPoint = startingPoint else {
+                // If the search has reached the top of the hierarchy, check the modules as a base case to break the recursion.
+                do {
+                    return try searchForNodeInModules()
+                } catch {
+                    // If the node couldn't be found in the modules, search the non-matching parent to achieve a more specific error message
+                    if let parentID = parentID {
+                        return try searchForNode(descendingFrom: lookup[parentID]!, pathComponents: path, parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+                    }
+                    throw error
+                }
+            }
+            
+            // If the path isn't empty we would have already found a node.
+            let firstComponent = path.first!
+            
+            // Keep track of the inner most error and raise that if no node is found.
+            var innerMostError: Swift.Error?
+            
+            // If the starting point's children match this component, descend the path hierarchy from there.
+            if possibleStartingPoint.anyChildMatches(firstComponent) {
+                do {
+                    return try searchForNode(descendingFrom: possibleStartingPoint, pathComponents: path, parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+                } catch {
+                    innerMostError = error
+                }
+            }
+            // It's possible that the component is ambiguous at the parent. Checking if this node matches the first component avoids that ambiguity.
+            if possibleStartingPoint.matches(firstComponent) {
+                do {
+                    return try searchForNode(descendingFrom: possibleStartingPoint, pathComponents: path.dropFirst(), parsedPathForError: parsedPathForError, onlyFindSymbols: onlyFindSymbols)
+                } catch {
+                    if innerMostError == nil {
+                        innerMostError = error
+                    }
+                }
+            }
+            
+            do {
+                return try searchForNodeUpTheHierarchy(from: possibleStartingPoint.parent, path: path)
+            } catch {
+                throw innerMostError ?? error
+            }
+        }
+        
+        if !isAbsolute, let parentID = parentID {
+            // If this is a relative link with a known starting point, search from that node up the hierarchy.
+            return try searchForNodeUpTheHierarchy(from: lookup[parentID]!, path: remaining)
+        }
+        return try searchForNodeInModules()
+    }
+    
+    private func searchForNode(
+        descendingFrom startingPoint: Node,
+        pathComponents: ArraySlice<PathComponent>,
+        parsedPathForError: () -> [PathComponent],
+        onlyFindSymbols: Bool
+    ) throws -> Node {
+        var node = startingPoint
+        var remaining = pathComponents[...]
         
         // Third, search for the match relative to the start node.
         if remaining.isEmpty {
@@ -307,12 +467,12 @@ struct PathHierarchy {
         
         // Search for the remaining components from the node
         while true {
-            let (children, pathComponent) = try findChildTree(node: &node, parsedPath: parsedPathForError, remaining: remaining)
+            let (children, pathComponent) = try findChildTree(node: &node, parsedPath: parsedPathForError(), remaining: remaining)
             
             do {
                 guard let child = try children.find(pathComponent.kind, pathComponent.hash) else {
                     // The search has ended with a node that doesn't have a child matching the next path component.
-                    throw makePartialResultError(node: node, parsedPath: parsedPathForError, remaining: remaining)
+                    throw makePartialResultError(node: node, parsedPath: parsedPathForError(), remaining: remaining)
                 }
                 node = child
                 remaining = remaining.dropFirst()
@@ -321,8 +481,8 @@ struct PathHierarchy {
                     return child
                 }
             } catch DisambiguationTree.Error.lookupCollision(let collisions) {
-                func wrappedCollisionError() -> Error {
-                    makeCollisionError(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
+                func handleWrappedCollision() throws -> Node {
+                    try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols)
                 }
                 
                 // See if the collision can be resolved by looking ahead on level deeper.
@@ -335,7 +495,7 @@ struct PathHierarchy {
                     for (node, _) in collisions {
                         guard let symbol = node.symbol else {
                             // Non-symbol collisions should have already been resolved
-                            throw wrappedCollisionError()
+                            return try handleWrappedCollision()
                         }
                         
                         let id = symbol.identifier.precise
@@ -345,7 +505,7 @@ struct PathHierarchy {
                         
                         guard uniqueCollisions.count < 2 else {
                             // Encountered more than one unique symbol
-                            throw wrappedCollisionError()
+                            return try handleWrappedCollision()
                         }
                     }
                     // A wrapped error would have been raised while iterating over the collection.
@@ -364,21 +524,45 @@ struct PathHierarchy {
                     return possibleMatches.first(where: { $0.symbol?.identifier.interfaceLanguage == "swift" }) ?? possibleMatches.first!
                 }
                 // Couldn't resolve the collision by look ahead.
-                throw makeCollisionError(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions)
+                return try handleCollision(node: node, parsedPath: parsedPathForError, remaining: remaining, collisions: collisions, onlyFindSymbols: onlyFindSymbols)
             }
         }
     }
                         
-    private func makeCollisionError(
+    private func handleCollision(
         node: Node,
-        parsedPath: [PathComponent],
+        parsedPath: () -> [PathComponent],
         remaining: ArraySlice<PathComponent>,
-        collisions: [(node: PathHierarchy.Node, disambiguation: String)]
-    ) -> Error {
-        return Error.lookupCollision(
+        collisions: [(node: PathHierarchy.Node, disambiguation: String)],
+        onlyFindSymbols: Bool
+    ) throws -> Node {
+        if let favoredMatch = collisions.singleMatch({ $0.node.isDisfavoredInCollision == false }) {
+            return favoredMatch.node
+        }
+        // If a module has the same name as the article root (which is named after the bundle display name) then its possible
+        // for an article a symbol to collide. Articles aren't supported in symbol links but symbols are supported in general
+        // documentation links (although the non-symbol result is prioritized).
+        //
+        // There is a later check that the returned node is a symbol for symbol links, but that won't happen if the link is a
+        // collision. To fully handle the collision in both directions, the check below uses `onlyFindSymbols` in the closure
+        // so that only symbol matches are returned for symbol links (when `onlyFindSymbols` is `true`) and non-symbol matches
+        // for general documentation links (when `onlyFindSymbols` is `false`).
+        //
+        // It's a more compact way to write
+        //
+        //     if onlyFindSymbols {
+        //        return $0.node.symbol != nil
+        //     } else {
+        //        return $0.node.symbol == nil
+        //     }
+        if let symbolOrNonSymbolMatch = collisions.singleMatch({ ($0.node.symbol != nil) == onlyFindSymbols }) {
+            return symbolOrNonSymbolMatch.node
+        }
+        
+        throw Error.lookupCollision(
             partialResult: (
                 node,
-                Array(parsedPath.dropLast(remaining.count))
+                Array(parsedPath().dropLast(remaining.count))
             ),
             remaining: Array(remaining),
             collisions: collisions.map { ($0.node, $0.disambiguation) }
@@ -402,7 +586,6 @@ struct PathHierarchy {
                 }
             )
         }
-        
         
         return Error.unknownName(
             partialResult: (
@@ -429,138 +612,28 @@ struct PathHierarchy {
             return (match, pathComponent)
         } else if let match = node.children[pathComponent.name] {
             return (match, pathComponent)
-        } else {
-            if node.name == pathComponent.name || node.name == pathComponent.full, let parent = node.parent {
-                // When multiple path components in a row have the same name it's possible that the search started at a node that's
-                // too deep in the hierarchy that won't find the final result.
-                // Check if a match would be found in the parent before raising an error.
-                if let match = parent.children[pathComponent.name] {
-                    node = parent
-                    return (match, pathComponent)
-                } else if let match = parent.children[pathComponent.full] {
-                    node = parent
-                    // The path component parsing may treat dash separated words as disambiguation information.
-                    // If the parsed name didn't match, also try the original.
-                    pathComponent.kind = nil
-                    pathComponent.hash = nil
-                    return (match, pathComponent)
-                }
-            }
         }
         // The search has ended with a node that doesn't have a child matching the next path component.
         throw makePartialResultError(node: node, parsedPath: parsedPath(), remaining: remaining)
     }
-    
-    /// Attempt to find the node to start the relative search relative to.
-    ///
+}
+
+private extension Sequence {
+    /// Returns the only element of the sequence that satisfies the given predicate.
     /// - Parameters:
-    ///   - parentID: An optional ID of the node to start the search relative to.
-    ///   - remaining: The parsed path components.
-    ///   - isAbsolute: If the parsed path represent an absolute documentation link.
-    ///   - onlyFindSymbols: If symbol results are required.
-    /// - Returns: The node to start the relative search relative to.
-    private func findRoot(parentID: ResolvedIdentifier?, parsedPath: @autoclosure () -> [PathComponent], remaining: inout ArraySlice<PathComponent>, isAbsolute: Bool, onlyFindSymbols: Bool) throws -> Node {
-        // If the first path component is "tutorials" or "documentation" then that
-        let isKnownTutorialPath = remaining.first!.full == NodeURLGenerator.Path.tutorialsFolderName
-        let isKnownDocumentationPath = remaining.first!.full == NodeURLGenerator.Path.documentationFolderName
-        if isKnownDocumentationPath || isKnownTutorialPath {
-            // Drop that component since it isn't represented in the path hierarchy.
-            remaining.removeFirst()
+    ///   - predicate: A closure that takes an element of the sequence as its argument and returns a Boolean value indicating whether the element is a match.
+    /// - Returns: The only element of the sequence that satisfies `predicate`, or `nil` if  multiple elements satisfy the predicate or if no element satisfy the predicate.
+    /// - Complexity: O(_n_), where _n_ is the length of the sequence.
+    func singleMatch(_ predicate: (Element) -> Bool) -> Element? {
+        var match: Element?
+        for element in self where predicate(element) {
+            guard match == nil else {
+                // Found a second match. No need to check the rest of the sequence.
+                return nil
+            }
+            match = element
         }
-        guard let component = remaining.first else {
-            throw Error.notFound(remaining: [], availableChildren: [])
-        }
-        
-        if !onlyFindSymbols {
-            // If non-symbol matches are possible there is a fixed order to try resolving the link:
-            // Articles match before tutorials which match before the tutorial overview page which match before symbols.
-            lookForArticleRoot: if !isKnownTutorialPath {
-                if articlesContainer.name == component.name || articlesContainer.name == component.full {
-                    if let next = remaining.dropFirst().first {
-                        if !articlesContainer.children.keys.contains(next.name) && !articlesContainer.children.keys.contains(next.full) {
-                            break lookForArticleRoot
-                        }
-                    }
-                    remaining = remaining.dropFirst()
-                    return articlesContainer
-                } else if articlesContainer.children.keys.contains(component.name) || articlesContainer.children.keys.contains(component.full)  {
-                    return articlesContainer
-                }
-            }
-            if !isKnownDocumentationPath {
-                if tutorialContainer.name == component.name || tutorialContainer.name == component.full {
-                    remaining = remaining.dropFirst()
-                    return tutorialContainer
-                } else if tutorialContainer.children.keys.contains(component.name) || tutorialContainer.children.keys.contains(component.full)  {
-                    return tutorialContainer
-                }
-                // The parent for tutorial overviews / technologies is "tutorials" which has already been removed above, so no need to check against that name.
-                else if tutorialOverviewContainer.children.keys.contains(component.name) || tutorialOverviewContainer.children.keys.contains(component.full)  {
-                    return tutorialOverviewContainer
-                }
-            }
-            if !isKnownTutorialPath && isAbsolute {
-                // If this is an absolute non-tutorial link, then the first component will be a module name.
-                if let matched = modules[component.name] ?? modules[component.full] {
-                    remaining = remaining.dropFirst()
-                    return matched
-                }
-            }
-        }
-        
-        func matches(node: Node, component: PathComponent) -> Bool {
-            if let symbol = node.symbol {
-                return node.name == component.name
-                && (component.kind == nil || component.kind == symbol.kind.identifier.identifier)
-                && (component.hash == nil || component.hash == symbol.identifier.precise.stableHashString)
-            } else {
-                return node.name == component.full
-            }
-        }
-        
-        if let parentID = parentID {
-            // If a parent ID was provided, start at that node and continue up the hierarchy until that node has a child that matches the first path components name.
-            var parentNode = lookup[parentID]!
-            let firstComponent = remaining.first!
-            // Check if the start node has a child that matches the first path components name.
-            if parentNode.children.keys.contains(firstComponent.name) || parentNode.children.keys.contains(firstComponent.full) {
-                return parentNode
-            }
-            // Check if the start node itself matches the first path components name.
-            if matches(node: parentNode, component: firstComponent) {
-                remaining = remaining.dropFirst()
-                return parentNode
-            }
-            while !parentNode.children.keys.contains(firstComponent.name) && !parentNode.children.keys.contains(firstComponent.full) {
-                guard let parent = parentNode.parent else {
-                    if matches(node: parentNode, component: firstComponent){
-                        remaining = remaining.dropFirst()
-                        return parentNode
-                    }
-                    if let matched = modules[component.name] ?? modules[component.full] {
-                        remaining = remaining.dropFirst()
-                        return matched
-                    }
-                    // No node up the hierarchy from the provided parent has a child that matches the first path component.
-                    // Go back to the provided parent node for diagnostic information about its available children.
-                    parentNode = lookup[parentID]!
-                    throw makePartialResultError(node: parentNode, parsedPath: parsedPath(), remaining: remaining)
-                }
-                parentNode = parent
-            }
-            return parentNode
-        }
-        
-        // If no parent ID was provided, check if the first path component is a module name.
-        if let matched = modules[component.name] ?? modules[component.full] {
-            remaining = remaining.dropFirst()
-            return matched
-        }
-        
-        // No place to start the search from could be found.
-        // It would be a nice future improvement to allow skipping the module and find top level symbols directly.
-        let topLevelNames = Set(modules.keys + [articlesContainer.name, tutorialContainer.name])
-        throw Error.notFound(remaining: Array(remaining), availableChildren: topLevelNames)
+        return match
     }
 }
 
@@ -583,11 +656,20 @@ extension PathHierarchy {
         /// The symbol, if a node has one.
         private(set) var symbol: SymbolGraph.Symbol?
         
+        /// If the path hierarchy should disfavor this node in a link collision.
+        ///
+        /// By default, nodes are not disfavored.
+        ///
+        /// If a favored node collides with a disfavored node the link will resolve to the favored node without
+        /// requiring any disambiguation. Referencing the disfavored node requires disambiguation.
+        var isDisfavoredInCollision: Bool
+        
         /// Initializes a symbol node.
         fileprivate init(symbol: SymbolGraph.Symbol!) {
             self.symbol = symbol
             self.name = symbol.pathComponents.last!
             self.children = [:]
+            self.isDisfavoredInCollision = false
         }
         
         /// Initializes a non-symbol node with a given name.
@@ -595,6 +677,7 @@ extension PathHierarchy {
             self.symbol = nil
             self.name = name
             self.children = [:]
+            self.isDisfavoredInCollision = false
         }
         
         /// Adds a descendant to this node, providing disambiguation information from the node's symbol.
@@ -628,6 +711,24 @@ extension PathHierarchy {
         }
     }
 }
+
+private extension PathHierarchy.Node {
+    func matches(_ component: PathHierarchy.PathComponent) -> Bool {
+        if let symbol = symbol {
+            return name == component.name
+            && (component.kind == nil || component.kind == symbol.kind.identifier.identifier)
+            && (component.hash == nil || component.hash == symbol.identifier.precise.stableHashString)
+        } else {
+            return name == component.full
+        }
+    }
+    
+    func anyChildMatches(_ component: PathHierarchy.PathComponent) -> Bool {
+        let keys = children.keys
+        return keys.contains(component.name) || keys.contains(component.full)
+    }
+}
+
 // MARK: Parsing documentation links
 
 /// All known symbol kind identifiers.
@@ -663,10 +764,16 @@ extension PathHierarchy {
         let isAbsolute = path.first == "/"
             || String(components.first ?? "") == NodeURLGenerator.Path.documentationFolderName
             || String(components.first ?? "") == NodeURLGenerator.Path.tutorialsFolderName
-       
+
+        // If there is a # character in the last component, split that into two components
         if let hashIndex = components.last?.firstIndex(of: "#") {
             let last = components.removeLast()
-            components.append(last[..<hashIndex])
+            // Allow anrhor-only links where there's nothing before #.
+            // In case the pre-# part is empty, and we're omitting empty components, don't add it in.
+            let pathName = last[..<hashIndex]
+            if !pathName.isEmpty || !omittingEmptyComponents {
+                components.append(pathName)
+            }
             
             let fragment = String(last[hashIndex...].dropFirst())
             return (components.map(Self.parse(pathComponent:)) + [PathComponent(full: fragment, name: fragment, kind: nil, hash: nil)], isAbsolute)
@@ -1082,10 +1189,10 @@ private extension PathHierarchy.Node {
             if let fragments = symbol[mixin: SymbolGraph.Symbol.DeclarationFragments.self]?.declarationFragments {
                 return fragments.map(\.spelling).joined().split(whereSeparator: { $0.isWhitespace || $0.isNewline }).joined(separator: " ")
             }
-            return context.symbolIndex[symbol.identifier.precise]!.name.description
+            return context.nodeWithSymbolIdentifier(symbol.identifier.precise)!.name.description
         }
         // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.
-        let reference = context.hierarchyBasedLinkResolver!.resolvedReferenceMap[identifier]!
+        let reference = context.hierarchyBasedLinkResolver.resolvedReferenceMap[identifier]!
         if reference.fragment != nil {
             return context.nodeAnchorSections[reference]!.title
         } else {
@@ -1403,3 +1510,4 @@ private extension SourceRange {
         return .makeRelativeRange(startColumn: startColumn, endColumn: startColumn + length)
     }
 }
+

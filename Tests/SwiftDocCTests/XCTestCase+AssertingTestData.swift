@@ -22,11 +22,12 @@ extension XCTestCase {
         symbolKind expectedSymbolKind: String? = nil,
         title expectedTitle: String,
         navigatorTitle expectedNavigatorTitle: String?,
-        abstract expectedAbstract: String,
+        abstract expectedAbstract: String?,
         declarationTokens expectedDeclarationTokens: [String]?,
         endpointTokens expectedEndpointTokens: [String]? = nil,
         httpParameters expectedHTTPParameters: [String]? = nil,
         httpBodyType expectedHTTPBodyType: String? = nil,
+        httpBodyParameters expectedHTTPBodyParameters: [String]? = nil,
         httpResponses expectedHTTPResponses: [UInt]? = nil,
         discussionSection expectedDiscussionSection: [String]?,
         topicSectionIdentifiers expectedTopicSectionIdentifiers: [String],
@@ -84,8 +85,9 @@ extension XCTestCase {
         
         XCTAssertEqual(
             (renderNode.primaryContentSections.compactMap { $0 as? RESTParametersRenderSection })
-                .flatMap(\.items)
-                .map(\.name),
+                .flatMap { section in
+                    section.items.map { "\($0.name)@\(section.source.rawValue)" }
+                },
             expectedHTTPParameters ?? [], // compactMap gives an empty [], but should treat it as match for nil, too
             failureMessageForField("rest parameters"),
             file: file,
@@ -97,6 +99,16 @@ extension XCTestCase {
                 .mimeType,
             expectedHTTPBodyType,
             failureMessageForField("rest body media type"),
+            file: file,
+            line: line
+        )
+        
+        XCTAssertEqual(
+            (renderNode.primaryContentSections.first(where: { nil != $0 as? RESTBodyRenderSection }) as? RESTBodyRenderSection)?
+                .parameters?
+                .map(\.name) ?? [],
+            expectedHTTPBodyParameters ?? [],
+            failureMessageForField("rest body parameters"),
             file: file,
             line: line
         )

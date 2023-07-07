@@ -600,6 +600,118 @@
           "spelling" : ")"
         }
       ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that sets the platform availability information for a documentation page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "`@Available` is analagous to the `@available` attribute in Swift: It allows you to specify a"
+          },
+          {
+            "text" : "platform version that the page relates to. To specify a platform and version, list the platform"
+          },
+          {
+            "text" : "name and use the `introduced` argument:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Available(macOS, introduced: \"12.0\")"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Any text can be given to the first argument, and will be displayed in the page's"
+          },
+          {
+            "text" : "availability data. The platforms `iOS`, `macOS`, `watchOS`, and `tvOS` will be matched"
+          },
+          {
+            "text" : "case-insensitively, but anything else will be printed verbatim."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "To provide a platform name with spaces in it, provide it as a quoted string:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Available(\"My Package\", introduced: \"1.0\")"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is available on both articles and documentation extension files. In extension"
+          },
+          {
+            "text" : "files, the information overrides any information from the symbol itself."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @Available(macOS, introduced: \"12.0\")"
+          },
+          {
+            "text" : "    @Available(iOS, introduced: \"15.0\")"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - platform: The platform that this argument's information applies to."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - introduced: The platform version that this page applies to."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
       "identifier" : {
         "interfaceLanguage" : "swift",
         "precise" : "__docc_universal_symbol_reference_$Available"
@@ -817,7 +929,13 @@
             "text" : "  - `download` indicates that the link is to a downloadable file. The button will be labeled \"Download\"."
           },
           {
-            "text" : "  - `link` indicates that the link is to an external webpage. The button will be labeled \"Visit\"."
+            "text" : "  - `link` indicates that the link is to an external webpage."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "     The button will be labeled \"Visit\" when used on article pages and \"View Source\" when used on sample code pages."
           },
           {
             "text" : "- The `label` parameter specifies the literal text to use as the button label."
@@ -1485,6 +1603,12 @@
           },
           {
             "text" : "with a row in a grid-based layout."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Create a column inside a ``Row`` by nesting a `@Column` directive within the content for an `@Row` directive."
           },
           {
             "text" : "- Parameters:"
@@ -2256,6 +2380,28 @@
           "spelling" : " {\n    ...\n}"
         }
       ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A block filled with an image."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - source: A reference to the source file for the media item."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - alt: Optional alternate text for an image."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
       "identifier" : {
         "interfaceLanguage" : "swift",
         "precise" : "__docc_universal_symbol_reference_$Image"
@@ -2817,6 +2963,9 @@
           },
           {
             "text" : "- ``SupportedLanguage``"
+          },
+          {
+            "text" : "- ``TitleHeading``"
           }
         ]
       },
@@ -2951,7 +3100,7 @@
       "docComment" : {
         "lines" : [
           {
-            "text" : "Use Option directives to adjust DocC's default behaviors when rendering a page."
+            "text" : "A directive to adjust Swift-DocC's default behaviors when rendering a page."
           },
           {
             "text" : ""
@@ -3077,6 +3226,184 @@
         },
         {
           "kind" : "typeIdentifier",
+          "spelling" : "PageColor"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "color"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Color"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that specifies an accent color for a given documentation page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use the `PageColor` directive to provide a hint to the renderer as to how"
+          },
+          {
+            "text" : "the page should be accented with color. The renderer may use this color,"
+          },
+          {
+            "text" : "depending on the context, as a foundation for other colors used on the"
+          },
+          {
+            "text" : "page. For example, Swift-DocC-Render uses this color as the primary"
+          },
+          {
+            "text" : "background color of a page's introduction section and adjusts other"
+          },
+          {
+            "text" : "elements in the introduction section to account for the new background."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @PageColor(orange)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - color: A context-dependent, standard color."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `blue`: A context-dependent blue color."
+          },
+          {
+            "text" : "     - term `gray`: A context-dependent gray color."
+          },
+          {
+            "text" : "     - term `green`: A context-dependent green color."
+          },
+          {
+            "text" : "     - term `orange`: A context-dependent orange color."
+          },
+          {
+            "text" : "     - term `purple`: A context-dependent purple color."
+          },
+          {
+            "text" : "     - term `red`: A context-dependent red color."
+          },
+          {
+            "text" : "     - term `yellow`: A context-dependent yellow color."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$PageColor"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$PageColor",
+            "spelling" : "PageColor"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "PageColor"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "color"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Color"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "PageColor"
+      },
+      "pathComponents" : [
+        "PageColor"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
           "spelling" : "PageImage"
         },
         {
@@ -3136,6 +3463,55 @@
           "spelling" : ")"
         }
       ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "Associates an image with a page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "You can use this directive to set the image used when rendering a user-interface element representing the page."
+          },
+          {
+            "text" : "For example, use the page image directive to customize the icon used to represent this page in the navigation sidebar,"
+          },
+          {
+            "text" : "or the card image used to represent this page when using the ``Links`` directive and the ``Links\/detailedGrid``"
+          },
+          {
+            "text" : "visual style."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - purpose: The image's purpose."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `icon`: The image will be used when representing the page as an icon, such as in the navigation sidebar."
+          },
+          {
+            "text" : "     - term `card`: The image will be used when representing the page as a card, such as in grid styled Topics sections."
+          },
+          {
+            "text" : "  - source: The base file name of an image in your documentation catalog."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - alt: Alternative text that describes the image to screen readers."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
       "identifier" : {
         "interfaceLanguage" : "swift",
         "precise" : "__docc_universal_symbol_reference_$PageImage"
@@ -3630,7 +4006,7 @@
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - numberOfColumns: The number of columns in this row."
+            "text" : "  - numberOfColumns: The number of columns available in this row."
           },
           {
             "text" : "     **(optional)**"
@@ -4353,6 +4729,12 @@
             "text" : "tab within a tab-based layout."
           },
           {
+            "text" : ""
+          },
+          {
+            "text" : " To add a new tab to a ``TabNavigator``, add  a `@Tab` directive within the content of the `@TabNavigator` directive."
+          },
+          {
             "text" : "- Parameters:"
           },
           {
@@ -4677,6 +5059,151 @@
       },
       "pathComponents" : [
         "TechnologyRoot"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TitleHeading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "heading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for customizing the text of a page's title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The ``heading`` property will override the page's default title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "@TitleHeading accepts an unnamed parameter containing containing the page's title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a top-level ``Metadata`` directive:"
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "   @TitleHeading(\"Release Notes\")"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - heading: An unnamed parameter containing containing the page-title’s heading text."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$TitleHeading"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TitleHeading",
+            "spelling" : "TitleHeading"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "TitleHeading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "heading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "TitleHeading"
+      },
+      "pathComponents" : [
+        "TitleHeading"
       ]
     },
     {
@@ -5285,6 +5812,34 @@
           "spelling" : " {\n    ...\n}"
         }
       ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A block filled with a video."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - source: A reference to the source file for the media item."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - alt: Alternate text describing the video."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "  - poster: An image to be shown when the video isn't playing."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
       "identifier" : {
         "interfaceLanguage" : "swift",
         "precise" : "__docc_universal_symbol_reference_$Video"

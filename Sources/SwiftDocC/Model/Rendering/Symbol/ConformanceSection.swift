@@ -87,10 +87,16 @@ public struct ConformanceSection: Codable, Equatable {
         }
         
         // Adds "," or ", and" to the requirements wherever necessary.
-        let merged = zip(rendered, separators).flatMap({ $0 + [$1] })
-            + rendered[separators.count...].flatMap({ $0 })
+        var merged: [RenderInlineContent] = []
+        merged.reserveCapacity(rendered.count * 4) // 3 for each constraint and 1 for each separator
+        for (constraint, separator) in zip(rendered, separators) {
+            merged.append(contentsOf: constraint)
+            merged.append(separator)
+        }
+        merged.append(contentsOf: rendered.last!)
+        merged.append(.text("."))
         
-        self.constraints = merged + [RenderInlineContent.text(".")]
+        self.constraints = merged
     }
     
     private static let selfPrefix = "Self."

@@ -19,7 +19,7 @@ public extension DocumentationServer {
         peer: DocumentationServer?
     ) -> DocumentationServer {
         let server = DocumentationServer(qualityOfService: qualityOfService)
-        server.register(service: ConvertService(linkResolvingServer: peer))
+        server.register(service: ConvertService(linkResolvingServer: peer, allowArbitraryCatalogDirectories: false))
         return server
     }
 }

@@ -111,6 +111,9 @@ public struct ConvertRequest: Codable {
     /// the client to pass a more up-to-date value than is available in the symbol graph.
     public var overridingDocumentationComments: [String: [Line]]? = nil
     
+    /// Whether the conversion's rendered documentation should include source file location metadata.
+    public var emitSymbolSourceFileURIs: Bool
+    
     /// The article and documentation extension file data included in the documentation bundle to convert.
     ///
     /// ## See Also
@@ -126,6 +129,13 @@ public struct ConvertRequest: Codable {
     /// ## See Also
     /// - ``DocumentationBundle/miscResourceURLs``
     public var miscResourceURLs: [URL]
+    
+    /// The symbol identifiers that have an expanded documentation page available if they meet the associated access level requirement.
+    ///
+    /// DocC sets the ``RenderMetadata/hasExpandedDocumentationForSymbols`` property to `true`
+    /// for these symbols if they meet the provided  requirements, so that renderers can display a "View More" link
+    /// that navigates the user to the full version of the documentation page.
+    public var symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]?
     
     /// The default code listing language for the documentation bundle to convert.
     ///
@@ -166,6 +176,7 @@ public struct ConvertRequest: Codable {
         self.tutorialFiles = []
         self.miscResourceURLs = miscResourceURLs
         self.featureFlags = FeatureFlags()
+        self.emitSymbolSourceFileURIs = true
         
         self.bundleInfo = DocumentationBundle.Info(
             displayName: displayName,
@@ -173,6 +184,8 @@ public struct ConvertRequest: Codable {
             version: version,
             defaultCodeListingLanguage: defaultCodeListingLanguage
         )
+        
+        self.symbolIdentifiersWithExpandedDocumentation = nil
     }
     
     /// Creates a request to convert in-memory documentation.
@@ -185,11 +198,14 @@ public struct ConvertRequest: Codable {
     ///   - symbolGraphs: The symbols graph data included in the documentation bundle to convert.
     ///   - overridingDocumentationComments: The mapping of external symbol identifiers to lines of a
     ///   documentation comment that overrides the value in the symbol graph.
+    ///   - emitSymbolSourceFileURIs: Whether the conversion's rendered documentation should include source file location metadata.
     ///   - knownDisambiguatedSymbolPathComponents: The mapping of external symbol identifiers to
     ///   known disambiguated symbol path components.
     ///   - markupFiles: The article and documentation extension file data included in the documentation bundle to convert.
     ///   - tutorialFiles: The tutorial file data included in the documentation bundle to convert.
     ///   - miscResourceURLs: The on-disk resources in the documentation bundle to convert.
+    ///   - symbolIdentifiersWithExpandedDocumentation: A dictionary of identifiers to requirements for these symbols to have expanded
+    ///   documentation available.
     public init(
         bundleInfo: DocumentationBundle.Info,
         featureFlags: FeatureFlags = FeatureFlags(),
@@ -200,9 +216,11 @@ public struct ConvertRequest: Codable {
         symbolGraphs: [Data],
         overridingDocumentationComments: [String: [Line]]? = nil,
         knownDisambiguatedSymbolPathComponents: [String: [String]]? = nil,
+        emitSymbolSourceFileURIs: Bool = true,
         markupFiles: [Data],
         tutorialFiles: [Data] = [],
-        miscResourceURLs: [URL]
+        miscResourceURLs: [URL],
+        symbolIdentifiersWithExpandedDocumentation: [String: ExpandedDocumentationRequirements]? = nil
     ) {
         self.externalIDsToConvert = externalIDsToConvert
         self.documentPathsToConvert = documentPathsToConvert
@@ -211,11 +229,19 @@ public struct ConvertRequest: Codable {
         self.symbolGraphs = symbolGraphs
         self.overridingDocumentationComments = overridingDocumentationComments
         self.knownDisambiguatedSymbolPathComponents = knownDisambiguatedSymbolPathComponents
+        
+        // The default value for this is `true` to enable the inclusion of symbol declaration file paths
+        // in the produced render json by default.
+        // This default to true, because the render nodes created by `ConvertService` are intended for
+        // local uses of documentation where this information could be relevant and we don't have the
+        // privacy concerns that come with including this information in public releases of docs.
+        self.emitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.markupFiles = markupFiles
         self.tutorialFiles = tutorialFiles
         self.miscResourceURLs = miscResourceURLs
         self.bundleInfo = bundleInfo
         self.featureFlags = featureFlags
+        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
     }
 }
 
@@ -273,6 +299,19 @@ extension ConvertRequest {
         public init(line: Int, character: Int) {
             self.line = line
             self.character = character
+        }
+    }
+    
+    /// Represents any requirements needed for a symbol to have additional documentation available in the client.
+    public struct ExpandedDocumentationRequirements: Codable {
+        /// Access control levels required for the symbol to have additional documentation available.
+        public let accessControlLevels: [String]
+        /// Whether the client provides additional documentation for the symbol despite it being prefixed with an underscore.
+        public let canBeUnderscored: Bool
+        
+        public init(accessControlLevels: [String], canBeUnderscored: Bool = false) {
+            self.accessControlLevels = accessControlLevels
+            self.canBeUnderscored = canBeUnderscored
         }
     }
 }

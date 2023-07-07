@@ -230,7 +230,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let source = """
             # My Article
             My introduction.
-            My exposè.
+            My exposé.
             My conclusion.
             """
             let document = Document(parsing: source, options: .parseBlockDirectives)
@@ -247,7 +247,7 @@ class RenderNodeTranslatorTests: XCTestCase {
             let source = """
             # My Article
             My introduction.
-            My exposè.
+            My exposé.
             My conclusion.
             ## Topics
             ### Basics
@@ -1014,6 +1014,37 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(l.syntax, "swift")
         XCTAssertEqual(l.code, ["func foo() {}"])
     }
+
+    func testNestedSnippetSliceToCodeListing() throws {
+        let (bundle, context) = try testBundleAndContext(named: "Snippets")
+        let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Snippets/Snippets", sourceLanguage: .swift)
+        let article = try XCTUnwrap(context.entity(with: reference).semantic as? Article)
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: reference, source: nil)
+        let renderNode = try XCTUnwrap(translator.visitArticle(article) as? RenderNode)
+        let discussion = try XCTUnwrap(renderNode.primaryContentSections.first(where: { $0.kind == .content }) as? ContentRenderSection)
+
+        let lastTabNavigator = try XCTUnwrap(discussion.content.indices.last {
+            guard case .tabNavigator = discussion.content[$0] else {
+                return false
+            }
+            return true
+        })
+
+        guard case let .tabNavigator(t) = discussion.content[lastTabNavigator] else {
+            XCTFail("Missing snippet slice code block")
+            return
+        }
+
+        let codeListing = t.tabs.last?.content.last
+
+        guard case let .codeListing(l) = codeListing else {
+            XCTFail("Missing nested snippet inside TabNavigator")
+            return
+        }
+
+        XCTAssertEqual(l.syntax, "swift")
+        XCTAssertEqual(l.code, ["middle()"])
+    }
     
     func testSnippetSliceTrimsIndentation() throws {
         let (bundle, context) = try testBundleAndContext(named: "Snippets")
@@ -1149,7 +1180,7 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(tabNavigator.tabs[2].content.count, 1)
     }
     
-    func testCustomPageImage() throws {
+    func testRenderNodeMetadata() throws {
          let (bundle, context) = try testBundleAndContext(named: "BookLikeContent")
          let reference = ResolvedTopicReference(
              bundleIdentifier: bundle.identifier,
@@ -1220,5 +1251,56 @@ class RenderNodeTranslatorTests: XCTestCase {
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.keys.first, "country")
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.values.count, 1)
         XCTAssertEqual(roundTrippedArticle.metadata.customMetadata.values.first, "Belgium")
+        
+        XCTAssertEqual(
+            roundTrippedArticle.metadata.color?.standardColorIdentifier,
+            "yellow"
+        )
+
+        XCTAssertEqual(roundTrippedArticle.metadata.roleHeading, "Book-Like Content")
+        XCTAssertEqual(roundTrippedArticle.metadata.role, "article")
      }
+    
+    func testPageColorMetadataInSymbolExtension() throws {
+        let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/TestBed",
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+   
+        let encodedSymbol = try JSONEncoder().encode(renderNode)
+        let roundTrippedSymbol = try JSONDecoder().decode(RenderNode.self, from: encodedSymbol)
+        XCTAssertEqual(roundTrippedSymbol.metadata.color?.standardColorIdentifier, "purple")
+    }
+
+    func testTitleHeadingMetadataInSymbolExtension() throws {
+        let (bundle, context) = try testBundleAndContext(named: "MixedManualAutomaticCuration")
+        let reference = ResolvedTopicReference(
+            bundleIdentifier: bundle.identifier,
+            path: "/documentation/TestBed",
+            sourceLanguage: .swift
+        )
+        let symbol = try XCTUnwrap(context.entity(with: reference).semantic as? Symbol)
+        var translator = RenderNodeTranslator(
+            context: context,
+            bundle: bundle,
+            identifier: reference,
+            source: nil
+        )
+        let renderNode = try XCTUnwrap(translator.visitSymbol(symbol) as? RenderNode)
+   
+        let encodedSymbol = try JSONEncoder().encode(renderNode)
+        let roundTrippedSymbol = try JSONDecoder().decode(RenderNode.self, from: encodedSymbol)
+        XCTAssertEqual(roundTrippedSymbol.metadata.roleHeading, "TestBed Notes")
+        XCTAssertEqual(roundTrippedSymbol.metadata.role, "collection")
+    }
 }

@@ -175,9 +175,23 @@ struct RenderContentCompiler: MarkupVisitor {
             useOverriding = false
         } else if let overridingTitle = overridingTitle,
                   overridingTitle.hasPrefix(ResolvedTopicReference.urlScheme + ":"),
-                  destination.hasPrefix(ResolvedTopicReference.urlScheme + "://"),
-                  destination.hasSuffix(overridingTitle.dropFirst((ResolvedTopicReference.urlScheme + ":").count)) { // If the link is a transformed doc link, we don't use overriding info
-            useOverriding = false
+                  destination.hasPrefix(ResolvedTopicReference.urlScheme + "://")
+        {
+            // The overriding title looks like a documentation link. Escape it like a resolved reference string to compare it with the destination.
+            let withoutScheme = overridingTitle.dropFirst((ResolvedTopicReference.urlScheme + ":").count)
+            if destination.hasSuffix(withoutScheme) {
+                useOverriding = false
+            } else {
+                let escapedTitle: String
+                if let fragmentIndex = withoutScheme.firstIndex(of: "#") {
+                    let escapedFragment = withoutScheme[fragmentIndex...].dropFirst().addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) ?? ""
+                    escapedTitle = "\(urlReadablePath(withoutScheme[..<fragmentIndex]))#\(escapedFragment)"
+                } else {
+                    escapedTitle = urlReadablePath(withoutScheme)
+                }
+                
+                useOverriding = !destination.hasSuffix(escapedTitle) // If the link is a transformed doc link, we don't use overriding info
+            }
         } else {
             useOverriding = true
         }
@@ -192,6 +206,17 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func resolveTopicReference(_ destination: String) -> ResolvedTopicReference? {
+        if let cached = context.referenceIndex[destination] {
+            if let node = context.topicGraph.nodeWithReference(cached), !context.topicGraph.isLinkable(node.reference) {
+                return nil
+            }
+            collectedTopicReferences.append(cached)
+            return cached
+        }
+        
+        // FIXME: Links from this build already exist in the reference index and don't need to be resolved again.
+        // https://github.com/apple/swift-docc/issues/581
+
         guard let validatedURL = ValidatedURL(parsingAuthoredLink: destination) else {
             return nil
         }
@@ -215,7 +240,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
 
     func resolveSymbolReference(destination: String) -> ResolvedTopicReference? {
-        if let cached = context.documentationCacheBasedLinkResolver.referenceFor(absoluteSymbolPath: destination, parent: identifier) {
+        if let cached = context.referenceIndex[destination] {
             return cached
         }
 
@@ -250,7 +275,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitLineBreak(_ lineBreak: LineBreak) -> [RenderContent] {
-        return [RenderInlineContent.text(" ")]
+        return [RenderInlineContent.text("\n")]
     }
     
     mutating func visitEmphasis(_ emphasis: Emphasis) -> [RenderContent] {
@@ -321,40 +346,12 @@ struct RenderContentCompiler: MarkupVisitor {
     }
 
     mutating func visitBlockDirective(_ blockDirective: BlockDirective) -> [RenderContent] {
-        switch blockDirective.name {
-        case Snippet.directiveName:
-            guard let snippet = Snippet(from: blockDirective, for: bundle, in: context) else {
-                return []
-            }
-            
-            guard let snippetReference = resolveSymbolReference(destination: snippet.path),
-                  let snippetEntity = try? context.entity(with: snippetReference),
-                  let snippetSymbol = snippetEntity.symbol,
-                  let snippetMixin = snippetSymbol.mixins[SymbolGraph.Symbol.Snippet.mixinKey] as? SymbolGraph.Symbol.Snippet else {
-                return []
-            }
-            
-            if let requestedSlice = snippet.slice,
-               let requestedLineRange = snippetMixin.slices[requestedSlice] {
-                // Render only the slice.
-                let lineRange = requestedLineRange.lowerBound..<min(requestedLineRange.upperBound, snippetMixin.lines.count)
-                let lines = snippetMixin.lines[lineRange]
-                let minimumIndentation = lines.map { $0.prefix { $0.isWhitespace }.count }.min() ?? 0
-                let trimmedLines = lines.map { String($0.dropFirst(minimumIndentation)) }
-                return [RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: trimmedLines, metadata: nil))]
-            } else {
-                // Render the whole snippet with its explanation content.
-                let docCommentContent = snippetEntity.markup.children.flatMap { self.visit($0) }
-                let code = RenderBlockContent.codeListing(.init(syntax: snippetMixin.language, code: snippetMixin.lines, metadata: nil))
-                return docCommentContent + [code]
-            }
-        default:
-            guard let renderableDirective = DirectiveIndex.shared.renderableDirectives[blockDirective.name] else {
-                return []
-            }
-            
-            return renderableDirective.render(blockDirective, with: &self)
+
+        guard let renderableDirective = DirectiveIndex.shared.renderableDirectives[blockDirective.name] else {
+            return []
         }
+            
+        return renderableDirective.render(blockDirective, with: &self)
     }
 
     func defaultVisit(_ markup: Markup) -> [RenderContent] {

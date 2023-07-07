@@ -169,9 +169,13 @@ extension Docc {
 
         /// A user-provided value that is true if experimental Doxygen support should be enabled.
         ///
-        /// Defaults to false.
+        /// > Important: This flag is deprecated now that the feature is enabled by default, and will be removed in a future release.
         @Flag(help: .hidden)
+        @available(*, deprecated, message: "Doxygen support is now enabled by default.")
         public var experimentalParseDoxygenCommands = false
+
+        @Flag(help: "Experimental: allow catalog directories without the `.docc` extension.")
+        var allowArbitraryCatalogDirectories = false
 
         // MARK: - Info.plist fallbacks
         

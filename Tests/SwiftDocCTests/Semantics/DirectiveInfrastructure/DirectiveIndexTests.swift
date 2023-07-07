@@ -36,6 +36,7 @@ class DirectiveIndexTests: XCTestCase {
                 "Links",
                 "Metadata",
                 "Options",
+                "PageColor",
                 "PageImage",
                 "PageKind",
                 "Redirected",
@@ -47,6 +48,7 @@ class DirectiveIndexTests: XCTestCase {
                 "Tab",
                 "TabNavigator",
                 "TechnologyRoot",
+                "TitleHeading",
                 "TopicsVisualStyle",
                 "Tutorial",
                 "TutorialReference",
@@ -64,6 +66,7 @@ class DirectiveIndexTests: XCTestCase {
                 "Links",
                 "Row",
                 "Small",
+                "Snippet",
                 "TabNavigator",
                 "Video",
             ]

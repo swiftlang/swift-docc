@@ -34,10 +34,13 @@ public struct ConvertService: DocumentationService {
     
     /// A peer server that can be used for resolving links.
     var linkResolvingServer: DocumentationServer?
-    
+
+    private let allowArbitraryCatalogDirectories: Bool
+
     /// Creates a conversion service, which converts in-memory documentation data.
-    public init(linkResolvingServer: DocumentationServer? = nil) {
+    public init(linkResolvingServer: DocumentationServer? = nil, allowArbitraryCatalogDirectories: Bool) {
         self.linkResolvingServer = linkResolvingServer
+        self.allowArbitraryCatalogDirectories = allowArbitraryCatalogDirectories
     }
     
     init(
@@ -46,6 +49,7 @@ public struct ConvertService: DocumentationService {
     ) {
         self.converter = converter
         self.linkResolvingServer = linkResolvingServer
+        self.allowArbitraryCatalogDirectories = false
     }
     
     public func process(
@@ -127,7 +131,10 @@ public struct ConvertService: DocumentationService {
             if let bundleLocation = request.bundleLocation {
                 // If an on-disk bundle is provided, convert it.
                 // Additional symbol graphs and markup are ignored for now.
-                provider = try LocalFileSystemDataProvider(rootURL: bundleLocation)
+                provider = try LocalFileSystemDataProvider(
+                    rootURL: bundleLocation,
+                    allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
+                )
             } else {
                 // Otherwise, convert the in-memory content.
                 var inMemoryProvider = InMemoryContentDataProvider()
@@ -149,6 +156,7 @@ public struct ConvertService: DocumentationService {
             // Enable support for generating documentation for standalone articles and tutorials.
             context.allowsRegisteringArticlesWithoutTechnologyRoot = true
             context.allowsRegisteringUncuratedTutorials = true
+            context.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved = true
             
             context.configureSymbolGraph = { symbolGraph in
                 for (symbolIdentifier, overridingDocumentationComment) in request.overridingDocumentationComments ?? [:] {
@@ -184,13 +192,9 @@ public struct ConvertService: DocumentationService {
                     fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 ),
-                // We're enabling the inclusion of symbol declaration file paths
-                // in the produced render json here because the render nodes created by
-                // `ConvertService` are intended for local uses of documentation where
-                // this information could be relevant and we don't have the privacy concerns
-                // that come with including this information in public releases of docs.
-                emitSymbolSourceFileURIs: true,
-                emitSymbolAccessLevels: true
+                emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
+                emitSymbolAccessLevels: true,
+                symbolIdentifiersWithExpandedDocumentation: request.symbolIdentifiersWithExpandedDocumentation
             )
 
             // Run the conversion.
@@ -257,9 +261,7 @@ public struct ConvertService: DocumentationService {
         baseReferenceStore: RenderReferenceStore?
     ) -> RenderReferenceStore {
         let uncuratedArticles = context.uncuratedArticles.map { ($0, isDocumentationExtensionContent: false) }
-        let uncuratedDocumentationExtensions = context.uncuratedDocumentationExtensions.flatMap { reference, articles in
-            articles.map { article in ((reference, article), isDocumentationExtensionContent: true) }
-        }
+        let uncuratedDocumentationExtensions = context.uncuratedDocumentationExtensions.map { ($0, isDocumentationExtensionContent: true) }
         let topicContent = (uncuratedArticles + uncuratedDocumentationExtensions)
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value

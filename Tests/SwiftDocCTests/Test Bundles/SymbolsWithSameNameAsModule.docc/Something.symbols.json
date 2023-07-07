@@ -1,0 +1,729 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 6,
+      "patch": 0
+    },
+    "generator": "Apple Swift version 5.9 (swiftlang-5.9.0.100.22 clang-1500.0.7.24.100)"
+  },
+  "module": {
+    "name": "Something",
+    "platform": {
+      "architecture": "arm64",
+      "vendor": "apple",
+      "operatingSystem": {
+        "name": "macosx",
+        "minimumVersion": {
+          "major": 14,
+          "minor": 0
+        }
+      }
+    }
+  },
+  "symbols": [
+    {
+      "kind": {
+        "identifier": "swift.enum.case",
+        "displayName": "Case"
+      },
+      "identifier": {
+        "precise": "s:9SomethingAAVAAO5firstyA2CmF",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Something",
+        "Something",
+        "first"
+      ],
+      "names": {
+        "title": "Something.Something.first",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "case"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "first"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "case"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "first"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/Something/TypeNameCollisions.swift",
+        "position": {
+          "line": 15,
+          "character": 13
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:9Something7WrapperV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Wrapper"
+      ],
+      "names": {
+        "title": "Wrapper",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Wrapper"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "struct"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Wrapper"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Wrapper"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/Something/TypeNameCollisions.swift",
+        "position": {
+          "line": 21,
+          "character": 14
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Instance Property"
+      },
+      "identifier": {
+        "precise": "s:9Something7WrapperVAAV5thirdSivp",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Wrapper",
+        "Something",
+        "third"
+      ],
+      "names": {
+        "title": "third",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "var"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "third"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "var"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "third"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/Something/TypeNameCollisions.swift",
+        "position": {
+          "line": 24,
+          "character": 19
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.func.op",
+        "displayName": "Operator"
+      },
+      "identifier": {
+        "precise": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9SomethingAAVAAO",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Something",
+        "Something",
+        "!=(_:_:)"
+      ],
+      "names": {
+        "title": "!=(_:_:)",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "static"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "keyword",
+            "spelling": "func"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "!="
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "text",
+            "spelling": "("
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Self"
+          },
+          {
+            "kind": "text",
+            "spelling": ", "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Self"
+          },
+          {
+            "kind": "text",
+            "spelling": ") -> "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Bool",
+            "preciseIdentifier": "s:Sb"
+          }
+        ]
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "lhs",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "lhs"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Self"
+              }
+            ]
+          },
+          {
+            "name": "rhs",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "rhs"
+              },
+              {
+                "kind": "text",
+                "spelling": ": "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Self"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Bool",
+            "preciseIdentifier": "s:Sb"
+          }
+        ]
+      },
+      "swiftExtension": {
+        "extendedModule": "Swift",
+        "typeKind": "swift.protocol"
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "static"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "keyword",
+          "spelling": "func"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "!="
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "text",
+          "spelling": "("
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "lhs"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Self"
+        },
+        {
+          "kind": "text",
+          "spelling": ", "
+        },
+        {
+          "kind": "internalParam",
+          "spelling": "rhs"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Self"
+        },
+        {
+          "kind": "text",
+          "spelling": ") -> "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Bool",
+          "preciseIdentifier": "s:Sb"
+        }
+      ],
+      "accessLevel": "public"
+    },
+    {
+      "kind": {
+        "identifier": "swift.property",
+        "displayName": "Instance Property"
+      },
+      "identifier": {
+        "precise": "s:9SomethingAAV6secondSivp",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Something",
+        "second"
+      ],
+      "names": {
+        "title": "second",
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "var"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "second"
+          },
+          {
+            "kind": "text",
+            "spelling": ": "
+          },
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Int",
+            "preciseIdentifier": "s:Si"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "var"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "second"
+        },
+        {
+          "kind": "text",
+          "spelling": ": "
+        },
+        {
+          "kind": "typeIdentifier",
+          "spelling": "Int",
+          "preciseIdentifier": "s:Si"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/Something/TypeNameCollisions.swift",
+        "position": {
+          "line": 17,
+          "character": 15
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:9SomethingAAV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Something"
+      ],
+      "names": {
+        "title": "Something",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "struct"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:///Users/username/path/to/Something/TypeNameCollisions.swift",
+        "module": "Something",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 11,
+                "character": 4
+              },
+              "end": {
+                "line": 11,
+                "character": 49
+              }
+            },
+            "text": "A top-level type names the same as the module"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Something"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/Something/TypeNameCollisions.swift",
+        "position": {
+          "line": 12,
+          "character": 14
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.struct",
+        "displayName": "Structure"
+      },
+      "identifier": {
+        "precise": "s:9Something7WrapperVAAV",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Wrapper",
+        "Something"
+      ],
+      "names": {
+        "title": "Wrapper.Something",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "struct"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ]
+      },
+      "docComment": {
+        "uri": "file:///Users/username/path/to/Something/TypeNameCollisions.swift",
+        "module": "Something",
+        "lines": [
+          {
+            "range": {
+              "start": {
+                "line": 22,
+                "character": 8
+              },
+              "end": {
+                "line": 22,
+                "character": 84
+              }
+            },
+            "text": "An inner type with the same name as the module and as other top-level types."
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "struct"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Something"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/Something/TypeNameCollisions.swift",
+        "position": {
+          "line": 23,
+          "character": 18
+        }
+      }
+    },
+    {
+      "kind": {
+        "identifier": "swift.enum",
+        "displayName": "Enumeration"
+      },
+      "identifier": {
+        "precise": "s:9SomethingAAVAAO",
+        "interfaceLanguage": "swift"
+      },
+      "pathComponents": [
+        "Something",
+        "Something"
+      ],
+      "names": {
+        "title": "Something.Something",
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "keyword",
+            "spelling": "enum"
+          },
+          {
+            "kind": "text",
+            "spelling": " "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Something"
+          }
+        ]
+      },
+      "declarationFragments": [
+        {
+          "kind": "keyword",
+          "spelling": "enum"
+        },
+        {
+          "kind": "text",
+          "spelling": " "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Something"
+        }
+      ],
+      "accessLevel": "public",
+      "location": {
+        "uri": "file:///Users/username/path/to/Something/TypeNameCollisions.swift",
+        "position": {
+          "line": 14,
+          "character": 16
+        }
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "kind": "memberOf",
+      "source": "s:9Something7WrapperVAAV",
+      "target": "s:9Something7WrapperV"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:9SomethingAAVAAO",
+      "target": "s:SH",
+      "targetFallback": "Swift.Hashable"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:9SomethingAAVAAO5firstyA2CmF",
+      "target": "s:9SomethingAAVAAO"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:9SomethingAAVAAO",
+      "target": "s:9SomethingAAV"
+    },
+    {
+      "kind": "conformsTo",
+      "source": "s:9SomethingAAVAAO",
+      "target": "s:SQ",
+      "targetFallback": "Swift.Equatable"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:9SomethingAAV6secondSivp",
+      "target": "s:9SomethingAAV"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:9Something7WrapperVAAV5thirdSivp",
+      "target": "s:9Something7WrapperVAAV"
+    },
+    {
+      "kind": "memberOf",
+      "source": "s:SQsE2neoiySbx_xtFZ::SYNTHESIZED::s:9SomethingAAVAAO",
+      "target": "s:9SomethingAAVAAO",
+      "sourceOrigin": {
+        "identifier": "s:SQsE2neoiySbx_xtFZ",
+        "displayName": "Equatable.!=(_:_:)"
+      }
+    }
+  ]
+}

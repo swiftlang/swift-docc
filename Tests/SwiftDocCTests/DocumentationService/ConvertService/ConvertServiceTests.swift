@@ -12,6 +12,7 @@ import XCTest
 import Foundation
 @testable import SwiftDocC
 import SymbolKit
+import SwiftDocCTestUtilities
 
 class ConvertServiceTests: XCTestCase {
     private let testBundleInfo = DocumentationBundle.Info(
@@ -188,8 +189,42 @@ class ConvertServiceTests: XCTestCase {
             
             XCTAssertEqual(
                 renderNode.metadata.remoteSource?.url.absoluteString,
-                "file:///private/tmp/test.swift#L2"
+                "doc-source-file:///private/tmp/test.swift#L2"
             )
+        }
+    }
+    
+    func testRemoteSourceInformationOptOut() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            emitSymbolSourceFileURIs: false,
+            markupFiles: [],
+            miscResourceURLs: []
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            XCTAssertEqual(renderNodes.count, 1)
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            XCTAssertNil(renderNode.metadata.remoteSource, "No remote source when 'emitSymbolSourceFileURIs' is 'false'")
         }
     }
     
@@ -447,25 +482,18 @@ class ConvertServiceTests: XCTestCase {
                 "/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method"
             )
             
-            if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-                XCTAssertEqual(
-                    renderNode.abstract?.first,
-                    .reference(
-                        identifier: .init("""
-                        doc://identifier/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method
-                        """
-                                         ),
-                        isActive: true,
-                        overridingTitle: nil,
-                        overridingTitleInlineContent: nil
-                    )
+            XCTAssertEqual(
+                renderNode.abstract?.first,
+                .reference(
+                    identifier: .init("""
+                    doc://identifier/documentation/MyKit/MyClass-swift.class/myFunction()-swift.method
+                    """
+                                     ),
+                    isActive: true,
+                    overridingTitle: nil,
+                    overridingTitleInlineContent: nil
                 )
-            } else {
-                XCTAssertEqual(
-                    renderNode.abstract?.first,
-                    .codeVoice(code: "myFunction()")
-                )
-            }
+            )
         }
         
         let symbolGraphWithAdjustedLink = Data(
@@ -616,6 +644,144 @@ class ConvertServiceTests: XCTestCase {
         }
     }
     
+    func testConvertsSymbolPageThatHasExpandedDocumentation() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: [],
+            symbolIdentifiersWithExpandedDocumentation: [
+                "s:5MyKit0A5ClassC10myFunctionyyF":
+                    ConvertRequest.ExpandedDocumentationRequirements(accessControlLevels: ["public", "open"])
+            ]
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+
+            XCTAssertFalse(renderNode.metadata.hasNoExpandedDocumentation)
+        }
+    }
+    
+    func testConvertsSymbolPageThatDoesNotMeetAccessLevelRequirementForExpandedDocumentation() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: [],
+            symbolIdentifiersWithExpandedDocumentation: [
+                "s:5MyKit0A5ClassC10myFunctionyyF":
+                    ConvertRequest.ExpandedDocumentationRequirements(accessControlLevels: ["open"])
+            ] // This symbol is public
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+
+            XCTAssertTrue(renderNode.metadata.hasNoExpandedDocumentation)
+        }
+    }
+    
+    func testConvertsSymbolPageThatHasDoesNotHaveExpandedDocumentation() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: [],
+            symbolIdentifiersWithExpandedDocumentation: [:]
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+
+            XCTAssert(renderNode.metadata.hasNoExpandedDocumentation)
+        }
+    }
+    
+    func testConvertsSymbolPageForRequestThatDoesNotSpecifyExpandedDocumentation() throws {
+        let symbolGraphFile = Bundle.module.url(
+            forResource: "mykit-one-symbol",
+            withExtension: "symbols.json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let symbolGraph = try Data(contentsOf: symbolGraphFile)
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: ["s:5MyKit0A5ClassC10myFunctionyyF"],
+            documentPathsToConvert: [],
+            symbolGraphs: [symbolGraph],
+            markupFiles: [],
+            miscResourceURLs: [],
+            symbolIdentifiersWithExpandedDocumentation: nil
+        )
+        
+        try processAndAssert(request: request) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let renderNodes = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)).renderNodes
+            
+            let data = try XCTUnwrap(renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+
+            XCTAssertFalse(renderNode.metadata.hasNoExpandedDocumentation)
+        }
+    }
+    
     func testConvertSingleArticlePage() throws {
         let articleFile = Bundle.module.url(
             forResource: "StandaloneArticle",
@@ -660,6 +826,414 @@ class ConvertServiceTests: XCTestCase {
                 renderNode.abstract?.first,
                 .text("An article abstract.")
             )
+        }
+    }
+
+    func testConvertTutorialWithCode() throws {
+        let tutorialContent = """
+        @Tutorial(time: 99) {
+            @Intro(title: "Tutorial Title") {
+                Tutorial intro.
+            }
+            @Section(title: "Section title") {
+                This section has one step with a code file reference.
+                
+                @Steps {
+                    @Step {
+                        Start with this
+                        
+                        @Code(name: "Something.swift", file: before.swift)
+                    }
+        
+                    @Step {
+                        Add this
+                        
+                        @Code(name: "Something.swift", file: after.swift)
+                    }
+                }
+            }
+        }
+        """
+        
+        let tempURL = try createTempFolder(content: [
+            Folder(name: "TutorialWithCodeTest.docc", content: [
+                TextFile(name: "Something.tutorial", utf8Content: tutorialContent),
+                
+                TextFile(name: "before.swift", utf8Content: """
+                    // This is an example swift file
+                    """),
+                TextFile(name: "after.swift", utf8Content: """
+                    // This is an example swift file
+                    let something = 0
+                    """),
+            ])
+        ])
+        let catalog = tempURL.appendingPathComponent("TutorialWithCodeTest.docc")
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: nil,
+            documentPathsToConvert: nil,
+            bundleLocation: nil,
+            symbolGraphs: [],
+            knownDisambiguatedSymbolPathComponents: nil,
+            markupFiles: [],
+            tutorialFiles: [tutorialContent.data(using: .utf8)!],
+            miscResourceURLs: []
+        )
+        
+        let server = DocumentationServer()
+        
+        let mockLinkResolvingService = LinkResolvingService { message in
+            XCTAssertEqual(message.type, "resolve-reference")
+            XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
+            do {
+                let payload = try XCTUnwrap(message.payload)
+                let request = try JSONDecoder()
+                    .decode(
+                        ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
+                        from: payload
+                    )
+                
+                XCTAssertEqual(request.convertRequestIdentifier, "test-identifier")
+                
+                switch request.payload {
+                case .topic(let url):
+                    XCTFail("Unexpected topic request: \(url.absoluteString.singleQuoted)")
+                    // Fail to resolve every topic
+                    return DocumentationServer.Message(
+                        type: "resolve-reference-response",
+                        payload: try JSONEncoder().encode(
+                            OutOfProcessReferenceResolver.Response.errorMessage("Unexpected topic request")
+                        )
+                    )
+                    
+                case .symbol(let preciseIdentifier):
+                    XCTFail("Unexpected symbol request: \(preciseIdentifier)")
+                    // Fail to resolve every symbol
+                    return DocumentationServer.Message(
+                        type: "resolve-reference-response",
+                        payload: try JSONEncoder().encode(
+                            OutOfProcessReferenceResolver.Response.errorMessage("Unexpected symbol request")
+                        )
+                    )
+                    
+                case .asset(let assetReference):
+                    print(assetReference)
+                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
+                    case (let assetName, "identifier") where ["before.swift", "after.swift"].contains(assetName):
+                        var asset = DataAsset()
+                        asset.register(
+                            catalog.appendingPathComponent(assetName),
+                            with: DataTraitCollection()
+                        )
+                        
+                        return DocumentationServer.Message(
+                            type: "resolve-reference-response",
+                            payload: try JSONEncoder().encode(
+                                OutOfProcessReferenceResolver.Response
+                                    .asset(asset)
+                            )
+                        )
+
+                    default:
+                        XCTFail("Unexpected asset request: \(assetReference.assetName)")
+                        // Fail to resolve all other assets
+                        return DocumentationServer.Message(
+                            type: "resolve-reference-response",
+                            payload: try JSONEncoder().encode(
+                                OutOfProcessReferenceResolver.Response.errorMessage("Unexpected topic request")
+                            )
+                        )
+                    }
+                }
+            } catch {
+                XCTFail(error.localizedDescription)
+                return nil
+            }
+        }
+        
+        server.register(service: mockLinkResolvingService)
+        
+        try processAndAssert(request: request, linkResolvingServer: server) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let response = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)
+            )
+            
+            XCTAssertEqual(response.renderNodes.count, 1)
+            let data = try XCTUnwrap(response.renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            let beforeIdentifier = RenderReferenceIdentifier("before.swift")
+            let afterIdentifier = RenderReferenceIdentifier("after.swift")
+            
+            XCTAssertEqual(
+                renderNode.references["before.swift"] as? FileReference,
+                FileReference(identifier: beforeIdentifier, fileName: "Something.swift", fileType: "swift", syntax: "swift", content: [
+                    "// This is an example swift file",
+                ], highlights: [])
+            )
+            XCTAssertEqual(
+                renderNode.references["after.swift"] as? FileReference,
+                FileReference(identifier: afterIdentifier, fileName: "Something.swift", fileType: "swift", syntax: "swift", content: [
+                    "// This is an example swift file",
+                    "let something = 0",
+                ], highlights: [.init(line: 2)])
+            )
+            
+            let stepsSection = try XCTUnwrap(renderNode.sections.compactMap { $0 as? TutorialSectionsRenderSection }.first?.tasks.first?.stepsSection)
+            XCTAssertEqual(stepsSection.count, 2)
+            if case .step(let step) = stepsSection.first {
+                XCTAssertEqual(step.code, beforeIdentifier)
+            } else {
+                XCTFail("Unexpected kind of step")
+            }
+            
+            if case .step(let step) = stepsSection.last {
+                XCTAssertEqual(step.code, afterIdentifier)
+            } else {
+                XCTFail("Unexpected kind of step")
+            }
+        }
+    }
+    
+    func testConvertArticleWithImageReferencesAndDetailedGridLinks() throws {
+        let articleData = try XCTUnwrap("""
+            # First article
+            
+            Link to another article which has page images.
+            
+            @Links(visualStyle: detailedGrid) {
+                - <doc:Second-article>
+            }
+            
+            @Metadata {
+                @PageImage(purpose: card, source: "first-page-card-image")
+                @PageImage(purpose: icon, source: "first-page-icon-image")
+            }
+            
+            ![A markdown image](first-page-markdown-image)
+            
+            @Image(source: "first-page-directive-image", alt: "A directive image")
+            """.data(using: .utf8))
+        
+        let request = ConvertRequest(
+            bundleInfo: testBundleInfo,
+            externalIDsToConvert: nil,
+            documentPathsToConvert: nil,
+            symbolGraphs: [],
+            knownDisambiguatedSymbolPathComponents: nil,
+            markupFiles: [articleData],
+            miscResourceURLs: []
+        )
+        
+        let server = DocumentationServer()
+        
+        let expectedAssetNames = [
+            "second-page-card-image",
+            "second-page-icon-image",
+            "first-page-card-image",
+            "first-page-icon-image",
+            "first-page-markdown-image",
+            "first-page-directive-image",
+        ]
+        
+        let mockLinkResolvingService = LinkResolvingService { message in
+            XCTAssertEqual(message.type, "resolve-reference")
+            XCTAssert(message.identifier.hasPrefix("SwiftDocC"))
+            do {
+                let payload = try XCTUnwrap(message.payload)
+                let request = try JSONDecoder()
+                    .decode(
+                        ConvertRequestContextWrapper<OutOfProcessReferenceResolver.Request>.self,
+                        from: payload
+                    )
+                
+                XCTAssertEqual(request.convertRequestIdentifier, "test-identifier")
+                
+                switch request.payload {
+                case .topic(let url):
+                    guard url.absoluteString == "doc://identifier/Second-article" else {
+                        XCTFail("Unexpected topic request: \(url.absoluteString.singleQuoted)")
+                        return nil
+                    }
+                    
+                    let testSymbolInformationResponse = OutOfProcessReferenceResolver
+                        .ResolvedInformation(
+                            kind: .article,
+                            url: url,
+                            title: "Second article",
+                            abstract: "An article with page image metadata.",
+                            language: .swift,
+                            availableLanguages: [.swift, .objectiveC],
+                            platforms: [],
+                            declarationFragments: nil,
+                            topicImages: [
+                                .init(pageImagePurpose: .card, identifier: RenderReferenceIdentifier("second-page-card-image")),
+                                .init(pageImagePurpose: .icon, identifier: RenderReferenceIdentifier("second-page-icon-image")),
+                            ],
+                            references: nil
+                        )
+                    
+                    let payloadData = OutOfProcessReferenceResolver.Response
+                        .resolvedInformation(testSymbolInformationResponse)
+                    
+                    return DocumentationServer.Message(
+                        type: "resolve-reference-response",
+                        payload: try JSONEncoder().encode(payloadData)
+                    )
+                    
+                case .symbol(let preciseIdentifier):
+                    XCTFail("Unexpected symbol request: \(preciseIdentifier)")
+                    return nil
+                    
+                case .asset(let assetReference):
+                    switch (assetReference.assetName, assetReference.bundleIdentifier) {
+                    case (let assetName, "identifier") where expectedAssetNames.contains(assetName):
+                        var asset = DataAsset()
+                        asset.register(
+                            URL(string: "docs-media:///path/to/\(assetName).png")!,
+                            with: DataTraitCollection(
+                                userInterfaceStyle: .light,
+                                displayScale: .double
+                            )
+                        )
+                        
+                        return DocumentationServer.Message(
+                            type: "resolve-reference-response",
+                            payload: try JSONEncoder().encode(
+                                OutOfProcessReferenceResolver.Response
+                                    .asset(asset)
+                            )
+                        )
+
+                    default:
+                        XCTFail("Unexpected asset resolution request for '\(assetReference)'")
+                        return nil
+                    }
+                }
+            } catch {
+                XCTFail(error.localizedDescription)
+                return nil
+            }
+        }
+        
+        server.register(service: mockLinkResolvingService)
+        
+        try processAndAssert(request: request, linkResolvingServer: server) { message in
+            XCTAssertEqual(message.type, "convert-response")
+            XCTAssertEqual(message.identifier, "test-identifier-response")
+            
+            let response = try JSONDecoder().decode(
+                ConvertResponse.self, from: XCTUnwrap(message.payload)
+            )
+            
+            XCTAssertEqual(response.renderNodes.count, 1)
+            let data = try XCTUnwrap(response.renderNodes.first)
+            let renderNode = try JSONDecoder().decode(RenderNode.self, from: data)
+            
+            XCTAssertEqual(
+                renderNode.metadata.externalID,
+                nil
+            )
+            
+            XCTAssertEqual(renderNode.kind, .article)
+            
+            XCTAssertEqual(renderNode.abstract?.count, 1)
+            
+            XCTAssertEqual(
+                renderNode.abstract?.first,
+                .text("Link to another article which has page images.")
+            )
+            
+            XCTAssertEqual(
+                renderNode.metadata.images.map(\.identifier.identifier).sorted(),
+                ["first-page-card-image", "first-page-icon-image"]
+            )
+            
+            XCTAssertEqual(
+                renderNode.references.keys.sorted(),
+                (["doc://identifier/Second-article"] + expectedAssetNames).sorted()
+            )
+            
+            let articleReference = try XCTUnwrap(renderNode.references["doc://identifier/Second-article"] as? TopicRenderReference)
+            XCTAssertEqual(articleReference.title, "Second article")
+            XCTAssertEqual(articleReference.abstract.plainText, "An article with page image metadata.")
+            XCTAssertEqual(articleReference.images.sorted(by: \.identifier.identifier), [
+                TopicImage(type: .card, identifier: RenderReferenceIdentifier("second-page-card-image")),
+                TopicImage(type: .icon, identifier: RenderReferenceIdentifier("second-page-icon-image")),
+            ])
+            
+            let firstCardImageReference = try XCTUnwrap(renderNode.references["first-page-card-image"] as? ImageReference)
+            XCTAssertEqual(firstCardImageReference.asset, DataAsset(
+                variants: [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-card-image.png")!,
+                ],
+                metadata: [
+                    URL(string: "docs-media:///path/to/first-page-card-image.png")!: DataAsset.Metadata(svgID: nil),
+                ],
+                context: .display
+            ))
+            
+            let firstIconImageReference = try XCTUnwrap(renderNode.references["first-page-icon-image"] as? ImageReference)
+            XCTAssertEqual(firstIconImageReference.asset, DataAsset(
+                variants: [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-icon-image.png")!,
+                ],
+                metadata: [
+                    URL(string: "docs-media:///path/to/first-page-icon-image.png")!: DataAsset.Metadata(svgID: nil),
+                ],
+                context: .display
+            ))
+            
+            let secondCardImageReference = try XCTUnwrap(renderNode.references["second-page-card-image"] as? ImageReference)
+            XCTAssertEqual(secondCardImageReference.asset, DataAsset(
+                variants: [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/second-page-card-image.png")!,
+                ],
+                metadata: [
+                    URL(string: "docs-media:///path/to/second-page-card-image.png")!: DataAsset.Metadata(svgID: nil),
+                ],
+                context: .display
+            ))
+            
+            let secondIconImageReference = try XCTUnwrap(renderNode.references["second-page-icon-image"] as? ImageReference)
+            XCTAssertEqual(secondIconImageReference.asset, DataAsset(
+                variants: [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/second-page-icon-image.png")!,
+                ],
+                metadata: [
+                    URL(string: "docs-media:///path/to/second-page-icon-image.png")!: DataAsset.Metadata(svgID: nil),
+                ],
+                context: .display
+            ))
+            
+            let firstMarkdownImageReference = try XCTUnwrap(renderNode.references["first-page-markdown-image"] as? ImageReference)
+            XCTAssertEqual(firstMarkdownImageReference.asset, DataAsset(
+                variants: [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-markdown-image.png")!,
+                ],
+                metadata: [
+                    URL(string: "docs-media:///path/to/first-page-markdown-image.png")!: DataAsset.Metadata(svgID: nil),
+                ],
+                context: .display
+            ))
+            XCTAssertEqual(firstMarkdownImageReference.altText, "A markdown image")
+            
+            let firstDirectiveImageReference = try XCTUnwrap(renderNode.references["first-page-directive-image"] as? ImageReference)
+            XCTAssertEqual(firstDirectiveImageReference.asset, DataAsset(
+                variants: [
+                    DataTraitCollection(userInterfaceStyle: .light, displayScale: .double): URL(string: "docs-media:///path/to/first-page-directive-image.png")!,
+                ],
+                metadata: [
+                    URL(string: "docs-media:///path/to/first-page-directive-image.png")!: DataAsset.Metadata(svgID: nil),
+                ],
+                context: .display
+            ))
+            XCTAssertEqual(firstDirectiveImageReference.altText, "A directive image")
         }
     }
     
@@ -950,6 +1524,9 @@ class ConvertServiceTests: XCTestCase {
             assert: { renderNodes, referenceStore in
                 let referenceStore = try XCTUnwrap(referenceStore)
                 
+                // The ConvertService relies on old implementation detail where documentation extension files were always considered "resolved" even when they didn't match a symbol. (rdar://108563483)
+                // https://github.com/apple/swift-docc/issues/567
+                
                 XCTAssertEqual(
                     Set(referenceStore.topics.keys.map(\.path)),
                     [
@@ -974,7 +1551,6 @@ class ConvertServiceTests: XCTestCase {
                         "/documentation/Test-Bundle/Default-Code-Listing-Syntax",
                     ]
                 )
-            
                 try self.assertReferenceStoreContains(
                     referenceStore: referenceStore,
                     topicPath: "/documentation/MyKit/MyClass",
