@@ -38,7 +38,7 @@ extension SemanticWalker {
     mutating func visitAssessments(_ assessments: Assessments) { descendIntoChildren(of: assessments) }
     /// Visits a multiple-choice question.
     mutating func visitMultipleChoice(_ multipleChoice: MultipleChoice) { descendIntoChildren(of: multipleChoice) }
-    /// Visits an assesment justification.
+    /// Visits an assessment justification.
     mutating func visitJustification(_ justification: Justification) { descendIntoChildren(of: justification) }
     /// Visits a single choice in a multiple-choice question.
     mutating func visitChoice(_ choice: Choice) { descendIntoChildren(of: choice) }

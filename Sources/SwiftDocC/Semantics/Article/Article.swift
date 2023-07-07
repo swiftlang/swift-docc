@@ -218,7 +218,7 @@ public final class Article: Semantic, MarkupConvertible, Abstracted, Redirected,
             problems.append(Problem(diagnostic: diagnostic, possibleSolutions: solutions))
             
             // Remove the display name customization from the article's metadata.
-            optionalMetadata = Metadata(originalMarkup: metadata.originalMarkup, documentationExtension: metadata.documentationOptions, technologyRoot: metadata.technologyRoot, displayName: nil)
+            optionalMetadata = Metadata(originalMarkup: metadata.originalMarkup, documentationExtension: metadata.documentationOptions, technologyRoot: metadata.technologyRoot, displayName: nil, titleHeading: metadata.titleHeading)
         }
         
         self.init(

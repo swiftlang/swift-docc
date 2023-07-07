@@ -40,7 +40,7 @@ import SwiftDocCTestUtilities
 /// 2. No support for file links
 /// 3. No support for relative paths or traversing the tree upwards (e.g. "/root/nested/../other" will not resolve)
 ///
-/// - Note: This class is thread-safe by using a naive locking for each accesss to the files dictionary.
+/// - Note: This class is thread-safe by using a naive locking for each access to the files dictionary.
 /// - Warning: Use this type for unit testing.
 class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
     let currentDirectoryPath = "/"
@@ -209,12 +209,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        guard let target = URL(string: path) else {
-            throw Errors.invalidPath(path)
-        }
-        
-        let parent = target.deletingLastPathComponent()
-        
+        let parent = URL(fileURLWithPath: path).deletingLastPathComponent()
         if parent.pathComponents.count > 1 {
             // If it's not the root folder, check if parents exist
             if createIntermediates == false {
@@ -262,8 +257,7 @@ class TestFileSystem: FileManagerProtocol, DocumentationWorkspaceDataProvider {
         filesLock.lock()
         defer { filesLock.unlock() }
 
-        guard let fileURL = URL(string: at.path),
-              files.keys.contains(fileURL.deletingLastPathComponent().path) else {
+        guard files.keys.contains(at.deletingLastPathComponent().path) else {
             throw NSError(domain: NSCocoaErrorDomain, code: NSFileNoSuchFileError, userInfo: [NSFilePathErrorKey: at.path])
         }
         

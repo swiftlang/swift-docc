@@ -25,14 +25,27 @@ space. For the page title of an article or API collection, use plain text only.
 > Important: Page titles must be the first line of content in a documentation 
 file. One or more empty lines can precede the page title.
 
-For the page title of a framework landing page or extension file, use a _symbol 
-link_. To create a symbol link, wrap the framework's name, or the symbol's name 
-(including its hierarchy within the framework, when necessary), within a set of 
-double backticks (\`\`).
+For the page title of a landing page, enter a symbol link by wrapping the framework's 
+module name within a set of double backticks (\`\`).
 
 ```markdown
 # ``SlothCreator``
+```
+
+For a documentation extension file, enter a symbol link by wrapping the path to the symbol 
+within double backticks (\`\`). The path may start with the framework's module name
+or with the name of a top-level symbol in the module.
+
+The following example shows a documentation extension link starting with a framework module name:
+
+```markdown
 # ``SlothCreator/CareSchedule/Event``
+```
+
+The following example shows a documentation extension link to the same symbol starting with a top-level symbol name:
+
+```markdown
+# ``CareSchedule/Event``
 ```
 
 Augment every page title with a short and concise single-sentence abstract or 
@@ -69,7 +82,7 @@ DocC provides three ways to format the text in your documentation. You can
 apply bold or italic styling, or you can use code voice, which renders the 
 specified text in a monospace font.
 
-To add bold styling, wrap the text in a pair of double asterisks (`**`) or you can wrap it in a pair of double underscores (`__`) .
+To add bold styling, wrap the text in a pair of double asterisks (`**`). 
 Alternatively, use double underscores (`__`).
 
 The following example uses bold styling for the names of the sloths:
@@ -157,9 +170,9 @@ struct Sightseeing: Activity {
 }
  ```
 
- The following table lists the names of programming languages that can be used
- to specify the syntax highlighting for a given code listing. Each one may have
- aliases that can also be used to specify the same language.
+The following table lists the names of the programming languages you can specify
+to enable syntax highlighting for a particular code listing. Each language may
+have one or more aliases.
 
 | Name       | Aliases                                                |
 | ---------- | ------------------------------------------------------ |
@@ -202,7 +215,7 @@ To add a link to a symbol, wrap the symbol's name in a set of double backticks
 ``SlothCreator``
 ```
 
-For nested symbols, include the entire path to the symbol in the link.
+For nested symbols, include the path to the symbol in the link.
 
 ```markdown
 ``SlothCreator/Sloth/eat(_:quantity:)``
@@ -213,7 +226,7 @@ a symbol link that appears inline in the `Sloth` class, and targets a
 symbol in that class, can omit the `SlothCreator/Sloth/` portion of the symbol 
 path.
 
-In some cases, a symbol's path isn’t unique, such as with overloaded methods in 
+In some cases, a symbol's path isn't unique, such as with overloaded methods in 
 Swift. For example, consider the `Sloth` structure, which has multiple 
 `update(_:)` methods.
 
@@ -235,7 +248,9 @@ mutating public func update(_ energyLevel: Int) {
 
 Both methods have an identical symbol path of `SlothCreator/Sloth/update(_:)`. 
 In this scenario, and to ensure uniqueness, DocC uses the symbol's unique 
-identifier instead of its name to disambiguate.
+identifier instead of its name to disambiguate. DocC's warnings about ambiguous
+symbol links suggests one disambiguation for each of the symbols that match the
+ambiguous symbol path.
 
 ```markdown
 ### Updating Sloths
@@ -243,48 +258,103 @@ identifier instead of its name to disambiguate.
 - ``Sloth/update(_:)-jixx``
 ```
 
-In the example above, both symbol paths are identical, regardless of text case. 
-However, another scenario where you need to provide more context to DocC about 
-the symbol you're linking is when the case-insensitive nature of symbol paths 
-comes into play. For example, consider the `Sloth` structure, which has a nested 
-`Color` enumeration and a `color` property.
+In the example above, both symbols are functions so you need the unique 
+identifiers to disambiguate the `Sloth/update(_:)` link. 
+
+Unique identifiers aren't the only way to disambiguate symbol links. If a symbol
+has a different type from the other symbols with the same symbol path, you can 
+use that symbol's type suffix to disambiguate the link and make the link refer 
+to that symbol. For example, consider a `Color` structure with `red`, `green`, 
+and `blue` properties for color components and static properties for a handful 
+of predefined color values.
 
 ```swift
-public struct Sloth {
-    public enum Color { }
-    
-    public var color: Color
+public struct Color {
+    public var red, green, blue: Double
+}
+
+extension Color {
+    public static let red    = Color(red: 1.0, green: 0.0, blue: 0.0)
+    public static let purple = Color(red: 0.5, green: 0.0, blue: 0.5)
+    public static let blue   = Color(red: 0.0, green: 0.0, blue: 1.0)
 }
 ```
 
-Because symbol paths are case-insensitive, both symbols resolve to the same path. 
-To address this issue, add the suffix for the target's type to the linked symbol path .
+Both the `red` property and the `red` static property have a symbol path of 
+`Color/red`. Because these are different types of symbols you can disambiguate 
+`Color/red` with symbol type suffixes instead of the symbols' unique identifiers.
+
+The following example shows a symbol link to the `red` property:
 
 ```markdown
-``Sloth/Color.swift-enum``
+``Color/red-property``
+```
+
+The following example shows a symbol link to the `red` static property:
+
+```markdown
+``Color/red-type.property``
 ```
 
 DocC supports the following symbol types for use in symbol links:
 
-| Symbol type | Suffix |
-| ----------- | ------ |
-| Enumeration | `-swift.enum` |
-| Enumeration case | `-swift.enum.case` |
-| Protocol | `-swift.protocol` |
-| Operator | `-swift.func.op` |
-| Typealias | `-swift.typealias` |
-| Function | `-swift.func` |
-| Structure | `-swift.struct` |
-| Class | `-swift.class` |
-| Type property | `-swift.type.property` |
-| Type method | `-swift.type.method` |
-| Type subscript | `-swift.type.subscript` |
-| Property | `-swift.property` |
-| Initializer | `-swift.init` |
-| Deinitializer | `-swift.deinit` |
-| Method | `-swift.method` |
-| Subscript | `-swift.subscript` |
+| Symbol type       | Suffix            |
+|-------------------|-------------------|
+| Enumeration       | `-enum`           |
+| Enumeration case  | `-enum.case`      |
+| Protocol          | `-protocol`       |
+| Operator          | `-func.op`        |
+| Typealias         | `-typealias`      |
+| Function          | `-func`           |
+| Structure         | `-struct`         |
+| Class             | `-class`          |
+| Type property     | `-type.property`  |
+| Type method       | `-type.method`    |
+| Type subscript    | `-type.subscript` |
+| Property          | `-property`       |
+| Initializer       | `-init`           |
+| Deinitializer     | `-deinit`         |
+| Method            | `-method`         |
+| Subscript         | `-subscript`      |
+| Instance variable | `-ivar`           |
+| Macro             | `-macro`          |
+| Module            | `-module`         |
 
+Symbol type suffixes can include a source language identifier prefix — for 
+example,  `-swift.enum` instead of `-enum`. However, the language 
+identifier doesn't disambiguate the link.
+
+Symbol paths are case-sensitive meaning that symbols with the same name in
+different text casing don't need disambiguation. 
+
+Symbols that have representations in both Swift and Objective-C can use
+symbol paths in either source language. For example, consider a `Sloth` 
+class with `@objc` attributes.
+
+```swift
+@objc public class Sloth: NSObject {
+    @objc public init(name: String, color: Color, power: Power) {
+        self.name = name
+        self.color = color
+        self.power = power
+    }
+}
+```
+
+A symbol link to the Sloth initializer can be written using the symbol 
+path in either source language.
+
+**Swift name**
+
+```markdown
+``Sloth/init(name:color:power:)``
+```
+
+**Objective-C name**
+
+```markdown
+``Sloth/initWithName:color:power:``
+```
 
 To add a link to an article, use the less-than symbol (`<`), the `doc` keyword, 
 a colon (`:`), the name of the article, and a greater-than symbol 
@@ -319,20 +389,20 @@ add the link's URL destination within the parentheses.
 DocC extends Markdown's image support so you can provide appearance and 
 display scale-aware versions of an image. You use specific components to create image filenames, and DocC  uses the most appropriate version of the image when displaying your documentation.
 
-![An image of a filename that's split into four labeled sections to highlight the individual components. From left to right, the components are the image name, the apperance mode, the display scale, and the file extension.](docc-image-filename)
+![An image of a filename that's split into four labeled sections to highlight the individual components. From left to right, the components are the image name, the appearance mode, the display scale, and the file extension.](docc-image-filename)
 
 | Component | Description |
 | --- | --- |
 | Image name | **Required**. Identifies the image within the documentation catalog. The name must be unique across all images in the catalog, even if you store them in separate folders. |
-| Appearance | **Optional**. Identifies the appearance mode in which DocC uses the image. Add `~dark` directly after the image name to identify the image as a dark appearance mode variant. |
+| Appearance | **Optional**. Identifies the appearance mode in which DocC uses the image. Add `~dark` directly after the image name to identify the image as a dark mode variant. |
 | Display scale | **Optional**. Identifies the display scale at which DocC uses the image. Possible values are `@1x`, `@2x`, and `@3x`. When specifying a display scale, add it directly before the file extension. |
 | File extension | **Required**. Identifies the type of image, such as .png or .jpeg. |
 
 For example, the following are all valid DocC image filenames:
 
 - term `sloth.png`: An image that's independent of all appearance modes and display scales.
-- term `sloth~dark.png`: An image that's specific to a dark appearance mode, but is display-scale independent.
-- term `sloth~dark@2x.png`: An image that's specific to a dark appearance mode and the 2x display scale.
+- term `sloth~dark.png`: An image that's specific to dark mode, but is display-scale independent.
+- term `sloth~dark@2x.png`: An image that's specific to dark mode and the 2x display scale.
 
 > Important: You must store images you include in your documentation in a 
 documentation catalog. For more information, see <doc:documenting-a-swift-framework-or-package>.
@@ -349,7 +419,7 @@ display scale, and file extension components. Don't include the path to the
 image, even if you store the image in a folder in the documentation catalog.
 
 ```markdown
-![A photograph of a sloth hanging off a tree.](sloth)
+![A sloth hanging off a tree.](sloth)
 ```
 
 ### Add Bulleted, Numbered, and Term Lists
@@ -499,4 +569,4 @@ DocC doesn't prematurely terminate the styling.
 **Sloths require sustenance\*\* to perform activities.**
 ```
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

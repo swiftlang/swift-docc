@@ -113,6 +113,45 @@ documentation might resemble the following:
 https://www.example.com/documentation/MyNewPackage/MyNewProtocol
 ```
 
+#### Host a documentation archive with a file server
+
+You can host documentation archives you create with DocC from the Swift 5.7 
+toolchain and later using a regular file server. By default, the server hosts 
+the documentation at the root of the website, like the "MyNewPackage" example 
+above. To host the documentation at a specific subpath, pass a custom hosting 
+base path for the `--hosting-base-path` option when you build the documentation
+archive. 
+
+```shell 
+docc convert MyNewPackage.docc \
+  --additional-symbol-graph-dir .build \
+  --output-dir MyNewPackage.doccarchive \
+  --hosting-base-path MyProject/Base/Path 
+```
+
+DocC adds the provided hosting base path before the path of each documentation
+page. For example, the URL to view for `MyNewProtocol` protocol in the 
+`MyNewPackage` documentation might resemble the following:
+
+```
+https://www.example.com/MyProject/Base/Path/documentation/MyNewPackage/MyNewProtocol
+                        ╰────────┬────────╯
+                       your custom base path
+```
+
+You can also configure the base path path via the `--hosting-base-path` option
+when [building documentation using the SwiftPM DocC Plugin][plugin-docs] or via
+the `DOCC_HOSTING_BASE_PATH` build setting when building documentation in Xcode.
+
+[plugin-docs]: https://apple.github.io/swift-docc-plugin/documentation/swiftdoccplugin/generating-documentation-for-hosting-online/
+
+#### Host a documentation archive using custom routing
+
+A file server is the recommended solution to host your documentation. But, if 
+you need more control over how the server hosts your content, you can configure
+the request routing of your web server so it responds to documentation requests 
+with the data and assets within the documentation archive.
+
 > Note: The following sections use Apache as an example. Other web server
   installations have similar mechanisms. Consult your server's documentation
   for details about performing similar configurations.
@@ -154,4 +193,4 @@ to date by using a continuous integration workflow that builds the
 documentation archive using `docc`, and copies the resulting
 `.doccarchive` to your web server.
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

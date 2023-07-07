@@ -27,6 +27,7 @@ import Markdown
 /// - ``Availability``
 /// - ``PageKind``
 /// - ``SupportedLanguage``
+/// - ``TitleHeading``
 public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     public let originalMarkup: BlockDirective
     
@@ -68,6 +69,9 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     var pageColor: PageColor.Color? {
         _pageColor?.color
     }
+
+    @ChildDirective
+    var titleHeading: TitleHeading? = nil
     
     static var keyPaths: [String : AnyKeyPath] = [
         "documentationOptions"  : \Metadata._documentationOptions,
@@ -79,7 +83,8 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
         "availability"          : \Metadata._availability,
         "pageKind"              : \Metadata._pageKind,
         "supportedLanguages"    : \Metadata._supportedLanguages,
-        "_pageColor"             : \Metadata.__pageColor,
+        "_pageColor"            : \Metadata.__pageColor,
+        "titleHeading"          : \Metadata._titleHeading,
     ]
     
     /// Creates a metadata object with a given markup, documentation extension, and technology root.
@@ -87,12 +92,14 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     ///   - originalMarkup: The original markup for this metadata directive.
     ///   - documentationExtension: Optional configuration that describes how this documentation extension file merges or overrides the in-source documentation.
     ///   - technologyRoot: Optional configuration to make this page root-level documentation.
-    ///   - displayName:Optional configuration to customize this page's symbol's display name.
-    init(originalMarkup: BlockDirective, documentationExtension: DocumentationExtension?, technologyRoot: TechnologyRoot?, displayName: DisplayName?) {
+    ///   - displayName: Optional configuration to customize this page's symbol's display name.
+    ///   - titleHeading: Optional configuration to customize the text of this page's title heading.
+    init(originalMarkup: BlockDirective, documentationExtension: DocumentationExtension?, technologyRoot: TechnologyRoot?, displayName: DisplayName?, titleHeading: TitleHeading?) {
         self.originalMarkup = originalMarkup
         self.documentationOptions = documentationExtension
         self.technologyRoot = technologyRoot
         self.displayName = displayName
+        self.titleHeading = titleHeading
     }
     
     @available(*, deprecated, message: "Do not call directly. Required for 'AutomaticDirectiveConvertible'.")
@@ -102,7 +109,7 @@ public final class Metadata: Semantic, AutomaticDirectiveConvertible {
     
     func validate(source: URL?, for bundle: DocumentationBundle, in context: DocumentationContext, problems: inout [Problem]) -> Bool {
         // Check that something is configured in the metadata block
-        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil {
+        if documentationOptions == nil && technologyRoot == nil && displayName == nil && pageImages.isEmpty && customMetadata.isEmpty && callToAction == nil && availability.isEmpty && pageKind == nil && pageColor == nil && titleHeading == nil {
             let diagnostic = Diagnostic(
                 source: source,
                 severity: .information,

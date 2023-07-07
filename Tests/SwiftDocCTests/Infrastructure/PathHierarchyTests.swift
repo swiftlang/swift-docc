@@ -17,7 +17,6 @@ import Markdown
 class PathHierarchyTests: XCTestCase {
     
     func testFindingUnambiguousAbsolutePaths() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -286,7 +285,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testAmbiguousPaths() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -574,7 +572,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testRedundantKindDisambiguation() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -627,7 +624,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testBothRedundantDisambiguations() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -680,7 +676,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testDefaultImplementationWithCollidingTargetSymbol() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
  
         // ---- Inner
         // public protocol Something {
@@ -715,7 +710,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testDisambiguatedPaths() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -838,7 +832,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testFindingRelativePaths() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -992,7 +985,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testPathWithDocumentationPrefix() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFrameworkWithLanguageRefinements")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -1008,7 +1000,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testTestBundle() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (bundle, context) = try testBundleAndContext(named: "TestBundle")
         let linkResolver = try XCTUnwrap(context.hierarchyBasedLinkResolver)
         let tree = try XCTUnwrap(linkResolver.pathHierarchy)
@@ -1067,7 +1058,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testMixedLanguageFramework() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -1122,7 +1112,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testArticleAndSymbolCollisions() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # An article
@@ -1139,8 +1128,30 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertNil(articleNode.symbol, "General documentation link find the article")
     }
     
+    func testArticleSelfAnchorLinks() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+            try """
+            # ArticleWithHeading
+
+            ## TestTargetHeading
+
+            This article has the same path as a symbol. See also:
+            - <doc:TestTargetHeading>
+            - <doc:#TestTargetHeading>
+
+            """.write(to: url.appendingPathComponent("ArticleWithHeading.md"), atomically: true, encoding: .utf8)
+        }
+
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        let articleNode = try tree.findNode(path: "/MixedLanguageFramework/ArticleWithHeading", onlyFindSymbols: false)
+
+        let linkNode = try tree.find(path: "TestTargetHeading", parent: articleNode.identifier, onlyFindSymbols: false)
+        let anchorLinkNode = try tree.find(path: "#TestTargetHeading", parent: articleNode.identifier, onlyFindSymbols: false)
+        XCTAssertNotNil(linkNode)
+        XCTAssertNotNil(anchorLinkNode)
+    }
+
     func testOverloadedSymbols() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -1174,7 +1185,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testSymbolsWithSameNameAsModule() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "SymbolsWithSameNameAsModule")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -1222,7 +1232,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testSnippets() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "Snippets")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -1248,7 +1257,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testInheritedOperators() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "InheritedOperators")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -1309,7 +1317,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testSameNameForSymbolAndContainer() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "BundleWithSameNameForSymbolAndContainer")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -1344,8 +1351,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testPrefersNonSymbolsWhenOnlyFindSymbolIsFalse() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
- 
         let (_, _, context) = try testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
             // This bundle has a top-level struct named "Wrapper". Adding an article named "Wrapper.md" introduces a possibility for a link collision
             try """
@@ -1378,7 +1383,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testOneSymbolPathsWithKnownDisambiguation() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let exampleDocumentation = Folder(name: "MyKit.docc", content: [
             CopyOfFile(original: Bundle.module.url(forResource: "mykit-one-symbol.symbols", withExtension: "json", subdirectory: "Test Resources")!),
             InfoPlist(displayName: "MyKit", identifier: "com.test.MyKit"),
@@ -1443,7 +1447,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testArticleWithDisambiguationLookingName() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let exampleDocumentation = Folder(name: "MyKit.docc", content: [
             CopyOfFile(original: Bundle.module.url(forResource: "BaseKit.symbols", withExtension: "json", subdirectory: "Test Resources")!),
             InfoPlist(displayName: "BaseKit", identifier: "com.test.BaseKit"),
@@ -1484,7 +1487,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testPartialSymbolGraphPaths() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let symbolPaths = [
             ["A", "B", "C"],
             ["A", "B", "C2"],
@@ -1543,7 +1545,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testMultiPlatformModuleWithExtension() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "MultiPlatformModuleWithExtension")
         let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
         
@@ -1561,6 +1562,7 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("first/", [("first", nil)])
         assertParsedPathComponents("first//second", [("first", nil), ("second", nil)])
         assertParsedPathComponents("first/second#third", [("first", nil), ("second", nil), ("third", nil)])
+        assertParsedPathComponents("#first", [("first", nil)])
 
         // Check disambiguation
         assertParsedPathComponents("path-hash", [("path", .kindAndHash(kind: nil, hash: "hash"))])

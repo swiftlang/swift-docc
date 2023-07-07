@@ -10,9 +10,20 @@
 
 import Foundation
 
-extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
+extension LocalFileSystemDataProvider {
     public func bundles(options: BundleDiscoveryOptions) throws -> [DocumentationBundle] {
-        return try bundlesInTree(fileSystem, options: options)
+        var bundles = try bundlesInTree(fileSystem, options: options)
+
+        guard case .directory(let rootDirectory) = fileSystem else {
+            preconditionFailure("Expected directory object at path '\(fileSystem.url.absoluteString)'.")
+        }
+
+        // If no bundles were found in the root directory, assume that the directory itself is a bundle.
+        if bundles.isEmpty && self.allowArbitraryCatalogDirectories {
+            bundles.append(try createBundle(rootDirectory, rootDirectory.children, options: options))
+        }
+
+        return bundles
     }
     
     /// Recursively traverses the file system, searching for documentation bundles.
@@ -39,7 +50,7 @@ extension DocumentationWorkspaceDataProvider where Self: FileSystemProvider {
                 }
             }
         }
-        
+
         return bundles
     }
     

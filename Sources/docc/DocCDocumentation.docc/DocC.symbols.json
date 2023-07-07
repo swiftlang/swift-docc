@@ -2963,6 +2963,9 @@
           },
           {
             "text" : "- ``SupportedLanguage``"
+          },
+          {
+            "text" : "- ``TitleHeading``"
           }
         ]
       },
@@ -5056,6 +5059,151 @@
       },
       "pathComponents" : [
         "TechnologyRoot"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TitleHeading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "heading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for customizing the text of a page's title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The ``heading`` property will override the page's default title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "@TitleHeading accepts an unnamed parameter containing containing the page's title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a top-level ``Metadata`` directive:"
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "   @TitleHeading(\"Release Notes\")"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - heading: An unnamed parameter containing containing the page-title’s heading text."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$TitleHeading"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TitleHeading",
+            "spelling" : "TitleHeading"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "TitleHeading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "heading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "TitleHeading"
+      },
+      "pathComponents" : [
+        "TitleHeading"
       ]
     },
     {
