@@ -8,7 +8,15 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(Darwin)
 import Darwin.C
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(Musl)
+import Musl
+#elseif os(Windows)
+import CRT
+#endif
 
 enum TerminalHelper {
     static var isConnectedToTerminal: Bool {
