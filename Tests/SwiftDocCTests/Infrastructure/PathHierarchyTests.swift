@@ -1123,7 +1123,6 @@ class PathHierarchyTests: XCTestCase {
     }
     
     func testArticleSelfAnchorLinks() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
             try """
             # ArticleWithHeading

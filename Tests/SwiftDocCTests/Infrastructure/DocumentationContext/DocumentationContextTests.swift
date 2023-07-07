@@ -1663,8 +1663,6 @@ let expected = """
     }
     
     func testCuratingSymbolsWithSpecialCharacters() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
-
         let (_, _, context) = try testBundleAndContext(copying: "InheritedOperators") { root in
             try """
             # ``Operators/MyNumber``
