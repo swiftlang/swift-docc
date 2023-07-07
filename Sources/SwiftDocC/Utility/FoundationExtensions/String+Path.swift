@@ -17,12 +17,19 @@ extension StringProtocol {
         return "/".appending(self)
     }
     
+    /// A copy of the string appended with a slash ("/") if the string doesn't already end with a trailing slash.
+    var appendingTrailingSlash: String {
+        guard !hasSuffix("/") else { return String(self) }
+        return self.appending("/")
+    }
+    
     /// A copy of the string without a leading slash ("/") or the original string if it doesn't start with a leading slash.
     var removingLeadingSlash: String {
         guard hasPrefix("/") else { return String(self) }
         return String(dropFirst())
     }
     
+    /// A copy of the string without a trailing slash ("/") or the original string if it doesn't end with a trailing slash.
     var removingTrailingSlash: String {
         guard hasSuffix("/") else { return String(self) }
         return String(dropLast())

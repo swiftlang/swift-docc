@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -58,7 +58,7 @@ class RedirectedTests: XCTestCase {
               XCTAssertEqual(1, problems.count)
               XCTAssertEqual(problems.first?.diagnostic.identifier, "org.swift.docc.HasArgument.from.ConversionFailed")
               XCTAssertEqual(
-                  problems.first?.diagnostic.localizedSummary,
+                  problems.first?.diagnostic.summary,
                   "Cannot convert '\(pathWithInvalidCharacter)' to type 'URL'"
               )
           }
@@ -134,11 +134,11 @@ class RedirectedTests: XCTestCase {
         var problems = [Problem]()
         let technology = Technology(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(technology, "A Technology value can be created with a Redirected child.")
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.localizedSummary })")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(analyzer.problems.localizedDescription)")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
     }
     
     func testVolumeAndChapterSupportsRedirect() throws {
@@ -166,7 +166,7 @@ class RedirectedTests: XCTestCase {
         var problems = [Problem]()
         let volume = Volume(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(volume, "A Volume value can be created with a Redirected child.")
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.localizedSummary })")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
     }
     
     func testTutorialAndSectionsSupportsRedirect() throws {
@@ -231,11 +231,11 @@ class RedirectedTests: XCTestCase {
         var problems = [Problem]()
         let tutorial = Tutorial(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(tutorial, "A Tutorial value can be created with a Redirected child.")
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.localizedSummary })")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(analyzer.problems.localizedDescription)")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
     }
     
     func testTutorialArticleSupportsRedirect() throws {
@@ -259,11 +259,11 @@ class RedirectedTests: XCTestCase {
         var problems = [Problem]()
         let article = TutorialArticle(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "A TutorialArticle value can be created with a Redirected child.")
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.localizedSummary })")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
         
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(analyzer.problems.localizedDescription)")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
     }
     
     func testResourcesSupportsRedirect() throws {
@@ -308,7 +308,7 @@ class RedirectedTests: XCTestCase {
         var problems = [Problem]()
         let article = Resources(from: directive, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "A Resources value can be created with a Redirected child.")
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.localizedSummary })")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
     }
     
     func testArticleSupportsRedirect() throws {
@@ -329,11 +329,11 @@ class RedirectedTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article, "An Article value can be created with a Redirected child.")
-        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.localizedSummary })")
+        XCTAssert(problems.isEmpty, "There shouldn't be any problems. Got:\n\(problems.map { $0.diagnostic.summary })")
                 
         var analyzer = SemanticAnalyzer(source: nil, context: context, bundle: bundle)
         _ = analyzer.visit(document)
-        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(analyzer.problems.localizedDescription)")
+        XCTAssert(analyzer.problems.isEmpty, "Expected no problems. Got \(DiagnosticConsoleWriter.formattedDescription(for:  analyzer.problems))")
     }
     
     func testIncorrectArgumentLabel() throws {

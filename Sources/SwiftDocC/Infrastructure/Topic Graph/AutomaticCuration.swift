@@ -47,7 +47,7 @@ public struct AutomaticCuration {
     /// - Returns: An array of title and references list tuples.
     static func topics(
         for node: DocumentationNode,
-        withTrait variantsTrait: DocumentationDataVariantsTrait?,
+        withTraits variantsTraits: Set<DocumentationDataVariantsTrait>,
         context: DocumentationContext
     ) throws -> [TaskGroup] {
         // Get any default implementation relationships for this symbol
@@ -87,8 +87,12 @@ public struct AutomaticCuration {
                 //
                 // Otherwise, we'll fall back to the first kind variant.
                 let childSymbolKindIdentifier: SymbolGraph.Symbol.KindIdentifier?
-                if let variantsTrait = variantsTrait {
-                    childSymbolKindIdentifier = childSymbol.kindVariants[variantsTrait]?.identifier
+                if variantsTraits.count > 0 {
+                    if let matchingTrait = variantsTraits.first(where: { childSymbol.kindVariants[$0] != nil }) {
+                        childSymbolKindIdentifier = childSymbol.kindVariants[matchingTrait]?.identifier
+                    } else {
+                        childSymbolKindIdentifier = nil
+                    }
                 } else {
                     childSymbolKindIdentifier = childSymbol.kindVariants.firstValue?.identifier
                 }
@@ -117,18 +121,15 @@ public struct AutomaticCuration {
     ///   `nil` if the method can't find any relevant links to automatically generate a See Also content.
     static func seeAlso(
         for node: DocumentationNode,
-        withTrait variantsTrait: DocumentationDataVariantsTrait,
+        withTraits variantsTraits: Set<DocumentationDataVariantsTrait>,
         context: DocumentationContext,
         bundle: DocumentationBundle,
         renderContext: RenderContext?,
         renderer: DocumentationContentRenderer
     ) throws -> TaskGroup? {
-        if let automaticSeeAlsoOption = node.options?.automaticSeeAlsoBehavior
-            ?? context.options?.automaticSeeAlsoBehavior
+        if (node.options?.automaticSeeAlsoEnabled ?? context.options?.automaticSeeAlsoEnabled) == false
         {
-            guard automaticSeeAlsoOption == .siblingPages else {
-                return nil
-            }
+            return nil
         }
         
         // First try getting the canonical path from a render context, default to the documentation context
@@ -145,11 +146,11 @@ public struct AutomaticCuration {
                 // Don't include the current node.
                 .filter { $0 != node.reference }
             
-                // Filter out nodes that aren't available in the given trait.
+                // Filter out nodes that aren't available in any of the given traits.
                 .filter { reference in
-                    try context.entity(with: reference)
+                    try !context.entity(with: reference)
                         .availableVariantTraits
-                        .contains(variantsTrait)
+                        .isDisjoint(with: variantsTraits)
                 }
         }
         
@@ -195,8 +196,10 @@ extension AutomaticCuration {
             case .`deinit`: return "Deinitializers"
             case .`enum`: return "Enumerations"
             case .`case`: return "Enumeration Cases"
+            case .dictionary: return "Dictionaries"
             case .extension: return "Extensions"
             case .`func`: return "Functions"
+            case .httpRequest: return "Endpoints"
             case .`operator`: return "Operators"
             case .`init`: return "Initializers"
             case .ivar: return "Instance Variables"
@@ -230,6 +233,8 @@ extension AutomaticCuration {
         .`class`,
         .`protocol`,
         .`struct`,
+        .`httpRequest`,
+        .`dictionary`,
         .`var`,
         .`func`,
         .`operator`,

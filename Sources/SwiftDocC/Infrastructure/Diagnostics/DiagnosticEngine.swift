@@ -95,6 +95,14 @@ public final class DiagnosticEngine {
             }
         }
     }
+    
+    public func finalize() {
+        workQueue.sync {
+            for consumer in self.consumers.sync({ $0.values }) {
+                try? consumer.finalize()
+            }
+        }
+    }
 
     /// Subscribes a given consumer to the diagnostics emitted by this engine.
     /// - Parameter consumer: The consumer to subscribe to this engine.

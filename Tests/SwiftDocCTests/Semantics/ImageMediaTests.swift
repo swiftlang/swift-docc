@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -153,6 +153,84 @@ class ImageMediaTests: XCTestCase {
                     inlineContent: [.image(
                         identifier: RenderReferenceIdentifier("figure1"),
                         metadata: RenderContentMetadata(abstract: [.text("This is my caption.")])
+                    )]
+                ))
+            ]
+        )
+    }
+    
+    func testImageDirectiveDiagnosesDeviceFrameByDefault() throws {
+        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+            """
+            @Image(source: "figure1", deviceFrame: phone)
+            """
+        }
+        
+        XCTAssertNotNil(image)
+        
+        XCTAssertEqual(problems, ["1: warning – org.swift.docc.UnknownArgument"])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                    inlineContent: [.image(
+                        identifier: RenderReferenceIdentifier("figure1"),
+                        metadata: nil
+                    )]
+                ))
+            ]
+        )
+    }
+    
+    func testRenderImageDirectiveWithDeviceFrame() throws {
+        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        
+        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+            """
+            @Image(source: "figure1", deviceFrame: phone)
+            """
+        }
+        
+        XCTAssertNotNil(image)
+        
+        XCTAssertEqual(problems, [])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                    inlineContent: [.image(
+                        identifier: RenderReferenceIdentifier("figure1"),
+                        metadata: RenderContentMetadata(deviceFrame: "phone")
+                    )]
+                ))
+            ]
+        )
+    }
+    
+    func testRenderImageDirectiveWithDeviceFrameAndCaption() throws {
+        enableFeatureFlag(\.isExperimentalDeviceFrameSupportEnabled)
+        
+        let (renderedContent, problems, image) = try parseDirective(ImageMedia.self, in: "BookLikeContent") {
+            """
+            @Image(source: "figure1", deviceFrame: laptop) {
+                This is my caption.
+            }
+            """
+        }
+        
+        XCTAssertNotNil(image)
+        
+        XCTAssertEqual(problems, [])
+        
+        XCTAssertEqual(
+            renderedContent,
+            [
+                RenderBlockContent.paragraph(RenderBlockContent.Paragraph(
+                    inlineContent: [.image(
+                        identifier: RenderReferenceIdentifier("figure1"),
+                        metadata: RenderContentMetadata(abstract: [.text("This is my caption.")], deviceFrame: "laptop")
                     )]
                 ))
             ]

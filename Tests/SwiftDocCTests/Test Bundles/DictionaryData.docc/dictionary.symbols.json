@@ -1,0 +1,329 @@
+{
+  "metadata": {
+    "formatVersion": {
+      "major": 0,
+      "minor": 5,
+      "patch": 0
+    },
+    "generator": "SymbolKit"
+  },
+  "module": {
+    "name": "DictionaryData",
+    "platform": {
+      "operatingSystem": {
+        "minimumVersion": {
+          "major": 1,
+          "minor": 0,
+          "patch": 0
+        },
+        "name": "test"
+      }
+    }
+  },
+  "relationships": [
+    {
+      "kind": "optionalMemberOf",
+      "source": "data:test:Artist@age",
+      "target": "data:test:Artist",
+      "targetFallback": null
+    },
+    {
+      "kind": "optionalMemberOf",
+      "source": "data:test:Artist@genre",
+      "target": "data:test:Artist",
+      "targetFallback": null
+    },
+    {
+      "kind": "optionalMemberOf",
+      "source": "data:test:Artist@monthOfBirth",
+      "target": "data:test:Artist",
+      "targetFallback": null
+    },
+    {
+      "kind": "memberOf",
+      "source": "data:test:Artist@name",
+      "target": "data:test:Artist",
+      "targetFallback": null
+    }
+  ],
+  "symbols": [
+    {
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "test",
+          "introduced": {
+            "major": 1,
+            "minor": 0,
+            "patch": 0
+          }
+        }
+      ],
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "object "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Artist"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "data:test:Artist"
+      },
+      "kind": {
+        "displayName": "Dictionary",
+        "identifier": "dictionary"
+      },
+      "names": {
+        "navigator": [
+          {
+            "kind": "identifier",
+            "spelling": "Artist"
+          }
+        ],
+        "subHeading": [
+          {
+            "kind": "text",
+            "spelling": "object "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Artist"
+          }
+        ],
+        "title": "Artist"
+      },
+      "pathComponents": [
+        "Artist"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "availability": [
+        {
+          "domain": "test",
+          "introduced": {
+            "major": 1,
+            "minor": 0,
+            "patch": 0
+          },
+          "isUnconditionallyDeprecated": true
+        }
+      ],
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "int"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "data:test:Artist@age"
+      },
+      "kind": {
+        "displayName": "Dictionary Key",
+        "identifier": "dictionaryKey"
+      },
+      "maximum": 125,
+      "minimum": 0,
+      "names": {
+        "title": "age"
+      },
+      "pathComponents": [
+        "Artist",
+        "age"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "allowedValues": [
+        "Classic Rock",
+        "Folk",
+        null
+      ],
+      "declarationFragments": [
+        {
+          "kind": "typeIdentifier",
+          "preciseIdentifier": "data:test:Genre",
+          "spelling": "Genre"
+        }
+      ],
+      "default": "Classic Rock",
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "data:test:Artist@genre"
+      },
+      "isReadOnly": true,
+      "kind": {
+        "displayName": "Dictionary Key",
+        "identifier": "dictionaryKey"
+      },
+      "names": {
+        "title": "genre"
+      },
+      "pathComponents": [
+        "Artist",
+        "genre"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "*"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "data:test:Artist@monthOfBirth"
+      },
+      "kind": {
+        "displayName": "Dictionary Key",
+        "identifier": "dictionaryKey"
+      },
+      "names": {
+        "title": "monthOfBirth"
+      },
+      "pathComponents": [
+        "Artist",
+        "monthOfBirth"
+      ],
+      "typeDetails": [
+        {
+          "baseType": "integer",
+          "fragments": [
+            {
+              "kind": "text",
+              "spelling": "integer"
+            }
+          ]
+        },
+        {
+          "baseType": "string",
+          "fragments": [
+            {
+              "kind": "text",
+              "spelling": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "string"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "data:test:Artist@name"
+      },
+      "kind": {
+        "displayName": "Dictionary Key",
+        "identifier": "dictionaryKey"
+      },
+      "names": {
+        "title": "name"
+      },
+      "pathComponents": [
+        "Artist",
+        "name"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "string "
+        },
+        {
+          "kind": "identifier",
+          "spelling": "Genre"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "data",
+        "precise": "data:test:Genre"
+      },
+      "kind": {
+        "displayName": "Type",
+        "identifier": "typealias"
+      },
+      "names": {
+        "subHeading": [
+          {
+            "kind": "text",
+            "spelling": "string "
+          },
+          {
+            "kind": "identifier",
+            "spelling": "Genre"
+          }
+        ],
+        "title": "Genre"
+      },
+      "pathComponents": [
+        "Genre"
+      ],
+      "typeDetails": [
+        {
+          "baseType": "string",
+        }
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "class FooObjC"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "objc",
+        "precise": "c:FooObjC"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "class"
+      },
+      "names": {
+        "title": "FooObjC"
+      },
+      "pathComponents": [
+        "FooObjC"
+      ]
+    },
+    {
+      "accessLevel": "public",
+      "declarationFragments": [
+        {
+          "kind": "text",
+          "spelling": "class FooSwift"
+        }
+      ],
+      "identifier": {
+        "interfaceLanguage": "swift",
+        "precise": "s:FooSwift"
+      },
+      "kind": {
+        "displayName": "Class",
+        "identifier": "class"
+      },
+      "names": {
+        "title": "FooSwift"
+      },
+      "pathComponents": [
+        "FooSwift"
+      ]
+    }
+  ]
+}

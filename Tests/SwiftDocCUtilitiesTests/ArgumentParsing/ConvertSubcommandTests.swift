@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -37,7 +37,7 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Tests a single input.
         do {
-            setenv(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path, 1)
+            SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
             XCTAssertNoThrow(try Docc.Convert.parse([
                 sourceURL.path,
             ]))
@@ -45,13 +45,13 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Test no inputs.
         do {
-            unsetenv(TemplateOption.environmentVariableKey)
+            UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
             XCTAssertNoThrow(try Docc.Convert.parse([]))
         }
         
         // Test missing input folder throws
         do {
-            setenv(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path, 1)
+            SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
             XCTAssertThrowsError(try Docc.Convert.parse([
                 URL(fileURLWithPath: "123").path,
             ]))
@@ -65,7 +65,7 @@ class ConvertSubcommandTests: XCTestCase {
                 try? FileManager.default.removeItem(at: sourceAsSingleFileURL)
             }
             
-            setenv(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path, 1)
+            SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
             XCTAssertThrowsError(try Docc.Convert.parse([
                 sourceAsSingleFileURL.path,
             ]))
@@ -74,7 +74,7 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Test no template folder does not throw
         do {
-            unsetenv(TemplateOption.environmentVariableKey)
+            UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
             XCTAssertNoThrow(try Docc.Convert.parse([
                 sourceURL.path,
             ]))
@@ -82,7 +82,7 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Test default template
         do {
-            unsetenv(TemplateOption.environmentVariableKey)
+            UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
             let tempFolder = try createTemporaryDirectory()
             let doccExecutableLocation = tempFolder
                 .appendingPathComponent("bin")
@@ -119,7 +119,7 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Test bad template folder throws
         do {
-            setenv(TemplateOption.environmentVariableKey, URL(fileURLWithPath: "123").path, 1)
+            SetEnvironmentVariable(TemplateOption.environmentVariableKey, URL(fileURLWithPath: "123").path)
             XCTAssertThrowsError(try Docc.Convert.parse([
                 sourceURL.path,
             ]))
@@ -127,7 +127,7 @@ class ConvertSubcommandTests: XCTestCase {
         
         // Test default target folder.
         do {
-            setenv(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path, 1)
+            SetEnvironmentVariable(TemplateOption.environmentVariableKey, rendererTemplateDirectory.path)
             let parseResult = try Docc.Convert.parse([
                 sourceURL.path,
             ])
@@ -137,7 +137,7 @@ class ConvertSubcommandTests: XCTestCase {
     }
 
     func testDefaultCurrentWorkingDirectory() {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
 
         XCTAssertTrue(
             FileManager.default.changeCurrentDirectoryPath(testBundleURL.path),
@@ -158,16 +158,16 @@ class ConvertSubcommandTests: XCTestCase {
         let fakeRootPath = "/nonexistentrootfolder/subfolder"
         // Test throws on non-existing parent folder.
         for path in ["/tmp/output", "/tmp", "/"] {
-            setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+            SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
             XCTAssertThrowsError(try Docc.Convert.parse([
                 "--output-path", fakeRootPath + path,
                 testBundleURL.path,
             ]), "Did not refuse target folder path '\(path)'")
         }
     }
-  
+
     func testAnalyzerIsTurnedOffByDefault() throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         let convertOptions = try Docc.Convert.parse([
             testBundleURL.path,
         ])
@@ -176,7 +176,7 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testInfoPlistFallbacks() throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         
         // Default to nil when not passed
         do {
@@ -206,7 +206,7 @@ class ConvertSubcommandTests: XCTestCase {
             XCTAssertEqual(convertOptions.defaultCodeListingLanguage, "swift")
         }
         
-        // Are set when passed 
+        // Are set when passed
         do {
             let convertOptions = try Docc.Convert.parse([
                 testBundleURL.path,
@@ -224,7 +224,7 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testAdditionalSymbolGraphFiles() throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         
         // Default to [] when not passed
         do {
@@ -289,7 +289,7 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testIndex() throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         
         let convertOptions = try Docc.Convert.parse([
             testBundleURL.path,
@@ -317,7 +317,7 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testWithoutBundle() throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         
         let convertOptions = try Docc.Convert.parse([
             "--fallback-display-name", "DisplayName",
@@ -370,8 +370,29 @@ class ConvertSubcommandTests: XCTestCase {
         XCTAssertTrue(actionWithFlag.experimentalEnableCustomTemplates)
     }
     
+    func testExperimentalEnableDeviceFrameSupportFlag() throws {
+        let originalFeatureFlagsState = FeatureFlags.current
+        
+        defer {
+            FeatureFlags.current = originalFeatureFlagsState
+        }
+        
+        let commandWithoutFlag = try Docc.Convert.parse([testBundleURL.path])
+        _ = try ConvertAction(fromConvertCommand: commandWithoutFlag)
+        XCTAssertFalse(commandWithoutFlag.enableExperimentalDeviceFrameSupport)
+        XCTAssertFalse(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
+
+        let commandWithFlag = try Docc.Convert.parse([
+            "--enable-experimental-device-frame-support",
+            testBundleURL.path,
+        ])
+        _ = try ConvertAction(fromConvertCommand: commandWithFlag)
+        XCTAssertTrue(commandWithFlag.enableExperimentalDeviceFrameSupport)
+        XCTAssertTrue(FeatureFlags.current.isExperimentalDeviceFrameSupportEnabled)
+    }
+    
     func testTransformForStaticHostingFlagWithoutHTMLTemplate() throws {
-        unsetenv(TemplateOption.environmentVariableKey)
+        UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
         
         // Since there's no custom template set (and relative HTML template lookup isn't
         // supported in the test harness), we expect `transformForStaticHosting` to
@@ -405,7 +426,7 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testTransformForStaticHostingFlagWithHTMLTemplate() throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         
         // Since we've provided an HTML template, we expect `transformForStaticHosting`
         // to be true by default, and when explicitly requested. It should only be false
@@ -439,7 +460,7 @@ class ConvertSubcommandTests: XCTestCase {
     }
     
     func testTreatWarningAsrror() throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         do {
             // Passing no argument should default to the current working directory.
             let convert = try Docc.Convert.parse([])

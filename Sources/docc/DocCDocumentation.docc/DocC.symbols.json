@@ -35,6 +35,1098 @@
         },
         {
           "kind" : "typeIdentifier",
+          "spelling" : "Article"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Article"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Article",
+            "spelling" : "Article"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Article"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Article"
+      },
+      "pathComponents" : [
+        "Article"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Assessments"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$MultipleChoice",
+          "spelling" : "MultipleChoice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A collection of questions about the concepts the documentation presents."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Assessments"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Assessments",
+            "spelling" : "Assessments"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Assessments"
+          }
+        ],
+        "title" : "Assessments"
+      },
+      "pathComponents" : [
+        "Assessments"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "AutomaticArticleSubheading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that modifies Swift-DocC's default behavior for automatic subheading generation on"
+          },
+          {
+            "text" : "article pages."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "By default, articles receive a second-level \"Overview\" heading unless the author explicitly writes"
+          },
+          {
+            "text" : "some other H2 heading below the abstract. This allows for opting out of that behavior."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - enabledness: Whether or not DocC generates automatic second-level \"Overview\" subheadings."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `enabled`: An overview subheading should be automatically created for the article (the default)."
+          },
+          {
+            "text" : "     - term `disabled`: No automatic overview subheading should be created for the article."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$AutomaticArticleSubheading"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$AutomaticArticleSubheading",
+            "spelling" : "AutomaticArticleSubheading"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "AutomaticArticleSubheading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "AutomaticArticleSubheading"
+      },
+      "pathComponents" : [
+        "AutomaticArticleSubheading"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "AutomaticSeeAlso"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for specifying Swift-DocC's automatic behavior when generating a page's"
+          },
+          {
+            "text" : "See Also section."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - enabledness: Whether or not DocC generates automatic See Also sections."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `enabled`: A See Also section should be automatically created (the default)."
+          },
+          {
+            "text" : "     - term `disabled`: No automatic See Also section should be created."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$AutomaticSeeAlso"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$AutomaticSeeAlso",
+            "spelling" : "AutomaticSeeAlso"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "AutomaticSeeAlso"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "AutomaticSeeAlso"
+      },
+      "pathComponents" : [
+        "AutomaticSeeAlso"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "AutomaticTitleHeading"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Enabledness"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for specifying Swift-DocC's automatic behavior when generating a page's"
+          },
+          {
+            "text" : "title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "A title heading is also known as a page eyebrow or kicker."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - enabledness: Whether or not DocC generates automatic title headings."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `enabled`: A title heading should be automatically created for the page (the default)."
+          },
+          {
+            "text" : "     - term `disabled`: No automatic title heading should be created for the page."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$AutomaticTitleHeading"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$AutomaticTitleHeading",
+            "spelling" : "AutomaticTitleHeading"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "AutomaticTitleHeading"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Enabledness"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "AutomaticTitleHeading"
+      },
+      "pathComponents" : [
+        "AutomaticTitleHeading"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Available"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "platform"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Platform"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "introduced"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that sets the platform availability information for a documentation page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "`@Available` is analagous to the `@available` attribute in Swift: It allows you to specify a"
+          },
+          {
+            "text" : "platform version that the page relates to. To specify a platform and version, list the platform"
+          },
+          {
+            "text" : "name and use the `introduced` argument:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Available(macOS, introduced: \"12.0\")"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Any text can be given to the first argument, and will be displayed in the page's"
+          },
+          {
+            "text" : "availability data. The platforms `iOS`, `macOS`, `watchOS`, and `tvOS` will be matched"
+          },
+          {
+            "text" : "case-insensitively, but anything else will be printed verbatim."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "To provide a platform name with spaces in it, provide it as a quoted string:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Available(\"My Package\", introduced: \"1.0\")"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is available on both articles and documentation extension files. In extension"
+          },
+          {
+            "text" : "files, the information overrides any information from the symbol itself."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @Available(macOS, introduced: \"12.0\")"
+          },
+          {
+            "text" : "    @Available(iOS, introduced: \"15.0\")"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - platform: The platform that this argument's information applies to."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - introduced: The platform version that this page applies to."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Available"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Available",
+            "spelling" : "Available"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Available"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "platform"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Platform"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "introduced"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Available"
+      },
+      "pathComponents" : [
+        "Available"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "CallToAction"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "url"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "URL"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "file"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "purpose"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Purpose"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "label"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that adds a prominent button or link to a page's header."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "A \"Call to Action\" has two main components: a link or file path, and the link text to display."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The link path can be specified in one of two ways:"
+          },
+          {
+            "text" : "- The `url` parameter specifies a URL that will be used verbatim. Use this when you're linking"
+          },
+          {
+            "text" : "  to an external page or externally-hosted file."
+          },
+          {
+            "text" : "- The `path` parameter specifies the path to a file hosted within your documentation catalog."
+          },
+          {
+            "text" : "  Use this if you're linking to a downloadable file that you're managing alongside your"
+          },
+          {
+            "text" : "  articles and tutorials."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The link text can also be specified in one of two ways:"
+          },
+          {
+            "text" : "- The `purpose` parameter can be used to use a default button label. There are two valid values:"
+          },
+          {
+            "text" : "  - `download` indicates that the link is to a downloadable file. The button will be labeled \"Download\"."
+          },
+          {
+            "text" : "  - `link` indicates that the link is to an external webpage."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "     The button will be labeled \"Visit\" when used on article pages and \"View Source\" when used on sample code pages."
+          },
+          {
+            "text" : "- The `label` parameter specifies the literal text to use as the button label."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "`@CallToAction` requires one of `url` or `path`, and one of `purpose` or `label`. Specifying both"
+          },
+          {
+            "text" : "`purpose` and `label` is allowed, but the `label` will override the default label provided by"
+          },
+          {
+            "text" : "`purpose`."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @CallToAction(url: \"https:\/\/example.com\/sample.zip\", purpose: download)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - url: The location of the associated link, as a fixed URL."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "  - file: The location of the associated link, as a reference to a file in this documentation bundle."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "  - purpose: The purpose of this Call to Action, which provides a default button label."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     - term `download`: References a link to download an associated asset, like a sample project."
+          },
+          {
+            "text" : "     - term `link`: References a link to view external content, like a source code repository."
+          },
+          {
+            "text" : "  - label: Text to use as the button label, which may override the default provided by a"
+          },
+          {
+            "text" : "     given `purpose`."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$CallToAction"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$CallToAction",
+            "spelling" : "CallToAction"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "CallToAction"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "url"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "URL"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "file"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ResourceReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "purpose"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Purpose"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "label"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "CallToAction"
+      },
+      "pathComponents" : [
+        "CallToAction"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
           "spelling" : "Chapter"
         },
         {
@@ -249,19 +1341,15 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "AutomaticArticleSubheading"
+          "spelling" : "Choice"
         },
         {
           "kind" : "text",
           "spelling" : "("
         },
         {
-          "kind" : "text",
-          "spelling" : "_ "
-        },
-        {
           "kind" : "identifier",
-          "spelling" : "behavior"
+          "spelling" : "isCorrect"
         },
         {
           "kind" : "text",
@@ -269,53 +1357,92 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "Behavior"
+          "spelling" : "Bool"
         },
         {
           "kind" : "text",
           "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    ...\n\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Justification",
+          "spelling" : "Justification"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "reaction"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
         }
       ],
       "docComment" : {
         "lines" : [
           {
-            "text" : "A directive that modifies Swift-DocC's default behavior for automatic subheading generation on"
-          },
-          {
-            "text" : "article pages."
+            "text" : "One of possibly many choices in a ``MultipleChoice`` question."
           },
           {
             "text" : ""
           },
           {
-            "text" : "By default, articles receive a second-level \"Overview\" heading unless the author explicitly writes"
-          },
-          {
-            "text" : "some other H2 heading below the abstract. This allows for opting out of that behavior."
-          },
-          {
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - behavior: The specified behavior for automatic subheading generation."
+            "text" : "  - isCorrect: `true` if this choice is a correct one; there can be multiple correct choices."
           },
           {
             "text" : "     **(required)**"
-          },
-          {
-            "text" : "     - term `disabled`: No subheading should be created for the article."
-          },
-          {
-            "text" : "     - term `enabled`: An overview subheading should be created containing the article's"
-          },
-          {
-            "text" : "        first paragraph of content."
           }
         ]
       },
       "identifier" : {
         "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$AutomaticArticleSubheading"
+        "precise" : "__docc_universal_symbol_reference_$Choice"
       },
       "kind" : {
         "displayName" : "Directive",
@@ -329,8 +1456,8 @@
           },
           {
             "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$AutomaticArticleSubheading",
-            "spelling" : "AutomaticArticleSubheading"
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Choice",
+            "spelling" : "Choice"
           }
         ],
         "subHeading" : [
@@ -340,19 +1467,15 @@
           },
           {
             "kind" : "identifier",
-            "spelling" : "AutomaticArticleSubheading"
+            "spelling" : "Choice"
           },
           {
             "kind" : "text",
             "spelling" : "("
           },
           {
-            "kind" : "text",
-            "spelling" : "_ "
-          },
-          {
             "kind" : "identifier",
-            "spelling" : "behavior"
+            "spelling" : "isCorrect"
           },
           {
             "kind" : "text",
@@ -360,17 +1483,17 @@
           },
           {
             "kind" : "typeIdentifier",
-            "spelling" : "Behavior"
+            "spelling" : "Bool"
           },
           {
             "kind" : "text",
             "spelling" : ")"
           }
         ],
-        "title" : "AutomaticArticleSubheading"
+        "title" : "Choice"
       },
       "pathComponents" : [
-        "AutomaticArticleSubheading"
+        "Choice"
       ]
     },
     {
@@ -382,7 +1505,11 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "MultipleChoice"
+          "spelling" : "Code"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
         },
         {
           "kind" : "text",
@@ -391,7 +1518,7 @@
       ],
       "identifier" : {
         "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$MultipleChoice"
+        "precise" : "__docc_universal_symbol_reference_$Code"
       },
       "kind" : {
         "displayName" : "Directive",
@@ -405,8 +1532,8 @@
           },
           {
             "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$MultipleChoice",
-            "spelling" : "MultipleChoice"
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Code",
+            "spelling" : "Code"
           }
         ],
         "subHeading" : [
@@ -416,13 +1543,17 @@
           },
           {
             "kind" : "identifier",
-            "spelling" : "MultipleChoice"
+            "spelling" : "Code"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
           }
         ],
-        "title" : "MultipleChoice"
+        "title" : "Code"
       },
       "pathComponents" : [
-        "MultipleChoice"
+        "Code"
       ]
     },
     {
@@ -434,7 +1565,241 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "AutomaticSeeAlso"
+          "spelling" : "Column"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "size"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Int"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = 1"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A container directive that holds general markup content describing a column"
+          },
+          {
+            "text" : "with a row in a grid-based layout."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Create a column inside a ``Row`` by nesting a `@Column` directive within the content for an `@Row` directive."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - size: The size of this column."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     "
+          },
+          {
+            "text" : "     Specify a value greater than `1` to make this column span multiple columns"
+          },
+          {
+            "text" : "     in the parent ``Row``."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Column"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Column",
+            "spelling" : "Column"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Column"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "size"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Int"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Column"
+      },
+      "pathComponents" : [
+        "Column"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Comment"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Comment"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Comment",
+            "spelling" : "Comment"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Comment"
+          }
+        ],
+        "title" : "Comment"
+      },
+      "pathComponents" : [
+        "Comment"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ContentAndMedia"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$ContentAndMedia"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$ContentAndMedia",
+            "spelling" : "ContentAndMedia"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "ContentAndMedia"
+          }
+        ],
+        "title" : "ContentAndMedia"
+      },
+      "pathComponents" : [
+        "ContentAndMedia"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "DisplayName"
         },
         {
           "kind" : "text",
@@ -446,7 +1811,7 @@
         },
         {
           "kind" : "identifier",
-          "spelling" : "behavior"
+          "spelling" : "name"
         },
         {
           "kind" : "text",
@@ -454,116 +1819,11 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "Behavior"
+          "spelling" : "String"
         },
         {
           "kind" : "text",
-          "spelling" : ")"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A directive for specifying Swift-DocC's automatic behavior when generating a page's"
-          },
-          {
-            "text" : "See Also section."
-          },
-          {
-            "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - behavior: The specified behavior for automatic See Also section generation."
-          },
-          {
-            "text" : "     **(required)**"
-          },
-          {
-            "text" : "     - term `disabled`: A See Also section will not be automatically created."
-          },
-          {
-            "text" : "     - term `siblingPages`: A See Also section will be automatically created based on the page's siblings."
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$AutomaticSeeAlso"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$AutomaticSeeAlso",
-            "spelling" : "AutomaticSeeAlso"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "AutomaticSeeAlso"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "text",
-            "spelling" : "_ "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "behavior"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "Behavior"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "AutomaticSeeAlso"
-      },
-      "pathComponents" : [
-        "AutomaticSeeAlso"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "TopicsVisualStyle"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "text",
-          "spelling" : "_ "
+          "spelling" : ", "
         },
         {
           "kind" : "identifier",
@@ -579,55 +1839,86 @@
         },
         {
           "kind" : "text",
+          "spelling" : " = conceptual"
+        },
+        {
+          "kind" : "text",
           "spelling" : ")"
         }
       ],
       "docComment" : {
         "lines" : [
           {
-            "text" : "A directive for specifying the style that should be used when rendering a page's"
+            "text" : "A directive that controls how the documentation-extension file overrides the symbol's display name."
           },
           {
-            "text" : "Topics section."
+            "text" : ""
+          },
+          {
+            "text" : "The ``name`` property will override the symbol's default display name."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "When the ``style`` property is ``Style\/conceptual``, the symbol's name is rendered as \"conceptual\"—same as article names or tutorial names —where applicable. The default style is ``Style\/conceptual``."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "When the ``style`` property is ``Style\/symbol``, the symbol's name is rendered as \"symbol\"—same as article names or tutorial names —where applicable. The default style is ``Style\/conceptual``."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "   @DisplayName(\"Custom Symbol Name\", style: conceptual)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
           },
           {
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - style: The specified style that should be used when rendering a page's Topics section."
+            "text" : "  - name: The custom display name for this symbol."
           },
           {
             "text" : "     **(required)**"
           },
           {
-            "text" : "     - term `list`: A list of the page's topics, including their full declaration and abstract."
+            "text" : "  - style: The style of the display name for this symbol."
           },
           {
-            "text" : "     - term `compactGrid`: A grid of items based on the card image for each page."
+            "text" : "     **(optional)**"
           },
           {
-            "text" : "        "
+            "text" : "     "
           },
           {
-            "text" : "        Includes each page’s title and card image but excludes their abstracts."
+            "text" : "     Defaults to ``Style\/conceptual``."
           },
           {
-            "text" : "     - term `detailedGrid`: A grid of items based on the card image for each page."
-          },
-          {
-            "text" : "        "
-          },
-          {
-            "text" : "        Unlike ``compactGrid``, this style includes the abstract for each page."
-          },
-          {
-            "text" : "     - term `hidden`: Do not show child pages anywhere on the page."
+            "text" : "     - term `symbol`: Completely override any in-source content with the content from the documentation-extension."
           }
         ]
       },
       "identifier" : {
         "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$TopicsVisualStyle"
+        "precise" : "__docc_universal_symbol_reference_$DisplayName"
       },
       "kind" : {
         "displayName" : "Directive",
@@ -641,8 +1932,8 @@
           },
           {
             "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$TopicsVisualStyle",
-            "spelling" : "TopicsVisualStyle"
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$DisplayName",
+            "spelling" : "DisplayName"
           }
         ],
         "subHeading" : [
@@ -652,7 +1943,7 @@
           },
           {
             "kind" : "identifier",
-            "spelling" : "TopicsVisualStyle"
+            "spelling" : "DisplayName"
           },
           {
             "kind" : "text",
@@ -661,6 +1952,22 @@
           {
             "kind" : "text",
             "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "name"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
           },
           {
             "kind" : "identifier",
@@ -679,10 +1986,10 @@
             "spelling" : ")"
           }
         ],
-        "title" : "TopicsVisualStyle"
+        "title" : "DisplayName"
       },
       "pathComponents" : [
-        "TopicsVisualStyle"
+        "DisplayName"
       ]
     },
     {
@@ -694,83 +2001,20 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "Small"
+          "spelling" : "Documentation"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
         },
         {
           "kind" : "text",
           "spelling" : " {\n    ...\n}"
         }
       ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A directive for specifying small print text like legal, license, or copyright text that"
-          },
-          {
-            "text" : "should be rendered in a smaller font size."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "The `@Small` directive is based on HTML's small tag (`<small>`). It supports any inline markup"
-          },
-          {
-            "text" : "formatting like bold and italics but does not support more structured markup like ``Row``"
-          },
-          {
-            "text" : "and ``Row\/Column``."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "```md"
-          },
-          {
-            "text" : "You can create a sloth using the ``init(name:color:power:)``"
-          },
-          {
-            "text" : "initializer, or create randomly generated sloth using a"
-          },
-          {
-            "text" : "``SlothGenerator``:"
-          },
-          {
-            "text" : "   "
-          },
-          {
-            "text" : "   let slothGenerator = MySlothGenerator(seed: randomSeed())"
-          },
-          {
-            "text" : "   let habitat = Habitat(isHumid: false, isWarm: true)"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "   \/\/ ..."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "@Small {"
-          },
-          {
-            "text" : "    _Licensed under Apache License v2.0 with Runtime Library Exception._"
-          },
-          {
-            "text" : "}"
-          },
-          {
-            "text" : "```"
-          }
-        ]
-      },
       "identifier" : {
         "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Small"
+        "precise" : "__docc_universal_symbol_reference_$Documentation"
       },
       "kind" : {
         "displayName" : "Directive",
@@ -784,8 +2028,8 @@
           },
           {
             "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Small",
-            "spelling" : "Small"
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Documentation",
+            "spelling" : "Documentation"
           }
         ],
         "subHeading" : [
@@ -795,13 +2039,550 @@
           },
           {
             "kind" : "identifier",
-            "spelling" : "Small"
+            "spelling" : "Documentation"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
           }
         ],
-        "title" : "Small"
+        "title" : "Documentation"
       },
       "pathComponents" : [
-        "Small"
+        "Documentation"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "DocumentationExtension"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "mergeBehavior"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Behavior"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "When the ``behavior`` property is ``Behavior\/append``, the content from the documentation-extension file is added after the content from"
+          },
+          {
+            "text" : "the in-source documentation for that symbol."
+          },
+          {
+            "text" : "If a documentation-extension file doesn't have a `DocumentationExtension` directive, then it has the ``Behavior\/append`` behavior."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "When the ``behavior`` property is ``Behavior\/override``, the content from the documentation-extension file completely replaces the content"
+          },
+          {
+            "text" : "from the in-source documentation for that symbol"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "   @DocumentationExtension(mergeBehavior: override)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - mergeBehavior: The merge behavior for this documentation extension."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `append`: Append the documentation-extension content to the in-source content and process them together."
+          },
+          {
+            "text" : "     - term `override`: Completely override any in-source content with the content from the documentation-extension."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$DocumentationExtension"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$DocumentationExtension",
+            "spelling" : "DocumentationExtension"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "DocumentationExtension"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "mergeBehavior"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Behavior"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "DocumentationExtension"
+      },
+      "pathComponents" : [
+        "DocumentationExtension"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Downloads"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Downloads"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Downloads",
+            "spelling" : "Downloads"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Downloads"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Downloads"
+      },
+      "pathComponents" : [
+        "Downloads"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Forums"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Forums"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Forums",
+            "spelling" : "Forums"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Forums"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Forums"
+      },
+      "pathComponents" : [
+        "Forums"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Image"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "source"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alt"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A block filled with an image."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - source: A reference to the source file for the media item."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - alt: Optional alternate text for an image."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Image"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Image",
+            "spelling" : "Image"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Image"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "source"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ResourceReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "alt"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Image"
+      },
+      "pathComponents" : [
+        "Image"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Intro"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "title"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "An introductory section for instructional pages."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - title: The title of the containing ``Tutorial``."
+          },
+          {
+            "text" : "     **(required)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Intro"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Intro",
+            "spelling" : "Intro"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Intro"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "title"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Intro"
+      },
+      "pathComponents" : [
+        "Intro"
       ]
     },
     {
@@ -917,1456 +2698,6 @@
       },
       "pathComponents" : [
         "Justification"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Step"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Step"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Step",
-            "spelling" : "Step"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Step"
-          }
-        ],
-        "title" : "Step"
-      },
-      "pathComponents" : [
-        "Step"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Resources"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Resources"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Resources",
-            "spelling" : "Resources"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Resources"
-          }
-        ],
-        "title" : "Resources"
-      },
-      "pathComponents" : [
-        "Resources"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Forums"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "(...)"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Forums"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Forums",
-            "spelling" : "Forums"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Forums"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "(...)"
-          }
-        ],
-        "title" : "Forums"
-      },
-      "pathComponents" : [
-        "Forums"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "SampleCode"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "(...)"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$SampleCode"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$SampleCode",
-            "spelling" : "SampleCode"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "SampleCode"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "(...)"
-          }
-        ],
-        "title" : "SampleCode"
-      },
-      "pathComponents" : [
-        "SampleCode"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "ContentAndMedia"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$ContentAndMedia"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$ContentAndMedia",
-            "spelling" : "ContentAndMedia"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "ContentAndMedia"
-          }
-        ],
-        "title" : "ContentAndMedia"
-      },
-      "pathComponents" : [
-        "ContentAndMedia"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Downloads"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "(...)"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Downloads"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Downloads",
-            "spelling" : "Downloads"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Downloads"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "(...)"
-          }
-        ],
-        "title" : "Downloads"
-      },
-      "pathComponents" : [
-        "Downloads"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Section"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "(...)"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Section"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Section",
-            "spelling" : "Section"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Section"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "(...)"
-          }
-        ],
-        "title" : "Section"
-      },
-      "pathComponents" : [
-        "Section"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Stack"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "    "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "preciseIdentifier" : "__docc_universal_symbol_reference_$ContentAndMedia",
-          "spelling" : "ContentAndMedia"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " { ... }"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "\n"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "}"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A semantic model for a view that arranges its children in a row."
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Stack"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Stack",
-            "spelling" : "Stack"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Stack"
-          }
-        ],
-        "title" : "Stack"
-      },
-      "pathComponents" : [
-        "Stack"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "AutomaticTitleHeading"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "text",
-          "spelling" : "_ "
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "behavior"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Behavior"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A directive for specifying Swift-DocC's automatic behavior when generating a page's"
-          },
-          {
-            "text" : "title heading."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "A title heading is also known as a page eyebrow or kicker."
-          },
-          {
-            "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - behavior: The specified behavior for automatic title heading generation."
-          },
-          {
-            "text" : "     **(required)**"
-          },
-          {
-            "text" : "     - term `disabled`: No title heading should be created for the page."
-          },
-          {
-            "text" : "     - term `pageKind`: A title heading based on the page's kind should be automatically created."
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$AutomaticTitleHeading"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$AutomaticTitleHeading",
-            "spelling" : "AutomaticTitleHeading"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "AutomaticTitleHeading"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "text",
-            "spelling" : "_ "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "behavior"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "Behavior"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "AutomaticTitleHeading"
-      },
-      "pathComponents" : [
-        "AutomaticTitleHeading"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "DisplayName"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "text",
-          "spelling" : "_ "
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "name"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "String"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ", "
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "style"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Style"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " = conceptual"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A directive that controls how the documentation-extension file overrides the symbol's display name."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "The ``name`` property will override the symbol's default display name."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "When the ``style-swift.property`` property is ``Style-swift.enum\/conceptual``, the symbol's name is rendered as \"conceptual\"—same as article names or tutorial names —where applicable. The default style is ``Style-swift.enum\/conceptual``."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "When the ``style-swift.property`` property is ``Style-swift.enum\/symbol``, the symbol's name is rendered as \"symbol\"—same as article names or tutorial names —where applicable. The default style is ``Style-swift.enum\/conceptual``."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "This directive is only valid within a ``Metadata`` directive:"
-          },
-          {
-            "text" : "```"
-          },
-          {
-            "text" : "@Metadata {"
-          },
-          {
-            "text" : "   @DisplayName(\"Custom Symbol Name\", style: conceptual)"
-          },
-          {
-            "text" : "}"
-          },
-          {
-            "text" : "```"
-          },
-          {
-            "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - name: The custom display name for this symbol."
-          },
-          {
-            "text" : "     **(required)**"
-          },
-          {
-            "text" : "  - style: The style of the display name for this symbol."
-          },
-          {
-            "text" : "     **(optional)**"
-          },
-          {
-            "text" : "     "
-          },
-          {
-            "text" : "     Defaults to ``Style-swift.enum\/conceptual``."
-          },
-          {
-            "text" : "     - term `symbol`: Completely override any in-source content with the content from the documentation-extension."
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$DisplayName"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$DisplayName",
-            "spelling" : "DisplayName"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "DisplayName"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "text",
-            "spelling" : "_ "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "name"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "String"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ", "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "style"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "Style"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "DisplayName"
-      },
-      "pathComponents" : [
-        "DisplayName"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Options"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "scope"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Scope"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " = local"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "Use Option directives to adjust DocC's default behaviors when rendering a page."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - scope: Whether the options in this Options directive should apply locally to the page"
-          },
-          {
-            "text" : "     or globally to the DocC catalog."
-          },
-          {
-            "text" : "     **(optional)**"
-          },
-          {
-            "text" : "     - term `local`: The directive should only affect the current page."
-          },
-          {
-            "text" : "     - term `global`: The directive should affect all pages in the current DocC catalog."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "## Topics"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "### Adjusting Automatic Behaviors"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "- ``AutomaticSeeAlso``"
-          },
-          {
-            "text" : "- ``AutomaticTitleHeading``"
-          },
-          {
-            "text" : "- ``AutomaticArticleSubheading``"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "### Adjusting Visual Style"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "- ``TopicsVisualStyle``"
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Options"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Options",
-            "spelling" : "Options"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Options"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "scope"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "Scope"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "Options"
-      },
-      "pathComponents" : [
-        "Options"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "DocumentationExtension"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "mergeBehavior"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Behavior"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A directive that controls how the documentation-extension file merges with or overrides the in-source documentation."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "When the ``behavior-swift.property`` property is ``Behavior-swift.enum\/append``, the content from the documentation-extension file is added after the content from"
-          },
-          {
-            "text" : "the in-source documentation for that symbol."
-          },
-          {
-            "text" : "If a documentation-extension file doesn't have a `DocumentationExtension` directive, then it has the ``Behavior-swift.enum\/append`` behavior."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "When the ``behavior-swift.property`` property is ``Behavior-swift.enum\/override``, the content from the documentation-extension file completely replaces the content"
-          },
-          {
-            "text" : "from the in-source documentation for that symbol"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "This directive is only valid within a ``Metadata`` directive:"
-          },
-          {
-            "text" : "```"
-          },
-          {
-            "text" : "@Metadata {"
-          },
-          {
-            "text" : "   @DocumentationExtension(mergeBehavior: override)"
-          },
-          {
-            "text" : "}"
-          },
-          {
-            "text" : "```"
-          },
-          {
-            "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - mergeBehavior: The merge behavior for this documentation extension."
-          },
-          {
-            "text" : "     **(required)**"
-          },
-          {
-            "text" : "     - term `append`: Append the documentation-extension content to the in-source content and process them together."
-          },
-          {
-            "text" : "     - term `override`: Completely override any in-source content with the content from the documentation-extension."
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$DocumentationExtension"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$DocumentationExtension",
-            "spelling" : "DocumentationExtension"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "DocumentationExtension"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "mergeBehavior"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "Behavior"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "DocumentationExtension"
-      },
-      "pathComponents" : [
-        "DocumentationExtension"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Row"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "numberOfColumns"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Int"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "?"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "    "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "preciseIdentifier" : "__docc_universal_symbol_reference_$Column",
-          "spelling" : "Column"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "size"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Int"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " = 1"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " { ... }"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "\n"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "}"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A container directive that arranges content into a grid-based row and column"
-          },
-          {
-            "text" : "layout."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "Create a new row by creating an `@Row` that contains child `@Column` directives."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "```md"
-          },
-          {
-            "text" : "@Row {"
-          },
-          {
-            "text" : "   @Column {"
-          },
-          {
-            "text" : "      @Image(source: \"icon-power-icon\", alt: \"A blue square containing a snowflake.\") {"
-          },
-          {
-            "text" : "         Ice power"
-          },
-          {
-            "text" : "      }"
-          },
-          {
-            "text" : "   }"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "   @Column {"
-          },
-          {
-            "text" : "      @Image(source: \"fire-power-icon\", alt: \"A red square containing a flame.\") {"
-          },
-          {
-            "text" : "         Fire power"
-          },
-          {
-            "text" : "      }"
-          },
-          {
-            "text" : "   }"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "   @Column {"
-          },
-          {
-            "text" : "      @Image(source: \"wind-power-icon\", alt: \"A teal square containing a breath of air.\") {"
-          },
-          {
-            "text" : "         Wind power"
-          },
-          {
-            "text" : "      }"
-          },
-          {
-            "text" : "   }"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "   @Column {"
-          },
-          {
-            "text" : "      @Image(source: \"lightning-power-icon\", alt: \"A yellow square containing a lightning bolt.\") {"
-          },
-          {
-            "text" : "         Lightning power"
-          },
-          {
-            "text" : "      }"
-          },
-          {
-            "text" : "   }"
-          },
-          {
-            "text" : "}"
-          },
-          {
-            "text" : "```"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - numberOfColumns: The number of columns in this row."
-          },
-          {
-            "text" : "     **(optional)**"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "## Topics"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "- ``Column``"
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Row"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Row",
-            "spelling" : "Row"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Row"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "numberOfColumns"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "Int"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "Row"
-      },
-      "pathComponents" : [
-        "Row"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Documentation"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "(...)"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Documentation"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Documentation",
-            "spelling" : "Documentation"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Documentation"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "(...)"
-          }
-        ],
-        "title" : "Documentation"
-      },
-      "pathComponents" : [
-        "Documentation"
       ]
     },
     {
@@ -2623,6 +2954,18 @@
           },
           {
             "text" : "- ``CallToAction``"
+          },
+          {
+            "text" : "- ``Availability``"
+          },
+          {
+            "text" : "- ``PageKind``"
+          },
+          {
+            "text" : "- ``SupportedLanguage``"
+          },
+          {
+            "text" : "- ``TitleHeading``"
           }
         ]
       },
@@ -2671,11 +3014,1690 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "Intro"
+          "spelling" : "MultipleChoice"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$MultipleChoice"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$MultipleChoice",
+            "spelling" : "MultipleChoice"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "MultipleChoice"
+          }
+        ],
+        "title" : "MultipleChoice"
+      },
+      "pathComponents" : [
+        "MultipleChoice"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Options"
         },
         {
           "kind" : "text",
           "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "scope"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Scope"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = local"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive to adjust Swift-DocC's default behaviors when rendering a page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - scope: Whether the options in this Options directive should apply locally to the page"
+          },
+          {
+            "text" : "     or globally to the DocC catalog."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "     - term `local`: The directive should only affect the current page."
+          },
+          {
+            "text" : "     - term `global`: The directive should affect all pages in the current DocC catalog."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "## Topics"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### Adjusting Automatic Behaviors"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``AutomaticSeeAlso``"
+          },
+          {
+            "text" : "- ``AutomaticTitleHeading``"
+          },
+          {
+            "text" : "- ``AutomaticArticleSubheading``"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "### Adjusting Visual Style"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``TopicsVisualStyle``"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Options"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Options",
+            "spelling" : "Options"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Options"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "scope"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Scope"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Options"
+      },
+      "pathComponents" : [
+        "Options"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "PageColor"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "color"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Color"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that specifies an accent color for a given documentation page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Use the `PageColor` directive to provide a hint to the renderer as to how"
+          },
+          {
+            "text" : "the page should be accented with color. The renderer may use this color,"
+          },
+          {
+            "text" : "depending on the context, as a foundation for other colors used on the"
+          },
+          {
+            "text" : "page. For example, Swift-DocC-Render uses this color as the primary"
+          },
+          {
+            "text" : "background color of a page's introduction section and adjusts other"
+          },
+          {
+            "text" : "elements in the introduction section to account for the new background."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @PageColor(orange)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - color: A context-dependent, standard color."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `blue`: A context-dependent blue color."
+          },
+          {
+            "text" : "     - term `gray`: A context-dependent gray color."
+          },
+          {
+            "text" : "     - term `green`: A context-dependent green color."
+          },
+          {
+            "text" : "     - term `orange`: A context-dependent orange color."
+          },
+          {
+            "text" : "     - term `purple`: A context-dependent purple color."
+          },
+          {
+            "text" : "     - term `red`: A context-dependent red color."
+          },
+          {
+            "text" : "     - term `yellow`: A context-dependent yellow color."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$PageColor"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$PageColor",
+            "spelling" : "PageColor"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "PageColor"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "color"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Color"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "PageColor"
+      },
+      "pathComponents" : [
+        "PageColor"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "PageImage"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "purpose"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Purpose"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "source"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "alt"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "String"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "Associates an image with a page."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "You can use this directive to set the image used when rendering a user-interface element representing the page."
+          },
+          {
+            "text" : "For example, use the page image directive to customize the icon used to represent this page in the navigation sidebar,"
+          },
+          {
+            "text" : "or the card image used to represent this page when using the ``Links`` directive and the ``Links\/detailedGrid``"
+          },
+          {
+            "text" : "visual style."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - purpose: The image's purpose."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `icon`: The image will be used when representing the page as an icon, such as in the navigation sidebar."
+          },
+          {
+            "text" : "     - term `card`: The image will be used when representing the page as a card, such as in grid styled Topics sections."
+          },
+          {
+            "text" : "  - source: The base file name of an image in your documentation catalog."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - alt: Alternative text that describes the image to screen readers."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$PageImage"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$PageImage",
+            "spelling" : "PageImage"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "PageImage"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "purpose"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Purpose"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "source"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "ResourceReference"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ", "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "alt"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "String"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "PageImage"
+      },
+      "pathComponents" : [
+        "PageImage"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "PageKind"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "kind"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Kind"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that allows you to set a page's kind, which affects its default title heading and page icon."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The `@PageKind` directive tells Swift-DocC to treat a documentation page as a particular"
+          },
+          {
+            "text" : "\"kind\". This is used to determine the page's default navigator icon, as well as the default"
+          },
+          {
+            "text" : "title heading on the page itself."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The available page kinds are `article` and `sampleCode`."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a `@Metadata` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @PageKind(sampleCode)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - kind: The page kind to apply to the page."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `article`: An article of free-form text; the default for standalone markdown files."
+          },
+          {
+            "text" : "     - term `sampleCode`: A page describing a \"sample code\" project."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$PageKind"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$PageKind",
+            "spelling" : "PageKind"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "PageKind"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "kind"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Kind"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "PageKind"
+      },
+      "pathComponents" : [
+        "PageKind"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Resources"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Resources"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Resources",
+            "spelling" : "Resources"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Resources"
+          }
+        ],
+        "title" : "Resources"
+      },
+      "pathComponents" : [
+        "Resources"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Row"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "numberOfColumns"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Int"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$Column",
+          "spelling" : "Column"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "size"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Int"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " = 1"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A container directive that arranges content into a grid-based row and column"
+          },
+          {
+            "text" : "layout."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "Create a new row by creating an `@Row` that contains child `@Column` directives."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "@Row {"
+          },
+          {
+            "text" : "   @Column {"
+          },
+          {
+            "text" : "      @Image(source: \"icon-power-icon\", alt: \"A blue square containing a snowflake.\") {"
+          },
+          {
+            "text" : "         Ice power"
+          },
+          {
+            "text" : "      }"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   @Column {"
+          },
+          {
+            "text" : "      @Image(source: \"fire-power-icon\", alt: \"A red square containing a flame.\") {"
+          },
+          {
+            "text" : "         Fire power"
+          },
+          {
+            "text" : "      }"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   @Column {"
+          },
+          {
+            "text" : "      @Image(source: \"wind-power-icon\", alt: \"A teal square containing a breath of air.\") {"
+          },
+          {
+            "text" : "         Wind power"
+          },
+          {
+            "text" : "      }"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   @Column {"
+          },
+          {
+            "text" : "      @Image(source: \"lightning-power-icon\", alt: \"A yellow square containing a lightning bolt.\") {"
+          },
+          {
+            "text" : "         Lightning power"
+          },
+          {
+            "text" : "      }"
+          },
+          {
+            "text" : "   }"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - numberOfColumns: The number of columns available in this row."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "## Topics"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "- ``Column``"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Row"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Row",
+            "spelling" : "Row"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Row"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "numberOfColumns"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Int"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "Row"
+      },
+      "pathComponents" : [
+        "Row"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "SampleCode"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$SampleCode"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$SampleCode",
+            "spelling" : "SampleCode"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "SampleCode"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "SampleCode"
+      },
+      "pathComponents" : [
+        "SampleCode"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Section"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Section"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Section",
+            "spelling" : "Section"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Section"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Section"
+      },
+      "pathComponents" : [
+        "Section"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Small"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for specifying small print text like legal, license, or copyright text that"
+          },
+          {
+            "text" : "should be rendered in a smaller font size."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "The `@Small` directive is based on HTML's small tag (`<small>`). It supports any inline markup"
+          },
+          {
+            "text" : "formatting like bold and italics but does not support more structured markup like ``Row``"
+          },
+          {
+            "text" : "and ``Row\/Column``."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```md"
+          },
+          {
+            "text" : "You can create a sloth using the ``init(name:color:power:)``"
+          },
+          {
+            "text" : "initializer, or create randomly generated sloth using a"
+          },
+          {
+            "text" : "``SlothGenerator``:"
+          },
+          {
+            "text" : "   "
+          },
+          {
+            "text" : "   let slothGenerator = MySlothGenerator(seed: randomSeed())"
+          },
+          {
+            "text" : "   let habitat = Habitat(isHumid: false, isWarm: true)"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "   \/\/ ..."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "@Small {"
+          },
+          {
+            "text" : "    _Licensed under Apache License v2.0 with Runtime Library Exception._"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Small"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Small",
+            "spelling" : "Small"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Small"
+          }
+        ],
+        "title" : "Small"
+      },
+      "pathComponents" : [
+        "Small"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Stack"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "    "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "preciseIdentifier" : "__docc_universal_symbol_reference_$ContentAndMedia",
+          "spelling" : "ContentAndMedia"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " { ... }"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "\n"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "}"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A semantic model for a view that arranges its children in a row."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Stack"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Stack",
+            "spelling" : "Stack"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Stack"
+          }
+        ],
+        "title" : "Stack"
+      },
+      "pathComponents" : [
+        "Stack"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Step"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Step"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Step",
+            "spelling" : "Step"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Step"
+          }
+        ],
+        "title" : "Step"
+      },
+      "pathComponents" : [
+        "Step"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Steps"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Steps"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Steps",
+            "spelling" : "Steps"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Steps"
+          }
+        ],
+        "title" : "Steps"
+      },
+      "pathComponents" : [
+        "Steps"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "SupportedLanguage"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "language"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "SourceLanguage"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive that controls what programming languages an article is available in."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "By default, an article is available in the languages the module that's being documented is available in. Use"
+          },
+          {
+            "text" : "this directive to override this behavior in a ``Metadata`` directive:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "    @SupportedLanguage(swift)"
+          },
+          {
+            "text" : "    @SupportedLanguage(objc)"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive supports any language identifier, but only the following are currently supported"
+          },
+          {
+            "text" : "by Swift-DocC Render:"
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "| Identifier                                 | Language               |"
+          },
+          {
+            "text" : "| --------------------------------- | ----------------------|"
+          },
+          {
+            "text" : "| `swift`                                | Swift                       |"
+          },
+          {
+            "text" : "| `objc`, `objective-c`   | Objective-C            |"
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - language: A source language that this symbol is available in."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     "
+          },
+          {
+            "text" : "     For supported values, see ``SupportedLanguage``."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$SupportedLanguage"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$SupportedLanguage",
+            "spelling" : "SupportedLanguage"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "SupportedLanguage"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "language"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "SourceLanguage"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "SupportedLanguage"
+      },
+      "pathComponents" : [
+        "SupportedLanguage"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Tab"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
         },
         {
           "kind" : "identifier",
@@ -2701,16 +4723,22 @@
       "docComment" : {
         "lines" : [
           {
-            "text" : "An introductory section for instructional pages."
+            "text" : "A container directive that holds general markup content describing an individual"
+          },
+          {
+            "text" : "tab within a tab-based layout."
           },
           {
             "text" : ""
           },
           {
+            "text" : " To add a new tab to a ``TabNavigator``, add  a `@Tab` directive within the content of the `@TabNavigator` directive."
+          },
+          {
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - title: The title of the containing ``Tutorial``."
+            "text" : "  - title: The title that should identify the content in this tab when rendered."
           },
           {
             "text" : "     **(required)**"
@@ -2719,7 +4747,7 @@
       },
       "identifier" : {
         "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Intro"
+        "precise" : "__docc_universal_symbol_reference_$Tab"
       },
       "kind" : {
         "displayName" : "Directive",
@@ -2733,8 +4761,8 @@
           },
           {
             "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Intro",
-            "spelling" : "Intro"
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tab",
+            "spelling" : "Tab"
           }
         ],
         "subHeading" : [
@@ -2744,11 +4772,15 @@
           },
           {
             "kind" : "identifier",
-            "spelling" : "Intro"
+            "spelling" : "Tab"
           },
           {
             "kind" : "text",
             "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
           },
           {
             "kind" : "identifier",
@@ -2767,70 +4799,10 @@
             "spelling" : ")"
           }
         ],
-        "title" : "Intro"
+        "title" : "Tab"
       },
       "pathComponents" : [
-        "Intro"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Code"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "(...)"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Code"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Code",
-            "spelling" : "Code"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Code"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "(...)"
-          }
-        ],
-        "title" : "Code"
-      },
-      "pathComponents" : [
-        "Code"
+        "Tab"
       ]
     },
     {
@@ -3022,327 +4994,6 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "CallToAction"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "url"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "URL"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "?"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ", "
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "file"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "ResourceReference"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "?"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ", "
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "purpose"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Purpose"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "?"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ", "
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "label"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "String"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "?"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A directive that adds a prominent button or link to a page's header."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "A \"Call to Action\" has two main components: a link or file path, and the link text to display."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "The link path can be specified in one of two ways:"
-          },
-          {
-            "text" : "- The `url` parameter specifies a URL that will be used verbatim. Use this when you're linking"
-          },
-          {
-            "text" : "  to an external page or externally-hosted file."
-          },
-          {
-            "text" : "- The `path` parameter specifies the path to a file hosted within your documentation catalog."
-          },
-          {
-            "text" : "  Use this if you're linking to a downloadable file that you're managing alongside your"
-          },
-          {
-            "text" : "  articles and tutorials."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "The link text can also be specified in one of two ways:"
-          },
-          {
-            "text" : "- The `purpose` parameter can be used to use a default button label. There are two valid values:"
-          },
-          {
-            "text" : "  - `download` indicates that the link is to a downloadable file. The button will be labeled \"Download\"."
-          },
-          {
-            "text" : "  - `link` indicates that the link is to an external webpage. The button will be labeled \"Visit\"."
-          },
-          {
-            "text" : "- The `label` parameter specifies the literal text to use as the button label."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "`@CallToAction` requires one of `url` or `path`, and one of `purpose` or `label`. Specifying both"
-          },
-          {
-            "text" : "`purpose` and `label` is allowed, but the `label` will override the default label provided by"
-          },
-          {
-            "text" : "`purpose`."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "This directive is only valid within a ``Metadata`` directive:"
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "```markdown"
-          },
-          {
-            "text" : "@Metadata {"
-          },
-          {
-            "text" : "    @CallToAction(url: \"https:\/\/example.com\/sample.zip\", purpose: download)"
-          },
-          {
-            "text" : "}"
-          },
-          {
-            "text" : "```"
-          },
-          {
-            "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - url: The location of the associated link, as a fixed URL."
-          },
-          {
-            "text" : "     **(optional)**"
-          },
-          {
-            "text" : "  - file: The location of the associated link, as a reference to a file in this documentation bundle."
-          },
-          {
-            "text" : "     **(optional)**"
-          },
-          {
-            "text" : "  - purpose: The purpose of this Call to Action, which provides a default button label."
-          },
-          {
-            "text" : "     **(optional)**"
-          },
-          {
-            "text" : "     - term `download`: References a link to download an associated asset, like a sample project."
-          },
-          {
-            "text" : "     - term `link`: References a link to view external content, like a source code repository."
-          },
-          {
-            "text" : "  - label: Text to use as the button label, which may override ``purpose-swift.property``."
-          },
-          {
-            "text" : "     **(optional)**"
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$CallToAction"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$CallToAction",
-            "spelling" : "CallToAction"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "CallToAction"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "url"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "URL"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ", "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "file"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "ResourceReference"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ", "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "purpose"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "Purpose"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ", "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "label"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "String"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "CallToAction"
-      },
-      "pathComponents" : [
-        "CallToAction"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
           "spelling" : "TechnologyRoot"
         }
       ],
@@ -3419,47 +5070,19 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "PageImage"
+          "spelling" : "TitleHeading"
         },
         {
           "kind" : "text",
           "spelling" : "("
         },
         {
-          "kind" : "identifier",
-          "spelling" : "purpose"
-        },
-        {
           "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Purpose"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ", "
+          "spelling" : "_ "
         },
         {
           "kind" : "identifier",
-          "spelling" : "source"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "ResourceReference"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ", "
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "alt"
+          "spelling" : "heading"
         },
         {
           "kind" : "text",
@@ -3471,687 +5094,52 @@
         },
         {
           "kind" : "text",
-          "spelling" : "?"
-        },
-        {
-          "kind" : "text",
           "spelling" : ")"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$PageImage"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$PageImage",
-            "spelling" : "PageImage"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "PageImage"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "purpose"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "Purpose"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ", "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "source"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "ResourceReference"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ", "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "alt"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "String"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "PageImage"
-      },
-      "pathComponents" : [
-        "PageImage"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Volume"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "(...)"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Volume"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Volume",
-            "spelling" : "Volume"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Volume"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "(...)"
-          }
-        ],
-        "title" : "Volume"
-      },
-      "pathComponents" : [
-        "Volume"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Column"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "size"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Int"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " = 1"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
         }
       ],
       "docComment" : {
         "lines" : [
           {
-            "text" : "A container directive that holds general markup content describing a column"
+            "text" : "A directive for customizing the text of a page's title heading."
           },
           {
-            "text" : "with a row in a grid-based layout."
+            "text" : ""
+          },
+          {
+            "text" : "The ``heading`` property will override the page's default title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "@TitleHeading accepts an unnamed parameter containing containing the page's title heading."
+          },
+          {
+            "text" : ""
+          },
+          {
+            "text" : "This directive is only valid within a top-level ``Metadata`` directive:"
+          },
+          {
+            "text" : "```markdown"
+          },
+          {
+            "text" : "@Metadata {"
+          },
+          {
+            "text" : "   @TitleHeading(\"Release Notes\")"
+          },
+          {
+            "text" : "}"
+          },
+          {
+            "text" : "```"
           },
           {
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - size: The size of this column."
-          },
-          {
-            "text" : "     **(optional)**"
-          },
-          {
-            "text" : "     "
-          },
-          {
-            "text" : "     Specify a value greater than `1` to make this column span multiple columns"
-          },
-          {
-            "text" : "     in the parent ``Row``."
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Column"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Column",
-            "spelling" : "Column"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Column"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "size"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "Int"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "Column"
-      },
-      "pathComponents" : [
-        "Column"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Tutorials"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "(...)"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Tutorials"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorials",
-            "spelling" : "Tutorials"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Tutorials"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "(...)"
-          }
-        ],
-        "title" : "Tutorials"
-      },
-      "pathComponents" : [
-        "Tutorials"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Steps"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Steps"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Steps",
-            "spelling" : "Steps"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Steps"
-          }
-        ],
-        "title" : "Steps"
-      },
-      "pathComponents" : [
-        "Steps"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Video"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "source"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "ResourceReference"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ", "
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "alt"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "String"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "?"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ", "
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "poster"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "ResourceReference"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "?"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Video"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Video",
-            "spelling" : "Video"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Video"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "source"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "ResourceReference"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ", "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "alt"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "String"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ", "
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "poster"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ": "
-          },
-          {
-            "kind" : "typeIdentifier",
-            "spelling" : "ResourceReference"
-          },
-          {
-            "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "Video"
-      },
-      "pathComponents" : [
-        "Video"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Assessments"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "    "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "preciseIdentifier" : "__docc_universal_symbol_reference_$MultipleChoice",
-          "spelling" : "MultipleChoice"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " { ... }"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "\n"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "}"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A collection of questions about the concepts the documentation presents."
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Assessments"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Assessments",
-            "spelling" : "Assessments"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Assessments"
-          }
-        ],
-        "title" : "Assessments"
-      },
-      "pathComponents" : [
-        "Assessments"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "TutorialReference"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "tutorial"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "TopicReference"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "A reference to a ``Tutorial`` or ``TutorialArticle`` by `URL`."
-          },
-          {
-            "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - tutorial: The tutorial page or tutorial article to which this refers."
+            "text" : "  - heading: An unnamed parameter containing containing the page-title’s heading text."
           },
           {
             "text" : "     **(required)**"
@@ -4160,7 +5148,7 @@
       },
       "identifier" : {
         "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$TutorialReference"
+        "precise" : "__docc_universal_symbol_reference_$TitleHeading"
       },
       "kind" : {
         "displayName" : "Directive",
@@ -4174,8 +5162,8 @@
           },
           {
             "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$TutorialReference",
-            "spelling" : "TutorialReference"
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TitleHeading",
+            "spelling" : "TitleHeading"
           }
         ],
         "subHeading" : [
@@ -4185,15 +5173,19 @@
           },
           {
             "kind" : "identifier",
-            "spelling" : "TutorialReference"
+            "spelling" : "TitleHeading"
           },
           {
             "kind" : "text",
             "spelling" : "("
           },
           {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
             "kind" : "identifier",
-            "spelling" : "tutorial"
+            "spelling" : "heading"
           },
           {
             "kind" : "text",
@@ -4201,17 +5193,156 @@
           },
           {
             "kind" : "typeIdentifier",
-            "spelling" : "TopicReference"
+            "spelling" : "String"
           },
           {
             "kind" : "text",
             "spelling" : ")"
           }
         ],
-        "title" : "TutorialReference"
+        "title" : "TitleHeading"
       },
       "pathComponents" : [
-        "TutorialReference"
+        "TitleHeading"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "TopicsVisualStyle"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "("
+        },
+        {
+          "kind" : "text",
+          "spelling" : "_ "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "style"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Style"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ")"
+        }
+      ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A directive for specifying the style that should be used when rendering a page's"
+          },
+          {
+            "text" : "Topics section."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - style: The specified style that should be used when rendering a page's Topics section."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "     - term `list`: A list of the page's topics, including their full declaration and abstract."
+          },
+          {
+            "text" : "     - term `compactGrid`: A grid of items based on the card image for each page."
+          },
+          {
+            "text" : "        "
+          },
+          {
+            "text" : "        Includes each page’s title and card image but excludes their abstracts."
+          },
+          {
+            "text" : "     - term `detailedGrid`: A grid of items based on the card image for each page."
+          },
+          {
+            "text" : "        "
+          },
+          {
+            "text" : "        Unlike ``compactGrid``, this style includes the abstract for each page."
+          },
+          {
+            "text" : "     - term `hidden`: Do not show child pages anywhere on the page."
+          }
+        ]
+      },
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$TopicsVisualStyle"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TopicsVisualStyle",
+            "spelling" : "TopicsVisualStyle"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "TopicsVisualStyle"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "text",
+            "spelling" : "_ "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "style"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "spelling" : "Style"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "title" : "TopicsVisualStyle"
+      },
+      "pathComponents" : [
+        "TopicsVisualStyle"
       ]
     },
     {
@@ -4450,19 +5581,15 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "Tab"
+          "spelling" : "TutorialReference"
         },
         {
           "kind" : "text",
           "spelling" : "("
         },
         {
-          "kind" : "text",
-          "spelling" : "_ "
-        },
-        {
           "kind" : "identifier",
-          "spelling" : "title"
+          "spelling" : "tutorial"
         },
         {
           "kind" : "text",
@@ -4470,30 +5597,23 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "String"
+          "spelling" : "TopicReference"
         },
         {
           "kind" : "text",
           "spelling" : ")"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
         }
       ],
       "docComment" : {
         "lines" : [
           {
-            "text" : "A container directive that holds general markup content describing an individual"
-          },
-          {
-            "text" : "tab within a tab-based layout."
+            "text" : "A reference to a ``Tutorial`` or ``TutorialArticle`` by `URL`."
           },
           {
             "text" : "- Parameters:"
           },
           {
-            "text" : "  - title: The title that should identify the content in this tab when rendered."
+            "text" : "  - tutorial: The tutorial page or tutorial article to which this refers."
           },
           {
             "text" : "     **(required)**"
@@ -4502,7 +5622,7 @@
       },
       "identifier" : {
         "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Tab"
+        "precise" : "__docc_universal_symbol_reference_$TutorialReference"
       },
       "kind" : {
         "displayName" : "Directive",
@@ -4516,8 +5636,8 @@
           },
           {
             "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tab",
-            "spelling" : "Tab"
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$TutorialReference",
+            "spelling" : "TutorialReference"
           }
         ],
         "subHeading" : [
@@ -4527,19 +5647,15 @@
           },
           {
             "kind" : "identifier",
-            "spelling" : "Tab"
+            "spelling" : "TutorialReference"
           },
           {
             "kind" : "text",
             "spelling" : "("
           },
           {
-            "kind" : "text",
-            "spelling" : "_ "
-          },
-          {
             "kind" : "identifier",
-            "spelling" : "title"
+            "spelling" : "tutorial"
           },
           {
             "kind" : "text",
@@ -4547,17 +5663,17 @@
           },
           {
             "kind" : "typeIdentifier",
-            "spelling" : "String"
+            "spelling" : "TopicReference"
           },
           {
             "kind" : "text",
             "spelling" : ")"
           }
         ],
-        "title" : "Tab"
+        "title" : "TutorialReference"
       },
       "pathComponents" : [
-        "Tab"
+        "TutorialReference"
       ]
     },
     {
@@ -4569,7 +5685,67 @@
         },
         {
           "kind" : "typeIdentifier",
-          "spelling" : "Image"
+          "spelling" : "Tutorials"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Tutorials"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Tutorials",
+            "spelling" : "Tutorials"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Tutorials"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Tutorials"
+      },
+      "pathComponents" : [
+        "Tutorials"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Video"
         },
         {
           "kind" : "text",
@@ -4609,6 +5785,26 @@
         },
         {
           "kind" : "text",
+          "spelling" : ", "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "poster"
+        },
+        {
+          "kind" : "text",
+          "spelling" : ": "
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "ResourceReference"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "?"
+        },
+        {
+          "kind" : "text",
           "spelling" : ")"
         },
         {
@@ -4616,9 +5812,37 @@
           "spelling" : " {\n    ...\n}"
         }
       ],
+      "docComment" : {
+        "lines" : [
+          {
+            "text" : "A block filled with a video."
+          },
+          {
+            "text" : "- Parameters:"
+          },
+          {
+            "text" : "  - source: A reference to the source file for the media item."
+          },
+          {
+            "text" : "     **(required)**"
+          },
+          {
+            "text" : "  - alt: Alternate text describing the video."
+          },
+          {
+            "text" : "     **(optional)**"
+          },
+          {
+            "text" : "  - poster: An image to be shown when the video isn't playing."
+          },
+          {
+            "text" : "     **(optional)**"
+          }
+        ]
+      },
       "identifier" : {
         "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Image"
+        "precise" : "__docc_universal_symbol_reference_$Video"
       },
       "kind" : {
         "displayName" : "Directive",
@@ -4632,8 +5856,8 @@
           },
           {
             "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Image",
-            "spelling" : "Image"
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Video",
+            "spelling" : "Video"
           }
         ],
         "subHeading" : [
@@ -4643,7 +5867,7 @@
           },
           {
             "kind" : "identifier",
-            "spelling" : "Image"
+            "spelling" : "Video"
           },
           {
             "kind" : "text",
@@ -4679,159 +5903,11 @@
           },
           {
             "kind" : "text",
-            "spelling" : ")"
-          }
-        ],
-        "title" : "Image"
-      },
-      "pathComponents" : [
-        "Image"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Choice"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "isCorrect"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Bool"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "    ...\n\n"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "    "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "preciseIdentifier" : "__docc_universal_symbol_reference_$Justification",
-          "spelling" : "Justification"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "("
-        },
-        {
-          "kind" : "identifier",
-          "spelling" : "reaction"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ": "
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "String"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "?"
-        },
-        {
-          "kind" : "text",
-          "spelling" : ")"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " { ... }"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "\n"
-        },
-        {
-          "kind" : "text",
-          "spelling" : "}"
-        }
-      ],
-      "docComment" : {
-        "lines" : [
-          {
-            "text" : "One of possibly many choices in a ``MultipleChoice`` question."
-          },
-          {
-            "text" : ""
-          },
-          {
-            "text" : "- Parameters:"
-          },
-          {
-            "text" : "  - isCorrect: `true` if this choice is a correct one; there can be multiple correct choices."
-          },
-          {
-            "text" : "     **(required)**"
-          }
-        ]
-      },
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Choice"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
+            "spelling" : ", "
           },
           {
             "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Choice",
-            "spelling" : "Choice"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Choice"
-          },
-          {
-            "kind" : "text",
-            "spelling" : "("
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "isCorrect"
+            "spelling" : "poster"
           },
           {
             "kind" : "text",
@@ -4839,69 +5915,17 @@
           },
           {
             "kind" : "typeIdentifier",
-            "spelling" : "Bool"
+            "spelling" : "ResourceReference"
           },
           {
             "kind" : "text",
             "spelling" : ")"
           }
         ],
-        "title" : "Choice"
+        "title" : "Video"
       },
       "pathComponents" : [
-        "Choice"
-      ]
-    },
-    {
-      "accessLevel" : "public",
-      "declarationFragments" : [
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "@"
-        },
-        {
-          "kind" : "typeIdentifier",
-          "spelling" : "Comment"
-        },
-        {
-          "kind" : "text",
-          "spelling" : " {\n    ...\n}"
-        }
-      ],
-      "identifier" : {
-        "interfaceLanguage" : "swift",
-        "precise" : "__docc_universal_symbol_reference_$Comment"
-      },
-      "kind" : {
-        "displayName" : "Directive",
-        "identifier" : "class"
-      },
-      "names" : {
-        "navigator" : [
-          {
-            "kind" : "attribute",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "preciseIdentifier" : "__docc_universal_symbol_reference_$Comment",
-            "spelling" : "Comment"
-          }
-        ],
-        "subHeading" : [
-          {
-            "kind" : "identifier",
-            "spelling" : "@"
-          },
-          {
-            "kind" : "identifier",
-            "spelling" : "Comment"
-          }
-        ],
-        "title" : "Comment"
-      },
-      "pathComponents" : [
-        "Comment"
+        "Video"
       ]
     },
     {
@@ -4962,6 +5986,66 @@
       },
       "pathComponents" : [
         "Videos"
+      ]
+    },
+    {
+      "accessLevel" : "public",
+      "declarationFragments" : [
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "@"
+        },
+        {
+          "kind" : "typeIdentifier",
+          "spelling" : "Volume"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "(...)"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " {\n    ...\n}"
+        }
+      ],
+      "identifier" : {
+        "interfaceLanguage" : "swift",
+        "precise" : "__docc_universal_symbol_reference_$Volume"
+      },
+      "kind" : {
+        "displayName" : "Directive",
+        "identifier" : "class"
+      },
+      "names" : {
+        "navigator" : [
+          {
+            "kind" : "attribute",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "preciseIdentifier" : "__docc_universal_symbol_reference_$Volume",
+            "spelling" : "Volume"
+          }
+        ],
+        "subHeading" : [
+          {
+            "kind" : "identifier",
+            "spelling" : "@"
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "Volume"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "(...)"
+          }
+        ],
+        "title" : "Volume"
+      },
+      "pathComponents" : [
+        "Volume"
       ]
     },
     {

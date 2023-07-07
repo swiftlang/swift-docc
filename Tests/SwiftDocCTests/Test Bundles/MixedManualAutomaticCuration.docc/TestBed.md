@@ -1,5 +1,10 @@
 # ``TestBed``
 
+@Metadata {
+    @PageColor(purple)
+    @TitleHeading("TestBed Notes")
+}
+
 TestBed framework.
 
 TestBed content.

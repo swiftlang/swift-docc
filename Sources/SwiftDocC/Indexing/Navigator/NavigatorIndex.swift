@@ -1097,7 +1097,9 @@ extension NavigatorIndex {
                     return
                 }
             }
-            
+
+            defer { environment.close() }
+
             let database: LMDB.Database
             if let alreadyDefinedDatabase = navigatorIndex.database {
                 database = alreadyDefinedDatabase

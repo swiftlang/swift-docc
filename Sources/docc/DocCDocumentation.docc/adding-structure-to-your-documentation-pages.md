@@ -1,6 +1,6 @@
 # Adding Structure to Your Documentation Pages
 
-Arrange symbols into groups and collections that make them easy to find.
+Make symbols easier to find by arranging them into groups and collections.
 
 ## Overview
 
@@ -24,9 +24,10 @@ For more information, see
 ### Customize Your Documentation's Landing Page
 
 A landing page provides an overview of your framework, introduces important 
-terms, and organizes the resources within your documentation catalog to ease 
-the reader's learning path. It's an opportunity for you to discuss key features 
-of your framework and offer motivation for when the reader might want to use 
+terms, and organizes the resources within your documentation catalog — the
+files that enrich your source documentation comments. The landing page is an
+opportunity for you to ease the reader's learning path, discuss key features of
+your technology, and offer motivation for the reader to return to when they need
 it.
 
 For projects that don't include a documentation catalog, DocC generates a 
@@ -40,7 +41,7 @@ of your framework.
 If you need to manually add a landing page to your documentation catalog, use your text editor to create a file to match the name of the framework. For example, for the 
 `SlothCreator` framework, the filename is `SlothCreator.md`.
 
-The first line of content in a landing page is the name of the framework, which 
+The first line of content in a landing page is an H1 heading containing the framework's product module name, which 
 you precede with a single hash (`#`) and encapsulate in a set of double backticks (\`\`).
 
 ```markdown
@@ -61,18 +62,18 @@ Catalog sloths you find in nature and create new adorable virtual sloths.
 
 After the summary, add another blank line and then one or more paragraphs that 
 introduce your framework to form the Overview section of the landing 
-page. Keep the Overview brief — typically less than a screen's worth of 
+page. Try to keep the Overview brief — typically less than a screen's worth of 
 content. Avoid detailing every feature in your framework. Instead, 
 provide content that helps the reader understand what problems the framework 
 solves.
 
-Write your Overview using _documentation markup_; a lightweight markup language 
+Write your Overview using _documentation markup_, a lightweight markup language 
 that allows you to include images, lists, and links to 
 symbols and other content. For more information, see 
 <doc:formatting-your-documentation-content>. 
 
-In addition to presenting rich content, a custom landing page provides organization of the top-level symbols and other content in your 
-documentation hierarchy.
+In addition to presenting rich content, a custom landing page organizes the top-level 
+symbols and other content in your documentation hierarchy.
 
 ### Arrange Top-Level Symbols Using Topic Groups
 
@@ -84,7 +85,7 @@ between those symbols.
 To help readers more easily navigate your framework, arrange symbols into 
 groups with meaningful names. Place important symbols higher on the page, and 
 nest supporting symbols inside other symbols. Use group names that are unique, 
-mutually exclusive, and have clear meaning. Experiment with different 
+mutually exclusive, and clear. Experiment with different 
 arrangements to find what works best for you.
 
 ![A screenshot showing the rendered documentation containing two topic groups: Essentials and Creating Sloths.](4_topics_1)
@@ -125,16 +126,16 @@ symbol's type information and summary. For more information, see
 <doc:formatting-your-documentation-content>.
 
 When you rebuild your documentation, the documentation viewer reflects these 
-organizational changes in the navigation pane and on the framework's 
+organizational changes in the navigation pane and on the 
 landing page, as the image above shows.
 
 ### Arrange Nested Symbols in Extension Files
 
-Not all public symbols appear at the top-level of a framework. For example, 
+Not all symbols appear on the top-level landing page. For example, 
 classes and structures define methods and properties, and in some cases, nested 
 classes or structures introduce additional levels of hierarchy.
 
-As with the framework's landing page, DocC generates default topic groups for 
+As with the top-level landing page, DocC generates default topic groups for 
 nested symbols according to their type. Use extension files to override this 
 default organization and provide a more appropriate structure for your symbols.
 
@@ -143,15 +144,14 @@ default organization and provide a more appropriate structure for your symbols.
 To add an extension file to your documentation catalog for a specific symbol, use a text editor to create a new file named `Extension.md`.
 
 In the `Extension.md` file, replace the `Symbol` placeholder 
-with the name of the symbol you're organizing and rename the file accordingly.
+with the symbol path of the symbol you're organizing and rename the file accordingly.
 
 ```markdown
 # ``SlothCreator/Sloth``
 ```
 
-> Important: You must use the symbol's absolute path for the page title of an 
-extension file and include the name of the framework or package. DocC doesn't 
-support relative symbol paths in this context.
+> Important: The symbol path for the page title of an extension file need to start
+with the name of a top-level symbol or the name of the framework.
 
 The Extension File template includes a `Topics` section with a single named 
 group, ready for you to fill out. Alternatively, if your documentation catalog 
@@ -222,4 +222,4 @@ they can also confuse a reader if you create too many levels of hierarchy.
 Avoid using a collection when a topic group at a higher level can achieve the 
 same result.
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,7 +19,11 @@ public struct ConvertAction: Action, RecreatingContext {
         var errorDescription: String {
             switch self {
             case .doesNotContainBundle(let url):
-                return "The directory at '\(url)' and its subdirectories do not contain at least one valid documentation bundle. A documentation bundle is a directory ending in `.docc`."
+                return """
+                    The directory at '\(url)' and its subdirectories do not contain at least one valid documentation \
+                    bundle. A documentation bundle is a directory ending in `.docc`. Pass \
+                    `--allow-arbitrary-catalog-directories` flag to convert a directory without a `.docc` extension.
+                    """
             case .cancelPending:
                 return "The action is already in the process of being cancelled."
             }
@@ -39,7 +43,7 @@ public struct ConvertAction: Action, RecreatingContext {
     let documentationCoverageOptions: DocumentationCoverageOptions
     let diagnosticLevel: DiagnosticSeverity
     let diagnosticEngine: DiagnosticEngine
-    
+
     let transformForStaticHosting: Bool
     let hostingBasePath: String?
     
@@ -98,11 +102,13 @@ public struct ConvertAction: Action, RecreatingContext {
         bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
         diagnosticLevel: String? = nil,
         diagnosticEngine: DiagnosticEngine? = nil,
-        emitFixits: Bool = false,
+        diagnosticFilePath: URL? = nil,
+        formatConsoleOutputForTools: Bool = false,
         inheritDocs: Bool = false,
         treatWarningsAsErrors: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool = false,
+        allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String? = nil,
         sourceRepository: SourceRepository? = nil
     ) throws
@@ -131,8 +137,8 @@ public struct ConvertAction: Action, RecreatingContext {
         }
         
         let formattingOptions: DiagnosticFormattingOptions
-        if emitFixits {
-            formattingOptions = [.showFixits]
+        if formatConsoleOutputForTools || diagnosticFilePath != nil {
+            formattingOptions = [.formatConsoleOutputForTools]
         } else {
             formattingOptions = []
         }
@@ -144,6 +150,9 @@ public struct ConvertAction: Action, RecreatingContext {
         let engine = diagnosticEngine ?? DiagnosticEngine(treatWarningsAsErrors: treatWarningsAsErrors)
         engine.filterLevel = filterLevel
         engine.add(DiagnosticConsoleWriter(formattingOptions: formattingOptions))
+        if let diagnosticFilePath = diagnosticFilePath {
+            engine.add(DiagnosticFileWriter(outputPath: diagnosticFilePath))
+        }
         
         self.diagnosticEngine = engine
         self.context = try context ?? DocumentationContext(dataProvider: workspace, diagnosticEngine: engine)
@@ -169,7 +178,10 @@ public struct ConvertAction: Action, RecreatingContext {
         if let injectedDataProvider = injectedDataProvider {
             dataProvider = injectedDataProvider
         } else if let rootURL = rootURL {
-            dataProvider = try LocalFileSystemDataProvider(rootURL: rootURL)
+            dataProvider = try LocalFileSystemDataProvider(
+                rootURL: rootURL,
+                allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
+            )
         } else {
             self.context.externalMetadata.isGeneratedBundle = true
             dataProvider = GeneratedDataProvider(symbolGraphDataLoader: { url in
@@ -192,6 +204,52 @@ public struct ConvertAction: Action, RecreatingContext {
         )
     }
     
+    @available(*, deprecated, renamed: "init(documentationBundleURL:outOfProcessResolver:analyze:targetDirectory:htmlTemplateDirectory:emitDigest:currentPlatforms:buildIndex:workspace:context:dataProvider:documentationCoverageOptions:bundleDiscoveryOptions:diagnosticLevel:diagnosticEngine:formatConsoleOutputForTools:inheritDocs:experimentalEnableCustomTemplates:transformForStaticHosting:hostingBasePath:sourceRepository:temporaryDirectory:)")
+    public init(
+        documentationBundleURL: URL, outOfProcessResolver: OutOfProcessReferenceResolver?,
+        analyze: Bool, targetDirectory: URL, htmlTemplateDirectory: URL?, emitDigest: Bool,
+        currentPlatforms: [String : PlatformVersion]?, buildIndex: Bool = false,
+        workspace: DocumentationWorkspace = DocumentationWorkspace(),
+        context: DocumentationContext? = nil,
+        dataProvider: DocumentationWorkspaceDataProvider? = nil,
+        documentationCoverageOptions: DocumentationCoverageOptions = .noCoverage,
+        bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
+        diagnosticLevel: String? = nil,
+        diagnosticEngine: DiagnosticEngine? = nil,
+        emitFixits: Bool, // No default value, this argument has been renamed
+        inheritDocs: Bool = false,
+        experimentalEnableCustomTemplates: Bool = false,
+        transformForStaticHosting: Bool,
+        hostingBasePath: String?,
+        sourceRepository: SourceRepository? = nil,
+        temporaryDirectory: URL
+    ) throws {
+        try self.init(
+            documentationBundleURL: documentationBundleURL,
+            outOfProcessResolver: outOfProcessResolver,
+            analyze: analyze,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: htmlTemplateDirectory,
+            emitDigest: emitDigest,
+            currentPlatforms: currentPlatforms,
+            buildIndex: buildIndex,
+            workspace: workspace,
+            context: context,
+            dataProvider: dataProvider,
+            documentationCoverageOptions: documentationCoverageOptions,
+            bundleDiscoveryOptions: bundleDiscoveryOptions,
+            diagnosticLevel: diagnosticLevel,
+            diagnosticEngine: diagnosticEngine,
+            formatConsoleOutputForTools: emitFixits,
+            inheritDocs: inheritDocs,
+            experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
+            transformForStaticHosting: transformForStaticHosting,
+            hostingBasePath: hostingBasePath,
+            sourceRepository: sourceRepository,
+            temporaryDirectory: temporaryDirectory
+        )
+    }
+    
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
     /// - Parameter workspace: A provided documentation workspace. Creates a new empty workspace if value is `nil`
     /// - Parameter context: A provided documentation context. Creates a new empty context in the workspace if value is `nil`
@@ -210,10 +268,11 @@ public struct ConvertAction: Action, RecreatingContext {
         bundleDiscoveryOptions: BundleDiscoveryOptions = .init(),
         diagnosticLevel: String? = nil,
         diagnosticEngine: DiagnosticEngine? = nil,
-        emitFixits: Bool = false,
+        formatConsoleOutputForTools: Bool = false,
         inheritDocs: Bool = false,
         experimentalEnableCustomTemplates: Bool = false,
         transformForStaticHosting: Bool,
+        allowArbitraryCatalogDirectories: Bool = false,
         hostingBasePath: String?,
         sourceRepository: SourceRepository? = nil,
         temporaryDirectory: URL
@@ -243,10 +302,11 @@ public struct ConvertAction: Action, RecreatingContext {
             bundleDiscoveryOptions: bundleDiscoveryOptions,
             diagnosticLevel: diagnosticLevel,
             diagnosticEngine: diagnosticEngine,
-            emitFixits: emitFixits,
+            formatConsoleOutputForTools: formatConsoleOutputForTools,
             inheritDocs: inheritDocs,
             experimentalEnableCustomTemplates: experimentalEnableCustomTemplates,
             transformForStaticHosting: transformForStaticHosting,
+            allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories,
             hostingBasePath: hostingBasePath,
             sourceRepository: sourceRepository
         )
@@ -305,6 +365,7 @@ public struct ConvertAction: Action, RecreatingContext {
         if let outOfProcessResolver = outOfProcessResolver {
             context.externalReferenceResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
             context.externalSymbolResolver = outOfProcessResolver
+            context._externalAssetResolvers[outOfProcessResolver.bundleIdentifier] = outOfProcessResolver
         }
         
         let temporaryFolder = try createTempFolder(

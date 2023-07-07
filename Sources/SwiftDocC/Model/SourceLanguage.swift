@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -42,7 +42,7 @@ public struct SourceLanguage: Hashable, Codable {
         switch queryID {
         case "swift":
             self = .swift
-        case "occ", "objective-c", "c":
+        case "occ", "objc", "objective-c", "c":
             self = .objectiveC
         case "javascript":
             self = .javaScript
@@ -60,7 +60,7 @@ public struct SourceLanguage: Hashable, Codable {
     public init(id: String) {
         switch id {
         case "swift": self = .swift
-        case "occ", "objective-c", "c": self = .objectiveC
+        case "occ", "objc", "objective-c", "c": self = .objectiveC
         case "javascript": self = .javaScript
         case "data": self = .data
         case "metal": self = .metal
@@ -133,6 +133,7 @@ public struct SourceLanguage: Hashable, Codable {
         id: "occ",
         idAliases: [
             "objective-c",
+            "objc",
             "c", // FIXME: DocC should display C as its own language (github.com/apple/swift-docc/issues/169).
         ],
         linkDisambiguationID: "c"

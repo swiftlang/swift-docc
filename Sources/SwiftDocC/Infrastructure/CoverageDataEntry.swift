@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -239,6 +239,7 @@ extension CoverageDataEntry {
             switch documentationNodeKind {
             case .class,
                 .structure,
+                .dictionary,
                 .enumeration,
                 .protocol,
                 .typeAlias,
@@ -248,6 +249,7 @@ extension CoverageDataEntry {
                 .extendedStructure,
                 .extendedEnumeration,
                 .extendedProtocol,
+                .httpRequest,
                 .unknownExtendedType:
                 self = .types
             case .localVariable,
@@ -277,6 +279,8 @@ extension CoverageDataEntry {
     enum KindSpecificData: Equatable, Codable {
         case `class`(memberStats: [InstanceMemberType: RatioStatistic])
         case structure(memberStats: [InstanceMemberType: RatioStatistic])
+        case dictionary
+        case httpRequest
         case enumeration(memberStats: [InstanceMemberType: RatioStatistic])
         case `protocol`(memberStats: [InstanceMemberType: RatioStatistic])
         case typeAlias
@@ -367,9 +371,7 @@ extension CoverageDataEntry {
                 )
                 let total = children.count
                 let documented = children.filter {
-                    (context.symbolIndex[$0.reference.description]?.semantic as? Symbol)?
-                        .abstractSection
-                        != nil
+                    (context.nodeWithSymbolIdentifier($0.reference.description)?.semantic as? Symbol)?.abstractSection != nil
                 }.count
 
                 if total == 0 {
@@ -444,7 +446,9 @@ extension CoverageDataEntry.KindSpecificData {
     internal enum Discriminant: String, Codable {
         case `class`
         case structure
+        case dictionary
         case enumeration
+        case httpRequest
         case `protocol`
         case `operator`
         case typeAlias
@@ -477,7 +481,9 @@ extension CoverageDataEntry.KindSpecificData {
                 return CoverageDataEntry.KindSpecificData.`operator`(parameterStats:)
             case .class,
                  .`structure`,
+                 .dictionary,
                  .enumeration,
+                .httpRequest,
                 .protocol,
                 .typeAlias,
                 .instanceProperty,
@@ -509,6 +515,8 @@ extension CoverageDataEntry.KindSpecificData {
                 return CoverageDataEntry.KindSpecificData.class(memberStats:)
             case .instanceMethod,
                  .initializer,
+                 .dictionary,
+                 .httpRequest,
                 .typeAlias,
                 .instanceProperty,
                 .enumerationCase,
@@ -533,8 +541,12 @@ extension CoverageDataEntry.KindSpecificData {
             return .class
         case .structure:
             return .`structure`
+        case .dictionary:
+            return .dictionary
         case .enumeration:
             return .enumeration
+        case .httpRequest:
+            return .httpRequest
         case .protocol:
             return .protocol
         case .typeAlias:
@@ -625,6 +637,10 @@ extension CoverageDataEntry.KindSpecificData {
             )
             self = try discriminant.associatedMemberStatisticsInitializer()(associatedValue)
 
+        case .dictionary:
+            self = .dictionary
+        case .httpRequest:
+            self = .httpRequest
         case .typeAlias:
             self = .typeAlias
         case .instanceProperty:
@@ -657,6 +673,8 @@ extension CoverageDataEntry.KindSpecificData {
             try container.encode(stats, forKey: .associatedValue)
 
         case .typeAlias,
+             .dictionary,
+             .httpRequest,
              .instanceProperty,
              .variable,
              .framework,

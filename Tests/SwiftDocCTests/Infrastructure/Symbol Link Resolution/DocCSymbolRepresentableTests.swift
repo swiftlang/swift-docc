@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -45,22 +45,6 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
     }
     
-    func testOverloadedParentAndMember() throws {
-        try XCTSkipIf(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver, "This is already unambiguous at the parent level. The `AbsoluteSymbolLink.LinkComponent` doesn't have the information to identify that.")
-        
-        try performOverloadSymbolDisambiguationTest(
-            correctLink: """
-            doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property
-            """,
-            incorrectLinks: [
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember",
-                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.enum.case",
-            ],
-            symbolTitle: "fifthTestMember",
-            expectedNumberOfAmbiguousSymbols: 2
-        )
-    }
-    
     func testProtocolMemberWithUSRHash() throws {
         try performOverloadSymbolDisambiguationTest(
             correctLink: """
@@ -76,34 +60,18 @@ class DocCSymbolRepresentableTests: XCTestCase {
     }
     
     func testFunctionWithKindIdentifierAndUSRHash() throws {
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            try performOverloadSymbolDisambiguationTest(
-                correctLink: """
-                doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s
-                """,
-                incorrectLinks: [
-                    "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14g8s",
-                    "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method",
-                    "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)",
-                ],
-                symbolTitle: "firstTestMemberName(_:)",
-                expectedNumberOfAmbiguousSymbols: 6
-            )
-        } else {
-            // The cache-based resolver redundantly disambiguates with both kind and usr when another overload has a different kind.
-            try performOverloadSymbolDisambiguationTest(
-                correctLink: """
-                doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14g8s
-                """,
-                incorrectLinks: [
-                    "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method",
-                    "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s",
-                    "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)",
-                ],
-                symbolTitle: "firstTestMemberName(_:)",
-                expectedNumberOfAmbiguousSymbols: 6
-            )
-        }
+        try performOverloadSymbolDisambiguationTest(
+            correctLink: """
+            doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-14g8s
+            """,
+            incorrectLinks: [
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method-14g8s",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)-swift.method",
+                "doc://com.shapes.ShapeKit/documentation/ShapeKit/OverloadedEnum/firstTestMemberName(_:)",
+            ],
+            symbolTitle: "firstTestMemberName(_:)",
+            expectedNumberOfAmbiguousSymbols: 6
+        )
     }
     
     func testSymbolWithNoDisambiguation() throws {
@@ -152,19 +120,19 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
         
         // Collect the overloaded symbols nodes from the built bundle
-        let ambiguousSymbols = context.symbolIndex.values.compactMap(\.symbol).filter {
-            $0.names.title.lowercased() == symbolTitle.lowercased()
-        }
+        let ambiguousSymbols = context.symbolIndex.values
+            .compactMap { context.documentationCache[$0]?.symbol }
+            .filter { $0.names.title.lowercased() == symbolTitle.lowercased() }
         XCTAssertEqual(ambiguousSymbols.count, expectedNumberOfAmbiguousSymbols)
         
         // Find the documentation node based on what we expect the correct link to be
-        let correctDocumentationNodeToSelect = try XCTUnwrap(
+        let correctReferenceToSelect = try XCTUnwrap(
             context.symbolIndex.values.first {
-                $0.reference.absoluteString == correctLink
+                $0.absoluteString == correctLink
             }
         )
         let correctSymbolToSelect = try XCTUnwrap(
-            correctDocumentationNodeToSelect.symbol
+            context.documentationCache[correctReferenceToSelect]?.symbol
         )
         
         // First confirm the first link does resolve as expected
@@ -187,7 +155,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             XCTAssertEqual(correctSymbolToSelect, selectedSymbol)
         }
         
-        // Now we'll try a couple of inprecise links and verify they don't resolve
+        // Now we'll try a couple of imprecise links and verify they don't resolve
         try incorrectLinks.forEach { incorrectLink in
             let absoluteSymbolLinkLastPathComponent = try XCTUnwrap(
                 AbsoluteSymbolLink(string: incorrectLink)?.basePathComponents.last
@@ -212,10 +180,11 @@ class DocCSymbolRepresentableTests: XCTestCase {
         )
         
         var count = 0
-        try context.symbolIndex.values.forEach { documentationNode in
-            guard let symbolLink = AbsoluteSymbolLink(string: documentationNode.reference.absoluteString) else {
+        try context.symbolIndex.values.forEach { reference in
+            guard let symbolLink = AbsoluteSymbolLink(string: reference.absoluteString) else {
                 return
             }
+            let documentationNode = try XCTUnwrap(context.documentationCache[reference])
             
             // The `asLinkComponent` property of DocCSymbolRepresentable doesn't have the context
             // to know what type disambiguation information it should use, so it always includes
@@ -240,12 +209,7 @@ class DocCSymbolRepresentableTests: XCTestCase {
             count += 1
         }
         
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            // With the hierarchy-based resolver it's never necessary to disambiguate with both kind and usr.
-            XCTAssertEqual(count, 0)
-        } else {
-            // With the cache-based resolver we expect this bundle to contain 5 symbols that need both kind and usr disambiguation.
-            XCTAssertEqual(count, 5)
-        }
+        // It's not necessary to disambiguate with both kind and usr.
+        XCTAssertEqual(count, 0)
     }
 }

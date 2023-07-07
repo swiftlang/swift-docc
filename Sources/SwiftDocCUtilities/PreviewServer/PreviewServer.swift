@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import Foundation
 import SwiftDocC
 
@@ -185,3 +186,4 @@ final class PreviewServer {
         print("Stopped preview server at \(bindTo)", to: &logHandle)
     }
 }
+#endif

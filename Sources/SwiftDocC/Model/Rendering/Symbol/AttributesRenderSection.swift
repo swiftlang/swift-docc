@@ -56,7 +56,7 @@ public enum RenderAttribute: Codable, Equatable {
     
     /// A list of the plain-text names of supported attributes.
     public enum Kind: String, Codable {
-        case `default`, minimum, minimumExclusive, maximum, maximumExclusive, allowedValues, allowedTypes
+        case `default`, minimum, minimumExclusive, maximum, maximumExclusive, minimumLength, maximumLength, allowedValues, allowedTypes
     }
     /// A default value, for example `none`.
     case `default`(String)
@@ -68,6 +68,10 @@ public enum RenderAttribute: Codable, Equatable {
     case maximum(String)
     /// A maximum value (excluding the given one), for example `10.0`.
     case maximumExclusive(String)
+    /// A minimum allowed length of a string.
+    case minimumLength(String)
+    /// A maximum allowed length of a string.
+    case maximumLength(String)
     /// A list of allowed values, for example `none`, `some`, and `all`.
     case allowedValues([String])
     /// A list of allowed type declarations for the value being described,
@@ -82,6 +86,8 @@ public enum RenderAttribute: Codable, Equatable {
         case .minimumExclusive: return "Minimum"
         case .maximum: return "Maximum"
         case .maximumExclusive: return "Maximum"
+        case .minimumLength: return "Minimum length"
+        case .maximumLength: return "Maximum length"
         case .allowedValues: return "Possible Values"
         case .allowedTypes: return "Possible Types"
         }
@@ -101,6 +107,10 @@ public enum RenderAttribute: Codable, Equatable {
             self = .maximum(try container.decode(String.self, forKey: .value))
         case .maximumExclusive:
             self = .maximumExclusive(try container.decode(String.self, forKey: .value))
+        case .minimumLength:
+            self = .minimumLength(try container.decode(String.self, forKey: .value))
+        case .maximumLength:
+            self = .maximumLength(try container.decode(String.self, forKey: .value))
         case .allowedValues:
             self = .allowedValues(try container.decode([String].self, forKey: .values))
         case .allowedTypes:
@@ -126,6 +136,12 @@ public enum RenderAttribute: Codable, Equatable {
             try container.encodeIfPresent(value, forKey: .value)
         case .maximumExclusive(let value):
             try container.encode(Kind.maximumExclusive, forKey: .kind)
+            try container.encodeIfPresent(value, forKey: .value)
+        case .minimumLength(let value):
+            try container.encode(Kind.minimumLength, forKey: .kind)
+            try container.encodeIfPresent(value, forKey: .value)
+        case .maximumLength(let value):
+            try container.encode(Kind.maximumLength, forKey: .kind)
             try container.encodeIfPresent(value, forKey: .value)
         case .allowedValues(let values):
             try container.encode(Kind.allowedValues, forKey: .kind)

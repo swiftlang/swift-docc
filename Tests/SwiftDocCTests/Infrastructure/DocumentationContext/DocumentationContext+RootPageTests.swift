@@ -88,10 +88,12 @@ class DocumentationContext_RootPageTests: XCTestCase {
         try workspace.registerProvider(dataProvider)
         
         // Verify that we emit a warning when trying to make a symbol a root page
-        XCTAssertTrue(context.problems.contains(where: { problem -> Bool in
-            return problem.diagnostic.identifier == "org.swift.docc.UnexpectedTechnologyRoot"
-                && problem.diagnostic.source?.path == "ReleaseNotes/MyClass"
-        }))
+        let technologyRootProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.UnexpectedTechnologyRoot" }))
+        XCTAssertEqual(technologyRootProblem.diagnostic.source, tempFolderURL.appendingPathComponent("no-sgf-test.docc").appendingPathComponent("MyClass.md"))
+        XCTAssertEqual(technologyRootProblem.diagnostic.range?.lowerBound.line, 3)
+        let solution = try XCTUnwrap(technologyRootProblem.possibleSolutions.first)
+        XCTAssertEqual(solution.replacements.first?.range.lowerBound.line, 3)
+        XCTAssertEqual(solution.replacements.first?.range.upperBound.line, 3)
     }
     
 }

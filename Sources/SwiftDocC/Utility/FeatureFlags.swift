@@ -28,6 +28,13 @@ public struct FeatureFlags: Codable {
     @available(*, deprecated, message: "Render Index JSON is now emitted by default.")
     public var isExperimentalJSONIndexEnabled = true
     
+    /// Whether or not experimental support for device frames on images and video is enabled.
+    public var isExperimentalDeviceFrameSupportEnabled = false
+
+    /// Whether or not experimental support for parsing Doxygen commands is enabled.
+    @available(*, deprecated, message: "Doxygen support is now enabled by default.")
+    public var isExperimentalDoxygenSupportEnabled = false
+    
     /// Creates a set of feature flags with the given values.
     ///
     /// - Parameters:

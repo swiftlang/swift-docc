@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -31,6 +31,10 @@ class ConvertActionTests: XCTestCase {
         withExtension: "symbols.json",
         subdirectory: "Test Resources"
     )!
+
+    let projectZipFile = Bundle.module.url(
+        forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!
+        .appendingPathComponent("project.zip")
     
     /// A symbol graph file that has missing symbols.
     let incompleteSymbolGraphFile = TextFile(name: "TechnologyX.symbols.json", utf8Content: """
@@ -961,6 +965,19 @@ class ConvertActionTests: XCTestCase {
                 """
             ),
 
+            TextFile(name: "SampleArticle.md", utf8Content: """
+                # Sample Article
+
+                @Metadata {
+                    @PageKind(sampleCode)
+                }
+
+                Sample abstract.
+
+                Discussion content
+                """
+            ),
+
             // A module page
             TextFile(name: "TestBed.md", utf8Content: """
                 # ``TestBed``
@@ -1042,6 +1059,15 @@ class ConvertActionTests: XCTestCase {
                     headings: ["Overview", "Article Section"],
                     rawIndexableTextContent: "Article abstract. Overview Discussion content  Article Section This is another section of the article."
                 )
+            case "/documentation/TestBundle/SampleArticle":
+                return IndexingRecord(
+                    kind: .article,
+                    location: .topLevelPage(reference),
+                    title: "Sample Article",
+                    summary: "Sample abstract.",
+                    headings: ["Overview"],
+                    rawIndexableTextContent: "Sample abstract. Overview Discussion content"
+                )
             default:
                 XCTFail("Encountered unexpected page '\(reference)'")
                 return nil
@@ -1060,11 +1086,14 @@ class ConvertActionTests: XCTestCase {
                         abstract: "TestBed abstract.",
                         taskGroups: [
                             .init(title: "Basics", identifiers: ["doc://com.test.example/documentation/TestBundle/Article"]),
+                            .init(title: "Articles", identifiers: ["doc://com.test.example/documentation/TestBundle/SampleArticle"]),
                             .init(title: "Structures", identifiers: ["doc://com.test.example/documentation/TestBed/A"]),
                         ],
                         usr: "TestBed",
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                 ]
@@ -1081,6 +1110,8 @@ class ConvertActionTests: XCTestCase {
                         usr: "s:7TestBed1AV",
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                 ]
@@ -1096,8 +1127,27 @@ class ConvertActionTests: XCTestCase {
                         taskGroups: [],
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
+                ]
+            case "/documentation/TestBundle/SampleArticle":
+                return [
+                    LinkDestinationSummary(
+                        kind: .sampleCode,
+                        relativePresentationURL: URL(string: "/documentation/testbundle/samplearticle")!,
+                        referenceURL: reference.url,
+                        title: "Sample Article",
+                        language: .swift,
+                        abstract: "Sample abstract.",
+                        taskGroups: [],
+                        availableLanguages: [.swift],
+                        platforms: nil,
+                        topicImages: nil,
+                        references: nil,
+                        redirects: nil
+                    )
                 ]
             default:
                 XCTFail("Encountered unexpected page '\(reference)'")
@@ -1151,6 +1201,125 @@ class ConvertActionTests: XCTestCase {
             return
         }
         XCTAssertEqual(resultAssets.images.map({ $0.identifier.identifier }).sorted(), images.map({ $0.identifier.identifier }).sorted())
+    }
+
+    func testDownloadMetadataIsWritenToOutputFolder() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            CopyOfFile(original: projectZipFile),
+            CopyOfFile(original: imageFile, newName: "referenced-tutorials-image.png"),
+
+            TextFile(name: "MyTechnology.tutorial", utf8Content: """
+            @Tutorial(time: 10, projectFiles: project.zip) {
+              @Intro(title: "TechologyX") {}
+
+              @Section(title: "Section") {
+                @Steps {}
+              }
+
+              @Assessments {
+                @MultipleChoice {
+                  text
+                  @Choice(isCorrect: true) {
+                    text
+                    @Justification(reaction: "reaction text") {}
+                  }
+
+                  @Choice(isCorrect: false) {
+                    text
+                    @Justification(reaction: "reaction text") {}
+                  }
+                }
+              }
+            }
+            """),
+
+            TextFile(name: "TechnologyX.tutorial", utf8Content: """
+            @Tutorials(name: TechnologyX) {
+               @Intro(title: "Technology X") {
+                  Learn about some stuff in Technology X.
+               }
+
+               @Volume(name: "Volume 1") {
+                  This volume contains Chapter 1.
+
+                  @Image(source: referenced-tutorials-image.png, alt: "Some alt text")
+
+                  @Chapter(name: "Chapter 1") {
+                     In this chapter, you'll learn about Tutorial 1.
+
+                     @Image(source: referenced-tutorials-image.png, alt: "Some alt text")
+                     @TutorialReference(tutorial: "doc:MyTechnology")
+                  }
+               }
+            }
+            """),
+
+            TextFile(name: "MySample.md", utf8Content: """
+            # My Sample
+
+            @Metadata {
+                @CallToAction(url: "https://example.com/sample.zip", purpose: download)
+            }
+
+            This is a page with a download button.
+            """),
+
+            TextFile(name: "TestBundle.md", utf8Content: """
+            # ``TestBundle``
+
+            This is a test.
+
+            ## Topics
+
+            ### Pages
+
+            - <doc:TechnologyX>
+            - <doc:MySample>
+            """),
+
+            // A symbol graph
+            CopyOfFile(original: Bundle.module.url(forResource: "TopLevelCuration.symbols", withExtension: "json", subdirectory: "Test Resources")!),
+
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+        ])
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: false,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: true,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory())
+        let result = try action.perform(logHandle: .standardOutput)
+
+        func contentsOfJSONFile<Result: Decodable>(url: URL) -> Result? {
+            guard let data = testDataProvider.contents(atPath: url.path) else {
+                return nil
+            }
+            return try? JSONDecoder().decode(Result.self, from: data)
+        }
+
+        // Verify downloads
+        guard let resultAssets: Digest.Assets = contentsOfJSONFile(url: result.outputs[0].appendingPathComponent("assets.json")) else {
+            XCTFail("Can't find assets.json in output")
+            return
+        }
+        XCTAssertEqual(resultAssets.downloads.count, 2)
+
+        XCTAssert(resultAssets.downloads.contains(where: {
+            $0.identifier.identifier == "project.zip"
+        }))
+        XCTAssert(resultAssets.downloads.contains(where: {
+            $0.identifier.identifier == "https://example.com/sample.zip"
+        }))
     }
 
     func testMetadataIsWrittenToOutputFolder() throws {
@@ -1262,6 +1431,8 @@ class ConvertActionTests: XCTestCase {
                         taskGroups: [.init(title: nil, identifiers: [reference.withFragment("Section-Name").absoluteString])],
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                     LinkDestinationSummary(
@@ -1274,6 +1445,8 @@ class ConvertActionTests: XCTestCase {
                         taskGroups: [],
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                 ]
@@ -1289,6 +1462,8 @@ class ConvertActionTests: XCTestCase {
                         taskGroups: [.init(title: nil, identifiers: [reference.appendingPath("Volume-1").absoluteString])],
                         availableLanguages: [.swift],
                         platforms: nil,
+                        topicImages: nil,
+                        references: nil,
                         redirects: nil
                     ),
                 ]
@@ -1806,6 +1981,7 @@ class ConvertActionTests: XCTestCase {
         let indexFromConvertAction = try NavigatorIndex.readNavigatorIndex(url: indexURL)
         XCTAssertEqual(indexFromConvertAction.count, 37)
         
+        indexFromConvertAction.environment?.close()
         try FileManager.default.removeItem(at: indexURL)
         
         // Run just the index command over the built documentation
@@ -2141,6 +2317,47 @@ class ConvertActionTests: XCTestCase {
             XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
         }
     }
+    
+    func testWritesDiagnosticFileWhenThrowingError() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            CopyOfFile(original: symbolGraphFile, newName: "MyKit.symbols.json"),
+            TextFile(name: "Article.md", utf8Content: """
+            Bad title
+
+            This article has a malformed title and can't be analyzed, so it
+            produces one warning.
+            """),
+            incompleteSymbolGraphFile,
+        ])
+
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+
+        let diagnosticFile = try createTemporaryDirectory().appendingPathComponent("test-diagnostics.json")
+        
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: true,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
+            diagnosticLevel: "error",
+            diagnosticFilePath: diagnosticFile
+        )
+        
+        XCTAssertFalse(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file doesn't exist before")
+        XCTAssertThrowsError(try action.performAndHandleResult()) { error in
+            XCTAssert(error is ErrorsEncountered, "Unexpected error type thrown by \(ConvertAction.self)")
+        }
+        XCTAssertTrue(FileManager.default.fileExists(atPath: diagnosticFile.path), "Diagnostic file exist after")
+    }
 
     // Verifies setting convert inherit docs flag
     func testConvertInheritDocsOption() throws {
@@ -2304,9 +2521,9 @@ class ConvertActionTests: XCTestCase {
         let doccCatalogDirectory = try emptyCatalog.write(inside: temporaryDirectory)
         let htmlTemplateDirectory = try Folder.emptyHTMLTemplateDirectory.write(inside: temporaryDirectory)
         
-        setenv(TemplateOption.environmentVariableKey, htmlTemplateDirectory.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, htmlTemplateDirectory.path)
         defer {
-            unsetenv(TemplateOption.environmentVariableKey)
+            UnsetEnvironmentVariable(TemplateOption.environmentVariableKey)
         }
         
         let convertCommand = try Docc.Convert.parse(
@@ -2803,10 +3020,10 @@ class ConvertActionTests: XCTestCase {
     private func uniformlyPrintDiagnosticMessages(_ problems: [Problem]) -> String {
         return problems.sorted(by: { (lhs, rhs) -> Bool in
             guard lhs.diagnostic.identifier != rhs.diagnostic.identifier else {
-                return lhs.diagnostic.localizedSummary < rhs.diagnostic.localizedSummary
+                return lhs.diagnostic.summary < rhs.diagnostic.summary
             }
             return lhs.diagnostic.identifier < rhs.diagnostic.identifier
-        }) .map { $0.diagnostic.localizedDescription }.sorted().joined(separator: "\n")
+        }) .map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }.sorted().joined(separator: "\n")
     }
     
     #endif
@@ -2825,6 +3042,8 @@ private extension LinkDestinationSummary {
         usr: String? = nil,
         availableLanguages: Set<SourceLanguage>,
         platforms: [PlatformAvailability]?,
+        topicImages: [TopicImage]?,
+        references: [RenderReference]?,
         redirects: [URL]?
     ) {
         self.init(
@@ -2840,6 +3059,8 @@ private extension LinkDestinationSummary {
             usr: usr,
             declarationFragments: nil,
             redirects: redirects,
+            topicImages: topicImages,
+            references: references,
             variants: []
         )
     }

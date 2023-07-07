@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -26,7 +26,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertEqual(article?.abstract?.plainText, "This is an abstract.")
@@ -48,7 +48,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertEqual(article?.abstract?.plainText, "This is an abstract.")
@@ -77,7 +77,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
         XCTAssertEqual(article?.title?.detachedFromParent.format(), "# This is my article")
         XCTAssertEqual(article?.abstract?.detachedFromParent.format(), "This is an abstract.")
@@ -101,7 +101,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertNil(article?.abstract)
@@ -119,7 +119,7 @@ class ArticleTests: XCTestCase {
         var problems = [Problem]()
         let article = Article(from: document, source: nil, for: bundle, in: context, problems: &problems)
         XCTAssertNotNil(article)
-        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(problems.localizedDescription)")
+        XCTAssert(problems.isEmpty, "Unexpectedly found problems: \(DiagnosticConsoleWriter.formattedDescription(for: problems))")
         
         XCTAssertEqual(article?.title?.plainText, "This is my article")
         XCTAssertNil(article?.abstract)
@@ -179,7 +179,7 @@ class ArticleTests: XCTestCase {
         This is an abstract.
         
         @Options {
-            @AutomaticSeeAlso(siblingPages)
+            @AutomaticSeeAlso(enabled)
         }
 
         Here's an overview.
@@ -206,6 +206,6 @@ class ArticleTests: XCTestCase {
             9
         )
         
-        XCTAssertEqual(article?.options[.local]?.automaticSeeAlsoBehavior, .disabled)
+        XCTAssertEqual(article?.options[.local]?.automaticSeeAlsoEnabled, false)
     }
 }

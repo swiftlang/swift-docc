@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -34,10 +34,13 @@ public struct ConvertService: DocumentationService {
     
     /// A peer server that can be used for resolving links.
     var linkResolvingServer: DocumentationServer?
-    
+
+    private let allowArbitraryCatalogDirectories: Bool
+
     /// Creates a conversion service, which converts in-memory documentation data.
-    public init(linkResolvingServer: DocumentationServer? = nil) {
+    public init(linkResolvingServer: DocumentationServer? = nil, allowArbitraryCatalogDirectories: Bool) {
         self.linkResolvingServer = linkResolvingServer
+        self.allowArbitraryCatalogDirectories = allowArbitraryCatalogDirectories
     }
     
     init(
@@ -46,6 +49,7 @@ public struct ConvertService: DocumentationService {
     ) {
         self.converter = converter
         self.linkResolvingServer = linkResolvingServer
+        self.allowArbitraryCatalogDirectories = false
     }
     
     public func process(
@@ -127,7 +131,10 @@ public struct ConvertService: DocumentationService {
             if let bundleLocation = request.bundleLocation {
                 // If an on-disk bundle is provided, convert it.
                 // Additional symbol graphs and markup are ignored for now.
-                provider = try LocalFileSystemDataProvider(rootURL: bundleLocation)
+                provider = try LocalFileSystemDataProvider(
+                    rootURL: bundleLocation,
+                    allowArbitraryCatalogDirectories: allowArbitraryCatalogDirectories
+                )
             } else {
                 // Otherwise, convert the in-memory content.
                 var inMemoryProvider = InMemoryContentDataProvider()
@@ -136,6 +143,7 @@ public struct ConvertService: DocumentationService {
                     info: request.bundleInfo,
                     symbolGraphs: request.symbolGraphs,
                     markupFiles: request.markupFiles,
+                    tutorialFiles: request.tutorialFiles,
                     miscResourceURLs: request.miscResourceURLs
                 )
                 
@@ -144,6 +152,19 @@ public struct ConvertService: DocumentationService {
             
             let context = try DocumentationContext(dataProvider: workspace)
             context.knownDisambiguatedSymbolPathComponents = request.knownDisambiguatedSymbolPathComponents
+            
+            // Enable support for generating documentation for standalone articles and tutorials.
+            context.allowsRegisteringArticlesWithoutTechnologyRoot = true
+            context.allowsRegisteringUncuratedTutorials = true
+            context.considerDocumentationExtensionsThatDoNotMatchSymbolsAsResolved = true
+            
+            context.configureSymbolGraph = { symbolGraph in
+                for (symbolIdentifier, overridingDocumentationComment) in request.overridingDocumentationComments ?? [:] {
+                    symbolGraph.symbols[symbolIdentifier]?.docComment = SymbolGraph.LineList(
+                        overridingDocumentationComment.map(SymbolGraph.LineList.Line.init(_:))
+                    )
+                }
+            }
             
             if let linkResolvingServer = linkResolvingServer {
                 let resolver = try OutOfProcessReferenceResolver(
@@ -171,13 +192,9 @@ public struct ConvertService: DocumentationService {
                     fallbackInfo: request.bundleInfo,
                     additionalSymbolGraphFiles: []
                 ),
-                // We're enabling the inclusion of symbol declaration file paths
-                // in the produced render json here because the render nodes created by
-                // `ConvertService` are intended for local uses of documentation where
-                // this information could be relevant and we don't have the privacy concerns
-                // that come with including this information in public releases of docs.
-                emitSymbolSourceFileURIs: true,
-                emitSymbolAccessLevels: true
+                emitSymbolSourceFileURIs: request.emitSymbolSourceFileURIs,
+                emitSymbolAccessLevels: true,
+                symbolIdentifiersWithExpandedDocumentation: request.symbolIdentifiersWithExpandedDocumentation
             )
 
             // Run the conversion.
@@ -187,7 +204,7 @@ public struct ConvertService: DocumentationService {
 
             guard conversionProblems.isEmpty else {
                 throw ConvertServiceError.conversionError(
-                    underlyingError: conversionProblems.localizedDescription)
+                    underlyingError: DiagnosticConsoleWriter.formattedDescription(for: conversionProblems))
             }
             
             let references: RenderReferenceStore?
@@ -244,9 +261,7 @@ public struct ConvertService: DocumentationService {
         baseReferenceStore: RenderReferenceStore?
     ) -> RenderReferenceStore {
         let uncuratedArticles = context.uncuratedArticles.map { ($0, isDocumentationExtensionContent: false) }
-        let uncuratedDocumentationExtensions = context.uncuratedDocumentationExtensions.flatMap { reference, articles in
-            articles.map { article in ((reference, article), isDocumentationExtensionContent: true) }
-        }
+        let uncuratedDocumentationExtensions = context.uncuratedDocumentationExtensions.map { ($0, isDocumentationExtensionContent: true) }
         let topicContent = (uncuratedArticles + uncuratedDocumentationExtensions)
             .compactMap { (value, isDocumentationExtensionContent) -> (ResolvedTopicReference, RenderReferenceStore.TopicContent)? in
                 let (topicReference, article) = value
@@ -297,5 +312,26 @@ extension Result {
             default: return transform(error)
             }
         }
+    }
+}
+
+private extension SymbolGraph.LineList.Line {
+    /// Creates a line given a convert request line.
+    init(_ line: ConvertRequest.Line) {
+        self.init(
+            text: line.text,
+            range: line.sourceRange.map { sourceRange in
+                SymbolGraph.LineList.SourceRange(
+                    start: SymbolGraph.LineList.SourceRange.Position(
+                        line: sourceRange.start.line,
+                        character: sourceRange.start.character
+                    ),
+                    end: SymbolGraph.LineList.SourceRange.Position(
+                        line: sourceRange.end.line,
+                        character: sourceRange.end.character
+                    )
+                )
+            }
+        )
     }
 }

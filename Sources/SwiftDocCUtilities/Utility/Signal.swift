@@ -11,6 +11,7 @@
 import Foundation
 
 /// A handler that intercepts system signal-events.
+#if !os(Windows)
 public struct Signal {
     /// List of all system signals that interrupt the program execution.
     public static let all = [SIGHUP, SIGINT, SIGQUIT, SIGABRT, SIGKILL, SIGALRM, SIGTERM]
@@ -35,3 +36,4 @@ public struct Signal {
         }
     }
 }
+#endif

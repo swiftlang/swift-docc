@@ -9,6 +9,9 @@
 */
 
 import Foundation
+#if os(Windows)
+import WinSDK
+#endif
 
 extension Benchmark {
     /// A peak memory footprint metric for the current process.
@@ -54,6 +57,16 @@ extension Benchmark {
                 let peakMemory = Double(peakMemoryString) else { return nil }
 
             return Int64(peakMemory * 1024) // convert from KBytes to bytes
+        }
+        #elseif os(Windows)
+        private static func peakMemory() -> Int64? {
+            var pmcStats = PROCESS_MEMORY_COUNTERS()
+            guard K32GetProcessMemoryInfo(
+                GetCurrentProcess(),
+                &pmcStats,
+                DWORD(MemoryLayout<PROCESS_MEMORY_COUNTERS>.size)
+            ) else { return nil }
+            return Int64(pmcStats.PeakWorkingSetSize)
         }
         #endif
         

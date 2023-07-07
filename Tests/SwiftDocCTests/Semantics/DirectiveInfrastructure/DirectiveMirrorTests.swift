@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -31,6 +31,19 @@ class DirectiveMirrorTests: XCTestCase {
         XCTAssertEqual(reflectedDirective.arguments["style"]?.propertyLabel, "style")
         XCTAssertEqual(reflectedDirective.arguments["style"]?.allowedValues, ["conceptual", "symbol"])
     }
+
+    func testReflectTitleHeadingDirective() {
+        let reflectedDirective = DirectiveMirror(reflecting: TitleHeading.self).reflectedDirective
+        
+        XCTAssertEqual(reflectedDirective.name, "TitleHeading")
+        XCTAssertFalse(reflectedDirective.allowsMarkup)
+        XCTAssertEqual(reflectedDirective.arguments.count, 1)
+        
+        XCTAssertEqual(reflectedDirective.arguments["heading"]?.unnamed, true)
+        XCTAssertEqual(reflectedDirective.arguments["heading"]?.required, true)
+        XCTAssertEqual(reflectedDirective.arguments["heading"]?.labelDisplayName, "_ heading")
+        XCTAssertEqual(reflectedDirective.arguments["heading"]?.propertyLabel, "heading")
+    }
     
     func testReflectMetadataDirective() {
         let reflectedDirective = DirectiveMirror(reflecting: Metadata.self).reflectedDirective
@@ -39,7 +52,7 @@ class DirectiveMirrorTests: XCTestCase {
         XCTAssertFalse(reflectedDirective.allowsMarkup)
         XCTAssert(reflectedDirective.arguments.isEmpty)
         
-        XCTAssertEqual(reflectedDirective.childDirectives.count, 7)
+        XCTAssertEqual(reflectedDirective.childDirectives.count, 11)
         
         XCTAssertEqual(
             reflectedDirective.childDirectives["DocumentationExtension"]?.propertyLabel,

@@ -302,8 +302,10 @@ extension RenderAttribute {
         case .default(let value): return value
         case .maximum(let value): return value
         case .maximumExclusive(let value): return value
+        case .maximumLength(let value): return value
         case .minimum(let value): return value
         case .minimumExclusive(let value): return value
+        case .minimumLength(let value): return value
         case .allowedValues(let values): return values.joined(separator: " ")
         case .allowedTypes(let values): return values.map { return $0.map { $0.text }.joined() }.joined(separator: " ")
         }

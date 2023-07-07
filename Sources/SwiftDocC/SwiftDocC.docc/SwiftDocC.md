@@ -51,4 +51,8 @@ Converting in-memory documentation into rendering nodes and persisting them on d
 - <doc:Utilities>
 - <doc:Communication>
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+### Development
+
+- <doc:Features>
+
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

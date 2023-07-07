@@ -13,16 +13,11 @@ import SymbolKit
 extension SymbolGraph.Symbol.AccessControl: Comparable {
     private var level: Int? {
         switch self {
-        case .private:
-            return 0
-        case .filePrivate:
-            return 1
-        case .internal:
-            return 2
-        case .public:
-            return 3
-        case .open:
-            return 4
+        case .private : return 1
+        case .filePrivate: return 2
+        case .internal: return 3
+        case .public: return 4
+        case .open: return 5
         default:
             assertionFailure("Unknown AccessControl case was used in comparison.")
             return nil
@@ -34,7 +29,6 @@ extension SymbolGraph.Symbol.AccessControl: Comparable {
               let rhs = rhs.level else {
             return false
         }
-        
         return lhs < rhs
     }
 }

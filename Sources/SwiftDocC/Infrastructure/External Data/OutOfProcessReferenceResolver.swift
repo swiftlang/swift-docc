@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -123,7 +123,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             do {
                 guard let unresolvedTopicURL = unresolvedReference.topicURL.components.url else {
                     // Return the unresolved reference if the underlying URL is not valid
-                    return .failure(unresolvedReference, errorMessage: "URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid.")
+                    return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo("URL \(unresolvedReference.topicURL.absoluteString.singleQuoted) is not valid."))
                 }
                 let metadata = try resolveInformationForTopicURL(unresolvedTopicURL)
                 // Don't do anything with this URL. The external URL will be resolved during conversion to render nodes
@@ -136,7 +136,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
                     )
                 )
             } catch let error {
-                return .failure(unresolvedReference, errorMessage: error.localizedDescription)
+                return .failure(unresolvedReference, TopicReferenceResolutionErrorInfo(error))
             }
         }
     }
@@ -172,7 +172,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             name = .conceptual(title: resolvedInformation.title)
         }
         
-        return DocumentationNode(
+        var node = DocumentationNode(
             reference: reference,
             kind: resolvedInformation.kind,
             sourceLanguage: resolvedInformation.language,
@@ -182,6 +182,10 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             semantic: maybeSymbol,
             platformNames: resolvedInformation.platformNames
         )
+        
+        addImagesAndCacheMediaReferences(to: &node, from: resolvedInformation)
+        
+        return node
     }
     
     /// Returns the web URL for the external topic.
@@ -247,7 +251,7 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             variants: resolvedInformation.variants
         )! // This entity was resolved from a symbol USR and is known to be a symbol.
         
-        return DocumentationNode(
+        var node = DocumentationNode(
             reference: reference,
             kind: resolvedInformation.kind,
             sourceLanguage: resolvedInformation.language,
@@ -257,6 +261,49 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
             semantic: symbol,
             platformNames: resolvedInformation.platformNames
         )
+        
+        addImagesAndCacheMediaReferences(to: &node, from: resolvedInformation)
+        
+        return node
+    }
+    
+    private func addImagesAndCacheMediaReferences(to node: inout DocumentationNode, from resolvedInformation: ResolvedInformation) {
+        // Because DocC renders external content in the local context, external media also needs to be added to the local context.
+        // If the external content was treated as pre-rendered then this wouldn't be necessary. (rdar://78718811)
+        // FIXME: https://github.com/apple/swift-docc/issues/468
+        
+        // `@PageImage` directives isn't meant to be created in code like this but it's the only way to associate topic images
+        // with a render node.
+        
+        if let topicImages = resolvedInformation.topicImages, !topicImages.isEmpty {
+            let metadata = node.metadata ?? Metadata(originalMarkup: BlockDirective(name: "Metadata", children: []), documentationExtension: nil, technologyRoot: nil, displayName: nil, titleHeading: nil)
+            
+            metadata.pageImages = topicImages.map { topicImage in
+                let purpose: PageImage.Purpose
+                switch topicImage.type {
+                case .card: purpose = .card
+                case .icon: purpose = .icon
+                }
+                
+                return PageImage._make(
+                    purpose: purpose,
+                    source: ResourceReference(bundleIdentifier: node.reference.bundleIdentifier, path: topicImage.identifier.identifier),
+                    alt: (resolvedInformation.references?.first(where: { $0.identifier == topicImage.identifier }) as? ImageReference)?.altText
+                )
+            }
+            
+            node.metadata = metadata
+        }
+        
+        // Since the DocumentationNode doesn't have any media references, the external media references can't be returned with the node.
+        // Instead they are added to the cache so that they are returned from later requests.
+        
+        for reference in (resolvedInformation.references ?? []) {
+            guard let mediaReference = reference as? MediaReference else { continue }
+            
+            assetCache[.init(assetName: mediaReference.identifier.identifier, bundleIdentifier: node.reference.bundleIdentifier)] = mediaReference.asset
+        }
+        
     }
     
     /// Returns the web URL for the external symbol.
@@ -397,6 +444,14 @@ public class OutOfProcessReferenceResolver: ExternalReferenceResolver, FallbackR
         
         // Fall back to the `language` property if `availableLanguages` is empty.
         return [resolvedInformation.language]
+    }
+}
+
+extension OutOfProcessReferenceResolver: _ExternalAssetResolver {
+    public func _resolveExternalAsset(named assetName: String, bundleIdentifier: String) -> DataAsset? {
+        // We don't want to make additional requests for these external assets.
+        // If they were already resolved, return them from the cache.
+        return assetCache[AssetReference(assetName: assetName, bundleIdentifier: bundleIdentifier)]
     }
 }
 
@@ -689,6 +744,10 @@ extension OutOfProcessReferenceResolver {
     
     /// A type used to transfer information about a resolved reference to DocC from from a reference resolver in another executable.
     public struct ResolvedInformation: Codable {
+        // This type is duplicating the information from LinkDestinationSummary with some minor differences.
+        // Changes generally need to be made in both places. It would be good to replace this with LinkDestinationSummary.
+        // FIXME: https://github.com/apple/swift-docc/issues/468
+        
         /// Information about the resolved kind.
         public let kind: DocumentationNode.Kind
         /// Information about the resolved URL.
@@ -719,8 +778,14 @@ extension OutOfProcessReferenceResolver {
             return platforms.map { platforms in Set(platforms.compactMap { $0.name }) }
         }
         
+        /// Images that are used to represent the summarized element.
+        public var topicImages: [TopicImage]?
+                
+        /// References used in the content of the summarized element.
+        public var references: [RenderReference]?
+        
         /// The variants of content (kind, url, title, abstract, language, declaration) for this resolver information.
-        public let variants: [Variant]?
+        public var variants: [Variant]?
         
         /// Creates a new resolved information value with all its values.
         ///
@@ -741,8 +806,10 @@ extension OutOfProcessReferenceResolver {
             abstract: String,
             language: SourceLanguage,
             availableLanguages: Set<SourceLanguage>,
-            platforms: [PlatformAvailability]?,
-            declarationFragments: DeclarationFragments?,
+            platforms: [PlatformAvailability]? = nil,
+            declarationFragments: DeclarationFragments? = nil,
+            topicImages: [TopicImage]? = nil,
+            references: [RenderReference]? = nil,
             variants: [Variant]? = nil
         ) {
             self.kind = kind
@@ -753,6 +820,8 @@ extension OutOfProcessReferenceResolver {
             self.availableLanguages = availableLanguages
             self.platforms = platforms
             self.declarationFragments = declarationFragments
+            self.topicImages = topicImages
+            self.references = references
             self.variants = variants
         }
         
@@ -782,6 +851,34 @@ extension OutOfProcessReferenceResolver {
             ///
             /// If the resolver information has a declaration but the variant doesn't, this property will be `Optional.some(nil)`.
             public let declarationFragments: VariantValue<DeclarationFragments?>
+            
+            /// Creates a new resolved information variant with the values that are different from the resolved information values.
+            ///
+            /// - Parameters:
+            ///   - traits: The traits of the variant.
+            ///   - kind: The resolved kind.
+            ///   - url: The resolved URL.
+            ///   - title: The resolved title
+            ///   - abstract: The resolved (plain text) abstract.
+            ///   - language: The resolved language.
+            ///   - declarationFragments: The resolved declaration fragments, if any.
+            public init(
+                traits: [RenderNode.Variant.Trait],
+                kind: VariantValue<DocumentationNode.Kind> = nil,
+                url: VariantValue<URL> = nil,
+                title: VariantValue<String> = nil,
+                abstract: VariantValue<String> = nil,
+                language: VariantValue<SourceLanguage> = nil,
+                declarationFragments: VariantValue<DeclarationFragments?> = nil
+            ) {
+                self.traits = traits
+                self.kind = kind
+                self.url = url
+                self.title = title
+                self.abstract = abstract
+                self.language = language
+                self.declarationFragments = declarationFragments
+            }
         }
     }
     
@@ -885,7 +982,64 @@ extension OutOfProcessReferenceResolver {
             seeAlsoVariants: .empty,
             returnsSectionVariants: .empty,
             parametersSectionVariants: .empty,
+            dictionaryKeysSectionVariants: .empty,
+            httpEndpointSectionVariants: .empty,
+            httpBodySectionVariants: .empty,
+            httpParametersSectionVariants: .empty,
+            httpResponsesSectionVariants: .empty,
             redirectsVariants: .empty
         )
     }
 }
+
+extension OutOfProcessReferenceResolver.ResolvedInformation {
+    enum CodingKeys: CodingKey {
+        case kind
+        case url
+        case title
+        case abstract
+        case language
+        case availableLanguages
+        case platforms
+        case declarationFragments
+        case topicImages
+        case references
+        case variants
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        kind = try container.decode(DocumentationNode.Kind.self, forKey: .kind)
+        url = try container.decode(URL.self, forKey: .url)
+        title = try container.decode(String.self, forKey: .title)
+        abstract = try container.decode(String.self, forKey: .abstract)
+        language = try container.decode(SourceLanguage.self, forKey: .language)
+        availableLanguages = try container.decode(Set<SourceLanguage>.self, forKey: .availableLanguages)
+        platforms = try container.decodeIfPresent([OutOfProcessReferenceResolver.ResolvedInformation.PlatformAvailability].self, forKey: .platforms)
+        declarationFragments = try container.decodeIfPresent(OutOfProcessReferenceResolver.ResolvedInformation.DeclarationFragments.self, forKey: .declarationFragments)
+        topicImages = try container.decodeIfPresent([TopicImage].self, forKey: .topicImages)
+        references = try container.decodeIfPresent([CodableRenderReference].self, forKey: .references).map { decodedReferences in
+            decodedReferences.map(\.reference)
+        }
+        variants = try container.decodeIfPresent([OutOfProcessReferenceResolver.ResolvedInformation.Variant].self, forKey: .variants)
+        
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        
+        try container.encode(self.kind, forKey: .kind)
+        try container.encode(self.url, forKey: .url)
+        try container.encode(self.title, forKey: .title)
+        try container.encode(self.abstract, forKey: .abstract)
+        try container.encode(self.language, forKey: .language)
+        try container.encode(self.availableLanguages, forKey: .availableLanguages)
+        try container.encodeIfPresent(self.platforms, forKey: .platforms)
+        try container.encodeIfPresent(self.declarationFragments, forKey: .declarationFragments)
+        try container.encodeIfPresent(self.topicImages, forKey: .topicImages)
+        try container.encodeIfPresent(references?.map { CodableRenderReference($0) }, forKey: .references)
+        try container.encodeIfPresent(self.variants, forKey: .variants)
+    }
+}
+

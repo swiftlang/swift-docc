@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -22,7 +22,15 @@ extension Metadata {
     /// @Available(macOS, introduced: "12.0")
     /// ```
     ///
-    /// The available platforms are `macOS`, `iOS`, `watchOS`, and `tvOS`.
+    /// Any text can be given to the first argument, and will be displayed in the page's
+    /// availability data. The platforms `iOS`, `macOS`, `watchOS`, and `tvOS` will be matched
+    /// case-insensitively, but anything else will be printed verbatim.
+    ///
+    /// To provide a platform name with spaces in it, provide it as a quoted string:
+    ///
+    /// ```markdown
+    /// @Available("My Package", introduced: "1.0")
+    /// ```
     ///
     /// This directive is available on both articles and documentation extension files. In extension
     /// files, the information overrides any information from the symbol itself.
@@ -38,19 +46,42 @@ extension Metadata {
     public final class Availability: Semantic, AutomaticDirectiveConvertible {
         static public let directiveName: String = "Available"
 
-        public enum Platform: String, RawRepresentable, CaseIterable, DirectiveArgumentValueConvertible {
+        public enum Platform: RawRepresentable, Hashable, DirectiveArgumentValueConvertible {
             // FIXME: re-add `case any = "*"` when `isBeta` and `isDeprecated` are implemented
             // cf. https://github.com/apple/swift-docc/issues/441
             case macOS, iOS, watchOS, tvOS
 
+            case other(String)
+
+            static var defaultCases: [Platform] = [.macOS, .iOS, .watchOS, .tvOS]
+
             public init?(rawValue: String) {
-                for platform in Self.allCases {
+                for platform in Self.defaultCases {
                     if platform.rawValue.lowercased() == rawValue.lowercased() {
                         self = platform
                         return
                     }
                 }
-                return nil
+                if rawValue == "*" {
+                    // Reserve the `*` platform for when `isBeta` and `isDeprecated` can be implemented
+                    return nil
+                } else {
+                    self = .other(rawValue)
+                }
+            }
+
+            public var rawValue: String {
+                switch self {
+                case .macOS: return "macOS"
+                case .iOS: return "iOS"
+                case .watchOS: return "watchOS"
+                case .tvOS: return "tvOS"
+                case .other(let platform): return platform
+                }
+            }
+
+            static func allowedValues() -> [String]? {
+                nil
             }
         }
 

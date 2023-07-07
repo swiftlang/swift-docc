@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -18,6 +18,8 @@ public struct RenderContentMetadata: Equatable, Codable {
     public var title: String?
     /// An optional custom abstract.
     public var abstract: [RenderInlineContent]?
+    /// An optional identifier for the device frame that should wrap this element.
+    public var deviceFrame: String?
 }
 
 extension RenderContentMetadata {
