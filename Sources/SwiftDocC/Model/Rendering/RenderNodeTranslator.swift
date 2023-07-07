@@ -191,8 +191,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.sections.append(tutorialSections)
-        if let assesments = tutorial.assessments {
-            node.sections.append(visitAssessments(assesments) as! TutorialAssessmentsRenderSection)
+        if let assessments = tutorial.assessments {
+            node.sections.append(visitAssessments(assessments) as! TutorialAssessmentsRenderSection)
         }
 
         // We guarantee there will be at least 1 path with at least 4 nodes in that path if the tutorial is curated.

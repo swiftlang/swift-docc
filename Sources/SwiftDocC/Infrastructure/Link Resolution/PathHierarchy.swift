@@ -1192,7 +1192,7 @@ private extension PathHierarchy.Node {
             return context.nodeWithSymbolIdentifier(symbol.identifier.precise)!.name.description
         }
         // This only gets called for PathHierarchy error messages, so hierarchyBasedLinkResolver is never nil.
-        let reference = context.hierarchyBasedLinkResolver!.resolvedReferenceMap[identifier]!
+        let reference = context.hierarchyBasedLinkResolver.resolvedReferenceMap[identifier]!
         if reference.fragment != nil {
             return context.nodeAnchorSections[reference]!.title
         } else {
