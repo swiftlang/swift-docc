@@ -237,7 +237,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
         \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
         \(explanation)
           --> TestTutorial.tutorial:44:59-44:138
-        42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+        42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
         43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
         44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
         45 |          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
@@ -280,7 +280,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
             44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
                |                                                           │  ╰─\u{001B}[1;39msuggestion: Other solution summary\u{001B}[0;0m
@@ -305,7 +305,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
             44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
                |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m
@@ -337,7 +337,7 @@ class DiagnosticConsoleWriterDefaultFormattingTest: XCTestCase {
             \u{001B}[1;33mwarning: \(summary)\u{001B}[0;0m
             \(explanation)
               --> TestTutorial.tutorial:44:59-44:138
-            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+            42 |          ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
             43 |          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
             44 +          This section link refers to this section itself: \u{001B}[1;32m<doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.\u{001B}[0;0m
                |                                                           ╰─\u{001B}[1;39msuggestion: Solution summary\u{001B}[0;0m

@@ -39,7 +39,7 @@
    @Section(title: "Create a New AR Project 💻") {
       @ContentAndMedia {
          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-         ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium.
+         ut labore et dolore magna aliqua. Phasellus faucibus scelerisque eleifend donec pretium. 
          Ultrices dui sapien eget mi proin sed libero enim. Quis auctor elit sed vulputate mi sit amet.
          This section link refers to this section itself: <doc:/tutorials/Test-Bundle/TestTutorial#Create-a-New-AR-Project-%F0%9F%92%BB>.
          This is an external link to Swift documentation: [Swift Documentation](https://swift.org/documentation/).
