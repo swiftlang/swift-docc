@@ -155,18 +155,10 @@ public extension Collection where Element: DocCSymbolRepresentable {
             // Disambiguate by kind
             return map { currentSymbol in
                 let kindCount = filter { $0.kindIdentifier == currentSymbol.kindIdentifier }.count
-                
-                if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-                    return (
-                        shouldAddIdHash: kindCount > 1,
-                        shouldAddKind: kindCount == 1
-                    )
-                } else {
-                    return (
-                        shouldAddIdHash: kindCount > 1,
-                        shouldAddKind: true
-                    )
-                }
+                return (
+                    shouldAddIdHash: kindCount > 1,
+                    shouldAddKind: kindCount == 1
+                )
             }
         }
     }

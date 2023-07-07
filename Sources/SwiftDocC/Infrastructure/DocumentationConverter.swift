@@ -398,8 +398,6 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         benchmark(add: Benchmark.ExternalTopicsHash(context: context))
         // Log the peak memory.
         benchmark(add: Benchmark.PeakMemory())
-
-        context.linkResolutionMismatches.reportGatheredMismatchesIfEnabled()
         
         return (analysisProblems: context.problems, conversionProblems: conversionProblems)
     }
