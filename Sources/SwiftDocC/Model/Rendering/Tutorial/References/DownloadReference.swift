@@ -101,7 +101,7 @@ public struct DownloadReference: RenderReference, URLReference, Equatable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type.rawValue, forKey: .type)
         try container.encode(identifier, forKey: .identifier)
-        try container.encodeIfPresent(checksum, forKey: .checksum)
+        try container.encode(checksum, forKey: .checksum)
         
         // Render URL
         if !encodeUrlVerbatim {
