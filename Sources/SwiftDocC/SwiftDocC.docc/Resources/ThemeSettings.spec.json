@@ -858,7 +858,7 @@
                                         "$ref": "#/components/schemas/FeatureFlagDisable"
                                     },
                                     "i18n": {
-                                        "$ref": "#/components/schemas/FeatureFlagDisable"
+                                        "$ref": "#/components/schemas/FeatureFlagEnable"
                                     }
                                 }
                             }
