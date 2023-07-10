@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import Foundation
 import XCTest
 @testable import SwiftDocC
@@ -54,3 +55,4 @@ class ErrorRequestHandlerTests: XCTestCase {
         XCTAssertEqual(response.body, "Message!")
     }
 }
+#endif

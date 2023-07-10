@@ -63,6 +63,11 @@ final class PathHierarchyBasedLinkResolver {
         return pathHierarchy.topLevelSymbols().map { resolvedReferenceMap[$0]! }
     }
     
+    /// Returns a list of all module symbols.
+    func modules() -> [ResolvedTopicReference] {
+        return pathHierarchy.modules.values.map { resolvedReferenceMap[$0.identifier]! }
+    }
+    
     // MARK: - Adding non-symbols
     
     /// Map the resolved identifiers to resolved topic references for a given bundle's article, tutorial, and technology root pages.
@@ -214,7 +219,12 @@ final class PathHierarchyBasedLinkResolver {
         do {
             let parentID = resolvedReferenceMap[parent]
             let found = try pathHierarchy.find(path: Self.path(for: unresolvedReference), parent: parentID, onlyFindSymbols: isCurrentlyResolvingSymbolLink)
-            let foundReference = resolvedReferenceMap[found]!
+            guard let foundReference = resolvedReferenceMap[found] else {
+                // It's possible for the path hierarchy to find a symbol that the local build doesn't create a page for. Such symbols can't be linked to.
+                let simplifiedFoundPath = sequence(first: pathHierarchy.lookup[found]!, next: \.parent)
+                    .map(\.name).reversed().joined(separator: "/")
+                return .failure(unresolvedReference, .init("\(simplifiedFoundPath.singleQuoted) has no page and isn't available for linking."))
+            }
             
             return .success(foundReference)
         } catch let error as PathHierarchy.Error {

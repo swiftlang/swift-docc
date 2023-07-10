@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import NIO
 import NIOHTTP1
 
@@ -20,3 +21,4 @@ protocol RequestHandlerFactory {
     func create<ChannelHandler: ChannelInboundHandler>(channelHandler: ChannelHandler) -> RequestHandler
         where ChannelHandler.OutboundOut == HTTPServerResponsePart
 }
+#endif

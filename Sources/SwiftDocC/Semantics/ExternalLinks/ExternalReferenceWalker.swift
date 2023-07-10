@@ -72,8 +72,8 @@ struct ExternalReferenceWalker: SemanticVisitor {
     mutating func visitTutorial(_ tutorial: Tutorial) {
         visit(tutorial.intro)
         tutorial.sections.forEach { visit($0) }
-        if let assesments = tutorial.assessments {
-            visit(assesments)
+        if let assessments = tutorial.assessments {
+            visit(assessments)
         }
     }
     

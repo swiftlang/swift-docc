@@ -20,6 +20,16 @@ final class SwiftLMDBTests: XCTestCase {
         let tempURL = try createTemporaryDirectory()
         
         environment = try! LMDB.Environment(path: tempURL.path, maxDBs: 4, mapSize: 1024 * 1024 * 1024) // 1GB of mapSize
+
+        // `addTeardownBlock` execute in LIFO order, which is important as we
+        // need this to execute before the implicit closure for the cleaning of
+        // the temporary directory.
+        addTeardownBlock {
+            // Explicitly close the environment to release the handles to the
+            // database files.  This is required on Windows where the files
+            // cannot be deleted while they are open.
+            self.environment.close()
+        }
     }
     
     override func tearDown() {
@@ -227,7 +237,7 @@ final class SwiftLMDBTests: XCTestCase {
     }
     
     func testArrayOfInt() throws {
-#if !os(Linux) && !os(Android)
+#if !os(Linux) && !os(Android) && !os(Windows)
         let database = try environment.openDatabase()
         
         var array: [UInt32] = []

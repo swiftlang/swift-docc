@@ -471,21 +471,17 @@ class ReferenceResolverTests: XCTestCase {
             try """
             # ``ModuleWithSingleExtension``
 
-            This is a test module with an extension to ``Swift/Array#Array``.
+            This is a test module with an extension to ``Swift/Array``.
             """.write(to: topLevelArticle, atomically: true, encoding: .utf8)
         }
 
         // Make sure that linking to `Swift/Array` raises a diagnostic about the page having been removed
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            let diagnostic = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination" }))
-            XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
-            let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
-            XCTAssertEqual(solution.replacements.count, 1)
-            let replacement = try XCTUnwrap(solution.replacements.first)
-            XCTAssertEqual(replacement.replacement, "`Swift/Array`")
-        } else {
-            XCTAssert(context.problems.contains(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
-        }
+        let diagnostic = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.removedExtensionLinkDestination" }))
+        XCTAssertEqual(diagnostic.possibleSolutions.count, 1)
+        let solution = try XCTUnwrap(diagnostic.possibleSolutions.first)
+        XCTAssertEqual(solution.replacements.count, 1)
+        let replacement = try XCTUnwrap(solution.replacements.first)
+        XCTAssertEqual(replacement.replacement, "`Swift/Array`")
 
         // Also make sure that the extension pages are still gone
         let extendedModule = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithSingleExtension/Swift", sourceLanguage: .swift)
@@ -539,7 +535,19 @@ class ReferenceResolverTests: XCTestCase {
         let renderReference = try XCTUnwrap(renderNode.references[boolReference])
         XCTAssert(renderReference is UnresolvedRenderReference)
     }
-    
+
+    func testExtensionWithEmptyDeclarationFragments() throws {
+        let (bundle, context) = try testBundleAndContext(named: "ModuleWithEmptyDeclarationFragments")
+
+        let node = try context.entity(with: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/ModuleWithEmptyDeclarationFragments", sourceLanguage: .swift))
+        var translator = RenderNodeTranslator(context: context, bundle: bundle, identifier: node.reference, source: nil)
+        let renderNode = translator.visit(node.semantic as! Symbol) as! RenderNode
+
+        // Despite having an extension to Float, there are no symbols added by that extension, so
+        // the resulting documentation should be empty
+        XCTAssertEqual(renderNode.topicSections.count, 0)
+    }
+
     struct TestExternalReferenceResolver: ExternalReferenceResolver {
         var bundleIdentifier = "com.external.testbundle"
         var expectedReferencePath = "/externally/resolved/path"

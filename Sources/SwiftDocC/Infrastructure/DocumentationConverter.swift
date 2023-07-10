@@ -92,6 +92,9 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
+    /// The identifiers and access level requirements for symbols that have an expanded version of their documentation page if the requirements are met
+    var symbolIdentifiersWithExpandedDocumentation: [String: ConvertRequest.ExpandedDocumentationRequirements]? = nil
+    
     /// `true` if the conversion is cancelled.
     private var isCancelled: Synchronized<Bool>? = nil
 
@@ -118,6 +121,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     ///   Before passing `true` please confirm that your use case doesn't include public
     ///   distribution of any created render nodes as there are filesystem privacy and security
     ///   concerns with distributing this data.
+    /// - Parameter symbolIdentifiersWithExpandedDocumentation: Identifiers and access level requirements for symbols
+    ///   that have an expanded version of their documentation page if the access level requirement is met.
     public init(
         documentationBundleURL: URL?,
         emitDigest: Bool,
@@ -133,7 +138,8 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         emitSymbolAccessLevels: Bool = false,
         sourceRepository: SourceRepository? = nil,
         isCancelled: Synchronized<Bool>? = nil,
-        diagnosticEngine: DiagnosticEngine = .init()
+        diagnosticEngine: DiagnosticEngine = .init(),
+        symbolIdentifiersWithExpandedDocumentation: [String: ConvertRequest.ExpandedDocumentationRequirements]? = nil
     ) {
         self.rootURL = documentationBundleURL
         self.emitDigest = emitDigest
@@ -149,6 +155,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         self.sourceRepository = sourceRepository
         self.isCancelled = isCancelled
         self.diagnosticEngine = diagnosticEngine
+        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
         
         // Inject current platform versions if provided
         if let currentPlatforms = currentPlatforms {
@@ -170,6 +177,10 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
     mutating public func convert<OutputConsumer: ConvertOutputConsumer>(
         outputConsumer: OutputConsumer
     ) throws -> (analysisProblems: [Problem], conversionProblems: [Problem]) {
+        defer {
+            diagnosticEngine.finalize()
+        }
+        
         // Unregister the current file data provider and all its bundles
         // when running repeated conversions.
         if let dataProvider = self.currentDataProvider {
@@ -250,13 +261,22 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         // Copy images, sample files, and other static assets.
         try outputConsumer.consume(assetsInBundle: bundle)
         
+        let symbolIdentifiersMeetingRequirementsForExpandedDocumentation: [String]? = symbolIdentifiersWithExpandedDocumentation?.compactMap { (identifier, expandedDocsRequirement) -> String? in
+            guard let documentationNode =  context.nodeWithSymbolIdentifier(identifier) else {
+                return nil
+            }
+            
+            return documentationNode.meetsExpandedDocumentationRequirements(expandedDocsRequirement) ? identifier : nil
+        }
+        
         let converter = DocumentationContextConverter(
             bundle: bundle,
             context: context,
             renderContext: renderContext,
             emitSymbolSourceFileURIs: shouldEmitSymbolSourceFileURIs,
             emitSymbolAccessLevels: shouldEmitSymbolAccessLevels,
-            sourceRepository: sourceRepository
+            sourceRepository: sourceRepository,
+            symbolIdentifiersWithExpandedDocumentation: symbolIdentifiersMeetingRequirementsForExpandedDocumentation
         )
         
         var indexingRecords = [IndexingRecord]()
@@ -378,10 +398,6 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         benchmark(add: Benchmark.ExternalTopicsHash(context: context))
         // Log the peak memory.
         benchmark(add: Benchmark.PeakMemory())
-
-        context.linkResolutionMismatches.reportGatheredMismatchesIfEnabled()
-        
-        diagnosticEngine.finalize()
         
         return (analysisProblems: context.problems, conversionProblems: conversionProblems)
     }
@@ -440,7 +456,7 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
         problems.append(problem)
     }
     
-    enum Error: DescribedError {
+    enum Error: DescribedError, Equatable {
         case doesNotContainBundle(url: URL)
         
         var errorDescription: String {
@@ -450,8 +466,18 @@ public struct DocumentationConverter: DocumentationConverterProtocol {
                     The directory at '\(url)' and its subdirectories do not contain at least one \
                     valid documentation bundle. A documentation bundle is a directory ending in \
                     `.docc`.
+                    Pass `--allow-arbitrary-catalog-directories` flag to convert a directory \
+                    without a `.docc` extension.
                     """
             }
         }
+    }
+}
+
+extension DocumentationNode {
+    func meetsExpandedDocumentationRequirements(_ requirements: ConvertRequest.ExpandedDocumentationRequirements) -> Bool {
+        guard let symbol = symbol else { return false }
+        
+        return requirements.accessControlLevels.contains(symbol.accessLevel.rawValue) && (!symbol.names.title.starts(with: "_") || requirements.canBeUnderscored)
     }
 }

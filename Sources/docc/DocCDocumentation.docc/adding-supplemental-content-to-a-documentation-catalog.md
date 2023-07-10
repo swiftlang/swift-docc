@@ -15,7 +15,7 @@ include this conceptual content. Articles are markup files that contain
 information that doesn't relate to a specific symbol. Use articles to:
 
 * Provide a landing page that includes an overview of your package or framework
-* Craft a learning path for readers to understand how to use your code base, such
+* Craft a learning path for readers to understand how to use your project, such
   as with a getting started guide or a tutorial
   
 Extension files are markup files that complement source documentation
@@ -32,14 +32,14 @@ files, see
 The process of crafting great documentation is an art. Your
 content is unique; you know which elements, beyond source
 documentation comments, provide the most value to your readers. For 
-information about adding documentation to your code base and creating a
+information about adding documentation to your project and creating a
 documentation catalog, see
 <doc:documenting-a-swift-framework-or-package>.
 
 ### Add Articles to Explain Concepts or Describe Tasks
 
 Adding articles to your documentation catalog helps readers understand how
-the types and methods in your code base work as a system. They let you
+the types and methods in your project work as a system. They let you
 explain how to complete a task, or discuss a broader concept that doesn't fit
 into an Overview section for a specific symbol.
 
@@ -48,7 +48,7 @@ into an Overview section for a specific symbol.
 The structure of an article is similar to symbol files or a top-level landing
 page, with the exception that the first level 1 header is regular content instead
 of a symbol reference. For example, the Getting Started with Sloths article
-contains the following title, single-sentence abstract or summary, and overview section:
+contains the following title, single-sentence abstract or summary, and Overview section:
 
 ```markdown
 # Getting Started with Sloths
@@ -64,7 +64,7 @@ habitat.
 
 To add an article to your documentation catalog, use a text editor and create a file with an appropriate title and add a `.md` extension.
 
-After the overview section, additional sections and subsections use a double
+After the Overview section, additional sections and subsections use a double
 hash (##) for a level 2 header, and a triple hash (###) for a level 3 header.
 Follow the hashes with a space, and then the title for that section or
 subsection.
@@ -77,7 +77,7 @@ When you add an article to a documentation catalog, DocC includes a link to it
 on the project's top-level page. To choose a different location for the
 article, add a link to it from a group or collection. When DocC renders a link to
  an article, it uses the article's title for the text of the link. For more information
-about organizing your code base's documentation, see
+about organizing your project's documentation, see
 <doc:adding-structure-to-your-documentation-pages>. 
  
 ### Add Extension Files to Append to or Override Source Documentation Comments
@@ -95,9 +95,8 @@ In cases like these, DocC supports supplementing or completely replacing source
 documentation comments with content in extension files. To add an extension file to your
 documentation catalog, create a file within the documentation catalog, then modify the first line of the file to identify the symbol that the file relates to.
 
-> Important: You must use the symbol's absolute path for the page title of an 
-extension file and include the name of the framework or package. DocC doesn't 
-support relative symbol paths in this context.
+> Important: The symbol path for the page title of an extension file need to start
+with the name of a top-level symbol or the name of the framework.
 
 If the symbol already has source documentation comments, add a
 `DocumentationExtension` directive to specify whether the content of the
@@ -151,7 +150,7 @@ This overrides the in-source summary.
 This content overrides in-source content.
 ````
 
-For additional details about `Metadata` and other directives, see
+For more information on `Metadata` and other directives, see
 <doc:Metadata>.
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

@@ -1645,13 +1645,8 @@ let expected = """
         
         // Verify the non-overload collisions were resolved
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-9053a", sourceLanguage: .swift)))
-            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-959hd", sourceLanguage: .swift)))
-        } else {
-            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-swift.var-9053a", sourceLanguage: .swift)))
-            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var-959hd", sourceLanguage: .swift)))
-        }
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-9053a", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-959hd", sourceLanguage: .swift)))
     }
 
     func testUnknownSymbolKind() throws {
@@ -1667,9 +1662,27 @@ let expected = """
         XCTAssertEqual(node.kind, .unknown)
     }
     
-    func testSpecialCharactersInLinks() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+    func testCuratingSymbolsWithSpecialCharacters() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "InheritedOperators") { root in
+            try """
+            # ``Operators/MyNumber``
+            
+            A documentation extension that curates symbosl with characters not allowed in a resolved reference URL.
+
+            ## Topics
+
+            - ``<(_:_:)``
+            - ``>(_:_:)``
+            - ``<=(_:_:)``
+            - ``>=(_:_:)``
+            """.write(to: root.appendingPathComponent("doc-extension.md"), atomically: true, encoding: .utf8)
+        }
         
+        let unresolvedTopicProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" })
+        XCTAssertEqual(unresolvedTopicProblems.map(\.diagnostic.summary), [], "All links should resolve without warnings")
+    }
+    
+    func testSpecialCharactersInLinks() throws {
         let originalSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!.appendingPathComponent("mykit-iOS.symbols.json")
         
         let testBundle = Folder(name: "special-characters.docc", content: [
@@ -1900,33 +1913,25 @@ let expected = """
         // Add a sidecar file for a symbol that doesn't exist
         let (_, _, context) = try testBundleAndContext(copying: "TestBundle") { root in
             unknownSymbolSidecarURL = root.appendingPathComponent("documentation/unknownSymbol.md")
-            otherUnknownSymbolSidecarURL = root.appendingPathComponent("documentation/xanotherSidecarFileForThisUnknownSymbol.md")
+            otherUnknownSymbolSidecarURL = root.appendingPathComponent("documentation/anotherSidecarFileForThisUnknownSymbol.md")
             
             try content.write(to: unknownSymbolSidecarURL, atomically: true, encoding: .utf8)
             try content.write(to: otherUnknownSymbolSidecarURL, atomically: true, encoding: .utf8)
         }
         
-        let unmatchedSidecarProblem = context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.SymbolUnmatched" })
+        let unmatchedSidecarProblem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.SymbolUnmatched" }))
         
         // Verify the diagnostics have the sidecar source URL
-        XCTAssertNotNil(unmatchedSidecarProblem?.diagnostic.source)
-        var sidecarFilesForUnknownSymbol: Set<URL?> = [unknownSymbolSidecarURL.standardizedFileURL, otherUnknownSymbolSidecarURL.standardizedFileURL]
+        XCTAssertNotNil(unmatchedSidecarProblem.diagnostic.source)
+        let sidecarFilesForUnknownSymbol: Set<URL?> = [unknownSymbolSidecarURL.standardizedFileURL, otherUnknownSymbolSidecarURL.standardizedFileURL]
         
         XCTAssertNotNil(unmatchedSidecarProblem)
-        if let unmatchedSidecarDiagnostic = unmatchedSidecarProblem?.diagnostic {
-            XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
-            XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem?.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem?.diagnostic.source))
-            XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. This documentation will be ignored.")
-            XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .information)
-            
-            XCTAssertEqual(unmatchedSidecarDiagnostic.notes.count, 1)
-            if let note = unmatchedSidecarDiagnostic.notes.first {
-                sidecarFilesForUnknownSymbol.remove(unmatchedSidecarDiagnostic.source?.standardizedFileURL)
-                XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(note.source.standardizedFileURL), "The other files should be the note's source")
-                
-                XCTAssertEqual(note.message, "'MyKit/UnknownSymbol' is also documented here.")
-            }
-        }
+        let unmatchedSidecarDiagnostic = unmatchedSidecarProblem.diagnostic
+        XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
+        XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem.diagnostic.source))
+        
+        XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/MyKit'.")
+        XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
     }
     
     func testUncuratedArticleDiagnostics() throws {
@@ -2136,6 +2141,48 @@ let expected = """
         XCTAssertEqual(context.problems.filter { $0.diagnostic.source?.path.hasSuffix(newArticle1URL.lastPathComponent) == true }.count, 0)
     }
 
+    func testPrefersNonSymbolsInDocLink() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
+            // This bundle has a top-level struct named "Wrapper". Adding an article named "Wrapper.md" introduces a possibility for a link collision
+            try """
+            # An article
+            
+            This is an article with the same name as a top-level symbol
+            """.write(to: url.appendingPathComponent("Wrapper.md"), atomically: true, encoding: .utf8)
+            
+            // Also change the display name so that the article container has the same name as the module.
+            try InfoPlist(displayName: "Something", identifier: "com.example.Something").write(inside: url)
+            
+            // Use a doc-link to curate the article.
+            try """
+            # ``Something``
+            
+            Curate the article and the symbol top-level.
+            
+            ## Topics
+            
+            - <doc:Wrapper>
+            """.write(to: url.appendingPathComponent("Something.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let moduleReference = try XCTUnwrap(context.rootModules.first)
+        let moduleNode = try context.entity(with: moduleReference)
+        
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let source = context.documentURL(for: moduleReference)
+        
+        let renderNode = try XCTUnwrap(converter.renderNode(for: moduleNode, at: source))
+        let curatedTopic = try XCTUnwrap(renderNode.topicSections.first?.identifiers.first)
+        
+        let topicReference = try XCTUnwrap(renderNode.references[curatedTopic] as? TopicRenderReference)
+        XCTAssertEqual(topicReference.title, "An article")
+        
+        // This test also reproduce https://github.com/apple/swift-docc/issues/593
+        // When that's fixed this test should also use a symbol link to curate the top-level symbol and verify that
+        // the symbol link resolves to the symbol.
+    }
+    
     // Modules that are being extended should not have their own symbol in the current bundle's graph.
     func testNoSymbolForTertiarySymbolGraphModules() throws {
         // Add an article without curating it anywhere
@@ -2313,17 +2360,10 @@ let expected = """
             XCTAssert(context.problems.allSatisfy { $0.diagnostic.source?.absoluteString == expectedDiagnosticSource })
             
             // Verify the expected source ranges
-            if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-                XCTAssertEqual(
-                    context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
-                    ["17:98", "18:100", "18:25", "18:45", "18:62"].sorted()
-                )
-            } else {
-                XCTAssertEqual(
-                    context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
-                    ["17:96", "18:23", "18:43", "18:60", "18:89"].sorted()
-                )
-            }
+            XCTAssertEqual(
+                context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
+                ["17:98", "18:100", "18:25", "18:45", "18:62"].sorted()
+            )
         }
     }
     
@@ -2406,6 +2446,39 @@ let expected = """
         XCTAssertNotNil(try context.entity(with: referenceForPath("/Collisions/SharedStruct/iOSVar")))
     }
     
+    func testLinkToSymbolWithoutPage() throws {
+        let inheritedDefaultImplementationsSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        let inheritedDefaultImplementationsAtSwiftSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations@Swift.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let testBundle = try Folder(
+            name: "unit-test.docc",
+            content: [
+                CopyOfFile(original: inheritedDefaultImplementationsSGF),
+                CopyOfFile(original: inheritedDefaultImplementationsAtSwiftSGF),
+                TextFile(name: "doc-extension.md", utf8Content: """
+                # ``FirstTarget``
+                
+                Link to a default implementation symbol that doesn't have a page in this build.
+                
+                - ``Comparable/localDefaultImplementation()``
+                """)
+            ]
+        ).write(inside: createTemporaryDirectory())
+        
+        let (_, _, context) = try loadBundle(from: testBundle)
+        
+        let problem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
+        XCTAssertEqual(problem.diagnostic.summary, "'FirstTarget/Comparable/localDefaultImplementation()' has no page and isn't available for linking.")
+    }
+    
     func testContextCachesReferences() throws {
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
@@ -2470,7 +2543,7 @@ let expected = """
                         subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
-        let (_, _, context) = try! loadBundle(from: bundleURL)
+        let (_, _, context) = try XCTUnwrap(loadBundle(from: bundleURL))
         
         // MissingDocs contains a struct that has a link to a non-existent type.
         // If there are no problems, that indicates that symbol graph link
@@ -2551,15 +2624,10 @@ let expected = """
         let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("myFunction.md") == true }
         XCTAssertEqual(linkResolutionProblems.count, 1)
         let problem = try XCTUnwrap(linkResolutionProblems.first)
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 28)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 7)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 42)
-        } else {
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 23)
-        }
+        XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
+        XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 28)
+        XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 7)
+        XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 42)
 
         let functionNode = try XCTUnwrap(context.nodeWithSymbolIdentifier("s:7SideKit0A5ClassC10myFunctionyyF"))
         XCTAssertEqual(functionNode.docChunks.count, 2)
@@ -2742,20 +2810,17 @@ let expected = """
 
         let identifier = "org.swift.docc.DuplicateMarkdownTitleSymbolReferences"
         let duplicateMarkdownProblems = context.problems.filter({ $0.diagnostic.identifier == identifier })
-        XCTAssertEqual(duplicateMarkdownProblems.count, 2)
-        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.summary, "Multiple occurrences of \'/documentation/MyKit/MyClass/myFunction()\' found")
+        XCTAssertEqual(duplicateMarkdownProblems.count, 1)
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.summary, "Multiple documentation extensions matched 'MyKit/MyClass/myFunction()'.")
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.notes.count, 1)
+        XCTAssertEqual(duplicateMarkdownProblems.first?.diagnostic.notes.first?.message, "'MyKit/MyClass/myFunction()' is also documented here.")
     }
     
     /// This test verifies that collision nodes and children of collision nodes are correctly
     /// matched with their documentation extension files. Besides verifying the correct content
     /// it verifies also that the curation in these doc extensions is reflected in the topic graph.
     func testMatchesCorrectlyDocExtensionToChildOfCollisionTopic() throws {
-        let fifthTestMemberPath: String
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember"
-        } else {
-            fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property"
-        }
+        let fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember"
         
         let (_, bundle, context) = try testBundleAndContext(copying: "OverloadedSymbols") { url in
             // Add an article to be curated from collided nodes' doc extensions.
@@ -2822,6 +2887,349 @@ let expected = """
         // Verify the correct topic graph parent <-> child relationship is created.
         let tgNode2 = try XCTUnwrap(context.topicGraph.edges[reference2])
         XCTAssertTrue(tgNode2.contains(articleReference))
+    }
+    
+    func testMatchesDocumentationExtensionsAsSymbolLinks() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // Two colliding symbols that differ by capitalization.
+            try """
+            # ``MixedFramework/CollisionsWithDifferentCapitalization/someThing``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            some thing
+            
+            This documentation extension link doesn't need disambiguation because "someThing" is capitalized differently than "something".
+            """.write(to: url.appendingPathComponent("some-thing.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/CollisionsWithDifferentCapitalization/something``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+
+            something
+            
+            This documentation extension link doesn't need disambiguation because "something" is capitalized differently than "someThing".
+            """.write(to: url.appendingPathComponent("something.md"), atomically: true, encoding: .utf8)
+            
+            // Three colliding symbols that differ by symbol kind.
+            try """
+            # ``MixedFramework/CollisionsWithEscapedKeywords/subscript()-method``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            method
+            
+            This documentation extension link can be disambiguated with only the kind information (without the language).
+            """.write(to: url.appendingPathComponent("method.md"), atomically: true, encoding: .utf8)
+
+            try """
+            # ``MixedFramework/CollisionsWithEscapedKeywords/subscript()-subscript``
+
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            subscript
+            
+            This documentation extension link can be disambiguated with only the kind information (without the language).
+            """.write(to: url.appendingPathComponent("subscript.md"), atomically: true, encoding: .utf8)
+
+            try """
+            # ``MixedFramework/CollisionsWithEscapedKeywords/subscript()-type.method``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            type method
+            
+            This documentation extension link can be disambiguated with only the kind information (without the language).
+            """.write(to: url.appendingPathComponent("type-method.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/someThing-90i4h", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "some thing", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithDifferentCapitalization/something-2c4k6", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "something", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.method", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "method", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.subscript", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "subscript", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/CollisionsWithEscapedKeywords/subscript()-swift.type.method", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "type method", "The abstract should be from the overriding documentation extension.")
+        }
+    }
+    
+    func testMatchesDocumentationExtensionsWithSourceLanguageSpecificLinks() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
+            //     MyObjectiveCOptionNone                                      = 0,
+            //     MyObjectiveCOptionFirst                                     = 1 << 0,
+            //     MyObjectiveCOptionSecond NS_SWIFT_NAME(secondCaseSwiftName) = 1 << 1
+            // };
+            try """
+            # ``MixedFramework/MyObjectiveCOption/MyObjectiveCOptionFirst``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Objective-C option case
+            
+            This documentation extension link uses the Objective-C spelling to refer to the "first" option case.
+            """.write(to: url.appendingPathComponent("objc-case.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCOption/secondCaseSwiftName``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Swift spelling of Objective-C option case
+            
+            This documentation extension link uses the customized Swift spelling to refer to the "second" option case.
+            """.write(to: url.appendingPathComponent("objc-case-swift-name.md"), atomically: true, encoding: .utf8)
+            
+            // NS_SWIFT_NAME(MyObjectiveCClassSwiftName)
+            // @interface MyObjectiveCClassObjectiveCName : NSObject
+            //
+            // @property (copy, readonly) NSString * myPropertyObjectiveCName NS_SWIFT_NAME(myPropertySwiftName);
+            //
+            // - (void)myMethodObjectiveCName NS_SWIFT_NAME(myMethodSwiftName());
+            // - (void)myMethodWithArgument:(NSString *)argument NS_SWIFT_NAME(myMethod(argument:));
+            //
+            // @end
+            try """
+            # ``MixedFramework/MyObjectiveCClassObjectiveCName/myMethodWithArgument:``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Objective-C method with one argument
+            
+            This documentation extension link uses the Objective-C spelling to refer to the method with an argument.
+            """.write(to: url.appendingPathComponent("objc-method.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            Swift spelling for Objective-C method without arguments
+            
+            This documentation extension link uses the customized Swift spelling to refer to the method without an argument.
+            """.write(to: url.appendingPathComponent("objc-method-swift-name.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCOption/first", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Objective-C option case", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCOption/secondCaseSwiftName", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Swift spelling of Objective-C option case", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Objective-C method with one argument", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs the language info alongside the symbol kind info.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyObjectiveCClassSwiftName/myMethodSwiftName()", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "Swift spelling for Objective-C method without arguments", "The abstract should be from the overriding documentation extension.")
+        }
+    }
+    
+    func testMatchesDocumentationExtensionsRelativeToModule() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // Top level symbols, omitting the module name
+            try """
+            # ``MyStruct/myStructProperty``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            my struct property
+            """.write(to: url.appendingPathComponent("struct-property.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MyTypeAlias``
+            
+            @Metadata {
+              @DocumentationExtension(mergeBehavior: override)
+            }
+            
+            my type alias
+            """.write(to: url.appendingPathComponent("alias.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyStruct/myStructProperty", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "my struct property", "The abstract should be from the overriding documentation extension.")
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/MixedFramework/MyTypeAlias", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "my type alias", "The abstract should be from the overriding documentation extension.")
+        }
+    }
+    
+    func testCurationOfSymbolsWithSameNameAsModule() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
+            // Top level symbols, omitting the module name
+            try """
+            # ``Something``
+            
+            This documentation extension covers the module symbol
+            
+            ## Topics
+            
+            This link curates the top-level struct
+            
+            - ``Something``
+            """.write(to: url.appendingPathComponent("something.md"), atomically: true, encoding: .utf8)
+        }
+        
+        do {
+            // The resolved reference needs more disambiguation than the documentation extension link did.
+            let reference = ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/documentation/Something", sourceLanguage: .swift)
+            
+            let node = try context.entity(with: reference)
+            let symbol = try XCTUnwrap(node.semantic as? Symbol)
+            XCTAssertEqual(symbol.abstract?.plainText, "This documentation extension covers the module symbol", "The abstract should be from the overriding documentation extension.")
+            
+            let topics = try XCTUnwrap(symbol.topics?.taskGroups.first)
+            XCTAssertEqual(topics.abstract?.paragraph.plainText, "This link curates the top-level struct")
+            XCTAssertEqual(topics.links.first?.destination, "doc://SymbolsWithSameNameAsModule/documentation/Something/Something")
+        }
+    }
+    
+    func testMultipleDocumentationExtensionMatchDiagnostic() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
+            // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
+            //     MyObjectiveCOptionNone                                      = 0,
+            //     MyObjectiveCOptionFirst                                     = 1 << 0,
+            //     MyObjectiveCOptionSecond NS_SWIFT_NAME(secondCaseSwiftName) = 1 << 1
+            // };
+            try """
+            # ``MixedFramework/MyObjectiveCOption/MyObjectiveCOptionFirst``
+            
+            This documentation extension link uses the Objective-C spelling to refer to the "first" option case.
+            """.write(to: url.appendingPathComponent("objc-case.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCOption/first``
+            
+            This documentation extension link uses the customized Swift spelling to refer to the "first" option case.
+            """.write(to: url.appendingPathComponent("objc-case-swift-name.md"), atomically: true, encoding: .utf8)
+            
+            // NS_SWIFT_NAME(MyObjectiveCClassSwiftName)
+            // @interface MyObjectiveCClassObjectiveCName : NSObject
+            //
+            // @property (copy, readonly) NSString * myPropertyObjectiveCName NS_SWIFT_NAME(myPropertySwiftName);
+            //
+            // - (void)myMethodObjectiveCName NS_SWIFT_NAME(myMethodSwiftName());
+            // - (void)myMethodWithArgument:(NSString *)argument NS_SWIFT_NAME(myMethod(argument:));
+            //
+            // @end
+            try """
+            # ``MixedFramework/MyObjectiveCClassObjectiveCName/myMethodWithArgument:``
+            
+            This documentation extension link uses the Objective-C spelling to refer to the method with an argument.
+            """.write(to: url.appendingPathComponent("objc-method.md"), atomically: true, encoding: .utf8)
+            
+            try """
+            # ``MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)``
+            
+            This documentation extension link uses the customized Swift spelling to refer to the method with an argument.
+            """.write(to: url.appendingPathComponent("objc-method-swift-name.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let multipleDocExtensionProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.DuplicateMarkdownTitleSymbolReferences" })
+        XCTAssertEqual(multipleDocExtensionProblems.count, 2)
+        
+        let enumCaseMultipleMatchProblem = try XCTUnwrap(multipleDocExtensionProblems.first(where: { $0.diagnostic.summary == "Multiple documentation extensions matched 'MixedFramework/MyObjectiveCOption/first'." }))
+        XCTAssert(["objc-case.md", "objc-case-swift-name.md"].contains(enumCaseMultipleMatchProblem.diagnostic.source?.lastPathComponent ?? ""), "The warning should refer to one of the documentation extensions files")
+        XCTAssertEqual(enumCaseMultipleMatchProblem.diagnostic.notes.count, 1)
+        XCTAssert(["objc-case.md", "objc-case-swift-name.md"].contains(enumCaseMultipleMatchProblem.diagnostic.notes.first?.source.lastPathComponent ?? ""), "The note should refer to one of the documentation extension files")
+        XCTAssertNotEqual(enumCaseMultipleMatchProblem.diagnostic.source, enumCaseMultipleMatchProblem.diagnostic.notes.first?.source, "The warning and the note should refer to different documentation extension files")
+        
+        let methodMultipleMatchProblem = try XCTUnwrap(multipleDocExtensionProblems.first(where: { $0.diagnostic.summary == "Multiple documentation extensions matched 'MixedFramework/MyObjectiveCClassSwiftName/myMethod(argument:)'." }))
+        XCTAssert(["objc-method.md", "objc-method-swift-name.md"].contains(methodMultipleMatchProblem.diagnostic.source?.lastPathComponent ?? ""), "The warning should refer to one of the documentation extensions files")
+        XCTAssertEqual(methodMultipleMatchProblem.diagnostic.notes.count, 1)
+        XCTAssert(["objc-method.md", "objc-method-swift-name.md"].contains(methodMultipleMatchProblem.diagnostic.notes.first?.source.lastPathComponent ?? ""), "The note should refer to one of the documentation extension files")
+        XCTAssertNotEqual(methodMultipleMatchProblem.diagnostic.source, methodMultipleMatchProblem.diagnostic.notes.first?.source, "The warning and the note should refer to different documentation extension files")
     }
     
     func testAutomaticallyCuratesArticles() throws {

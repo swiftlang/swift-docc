@@ -141,9 +141,7 @@ enum GeneratedDocumentationTopics {
                     let inheritedSection = AutomaticTaskGroupSection(title: defaultImplementationGroupTitle, references: [collectionReference], renderPositionPreference: .bottom)
                     symbol.automaticTaskGroupsVariants[trait]?.append(inheritedSection)
                 }
-                if let hierarchyBasedLinkResolver = context.hierarchyBasedLinkResolver {
-                    hierarchyBasedLinkResolver.addTaskGroup(named: title, reference: collectionReference, to: parent)
-                }
+                context.hierarchyBasedLinkResolver.addTaskGroup(named: title, reference: collectionReference, to: parent)
             }
         } else {
             fatalError("createCollectionNode() should be used only to add nodes under symbols.")
@@ -160,7 +158,7 @@ enum GeneratedDocumentationTopics {
         var collectionArticle: Article
         
         // Find matching doc extension or create an empty article.
-        if let docExtensionMatch = context.uncuratedDocumentationExtensions[collectionReference]?.first?.value {
+        if let docExtensionMatch = context.uncuratedDocumentationExtensions[collectionReference]?.value {
             collectionArticle = docExtensionMatch
             collectionArticle.title = Heading(level: 1, Text(title))
             context.uncuratedDocumentationExtensions.removeValue(forKey: collectionReference)

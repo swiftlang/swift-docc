@@ -51,13 +51,17 @@ public struct RenderNodeTranslator: SemanticVisitor {
     /// The source repository where the documentation's sources are hosted.
     var sourceRepository: SourceRepository?
     
+    var symbolIdentifiersWithExpandedDocumentation: [String]? = nil
+    
     public mutating func visitCode(_ code: Code) -> RenderTree? {
         let fileType = NSString(string: code.fileName).pathExtension
-        let fileReference = code.fileReference
+        guard let fileIdentifier = context.identifier(forAssetName: code.fileReference.path, in: identifier) else {
+            return nil
+        }
         
-        guard let fileData = try? context.resource(with: code.fileReference),
-            let fileContents = String(data: fileData, encoding: .utf8) else {
-            return RenderReferenceIdentifier("")
+        let fileReference = ResourceReference(bundleIdentifier: code.fileReference.bundleIdentifier, path: fileIdentifier)
+        guard let fileContents = fileContents(with: fileReference) else {
+            return nil
         }
         
         let assetReference = RenderReferenceIdentifier(fileReference.path)
@@ -70,6 +74,21 @@ public struct RenderNodeTranslator: SemanticVisitor {
             content: fileContents.splitByNewlines
         )
         return assetReference
+    }
+    
+    private func fileContents(with fileReference: ResourceReference) -> String? {
+        // Check if the file is a local asset that can be read directly from the context
+        if let fileData = try? context.resource(with: fileReference) {
+            return String(data: fileData, encoding: .utf8)
+        }
+        // Check if the file needs to be resolved to read its content
+        else if let asset = context.resolveAsset(named: fileReference.path, in: identifier) {
+            return try? String(contentsOf: asset.data(bestMatching: DataTraitCollection()).url, encoding: .utf8)
+        }
+        // Couldn't find the file reference's content
+        else {
+            return nil
+        }
     }
     
     public mutating func visitSteps(_ steps: Steps) -> RenderTree? {
@@ -105,7 +124,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
             stepsContent = []
         }
         
-        let highlightsPerFile = LineHighlighter(context: context, tutorialSection: tutorialSection).highlights
+        let highlightsPerFile = LineHighlighter(context: context, tutorialSection: tutorialSection, tutorialReference: identifier).highlights
         
         // Add the highlights to the file references.
         for result in highlightsPerFile {
@@ -172,8 +191,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.sections.append(tutorialSections)
-        if let assesments = tutorial.assessments {
-            node.sections.append(visitAssessments(assesments) as! TutorialAssessmentsRenderSection)
+        if let assessments = tutorial.assessments {
+            node.sections.append(visitAssessments(assessments) as! TutorialAssessmentsRenderSection)
         }
 
         // We guarantee there will be at least 1 path with at least 4 nodes in that path if the tutorial is curated.
@@ -797,7 +816,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         isActive: true,
                         overridingTitle: callToAction.buttonLabel(for: article.metadata?.pageKind?.kind),
                         overridingTitleInlineContent: nil))
-                externalLocationReferences[url.description] = ExternalLocationReference(identifier: downloadIdentifier)
+                downloadReferences[url.description] = DownloadReference(identifier: downloadIdentifier, verbatimURL: url, checksum: nil)
             } else if let fileReference = callToAction.file,
                       let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
             {
@@ -822,11 +841,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 node.metadata.platformsVariants = .init(defaultValue: renderAvailability)
             }
         }
-
+        
         if let pageKind = article.metadata?.pageKind {
             node.metadata.role = pageKind.kind.renderRole.rawValue
             node.metadata.roleHeading = pageKind.kind.titleHeading
         }
+        
+        if let titleHeading = article.metadata?.titleHeading {
+            node.metadata.roleHeading = titleHeading.heading
+        } 
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
@@ -835,7 +858,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(videoReferences, to: &node)
         addReferences(linkReferences, to: &node)
         addReferences(downloadReferences, to: &node)
-        addReferences(externalLocationReferences, to: &node)
         // See Also can contain external links, we need to separately transfer
         // link references from the content compiler
         addReferences(contentCompiler.linkReferences, to: &node)
@@ -1179,8 +1201,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         } else if let extendedModule = symbol.extendedModule, extendedModule != moduleName.displayName {
             node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: [extendedModule])])
         } else {
-            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: nil)]
-            )
+            node.metadata.modulesVariants = VariantCollection(defaultValue: [RenderMetadata.Module(name: moduleName.displayName, relatedModules: nil)])
         }
         
         node.metadata.extendedModuleVariants = VariantCollection<String?>(defaultValue: symbol.extendedModule)
@@ -1228,6 +1249,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if shouldCreateAutomaticRoleHeading(for: documentationNode) {
             node.metadata.roleHeadingVariants = VariantCollection<String?>(from: symbol.roleHeadingVariants)
+        }
+
+        if let titleHeading = documentationNode.metadata?.titleHeading {
+            node.metadata.roleHeadingVariants = VariantCollection<String?>(defaultValue: titleHeading.heading)
         }
         
         node.metadata.symbolKindVariants = VariantCollection<String?>(from: symbol.kindVariants) { _, kindVariants in
@@ -1353,6 +1378,12 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if shouldEmitSymbolAccessLevels {
             node.metadata.symbolAccessLevelVariants = VariantCollection<String?>(from: symbol.accessLevelVariants)
+        }
+        
+        if let externalID = symbol.externalID,
+           let symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
+        {
+            node.metadata.hasNoExpandedDocumentation = !symbolIdentifiersWithExpandedDocumentation.contains(externalID)
         }
         
         node.relationshipSectionsVariants = VariantCollection<[RelationshipsRenderSection]>(
@@ -1677,7 +1708,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var linkReferences: [String: LinkReference] = [:]
     var requirementReferences: [String: XcodeRequirementReference] = [:]
     var downloadReferences: [String: DownloadReference] = [:]
-    var externalLocationReferences: [String: ExternalLocationReference] = [:]
     
     private var bundleAvailability: [BundleModuleIdentifier: [AvailabilityRenderItem]] = [:]
     
@@ -1878,7 +1908,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         renderContext: RenderContext? = nil,
         emitSymbolSourceFileURIs: Bool = false,
         emitSymbolAccessLevels: Bool = false,
-        sourceRepository: SourceRepository? = nil
+        sourceRepository: SourceRepository? = nil,
+        symbolIdentifiersWithExpandedDocumentation: [String]? = nil
     ) {
         self.context = context
         self.bundle = bundle
@@ -1889,6 +1920,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
         self.shouldEmitSymbolSourceFileURIs = emitSymbolSourceFileURIs
         self.shouldEmitSymbolAccessLevels = emitSymbolAccessLevels
         self.sourceRepository = sourceRepository
+        self.symbolIdentifiersWithExpandedDocumentation = symbolIdentifiersWithExpandedDocumentation
     }
 }
 
