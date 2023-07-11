@@ -32,7 +32,7 @@ public struct IndexAction: Action {
     private var dataProvider: LocalFileSystemDataProvider!
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
-    public init(documentationBundleURL: URL, outputURL:URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine = .init()) throws
+    public init(documentationBundleURL: URL, outputURL: URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine = .init()) throws
     {
         // Initialize the action context.
         self.rootURL = documentationBundleURL
