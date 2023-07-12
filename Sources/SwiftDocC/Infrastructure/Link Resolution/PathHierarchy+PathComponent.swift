@@ -56,7 +56,7 @@ extension PathHierarchy {
         // If there is a # character in the last component, split that into two components
         if let hashIndex = components.last?.firstIndex(of: "#") {
             let last = components.removeLast()
-            // Allow anrhor-only links where there's nothing before #.
+            // Allow anchor-only links where there's nothing before #.
             // In case the pre-# part is empty, and we're omitting empty components, don't add it in.
             let pathName = last[..<hashIndex]
             if !pathName.isEmpty || !omittingEmptyComponents {

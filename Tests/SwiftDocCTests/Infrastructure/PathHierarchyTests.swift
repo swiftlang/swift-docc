@@ -1580,10 +1580,50 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("path-type.property", [("path", .kindAndHash(kind: "type.property", hash: nil))])
         assertParsedPathComponents("path-swift.type.property", [("path", .kindAndHash(kind: "type.property", hash: nil))])
         
-        // TODO: Test more combinations here
+        // Check parsing return values and parameter types
         assertParsedPathComponents("..<(_:_:)->Bool", [("..<(_:_:)", .typeSignature(parameterTypes: nil, returnTypes: ["Bool"]))])
         assertParsedPathComponents("..<(_:_:)-(_,Int)", [("..<(_:_:)", .typeSignature(parameterTypes: ["_", "Int"], returnTypes: nil))])
-        assertParsedPathComponents("..<(_:_:)->(_,Int,_)", [("..<(_:_:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "Int", "_"]))])
+        
+        
+        assertParsedPathComponents("something(first:second:third:)->(_,_,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "_", "_"]))])
+        
+        assertParsedPathComponents("something(first:second:third:)->(String,_,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "_", "_"]))])
+        assertParsedPathComponents("something(first:second:third:)->(_,Int,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "Int", "_"]))])
+        assertParsedPathComponents("something(first:second:third:)->(_,_,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "_", "Bool"]))])
+        
+        assertParsedPathComponents("something(first:second:third:)->(String,Int,_)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "Int", "_"]))])
+        assertParsedPathComponents("something(first:second:third:)->(String,_,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "_", "Bool"]))])
+        assertParsedPathComponents("something(first:second:third:)->(_,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["_", "Int", "Bool"]))])
+        
+        assertParsedPathComponents("something(first:second:third:)->(String,Int,Bool)", [("something(first:second:third:)", .typeSignature(parameterTypes: nil, returnTypes: ["String", "Int", "Bool"]))])
+        
+        // Check closure parameters
+        assertParsedPathComponents("map(_:)-((Element)->T)", [("map(_:)", .typeSignature(parameterTypes: ["(Element)->T"], returnTypes: nil))])
+        assertParsedPathComponents("map(_:)->[T]", [("map(_:)", .typeSignature(parameterTypes: nil, returnTypes: ["[T]"]))])
+        
+        assertParsedPathComponents("filter(_:)-((Element)->Bool)", [("filter(_:)", .typeSignature(parameterTypes: ["(Element)->Bool"], returnTypes: nil))])
+        assertParsedPathComponents("filter(_:)->[Element]", [("filter(_:)", .typeSignature(parameterTypes: nil, returnTypes: ["[Element]"]))])
+        
+        assertParsedPathComponents("reduce(_:_:)-(Result,_)", [("reduce(_:_:)", .typeSignature(parameterTypes: ["Result", "_"], returnTypes: nil))])
+        assertParsedPathComponents("reduce(_:_:)-(_,(Result,Element)->Result)", [("reduce(_:_:)", .typeSignature(parameterTypes: ["_", "(Result,Element)->Result"], returnTypes: nil))])
+        
+        assertParsedPathComponents("partition(by:)-((Element)->Bool)", [("partition(by:)", .typeSignature(parameterTypes: ["(Element)->Bool"], returnTypes: nil))])
+        assertParsedPathComponents("partition(by:)->Index", [("partition(by:)", .typeSignature(parameterTypes: nil, returnTypes: ["Index"]))])
+        
+        assertParsedPathComponents("max(by:)-((Element,Element)->Bool)", [("max(by:)", .typeSignature(parameterTypes: ["(Element,Element)->Bool"], returnTypes: nil))])
+        assertParsedPathComponents("max(by:)->Element?", [("max(by:)", .typeSignature(parameterTypes: nil, returnTypes: ["Element?"]))])
+        
+        // Nested tuples
+        assertParsedPathComponents("functionName->((A,(B,C),D),(E,F),G)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(A,(B,C),D)", "(E,F)", "G"]))])
+        assertParsedPathComponents("functionName-((A,(B,C),D),(E,F),G)", [("functionName", .typeSignature(parameterTypes: ["(A,(B,C),D)", "(E,F)", "G"], returnTypes: nil))])
+        
+        // Nested closures
+        assertParsedPathComponents("functionName->((A)->B,(C,(D)->E),(F,(G)->H)->I)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(A)->B", "(C,(D)->E)", "(F,(G)->H)->I"]))])
+        
+        // Unicode characters and accents
+        assertParsedPathComponents("functionName->((Å,(𝔹,©),Δ),(∃,⨍),𝄞)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(Å,(𝔹,©),Δ)", "(∃,⨍)", "𝄞"]))])
+        assertParsedPathComponents("functionName-((Å,(𝔹,©),Δ),(∃,⨍),𝄞)", [("functionName", .typeSignature(parameterTypes: ["(Å,(𝔹,©),Δ)", "(∃,⨍)", "𝄞"], returnTypes: nil))])
+        assertParsedPathComponents("functionName->((Å)->𝔹,(©,(Δ)->∃),(⨍,(𝄞)->ℌ)->𝓲)", [("functionName", .typeSignature(parameterTypes: nil, returnTypes: ["(Å)->𝔹", "(©,(Δ)->∃)", "(⨍,(𝄞)->ℌ)->𝓲"]))])
     }
     
     // MARK: Test helpers
