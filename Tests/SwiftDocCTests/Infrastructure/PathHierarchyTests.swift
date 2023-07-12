@@ -1133,6 +1133,30 @@ class PathHierarchyTests: XCTestCase {
         XCTAssertNil(articleNode.symbol, "General documentation link find the article")
     }
     
+    func testArticleSelfAnchorLinks() throws {
+        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+        let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFramework") { url in
+            try """
+            # ArticleWithHeading
+
+            ## TestTargetHeading
+
+            This article has the same path as a symbol. See also:
+            - <doc:TestTargetHeading>
+            - <doc:#TestTargetHeading>
+
+            """.write(to: url.appendingPathComponent("ArticleWithHeading.md"), atomically: true, encoding: .utf8)
+        }
+
+        let tree = try XCTUnwrap(context.hierarchyBasedLinkResolver?.pathHierarchy)
+        let articleNode = try tree.findNode(path: "/MixedLanguageFramework/ArticleWithHeading", onlyFindSymbols: false)
+
+        let linkNode = try tree.find(path: "TestTargetHeading", parent: articleNode.identifier, onlyFindSymbols: false)
+        let anchorLinkNode = try tree.find(path: "#TestTargetHeading", parent: articleNode.identifier, onlyFindSymbols: false)
+        XCTAssertNotNil(linkNode)
+        XCTAssertNotNil(anchorLinkNode)
+    }
+
     func testOverloadedSymbols() throws {
         try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
         let (_, context) = try testBundleAndContext(named: "OverloadedSymbols")
@@ -1555,6 +1579,7 @@ class PathHierarchyTests: XCTestCase {
         assertParsedPathComponents("first/", [("first", nil, nil)])
         assertParsedPathComponents("first//second", [("first", nil, nil), ("second", nil, nil)])
         assertParsedPathComponents("first/second#third", [("first", nil, nil), ("second", nil, nil), ("third", nil, nil)])
+        assertParsedPathComponents("#first", [("first", nil, nil)])
 
         // Check disambiguation
         assertParsedPathComponents("path-hash", [("path", nil, "hash")])
