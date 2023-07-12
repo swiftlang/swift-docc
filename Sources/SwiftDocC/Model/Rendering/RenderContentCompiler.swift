@@ -275,7 +275,7 @@ struct RenderContentCompiler: MarkupVisitor {
     }
     
     mutating func visitLineBreak(_ lineBreak: LineBreak) -> [RenderContent] {
-        return [RenderInlineContent.text(" ")]
+        return [RenderInlineContent.text("\n")]
     }
     
     mutating func visitEmphasis(_ emphasis: Emphasis) -> [RenderContent] {
