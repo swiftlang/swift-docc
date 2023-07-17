@@ -152,7 +152,7 @@ public struct ConvertAction: Action, RecreatingContext {
         engine.add(
             DiagnosticConsoleWriter(
                 formattingOptions: formattingOptions,
-                baseURL: documentationBundleURL ?? URL(string: fileManager.currentDirectoryPath)
+                baseURL: documentationBundleURL ?? URL(fileURLWithPath: fileManager.currentDirectoryPath)
             )
         )
         if let diagnosticFilePath = diagnosticFilePath {

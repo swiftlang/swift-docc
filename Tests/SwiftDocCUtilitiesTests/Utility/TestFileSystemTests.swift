@@ -259,4 +259,29 @@ class TestFileSystemTests: XCTestCase {
         XCTAssertFalse(fs.contentsEqual(atPath: "/main/test.txt", andPath: "/main/notclone.txt"))
         XCTAssertFalse(fs.contentsEqual(atPath: "/main/test.txt", andPath: "/main/missing.txt"))
     }
+    
+    func testBundleUsesFileURLs() throws {
+        let emptySymbolGraphData = try JSONEncoder().encode(makeSymbolGraph(moduleName: "Something"))
+        
+        // A docc catalog with an article, a resource, an Info.plist file, and a symbol graph file
+        let folders = Folder(name: "something.docc", content: [
+            TextFile(name: "article.md", utf8Content: ""),
+            DataFile(name: "image.png", data: Data()),
+            InfoPlist(displayName: "unit-test", identifier: "com.example"),
+            DataFile(name: "Something.symbols.json", data: emptySymbolGraphData)
+        ])
+        let fs = try TestFileSystem(folders: [folders])
+        
+        let bundles = try fs.bundles()
+        XCTAssertEqual(bundles.count, 1)
+        
+        let bundle = try XCTUnwrap(bundles.first)
+        XCTAssertFalse(bundle.markupURLs.isEmpty)
+        XCTAssertFalse(bundle.miscResourceURLs.isEmpty)
+        XCTAssertFalse(bundle.symbolGraphURLs.isEmpty)
+        
+        XCTAssert(bundle.markupURLs.allSatisfy(\.isFileURL))
+        XCTAssert(bundle.miscResourceURLs.allSatisfy(\.isFileURL))
+        XCTAssert(bundle.symbolGraphURLs.allSatisfy(\.isFileURL))
+    }
 }
