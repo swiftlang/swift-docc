@@ -352,6 +352,11 @@ public struct ConvertAction: Action, RecreatingContext {
     /// Converts each eligible file from the source documentation bundle,
     /// saves the results in the given output alongside the template files.
     mutating public func perform(logHandle: LogHandle) throws -> ActionResult {
+        defer {
+            diagnosticEngine.finalize()
+        }
+        
+        var convertEncounteredProblems: [Problem] = []
         let totalTimeMetric = benchmark(begin: Benchmark.Duration(id: "convert-total-time"))
         
         // While running this method keep the `isPerforming` flag up.
@@ -447,10 +452,20 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         var allProblems = analysisProblems + conversionProblems
-
-        if allProblems.containsErrors == false {
+        if allProblems.containsErrors == false || convertEncounteredProblems.containsErrors == false {
             let coverageResults = try coverageAction.perform(logHandle: logHandle)
-            allProblems.append(contentsOf: coverageResults.problems)
+            convertEncounteredProblems.append(contentsOf: coverageResults.problems)
+        }
+
+        if try context.renderRootModules.isEmpty {
+            convertEncounteredProblems.append(
+                Problem(diagnostic: Diagnostic(
+                    severity: .warning,
+                    identifier: "org.swift.docc.EmptyDoccArchive",
+                    summary: "The generated archive does not contain any pages.",
+                    explanation: "For article-only documentation add a Technology Root using the `TechnologyRoot` directive within a `Metadata` directive (https://www.swift.org/documentation/docc/technologyroot)."
+                ))
+            )
         }
         
         // If we're building a navigation index, finalize the process and collect encountered problems.
@@ -463,12 +478,20 @@ public struct ConvertAction: Action, RecreatingContext {
             // Always emit a JSON representation of the index but only emit the LMDB
             // index if the user has explicitly opted in with the `--emit-lmdb-index` flag.
             let indexerProblems = indexer.finalize(emitJSON: true, emitLMDB: buildLMDBIndex)
-            allProblems.append(contentsOf: indexerProblems)
+            convertEncounteredProblems.append(contentsOf: indexerProblems)
+        }
+        
+        // Output to the user the problems encountered during the convert process and log it into the diagnostics file
+        diagnosticEngine.emit(convertEncounteredProblems)
+        if emitDigest {
+            try outputConsumer.consume(problems: convertEncounteredProblems)
         }
 
         // Stop the "total time" metric here. The moveOutput time isn't very interesting to include in the benchmark.
         // New tasks and computations should be added above this line so that they're included in the benchmark.
         benchmark(end: totalTimeMetric)
+        
+        allProblems += convertEncounteredProblems
         
         // We should generally only replace the current build output if we didn't encounter errors
         // during conversion. However, if the `emitDigest` flag is true,

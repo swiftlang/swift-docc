@@ -3026,6 +3026,35 @@ class ConvertActionTests: XCTestCase {
         }) .map { DiagnosticConsoleWriter.formattedDescription(for: $0.diagnostic) }.sorted().joined(separator: "\n")
     }
     
+    // Tests that when converting a catalog with no technology root a warning is raised (r93371988)
+    func testConvertWithNoTechnologyRoot() throws {
+        let bundle = Folder(name: "unit-test.docc", content: [
+            InfoPlist(displayName: "TestBundle", identifier: "com.test.example"),
+            TextFile(name: "Documentation.md", utf8Content: "")
+        ])
+        let testDataProvider = try TestFileSystem(folders: [bundle, Folder.emptyHTMLTemplateDirectory])
+        let targetDirectory = URL(fileURLWithPath: testDataProvider.currentDirectoryPath)
+            .appendingPathComponent("target", isDirectory: true)
+        let engine = DiagnosticEngine()
+        var action = try ConvertAction(
+            documentationBundleURL: bundle.absoluteURL,
+            outOfProcessResolver: nil,
+            analyze: true,
+            targetDirectory: targetDirectory,
+            htmlTemplateDirectory: Folder.emptyHTMLTemplateDirectory.absoluteURL,
+            emitDigest: false,
+            currentPlatforms: nil,
+            dataProvider: testDataProvider,
+            fileManager: testDataProvider,
+            temporaryDirectory: createTemporaryDirectory(),
+            diagnosticEngine: engine
+        )
+        let _ = try action.perform(logHandle: .standardOutput)
+        XCTAssertEqual(engine.problems.count, 1)
+        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.EmptyDoccArchive"])
+        XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
+    }
+    
     #endif
 }
 
