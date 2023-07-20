@@ -452,11 +452,6 @@ public struct ConvertAction: Action, RecreatingContext {
         }
 
         var allProblems = analysisProblems + conversionProblems
-        if allProblems.containsErrors == false || convertEncounteredProblems.containsErrors == false {
-            let coverageResults = try coverageAction.perform(logHandle: logHandle)
-            convertEncounteredProblems.append(contentsOf: coverageResults.problems)
-        }
-
         if try context.renderRootModules.isEmpty {
             convertEncounteredProblems.append(
                 Problem(diagnostic: Diagnostic(
@@ -492,6 +487,11 @@ public struct ConvertAction: Action, RecreatingContext {
         benchmark(end: totalTimeMetric)
         
         allProblems += convertEncounteredProblems
+        
+        if allProblems.containsErrors == false {
+            let coverageResults = try coverageAction.perform(logHandle: logHandle)
+            convertEncounteredProblems.append(contentsOf: coverageResults.problems)
+        }
         
         // We should generally only replace the current build output if we didn't encounter errors
         // during conversion. However, if the `emitDigest` flag is true,
