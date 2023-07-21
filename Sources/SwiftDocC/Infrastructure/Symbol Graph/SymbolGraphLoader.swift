@@ -113,7 +113,7 @@ struct SymbolGraphLoader {
         // This strategy benchmarks better when we have multiple
         // "larger" symbol graphs.
         #if os(macOS) || os(iOS)
-        if bundle.symbolGraphURLs.filter({ !($0.pathComponents.last ?? "").contains("@") }).count > 1 {
+        if bundle.symbolGraphURLs.filter({ !$0.lastPathComponent.contains("@") }).count > 1 {
             // There are multiple main symbol graphs, better parallelize all files decoding.
             decodingStrategy = .concurrentlyAllFiles
         }
