@@ -313,10 +313,6 @@ class SymbolGraphLoaderTests: XCTestCase {
     /// Ensure that loading symbol graphs from a directory with an at-sign properly selects the
     /// `concurrentlyAllFiles` decoding strategy on macOS and iOS.
     func testLoadingSymbolsInAtSignDirectory() throws {
-        #if !os(macOS) && !os(iOS)
-        XCTSkip("This test is only valid on macOS and iOS.")
-        #endif
-
         let tempURL = try createTemporaryDirectory(pathComponents: "MyTempDir@2")
         let originalSymbolGraphs = [
             CopyOfFile(original: Bundle.module.url(forResource: "Asides.symbols", withExtension: "json", subdirectory: "Test Resources")!),
@@ -327,7 +323,11 @@ class SymbolGraphLoaderTests: XCTestCase {
         var loader = try makeSymbolGraphLoader(symbolGraphURLs: symbolGraphURLs)
         try loader.loadAll()
 
+        #if os(macOS) || os(iOS)
         XCTAssertEqual(loader.decodingStrategy, .concurrentlyAllFiles)
+        #else
+        XCTAssertEqual(loader.decodingStrategy, .concurrentlyEachFileInBatches)
+        #endif
     }
 
     func testInputWithMixedGraphFormats() throws {
