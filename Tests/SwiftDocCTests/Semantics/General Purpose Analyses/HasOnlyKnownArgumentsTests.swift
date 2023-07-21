@@ -68,6 +68,6 @@ class HasOnlyKnownArgumentsTests: XCTestCase {
         
         XCTAssertEqual(problems.count, 1)
         guard let first = problems.first else { return }
-        XCTAssertEqual("error: Unknown argument 'baz' in Intro. These arguments are currently unused but allowed: 'bark', 'woof'.", DiagnosticConsoleWriter.formattedDescription(for: first.diagnostic))
+        XCTAssertEqual("error: Unknown argument 'baz' in Intro. These arguments are currently unused but allowed: 'bark', 'woof'.", DiagnosticConsoleWriter.formattedDescription(for: first.diagnostic, options: .formatConsoleOutputForTools))
     }
 }

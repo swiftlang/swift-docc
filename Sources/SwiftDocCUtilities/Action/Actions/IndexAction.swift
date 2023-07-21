@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -32,7 +32,7 @@ public struct IndexAction: Action {
     private var dataProvider: LocalFileSystemDataProvider!
 
     /// Initializes the action with the given validated options, creates or uses the given action workspace & context.
-    public init(documentationBundleURL: URL, outputURL:URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine = .init()) throws
+    public init(documentationBundleURL: URL, outputURL: URL, bundleIdentifier: String, diagnosticEngine: DiagnosticEngine = .init()) throws
     {
         // Initialize the action context.
         self.rootURL = documentationBundleURL
@@ -40,7 +40,7 @@ public struct IndexAction: Action {
         self.bundleIdentifier = bundleIdentifier
 
         self.diagnosticEngine = diagnosticEngine
-        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: []))
+        self.diagnosticEngine.add(DiagnosticConsoleWriter(formattingOptions: [], baseURL: documentationBundleURL))
     }
     
     /// Converts each eligable file from the source documentation bundle,
