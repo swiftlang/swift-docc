@@ -99,7 +99,7 @@ final class RenderIndexTests: XCTestCase {
                             "type": "groupMarker"
                           },
                           {
-                            "path": "/documentation/mixedlanguageframework/bar/mystringfunction(_:)",
+                            "path": "/documentation/mixedlanguageframework/bar/mystringfunction(__)",
                             "title": "myStringFunction:error: (navigator title)",
                             "type": "method",
                             "children": [
@@ -327,7 +327,7 @@ final class RenderIndexTests: XCTestCase {
                           },
                           {
                             "title": "class func myStringFunction(String) throws -> String",
-                            "path": "/documentation/mixedlanguageframework/bar/mystringfunction(_:)",
+                            "path": "/documentation/mixedlanguageframework/bar/mystringfunction(__)",
                             "type": "method"
                           }
                         ]
@@ -488,7 +488,7 @@ final class RenderIndexTests: XCTestCase {
                             "type": "groupMarker"
                           },
                           {
-                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/init(rawvalue:)",
+                            "path": "\/documentation\/mixedlanguageframework\/foo-swift.struct\/init(rawvalue_)",
                             "title": "init(rawValue: UInt)",
                             "type": "init"
                           },

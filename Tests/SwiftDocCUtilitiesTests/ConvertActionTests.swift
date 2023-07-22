@@ -330,7 +330,7 @@ class ConvertActionTests: XCTestCase {
             "/output/data/documentation/mykit/myclass/init()-3743d.json",
             "/output/data/documentation/mykit/myclass/myfunction().json",
             "/output/data/documentation/mykit/myprotocol.json",
-            "/output/data/documentation/mykit/globalfunction(_:considering:).json",
+            "/output/data/documentation/mykit/globalfunction(__considering_).json",
         ].sorted())
         
         let myKitNodeData = try XCTUnwrap(outputData["/output/data/documentation/mykit.json"])

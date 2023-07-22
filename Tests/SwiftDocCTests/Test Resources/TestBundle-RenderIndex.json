@@ -614,7 +614,7 @@
         "type" : "groupMarker"
       },
       {
-        "path" : "\/documentation\/mykit\/globalfunction(_:considering:)",
+        "path" : "\/documentation\/mykit\/globalfunction(__considering_)",
         "title" : "func globalFunction(Data, considering: Int)",
         "type" : "func"
       },
@@ -638,7 +638,7 @@
             "type" : "groupMarker"
           },
           {
-            "path" : "\/documentation\/sidekit\/sideclass\/value(_:)",
+            "path" : "\/documentation\/sidekit\/sideclass\/value(__)",
             "title" : "case Value(Int)",
             "type" : "case"
           },

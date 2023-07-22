@@ -194,7 +194,13 @@ public struct NodeURLGenerator {
                     isURLModified = true
                     name = "'\(name)"
                 }
-                
+
+                let components = name.components(separatedBy: ["<", ">", ":", "\"", "/", "\\", "|", "?", "*"])
+                if components.count > 1 {
+                    isURLModified = true
+                    name = components.joined(separator: "_")
+                }
+
                 // Shorten path components that are too long.
                 // Take the first 240 chars and append a checksum on the *complete* string.
                 if name.count >= pathComponentLengthLimit {
