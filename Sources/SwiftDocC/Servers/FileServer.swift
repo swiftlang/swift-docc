@@ -198,7 +198,10 @@ public class MemoryFileServerProvider: FileServerProvider {
     @discardableResult
     public func addFile(path: String, data: Data) -> Bool {
         guard !path.isEmpty else { return false }
-        let trimmed = path.trimmingCharacters(in: slashCharSet)
+        var trimmed = path.trimmingCharacters(in: slashCharSet)
+        #if os(Windows)
+        trimmed = trimmed.replacingOccurrences(of: #"/"#, with: #"\"#)
+        #endif
         files[trimmed] = data
         return true
     }
@@ -210,7 +213,10 @@ public class MemoryFileServerProvider: FileServerProvider {
      - returns: The data matching the url, if possible.
      */
     public func data(for path: String) -> Data? {
-        let trimmed = path.trimmingCharacters(in: slashCharSet)
+        var trimmed = path.trimmingCharacters(in: slashCharSet)
+        #if os(Windows)
+        trimmed = trimmed.replacingOccurrences(of: #"/"#, with: #"\"#)
+        #endif
         return files[trimmed]
     }
     
@@ -247,7 +253,12 @@ public class MemoryFileServerProvider: FileServerProvider {
      - parameter path: The path used to match the files.
      */
     public func removeAllFiles(in subPath: String) {
-        let trimmed = subPath.trimmingCharacters(in: slashCharSet).appending("/")
+        var trimmed = subPath.trimmingCharacters(in: slashCharSet)
+        #if os(Windows)
+        trimmed = trimmed.appending(#"\"#)
+        #else
+        trimmed = trimmed.appending(#"/"#)
+        #endif
         for key in files.keys where key.hasPrefix(trimmed) {
             files.removeValue(forKey: key)
         }
