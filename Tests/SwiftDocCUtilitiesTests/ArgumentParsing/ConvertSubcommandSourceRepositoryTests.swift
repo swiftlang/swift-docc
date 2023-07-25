@@ -140,7 +140,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
         sourceServiceBaseURL: String?,
         assertion: ((ConvertAction) throws -> Void)? = nil
     ) throws {
-        setenv(TemplateOption.environmentVariableKey, testTemplateURL.path, 1)
+        SetEnvironmentVariable(TemplateOption.environmentVariableKey, testTemplateURL.path)
         
         var arguments: [String] = [testBundleURL.path]
         if let checkoutPath = checkoutPath {

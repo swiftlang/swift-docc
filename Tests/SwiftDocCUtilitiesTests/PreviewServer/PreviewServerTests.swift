@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import XCTest
 import Foundation
 
@@ -206,3 +207,4 @@ class PreviewServerTests {
         XCTAssertEqual("\(socketBind)", "/tmp/file.sock")
     }
 }
+#endif

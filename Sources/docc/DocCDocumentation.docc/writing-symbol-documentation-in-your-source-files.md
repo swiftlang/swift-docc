@@ -23,8 +23,8 @@ mutating public func eat(_ food: Food, quantity: Int) throws -> Int {
 }
 ``` 
 
-To help people who use your API better understand it, follow the steps in the sections below to 
-add documentation comments to the public symbols in your code base. DocC compiles 
+To help the people who use your API have a better understanding of it, follow the steps in the sections below to 
+add documentation comments to the public symbols in your project. DocC compiles 
 those comments and generates formatted documentation that you share with your users. 
 
 ### Add a Basic Description for Each Symbol
@@ -78,6 +78,9 @@ Insert blank lines to break text into separate paragraphs.
 mutating public func eat(_ food: Food, quantity: Int) throws -> Int {
 ``` 
 
+Any paragraphs you add appear below the Discussion header in the symbol 
+reference page that DocC generates. 
+
 When writing content for a Discussion section, use documentation markup. For 
 more information, see <doc:formatting-your-documentation-content>.
 
@@ -88,7 +91,7 @@ summary, or the Discussion section, if you include one. Describe each parameter
 in isolation. Discuss its purpose and, where necessary, the range of acceptable 
 values.
 
-DocC supports two approaches to document the parameters of a 
+DocC supports two approaches for documenting the parameters of a 
 method. You can add a Parameters section, or one or more parameter fields. 
 Both use Markdown's list syntax.
 
@@ -114,7 +117,7 @@ the name of the parameter.
 mutating public func eat(_ food: Food, quantity: Int) throws -> Int {
 ```
 
-After you add documentation for a method’s parameters, preview it in a web browser to see the rendered content.
+After you add documentation for a methods parameters, preview it in a web browser to see the rendered content.
 
 ![A screenshot showing the rendered documentation for the eat(_:quantity:) method.](3_eat)
 
@@ -189,7 +192,7 @@ In addition, DocC includes features that allow you to create even richer
 documentation for your symbols:
 
 * Use symbol links instead of code voice when referring to other symbols in 
-your framework. Symbol links allow you to quickly navigate your framework's 
+your project. Symbol links allow you to quickly navigate your project's 
 documentation when viewing in a browser. For more information, see 
 <doc:formatting-your-documentation-content>.
 * Use extension files to provide additional content for your symbols, such as 
@@ -197,4 +200,4 @@ code examples and images, and to help keep the size of their in-source comments
 manageable. For more information, see 
 <doc:adding-supplemental-content-to-a-documentation-catalog>.
 
-<!-- Copyright (c) 2021 Apple Inc and the Swift Project authors. All Rights Reserved. -->
+<!-- Copyright (c) 2021-2023 Apple Inc and the Swift Project authors. All Rights Reserved. -->

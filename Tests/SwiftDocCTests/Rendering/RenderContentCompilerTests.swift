@@ -131,4 +131,69 @@ class RenderContentCompilerTests: XCTestCase {
             XCTAssertEqual(paragraph, RenderBlockContent.Paragraph(inlineContent: [link]))
         }
     }
+    
+    func testLineBreak() throws {
+        let (bundle, context) = try testBundleAndContext(named: "TestBundle")
+        var compiler = RenderContentCompiler(context: context, bundle: bundle, identifier: ResolvedTopicReference(bundleIdentifier: bundle.identifier, path: "/path", fragment: nil, sourceLanguage: .swift))
+
+        let source = #"""
+        Backslash before new line\
+        is an explicit hard line break.
+
+        Two spaces before new line  
+        is a hard line break.
+
+        Paragraph can't end with hard line break.\
+
+        # Headings can't end with hard line break.\
+
+            Code blocks ignore\
+            hard line breaks.
+
+        A single space before new line
+        is a soft line break.
+        """#
+        let document = Document(parsing: source)
+        let expectedDump = #"""
+        Document
+        ├─ Paragraph
+        │  ├─ Text "Backslash before new line"
+        │  ├─ LineBreak
+        │  └─ Text "is an explicit hard line break."
+        ├─ Paragraph
+        │  ├─ Text "Two spaces before new line"
+        │  ├─ LineBreak
+        │  └─ Text "is a hard line break."
+        ├─ Paragraph
+        │  └─ Text "Paragraph can’t end with hard line break.\"
+        ├─ Heading level: 1
+        │  └─ Text "Headings can’t end with hard line break.\"
+        ├─ CodeBlock language: none
+        │  Code blocks ignore\
+        │  hard line breaks.
+        └─ Paragraph
+           ├─ Text "A single space before new line"
+           ├─ SoftBreak
+           └─ Text "is a soft line break."
+        """#
+        XCTAssertEqual(document.debugDescription(), expectedDump)
+        let result = document.children.flatMap { compiler.visit($0) }
+        XCTAssertEqual(result.count, 6)
+        do {
+            guard case let .paragraph(paragraph) = result[0] as? RenderBlockContent else {
+                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                return
+            }
+            let text = RenderInlineContent.text("\n")
+            XCTAssertEqual(paragraph.inlineContent[1], text)
+        }
+        do {
+            guard case let .paragraph(paragraph) = result[1] as? RenderBlockContent else {
+                XCTFail("RenderCotent result is not the expected RenderBlockContent.paragraph(Paragraph)")
+                return
+            }
+            let text = RenderInlineContent.text("\n")
+            XCTAssertEqual(paragraph.inlineContent[1], text)
+        }
+    }
 }

@@ -191,8 +191,8 @@ public struct RenderNodeTranslator: SemanticVisitor {
         }
         
         node.sections.append(tutorialSections)
-        if let assesments = tutorial.assessments {
-            node.sections.append(visitAssessments(assesments) as! TutorialAssessmentsRenderSection)
+        if let assessments = tutorial.assessments {
+            node.sections.append(visitAssessments(assessments) as! TutorialAssessmentsRenderSection)
         }
 
         // We guarantee there will be at least 1 path with at least 4 nodes in that path if the tutorial is curated.
@@ -816,7 +816,7 @@ public struct RenderNodeTranslator: SemanticVisitor {
                         isActive: true,
                         overridingTitle: callToAction.buttonLabel(for: article.metadata?.pageKind?.kind),
                         overridingTitleInlineContent: nil))
-                externalLocationReferences[url.description] = ExternalLocationReference(identifier: downloadIdentifier)
+                downloadReferences[url.description] = DownloadReference(identifier: downloadIdentifier, verbatimURL: url, checksum: nil)
             } else if let fileReference = callToAction.file,
                       let downloadIdentifier = createAndRegisterRenderReference(forMedia: fileReference, assetContext: .download)
             {
@@ -841,11 +841,15 @@ public struct RenderNodeTranslator: SemanticVisitor {
                 node.metadata.platformsVariants = .init(defaultValue: renderAvailability)
             }
         }
-
+        
         if let pageKind = article.metadata?.pageKind {
             node.metadata.role = pageKind.kind.renderRole.rawValue
             node.metadata.roleHeading = pageKind.kind.titleHeading
         }
+        
+        if let titleHeading = article.metadata?.titleHeading {
+            node.metadata.roleHeading = titleHeading.heading
+        } 
         
         collectedTopicReferences.append(contentsOf: contentCompiler.collectedTopicReferences)
         node.references = createTopicRenderReferences()
@@ -854,7 +858,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
         addReferences(videoReferences, to: &node)
         addReferences(linkReferences, to: &node)
         addReferences(downloadReferences, to: &node)
-        addReferences(externalLocationReferences, to: &node)
         // See Also can contain external links, we need to separately transfer
         // link references from the content compiler
         addReferences(contentCompiler.linkReferences, to: &node)
@@ -1246,6 +1249,10 @@ public struct RenderNodeTranslator: SemanticVisitor {
         
         if shouldCreateAutomaticRoleHeading(for: documentationNode) {
             node.metadata.roleHeadingVariants = VariantCollection<String?>(from: symbol.roleHeadingVariants)
+        }
+
+        if let titleHeading = documentationNode.metadata?.titleHeading {
+            node.metadata.roleHeadingVariants = VariantCollection<String?>(defaultValue: titleHeading.heading)
         }
         
         node.metadata.symbolKindVariants = VariantCollection<String?>(from: symbol.kindVariants) { _, kindVariants in
@@ -1701,7 +1708,6 @@ public struct RenderNodeTranslator: SemanticVisitor {
     var linkReferences: [String: LinkReference] = [:]
     var requirementReferences: [String: XcodeRequirementReference] = [:]
     var downloadReferences: [String: DownloadReference] = [:]
-    var externalLocationReferences: [String: ExternalLocationReference] = [:]
     
     private var bundleAvailability: [BundleModuleIdentifier: [AvailabilityRenderItem]] = [:]
     

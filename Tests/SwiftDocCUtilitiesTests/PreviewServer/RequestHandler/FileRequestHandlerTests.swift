@@ -8,6 +8,7 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+#if canImport(NIOHTTP1)
 import Foundation
 import XCTest
 @testable import SwiftDocC
@@ -151,3 +152,4 @@ class FileRequestHandlerTests: XCTestCase {
         XCTAssertEqual(response.requestError?.status.code, RequestError.init(status: .badRequest).status.code)
     }
 }
+#endif

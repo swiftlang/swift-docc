@@ -1645,13 +1645,8 @@ let expected = """
         
         // Verify the non-overload collisions were resolved
         XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/Test-swift.enum", sourceLanguage: .swift)))
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-9053a", sourceLanguage: .swift)))
-            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-959hd", sourceLanguage: .swift)))
-        } else {
-            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-swift.var-9053a", sourceLanguage: .swift)))
-            XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-swift.var-959hd", sourceLanguage: .swift)))
-        }
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/tEst-9053a", sourceLanguage: .swift)))
+        XCTAssertNoThrow(try context.entity(with: ResolvedTopicReference(bundleIdentifier: "org.swift.docc.example", path: "/documentation/SideKit/SideClass/test-959hd", sourceLanguage: .swift)))
     }
 
     func testUnknownSymbolKind() throws {
@@ -1667,9 +1662,27 @@ let expected = """
         XCTAssertEqual(node.kind, .unknown)
     }
     
-    func testSpecialCharactersInLinks() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
+    func testCuratingSymbolsWithSpecialCharacters() throws {
+        let (_, _, context) = try testBundleAndContext(copying: "InheritedOperators") { root in
+            try """
+            # ``Operators/MyNumber``
+            
+            A documentation extension that curates symbosl with characters not allowed in a resolved reference URL.
+
+            ## Topics
+
+            - ``<(_:_:)``
+            - ``>(_:_:)``
+            - ``<=(_:_:)``
+            - ``>=(_:_:)``
+            """.write(to: root.appendingPathComponent("doc-extension.md"), atomically: true, encoding: .utf8)
+        }
         
+        let unresolvedTopicProblems = context.problems.filter({ $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" })
+        XCTAssertEqual(unresolvedTopicProblems.map(\.diagnostic.summary), [], "All links should resolve without warnings")
+    }
+    
+    func testSpecialCharactersInLinks() throws {
         let originalSymbolGraph = Bundle.module.url(forResource: "TestBundle", withExtension: "docc", subdirectory: "Test Bundles")!.appendingPathComponent("mykit-iOS.symbols.json")
         
         let testBundle = Folder(name: "special-characters.docc", content: [
@@ -1913,13 +1926,8 @@ let expected = """
         XCTAssertTrue(sidecarFilesForUnknownSymbol.contains(unmatchedSidecarDiagnostic.source?.standardizedFileURL), "One of the files should be the diagnostic source")
         XCTAssertEqual(unmatchedSidecarDiagnostic.range, SourceLocation(line: 1, column: 3, source: unmatchedSidecarProblem.diagnostic.source)..<SourceLocation(line: 1, column: 26, source: unmatchedSidecarProblem.diagnostic.source))
         
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/MyKit'.")
-            XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
-        } else {
-            XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. This documentation will be ignored.")
-            XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .information)
-        }
+        XCTAssertEqual(unmatchedSidecarDiagnostic.summary, "No symbol matched 'MyKit/UnknownSymbol'. 'UnknownSymbol' doesn't exist at '/MyKit'.")
+        XCTAssertEqual(unmatchedSidecarDiagnostic.severity, .warning)
     }
     
     func testUncuratedArticleDiagnostics() throws {
@@ -2129,6 +2137,48 @@ let expected = """
         XCTAssertEqual(context.problems.filter { $0.diagnostic.source?.path.hasSuffix(newArticle1URL.lastPathComponent) == true }.count, 0)
     }
 
+    func testPrefersNonSymbolsInDocLink() throws {
+        let (_, bundle, context) = try testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
+            // This bundle has a top-level struct named "Wrapper". Adding an article named "Wrapper.md" introduces a possibility for a link collision
+            try """
+            # An article
+            
+            This is an article with the same name as a top-level symbol
+            """.write(to: url.appendingPathComponent("Wrapper.md"), atomically: true, encoding: .utf8)
+            
+            // Also change the display name so that the article container has the same name as the module.
+            try InfoPlist(displayName: "Something", identifier: "com.example.Something").write(inside: url)
+            
+            // Use a doc-link to curate the article.
+            try """
+            # ``Something``
+            
+            Curate the article and the symbol top-level.
+            
+            ## Topics
+            
+            - <doc:Wrapper>
+            """.write(to: url.appendingPathComponent("Something.md"), atomically: true, encoding: .utf8)
+        }
+        
+        let moduleReference = try XCTUnwrap(context.rootModules.first)
+        let moduleNode = try context.entity(with: moduleReference)
+        
+        let renderContext = RenderContext(documentationContext: context, bundle: bundle)
+        let converter = DocumentationContextConverter(bundle: bundle, context: context, renderContext: renderContext)
+        let source = context.documentURL(for: moduleReference)
+        
+        let renderNode = try XCTUnwrap(converter.renderNode(for: moduleNode, at: source))
+        let curatedTopic = try XCTUnwrap(renderNode.topicSections.first?.identifiers.first)
+        
+        let topicReference = try XCTUnwrap(renderNode.references[curatedTopic] as? TopicRenderReference)
+        XCTAssertEqual(topicReference.title, "An article")
+        
+        // This test also reproduce https://github.com/apple/swift-docc/issues/593
+        // When that's fixed this test should also use a symbol link to curate the top-level symbol and verify that
+        // the symbol link resolves to the symbol.
+    }
+    
     // Modules that are being extended should not have their own symbol in the current bundle's graph.
     func testNoSymbolForTertiarySymbolGraphModules() throws {
         // Add an article without curating it anywhere
@@ -2306,17 +2356,10 @@ let expected = """
             XCTAssert(context.problems.allSatisfy { $0.diagnostic.source?.absoluteString == expectedDiagnosticSource })
             
             // Verify the expected source ranges
-            if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-                XCTAssertEqual(
-                    context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
-                    ["17:98", "18:100", "18:25", "18:45", "18:62"].sorted()
-                )
-            } else {
-                XCTAssertEqual(
-                    context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
-                    ["17:96", "18:23", "18:43", "18:60", "18:89"].sorted()
-                )
-            }
+            XCTAssertEqual(
+                context.problems.map { "\($0.diagnostic.range!.lowerBound.line):\($0.diagnostic.range!.lowerBound.column)" }.sorted(),
+                ["17:98", "18:100", "18:25", "18:45", "18:62"].sorted()
+            )
         }
     }
     
@@ -2399,6 +2442,39 @@ let expected = """
         XCTAssertNotNil(try context.entity(with: referenceForPath("/Collisions/SharedStruct/iOSVar")))
     }
     
+    func testLinkToSymbolWithoutPage() throws {
+        let inheritedDefaultImplementationsSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        let inheritedDefaultImplementationsAtSwiftSGF = Bundle.module.url(
+            forResource: "InheritedDefaultImplementations@Swift.symbols",
+            withExtension: "json",
+            subdirectory: "Test Resources"
+        )!
+        
+        let testBundle = try Folder(
+            name: "unit-test.docc",
+            content: [
+                CopyOfFile(original: inheritedDefaultImplementationsSGF),
+                CopyOfFile(original: inheritedDefaultImplementationsAtSwiftSGF),
+                TextFile(name: "doc-extension.md", utf8Content: """
+                # ``FirstTarget``
+                
+                Link to a default implementation symbol that doesn't have a page in this build.
+                
+                - ``Comparable/localDefaultImplementation()``
+                """)
+            ]
+        ).write(inside: createTemporaryDirectory())
+        
+        let (_, _, context) = try loadBundle(from: testBundle)
+        
+        let problem = try XCTUnwrap(context.problems.first(where: { $0.diagnostic.identifier == "org.swift.docc.unresolvedTopicReference" }))
+        XCTAssertEqual(problem.diagnostic.summary, "'FirstTarget/Comparable/localDefaultImplementation()' has no page and isn't available for linking.")
+    }
+    
     func testContextCachesReferences() throws {
         // Verify there is no pool bucket for the bundle we're about to test
         XCTAssertNil(ResolvedTopicReference.sharedPool.sync({ $0[#function] }))
@@ -2463,7 +2539,7 @@ let expected = """
                         subdirectory: "Test Resources")!),
         ]).write(inside: tempURL)
         
-        let (_, _, context) = try! loadBundle(from: bundleURL)
+        let (_, _, context) = try XCTUnwrap(loadBundle(from: bundleURL))
         
         // MissingDocs contains a struct that has a link to a non-existent type.
         // If there are no problems, that indicates that symbol graph link
@@ -2544,15 +2620,10 @@ let expected = """
         let linkResolutionProblems = problems.filter { $0.diagnostic.source?.relativePath.hasSuffix("myFunction.md") == true }
         XCTAssertEqual(linkResolutionProblems.count, 1)
         let problem = try XCTUnwrap(linkResolutionProblems.first)
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 28)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 7)
-            XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 42)
-        } else {
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
-            XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 23)
-        }
+        XCTAssertEqual(problem.diagnostic.range?.lowerBound.line, 7)
+        XCTAssertEqual(problem.diagnostic.range?.lowerBound.column, 28)
+        XCTAssertEqual(problem.diagnostic.range?.upperBound.line, 7)
+        XCTAssertEqual(problem.diagnostic.range?.upperBound.column, 42)
 
         let functionNode = try XCTUnwrap(context.nodeWithSymbolIdentifier("s:7SideKit0A5ClassC10myFunctionyyF"))
         XCTAssertEqual(functionNode.docChunks.count, 2)
@@ -2745,12 +2816,7 @@ let expected = """
     /// matched with their documentation extension files. Besides verifying the correct content
     /// it verifies also that the curation in these doc extensions is reflected in the topic graph.
     func testMatchesCorrectlyDocExtensionToChildOfCollisionTopic() throws {
-        let fifthTestMemberPath: String
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember"
-        } else {
-            fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember-swift.type.property"
-        }
+        let fifthTestMemberPath = "ShapeKit/OverloadedParentStruct-1jr3p/fifthTestMember"
         
         let (_, bundle, context) = try testBundleAndContext(copying: "OverloadedSymbols") { url in
             // Add an article to be curated from collided nodes' doc extensions.
@@ -2820,8 +2886,6 @@ let expected = """
     }
     
     func testMatchesDocumentationExtensionsAsSymbolLinks() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
-        
         let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
             // Two colliding symbols that differ by capitalization.
             try """
@@ -2933,8 +2997,6 @@ let expected = """
     }
     
     func testMatchesDocumentationExtensionsWithSourceLanguageSpecificLinks() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
-        
         let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
             // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
             //     MyObjectiveCOptionNone                                      = 0,
@@ -3037,8 +3099,6 @@ let expected = """
     }
     
     func testMatchesDocumentationExtensionsRelativeToModule() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
-        
         let (_, bundle, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
             // Top level symbols, omitting the module name
             try """
@@ -3082,8 +3142,6 @@ let expected = """
     }
     
     func testCurationOfSymbolsWithSameNameAsModule() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
-        
         let (_, bundle, context) = try testBundleAndContext(copying: "SymbolsWithSameNameAsModule") { url in
             // Top level symbols, omitting the module name
             try """
@@ -3114,8 +3172,6 @@ let expected = """
     }
     
     func testMultipleDocumentationExtensionMatchDiagnostic() throws {
-        try XCTSkipUnless(LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver)
-        
         let (_, _, context) = try testBundleAndContext(copying: "MixedLanguageFrameworkWithLanguageRefinements") { url in
             // typedef NS_OPTIONS(NSInteger, MyObjectiveCOption) {
             //     MyObjectiveCOptionNone                                      = 0,

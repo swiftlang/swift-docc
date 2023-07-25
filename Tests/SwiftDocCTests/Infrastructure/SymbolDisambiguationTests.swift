@@ -25,13 +25,15 @@ class SymbolDisambiguationTests: XCTestCase {
         
         XCTAssertEqual(references.count, 2)
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/first-swift.property",
-        ])
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/first-swift.property"
+        )
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/First-swift.struct",
-        ])
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/First-swift.struct"
+        )
     }
     
     func testPathCollisionWithDifferentArgumentTypesInSameLanguage() throws {
@@ -46,13 +48,15 @@ class SymbolDisambiguationTests: XCTestCase {
         
         XCTAssertEqual(references.count, 2)
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/first(_:)-\("first".stableHashString)",
-        ])
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/first(_:)-\("first".stableHashString)"
+        )
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/first(_:)-\("second".stableHashString)",
-        ])
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/first(_:)-\("second".stableHashString)"
+        )
     }
     
     func testSameSymbolWithDifferentKindsInDifferentLanguages() throws {
@@ -67,9 +71,10 @@ class SymbolDisambiguationTests: XCTestCase {
         
         XCTAssertEqual(references.count, 1)
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/First", // Same symbol doesn't require disambiguation
-        ])
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/First" // Same symbol doesn't require disambiguation
+        )
     }
     
     func testDifferentSymbolsWithDifferentKindsInDifferentLanguages() throws {
@@ -84,13 +89,13 @@ class SymbolDisambiguationTests: XCTestCase {
         
         XCTAssertEqual(references.count, 2)
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/First-swift.struct",
-        ])
+        XCTAssertEqual(references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/First-swift.struct"
+        )
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "objective-c")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/First-c.protocol",
-        ])
+        XCTAssertEqual(references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "objective-c")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/First-c.protocol"
+        )
     }
     
     func testSameSymbolWithDifferentNamesInDifferentLanguages() throws {
@@ -105,10 +110,10 @@ class SymbolDisambiguationTests: XCTestCase {
         
         XCTAssertEqual(references.count, 1)
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/first(one:two:)",
-            "/documentation/SymbolDisambiguationTests/Something/firstWithOne:two:",
-        ])
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/first(one:two:)"
+        )
     }
     
     func testOneVariantOfMultiLanguageSymbolCollidesWithDifferentTypeSymbol() throws {
@@ -124,14 +129,14 @@ class SymbolDisambiguationTests: XCTestCase {
         
         XCTAssertEqual(references.count, 2)
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "instance-method", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/first(one:two:)-swift.method",
-        ])
-        
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "type-method", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/first(one:two:)-swift.type.method",
-            "/documentation/SymbolDisambiguationTests/Something/firstWithOne:two:", // This path doesn't have any collisions
-        ])
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "instance-method", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/first(one:two:)-swift.method"
+        )
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "type-method", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/first(one:two:)-swift.type.method"
+        )
     }
     
     func testStructAndEnumAndTypeAliasCollisionOfSameSymbol() throws {
@@ -147,14 +152,13 @@ class SymbolDisambiguationTests: XCTestCase {
         
         XCTAssertEqual(references.count, 2)
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/First-swift.struct",
-            "/documentation/SymbolDisambiguationTests/Something/First-c.enum",
-        ])
+        XCTAssertEqual(references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/First-swift.struct"
+        )
         
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "objective-c")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/First-c.typealias",
-        ])
+        XCTAssertEqual(references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "objective-c")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/First-c.typealias"
+        )
     }
     
     func testTripleCollisionWithBothSameTypeAndDifferentType() throws {
@@ -170,121 +174,87 @@ class SymbolDisambiguationTests: XCTestCase {
         XCTAssertEqual(references.count, 3)
         
         // The first collision can be disambiguated with its kind information
-        XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-            "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.method",
-        ])
-        
-        if LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-                "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-\("second".stableHashString)",
-            ])
-            XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "third", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-                "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-\("third".stableHashString)",
-            ])
-        } else {
-            // The cache-based resolver redundantly disambiguates with both kind and usr when another overload has a different kind.
-            XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-                "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.type.method-\("second".stableHashString)",
-            ])
-            XCTAssertEqual((references[SymbolGraph.Symbol.Identifier(precise: "third", interfaceLanguage: "swift")] ?? []).map { $0.path }, [
-                "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.type.method-\("third".stableHashString)",
-            ])
-        }
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "first", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-swift.method"
+        )
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "second", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-\("second".stableHashString)"
+        )
+        XCTAssertEqual(
+            references[SymbolGraph.Symbol.Identifier(precise: "third", interfaceLanguage: "swift")]?.path,
+            "/documentation/SymbolDisambiguationTests/Something/first(_:_:)-\("third".stableHashString)"
+        )
     }
     
     func testMixedLanguageFramework() throws {
         let (bundle, context) = try testBundleAndContext(named: "MixedLanguageFramework")
         
-        if !LinkResolutionMigrationConfiguration.shouldUseHierarchyBasedLinkResolver {
-            let aliases = [String: [String]](uniqueKeysWithValues: context.documentationCacheBasedLinkResolver.referenceAliases.map({ ($0.key.path, $0.value.map(\.path).sorted()) }))
-            XCTAssertEqual(aliases, [
-                "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)": [
-                    "/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
-                ],
-                "/documentation/MixedLanguageFramework/Foo-swift.struct": [
-                    "/documentation/MixedLanguageFramework/Foo-c.enum",
-                ],
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()": [
-                    "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init",
-                ],
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()": [
-                    "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod",
-                ],
-                "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()": [
-                    "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod",
-                ],
-            ])
-        }
-        
         var loader = SymbolGraphLoader(bundle: bundle, dataProvider: context.dataProvider)
         try loader.loadAll()
         
-        let references = context.documentationCacheBasedLinkResolver.referencesForSymbols(in: loader.unifiedGraphs, bundle: bundle, context: context).mapValues({ $0.map(\.path) })
-        XCTAssertEqual(references, [
-            .init(precise: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()",
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod",
-            ],
-            .init(precise: "c:@E@Foo", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/Foo-swift.struct",
-                "/documentation/MixedLanguageFramework/Foo-c.enum",
-            ],
-            .init(precise: "c:@E@Foo@first", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/Foo/first",
-            ],
-            .init(precise: "c:@E@Foo@fourth", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/Foo/fourth",
-            ],
-            .init(precise: "c:@E@Foo@second", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/Foo/second",
-            ],
-            .init(precise: "c:@E@Foo@third", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/Foo/third",
-            ],
-            .init(precise: "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol",
-            ],
-            .init(precise: "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()",
-                "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init",
-            ],
-            .init(precise: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/MixedLanguageProtocol",
-            ],
-            .init(precise: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()",
-                "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod",
-            ],
-            .init(precise: "c:@MixedLanguageFrameworkVersionNumber", interfaceLanguage: "occ"): [
-                "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber",
-            ],
-            .init(precise: "c:@MixedLanguageFrameworkVersionString", interfaceLanguage: "occ"): [
-                "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString",
-            ],
-            .init(precise: "c:MixedLanguageFramework.h@T@Foo", interfaceLanguage: "occ"): [
-                "/documentation/MixedLanguageFramework/Foo-c.typealias",
-            ],
-            .init(precise: "c:objc(cs)Bar", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/Bar",
-            ],
-            .init(precise: "c:objc(cs)Bar(cm)myStringFunction:error:", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)",
-                "/documentation/MixedLanguageFramework/Bar/myStringFunction:error:",
-            ],
-            .init(precise: "s:22MixedLanguageFramework15SwiftOnlyClassV", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/SwiftOnlyClass",
-            ],
-            .init(precise: "s:22MixedLanguageFramework15SwiftOnlyStructV", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/SwiftOnlyStruct",
-            ],
-            .init(precise: "s:22MixedLanguageFramework15SwiftOnlyStructV4tadayyF", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/SwiftOnlyStruct/tada()",
-            ],
-            .init(precise: "s:So3FooV8rawValueABSu_tcfc", interfaceLanguage: "swift"): [
-                "/documentation/MixedLanguageFramework/Foo/init(rawValue:)",
-            ],
+        let references = context.hierarchyBasedLinkResolver.referencesForSymbols(in: loader.unifiedGraphs, bundle: bundle, context: context).mapValues(\.path)
+        XCTAssertEqual(Set(references.keys), [
+            SymbolGraph.Symbol.Identifier(precise: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift"),
+            .init(precise: "c:@E@Foo", interfaceLanguage: "swift"),
+            .init(precise: "c:@E@Foo@first", interfaceLanguage: "swift"),
+            .init(precise: "c:@E@Foo@fourth", interfaceLanguage: "swift"),
+            .init(precise: "c:@E@Foo@second", interfaceLanguage: "swift"),
+            .init(precise: "c:@E@Foo@third", interfaceLanguage: "swift"),
+            .init(precise: "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol", interfaceLanguage: "swift"),
+            .init(precise: "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init", interfaceLanguage: "swift"),
+            .init(precise: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol", interfaceLanguage: "swift"),
+            .init(precise: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift"),
+            .init(precise: "c:@MixedLanguageFrameworkVersionNumber", interfaceLanguage: "occ"),
+            .init(precise: "c:@MixedLanguageFrameworkVersionString", interfaceLanguage: "occ"),
+            .init(precise: "c:MixedLanguageFramework.h@T@Foo", interfaceLanguage: "occ"),
+            .init(precise: "c:objc(cs)Bar", interfaceLanguage: "swift"),
+            .init(precise: "c:objc(cs)Bar(cm)myStringFunction:error:", interfaceLanguage: "swift"),
+            .init(precise: "s:22MixedLanguageFramework15SwiftOnlyClassV", interfaceLanguage: "swift"),
+            .init(precise: "s:22MixedLanguageFramework15SwiftOnlyStructV", interfaceLanguage: "swift"),
+            .init(precise: "s:22MixedLanguageFramework15SwiftOnlyStructV4tadayyF", interfaceLanguage: "swift"),
+            .init(precise: "s:So3FooV8rawValueABSu_tcfc", interfaceLanguage: "swift"),
         ])
         
+        XCTAssertEqual(references[.init(precise: "c:@CM@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/mixedLanguageMethod()")
+        XCTAssertEqual(references[.init(precise: "c:@E@Foo", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/Foo-swift.struct")
+        XCTAssertEqual(references[.init(precise: "c:@E@Foo@first", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/Foo-swift.struct/first")
+        XCTAssertEqual(references[.init(precise: "c:@E@Foo@fourth", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/Foo-swift.struct/fourth")
+        XCTAssertEqual(references[.init(precise: "c:@E@Foo@second", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/Foo-swift.struct/second")
+        XCTAssertEqual(references[.init(precise: "c:@E@Foo@third", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/Foo-swift.struct/third")
+        XCTAssertEqual(references[.init(precise: "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol")
+        XCTAssertEqual(references[.init(precise: "c:@M@TestFramework@objc(cs)MixedLanguageClassConformingToProtocol(im)init", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/MixedLanguageClassConformingToProtocol/init()")
+        XCTAssertEqual(references[.init(precise: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/MixedLanguageProtocol")
+        XCTAssertEqual(references[.init(precise: "c:@M@TestFramework@objc(pl)MixedLanguageProtocol(im)mixedLanguageMethod", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/MixedLanguageProtocol/mixedLanguageMethod()")
+        XCTAssertEqual(references[.init(precise: "c:@MixedLanguageFrameworkVersionNumber", interfaceLanguage: "occ")],
+                       "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionNumber")
+        XCTAssertEqual(references[.init(precise: "c:@MixedLanguageFrameworkVersionString", interfaceLanguage: "occ")],
+                       "/documentation/MixedLanguageFramework/_MixedLanguageFrameworkVersionString")
+        XCTAssertEqual(references[.init(precise: "c:MixedLanguageFramework.h@T@Foo", interfaceLanguage: "occ")],
+                       "/documentation/MixedLanguageFramework/Foo-c.typealias")
+        XCTAssertEqual(references[.init(precise: "c:objc(cs)Bar", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/Bar")
+        XCTAssertEqual(references[.init(precise: "c:objc(cs)Bar(cm)myStringFunction:error:", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/Bar/myStringFunction(_:)")
+        XCTAssertEqual(references[.init(precise: "s:22MixedLanguageFramework15SwiftOnlyClassV", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/SwiftOnlyClass")
+        XCTAssertEqual(references[.init(precise: "s:22MixedLanguageFramework15SwiftOnlyStructV", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/SwiftOnlyStruct")
+        XCTAssertEqual(references[.init(precise: "s:22MixedLanguageFramework15SwiftOnlyStructV4tadayyF", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/SwiftOnlyStruct/tada()")
+        XCTAssertEqual(references[.init(precise: "s:So3FooV8rawValueABSu_tcfc", interfaceLanguage: "swift")],
+                       "/documentation/MixedLanguageFramework/Foo-swift.struct/init(rawValue:)")
     }
     
     // MARK: - Test Helpers
@@ -295,8 +265,7 @@ class SymbolDisambiguationTests: XCTestCase {
         let kind: SymbolGraph.Symbol.KindIdentifier
     }
     
-    
-    private func disambiguatedReferencesForSymbols(swift swiftSymbols: [TestSymbolData], objectiveC objectiveCSymbols: [TestSymbolData]) throws -> [SymbolGraph.Symbol.Identifier : [ResolvedTopicReference]] {
+    private func disambiguatedReferencesForSymbols(swift swiftSymbols: [TestSymbolData], objectiveC objectiveCSymbols: [TestSymbolData]) throws -> [SymbolGraph.Symbol.Identifier : ResolvedTopicReference] {
         let graph = SymbolGraph(
             metadata: SymbolGraph.Metadata(
                 formatVersion: SymbolGraph.SemanticVersion(major: 1, minor: 1, patch: 1),
@@ -345,8 +314,10 @@ class SymbolDisambiguationTests: XCTestCase {
             relationships: []
         )
         
-        unified.mergeGraph(graph: graph2, at: URL(fileURLWithPath: "fake-path-for-swift-objc-graph"))
+        let swiftSymbolGraphURL = URL(fileURLWithPath: "fake-path-for-swift-symbol-graph")
+        let objcSymbolGraphURL = URL(fileURLWithPath: "fake-path-for-swift-objc-graph")
         
+        unified.mergeGraph(graph: graph2, at: objcSymbolGraphURL)
         let uniqueSymbolCount = Set(swiftSymbols.map(\.preciseID) + objectiveCSymbols.map(\.preciseID)).count
         XCTAssertEqual(unified.symbols.count, uniqueSymbolCount)
         
@@ -354,7 +325,7 @@ class SymbolDisambiguationTests: XCTestCase {
             info: DocumentationBundle.Info(
                 displayName: "SymbolDisambiguationTests",
                 identifier: "com.test.SymbolDisambiguationTests"),
-            symbolGraphURLs: [],
+            symbolGraphURLs: [swiftSymbolGraphURL, objcSymbolGraphURL],
             markupURLs: [],
             miscResourceURLs: []
         )
@@ -362,18 +333,25 @@ class SymbolDisambiguationTests: XCTestCase {
         class TestProvider: DocumentationContextDataProvider {
             var delegate: DocumentationContextDataProviderDelegate? = nil
             var bundles: [SwiftDocC.BundleIdentifier : SwiftDocC.DocumentationBundle] = [:]
+            var symbolGraphData: [URL: Data] = [:]
             
             func contentsOfURL(_ url: URL, in bundle: SwiftDocC.DocumentationBundle) throws -> Data {
-                fatalError("No content will be loaded from the bundle in this test")
+                guard let data = symbolGraphData[url] else {
+                    fatalError("Only symbol graph content will be loaded from the bundle in this test")
+                }
+                return data
             }
         }
         
         let provider = TestProvider()
+        provider.symbolGraphData = [
+            swiftSymbolGraphURL: try JSONEncoder().encode(graph),
+            objcSymbolGraphURL: try JSONEncoder().encode(graph2),
+        ]
         provider.bundles[bundle.identifier] = bundle
         
         let context = try DocumentationContext(dataProvider: provider)
         
-        
-        return context.documentationCacheBasedLinkResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], bundle: bundle, context: context)
+        return context.hierarchyBasedLinkResolver.referencesForSymbols(in: ["SymbolDisambiguationTests": unified], bundle: bundle, context: context)
     }
 }
