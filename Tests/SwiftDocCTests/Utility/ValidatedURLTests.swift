@@ -36,19 +36,9 @@ class ValidatedURLTests: XCTestCase {
     }
 
     func testInvalidURLs() {
-        let invalidURLs = [
-            URL(string: "http://:domain")!,
-        ]
-        
-        // Test ValidatedURL.init(String)
-        invalidURLs.forEach { url in
-            XCTAssertNil(ValidatedURL(parsingExact: url.absoluteString))
-        }
+        XCTAssertNil(ValidatedURL(parsingExact: "http://:domain"))
 
-        // Test ValidatedURL.init(URL)
-        invalidURLs.forEach { url in
-            XCTAssertNil(ValidatedURL(url))
-        }
+        XCTAssertNil(URL(string: "http://:domain").flatMap { ValidatedURL($0) })
     }
 
     func testRequiringScheme() {
