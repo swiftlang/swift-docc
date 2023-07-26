@@ -32,10 +32,10 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             try assertSourceRepositoryArguments(
                 checkoutPath: "checkout path",
                 sourceService: sourceService,
-                sourceServiceBaseURL: "example.com/path/to/base"
+                sourceServiceBaseURL: "https://example.com/path/to/base"
             ) { action in
                 XCTAssertEqual(action.sourceRepository?.checkoutPath, "checkout path")
-                XCTAssertEqual(action.sourceRepository?.sourceServiceBaseURL, URL(string: "example.com/path/to/base")!)
+                XCTAssertEqual(action.sourceRepository?.sourceServiceBaseURL.absoluteString, "https://example.com/path/to/base")
             }
         }
     }
@@ -55,7 +55,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             try assertSourceRepositoryArguments(
                 checkoutPath: nil,
                 sourceService: nil,
-                sourceServiceBaseURL: "example.com/path/to/base"
+                sourceServiceBaseURL: "https://example.com/path/to/base"
             )
         ) { error in
             XCTAssertEqual(
@@ -124,7 +124,7 @@ class ConvertSubcommandSourceRepositoryTests: XCTestCase {
             try assertSourceRepositoryArguments(
                 checkoutPath: "checkout path",
                 sourceService: "not a supported source service",
-                sourceServiceBaseURL: "example.com/foo"
+                sourceServiceBaseURL: "https://example.com/foo"
             )
         ) { error in
             XCTAssertEqual(
