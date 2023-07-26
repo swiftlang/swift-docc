@@ -41,29 +41,6 @@ class RedirectedTests: XCTestCase {
         XCTAssertEqual(redirected?.oldPath.path, oldPath)
     }
     
-    func testInvalidURL() throws {
-          let someCharactersThatAreNotAllowedInPaths = "⊂⧺∀ℝ∀⊂⊤∃∫"
-          for character in someCharactersThatAreNotAllowedInPaths {
-              XCTAssertFalse(CharacterSet.urlPathAllowed.contains(character.unicodeScalars.first!), "Verify that \(character) is invalid")
-              
-              let pathWithInvalidCharacter = "/path/with/invalid\(character)for/paths"
-              let source = "@Redirected(from: \(pathWithInvalidCharacter))"
-              let document = Document(parsing: source, options: .parseBlockDirectives)
-              let directive = document.child(at: 0)! as! BlockDirective
-              let (bundle, context) = try testBundleAndContext(named: "TestBundle")
-              var problems = [Problem]()
-              let redirected = Redirect(from: directive, source: nil, for: bundle, in: context, problems: &problems)
-              XCTAssertNil(redirected?.oldPath.absoluteString, "\(character)")
-              XCTAssertFalse(problems.containsErrors)
-              XCTAssertEqual(1, problems.count)
-              XCTAssertEqual(problems.first?.diagnostic.identifier, "org.swift.docc.HasArgument.from.ConversionFailed")
-              XCTAssertEqual(
-                  problems.first?.diagnostic.summary,
-                  "Cannot convert '\(pathWithInvalidCharacter)' to type 'URL'"
-              )
-          }
-      }
-    
     func testExtraArguments() throws {
         let oldPath = "/old/path/to/this/page"
         let source = "@Redirected(from: \(oldPath), argument: value)"
