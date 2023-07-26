@@ -60,7 +60,7 @@
         "repositoryURL": "https://github.com/apple/swift-markdown.git",
         "state": {
           "branch": "release/5.9",
-          "revision": "bbeb362919d903eb722c913ad49a1b23d27bdc00",
+          "revision": "15bbd521f3efd161995ed55179e9984a7d734c61",
           "version": null
         }
       },
