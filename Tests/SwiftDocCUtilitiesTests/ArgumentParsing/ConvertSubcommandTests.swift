@@ -112,7 +112,7 @@ class ConvertSubcommandTests: XCTestCase {
             )
             let action = try ConvertAction(fromConvertCommand: convert)
             XCTAssertEqual(
-                action.htmlTemplateDirectory,
+                action.htmlTemplateDirectory?.standardizedFileURL,
                 defaultTemplateDir.standardizedFileURL
             )
         }
