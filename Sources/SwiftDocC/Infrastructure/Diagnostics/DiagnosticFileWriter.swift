@@ -29,10 +29,14 @@ public final class DiagnosticFileWriter: DiagnosticConsumer {
         receivedProblems.append(contentsOf: problems)
     }
     
-    public func finalize() throws {
+    public func flush() throws {
         let fileContent = DiagnosticFile(problems: receivedProblems)
         receivedProblems = []
         let encoder = RenderJSONEncoder.makeEncoder(emitVariantOverrides: false)
         try encoder.encode(fileContent).write(to: outputPath, options: .atomic)
+    }
+    
+    public func finalize() throws {
+        try flush()
     }
 }

@@ -17,7 +17,11 @@ public protocol DiagnosticConsumer: AnyObject {
     func receive(_ problems: [Problem])
     
     /// Inform the consumer that the engine has sent all diagnostics for this build.
+    @available(*, deprecated, message: "Please use flush() instead.")
     func finalize() throws
+    
+    /// Inform the consumer that the engine has sent all diagnostics.
+    func flush() throws
 }
 
 /// A type that can format received diagnostics in way that's suitable for writing to a destination such as a file or `TextOutputStream`.

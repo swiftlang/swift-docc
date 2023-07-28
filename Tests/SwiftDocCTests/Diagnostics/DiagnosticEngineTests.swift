@@ -22,6 +22,7 @@ class DiagnosticEngineTests: XCTestCase {
             expectation.fulfill()
         }
         func finalize() { }
+        func flush() { }
     }
 
     func testEmitDiagnostic() {

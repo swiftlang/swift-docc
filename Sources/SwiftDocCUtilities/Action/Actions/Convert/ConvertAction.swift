@@ -369,7 +369,7 @@ public struct ConvertAction: Action, RecreatingContext {
         defer {
             didPerformFuture?()
             isPerforming.sync({ $0 = false })
-            diagnosticEngine.finalize()
+            diagnosticEngine.flush()
         }
         
         if let outOfProcessResolver = outOfProcessResolver {

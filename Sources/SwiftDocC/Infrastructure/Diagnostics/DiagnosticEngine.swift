@@ -96,7 +96,12 @@ public final class DiagnosticEngine {
         }
     }
     
+    @available(*, deprecated, message: "Please use flush() instead.")
     public func finalize() {
+        flush()
+    }
+    
+    public func flush() {
         workQueue.sync {
             for consumer in self.consumers.sync({ $0.values }) {
                 try? consumer.finalize()
