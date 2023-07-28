@@ -3051,7 +3051,7 @@ class ConvertActionTests: XCTestCase {
         )
         let _ = try action.perform(logHandle: .standardOutput)
         XCTAssertEqual(engine.problems.count, 1)
-        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.EmptyDoccArchive"])
+        XCTAssertEqual(engine.problems.map { $0.diagnostic.identifier }, ["org.swift.docc.MissingTechnologyRoot"])
         XCTAssert(engine.problems.contains(where: { $0.diagnostic.severity == .warning }))
     }
     
