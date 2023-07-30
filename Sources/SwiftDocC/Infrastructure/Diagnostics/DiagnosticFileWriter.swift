@@ -36,7 +36,11 @@ public final class DiagnosticFileWriter: DiagnosticConsumer {
         try encoder.encode(fileContent).write(to: outputPath, options: .atomic)
     }
     
+    @available(*, deprecated, message: "Please use flush() instead.")
     public func finalize() throws {
-        try flush()
+        let fileContent = DiagnosticFile(problems: receivedProblems)
+        receivedProblems = []
+        let encoder = RenderJSONEncoder.makeEncoder(emitVariantOverrides: false)
+        try encoder.encode(fileContent).write(to: outputPath, options: .atomic)
     }
 }
