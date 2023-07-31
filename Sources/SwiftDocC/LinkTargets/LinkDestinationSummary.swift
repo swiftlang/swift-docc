@@ -392,7 +392,7 @@ extension LinkDestinationSummary {
                 .sorted(by: \.identifier.identifier)
             
             self.init(
-                kind: documentationNode.kind,
+                kind: documentationNode.kindForLinkDestinationSummary,
                 language: documentationNode.sourceLanguage,
                 relativePresentationURL: relativePresentationURL,
                 referenceURL: referenceURL,
@@ -739,6 +739,27 @@ extension LinkDestinationSummary {
         }
         
         return true
+    }
+}
+
+private extension DocumentationNode {
+    /// The documentation node kind that should be used when creating a link destination
+    /// summary for this node.
+    var kindForLinkDestinationSummary: DocumentationNode.Kind {
+        // If this page has an explicit page kind set with the `@PageKind` metadata directive, that
+        // is the one that should be used for the link destination summary.
+        //
+        // This allows specialized articles, like SampleCode pages, that are otherwise treated as
+        // articles in the compilation process to still be rendered correctly when linked against.
+        // However, this solution is less than ideal...
+        //
+        // FIXME: Implement a more robust solution for handling specialized article-like pages.
+        //
+        // This implementation is less than ideal. There should be a more robust way of handling
+        // specialized articles, like sample code pages, that benefit from being treated as articles in
+        // some parts of the compilation process (like curation) but not others (like link destination
+        // summary creation and render node translation).
+        return metadata?.pageKind?.kind.documentationNodeKind ?? kind
     }
 }
 
