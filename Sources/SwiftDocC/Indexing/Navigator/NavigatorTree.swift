@@ -324,11 +324,12 @@ public class NavigatorTree {
         presentationIdentifier: String? = nil,
         onNodeRead: ((NavigatorTree.Node) -> Void)? = nil
     ) throws -> NavigatorTree {
-        guard 
-            let fileHandle = FileHandle(forReadingAtPath: path),
-            let data = try fileHandle.readToEnd()
-        else {
+        guard let fileHandle = FileHandle(forReadingAtPath: path) else {
             throw Error.cannotOpenFile(path: path)
+        }
+
+        guard let data = try fileHandle.readToEnd() else {
+            throw FileSystemError.noDataReadFromFile(path: path)
         }
 
         var map = [UInt32: Node]()
