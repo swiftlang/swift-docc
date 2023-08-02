@@ -9,9 +9,6 @@
 */
 
 import Foundation
-#if canImport(FoundationNetworking)
-import FoundationNetworking
-#endif
 
 import XCTest
 @testable import SwiftDocC
