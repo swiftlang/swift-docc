@@ -11,6 +11,8 @@
 
 set -eu
 
+grep -r FoundationNetworking Sources && echo "Replace uses of FoundationNetworking with alternatives" && exit 1
+
 # A `realpath` alternative using the default C implementation.
 filepath() {
   [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
