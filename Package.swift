@@ -19,7 +19,7 @@ let swiftSettings: [SwiftSetting] = [
 let package = Package(
     name: "SwiftDocC",
     platforms: [
-        .macOS(.v10_15),
+        .macOS(.v11),
         .iOS(.v13)
     ],
     products: [
@@ -91,6 +91,7 @@ let package = Package(
         .target(
             name: "SwiftDocCTestUtilities",
             dependencies: [
+                "SwiftDocC",
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             swiftSettings: swiftSettings

@@ -158,13 +158,16 @@ struct FileRequestHandler: RequestHandlerFactory {
                 // Read the file contents
                 do {
                     let fileHandle = try FileHandle(forReadingFrom: fileURL)
-                    data = fileHandle.readDataToEndOfFile()
+                    guard let readData = try fileHandle.readToEnd() else {
+                        throw FileSystemError.noDataReadFromFile(path: fileURL.path)
+                    }
+                    data = readData
                     totalLength = data.count
                 } catch {
                     throw RequestError(status: .notFound)
                 }
 
-                // Add Range header if neccessary
+                // Add Range header if necessary
                 var headers = HTTPHeaders()
                 let range = head.headers["Range"].first.flatMap(RangeHeader.init)
                 if let range = range {

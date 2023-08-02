@@ -140,7 +140,9 @@ public class NavigatorTree {
         broadcast: BroadcastCallback?
     ) throws {
         let fileHandle = try FileHandle(forReadingFrom: url)
-        let data = fileHandle.readDataToEndOfFile()
+        guard let data = try fileHandle.readToEnd() else {
+            throw Error.cannotOpenFile(path: url.path)
+        }
         let readingCursor = ReadingCursor(data: data)
         self.readingCursor = readingCursor
         
@@ -322,10 +324,12 @@ public class NavigatorTree {
         presentationIdentifier: String? = nil,
         onNodeRead: ((NavigatorTree.Node) -> Void)? = nil
     ) throws -> NavigatorTree {
-        guard let fileHandle = FileHandle(forReadingAtPath: path) else {
+        guard 
+            let fileHandle = FileHandle(forReadingAtPath: path),
+            let data = try fileHandle.readToEnd()
+        else {
             throw Error.cannotOpenFile(path: path)
         }
-        let data = fileHandle.readDataToEndOfFile()
 
         var map = [UInt32: Node]()
         var index: UInt32 = 0

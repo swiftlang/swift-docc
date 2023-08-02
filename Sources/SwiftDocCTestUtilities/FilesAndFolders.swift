@@ -9,6 +9,7 @@
 */
 
 import Foundation
+import SwiftDocC
 import XCTest
 
 /*
@@ -201,7 +202,10 @@ public struct CopyOfFile: File, DataRepresentable {
         var isDirectory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: original.path, isDirectory: &isDirectory), !isDirectory.boolValue else { throw Error.notAFile(original) }
         let fileHandle = try FileHandle(forReadingFrom: original)
-        return fileHandle.readDataToEndOfFile()
+        guard let data = try fileHandle.readToEnd() else {
+            throw FileSystemError.noDataReadFromFile(path: original.path)
+        }
+        return data
     }
     
     public func write(to url: URL) throws {

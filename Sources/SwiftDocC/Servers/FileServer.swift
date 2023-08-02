@@ -174,7 +174,7 @@ public class FileSystemServerProvider: FileServerProvider {
     public func data(for path: String) -> Data? {
         let finalURL = directoryURL.appendingPathComponent(path)
         let fileHandle = try? FileHandle(forReadingFrom: finalURL)
-        return fileHandle?.readDataToEndOfFile()
+        return try? fileHandle?.readToEnd()
     }
     
 }
@@ -229,9 +229,12 @@ public class MemoryFileServerProvider: FileServerProvider {
         
         for file in enumerator {
             guard let file = file as? String else { fatalError("Enumerator returned an unexpected type.") }
-            guard let fileHandle = try? FileHandle(forReadingFrom: URL(fileURLWithPath: path).appendingPathComponent(file))
+            let fileURL = URL(fileURLWithPath: path).appendingPathComponent(file)
+            guard
+                let fileHandle = try? FileHandle(forReadingFrom: fileURL),
+                let data = try? fileHandle.readToEnd()
             else { continue }
-            let data = fileHandle.readDataToEndOfFile()
+
             if recursive == false && file.contains("/") { continue } // skip if subfolder and recursive is disabled
             addFile(path: "/\(trimmedSubPath)/\(file)", data: data)
         }

@@ -61,9 +61,8 @@ public class NavigatorIndex {
     
     /// A specific error to describe issues when processing a `NavigatorIndex`.
     public enum Error: Swift.Error, DescribedError {
-        
         /// Missing bundle identifier.
-        case missingBundleIndentifier
+        case missingBundleIdentifier
         
         /// A RenderNode has no title and won't be indexed.
         case missingTitle(description: String)
@@ -72,8 +71,8 @@ public class NavigatorIndex {
         case navigatorIndexIsNil
         
         public var errorDescription: String {
-            switch self  {
-            case .missingBundleIndentifier:
+            switch self {
+            case .missingBundleIdentifier:
                 return "A navigator index requires a bundle identifier, which is missing."
             case .missingTitle:
                 return "The page has no valid title available."
@@ -169,16 +168,17 @@ public class NavigatorIndex {
         
         let information = try environment.openDatabase(named: "information", flags: [])
         
-        let availabilityIndexFileHandle = try FileHandle(
-            forReadingFrom: url.appendingPathComponent("availability.index", isDirectory: false)
-        )
-        let data = availabilityIndexFileHandle.readDataToEndOfFile()
+        let availabilityIndexFileURL = url.appendingPathComponent("availability.index", isDirectory: false)
+        let availabilityIndexFileHandle = try FileHandle(forReadingFrom: availabilityIndexFileURL)
+        guard let data = try availabilityIndexFileHandle.readToEnd() else {
+            throw FileSystemError.noDataReadFromFile(path: availabilityIndexFileURL.path)
+        }
         let plistDecoder = PropertyListDecoder()
         let availabilityIndex = try plistDecoder.decode(AvailabilityIndex.self, from: data)
         let bundleIdentifier = bundleIdentifier ?? information.get(type: String.self, forKey: NavigatorIndex.bundleKey) ?? NavigatorIndex.UnknownBundleIdentifier
         
         guard bundleIdentifier != NavigatorIndex.UnknownBundleIdentifier else {
-            throw Error.missingBundleIndentifier
+            throw Error.missingBundleIdentifier
         }
         
         // Use `.fnv1` by default if no path hasher is set for compatibility reasons.
@@ -285,7 +285,7 @@ public class NavigatorIndex {
         self.availabilityIndex = AvailabilityIndex()
         
         guard self.bundleIdentifier != NavigatorIndex.UnknownBundleIdentifier else {
-            throw Error.missingBundleIndentifier
+            throw Error.missingBundleIdentifier
         }
     }
     
