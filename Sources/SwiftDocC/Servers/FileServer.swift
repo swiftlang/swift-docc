@@ -96,7 +96,7 @@ public class FileServer {
         if let data = data {
             response = .init(status: .ok, headerFields: [.contentType: mimeType, .contentLength: "\(data.count)"])
         } else {
-            response = .init(status: .ok, headerFields: [.contentType: mimeType])
+            response = .init(status: .ok, headerFields: [.contentType: "application/octet-stream"])
         }
         
         return (response, data)
