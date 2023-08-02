@@ -56,7 +56,7 @@ public class FileServer {
      */
     @available(*, deprecated, message: "Use 'data(for path: String)' instead.")
     public func data(for url: URL) -> Data? {
-        return data(for url.path)
+        return data(for: url.path)
     }
 
     public func data(for path: String) -> Data? {

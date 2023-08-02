@@ -75,7 +75,7 @@ public class NavigatorIndex {
         
         public var errorDescription: String {
             switch self {
-            case .missingBundleIdentifier:
+            case .missingBundleIdentifier, .missingBundleIndentifier:
                 return "A navigator index requires a bundle identifier, which is missing."
             case .missingTitle:
                 return "The page has no valid title available."
@@ -174,7 +174,7 @@ public class NavigatorIndex {
         let availabilityIndexFileURL = url.appendingPathComponent("availability.index", isDirectory: false)
         let availabilityIndexFileHandle = try FileHandle(forReadingFrom: availabilityIndexFileURL)
         guard let data = try availabilityIndexFileHandle.readToEnd() else {
-            throw FileSystemError.noDataReadFromFile(path: availabilityIndexFileURL.path)
+            throw CocoaError(.fileReadUnknown, userInfo: ["path": availabilityIndexFileURL.path])
         }
         let plistDecoder = PropertyListDecoder()
         let availabilityIndex = try plistDecoder.decode(AvailabilityIndex.self, from: data)

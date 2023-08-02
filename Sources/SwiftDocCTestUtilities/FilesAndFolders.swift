@@ -203,7 +203,7 @@ public struct CopyOfFile: File, DataRepresentable {
         guard FileManager.default.fileExists(atPath: original.path, isDirectory: &isDirectory), !isDirectory.boolValue else { throw Error.notAFile(original) }
         let fileHandle = try FileHandle(forReadingFrom: original)
         guard let data = try fileHandle.readToEnd() else {
-            throw FileSystemError.noDataReadFromFile(path: original.path)
+            throw CocoaError(.fileReadUnknown, userInfo: ["path": original.path])
         }
         return data
     }

@@ -50,7 +50,7 @@ public struct LocalFileSystemDataProvider: DocumentationWorkspaceDataProvider, F
         precondition(url.isFileURL, "Unexpected non-file url '\(url)'.")
         let fileHandle = try FileHandle(forReadingFrom: url)
         guard let data = try fileHandle.readToEnd() else {
-            throw FileSystemError.noDataReadFromFile(path: url.path)
+            throw CocoaError(.fileReadUnknown, userInfo: ["path": url.path])
         }
 
         return data

@@ -329,7 +329,7 @@ public class NavigatorTree {
         }
 
         guard let data = try fileHandle.readToEnd() else {
-            throw FileSystemError.noDataReadFromFile(path: path)
+            throw CocoaError(.fileReadUnknown, userInfo: ["path": path])
         }
 
         var map = [UInt32: Node]()

@@ -32,7 +32,7 @@ struct DefaultRequestHandler: RequestHandlerFactory {
             let fileURL = self.rootURL.appendingPathComponent("index.html")
             let fileHandle = try FileHandle(forReadingFrom: fileURL)
             guard let response = try fileHandle.readToEnd() else {
-                throw FileSystemError.noDataReadFromFile(path: fileURL.path)
+                throw CocoaError(.fileReadUnknown, userInfo: ["path": fileURL.path])
             }
 
             var content = context.channel.allocator.buffer(capacity: response.count)

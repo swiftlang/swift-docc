@@ -91,7 +91,6 @@ let package = Package(
         .target(
             name: "SwiftDocCTestUtilities",
             dependencies: [
-                "SwiftDocC",
                 .product(name: "SymbolKit", package: "swift-docc-symbolkit"),
             ],
             swiftSettings: swiftSettings

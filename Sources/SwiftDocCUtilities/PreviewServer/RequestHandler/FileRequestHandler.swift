@@ -159,7 +159,7 @@ struct FileRequestHandler: RequestHandlerFactory {
                 do {
                     let fileHandle = try FileHandle(forReadingFrom: fileURL)
                     guard let readData = try fileHandle.readToEnd() else {
-                        throw FileSystemError.noDataReadFromFile(path: fileURL.path)
+                        throw CocoaError(.fileReadUnknown, userInfo: ["path": fileURL.path])
                     }
                     data = readData
                     totalLength = data.count
