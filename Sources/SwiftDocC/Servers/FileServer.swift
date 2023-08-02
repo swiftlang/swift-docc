@@ -90,7 +90,7 @@ public class FileServer {
                 xlog("Tried to load an invalid path: \(path).\nFalling back to serve index.html.")
             }
             mimeType = "text/html"
-            data = self.data(for: path.appendingPathComponent("/index.html"))
+            data = self.data(for: "/index.html")
         }
         
         if let data = data {
